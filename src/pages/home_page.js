@@ -4,6 +4,7 @@ import JobIconImg from './../assets/job_icon.png';
 import ExploreIconImg from './../assets/explore_icon.png'; 
 import WalletIconImg from './../assets/wallet_icon.png'; 
 import StackIconImg from './../assets/stack_icon.png';
+import Letter from './../assets/letter.png'; 
 
 class home_page extends Component {
     
@@ -14,7 +15,7 @@ class home_page extends Component {
     render(){
         var size = this.props.screensize;
         var top_bar = 50;
-        var middle = this.props.height-126;
+        var middle = this.props.height-120;
         var bottom_bar = 76;
         var width = this.props.width;
         var navbar_color = '#444444';// #444444
@@ -53,7 +54,61 @@ class home_page extends Component {
                 </div>   
             </div>
         );
+        }
+      else if(size == 'm'){
+        return ( 
+            <div className="row" style={{height: this.state.height, width:this.state.width,'background-color':background_color}}>
+                  <div className="col" style={{backgroundImage: `url(${Background})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
+                      <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px'}}>
+                          {this.render_top_tag_bar(size)}
+                      </div>
+                      
+                      <div style={{height:5}}/>
+                      <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 3px'}}>
+                          <div className="col-6">
+                              {this.render_post_list_group(size)}
+                          </div>
+                          
+                          <div className="col-6" style={{'padding':'0px 10px 0px 10px'}}>
+                              {this.render_post_detail_object(size)}
+                          </div>
+                          
+                      </div>
+                      <div style={{height:5}}/>
+                      <div style={{height:bottom_bar, width: width, 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                          {this.render_navbar_button_group(size)}
+                      </div>
+                      
+                  </div>
+              </div>
+        );
       }
+      else if(size == 's'){
+        return ( 
+            <div style={{height: this.state.height, width:'100%','background-color':background_color, backgroundImage: `url(${Background})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
+                <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px'}}>
+                    {this.render_top_tag_bar(size)}
+                </div>
+                
+                <div style={{height:this.props.height-126, width:width, 'padding':'0px 5px 0px 5px'}}  >
+                    {this.render_post_list_group(size)}
+                </div>
+                
+                <div style={{height:5}}/>
+                <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px'}}>
+                    {this.render_navbar_button_group(size)}
+                </div>
+            </div>
+        );
+      }
+      else{
+        return(
+            <div style={{height: this.props.height, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <img src={Letter} style={{height:'auto',width:'35%'}} />
+            </div>
+        );
+      }
+
     }
 
 
@@ -195,6 +250,10 @@ class home_page extends Component {
     }
 
     render_post_detail_object(){
+
+    }
+
+    open_view_stack_bottomsheet(){
 
     }
 
