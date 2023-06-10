@@ -63,7 +63,7 @@ class App extends Component {
       }
 
       else if(width == 1366 && height == 1024){
-          return 'l';//l
+          return 'e';//l
       }
 
       else if(width > 1250){
@@ -71,7 +71,7 @@ class App extends Component {
       }
 
       if(width > 1020){
-          return 'l';//l
+          return 'e';//l
       }
       else if(width > 730){
           return 'm';

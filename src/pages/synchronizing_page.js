@@ -27,7 +27,7 @@ class synchronizing_page extends Component {
                     {this.render_synch_bar()}
                 </div>
                 <img style={{width:'60%', margin:'5% 0% 0% 17%'}} src={syncrhonizing_image} alt="Paris"/>
-                <div style={{width:'60%', margin:'0% 0% 0% 15%'}}>
+                <div style={{width:'60%', margin:'20% 0% 0% 15%'}}>
                     {this.render_bottom_text()}
                 </div>
             </div>
