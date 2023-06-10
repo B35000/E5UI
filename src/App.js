@@ -101,7 +101,7 @@ class App extends Component {
 
   render_page(){
     return(
-      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height}/>
+      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state}/>
     )
   }
 
@@ -137,11 +137,26 @@ class App extends Component {
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     
-
+    const steps = 5;
+    const incr_count = 100/steps;
     const web3 = new Web3('http://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = '0x02b0B4EFd909240FCB2Eb5FAe060dC60D112E3a4'
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+    web3.eth.getBlockNumber().then(blockNumber => {
+        var last_blocks = [];
+        var start = blockNumber-30;
+        if(blockNumber < 30){
+          start = 0;
+        }
+        for (let i = start; i <= blockNumber; i++) {
+          web3.eth.getBlock(i).then(block => {
+            last_blocks.push(block);
+          })
+        }
+        this.setState({last_blocks: last_blocks, number_of_blocks: blockNumber, syncronizing_progress:this.state.syncronizing_progress+incr_count});
+    });
     
     console.log('attempting to load addresses')
     contractInstance.getPastEvents('e7', {
@@ -152,7 +167,7 @@ class App extends Component {
         console.error(error);
       } else {
         console.log('loaded addresses')
-        this.setState({E5_addresses: events[0].returnValues.p5, syncronizing_progress:this.state.syncronizing_progress+25}); 
+        this.setState({E5_addresses: events[0].returnValues.p5, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
         
       }
     });
@@ -161,17 +176,10 @@ class App extends Component {
       if (error) {
         console.error(error);
       } else {
-        this.setState({E5_runs: events, syncronizing_progress:this.state.syncronizing_progress+25}); 
+        this.setState({E5_runs: events, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
       }
     });
 
-    this.load_contract_and_token_data();
-
-  }
-
-
-  load_contract_and_token_data(){ 
-    const web3 = new Web3('http://127.0.0.1:8545/'); 
     const G5contractArtifact = require('./contract_abis/G5.json');
     const G5_address = '0xFD6F7A6a5c21A3f503EBaE7a473639974379c351'
     const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
@@ -181,7 +189,7 @@ class App extends Component {
         console.error(error);
       } else {
         console.log(result); 
-        this.setState({E5_main_contract_data: result[0], syncronizing_progress:this.state.syncronizing_progress+25});
+        this.setState({E5_main_contract_data: result[0], syncronizing_progress:this.state.syncronizing_progress+incr_count});
       }
     });
 
@@ -194,10 +202,10 @@ class App extends Component {
         console.error(error);
       } else {
         console.log(result); 
-        this.setState({E5_End_exchange: result[0], E5_Spend_exchange: result[1], should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+25});
+        this.setState({E5_End_exchange: result[0], E5_Spend_exchange: result[1], should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+incr_count});
       }
     });
-    
+
   }
 
 

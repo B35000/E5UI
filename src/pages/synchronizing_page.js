@@ -22,7 +22,7 @@ class synchronizing_page extends Component {
     render_synchronizing_page(){
         return(
             <div style={{}}>
-                <p style={{margin:'15% 0% 3% 40%'}}>Synchronizing...</p>
+                <p style={{margin:'15% 0% 3% 40%'}}>{this.get_sync_text()}</p>
                 <div style={{width:'60%', margin:'0% 0% 0% 20%'}}>
                     {this.render_synch_bar()}
                 </div>
@@ -32,6 +32,14 @@ class synchronizing_page extends Component {
                 </div>
             </div>
         );
+    }
+
+    get_sync_text(){
+        if(this.props.sync_progress >= 100){
+            return 'synchronized.'
+        }else{
+            return 'Synchronizing...'
+        }
     }
 
     render_synch_bar(){
