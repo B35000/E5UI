@@ -5,11 +5,11 @@ import ExploreIconImg from './../assets/explore_icon.png';
 import WalletIconImg from './../assets/wallet_icon.png'; 
 import StackIconImg from './../assets/stack_icon.png';
 import Letter from './../assets/letter.png'; 
-import E5EmptyIcon from './../assets/e5empty_icon.png';
 import AddLetter from './../assets/add_icon.png';
-import EthereumTestnet from './../assets/ethereum_testnet.png';
 
 import Tags from './../components/tags';
+import PostDetailSection from '../sections/post_detail_section';
+import PostListSection from './../sections/post_list_section';
 
 import CanvasJSReact from './../externals/canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -25,6 +25,8 @@ function number_with_commas(x) {
 }
 
 
+
+
 class home_page extends Component {
     
     state = {
@@ -32,6 +34,8 @@ class home_page extends Component {
         work_page_tags_object:this.get_main_page_tag_object('?'), 
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
+        selected_ether_item: null,
+        
     };
 
 
@@ -91,6 +95,8 @@ class home_page extends Component {
       
     }
 
+    
+
     render(){
         var size = this.props.screensize;
         var top_bar = 50;
@@ -103,7 +109,7 @@ class home_page extends Component {
 
         if(size == 'm'){
             return ( 
-                <div className="row" style={{height: this.props.height, width:'101%','background-color':background_color}}>
+                <div className="row" style={{height: this.props.height, width:'102%','background-color':background_color, 'overflow': 'hidden'}}>
                     <div className="col" style={{backgroundImage: `url(${Background})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px'}}>
                             {this.render_top_tag_bar(size)}
@@ -111,17 +117,19 @@ class home_page extends Component {
                         
                         <div style={{height:5}}/>
                         <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 3px'}}>
-                            <div className="col-6">
+                            <div className="col-6" style={{}}>
                                 {this.render_post_list_group(size)}
                             </div>
-                            
+
                             <div className="col-6" style={{'padding':'0px 10px 0px 10px'}}>
                                 {this.render_post_detail_object(size)}
                             </div>
+
+                            
                             
                         </div>
                         <div style={{height:5}}/>
-                        <div style={{height:bottom_bar, width: '102%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
+                        <div style={{height:bottom_bar, width: '103%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                             {this.render_navbar_button_group(size)}
                         </div>
                         
@@ -358,718 +366,26 @@ class home_page extends Component {
 
 
 
-
-
-
-    render_post_list_group(){
-        var selected_page = this.state.page;
-        if(selected_page == '?'){
-            var selected_tag = this.state.work_page_tags_object['i'].active
-            if(selected_tag == 'contracts' || selected_tag == 'e'){
-                return(
-                <div>{this.render_contracts_list_group()}</div>
-                )
-            }
-            else if(selected_tag == 'proposals' ){
-                return(
-                <div>{this.render_proposal_list_group()}</div>
-                )
-            }
-            else if(selected_tag == 'subscriptions' ){
-                return(
-                <div>{this.render_subscription_list_group()}</div>
-                )
-            }
-        }
-        else if(selected_page == 'e'){
-            var selected_tag = this.state.explore_page_tags_object['i'].active
-            if(selected_tag == 'E5s' || selected_tag == 'e'){
-                return(
-                <div>{this.render_E5s_list_group()}</div>
-                )
-            }
-            else if(selected_tag == 'posts' ){
-                return(
-                <div>{this.render_posts_list_group()}</div>
-                )
-            }
-            else if(selected_tag == 'channels' ){
-                return(
-                <div>{this.render_channels_list_group()}</div>
-                )
-            }
-        }
-        else if(selected_page == 'w'){
-            var selected_tag = this.state.wallet_page_tags_object['i'].active
-            var selected_item = this.state.wallet_page_tags_object['e'][2][0];
-            var selected_option_name = this.state.wallet_page_tags_object['e'][1][selected_item];
-            if(selected_option_name == 'ethers ⚗️' || selected_option_name == 'e'){
-                return(
-                <div>{this.render_ethers_list_group()}</div>
-                )
-            }
-            else if(selected_option_name == 'ends ☝️' ){
-                return(
-                <div>{this.render_ends_list_group()}</div>
-                )
-            }
-            else if(selected_option_name == 'spends 🫰' ){
-                return(
-                <div>{this.render_spends_list_group()}</div>
-                )
-            }
-        }
-
-    }
-
-    
-    render_contracts_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_contract_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-
-    render_contract_object(){
-        return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
-    }
-
-
-
-    render_proposal_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_proposal_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-
-    render_proposal_object(){
-        return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
-    }
-
-
-    render_subscription_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_subscription_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-
-    render_subscription_object(){
-        return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
-    }
-
-
-
-    render_E5s_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_E5s_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-
-    render_E5s_object(){
-        return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
-    }
-
-
-
-    render_posts_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_posts_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-
-    render_posts_object(){
-        return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
-    }
-
-
-
-    render_channels_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_channels_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-
-    render_channels_object(){
-        return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
-    }
-
-
-
-    render_ethers_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = this.get_ethers_data()
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_ethers_object(item)}
-                        </li>
-                    ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                </ul>
-            </div>
-        );
-    }
-
-    render_ethers_object(item){
-        return ( 
-            <div onClick={() => this.when_ether_object_clicked()} style={{height:'auto', width:'100%', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{'padding': '0px 10px 0px 10px'}}>
-                        {this.render_detail_item('8', item['label'])}
-                    </div>
-                    <div style={{height: 20}}/>
-                    {this.render_detail_item('2', item['number_label'])}
-                </div>         
-            </div>
-        );
-    }
-
-    get_ethers_data(){
-        return [
-            {
-                'name': 'Ethereum Testnet',
-                'symbol': 'ETHT',
-                'image': EthereumTestnet,
-                'label':{'title':'ETHT', 'details':'Ethereum Testnet', 'size':'l', 'image': EthereumTestnet},
-                'tags':{'active_tags':['Ethereum', 'Ether', 'EVM', 'Chain'], 'index_option':'unindexed'},
-                'number_label':this.get_blockchain_data(),
-            }
-        ]
-    }
-
-    get_blockchain_data(){
-        return{
-            'style':'s',
-            'title':'',
-            'subtitle':'',
-            'barwidth':this.get_number_width(this.props.app_state.number_of_blocks),
-            'number':`${number_with_commas(this.props.app_state.number_of_blocks)} blocks`,
-            'barcolor':'#606060',
-            'relativepower':'ledger size',
-        }
-    }
-
     
 
-    get_number_width(number){
-        var last_two_digits = number.toString().slice(0, 1)+'0';
-        if(number > 10){
-            last_two_digits = number.toString().slice(0, 2);
-        }
-        return last_two_digits+'%'
-    }
-
-    when_ether_object_clicked(){
-
-    }
 
 
-
-    render_ends_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_ends_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-
-    render_ends_object(){
+    render_post_list_group(size){
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
+            <PostListSection size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)}/>
+        )
     }
 
-
-
-    render_spends_list_group(){
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_spends_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
+    when_ether_object_clicked(index){
+        this.setState({selected_ether_item: index})
     }
 
-    render_spends_object(){
+    render_post_detail_object(size){
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
+            <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} selected_ether_item={this.state.selected_ether_item} height={this.props.height} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)}/>
+        )
     }
 
-    render_empty_object(){
-        return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-            );
-    }
-
-
-
-
-
-    render_post_detail_object(){
-
-    }
-
-
-    /* renders the specific element in the post or detail object */
-    render_detail_item(item_id, object_data){
-        var background_color = 'rgb(217, 217, 217,.6)';
-        var divider_color = '#BFBFBF';
-        var border_radius = '7px';
-
-        if(item_id=='0'){/* line */
-            return(
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-            );
-        }
-        else if(item_id=='1'){/* tags */
-            var active_tags = ['tag1','tag2','tag3']
-            var tag_background_color = '#787878';
-            
-            if(object_data != null){
-              active_tags = object_data['active_tags']
-              if(object_data['index_option'] == 'indexed'){
-                tag_background_color = '#5e5e5e';
-              }
-              if(object_data['active_tags'].length == 0){
-                active_tags = ['e'];
-              }
-            }
-            return (
-                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': border_radius}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow':'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px'}}>
-                      {active_tags.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'padding': '5px', '-ms-overflow-style': 'none', 'scrollbar-width': 'none', height:30}}>
-                              <div style={{'background-color': tag_background_color, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px #868686'}} onClick={()=> this.when_tag_item_clicked(item, index, object_data['when_tapped'])}>
-                                <p style={{'color': 'white', 'font-size': '16px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify'}} className="text-center">{item}</p>
-                            </div>
-                          </li>
-                      ))}
-                  </ul>
-                </div>
-            );
-        }
-        else if(item_id=='2'){/* number */
-            var style = object_data != null ? object_data['style']: 's'
-            var title = object_data != null ? object_data['title']:'Post Block Number'
-            var subtitle = object_data != null ? object_data['subtitle']:'depth'
-            var barwidth = object_data != null ? object_data['barwidth']:'84%'
-            var number = object_data != null ? object_data['number']:'123,445,555'
-            var barcolor = object_data != null ? object_data['barcolor']:'#606060'
-            var relativepower = object_data != null ? object_data['relativepower']:'500 blocks'
-            if(style == 's'){
-              return ( 
-                  <div style={{'margin': '0px 20px 0px 20px'}}>                   
-                      <div style={{ height: 2, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 1px 1px #CECDCD', 'margin': '0px 0px 4px 0px' }}>
-                          <div className="progress" style={{ height: 2, width: "100%", 'background-color': '#BFBFBF' }}>
-                              <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                      </div>
-
-                      <div className="row">
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                              <p style={{'color': '#444444', 'font-size': '10px', height: '100%'}} className="fw-bold">{number}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
-                              <p style={{'color': '#444444', 'font-size': '9px', height: '100%', 'padding-top':' 1px'}} className="text-end">{relativepower}</p>
-                          </div>
-                      </div>
-                  </div>
-              );
-            }else{
-                return ( 
-                    <div style={{'margin': '5px 20px 0px 15px'}}>
-                        <div className="row">
-                            <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                            <p style={{'color': '#444444', 'font-size': '11px', height: 7}} className="fw-bold">{title}</p>
-                            </div>
-                            <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
-                                <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'padding-top':' 0.5px'}} className="text-end">{subtitle}</p>
-                            </div>
-                        </div>
-                        
-                        <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 2px 1px #CECDCD', 'margin': '0px 0px 4px 0px' }}>
-                            <div className="progress" style={{ height: 3, width: "100%", 'background-color': '#BFBFBF' }}>
-                                <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                                <p style={{'color': '#444444', 'font-size': '11px', height: '100%'}} className="fw-bold">{number}</p>
-                            </div>
-                            <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
-                                <p style={{'color': '#444444', 'font-size': '10px', height: '100%', 'padding-top':' 1px'}} className="text-end">{relativepower}</p>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-        }
-        else if(item_id=='3' || item_id=='8'){/* label-id */
-            var title = 'Author';
-            var details = 'e25885';
-            var size = 'l';
-            if(object_data != null){
-              title = object_data['title']
-              details = object_data['details']
-              size = object_data['size']
-            }
-            var font_size = ['14px', '11px', 17];
-            if(size == 'l'){
-                font_size = ['17px', '13px', 19];
-            }
-            if(item_id == '8'){
-                var img = E5EmptyIcon;
-                if(object_data != null){
-                    img = object_data['image'];
-                }
-               return (
-                <div style={{'display': 'flex','flex-direction': 'row','padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                    <div className="row" style={{height:'100%', width:'70%'}}>
-                        <div className="col-3">
-                            <img src={img} style={{height:40 ,width:'auto'}} />
-                        </div>
-                        <div className="col">
-                            <p style={{'font-size': font_size[0],'color': '#444444','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
-                            <p style={{'font-size': font_size[1],'color': '#747474','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{details}</p>
-                        </div>
-                    </div>
-                </div>
-            ); 
-            }else{
-                return (
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                        <div style={{height:'100%', width:'70%'}}>
-                            <div>
-                                {/* light mode , title: #444444, details:#BFBFBF , Sans-serif , Times New Roman  */}
-                                <p style={{'font-size': font_size[0],'color': '#444444','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
-                                <p style={{'font-size': font_size[1],'color': '#747474','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{details}</p>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-        }
-        else if(item_id=='4'){/* text */
-            var font = 'Sans-serif';/* Sans-serif , Times New Roman */
-            var textsize = '15px';
-            var text = 'some random text';
-            var color = 'dark-grey';
-
-            if(object_data!=null){
-              font = object_data['font'];
-              textsize = object_data['textsize'];
-              text = object_data['text'];
-              color = object_data['color'];
-            }
-
-            return(
-                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => console.log('text-tapped')}>
-                      <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 2px','padding': '5px 5px 5px 10px','border-radius': '8px' }}>
-                          <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none'}}>{this.format_text_if_empty_or_null(text)}</p>
-                      </div>
-                    </div>
-                </div>
-                
-            );
-        }
-        else if(item_id=='5'){/* button */
-            var text = 'buy'
-            var action = 'none'
-            if(object_data!= null){
-              text = object_data['text'];
-              action = object_data['action']
-            }
-            return(
-                <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'10px 0px 10px 5px','padding': '0px 0px 0px 0px'}}>
-                    <button style={{'background-color': '#444444', 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px #CECDCD','text-transform': 'capitalize'}}>
-                      {text}
-                    </button>
-                </div>
-                
-            );
-        }
-        else if(item_id=='6'){/* chart */
-            var default_chart_color = '#FCFCFC';//#FCFCFC(default white-ish) #444444(default dark-ish)
-            var background_color= '#D5D5D5';
-            var dataPoints = this.generateDataPoints(23);
-            const options = {
-              theme: "light1", // "light1", "dark1", "dark2"
-              animationEnabled: true,
-              zoomEnabled: false,
-              title: {
-                  text: ".",
-                  fontColor: "rgb(210, 210, 210,.0)",
-                  fontSize: 13
-              },
-              backgroundColor: background_color,//#F5F5F5
-              axisX:{
-                  interval: 30,//size of space between labels
-                  labelFontSize: 0,
-                  tickLength: 0,
-                  gridThickness: 0,
-                  lineColor: "rgb(210, 210, 210,.0)",
-                  labelFontColor: "#292929" //#292929 #DEDEDE
-              },
-              axisY:{
-                  labelFontSize: 10,
-                  interval: 30,//size of space between labels
-                  tickLength: 0,
-                  gridThickness: 0.3,
-                  gridColor: "#767676",
-                  lineColor: "rgb(210, 210, 210,.0)",
-                  labelFontColor: "#292929"//#292929 #DEDEDE
-              },
-              toolTip:{
-                  enabled: false   //enable here
-              },
-              data: [{
-                        type: "splineArea",//area
-                        color:default_chart_color,
-                        lineThickness: 0.5,
-                        fillOpacity: 1,
-                        markerColor: "transparent",
-                        indexLabelFontColor: "#292929",
-                        indexLabelFontFamily:"Sans-serif",
-                        indexLabelFontWeight:"bold",
-                        dataPoints: dataPoints
-              }]
-            }
-
-            return(
-                <div style={{'margin':'10px 10px 0px 15px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:'100%', 'border-radius': border_radius}}>
-                    <div style={{'padding':'0px 0px 10px 5px', height:420}}>
-                        <div style={{'margin': '10px 0px 0px 0px'}}>
-                          <div style={{ height: 300, width: '100%' ,'position': 'relative'}}>
-                              <div style={{ height: 30, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
-
-                              <CanvasJSChart style={{ width: '100%' , 'z-index':'2' ,'position': 'fixed'}} options = {options}/>
-                              
-                              <div style={{ height: 19, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
-                          </div>
-                      </div>
-                    </div>
-                </div>
-            );
-        }
-        else if(item_id=='7'){/* banner-icon */
-            var header = 'E35'
-            var subtitle = 'ETC'
-            return(
-                <div style={{height:230, width:'90%','display': 'flex', 'align-items':'center','justify-content':'center','padding':'0px 0px 0px 0px'}}>
-                    <img src={E5EmptyIcon} style={{height:'100%' ,width:'auto'}} />
-
-                    <div style={{'margin':'0px 0px 0px 0px'}}> 
-                        <p style={{'font-size': '21px','color': '#444444','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:30}}>{header}</p> 
-                        <p style={{'font-size': '16px','color': '#747474','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{subtitle}</p>
-                    </div>
-                </div>
-            );
-        }
-
-    }
-
-    format_text_if_empty_or_null(text){
-        if(text == '' || text == null){
-            return '...';
-        }else{
-            return text;
-        }
-    }
-
-    when_action_button_clicked(action_id){
-
-    }
-
-    when_tag_item_clicked(tag, pos, action_id){
-
-    }
 
 
     

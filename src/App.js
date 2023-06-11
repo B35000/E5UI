@@ -15,8 +15,11 @@ import SwipeableViews from 'react-swipeable-views';
 /* pages stuff */
 import Syncronizing_page from './pages/synchronizing_page';
 import Home_page from './pages/home_page';
+import SendReceiveEtherPage from './pages/send_receive_ether_page'
 
 const Web3 = require('web3');
+
+
 
 
 class App extends Component {
@@ -25,6 +28,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
+    send_receive_bottomsheet: false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
   };
 
@@ -95,13 +99,14 @@ class App extends Component {
       <div className="App">
         {this.render_page()}
         {this.render_synchronizing_bottomsheet()}
+        {this.render_send_receive_ether_bottomsheet()}
       </div>
     );
   }
 
   render_page(){
     return(
-      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state}/>
+      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)}/>
     )
   }
 
@@ -131,23 +136,52 @@ class App extends Component {
   };
 
 
+  render_send_receive_ether_bottomsheet(){
+    var background_color = '#F1F1F1';
+        var size = this.getScreenSize();
+      return(
+        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+            <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px'}}>
+                {this.render_send_receive_ether_page()}
+            </div>
+        </SwipeableBottomSheet>
+      )
+  }
+
+  open_send_receive_ether_bottomsheet(){
+    if(this.state != null){
+        this.setState({send_receive_bottomsheet: !this.state.send_receive_bottomsheet});
+      }
+  }
 
 
 
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     
-    const steps = 5;
+    const steps = 8;
     const incr_count = 100/steps;
     const web3 = new Web3('http://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = '0x02b0B4EFd909240FCB2Eb5FAe060dC60D112E3a4'
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
+    await web3.eth.net.getId().then(id =>{
+      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, chain_id: id});
+    })
+
+    await web3.eth.net.getPeerCount().then(peers =>{
+      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, number_of_peers: peers});
+    })
+
+    await web3.eth.net.getNetworkType().then(type =>{
+      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, network_type: type});
+    })
+
     web3.eth.getBlockNumber().then(blockNumber => {
         var last_blocks = [];
-        var start = blockNumber-30;
-        if(blockNumber < 30){
+        var start = blockNumber-100;
+        if(blockNumber < 100){
           start = 0;
         }
         for (let i = start; i <= blockNumber; i++) {
@@ -155,7 +189,8 @@ class App extends Component {
             last_blocks.push(block);
           })
         }
-        this.setState({last_blocks: last_blocks, number_of_blocks: blockNumber, syncronizing_progress:this.state.syncronizing_progress+incr_count});
+
+        this.setState({E15last_blocks: last_blocks, E15number_of_blocks: blockNumber, syncronizing_progress:this.state.syncronizing_progress+incr_count});
     });
     
     console.log('attempting to load addresses')
@@ -167,7 +202,7 @@ class App extends Component {
         console.error(error);
       } else {
         console.log('loaded addresses')
-        this.setState({E5_addresses: events[0].returnValues.p5, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
+        this.setState({E15_addresses: events[0].returnValues.p5, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
         
       }
     });
@@ -176,7 +211,7 @@ class App extends Component {
       if (error) {
         console.error(error);
       } else {
-        this.setState({E5_runs: events, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
+        this.setState({E15_runs: events, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
       }
     });
 
@@ -189,7 +224,7 @@ class App extends Component {
         console.error(error);
       } else {
         console.log(result); 
-        this.setState({E5_main_contract_data: result[0], syncronizing_progress:this.state.syncronizing_progress+incr_count});
+        this.setState({E15_main_contract_data: result[0], syncronizing_progress:this.state.syncronizing_progress+incr_count});
       }
     });
 
@@ -202,11 +237,24 @@ class App extends Component {
         console.error(error);
       } else {
         console.log(result); 
-        this.setState({E5_End_exchange: result[0], E5_Spend_exchange: result[1], should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+incr_count});
+        this.setState({E15_End_exchange: result[0], E15_Spend_exchange: result[1], should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+incr_count});
       }
     });
 
   }
+
+
+  
+
+  //#region pages
+  render_send_receive_ether_page(){
+    return(
+      <div>
+        <SendReceiveEtherPage/>
+      </div>
+    )
+  }
+  //#endregion
 
 
 
