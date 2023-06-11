@@ -312,6 +312,9 @@ class ViewGroups extends Component {
         if(action_id == 'send_receive_ether'){
             this.props.open_send_receive_ether_bottomsheet()
         }
+        else if(action_id == 'copy_to_clipboard'){
+            this.props.copy_to_clipboard()
+        }
     }
 
     when_tag_item_clicked(tag, pos, action_id){

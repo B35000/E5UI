@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import AlertIcon from './assets/alert_icon.png';
 
 /* blockchain stuff */
 import { ethers } from 'ethers';
@@ -10,6 +11,7 @@ import { bigInt } from 'big-integer';
 /* shared component stuff */
 import SwipeableBottomSheet from 'react-swipeable-bottom-sheet'; 
 import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import SwipeableViews from 'react-swipeable-views';
 
 /* pages stuff */
@@ -100,6 +102,7 @@ class App extends Component {
         {this.render_page()}
         {this.render_synchronizing_bottomsheet()}
         {this.render_send_receive_ether_bottomsheet()}
+        <ToastContainer limit={3} containerId="id" />
       </div>
     );
   }
@@ -142,7 +145,7 @@ class App extends Component {
       return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
             <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px'}}>
-                {this.render_send_receive_ether_page()}
+                <SendReceiveEtherPage app_state={this.state} notify={this.prompt_top_notification.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
       )
@@ -165,6 +168,11 @@ class App extends Component {
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = '0x02b0B4EFd909240FCB2Eb5FAe060dC60D112E3a4'
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+
+    const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; 
+    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    this.setState({account: account});
 
     await web3.eth.net.getId().then(id =>{
       this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, chain_id: id});
@@ -238,23 +246,50 @@ class App extends Component {
       } else {
         console.log(result); 
         this.setState({E15_End_exchange: result[0], E15_Spend_exchange: result[1], should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+incr_count});
+        this.prompt_top_notification('syncronized!', 500);
       }
     });
 
   }
 
 
-  
-
-  //#region pages
-  render_send_receive_ether_page(){
-    return(
-      <div>
-        <SendReceiveEtherPage/>
-      </div>
-    )
+  /* prompts an alert notification from the top */
+  prompt_top_notification(data, duration){
+      var time = duration == null ? 1000: duration;
+      console.log('prompting notification!-------------')
+      toast(this.render_toast_item(data), {
+          position: "top-center",
+          autoClose: time,
+          closeButton: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: Slide,
+          containerId:"id",
+          toastId:"tid",
+          hideProgressBar: true,
+          style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:350}
+      });
   }
-  //#endregion
+
+
+    /* renders the toast item used */
+    render_toast_item(message){
+      return ( 
+            <div>
+                <div style={{'background-color':'white', 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px #CECDCD','padding': '0px 0px 0px 5px', 'height':'40px', 'width':'auto','display': 'flex','flex-direction': 'row'}}>
+                    <div style={{'padding': '0px 0px 0px 15px','display': 'flex','align-items': 'center'}}> 
+                        <img src={AlertIcon} style={{height:'20px',width:'auto'}} />
+                    </div>
+                    <div style={{'padding': '0px 0px 0px 8px', 'margin':'17px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
+                        <p style={{'font-size': '13px', 'color':'#696969','text-shadow': '-0px -0px 0px #A1A1A1'}}>{message}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
 
 
 
