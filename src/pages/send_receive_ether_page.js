@@ -6,10 +6,12 @@ import NumberPicker from './../components/number_picker';
 import TextInput from './../components/text_input';
 import Html5QrcodePlugin from './../externals/Html5QrcodePlugin'
 import Dialog from "@mui/material/Dialog";
+import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
 
 function number_with_commas(x) {
+    if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -100,7 +102,6 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Send Ether using the address shown below', 'color':'dark-grey'})}
 
                 {this.render_medium_screen_ui()}
-                
                 {this.render_dialog_ui()}
             </div>
         )
@@ -111,6 +112,22 @@ class SendReceiveEtherPage extends Component {
             <div className="row">
                 <div className="col-6">
                     <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Sender Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':'Receiver Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
+                    <div style={{height: 10}}/>
+
+                    <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address}/>
+                    <div style={{height: 10}}/>
+
+                    <Html5QrcodePlugin 
+                        fps={10}
+                        qrbox={250}
+                        disableFlip={false}
+                        qrCodeSuccessCallback={this.onNewScanResult}/>
+
+                    {this.render_detail_item('0')}
                     <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', this.get_number_balance_object())}
                     </div>
@@ -127,19 +144,7 @@ class SendReceiveEtherPage extends Component {
                     
                 </div>
                 <div className="col-6">
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Sender Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3', {'title':'Receiver Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
-                    <div style={{height: 10}}/>
-                    <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address}/>
-                    <div style={{height: 10}}/>
-                    <Html5QrcodePlugin 
-                        fps={10}
-                        qrbox={250}
-                        disableFlip={false}
-                        qrCodeSuccessCallback={this.onNewScanResult}/>
+                    {this.render_transaction_history()}
                 </div>
             </div>
         )
@@ -171,6 +176,78 @@ class SendReceiveEtherPage extends Component {
                 
             </Dialog>
         )
+    }
+
+    render_transaction_history(){
+        var middle = this.props.app_state.height-200;
+        var size = this.props.size;
+        var items = []
+        if(this.props.app_state.account_transaction_history != null){
+            var items = this.props.app_state.account_transaction_history == null ? [] : this.props.app_state.account_transaction_history
+        }
+        
+        return (
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '5px'}}>
+                            {this.render_transaction_history_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    }
+
+    render_transaction_history_item(item, index){
+        var item_object = this.get_block_history_log_item_object(item)
+        if(item.from == null || item.to == null){
+            return(
+                <div/>
+            )
+        }
+        return ( 
+            <div onClick={() => console.log()} style={{height:'auto', width:'100%', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    <div style={{'padding': '0px 10px 0px 10px'}} onClick={() => this.copy_text_to_clipboard(item.blockHash)}>
+                        {this.render_detail_item('3', item_object['title'])}
+                    </div>
+                    <div style={{height: 10}}/>
+                    
+                    <div style={{'padding': '0px 10px 0px 10px'}} onClick={() => this.copy_text_to_clipboard(item.from)}>
+                        {this.render_detail_item('3', item_object['from'])}
+                    </div>
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 10px 0px 10px'}} onClick={() => this.copy_text_to_clipboard(item.to)}>
+                        {this.render_detail_item('3', item_object['to'])}
+                    </div>
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 10px 0px 10px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Value in Ether and Wei</p>
+                        {this.render_detail_item('2', item_object['value_in_wei'])}
+                        {this.render_detail_item('2', item_object['value_in_ether'])}
+                    </div>
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 10px 0px 10px'}}>
+                        {this.render_detail_item('3', item_object['gas_gasprice'])}
+                    </div>
+                    <div style={{height: 10}}/>
+                </div>         
+            </div>
+        );
+    }
+
+    get_block_history_log_item_object(item){
+        var blockhash = item.blockHash == null? '':item.blockHash.toString().substring(0, 20).concat('...')
+        return{
+            'title':{'title':'Block: '+item.blockNumber, 'details':blockhash, 'size':'s'},
+            'from':{'title':'From: ', 'details':item.from, 'size':'s'},
+            'to':{'title':'To: ', 'details':item.to, 'size':'s'},
+            'value_in_wei':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value),'number':this.format_account_balance_figure(item.value), 'barcolor':'#606060', 'relativepower':'wei',},
+            'value_in_ether':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value/10**18),'number':this.format_account_balance_figure((item.value/10**18).toFixed(8)), 'barcolor':'#606060', 'relativepower':'ether',},
+            'gas_gasprice':{'title':'Gas: '+this.format_account_balance_figure(item.gas), 'details':' Gas Price(Wei): '+this.format_account_balance_figure(item.gasPrice), 'size':'s'},
+        }
     }
 
     onNewScanResult(decodedText, decodedResult) {
@@ -325,7 +402,6 @@ class SendReceiveEtherPage extends Component {
     }
 
     copy_address_to_clipboard(){
-        console.log('copied to clipboard')
         navigator.clipboard.writeText(this.props.app_state.account.address)
         this.props.notify('copied to clipboard!', 600)
     }
@@ -354,6 +430,10 @@ class SendReceiveEtherPage extends Component {
        this.setState({confirmation_dialog_box: true})
     };
 
+    copy_text_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify('copied to clipboard!', 600)
+    }
 
 }
 

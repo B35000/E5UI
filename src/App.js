@@ -145,7 +145,7 @@ class App extends Component {
       return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
             <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                <SendReceiveEtherPage app_state={this.state} notify={this.prompt_top_notification.bind(this)}/>
+                <SendReceiveEtherPage app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
       )
@@ -159,10 +159,14 @@ class App extends Component {
 
 
 
+
+
+
+
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     
-    const steps = 9;
+    const steps = 10;
     const incr_count = 100/steps;
     const web3 = new Web3('http://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
@@ -174,8 +178,36 @@ class App extends Component {
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     this.setState({account: account});
 
+    let block = await web3.eth.getBlock('latest');
+    let number = block.number;
+    const targetAddress = account.address;
+    var transactions = []
+    var start = 0;
+    const blocks_checked = 350;
+    if(number > blocks_checked){
+      start = number - blocks_checked
+    }
+    for (let i = start; i <= number; i++) {
+      web3.eth.getBlock(i).then(block => {
+        let transactions = block.transactions;
+        if (block != null && transactions != null) {
+          for (let txHash of transactions) {
+
+            web3.eth.getTransaction(txHash).then(tx => {
+              if (targetAddress == tx.to || targetAddress == tx.from) {
+                transactions.push(tx)
+                this.setState({account_transaction_history: transactions})
+              }
+            })
+            
+          }
+        }
+      });
+    }
+    this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
+
     web3.eth.getBalance(account.address).then(balance => {
-        this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, account_balance: balance});
+      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, account_balance: balance});
     }).catch(error => {
       console.error('Error:', error);
     });
@@ -207,7 +239,6 @@ class App extends Component {
         this.setState({E15last_blocks: last_blocks, E15number_of_blocks: blockNumber, syncronizing_progress:this.state.syncronizing_progress+incr_count});
     });
     
-    console.log('attempting to load addresses')
     contractInstance.getPastEvents('e7', {
       fromBlock: 0,
       toBlock: 'latest'

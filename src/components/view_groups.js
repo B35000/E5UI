@@ -124,7 +124,7 @@ class ViewGroups extends Component {
               details = object_data['details']
               size = object_data['size']
             }
-            var font_size = ['14px', '11px', 17];
+            var font_size = ['13px', '11px', 17];
             if(size == 'l'){
                 font_size = ['17px', '13px', 19];
             }
@@ -141,7 +141,7 @@ class ViewGroups extends Component {
                         </div>
                         <div className="col">
                             <p style={{'font-size': font_size[0],'color': '#444444','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
-                            <p style={{'font-size': font_size[1],'color': '#747474','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', }}>{details}</p>
+                            <p style={{'font-size': font_size[1],'color': '#747474','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none','word-wrap': 'break-word' }}>{details}</p>
                         </div>
                     </div>
                 </div>

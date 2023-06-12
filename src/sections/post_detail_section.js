@@ -6,6 +6,7 @@ import EthereumTestnet from './../assets/ethereum_testnet.png';
 
 
 function number_with_commas(x) {
+    if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -419,7 +420,7 @@ class PostDetailSection extends Component {
 
     get_latest_block_data(){
         if(this.props.app_state.E15last_blocks.length  ==  0){
-            return null
+            return []
         }
         return this.props.app_state.E15last_blocks[0];
     }
