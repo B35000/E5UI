@@ -48,7 +48,7 @@ class ViewGroups extends Component {
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': border_radius}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px'}}>
                       {active_tags.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'padding': '5px', '-ms-overflow-style': 'none', height:30}}>
+                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
                               <div style={{'background-color': tag_background_color, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px #868686'}} onClick={()=> this.when_tag_item_clicked(item, index, object_data['when_tapped'])}>
                                 <p style={{'color': 'white', 'font-size': '16px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify'}} className="text-center">{item}</p>
                             </div>
@@ -134,7 +134,7 @@ class ViewGroups extends Component {
                     img = object_data['image'];
                 }
                return (
-                <div style={{'display': 'flex','flex-direction': 'row','padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                     <div className="row" style={{height:'100%', width:'70%'}}>
                         <div className="col-3">
                             <img src={img} style={{height:40 ,width:'auto'}} />
@@ -315,10 +315,21 @@ class ViewGroups extends Component {
         else if(action_id == 'copy_to_clipboard'){
             this.props.copy_to_clipboard()
         }
+        else if(action_id == 'send_ether'){
+            this.props.when_send_ether_button_tapped()
+        }
+        else if(action_id == 'set_receiver_address'){
+            this.props.when_set_receiver_address_button_tapped()
+        }
+        else if(action_id == 'confirm_send_ether'){
+            this.props.when_send_ether_confirmation_received()
+        }
     }
 
     when_tag_item_clicked(tag, pos, action_id){
-
+        if(action_id == 'when_number_picker_power_tapped'){
+            this.props.when_number_picker_power_tapped(tag, pos)
+        }
     }
 
 }

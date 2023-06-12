@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Slider from './slider'
+import ViewGroups from './view_groups'
 var bigInt = require("big-integer");
 
 
 function bgN(number, power) {
-  return bigInt((number+"e"+power)).toString().substring(1, power);
+  return bigInt((number+"e"+power)).toString();
 }
 
 
@@ -25,7 +26,8 @@ class NumberPicker extends Component {
         'number':  bgN(1,72).toString().substring(1,72),
         'power':0,
         'editpos':0,
-        'powerlimit':63
+        'powerlimit':63,
+        'picked_powers':[]
       }
     }
 
@@ -35,9 +37,27 @@ class NumberPicker extends Component {
                 <div  style={{'margin':'30px 0px 0px 5px','padding': '0px 0px 5px 0px'}}>
                     {this.render_number_label_group()}
                     {this.render_number_picker_sliders()}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('1', this.get_number_power_data())}
                 </div>
             </div>
         )
+    }
+
+    get_number_power_data(){
+        return{
+            'active_tags':this.format_powers(this.state.create_number_data['picked_powers']),
+            'index_option':'indexed',
+            'when_tapped': 'when_number_picker_power_tapped'
+        }
+    }
+
+    format_powers(picked_powers){
+        var new_array = []
+        picked_powers.forEach(element => {
+            new_array.push('e'+element)
+        });
+        return new_array
     }
 
     render_number_label_group(){
@@ -90,7 +110,15 @@ class NumberPicker extends Component {
           }
       }
       clone['number'] = new_number;
-      this.setState({create_number_data: clone})
+      
+      if(bigInt(new_number) < this.props.number_limit){
+        if(!clone['picked_powers'].includes(this.state.create_number_data['power'])){
+            clone['picked_powers'].push(this.state.create_number_data['power']);
+        }
+        this.setState({create_number_data: clone})
+        this.props.when_number_picker_value_changed(bigInt(new_number))
+      }
+      
     }
 
     when_power_input_slider_changed(number){
@@ -207,6 +235,31 @@ class NumberPicker extends Component {
       var start_pos =  (number.length) - (parseInt(power)+(pos * 3));
       var end_pos = start_pos-3;
       return parseInt(number.substring(start_pos, end_pos));
+    }
+
+
+
+    /* renders the specific element in the post or detail object */
+    render_detail_item(item_id, object_data){
+        return(
+            <div>
+                <ViewGroups item_id={item_id} object_data={object_data} when_number_picker_power_tapped={this.when_number_picker_power_tapped.bind(this)}/>
+            </div>
+        )
+
+    }
+
+     when_number_picker_power_tapped(tag, pos){
+        var power = this.state.create_number_data['picked_powers'][pos];
+        var clone = {};
+        var page_data = this.state.create_number_data;
+        for (var key in page_data) {/* clone the existing created object data object */
+            if (page_data.hasOwnProperty(key)) {
+                clone[key] = page_data[key];
+            }
+        }
+        clone['power'] = parseInt(power)
+        this.setState({create_number_data: clone})
     }
 
 

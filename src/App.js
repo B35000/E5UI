@@ -144,7 +144,7 @@ class App extends Component {
         var size = this.getScreenSize();
       return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
-            <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px'}}>
+            <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
                 <SendReceiveEtherPage app_state={this.state} notify={this.prompt_top_notification.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
@@ -162,7 +162,7 @@ class App extends Component {
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     
-    const steps = 8;
+    const steps = 9;
     const incr_count = 100/steps;
     const web3 = new Web3('http://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
@@ -173,6 +173,12 @@ class App extends Component {
     const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; 
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     this.setState({account: account});
+
+    web3.eth.getBalance(account.address).then(balance => {
+        this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, account_balance: balance});
+    }).catch(error => {
+      console.error('Error:', error);
+    });
 
     await web3.eth.net.getId().then(id =>{
       this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, chain_id: id});

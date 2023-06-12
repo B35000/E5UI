@@ -4,6 +4,13 @@ import Tags from './../components/tags';
 import Letter from './../assets/letter.png'; 
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 
+
+function number_with_commas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
+
 class PostDetailSection extends Component {
     
     state = {
@@ -526,11 +533,6 @@ class PostDetailSection extends Component {
     }
 
 
-}
-
-
-function number_with_commas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 
