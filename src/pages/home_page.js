@@ -7,6 +7,8 @@ import StackIconImg from './../assets/stack_icon.png';
 import Letter from './../assets/letter.png'; 
 import AddLetter from './../assets/add_icon.png';
 
+import SwipeableBottomSheet from 'react-swipeable-bottom-sheet';
+
 import Tags from './../components/tags';
 import PostDetailSection from '../sections/post_detail_section';
 import PostListSection from './../sections/post_list_section';
@@ -35,7 +37,7 @@ class home_page extends Component {
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
         selected_ether_item: null,
-        
+        view_post_bottomsheet: false,
     };
 
 
@@ -152,6 +154,8 @@ class home_page extends Component {
                     <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px'}}>
                         {this.render_navbar_button_group(size)}
                     </div>
+
+                    {this.render_view_object_bottomsheet()}
                 </div>
             );
         }
@@ -163,6 +167,24 @@ class home_page extends Component {
             );
         }
 
+    }
+
+    render_view_object_bottomsheet(){
+        var background_color = '#F1F1F1';
+        var size = this.props.screensize;
+        return(
+        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+            <div style={{ height: this.props.height, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '0px 0px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                {this.render_post_detail_object(size)}
+            </div>
+        </SwipeableBottomSheet>
+        )
+    }
+
+    open_view_object_bottomsheet(){
+        if(this.state != null){
+            this.setState({view_post_bottomsheet: !this.state.view_post_bottomsheet});
+        }
     }
 
 
@@ -265,7 +287,7 @@ class home_page extends Component {
     }
 
     open_view_stack_bottomsheet(){
-
+        
     }
 
 
@@ -378,6 +400,9 @@ class home_page extends Component {
 
     when_ether_object_clicked(index){
         this.setState({selected_ether_item: index})
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
     }
 
     render_post_detail_object(size){

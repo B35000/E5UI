@@ -141,14 +141,14 @@ class App extends Component {
 
   render_send_receive_ether_bottomsheet(){
     var background_color = '#F1F1F1';
-        var size = this.getScreenSize();
-      return(
-        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
-            <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                <SendReceiveEtherPage app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)}/>
-            </div>
-        </SwipeableBottomSheet>
-      )
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+              <SendReceiveEtherPage app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
   }
 
   open_send_receive_ether_bottomsheet(){
@@ -196,6 +196,7 @@ class App extends Component {
             web3.eth.getTransaction(txHash).then(tx => {
               if (targetAddress == tx.to || targetAddress == tx.from) {
                 transactions.push(tx)
+                console.log('added transaction :'+transactions.length)
                 this.setState({account_transaction_history: transactions})
               }
             })
@@ -325,6 +326,40 @@ class App extends Component {
                 </div>
             </div>
         );
+    }
+
+
+
+    send_ether_to_target(recipientAddress, amount, gasPrice, state){
+      const web3 = new Web3('http://127.0.0.1:8545/');
+      const me = this;
+      web3.eth.sendTransaction({
+      from: state.account.address,
+      to: recipientAddress,
+      value: amount.toString(),
+      gasPrice: gasPrice.toString() // Adjust gas price as needed
+    }).on('transactionHash', function (hash) {
+        console.log('Transaction sent:', hash);
+
+        web3.eth.getTransaction(hash).then(tx => {
+            var transactions = state.account_transaction_history.slice();
+            transactions.push(tx)
+            me.setState({account_transaction_history: transactions})
+            
+            setTimeout(function() {
+              me.prompt_top_notification('transaction completed!', 1200)
+            }, (3 * 1000));
+        })
+        
+        web3.eth.getBalance(state.account.address).then(balance => {
+          me.setState({account_balance: balance});
+        }).catch(error => {
+          console.error('Error:', error);
+        });
+      })
+      .on('error', function (error) {
+        console.error('Failed to send transaction:', error);
+      });
     }
 
 

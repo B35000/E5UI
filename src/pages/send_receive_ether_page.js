@@ -9,6 +9,7 @@ import Dialog from "@mui/material/Dialog";
 import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
+const Web3 = require('web3');
 
 function number_with_commas(x) {
     if(x == null) x = '';
@@ -32,19 +33,32 @@ class SendReceiveEtherPage extends Component {
         selected: 0,
         send_receive_ether_page_tags_object: this.get_send_receive_ether_page_tags_object(),
         picked_wei_amount: 0,
+        picked_wei_gas_price: 0,
         recipient_address:'0x00000000000000000000',
         confirmation_dialog_box: false
     };
 
     get_send_receive_ether_page_tags_object(){
-        return{
-          'i':{
-              active:'e', 
-          },
-          'e':[
-              ['or','',0], ['e','send', 'receive'], [0]
-          ],
-        };
+        if(this.props.size == 's'){
+            return{
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['or','',0], ['e','send', 'receive', 'logs'], [0]
+                ],
+            };
+        }else{
+            return{
+                'i':{
+                    active:'e', 
+                },
+                'e':[
+                    ['or','',0], ['e','send', 'receive'], [0]
+                ],
+            };
+        }
+        
     }
 
     render(){
@@ -56,11 +70,21 @@ class SendReceiveEtherPage extends Component {
                     <div style={{'margin':'20px 0px 0px 20px'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_send_ether_ui()}
-                    </div>
-                    
+                    </div> 
                 </div>
             )
-        }else{
+        }
+        else if(selected_item == 'logs'){
+            return(
+                <div>
+                    <div style={{'margin':'20px 0px 0px 20px'}}>
+                        {this.render_top_tag_bar_group()}
+                        {this.render_transaction_history()}
+                    </div>
+                </div>
+            )
+        }
+        else{
             return(
                 <div>
                     <div style={{'margin':'20px 0px 0px 20px'}}>
@@ -100,7 +124,6 @@ class SendReceiveEtherPage extends Component {
         return(
             <div style={{'padding':'10px 30px 0px 0px', width:'100%'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Send Ether using the address shown below', 'color':'dark-grey'})}
-
                 {this.render_medium_screen_ui()}
                 {this.render_dialog_ui()}
             </div>
@@ -108,44 +131,82 @@ class SendReceiveEtherPage extends Component {
     }
 
     render_medium_screen_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_send_ether_middle_part()}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div className="row">
+                    <div className="col-6">
+                        {this.render_send_ether_middle_part()}
+                    </div>
+                    <div className="col-6">
+                        {this.render_transaction_history()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_send_ether_middle_part(){
         return(
-            <div className="row">
-                <div className="col-6">
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Sender Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
-                    <div style={{height: 10}}/>
+            <div>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':'Sender Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':'Receiver Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
-                    <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':'Receiver Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
+                <div style={{height: 10}}/>
 
-                    <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address}/>
-                    <div style={{height: 10}}/>
+                <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address}/>
+                <div style={{height: 10}}/>
 
-                    <Html5QrcodePlugin 
-                        fps={10}
-                        qrbox={250}
-                        disableFlip={false}
-                        qrCodeSuccessCallback={this.onNewScanResult}/>
+                <Html5QrcodePlugin 
+                    fps={10}
+                    qrbox={250}
+                    disableFlip={false}
+                    qrCodeSuccessCallback={this.onNewScanResult}/>
 
-                    {this.render_detail_item('0')}
-                    <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', this.get_number_balance_object())}
-                    </div>
-                    {this.render_number_picker()}
-                    <div style={{height: 10}}/>
-                    <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
+                {this.render_detail_item('0')}
 
-                        {this.render_detail_item('2', this.get_picked_amount_in_wei())}
-                        {this.render_detail_item('2', this.get_picked_amount_in_ether())}
-                    </div>
-                    
-                    {this.render_detail_item('5', {'text':'Send Ether to Address', 'action':'send_ether'})}
-                    
+
+                <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', this.get_number_balance_object())}
                 </div>
-                <div className="col-6">
-                    {this.render_transaction_history()}
+                {this.render_amount_number_picker()}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
+
+                    {this.render_detail_item('2', this.get_picked_amount_in_wei())}
+                    {this.render_detail_item('2', this.get_picked_amount_in_ether())}
                 </div>
+                <div style={{height: 10}}/>
+
+
+
+                {this.render_detail_item('0')}
+
+                {this.render_gas_price_number_picker()}
+                <div style={{height: 10}}/>
+                <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Gas Price in Ether and Wei</p>
+
+                    {this.render_detail_item('2', this.get_picked_gas_price_in_wei())}
+                    {this.render_detail_item('2', this.get_picked_gas_price_in_ether())}
+                </div>
+
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('5', {'text':'Send Ether to Address', 'action':'send_ether'})}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -182,8 +243,18 @@ class SendReceiveEtherPage extends Component {
         var middle = this.props.app_state.height-200;
         var size = this.props.size;
         var items = []
-        if(this.props.app_state.account_transaction_history != null){
-            var items = this.props.app_state.account_transaction_history == null ? [] : this.props.app_state.account_transaction_history
+        if(this.props.transaction_history != null){
+            var items = this.props.transaction_history == null ? [] : this.props.transaction_history
+        }
+
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                    <div style={{height: 5}}/>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
         }
         
         return (
@@ -199,13 +270,30 @@ class SendReceiveEtherPage extends Component {
         );
     }
 
+    render_empty_detail_object(){
+        var he = this.props.app_state.height
+        var size = this.props.size
+        if(size == 'm'){
+            he = this.props.app_state.height-190;
+        }
+        return(
+            <div style={{height:he, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                    </div>
+                    
+                </div>
+        );
+    }
+
     render_transaction_history_item(item, index){
-        var item_object = this.get_block_history_log_item_object(item)
         if(item.from == null || item.to == null){
             return(
                 <div/>
             )
         }
+        var item_object = this.get_block_history_log_item_object(item)
         return ( 
             <div onClick={() => console.log()} style={{height:'auto', width:'100%', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
@@ -242,12 +330,19 @@ class SendReceiveEtherPage extends Component {
         var blockhash = item.blockHash == null? '':item.blockHash.toString().substring(0, 20).concat('...')
         return{
             'title':{'title':'Block: '+item.blockNumber, 'details':blockhash, 'size':'s'},
-            'from':{'title':'From: ', 'details':item.from, 'size':'s'},
-            'to':{'title':'To: ', 'details':item.to, 'size':'s'},
+            'from':{'title':'From: ', 'details':this.format_hash_or_address(item.from), 'size':'s'},
+            'to':{'title':'To: ', 'details':this.format_hash_or_address(item.to), 'size':'s'},
             'value_in_wei':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value),'number':this.format_account_balance_figure(item.value), 'barcolor':'#606060', 'relativepower':'wei',},
             'value_in_ether':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(item.value/10**18),'number':this.format_account_balance_figure((item.value/10**18).toFixed(8)), 'barcolor':'#606060', 'relativepower':'ether',},
             'gas_gasprice':{'title':'Gas: '+this.format_account_balance_figure(item.gas), 'details':' Gas Price(Wei): '+this.format_account_balance_figure(item.gasPrice), 'size':'s'},
         }
+    }
+
+    format_hash_or_address(string){
+        if(string == null){
+            string = '0x00000000000000000000000000000000000000000'
+        }
+        return string.toString().replace(string.substring(9,18), "....")
     }
 
     onNewScanResult(decodedText, decodedResult) {
@@ -278,6 +373,31 @@ class SendReceiveEtherPage extends Component {
             'number':this.format_account_balance_figure(this.state.picked_wei_amount/10**18),
             'barcolor':'#606060',
             'relativepower':'ether',
+        }
+    }
+
+
+    get_picked_gas_price_in_ether(){
+        return{
+            'style':'s',
+            'title':'',
+            'subtitle':'',
+            'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**18),
+            'number':this.format_account_balance_figure(this.state.picked_wei_gas_price/10**18),
+            'barcolor':'#606060',
+            'relativepower':'ether',
+        }
+    }
+
+    get_picked_gas_price_in_wei(){
+        return{
+            'style':'s',
+            'title':'',
+            'subtitle':'',
+            'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price),
+            'number':this.format_account_balance_figure(this.state.picked_wei_gas_price),
+            'barcolor':'#606060',
+            'relativepower':'wei',
         }
     }
 
@@ -353,7 +473,7 @@ class SendReceiveEtherPage extends Component {
         return power
     }
 
-    render_number_picker(){
+    render_amount_number_picker(){
         return(
             <div>
                 <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)}/>
@@ -361,14 +481,56 @@ class SendReceiveEtherPage extends Component {
         )
     }
 
+    render_gas_price_number_picker(){
+        return(
+            <div>
+                <NumberPicker number_limit={bigInt('1e15')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)}/>
+            </div>
+        )
+    }
+
+    when_new_gas_price_figure_set(amount){
+        this.setState({picked_wei_gas_price: amount})
+    }
+
     when_number_picker_value_changed(amount){
         this.setState({picked_wei_amount: amount})
     }
 
 
+
+
+
+
+
     render_receive_ether_ui(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_scan_qr_code_ui()}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div className="row">
+                    <div className="col-6">
+                        {this.render_scan_qr_code_ui()}
+                    </div>
+                    <div className="col-6" style={{'margin':'0px 10px 0px 0px', width:'47%'}}>
+                        {this.render_transaction_history()}
+                    </div>
+                </div> 
+            )
+        }
+        
+    }
+
+    render_scan_qr_code_ui(){
         return(
-            <div style={{'padding':'10px 30px 0px 0px', width:'85%'}}>
+            <div style={{'padding':'10px 30px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Receive Ether using the address shown below', 'color':'dark-grey'})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'l'})}
@@ -417,17 +579,48 @@ class SendReceiveEtherPage extends Component {
         this.setState({recipient_address: final_text})
     }
 
+
+
+
+
+
+
     cancel_dialog_box(){
         this.setState({confirmation_dialog_box: false})
     }
 
     when_send_ether_confirmation_received = () => {
-      this.setState({confirmation_dialog_box: false})
+        this.setState({confirmation_dialog_box: false})
 
+        this.props.notify('running transaction...', 600)
+        this.props.send_ether_to_target(this.state.recipient_address, this.state.picked_wei_amount, this.state.picked_wei_gas_price, this.props.app_state);
+        
     };
 
+    isValidAddress = (adr) => {
+        try {
+        const web3 = new Web3()
+        web3.utils.toChecksumAddress(adr)
+        return true
+        } catch (e) {
+        return false
+        }
+    }
+
     open_confirmation_dialog_box = () => {
-       this.setState({confirmation_dialog_box: true})
+        if(this.state.picked_wei_amount == 0){
+            this.props.notify('please set a valid amount', 500)
+        }
+        else if(this.state.picked_wei_gas_price == 0){
+            this.props.notify('please set a valid gas price', 500)
+        }
+        else if(!this.isValidAddress(this.state.recipient_address)){
+            this.props.notify('please set a valid recipient', 500)
+        }
+        else{
+            this.setState({confirmation_dialog_box: true}) 
+        }
+       
     };
 
     copy_text_to_clipboard(text){

@@ -180,14 +180,14 @@ class PostDetailSection extends Component {
     }
 
     render_ethers_main_details_section(){
-        var he = this.props.height
+        var he = this.props.height-90
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
         var item = this.get_ethers_data()[this.props.selected_ether_item];
         return(
-            <div style={{ width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ width:'99%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
@@ -224,6 +224,8 @@ class PostDetailSection extends Component {
 
                     {this.render_detail_item('5', {'text':'Send Receive Ether', 'action': 'send_receive_ether'})}
 
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
@@ -234,12 +236,15 @@ class PostDetailSection extends Component {
     }
 
     render_block_history_logs(){
-        var middle = this.props.height-190;
-        var size = this.props.size;
+        var middle = this.props.height-100;
+        var size = this.props.screensize;
+        if(size == 'm'){
+            middle = this.props.height-190;
+        }
         var items = this.props.app_state.E15last_blocks
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle, 'margin':'0px 0px 20px 0px'}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+            <div style={{overflow: 'auto',height: middle, 'margin':'0px 0px 20px 0px'}}>
+                <ul style={{ 'padding': '10px 0px 0px 20px', 'list-style': 'none'}}>
                     {items.reverse().map((item, index) => (
                         <li style={{'padding': '5px'}}>
                             {this.render_block_history_log_item(item, index)}
@@ -259,7 +264,7 @@ class PostDetailSection extends Component {
     render_block_history_log_item(item, index){
         var item_object = this.get_block_history_log_item_object(item)
         return ( 
-            <div onClick={() => console.log()} style={{height:'auto', width:'100%', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
+            <div onClick={() => console.log()} style={{height:'auto', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item_object['tags'])}
                     <div style={{'padding': '0px 10px 0px 10px'}}>
