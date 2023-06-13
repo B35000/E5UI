@@ -59,7 +59,7 @@ class PostDetailSection extends Component {
             }
         }
         else if(selected_page == 'e'){
-            var selected_tag = this.state.explore_page_tags_object['i'].active
+            var selected_tag = this.props.explore_page_tags_object['i'].active
             if(selected_tag == 'E5s' || selected_tag == 'e'){
                 return(
                 <div>{this.render_E5s_list_detail()}</div>
@@ -180,6 +180,7 @@ class PostDetailSection extends Component {
     }
 
     render_ethers_main_details_section(){
+        var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
         var size = this.props.screensize
         if(size == 'm'){
@@ -187,7 +188,7 @@ class PostDetailSection extends Component {
         }
         var item = this.get_ethers_data()[this.props.selected_ether_item];
         return(
-            <div style={{ width:'99%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
@@ -263,8 +264,10 @@ class PostDetailSection extends Component {
 
     render_block_history_log_item(item, index){
         var item_object = this.get_block_history_log_item_object(item)
+        var background_color = this.props.theme['card_background_color']
+        var shadow_color = this.props.theme['card_shadow_color']
         return ( 
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
+            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item_object['tags'])}
                     <div style={{'padding': '0px 10px 0px 10px'}}>
@@ -341,13 +344,14 @@ class PostDetailSection extends Component {
 
 
     render_empty_detail_object(){
+        var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
         return(
-            <div style={{height:he, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+            <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -527,8 +531,9 @@ class PostDetailSection extends Component {
     }
 
     render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>

@@ -53,10 +53,10 @@ class tags extends Component {
 
     /* renders the tag button item */
     render_tag_button(index, selected, text, tag_size){
-        var background = '#787878';//#444444,  #5B5B5B
+        var background = this.props.theme['tag_background_color'];//#444444,  #5B5B5B
         var txt = text+'';
         if(txt.startsWith('a.') || txt.startsWith('e.')|| txt.startsWith('v.')){
-            background = '#444444';
+            background = this.props.theme['indexed_tag_background'];
         }
 
         if(index == 0){
@@ -70,13 +70,13 @@ class tags extends Component {
 
         if(tag_size == 's'){
             return ( 
-                <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px #868686'}}>
+                <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
                     <p style={{'color': 'white', 'font-size': '13px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify'}} className="text-center">{this.final_text(txt,index)}</p>
                 </div>
             );
         }else{
             return ( 
-                <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px #868686'}}>
+                <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
                     <p style={{'color': 'white', 'font-size': '16px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1'}} className="text-center">{this.final_text(txt,index)}</p>
                 </div>
             );

@@ -106,8 +106,9 @@ class PostListSection extends Component {
     }
 
     render_contract_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -140,8 +141,9 @@ class PostListSection extends Component {
     }
 
     render_proposal_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -173,8 +175,9 @@ class PostListSection extends Component {
     }
 
     render_subscription_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -207,8 +210,9 @@ class PostListSection extends Component {
     }
 
     render_E5s_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -241,8 +245,9 @@ class PostListSection extends Component {
     }
 
     render_posts_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -275,8 +280,9 @@ class PostListSection extends Component {
     }
 
     render_channels_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -315,10 +321,13 @@ class PostListSection extends Component {
     }
 
     render_ethers_object(item, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
-            <div onClick={() => this.when_ether_object_clicked(index)} style={{height:'auto', width:'100%', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
+            <div onClick={() => this.when_ether_object_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
                     <div style={{'padding': '0px 10px 0px 10px'}}>
                         {this.render_detail_item('8', item['label'])}
                     </div>
@@ -400,8 +409,9 @@ class PostListSection extends Component {
     }
 
     render_ends_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -434,8 +444,9 @@ class PostListSection extends Component {
     }
 
     render_spends_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -446,8 +457,9 @@ class PostListSection extends Component {
     }
 
     render_empty_object(){
+        var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>

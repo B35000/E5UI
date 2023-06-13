@@ -90,8 +90,11 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','ethers ⚗️','ends ☝️','spends 🫰'],[0]
+              ['or','',0], ['e','ethers ⚗️', 'e.E5tokens'],[0]
           ],
+          'E5tokens':[
+              ['or','',0], ['E5tokens','ends ☝️','spends 🫰'], [1],[1]
+          ]
         }
       }
       
@@ -197,19 +200,19 @@ class home_page extends Component {
           return ( 
               <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
                   <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('l','1px 0px 0px 12px', JobIconImg, 'auto', '70px','3px 12px 3px 19px','????','44 tabs open')}
+                      {this.render_navbar_button('l','1px 0px 0px 12px', JobIconImg, 'auto', '70px','3px 12px 3px 19px','????','Work Contracts')}
                   </div>
 
                   <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                    {this.render_navbar_button('l','2px 0px 0px 3px', ExploreIconImg, 'auto', '60px','5px 11px 0px 20px','Explore','44 tabs open')}
+                    {this.render_navbar_button('l','2px 0px 0px 3px', ExploreIconImg, 'auto', '60px','5px 11px 0px 20px','Explore','Deployed E5s')}
                   </div>
 
                   <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('l','2px 0px 0px 15px', WalletIconImg, 'auto', '70px','5px 10px 6px 17px','Wallet','3 wallets open')}
+                    {this.render_navbar_button('l','2px 0px 0px 15px', WalletIconImg, 'auto', '70px','5px 10px 6px 17px','Wallet','Coin & Tokens')}
                   </div>
                   
                   <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('l','2px 0px 0px 5px', StackIconImg, 'auto', '59px','3px 11px 2px 12px','Stack','6 transactions')}
+                    {this.render_navbar_button('l','2px 0px 0px 5px', StackIconImg, 'auto', '59px','3px 11px 2px 12px','Stack','Runs on e')}
                   </div>
               </div>
           );
@@ -259,8 +262,8 @@ class home_page extends Component {
     }
 
     render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
-        var navbar_button_text_color = this.props.theme['navbar_button_text_color']
-        var navbar_button_secondary_text = this.props.theme['navbar_button_secondary_text']
+        var navbar_button_text_color = this.props.theme['primary_text_color']
+        var navbar_button_secondary_text = this.props.theme['secondary_text_color']
       if(icontype == 's' || icontype == 'xs'){
             return (
                 <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>

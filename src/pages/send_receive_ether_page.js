@@ -163,7 +163,7 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('3', {'title':'Receiver Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address}/>
+                <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
                 <div style={{height: 10}} theme={this.props.theme}/>
 
                 <Html5QrcodePlugin 
@@ -175,13 +175,13 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('0')}
 
 
-                <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', this.get_number_balance_object())}
                 </div>
                 {this.render_amount_number_picker()}
                 <div style={{height: 10}}/>
-                <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
 
                     {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                     {this.render_detail_item('2', this.get_picked_amount_in_ether())}
@@ -194,8 +194,8 @@ class SendReceiveEtherPage extends Component {
 
                 {this.render_gas_price_number_picker()}
                 <div style={{height: 10}}/>
-                <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Gas Price in Ether and Wei</p>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Gas Price in Ether and Wei</p>
 
                     {this.render_detail_item('2', this.get_picked_gas_price_in_wei())}
                     {this.render_detail_item('2', this.get_picked_gas_price_in_ether())}
@@ -214,12 +214,12 @@ class SendReceiveEtherPage extends Component {
     render_dialog_ui(){
         return(
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
-                <div style={{'padding': '10px'}}>
-                    <h3 style={{'margin':'0px 0px 5px 5px'}}>Confirmation</h3>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                    <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
                     {this.render_detail_item('3', {'title':'Send Ether Confirmation', 'details':'Confirm that you want to send Ether to the targeted recipient', 'size':'s'})}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
 
                         {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                         {this.render_detail_item('2', this.get_picked_amount_in_ether())}
@@ -277,7 +277,7 @@ class SendReceiveEtherPage extends Component {
             he = this.props.app_state.height-190;
         }
         return(
-            <div style={{height:he, width:'100%', 'background-color': 'rgb(225, 225, 225,.9)', 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+            <div style={{height:he, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -295,7 +295,7 @@ class SendReceiveEtherPage extends Component {
         }
         var item_object = this.get_block_history_log_item_object(item)
         return ( 
-            <div onClick={() => console.log()} style={{height:'auto', width:'100%', 'background-color': 'rgb(225, 225, 225,.8)', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px #DCDCDC'}}>
+            <div onClick={() => console.log()} style={{height:'auto', width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     <div style={{'padding': '0px 10px 0px 10px'}} onClick={() => this.copy_text_to_clipboard(item.blockHash)}>
                         {this.render_detail_item('3', item_object['title'])}
@@ -311,8 +311,8 @@ class SendReceiveEtherPage extends Component {
                     </div>
                     <div style={{height: 10}}/>
 
-                    <div style={{'background-color': 'rgb(217, 217, 217,.6)', 'box-shadow': '0px 0px 0px 0px #CECDCD','margin': '0px 10px 0px 10px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': '#444444', 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Value in Ether and Wei</p>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 10px 0px 10px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Value in Ether and Wei</p>
                         {this.render_detail_item('2', item_object['value_in_wei'])}
                         {this.render_detail_item('2', item_object['value_in_ether'])}
                     </div>
@@ -544,7 +544,7 @@ class SendReceiveEtherPage extends Component {
                     />
                     
                 </div>
-                <p style={{'margin':'5% 0% 0% 47%'}}>Qr Code</p>
+                <p style={{'margin':'5% 0% 0% 47%', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
                 
             </div>
         )
