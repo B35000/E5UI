@@ -135,13 +135,13 @@ class ViewGroups extends Component {
                 }
                return (
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                    <div className="row" style={{height:'100%', width:'70%'}}>
+                    <div className="row" style={{height:'100%', width:'100%'}}>
                         <div className="col-3">
                             <img src={img} style={{height:40 ,width:'auto'}} />
                         </div>
                         <div className="col">
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none','word-wrap': 'break-word' }}>{details}</p>
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none' }}>{details}</p>
                         </div>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ class ViewGroups extends Component {
             }else{
                 return (
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                        <div style={{height:'100%', width:'70%'}}>
+                        <div style={{height:'100%', width:'100%'}}>
                             <div>
                                 {/* light mode , title: #444444, details:#BFBFBF , Sans-serif , Times New Roman  */}
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 

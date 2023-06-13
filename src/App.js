@@ -34,7 +34,8 @@ class App extends Component {
     send_receive_bottomsheet: false,
     stack_bottomsheet: false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
-    theme: this.get_theme_data('dark')
+    theme: this.get_theme_data('light'),
+    details_orientation: 'right'
   };
 
   componentDidMount() {
@@ -102,9 +103,9 @@ class App extends Component {
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
         
-        'primary_text_color':'393e46','secondary_text_color':'#D1D1D1',
+        'primary_text_color':'#393e46','secondary_text_color':'grey',
         
-        'navbar_button_selected_color':'#545454','primary_text_color':'#393e46','secondary_text_color':'#737373','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
+        'navbar_button_selected_color':'#545454','primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','card_background_color':'rgb(225, 225, 225,.9)','card_shadow_color':'#DCDCDC',
         
         'view_group_card_item_background':'rgb(217, 217, 217,.6)','tag_background_color':'#787878','indexed_tag_background':'#5e5e5e','tag_shadow':'#868686',
         
@@ -113,7 +114,7 @@ class App extends Component {
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#868686',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787',
         
-        'slider_color':'white','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        'slider_color':'white', 'toast_background_color':'white',
       }
     }
     else if(theme == 'dark'){
@@ -121,16 +122,19 @@ class App extends Component {
         'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444',
         
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
+
+        'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         
-        'navbar_button_selected_color':'#545454','primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
-        'card_background_color':'#333333','card_shadow_color':'#424242',
+        'navbar_button_selected_color':'#545454','card_background_color':'#333333', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','card_shadow_color':'#424242',
 
         'view_group_card_item_background':'#2e2e2e','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242',
 
         'chart_color':'#333333','chart_background_color':'#232323',
 
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#868686',
-        'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'slider_color':'white'
+        'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 
+        
+        'slider_color':'white','toast_background_color':'#333333',
       }
     }
   }
@@ -152,7 +156,7 @@ class App extends Component {
 
   render_page(){
     return(
-      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme}/>
+      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation}/>
     )
   }
 
@@ -190,6 +194,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+              
               <SendReceiveEtherPage app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme}/>
           </div>
       </SwipeableBottomSheet>
@@ -209,7 +214,8 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage app_state={this.state} size={size} theme={this.state.theme}/>
+              
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -220,6 +226,15 @@ class App extends Component {
     if(this.state != null){
         this.setState({stack_bottomsheet: !this.state.stack_bottomsheet});
       }
+  }
+
+
+  when_device_theme_changed(theme){
+    this.setState({theme: this.get_theme_data(theme)})
+  }
+
+  when_details_orientation_changed(orientation){
+    this.setState({details_orientation: orientation})
   }
 
 
@@ -371,21 +386,22 @@ class App extends Component {
           containerId:"id",
           toastId:"tid",
           hideProgressBar: true,
-          style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:350}
+          style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:'auto'}
       });
   }
 
 
     /* renders the toast item used */
     render_toast_item(message){
+
       return ( 
             <div>
-                <div style={{'background-color':'white', 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px #CECDCD','padding': '0px 0px 0px 5px', 'height':'40px', 'width':'auto','display': 'flex','flex-direction': 'row'}}>
+                <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px', 'height':'40px', 'width':'auto','display': 'flex','flex-direction': 'row'}}>
                     <div style={{'padding': '0px 0px 0px 15px','display': 'flex','align-items': 'center'}}> 
                         <img src={AlertIcon} style={{height:'20px',width:'auto'}} />
                     </div>
                     <div style={{'padding': '0px 0px 0px 8px', 'margin':'17px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
-                        <p style={{'font-size': '13px', 'color':'#696969','text-shadow': '-0px -0px 0px #A1A1A1'}}>{message}</p>
+                        <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1'}}>{message}</p>
                     </div>
                 </div>
             </div>

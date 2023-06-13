@@ -121,19 +121,9 @@ class home_page extends Component {
                         </div>
                         
                         <div style={{height:5}}/>
-                        <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 3px'}}>
-                            <div className="col-6" style={{}}>
-                                {this.render_post_list_group(size)}
-                            </div>
-
-                            <div className="col-6" style={{'padding':'0px 10px 0px 10px'}}>
-                                {this.render_post_detail_object(size)}
-                            </div>
-
-                            
-                            
-                        </div>
+                        {this.render_post_details_with_orientation(middle, width, size)}
                         <div style={{height:5}}/>
+                        
                         <div style={{height:bottom_bar, width: '103%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                             {this.render_navbar_button_group(size)}
                         </div>
@@ -170,6 +160,38 @@ class home_page extends Component {
             );
         }
 
+    }
+
+    render_post_details_with_orientation(middle, width, size){
+        var orientation = this.props.details_orientation;
+
+        if(orientation == 'right'){
+            return(
+                <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 3px'}}>
+                    <div className="col-6" style={{}}>
+                        {this.render_post_list_group(size)}
+                    </div>
+
+                    <div className="col-6" style={{'padding':'0px 10px 0px 10px'}}>
+                        {this.render_post_detail_object(size)}
+                    </div>
+
+                </div>
+            );
+        }else{
+            return(
+                <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 3px'}}>
+                    <div className="col-6" style={{'padding':'0px 10px 0px 10px'}}>
+                        {this.render_post_detail_object(size)}
+                    </div>
+
+                    <div className="col-6" style={{}}>
+                        {this.render_post_list_group(size)}
+                    </div>
+
+                </div>
+            );
+        }
     }
 
     render_view_object_bottomsheet(){
@@ -262,8 +284,8 @@ class home_page extends Component {
     }
 
     render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
-        var navbar_button_text_color = this.props.theme['primary_text_color']
-        var navbar_button_secondary_text = this.props.theme['secondary_text_color']
+        var navbar_button_text_color = this.props.theme['primary_navbar_text_color']
+        var navbar_button_secondary_text = this.props.theme['secondary_navbar_text_color']
       if(icontype == 's' || icontype == 'xs'){
             return (
                 <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>

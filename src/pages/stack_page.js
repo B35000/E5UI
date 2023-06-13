@@ -7,7 +7,8 @@ class StackPage extends Component {
     state = {
         selected: 0,
         get_stack_page_tags_object: this.get_stack_page_tags_object(),
-        get_themes_tags_object:this.get_theme_tags_object(),
+        get_themes_tags_object: this.get_theme_tags_object(),
+        get_orientation_tags_object: this.get_orientation_tags_object()
     };
 
     get_stack_page_tags_object(){
@@ -28,7 +29,20 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','basic-light','basic-dark'], [0]
+                ['or','',0], ['e','light','dark'], [1]
+            ],
+        };
+        
+    }
+
+
+    get_orientation_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e','right','left'], [1]
             ],
         };
         
@@ -116,10 +130,22 @@ class StackPage extends Component {
             <div>
                 <div style={{height: 10}}/>
                 <div style={{'padding': '0px 0px 0px 0px'}}>
-                    {this.render_detail_item('3')}
+
+                    {this.render_detail_item('3',{'title':'App Theme', 'details':'Set the look and feel of E5.', 'size':'l'})}
                     <div style={{height: 10}}/>
+
                     <Tags page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme}/>
+
                     {this.render_detail_item('0')}
+
+
+                    {this.render_detail_item('3',{'title':'Orientation (for larger screens)', 'details':'Set the orientation for viewing a posts details', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
                 </div>
             </div>
         )
@@ -127,7 +153,34 @@ class StackPage extends Component {
 
     when_theme_tags_updated(tag_group){
         this.setState({get_themes_tags_object: tag_group})
+
+        var selected_item = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
+
+        if(selected_item == 'e'){
+            selected_item = 'light'
+        }
+
+        this.props.when_device_theme_changed(selected_item)
     }
+
+
+    when_details_orientation_changed(tag_group){
+        
+        this.setState({get_orientation_tags_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_orientation_tags_object, this.state.get_orientation_tags_object['i'].active)
+
+        if(selected_item == 'e'){
+            selected_item = 'right'
+        }
+
+        this.props.when_details_orientation_changed(selected_item)
+    }
+
+
+
+
+
+
 
 
     /* renders the specific element in the post or detail object */
