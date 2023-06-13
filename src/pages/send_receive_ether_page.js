@@ -109,7 +109,7 @@ class SendReceiveEtherPage extends Component {
     render_top_tag_bar_group(){
         return(
             <div>
-                <Tags page_tags_object={this.state.send_receive_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_tags_updated.bind(this)}/>
+                <Tags page_tags_object={this.state.send_receive_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme}/>
             </div>
         )
     }
@@ -164,7 +164,7 @@ class SendReceiveEtherPage extends Component {
                 <div style={{height: 10}}/>
 
                 <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address}/>
-                <div style={{height: 10}}/>
+                <div style={{height: 10}} theme={this.props.theme}/>
 
                 <Html5QrcodePlugin 
                     fps={10}
@@ -476,7 +476,7 @@ class SendReceiveEtherPage extends Component {
     render_amount_number_picker(){
         return(
             <div>
-                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)}/>
+                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme}/>
             </div>
         )
     }
@@ -484,7 +484,7 @@ class SendReceiveEtherPage extends Component {
     render_gas_price_number_picker(){
         return(
             <div>
-                <NumberPicker number_limit={bigInt('1e15')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)}/>
+                <NumberPicker number_limit={bigInt('1e15')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme}/>
             </div>
         )
     }
@@ -557,7 +557,7 @@ class SendReceiveEtherPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} copy_to_clipboard={this.copy_address_to_clipboard.bind(this)} when_send_ether_button_tapped={this.when_send_ether_button_tapped.bind(this)} when_send_ether_confirmation_received={this.when_send_ether_confirmation_received.bind(this)}/>
+                <ViewGroups item_id={item_id} object_data={object_data} copy_to_clipboard={this.copy_address_to_clipboard.bind(this)} when_send_ether_button_tapped={this.when_send_ether_button_tapped.bind(this)} when_send_ether_confirmation_received={this.when_send_ether_confirmation_received.bind(this)} theme={this.props.theme}/>
             </div>
         )
 

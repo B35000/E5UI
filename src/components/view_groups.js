@@ -282,7 +282,7 @@ class ViewGroups extends Component {
     }
 
 
-        format_text_if_empty_or_null(text){
+    format_text_if_empty_or_null(text){
         if(text == '' || text == null){
             return '...';
         }else{

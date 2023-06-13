@@ -145,7 +145,7 @@ class PostDetailSection extends Component {
                 <div>
                     {this.render_ether_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
-                        <Tags page_tags_object={this.state.navigate_view_ethers_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_ethers_list_detail_tags_object_updated.bind(this)}/>
+                        <Tags page_tags_object={this.state.navigate_view_ethers_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_ethers_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -180,7 +180,7 @@ class PostDetailSection extends Component {
     }
 
     render_ethers_main_details_section(){
-        var he = this.props.height-90
+        var he = this.props.height-70
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
@@ -236,7 +236,7 @@ class PostDetailSection extends Component {
     }
 
     render_block_history_logs(){
-        var middle = this.props.height-100;
+        var middle = this.props.height-70;
         var size = this.props.screensize;
         if(size == 'm'){
             middle = this.props.height-190;
@@ -365,7 +365,7 @@ class PostDetailSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)}/>
+                <ViewGroups item_id={item_id} object_data={object_data} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme}/>
             </div>
         )
 

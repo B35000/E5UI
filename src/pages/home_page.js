@@ -105,8 +105,8 @@ class home_page extends Component {
         var middle = this.props.height-126;
         var bottom_bar = 70;
         var width = this.props.width;
-        var navbar_color = '#444444';// #444444
-        var background_color = '#F1F1F1';//#F1F1F1
+        var navbar_color = this.props.theme['nav_bar_color'];
+        var background_color = this.props.theme['homepage_background_color'];
 
 
         if(size == 'm'){
@@ -170,10 +170,12 @@ class home_page extends Component {
     }
 
     render_view_object_bottomsheet(){
-        var background_color = '#F1F1F1';
+        var background_color = this.props.theme['send_receive_ether_background_color'];
+        var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
+        var overlay_shadow_color = this.props.theme['send_receive_ether_overlay_shadow'];
         var size = this.props.screensize;
         return(
-        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
             <div style={{ height: this.props.height, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '0px 0px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
                 {this.render_post_detail_object(size)}
             </div>
@@ -240,7 +242,7 @@ class home_page extends Component {
     get_navbar_normal_or_highlighted_button_background(val){
       var color = 'transparent';
         if(val == this.state.page){
-            color = '#545454';
+            color = this.props.theme['navbar_button_selected_color'];
         }
         return color;
     }
@@ -257,14 +259,16 @@ class home_page extends Component {
     }
 
     render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
+        var navbar_button_text_color = this.props.theme['navbar_button_text_color']
+        var navbar_button_secondary_text = this.props.theme['navbar_button_secondary_text']
       if(icontype == 's' || icontype == 'xs'){
             return (
                 <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
                     <img src={img} style={{height:img_height,width:img_width, padding: img_padding}} />
 
-                    <p style={{'font-size': '12px','color': 'white','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p>
+                    <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p>
 
-                    <p style={{'font-size': '8px','color': '#D1D1D1','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
+                    <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                 </div>
             );
         }else{
@@ -277,8 +281,8 @@ class home_page extends Component {
                     </div>
                     <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
                         <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
-                            <p style={{'font-size': '18px','color': 'white','margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p> 
-                            <p style={{'font-size': '10px','color': '#D1D1D1','margin': '-5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
+                            <p style={{'font-size': '18px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p> 
+                            <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                         </div>
                     </div>
                 </div> 
@@ -287,7 +291,7 @@ class home_page extends Component {
     }
 
     open_view_stack_bottomsheet(){
-        
+        this.props.open_stack_bottomsheet()
     }
 
 
@@ -367,7 +371,7 @@ class home_page extends Component {
     render_tag_bar_group(option, size){
         return(
             <div>
-                <Tags page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)}/>
+                <Tags page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme}/>
             </div>
         )
     }
@@ -394,7 +398,7 @@ class home_page extends Component {
 
     render_post_list_group(size){
         return(
-            <PostListSection size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)}/>
+            <PostListSection size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme}/>
         )
     }
 
@@ -407,7 +411,7 @@ class home_page extends Component {
 
     render_post_detail_object(size){
         return(
-            <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} selected_ether_item={this.state.selected_ether_item} height={this.props.height} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)}/>
+            <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} selected_ether_item={this.state.selected_ether_item} height={this.props.height} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme}/>
         )
     }
 

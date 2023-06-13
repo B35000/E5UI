@@ -18,6 +18,7 @@ import SwipeableViews from 'react-swipeable-views';
 import Syncronizing_page from './pages/synchronizing_page';
 import Home_page from './pages/home_page';
 import SendReceiveEtherPage from './pages/send_receive_ether_page'
+import StackPage from './pages/stack_page'
 
 const Web3 = require('web3');
 
@@ -31,12 +32,14 @@ class App extends Component {
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false,
+    stack_bottomsheet: false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
+    theme: this.get_theme_data('dark')
   };
 
   componentDidMount() {
     console.log("mounted");
-    this.load_e5_data();
+    this.load_e5_data(); 
 
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
@@ -91,7 +94,31 @@ class App extends Component {
 
   }
 
+  get_theme_data(theme){
+    //this.props.theme['']
+    if(theme == 'light'){
+      return{
+        'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'#444444',
+        
+        'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'393e46','secondary_text_color':'#D1D1D1',
+        
+        'navbar_button_selected_color':'#545454','navbar_button_text_color':'white','navbar_button_secondary_text':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+      }
+    }
+    else if(theme == 'dark'){
+      return{
+        'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444',
+        
+        'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
+        
+        'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
 
+        'navbar_button_selected_color':'#545454',
+      }
+    }
+  }
 
 
 
@@ -102,24 +129,25 @@ class App extends Component {
         {this.render_page()}
         {this.render_synchronizing_bottomsheet()}
         {this.render_send_receive_ether_bottomsheet()}
-        <ToastContainer limit={3} containerId="id" />
+        {this.render_stack_bottomsheet()}
+        <ToastContainer limit={3} containerId="id"/>
       </div>
     );
   }
 
   render_page(){
     return(
-      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)}/>
+      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme}/>
     )
   }
 
   render_synchronizing_bottomsheet(){
-    var background_color = '#F1F1F1';
+    var background_color = this.state.theme['syncronizing_page_background_color'];
     var size = this.getScreenSize();
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'3'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
           <div style={{ height: this.state.height, 'background-color': background_color, 'margin': '0px 0px 0px 0px', 'padding':'10px 10px 0px 10px', 'overflow-y':'auto'}}>
-            <Syncronizing_page sync_progress={this.state.syncronizing_progress}/>
+            <Syncronizing_page sync_progress={this.state.syncronizing_progress} theme={this.state.theme}/>
           </div>  
       </SwipeableBottomSheet>
     );
@@ -140,12 +168,14 @@ class App extends Component {
 
 
   render_send_receive_ether_bottomsheet(){
-    var background_color = '#F1F1F1';
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
+    var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
     var size = this.getScreenSize();
     return(
-      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <SendReceiveEtherPage app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history}/>
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+              <SendReceiveEtherPage app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -154,6 +184,26 @@ class App extends Component {
   open_send_receive_ether_bottomsheet(){
     if(this.state != null){
         this.setState({send_receive_bottomsheet: !this.state.send_receive_bottomsheet});
+      }
+  }
+
+
+  render_stack_bottomsheet(){
+    var background_color = '#F1F1F1';
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': '#474747','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'white', 'border-radius': '15px 15px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+
+  open_stack_bottomsheet(){
+    if(this.state != null){
+        this.setState({stack_bottomsheet: !this.state.stack_bottomsheet});
       }
   }
 
