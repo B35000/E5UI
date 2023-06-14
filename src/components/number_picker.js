@@ -23,11 +23,30 @@ class NumberPicker extends Component {
 
     get_create_number_data(){
       return{
-        'number':  bgN(1,72).toString().substring(1,72),
+        'number':  this.get_number_from_power_limit(),
         'power':0,
         'editpos':0,
-        'powerlimit':63,
+        'powerlimit':this.get_power_limit(),
         'picked_powers':[]
+      }
+    }
+
+    get_power_limit(){
+      if(this.props.power_limit == null){
+        return 63
+      }
+      else{
+        return this.props.power_limit 
+      }
+    }
+
+    get_number_from_power_limit(){
+      var power_limit = this.get_power_limit()
+      if(power_limit == 63){
+        return bgN(1,72).toString().substring(1,72)
+      }
+      else{
+        return bgN(1,1000).toString().substring(1,1000)
       }
     }
 
@@ -118,7 +137,7 @@ class NumberPicker extends Component {
       
       if(bigInt(new_number) < this.props.number_limit){
         if(!clone['picked_powers'].includes(this.state.create_number_data['power'])){
-            clone['picked_powers'].push(this.state.create_number_data['power']);
+          clone['picked_powers'].push(this.state.create_number_data['power']);
         }
         this.setState({create_number_data: clone})
         this.props.when_number_picker_value_changed(bigInt(new_number))

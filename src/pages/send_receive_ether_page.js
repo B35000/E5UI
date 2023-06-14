@@ -476,7 +476,7 @@ class SendReceiveEtherPage extends Component {
     render_amount_number_picker(){
         return(
             <div>
-                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme}/>
+                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
             </div>
         )
     }
@@ -484,7 +484,7 @@ class SendReceiveEtherPage extends Component {
     render_gas_price_number_picker(){
         return(
             <div>
-                <NumberPicker number_limit={bigInt('1e15')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme}/>
+                <NumberPicker number_limit={bigInt('1e15')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={63}/>
             </div>
         )
     }

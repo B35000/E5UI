@@ -34,22 +34,27 @@ class ViewGroups extends Component {
             var active_tags = ['tag1','tag2','tag3']
             var tag_background_color = this.props.theme['tag_background_color'];
             var tag_shadow = this.props.theme['tag_shadow'];
-            
+            var when_tapped = 'null'
             if(object_data != null){
               active_tags = object_data['active_tags']
               if(object_data['index_option'] == 'indexed'){
                 tag_background_color = this.props.theme['indexed_tag_background'];
               }
+              if(object_data['when_tapped'] != null){
+                when_tapped = object_data['when_tapped']
+              }
               if(object_data['active_tags'].length == 0){
                 active_tags = ['e'];
+                when_tapped = 'null'
               }
+              
             }
             return (
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': border_radius}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                       {active_tags.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
-                              <div style={{'background-color': tag_background_color, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}} onClick={()=> this.when_tag_item_clicked(item, index, object_data['when_tapped'])}>
+                              <div style={{'background-color': tag_background_color, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
                                 <p style={{'color': 'white', 'font-size': '16px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify'}} className="text-center">{item}</p>
                             </div>
                           </li>
@@ -323,11 +328,20 @@ class ViewGroups extends Component {
         else if(action_id == 'confirm_send_ether'){
             this.props.when_send_ether_confirmation_received()
         }
+        else if(action_id == 'when_add_word_button_tapped'){
+            this.props.when_add_word_button_tapped()
+        }
+        else if(action_id == 'when_set_wallet_button_tapped'){
+            this.props.when_set_wallet_button_tapped()
+        }
     }
 
     when_tag_item_clicked(tag, pos, action_id){
         if(action_id == 'when_number_picker_power_tapped'){
             this.props.when_number_picker_power_tapped(tag, pos)
+        }
+        else if(action_id == 'delete_entered_seed_word'){
+            this.props.delete_entered_seed_word(tag, pos)
         }
     }
 

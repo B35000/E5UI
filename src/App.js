@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import AlertIcon from './assets/alert_icon.png';
 
 /* blockchain stuff */
-import { ethers } from 'ethers';
 import { mnemonicToSeedSync } from 'bip39';
 import { Buffer } from 'buffer';
 import { bigInt } from 'big-integer';
@@ -21,8 +20,8 @@ import SendReceiveEtherPage from './pages/send_receive_ether_page'
 import StackPage from './pages/stack_page'
 
 const Web3 = require('web3');
-
-
+const ethers = require("ethers");
+window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
 class App extends Component {
@@ -215,7 +214,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -269,9 +268,9 @@ class App extends Component {
     }
     for (let i = start; i <= number; i++) {
       web3.eth.getBlock(i).then(block => {
-        let transactions = block.transactions;
-        if (block != null && transactions != null) {
-          for (let txHash of transactions) {
+        let txs = block.transactions;
+        if (block != null && txs != null) {
+          for (let txHash of txs) {
 
             web3.eth.getTransaction(txHash).then(tx => {
               if (targetAddress == tx.to || targetAddress == tx.from) {
@@ -391,56 +390,77 @@ class App extends Component {
   }
 
 
-    /* renders the toast item used */
-    render_toast_item(message){
+  /* renders the toast item used */
+  render_toast_item(message){
 
-      return ( 
-            <div>
-                <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px', 'height':'40px', 'width':'auto','display': 'flex','flex-direction': 'row'}}>
-                    <div style={{'padding': '0px 0px 0px 15px','display': 'flex','align-items': 'center'}}> 
-                        <img src={AlertIcon} style={{height:'20px',width:'auto'}} />
-                    </div>
-                    <div style={{'padding': '0px 0px 0px 8px', 'margin':'17px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
-                        <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1'}}>{message}</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    return ( 
+          <div>
+              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px', 'height':'40px', 'width':'auto','display': 'flex','flex-direction': 'row'}}>
+                  <div style={{'padding': '0px 0px 0px 15px','display': 'flex','align-items': 'center'}}> 
+                      <img src={AlertIcon} style={{height:'20px',width:'auto'}} />
+                  </div>
+                  <div style={{'padding': '0px 0px 0px 8px', 'margin':'17px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
+                      <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1'}}>{message}</p>
+                  </div>
+              </div>
+          </div>
+      );
+  }
 
 
 
-    send_ether_to_target(recipientAddress, amount, gasPrice, state){
-      const web3 = new Web3('http://127.0.0.1:8545/');
-      const me = this;
-      web3.eth.sendTransaction({
-      from: state.account.address,
-      to: recipientAddress,
-      value: amount.toString(),
-      gasPrice: gasPrice.toString() // Adjust gas price as needed
-    }).on('transactionHash', function (hash) {
-        console.log('Transaction sent:', hash);
+  send_ether_to_target(recipientAddress, amount, gasPrice, state){
+    const web3 = new Web3('http://127.0.0.1:8545/');
+    const me = this;
+    web3.eth.sendTransaction({
+    from: state.account.address,
+    to: recipientAddress,
+    value: amount.toString(),
+    gasPrice: gasPrice.toString() // Adjust gas price as needed
+  }).on('transactionHash', function (hash) {
+      console.log('Transaction sent:', hash);
 
-        web3.eth.getTransaction(hash).then(tx => {
-            var transactions = state.account_transaction_history.slice();
-            transactions.push(tx)
-            me.setState({account_transaction_history: transactions})
-            
-            setTimeout(function() {
-              me.prompt_top_notification('transaction completed!', 1200)
-            }, (3 * 1000));
-        })
-        
-        web3.eth.getBalance(state.account.address).then(balance => {
-          me.setState({account_balance: balance});
-        }).catch(error => {
-          console.error('Error:', error);
-        });
+      web3.eth.getTransaction(hash).then(tx => {
+          var transactions = state.account_transaction_history.slice();
+          transactions.push(tx)
+          me.setState({account_transaction_history: transactions})
+          
+          setTimeout(function() {
+            me.prompt_top_notification('transaction completed!', 1200)
+          }, (3 * 1000));
       })
-      .on('error', function (error) {
-        console.error('Failed to send transaction:', error);
+      
+      web3.eth.getBalance(state.account.address).then(balance => {
+        me.setState({account_balance: balance});
+      }).catch(error => {
+        console.error('Error:', error);
       });
-    }
+    })
+    .on('error', function (error) {
+      console.error('Failed to send transaction:', error);
+    });
+  }
+
+
+  when_wallet_data_updated(added_tags, set_salt, selected_item){
+    var seed = added_tags.join(' | ') + set_salt + selected_item;
+
+    const web3 = new Web3('http://127.0.0.1:8545/');
+    const mnemonic = seed.trim();
+    const seedBytes = mnemonicToSeedSync(mnemonic);
+    const hdNode = ethers.utils.HDNode.fromSeed(seedBytes);
+    const wallet = new ethers.Wallet(hdNode.privateKey);
+
+    const account = web3.eth.accounts.privateKeyToAccount(wallet.privateKey);
+    this.setState({account: account});
+
+    web3.eth.getBalance(account.address).then(balance => {
+      this.setState({account_balance: balance});
+      this.prompt_top_notification('wallet set!', 200)
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+  }
 
 
 
