@@ -5,6 +5,7 @@ import ViewGroups from './../components/view_groups';
 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
+import End35 from './../assets/end35.png';
 
 
 function number_with_commas(x) {
@@ -65,10 +66,6 @@ class PostListSection extends Component {
             }
         }
         else if(selected_page == 'w'){
-            // var selected_tag = this.props.wallet_page_tags_object['i'].active
-            // var selected_item = this.props.wallet_page_tags_object['e'][2][0];
-            // var selected_option_name = this.props.wallet_page_tags_object['e'][1][selected_item];
-
             var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
 
             if(selected_option_name == 'ethers ⚗️' || selected_option_name == 'e'){
@@ -207,13 +204,13 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = ['0','1','2','3'];
+        var items = this.get_e5_data()
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '5px'}}>
-                            {this.render_E5s_object()}
+                            {this.render_E5s_object(item['data'], index, item['id'])}
                         </li>
                     ))}
                 </ul>
@@ -221,17 +218,50 @@ class PostListSection extends Component {
         );
     }
 
-    render_E5s_object(){
+    get_e5_data(){
+        var data = []
+        var contract_data = this.props.app_state.E15_contract_data
+        var contract_id_data = this.props.app_state.contract_id_data
+        for (let i = 0; i < contract_data.length; i++) {
+            data.push({'data':contract_data[i], 'id':contract_id_data[i]})
+        }
+        return data
+    }
+
+    render_E5s_object(item_data, index, name){
         var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.get_e5_data_item_object(item_data, name)
+        return ( 
+            <div onClick={() => this.when_E5_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 10px 0px 10px'}}>
+                        {this.render_detail_item('8', item['label'])}
+                    </div>
+                    <div style={{height: 10}}/>
+                    <div style={{'margin':'0px 10px 0px 10px'}}>
+                        {this.render_detail_item('3', item['address'])}
                     </div>
                     
-                </div>
-            );
+                </div>         
+            </div>
+        );
+    }
+
+    get_e5_data_item_object(item_data, name){
+        var obj = {'E35':End35}
+        var add_obj = {'e35':this.props.app_state.E35_addresses[0]}
+        return {
+                'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': obj[name]},
+                'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
+                'address':{'title':'Contract Address', 'details':add_obj['e35'], 'size':'l'}
+            }
+    }
+
+    when_E5_item_clicked(index){
+        this.props.when_E5_item_clicked(index)
     }
 
 

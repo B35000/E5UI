@@ -8,6 +8,7 @@ import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
+import End35 from './../assets/end35.png';
 
 var bigInt = require("big-integer");
 
@@ -30,6 +31,7 @@ class PostDetailSection extends Component {
         navigate_view_ethers_list_detail_tags_object: this.get_navigate_view_ethers_list_detail_tags(),
         navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(),
         navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(),
+        navigate_view_e5_list_detail_tags_object: this.get_navigate_view_e5_list_detail_tags(),
     };
 
     get_navigate_view_ethers_list_detail_tags(){
@@ -65,6 +67,22 @@ class PostDetailSection extends Component {
           ],
         }
     }
+
+    get_navigate_view_e5_list_detail_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['or','',0], ['e','details','transactions'],[0]
+          ],
+        }
+    }
+
+
+
+
+
 
     render(){
         return(
@@ -154,8 +172,209 @@ class PostDetailSection extends Component {
 
     //#region E5 list data
     render_E5s_list_detail(){
+        if(this.props.selected_e5_item == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_e5_details_section()}
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                        <Tags page_tags_object={this.state.navigate_view_e5_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_e5_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_navigate_view_e5_list_detail_tags_object_updated(tag_group){
+        this.setState({navigate_view_e5_list_detail_tags_object: tag_group})
+    }
+
+    render_e5_details_section(){
+        var selected_item = this.get_selected_item(this.state.navigate_view_e5_list_detail_tags_object, this.state.navigate_view_e5_list_detail_tags_object['i'].active)
+
+        if(selected_item == 'details' || selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_e5_main_details_section()}
+                </div>
+            )
+        }else if(selected_item == 'transactions'){
+            return(
+                <div>
+                    {this.render_e5_block_history_logs()}
+                </div>
+            )
+            
+        }
+    }
+
+    render_e5_main_details_section(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-70
+        var size = this.props.screensize
+        if(size == 'm'){
+            he = this.props.height-190;
+        }
+        var item = this.get_e5_details_data()
+        return(
+            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    
+                    {this.render_detail_item('7', item['label'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['default_end_minimum_contract_amount'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['default_spend_minimum_contract_amount'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['default_minimum_end_vote_bounty_amount'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['default_minimum_spend_vote_bounty_amount'])}
+                    </div>
+                    
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['tx_gas_limit'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['contract_block_invocation_limit'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['contract_time_invocation_limit'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_entered_contracts'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['tag_indexing_limit'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_transaction_count'])}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['gas_anchor_price'])}
+                    </div>
+
+                    
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['tx_gas_reduction_proportion'])}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['tx_gas_anchor_price'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['tx_gas_lower_limit'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['absolute_proposal_expiry_duration_limit'])}
+                    
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['invite_only_e5'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['primary_tx_account'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['primary_account_tx_period'])}
+
+                    {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
+                </div>
+            </div>
+        )
+    }
+
+    get_e5_data(){
+        var data = []
+        var contract_data = this.props.app_state.E15_contract_data
+        var contract_id_data = this.props.app_state.contract_id_data
+        for (let i = 0; i < contract_data.length; i++) {
+            data.push({'data':contract_data[i], 'id':contract_id_data[i]})
+        }
+        return data
+    }
+
+    get_e5_details_data(){
+        var obj = this.get_e5_data()[this.props.selected_e5_item]
+        var img_obj = {'E35':End35}
+        var contract_config = obj['data'][1]
+        return{
+            'label':{'header':obj['id'], 'subtitle':'Main Contract', 'size':'l', 'image': img_obj[obj['id']]},
+            'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
+            
+            'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':'Vote Bounty Split Proportion', 'size':'l'},
+            
+            'default_end_minimum_contract_amount':{'style':'l','title':'Minimum End Contract Amount', 'subtitle':this.format_power_figure(contract_config[3]), 'barwidth':this.calculate_bar_width(contract_config[3]), 'number':this.format_account_balance_figure(contract_config[3]), 'relativepower':'tokens'},
+
+            'default_minimum_end_vote_bounty_amount':{'style':'l','title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':'tokens'},
+
+            'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':'Proposal Expiry Duration Limit', 'size':'l'},
+
+            'default_spend_minimum_contract_amount':{'style':'l','title':'Minimum Spend Contract Amount', 'subtitle':this.format_power_figure(contract_config[9]), 'barwidth':this.calculate_bar_width(contract_config[9]), 'number':this.format_account_balance_figure(contract_config[9]), 'relativepower':'tokens'},
+
+            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':'tokens'},
+
+            'tx_gas_limit':{'style':'l','title':'Transaction Gas Limit', 'subtitle':this.format_power_figure(contract_config[11]), 'barwidth':this.calculate_bar_width(contract_config[11]), 'number':this.format_account_balance_figure(contract_config[11]), 'relativepower':'gas'},
+
+            'contract_block_invocation_limit': {'title':contract_config[12], 'details':'E5 block invocation Limit', 'size':'l'},
+
+            'contract_time_invocation_limit': {'title':contract_config[13], 'details':'E5 time invocation Limit', 'size':'l'},
+
+            'minimum_entered_contracts': {'title':contract_config[14], 'details':'Minimum Entered Contracts for Consensus Participation', 'size':'l'},
+
+            'tag_indexing_limit': {'title':contract_config[16], 'details':'Tag Indexing Limit', 'size':'l'},
+            'minimum_transaction_count': {'title':contract_config[19], 'details':'Minimum Transaction Count for Consensus Particiation', 'size':'l'},
+
+            'gas_anchor_price':{'style':'l','title':'Gas Anchor Price', 'subtitle':this.format_power_figure(contract_config[23]), 'barwidth':this.calculate_bar_width(contract_config[23]), 'number':this.format_account_balance_figure(contract_config[23]), 'relativepower':'wei'},
+
+            'tx_gas_reduction_proportion': {'title':this.format_proportion(contract_config[24]), 'details':'Transaction Gas Reduction Proportion', 'size':'l'},
+
+            'tx_gas_anchor_price':{'style':'l','title':'Transaction Gas Anchor Price', 'subtitle':this.format_power_figure(contract_config[25]), 'barwidth':this.calculate_bar_width(contract_config[25]), 'number':this.format_account_balance_figure(contract_config[25]), 'relativepower':'wei'},
+
+            'tx_gas_lower_limit':{'style':'l','title':'Transaction Gas Lower Limit', 'subtitle':this.format_power_figure(contract_config[26]), 'barwidth':this.calculate_bar_width(contract_config[26]), 'number':this.format_account_balance_figure(contract_config[26]), 'relativepower':'wei'},
+
+            'absolute_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[30]), 'details':'Absolute Proposal Expiry Duration Limit', 'size':'l'},
+
+            'invite_only_e5': {'title':this.enabled_disabled(contract_config[32]), 'details':'Invite Only E5', 'size':'l'},
+
+            'primary_tx_account': {'title':contract_config[39], 'details':'Primary Transaction Account', 'size':'l'},
+
+            'primary_account_tx_period': {'title':this.get_time_diff(contract_config[40]), 'details':'Primary Account Transaction Period', 'size':'l'},
+        }
+    }
+
+    render_e5_block_history_logs(){
 
     }
+
+
+
 
     render_posts_list_detail(){
 
@@ -239,10 +458,10 @@ class PostDetailSection extends Component {
                     {this.render_detail_item('3', item['network_type'])}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', item['gas_used_chart_data_label'])}
-                    {this.render_detail_item('6', item['gas_used_chart_data'])}
+                    {/* {this.render_detail_item('3', item['gas_used_chart_data_label'])} */}
+                    {/* {this.render_detail_item('6', item['gas_used_chart_data'])} */}
                     <div style={{height: 10}}/>
-                    {/* {this.render_detail_item('3', item['gas_used_chart_data_average'])} */}
+                    {this.render_detail_item('3', item['gas_used_chart_data_average'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['highest_gas_consumed'])}
                     <div style={{height: 10}}/>
@@ -259,6 +478,8 @@ class PostDetailSection extends Component {
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('5', {'text':'Send Receive Ether', 'action': 'send_receive_ether'})}
+
+                    {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -488,6 +709,8 @@ class PostDetailSection extends Component {
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
                     
                     {this.render_detail_item('5', item['mint_burn_button'])}
+
+                    {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -806,6 +1029,8 @@ class PostDetailSection extends Component {
                     {this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
 
                     {this.render_detail_item('5', item['mint_burn_button'])}
+
+                    {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
                     
 
                     {this.render_detail_item('0')}
@@ -921,10 +1146,14 @@ class PostDetailSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme}/>
+                <ViewGroups item_id={item_id} object_data={object_data} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki={this.open_wiki.bind(this)}/>
             </div>
         )
 
+    }
+
+    open_wiki(){
+        this.props.open_wiki_bottomsheet()
     }
 
 

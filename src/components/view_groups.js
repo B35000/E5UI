@@ -143,10 +143,10 @@ class ViewGroups extends Component {
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                     <div className="row" style={{height:'100%', width:'100%'}}>
                         <div className="col-2">
-                            <img src={img} style={{height:40 ,width:'auto'}} />
+                            <img src={img} style={{height:50 ,width:'auto'}} />
                         </div>
                         <div className="col">
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
                             <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none' }}>{details}</p>
                         </div>
                     </div>
@@ -334,6 +334,9 @@ class ViewGroups extends Component {
         }
         else if(action_id == 'when_set_wallet_button_tapped'){
             this.props.when_set_wallet_button_tapped()
+        }
+        else if(action_id == 'open_wiki'){
+            this.props.open_wiki()
         }
     }
 

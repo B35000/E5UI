@@ -18,6 +18,7 @@ import Syncronizing_page from './pages/synchronizing_page';
 import Home_page from './pages/home_page';
 import SendReceiveEtherPage from './pages/send_receive_ether_page'
 import StackPage from './pages/stack_page'
+import WikiPage from './pages/wiki_page'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -30,8 +31,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false,
-    stack_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right'
@@ -124,7 +124,7 @@ class App extends Component {
 
         'primary_text_color':'white', 'secondary_text_color':'#e6e6e6',
         
-        'navbar_button_selected_color':'#545454','card_background_color':'#333333', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','card_shadow_color':'#424242',
+        'navbar_button_selected_color':'#545454','card_background_color':'rgb(51, 51, 51,.9)', 'primary_navbar_text_color':'white','secondary_navbar_text_color':'#e6e6e6','card_shadow_color':'#424242',
 
         'view_group_card_item_background':'#2e2e2e','tag_background_color':'#444444', 'indexed_tag_background':'#404040', 'tag_shadow':'#424242',
 
@@ -155,7 +155,7 @@ class App extends Component {
 
   render_page(){
     return(
-      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation}/>
+      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)}/>
     )
   }
 
@@ -239,6 +239,27 @@ class App extends Component {
 
 
 
+  render_stack_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_wiki_bottomsheet.bind(this)} open={this.state.wiki_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+              
+              <WikiPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} />
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+
+  open_wiki_bottomsheet(){
+    if(this.state != null){
+        this.setState({wiki_bottomsheet: !this.state.wiki_bottomsheet});
+      }
+  }
+
+
 
 
 
@@ -301,7 +322,7 @@ class App extends Component {
         console.error(error);
       } else {
         console.log('loaded addresses')
-        this.setState({E15_addresses: events[0].returnValues.p5, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
+        this.setState({E35_addresses: events[0].returnValues.p5, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
         
       }
     });
@@ -322,7 +343,7 @@ class App extends Component {
       if (error) {
         console.error(error);
       } else {
-        this.setState({E15_contract_data: result, syncronizing_progress:this.state.syncronizing_progress+incr_count});
+        this.setState({E15_contract_data: result, contract_id_data:['E35'], syncronizing_progress:this.state.syncronizing_progress+incr_count});
       }
     });
 
