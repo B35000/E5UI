@@ -19,6 +19,7 @@ import Home_page from './pages/home_page';
 import SendReceiveEtherPage from './pages/send_receive_ether_page'
 import StackPage from './pages/stack_page'
 import WikiPage from './pages/wiki_page'
+import NewJobPage from './pages/new_job_page'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -31,10 +32,11 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
-    details_orientation: 'right'
+    details_orientation: 'right',
+    new_object_target: '0'
   };
 
   componentDidMount() {
@@ -148,6 +150,8 @@ class App extends Component {
         {this.render_synchronizing_bottomsheet()}
         {this.render_send_receive_ether_bottomsheet()}
         {this.render_stack_bottomsheet()}
+        {this.render_wiki_bottomsheet()}
+        {this.render_new_object_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -155,9 +159,10 @@ class App extends Component {
 
   render_page(){
     return(
-      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)}/>
+      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} open_new_object={this.open_new_object.bind(this)}/>
     )
   }
+
 
   render_synchronizing_bottomsheet(){
     var background_color = this.state.theme['syncronizing_page_background_color'];
@@ -239,7 +244,7 @@ class App extends Component {
 
 
 
-  render_stack_bottomsheet(){
+  render_wiki_bottomsheet(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -260,6 +265,40 @@ class App extends Component {
   }
 
 
+  render_new_object_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_object_bottomsheet.bind(this)} open={this.state.new_object_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            {this.render_create_object_ui()}
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_new_object_bottomsheet(){
+    if(this.state != null){
+      this.setState({new_object_bottomsheet: !this.state.new_object_bottomsheet});
+    }
+  }
+
+  open_new_object(target){
+    this.setState({new_object_target: target});
+    this.open_new_object_bottomsheet()
+  }
+
+  render_create_object_ui(){
+    var target = this.state.new_object_target;
+    var size = this.getScreenSize();
+    if(target == '0'){
+      return(
+        <div>
+          <NewJobPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} />
+        </div>
+      )
+    }
+    
+  }
 
 
 

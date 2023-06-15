@@ -37,7 +37,7 @@ class home_page extends Component {
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
         selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null,
-        view_post_bottomsheet: false,
+        view_post_bottomsheet: false, 
     };
 
 
@@ -49,7 +49,10 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','e.contracts', 'e.proposals','e.subscriptions'], [0]
+              ['or','',0], ['e','e.jobs','e.contracts', 'e.proposals','e.subscriptions', 'e.storefronts'], [0]
+          ],
+          'jobs':[
+              ['or','e',1], ['jobs','all','viewed','created'], [1],[1]
           ],
           'contracts':[
               ['or','e',1], ['contracts','all','viewed','created','received'], [1],[1]
@@ -60,8 +63,8 @@ class home_page extends Component {
           'subscriptions':[
               ['or','e',1], ['subscriptions','all','paid','created'], [1],[1]
           ],
-          'my':[
-              ['or','',0], ['my','carts','bags'], [1],[1]
+          'storefronts':[
+              ['or','',0], ['storefronts','stores','carts','bags'], [1],[1]
           ],
         };
       }
@@ -71,7 +74,10 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','e.posts','e.channels','e.E5s'], [0]
+              ['or','',0], ['e','e.E5s','e.posts','e.channels'], [0]
+          ],
+          'E5s':[
+              ['or','',0], ['E5s','info ℹ️','indexdata 📊','blockexplorer 🗺️', 'tipjar 🍯'], [1],[1]
           ],
           'posts':[
               ['or','',0], ['posts','all','viewed','created'], [1],[1]
@@ -79,9 +85,7 @@ class home_page extends Component {
           'channels':[
               ['or','',0], ['channels','all','viewed','created'], [1],[1]
           ],
-          'E5s':[
-              ['or','',0], ['E5s','info ℹ️','indexdata 📊','blockexplorer 🗺️', 'tipjar 🍯'], [1],[1]
-          ]
+          
         }
       }
       else{/* wallet_section */
@@ -92,9 +96,6 @@ class home_page extends Component {
           'e':[
               ['or','',0], ['e','ethers ⚗️', 'ends ☝️', 'spends 🫰'],[0]
           ],
-          'E5tokens':[
-              ['or','',0], ['E5tokens','ends ☝️','spends 🫰'], [1],[1]
-          ]
         }
       }
       
@@ -345,13 +346,6 @@ class home_page extends Component {
         );
     }
 
-    /* called when the eplus letter is clicked on the main page */
-    when_e_plus_letter_clicked(){
-      var button_target = this.get_e_plus_button_mapping();
-      if(button_target != ''){
-        this.open_new_object_bottomsheet();
-      }
-    }
 
     /* renders the e plus button and sets its opacity */
     render_e_plus_button(){
@@ -367,11 +361,21 @@ class home_page extends Component {
 
     /* gets the tag object id for creating new objects associated with the tag option active in the top bar */
     get_e_plus_button_mapping(){
-      var active_page_tag_item = this.get_tag_group_option()['i'].active;
-      var data = {'contracts':'6','jobs':'7','contractors':'8','storefronts':'9','E5tokens':'11','subscriptions':'12','posts':'13','channels':'14',};
-
-      if(data[active_page_tag_item] == null) return ''
-      return data[active_page_tag_item];
+      if(this.state.page == '?'){
+        var selected_item = this.state.work_page_tags_object['i'].active
+        var data = {'jobs':'0','contracts':'1','proposals':'2','subscriptions':'3','storefronts':'4'};
+        if(data[selected_item] == null) return ''
+        return data[selected_item];
+      }
+      else if(this.state.page == 'e'){
+        var selected_item = this.state.explore_page_tags_object['i'].active
+        var data = {'E5s':'5','posts':'6','channels':'7'};
+        if(data[selected_item] == null) return ''
+        return data[selected_item];
+      }
+      else{
+        return '8'
+      }
     }
 
     /* gets the option of tags to use depending on the bottom navbar button clicked */
@@ -384,6 +388,20 @@ class home_page extends Component {
       }
       else{
         return this.state.wallet_page_tags_object
+      }
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
+
+     /* called when the eplus letter is clicked on the main page */
+    when_e_plus_letter_clicked(){
+      var button_target = this.get_e_plus_button_mapping();
+      if(button_target != ''){
+        this.props.open_new_object(button_target);
       }
     }
 
