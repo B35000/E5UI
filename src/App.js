@@ -525,7 +525,8 @@ class App extends Component {
             web3.eth.getTransaction(txHash).then(tx => {
               if (targetAddress == tx.to || targetAddress == tx.from) {
                 transactions.push(tx)
-                this.setState({account_transaction_history: transactions})
+                const sortedData = this.sortByAttributeDescending(transactions, 'blockNumber');
+                this.setState({account_transaction_history: sortedData})
               }
             })
             
@@ -533,6 +534,18 @@ class App extends Component {
         }
       });
     }
+  }
+
+  sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
   }
 
 
