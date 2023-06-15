@@ -441,7 +441,53 @@ class PostDetailSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['buy_limit'])}
                     </div>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['sell_limit'])}
+                    </div>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['exchanges_liquidity'])}
+                    </div>
+
+                    {this.render_detail_item('0')}
                     
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_transactions_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_blocks_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_time_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_entered_contracts_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_transactions_for_first_buy'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_entered_contracts_for_first_buy'])}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', item['trust_fee_proportion'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['exchange_authority'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['trust_fee_target'])}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['ratio_x'])}
+                    </div>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['ratio_y'])}
+                    </div>
+
+                    {this.render_detail_item('3', item['combined_exchange_ratio'])}
+                    
+                    {this.render_detail_item('5', item['mint_burn_button'])}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -461,6 +507,8 @@ class PostDetailSection extends Component {
         var selected_obj_ratio_config = selected_object['data'][2];
 
         var type = selected_obj_root_config[3] == 3 ? 'Capped' : 'Uncapped'
+        var is_auth_main_contract = selected_obj_config[9] == 2 ? '2 (Main Contract)': selected_obj_config[9]
+        var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
 
         if(title == 3){
             title = 'END'
@@ -476,8 +524,27 @@ class PostDetailSection extends Component {
             'fully_custom': {'title':'Fully Custom', 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
 
             'buy_limit':{'style':'l','title':'Buy Limit', 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':'tokens'},
-            '':{},
-            '':{},
+            
+            'minimum_transactions_between_swap': {'title':selected_obj_config[2], 'details':'Minimum Transactions Between Swap', 'size':'l'},
+            'minimum_blocks_between_swap': {'title':selected_obj_config[3], 'details':'Minimum Blocks Between Swap', 'size':'l'},
+            'minimum_time_between_swap': {'title':this.get_time_diff(selected_obj_config[4]), 'details':'Minimum Time Between Swap', 'size':'l'},
+            
+            'trust_fee_proportion': {'title':this.format_proportion(selected_obj_config[7]), 'details':'Trust Fee', 'size':'l'},
+            'exchange_authority': {'title':'Authority: '+is_auth_main_contract, 'details':'Exchange Authority Identifier', 'size':'l'},
+            'trust_fee_target': {'title':'Target: '+is_trust_fee_target_main_contract, 'details':'Trust Fee Target Identifier', 'size':'l'},
+
+            'sell_limit':{'style':'l','title':'Sell Limit', 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':'tokens'},
+
+            'minimum_entered_contracts_between_swap': {'title':selected_obj_config[13], 'details':'Minimum Entered Contracts Between Swap', 'size':'l'},
+            'minimum_transactions_for_first_buy': {'title':selected_obj_config[17], 'details':'Minimum Transactions For First Buy', 'size':'l'},
+            'minimum_entered_contracts_for_first_buy': {'title':selected_obj_config[18], 'details':'Minimum Entered Contracts For First Buy', 'size':'l'},
+
+            'ratio_x':{'style':'l','title':'Exchange Ratio X', 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':'tokens'},
+            'ratio_y':{'style':'l','title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':'tokens'},
+            'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':'Exchange Ratio X:Y', 'size':'l'},
+
+            'exchanges_liquidity':{'style':'l','title':'Exchanges Liquidity', 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':'tokens'},
+            'mint_burn_button':{'text':'Buy/Sell Token', 'action':''},
             '':{},
             '':{},
             '':{},
@@ -485,6 +552,10 @@ class PostDetailSection extends Component {
             '':{},
 
         }
+    }
+
+    render_end_block_history_logs(){
+
     }
 
     enabled_disabled(value){
@@ -528,7 +599,6 @@ class PostDetailSection extends Component {
         return figure+'%'
     }
 
-
     format_power_figure(amount){
         var power = 'e72'
         if(amount < bigInt('1e9')){
@@ -544,6 +614,24 @@ class PostDetailSection extends Component {
             power = 'e72'
         }
         return power
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
+    }
+
+    format_exchange_ratio(ratio_x, ratio_y){
+        // Calculate the ratio
+        const gcd = this.calculateGCD(ratio_x, ratio_y);
+        const ratio = `${ratio_x / gcd}:${ratio_y / gcd}`;
+        return ratio;
+    }
+
+    calculateGCD(a, b) {
+        if (b === 0) {
+            return a;
+        }
+        return this.calculateGCD(b, a % b);
     }
 
     get_exchange_tokens(exchange_type){
@@ -628,7 +716,98 @@ class PostDetailSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
-                
+                    {this.render_detail_item('3', item['token_type'])}
+                    <div style={{height:10}}/>
+                    
+                    {this.render_detail_item('3', item['unlocked_supply'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['unlocked_liquidity'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['fully_custom'])}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['buy_limit'])}
+                    </div>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['sell_limit'])}
+                    </div>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['exchanges_liquidity'])}
+                    </div>
+
+                    {this.render_detail_item('0')}
+                    
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_transactions_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_blocks_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_time_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_entered_contracts_between_swap'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_transactions_for_first_buy'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['minimum_entered_contracts_for_first_buy'])}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', item['trust_fee_proportion'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['exchange_authority'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['trust_fee_target'])}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['ratio_x'])}
+                    </div>
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['ratio_y'])}
+                    </div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['combined_exchange_ratio'])}
+                    {this.render_detail_item('0')}
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['block_limit'])}
+                    </div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['internal_block_halfing_proportion'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['block_limit_reduction_proportion'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['block_reset_limit'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['block_limit_sensitivity'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['default_authority_mint_limit'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['block_halfing_type'])}
+
+                    {this.render_detail_item('0')}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['maturity_limit'])}
+                    </div>
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['current_block_mint_total'])}
+                    </div>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
+
+                    {this.render_detail_item('5', item['mint_burn_button'])}
+                    
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -641,16 +820,76 @@ class PostDetailSection extends Component {
         var selected_object = this.get_exchange_tokens(5)[selected_item]
         var title = selected_object['id'];
         var img = selected_object['img']
+        
+        var selected_obj_root_config = selected_object['data'][0];
+        var selected_obj_config = selected_object['data'][1];
+        var selected_obj_ratio_config = selected_object['data'][2];
+
+        var type = selected_obj_root_config[3] == 3 ? 'Capped' : 'Uncapped'
+        var is_auth_main_contract = selected_obj_config[9] == 2 ? '2 (Main Contract)': selected_obj_config[9]
+        var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
+        var halfing_type = selected_obj_config[15] == 0 ? 'Fixed' : 'Spread'
+
         if(title == 5){
             title = 'SPEND'
         }
         
         return{
             'banner-icon':{'header':title, 'subtitle':'Exchange', 'image':img},
+            'token_id': {'title':'ID: '+selected_object['id'], 'details':'Token Identifier', 'size':'l'},
+            'token_type': {'title':'Token Type', 'details':type, 'size':'l'},
+
+            'unlocked_supply': {'title':'Unlocked Supply', 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
+            'unlocked_liquidity': {'title':'Unlocked Liquidity', 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
+            'fully_custom': {'title':'Fully Custom', 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
+
+            'buy_limit':{'style':'l','title':'Mint Limit', 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':'tokens'},
+            
+            'minimum_transactions_between_swap': {'title':selected_obj_config[2], 'details':'Minimum Transactions Between Swap', 'size':'l'},
+            'minimum_blocks_between_swap': {'title':selected_obj_config[3], 'details':'Minimum Blocks Between Swap', 'size':'l'},
+            'minimum_time_between_swap': {'title':this.get_time_diff(selected_obj_config[4]), 'details':'Minimum Time Between Swap', 'size':'l'},
+            
+            'trust_fee_proportion': {'title':this.format_proportion(selected_obj_config[7]), 'details':'Trust Fee', 'size':'l'},
+            'exchange_authority': {'title':'Authority: '+is_auth_main_contract, 'details':'Exchange Authority Identifier', 'size':'l'},
+            'trust_fee_target': {'title':'Target: '+is_trust_fee_target_main_contract, 'details':'Trust Fee Target Identifier', 'size':'l'},
+
+            'sell_limit':{'style':'l','title':'Sell Limit', 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':'tokens'},
+
+            'minimum_entered_contracts_between_swap': {'title':selected_obj_config[13], 'details':'Minimum Entered Contracts Between Swap', 'size':'l'},
+            'minimum_transactions_for_first_buy': {'title':selected_obj_config[17], 'details':'Minimum Transactions For First Buy', 'size':'l'},
+            'minimum_entered_contracts_for_first_buy': {'title':selected_obj_config[18], 'details':'Minimum Entered Contracts For First Buy', 'size':'l'},
+
+            'ratio_x':{'style':'l','title':'Exchange Ratio X', 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':'tokens'},
+            'ratio_y':{'style':'l','title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':'tokens'},
+            'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':'Exchange Ratio X:Y', 'size':'l'},
+
+            'exchanges_liquidity':{'style':'l','title':'Circulating Supply', 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':'tokens'},
+            'mint_burn_button':{'text':'Mint/Burn Token', 'action':''},
+
+            'block_limit':{'style':'l','title':'Block Limit', 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':'tokens'},
+            'internal_block_halfing_proportion': {'title':this.format_proportion(selected_obj_config[5]), 'details':'Internal Block Halving Proportion', 'size':'l'},
+            'block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_config[6]), 'details':'Block Limit Reduction Proportion', 'size':'l'},
+            
+            'block_reset_limit': {'title':selected_obj_config[8], 'details':'Block Reset Limit', 'size':'l'},
+            'block_limit_sensitivity': {'title':selected_obj_config[12], 'details':'Block Limit Sensitivity', 'size':'l'},
+            'default_authority_mint_limit': {'title':this.format_proportion(selected_obj_config[14]), 'details':'Authority Mint Limit (percentage of supply)', 'size':'l'},
+            'block_halfing_type': {'title':halfing_type, 'details':'Halving Type', 'size':'l'},
+            'maturity_limit':{'style':'l','title':'Maturity Limit', 'subtitle':this.format_power_figure(selected_obj_config[16]), 'barwidth':this.calculate_bar_width(selected_obj_config[16]), 'number':this.format_account_balance_figure(selected_obj_config[16]), 'relativepower':'tokens'},
+
+            'current_block_mint_total':{'style':'l','title':'Current Block Mint Total', 'subtitle':this.format_power_figure(selected_obj_ratio_config[4]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[4]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[4]), 'relativepower':'tokens'},
+            'active_block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_ratio_config[6]), 'details':'Active Block Limit Reduction Proportion', 'size':'l'},
+            '':{},
+            '':{},
+            '':{},
+            '':{},
+            '':{},
+            '':{},
         }
     }
 
+    render_spend_block_history_logs(){
 
+    }
 
 
 
@@ -834,8 +1073,14 @@ class PostDetailSection extends Component {
         var now = Math.round(new Date().getTime()/1000);
 
         var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
         if(diff < 60){//less than 1 min
-            return 'now';
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ ' sec'
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
@@ -863,7 +1108,6 @@ class PostDetailSection extends Component {
             return num + ' yr' + s;
         }
     }
-
 
 }
 

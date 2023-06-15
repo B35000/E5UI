@@ -64,6 +64,7 @@ class ViewGroups extends Component {
             );
         }
         else if(item_id=='2'){/* number */
+            //'':{'style':'','title':'', 'subtitle':'', 'barwidth':'', 'number':'', 'relativepower':''},
             var style = object_data != null ? object_data['style']: 'l'
             var title = object_data != null ? object_data['title']:'Post Block Number'
             var subtitle = object_data != null ? object_data['subtitle']:'depth'

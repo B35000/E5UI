@@ -469,7 +469,7 @@ class PostListSection extends Component {
         return{
             'tags':{'active_tags':[''+token_id, ''+type, 'token'], 'index_option':'indexed', 'when_tapped':''},
             'label':{'title':'Token Id: '+token_id,'details':'Token Type: '+type, 'size':'l', 'image':img},
-            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(supply), 'number':`${this.format_account_balance_figure(supply)}`, 'barcolor':'#606060', 'relativepower':'supply',}
+            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(supply), 'number':`${this.format_account_balance_figure(supply)}`, 'barcolor':'#606060', 'relativepower':'balance',}
         }
     }
 
