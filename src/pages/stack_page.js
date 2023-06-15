@@ -269,6 +269,7 @@ class StackPage extends Component {
 
                 {this.render_detail_item('3',{'title':'Wallet Thyme', 'details':'Set the preferred thyme for your wallet', 'size':'l'})}
                 <Tags page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('5',{'text':'Set Wallet','action':'when_set_wallet_button_tapped'})}
                 {this.render_detail_item('0')}
@@ -293,7 +294,7 @@ class StackPage extends Component {
         }
 
         if(this.state.added_tags.length == 0){
-            this.props.notify('set your wallets seed', 200)
+            this.props.notify('set your wallets seed', 600)
         }
         else if(this.state.set_salt == 0){
             this.props.notify('set a salt', 200)
@@ -344,13 +345,25 @@ class StackPage extends Component {
     render_set_wallet_data(){
         return(
             <div>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 10px 0px 10px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                
+                {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
-                    </div>
+                </div>
+                
+                
             </div>
         )
+    }
+
+    get_account_address(){
+        if(this.props.app_state.account != null){
+            return this.props.app_state.account.address;
+        }
     }
 
     get_balance_amount_in_wei(){

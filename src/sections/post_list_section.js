@@ -3,6 +3,9 @@ import Letter from './../assets/letter.png';
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 import ViewGroups from './../components/view_groups';
 
+import EndImg from './../assets/end_token_icon.png';
+import SpendImg from './../assets/spend_token_icon.png';
+
 
 function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -62,9 +65,12 @@ class PostListSection extends Component {
             }
         }
         else if(selected_page == 'w'){
-            var selected_tag = this.props.wallet_page_tags_object['i'].active
-            var selected_item = this.props.wallet_page_tags_object['e'][2][0];
-            var selected_option_name = this.props.wallet_page_tags_object['e'][1][selected_item];
+            // var selected_tag = this.props.wallet_page_tags_object['i'].active
+            // var selected_item = this.props.wallet_page_tags_object['e'][2][0];
+            // var selected_option_name = this.props.wallet_page_tags_object['e'][1][selected_item];
+
+            var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
+
             if(selected_option_name == 'ethers ⚗️' || selected_option_name == 'e'){
                 return(
                 <div>{this.render_ethers_list_group()}</div>
@@ -82,6 +88,12 @@ class PostListSection extends Component {
             }
         }
 
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
     }
 
     
@@ -394,31 +406,84 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = ['0','1','2','3'];
+        var items = this.get_exchange_tokens(3)
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_ends_object()}
+                        <li onClick={() => this.when_ends_object_clicked(index)} style={{'padding': '5px'}}>
+                            {this.render_ends_object(item['data'], index, item['id'])}
                         </li>
                     ))}
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
                 </ul>
             </div>
         );
     }
 
-    render_ends_object(){
+    get_exchange_tokens(exchange_type){
+        var token_exchanges = []
+        var exchanges_from_sync = this.props.app_state.E15_exchange_data;
+        var exchange_ids_from_sync = this.props.app_state.E15_exchange_id_data
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var type = exchanges_from_sync[i][0][3/* <3>token_type */]
+            if(type == exchange_type){
+                token_exchanges.push({'data': exchanges_from_sync[i], 'id':exchange_ids_from_sync[i], 'E5': 'E15'})
+            }
+        }
+        return token_exchanges
+    }
+
+    render_ends_object(object_array, index, token_id){
         var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.get_exchanges_data(object_array, token_id)
+        return ( 
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 10px 0px 10px'}}>
+                        {this.render_detail_item('8', item['label'])}
                     </div>
-                    
-                </div>
-            );
+                    <div style={{height: 20}}/>
+                    {this.render_detail_item('2', item['number_label'])}
+                </div>         
+            </div>
+        );
+    }
+
+    when_ends_object_clicked(index){
+        this.props.when_ends_object_clicked(index)
+    }
+
+    get_exchanges_data(object_array, token_id){
+        var type = object_array[0][3/* <3>token_type */] == 3 ? 'end': 'spend'
+        var img = object_array[0][3/* <3>token_type */]  == 3 ? EndImg: SpendImg
+        var supply = object_array[2][2/* <2>token_exchange_liquidity/total_supply */]
+        return{
+            'tags':{'active_tags':[''+token_id, ''+type, 'token'], 'index_option':'indexed', 'when_tapped':''},
+            'label':{'title':'Token Id: '+token_id,'details':'Token Type: '+type, 'size':'l', 'image':img},
+            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(supply), 'number':`${this.format_account_balance_figure(supply)}`, 'barcolor':'#606060', 'relativepower':'supply',}
+        }
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
     }
 
 
@@ -429,31 +494,48 @@ class PostListSection extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = ['0','1','2','3'];
+        var items = this.get_exchange_tokens(5)
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_spends_object()}
+                        <li onClick={() => this.when_spends_object_item_clicked(index)} style={{'padding': '5px'}}>
+                            {this.render_ends_object(item['data'], index, item['id'])}
                         </li>
                     ))}
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
                 </ul>
             </div>
         );
     }
 
-    render_spends_object(){
+    render_spends_object(object_array, index, token_id){
         var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.get_exchanges_data(object_array, token_id)
+        return ( 
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 10px 0px 10px'}}>
+                        {this.render_detail_item('8', item['label'])}
                     </div>
-                    
-                </div>
-            );
+                    <div style={{height: 20}}/>
+                    {this.render_detail_item('2', item['number_label'])}
+                </div>         
+            </div>
+        );
+    }
+
+    when_spends_object_item_clicked(index){
+        console.log('selected: '+index);
+        this.props.when_spends_object_clicked(index)
     }
 
     render_empty_object(){

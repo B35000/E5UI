@@ -257,32 +257,7 @@ class App extends Component {
     const account = web3.eth.accounts.privateKeyToAccount(privateKey);
     this.setState({account: account});
 
-    let block = await web3.eth.getBlock('latest');
-    let number = block.number;
-    const targetAddress = account.address;
-    var transactions = []
-    var start = 0;
-    const blocks_checked = 50;
-    if(number > blocks_checked){
-      start = number - blocks_checked
-    }
-    for (let i = start; i <= number; i++) {
-      web3.eth.getBlock(i).then(block => {
-        let txs = block.transactions;
-        if (block != null && txs != null) {
-          for (let txHash of txs) {
-
-            web3.eth.getTransaction(txHash).then(tx => {
-              if (targetAddress == tx.to || targetAddress == tx.from) {
-                transactions.push(tx)
-                this.setState({account_transaction_history: transactions})
-              }
-            })
-            
-          }
-        }
-      });
-    }
+    this.get_transaction_history(account)
     this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
 
     web3.eth.getBalance(account.address).then(balance => {
@@ -347,8 +322,7 @@ class App extends Component {
       if (error) {
         console.error(error);
       } else {
-        console.log(result); 
-        this.setState({E15_main_contract_data: result[0], syncronizing_progress:this.state.syncronizing_progress+incr_count});
+        this.setState({E15_contract_data: result, syncronizing_progress:this.state.syncronizing_progress+incr_count});
       }
     });
 
@@ -360,8 +334,7 @@ class App extends Component {
       if (error) {
         console.error(error);
       } else {
-        console.log(result); 
-        this.setState({E15_End_exchange: result[0], E15_Spend_exchange: result[1], should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+incr_count});
+        this.setState({E15_exchange_data: result, E15_exchange_id_data:token_ids, should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+incr_count});
         this.prompt_top_notification('syncronized!', 500);
       }
     });
@@ -446,12 +419,7 @@ class App extends Component {
     var seed = added_tags.join(' | ') + set_salt + selected_item;
 
     const web3 = new Web3('http://127.0.0.1:8545/');
-    const mnemonic = seed.trim();
-    const seedBytes = mnemonicToSeedSync(mnemonic);
-    const hdNode = ethers.utils.HDNode.fromSeed(seedBytes);
-    const wallet = new ethers.Wallet(hdNode.privateKey);
-
-    const account = web3.eth.accounts.privateKeyToAccount(wallet.privateKey);
+    const account = this.get_account_from_seed(seed);
     this.setState({account: account});
 
     web3.eth.getBalance(account.address).then(balance => {
@@ -460,9 +428,52 @@ class App extends Component {
     }).catch(error => {
       console.error('Error:', error);
     });
+
+    this.get_transaction_history(account)
+  }
+
+  get_account_from_seed(seed){
+    const web3 = new Web3('http://127.0.0.1:8545/');
+    const mnemonic = seed.trim();
+    const seedBytes = mnemonicToSeedSync(mnemonic);
+    const hdNode = ethers.utils.HDNode.fromSeed(seedBytes);
+    const wallet = new ethers.Wallet(hdNode.privateKey);
+
+    const account = web3.eth.accounts.privateKeyToAccount(wallet.privateKey);
+    return account;
   }
 
 
+  get_transaction_history = async (account) => {
+    const web3 = new Web3('http://127.0.0.1:8545/');
+    
+    let block = await web3.eth.getBlock('latest');
+    let number = block.number;
+    const targetAddress = account.address;
+    var transactions = []
+    var start = 0;
+    const blocks_checked = 50;
+    if(number > blocks_checked){
+      start = number - blocks_checked
+    }
+    for (let i = start; i <= number; i++) {
+      web3.eth.getBlock(i).then(block => {
+        let txs = block.transactions;
+        if (block != null && txs != null) {
+          for (let txHash of txs) {
+
+            web3.eth.getTransaction(txHash).then(tx => {
+              if (targetAddress == tx.to || targetAddress == tx.from) {
+                transactions.push(tx)
+                this.setState({account_transaction_history: transactions})
+              }
+            })
+            
+          }
+        }
+      });
+    }
+  }
 
 
 }

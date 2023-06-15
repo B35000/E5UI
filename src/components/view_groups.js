@@ -141,7 +141,7 @@ class ViewGroups extends Component {
                return (
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                     <div className="row" style={{height:'100%', width:'100%'}}>
-                        <div className="col-3">
+                        <div className="col-2">
                             <img src={img} style={{height:40 ,width:'auto'}} />
                         </div>
                         <div className="col">

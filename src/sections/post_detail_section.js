@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+
 import Letter from './../assets/letter.png'; 
 import EthereumTestnet from './../assets/ethereum_testnet.png';
+import EndImg from './../assets/end_token_icon.png';
+import SpendImg from './../assets/spend_token_icon.png';
+import E35EndImg from './../assets/e35_end_token.png';
+import E35SpendImg from './../assets/e35_spend_token.png';
 
+var bigInt = require("big-integer");
+
+
+function bgN(number, power) {
+  return bigInt((number+"e"+power)).toString();
+}
 
 function number_with_commas(x) {
     if(x == null) x = '';
@@ -17,9 +28,34 @@ class PostDetailSection extends Component {
     state = {
         selected: 0,
         navigate_view_ethers_list_detail_tags_object: this.get_navigate_view_ethers_list_detail_tags(),
+        navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(),
+        navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(),
     };
 
     get_navigate_view_ethers_list_detail_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['or','',0], ['e','details','transactions'],[0]
+          ],
+        }
+    }
+
+    get_navigate_view_end_list_detail_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['or','',0], ['e','details','transactions'],[0]
+          ],
+        }
+    }
+
+
+    get_navigate_view_spend_list_detail_tags(){
         return{
           'i':{
               active:'e', 
@@ -133,7 +169,6 @@ class PostDetailSection extends Component {
 
 
     render_ethers_list_detail(){
-        
         if(this.props.selected_ether_item == null){
             return(
                 <div>
@@ -207,7 +242,7 @@ class PostDetailSection extends Component {
                     {this.render_detail_item('3', item['gas_used_chart_data_label'])}
                     {this.render_detail_item('6', item['gas_used_chart_data'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['gas_used_chart_data_average'])}
+                    {/* {this.render_detail_item('3', item['gas_used_chart_data_average'])} */}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['highest_gas_consumed'])}
                     <div style={{height: 10}}/>
@@ -234,6 +269,37 @@ class PostDetailSection extends Component {
 
     when_navigate_view_ethers_list_detail_tags_object_updated(tag_group){
         this.setState({navigate_view_ethers_list_detail_tags_object: tag_group})
+    }
+
+    get_ethers_data(){
+        return [
+            {
+                'name': 'Ethereum Testnet',
+                'symbol': 'ETHT',
+                'image': EthereumTestnet,
+                'label':{'title':'ETHT', 'details':'Ethereum Testnet', 'size':'l', 'image': EthereumTestnet},
+                'tags':{'active_tags':['Ethereum', 'Ether', 'EVM', 'Chain'], 'index_option':'indexed'},
+                'number_label':this.get_blockchain_data('s'),
+                'number_label_large': this.get_blockchain_data('l'),
+                'banner-icon':{'header':'ETHT', 'subtitle':'Ethereum Testnet', 'image':EthereumTestnet},
+                'chain_id':{'title':this.props.app_state.chain_id, 'details':'Chain ID', 'size' :'l'},
+                'peer_count':{'title':this.props.app_state.number_of_peers, 'details':'Number of Peers', 'size' :'l'},
+                'network_type':{'title':this.props.app_state.network_type, 'details':'Network Type', 'size' :'l'},
+                
+                'gas_used_chart_data_label':{'title':'Gas Used', 'details':'Amount of gas used in the last 100 blocks', 'size' :'l'},
+                'gas_used_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_gas_used_data_points()},
+                'gas_used_chart_data_average':{'title':number_with_commas(this.get_gas_used_data_point_average()), 'details':'Average Gas Used', 'size' :'l'},
+                'highest_gas_consumed':{'title':number_with_commas(this.get_highest_gas_figure()), 'details':'Highest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
+                'lowest_gas_consumed':{'title':number_with_commas(this.get_lowest_gas_figure()), 'details':'Lowest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
+
+                'transaction_count_chart_data_label':{'title':'Transactions Processed', 'details':'Amount of transactions processed in the last 100 blocks', 'size' :'l'},
+                'transaction_count_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points()},
+                
+
+                'gas_limit':{'title':number_with_commas(this.get_latest_block_data().gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
+                'base_fee_per_gas':{'title':number_with_commas(this.get_latest_block_data().baseFeePerGas), 'details':'Base Fee per Gas Unit', 'size' :'l'},
+            }
+        ]
     }
 
     render_block_history_logs(){
@@ -297,50 +363,297 @@ class PostDetailSection extends Component {
         }
     }
 
-    /* gets a formatted time diffrence from now to a given time */
-    get_time_difference(time){
-        var number_date = Math.round(parseInt(time));
-        var now = Math.round(new Date().getTime()/1000);
 
-        var diff = now - number_date;
-        if(diff < 60){//less than 1 min
-            return 'now';
-        }
-        else if(diff < 60*60){//less than 1 hour
-            var num = Math.floor(diff/(60));
-            var s = num > 1 ? 's': '';
-            return num + ' min' 
-        }
-        else if(diff < 60*60*24){//less than 24 hours
-            var num = Math.floor(diff/(60*60));
-            var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
-        }
-        else if(diff < 60*60*24*7){//less than 7 days
-            var num = Math.floor(diff/(60*60*24));
-            var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
-        }
-        else if(diff < 60*60*24*7*53){//less than 1 year
-            var num = Math.floor(diff/(60*60*24*7));
-            var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
-        }
-        else {//more than a year
-            var num = Math.floor(diff/(60*60*24*7*53));
-            var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
-        }
-    }
+
+
+
+
+
+
 
     render_ends_list_detail(){
+        if(this.props.selected_end_item == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_end_details_section()}
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                        <Tags page_tags_object={this.state.navigate_view_end_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_end_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_navigate_view_end_list_detail_tags_object_updated(tag_group){
+        this.setState({navigate_view_end_list_detail_tags_object: tag_group})
+    }
+
+    render_end_details_section(){
+        var selected_item = this.get_selected_item(this.state.navigate_view_end_list_detail_tags_object, this.state.navigate_view_end_list_detail_tags_object['i'].active)
+
+        if(selected_item == 'details' || selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_end_main_details_section()}
+                </div>
+            )
+        }else if(selected_item == 'transactions'){
+            return(
+                <div>
+                    {this.render_end_block_history_logs()}
+                </div>
+            )
+            
+        }
+    }
+
+    render_end_main_details_section(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-70
+        var size = this.props.screensize
+        if(size == 'm'){
+            he = this.props.height-190;
+        }
+        var item = this.get_end_data();
+                return(
+            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('3', item['token_type'])}
+                    <div style={{height:10}}/>
+                    
+                    {this.render_detail_item('3', item['unlocked_supply'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['unlocked_liquidity'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['fully_custom'])}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['buy_limit'])}
+                    </div>
+                    
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    get_end_data(){
+        var selected_item = this.props.selected_end_item
+        var selected_object = this.get_exchange_tokens(3)[selected_item]
+        var title = selected_object['id'];
+        var img = selected_object['img']
+        
+        var selected_obj_root_config = selected_object['data'][0];
+        var selected_obj_config = selected_object['data'][1];
+        var selected_obj_ratio_config = selected_object['data'][2];
+
+        var type = selected_obj_root_config[3] == 3 ? 'Capped' : 'Uncapped'
+
+        if(title == 3){
+            title = 'END'
+        }
+        
+        return{
+            'banner-icon':{'header':title, 'subtitle':'Exchange', 'image':img},
+            'token_id': {'title':'ID: '+selected_object['id'], 'details':'Token Identifier', 'size':'l'},
+            'token_type': {'title':'Token Type', 'details':type, 'size':'l'},
+
+            'unlocked_supply': {'title':'Unlocked Supply', 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
+            'unlocked_liquidity': {'title':'Unlocked Liquidity', 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
+            'fully_custom': {'title':'Fully Custom', 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
+
+            'buy_limit':{'style':'l','title':'Buy Limit', 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':'tokens'},
+            '':{},
+            '':{},
+            '':{},
+            '':{},
+            '':{},
+            '':{},
+            '':{},
+
+        }
+    }
+
+    enabled_disabled(value){
+        if(value == 1){
+            return 'enabled'
+        }
+        return 'disabled'
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
+    calculate_bar_width(amount){
+        var figure = ''
+        if(amount == null){
+            amount = 0
+        }
+        if(amount < bigInt('1e9')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
+        }
+        else if(amount < bigInt('1e18')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
+        }
+        else if(amount < bigInt('1e36')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
+        }
+        else{
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
+        }
+
+        return figure+'%'
+    }
+
+
+    format_power_figure(amount){
+        var power = 'e72'
+        if(amount < bigInt('1e9')){
+            power = 'e9'
+        }
+        else if(amount < bigInt('1e18')){
+            power = 'e18'
+        }
+        else if(amount < bigInt('1e36')){
+            power = 'e36'
+        }
+        else{
+            power = 'e72'
+        }
+        return power
+    }
+
+    get_exchange_tokens(exchange_type){
+        var token_exchanges = []
+        var exchanges_from_sync = this.props.app_state.E15_exchange_data;
+        var exchange_ids_from_sync = this.props.app_state.E15_exchange_id_data
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var type = exchanges_from_sync[i][0][3/* <3>token_type */]
+            
+            var img = type  == 3 ? EndImg: SpendImg
+            if(exchange_ids_from_sync[i] == 3) img = E35EndImg
+            else if(exchange_ids_from_sync[i] == 5) img = E35SpendImg
+            
+            if(type == exchange_type){
+                token_exchanges.push({'data': exchanges_from_sync[i], 'id':exchange_ids_from_sync[i], 'E5': 'E15', 'img':img}, )
+            }
+        }
+        return token_exchanges
+    }
+
+
+    render_end_block_history_logs(){
 
     }
+
+
+
 
 
     render_spends_list_detail(){
-
+        if(this.props.selected_spend_item == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_spend_details_section()}
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                        <Tags page_tags_object={this.state.navigate_view_spend_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_spend_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                </div>
+            )
+        }
     }
+
+    when_navigate_view_spend_list_detail_tags_object_updated(tag_group){
+        this.setState({navigate_view_spend_list_detail_tags_object: tag_group})
+    }
+
+    render_spend_details_section(){
+        var selected_item = this.get_selected_item(this.state.navigate_view_spend_list_detail_tags_object, this.state.navigate_view_spend_list_detail_tags_object['i'].active)
+
+        if(selected_item == 'details' || selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_spend_main_details_section()}
+                </div>
+            )
+        }else if(selected_item == 'transactions'){
+            return(
+                <div>
+                    {this.render_spend_block_history_logs()}
+                </div>
+            )
+            
+        }
+    }
+
+    render_spend_main_details_section(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-70
+        var size = this.props.screensize
+        if(size == 'm'){
+            he = this.props.height-190;
+        }
+        var item = this.get_spend_data();
+        return(
+            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    
+                    {this.render_detail_item('7', item['banner-icon'])}
+                
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    get_spend_data(){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+        var title = selected_object['id'];
+        var img = selected_object['img']
+        if(title == 5){
+            title = 'SPEND'
+        }
+        
+        return{
+            'banner-icon':{'header':title, 'subtitle':'Exchange', 'image':img},
+        }
+    }
+
+
+
+
+
 
 
     render_empty_detail_object(){
@@ -376,36 +689,7 @@ class PostDetailSection extends Component {
     }
 
 
-    get_ethers_data(){
-        return [
-            {
-                'name': 'Ethereum Testnet',
-                'symbol': 'ETHT',
-                'image': EthereumTestnet,
-                'label':{'title':'ETHT', 'details':'Ethereum Testnet', 'size':'l', 'image': EthereumTestnet},
-                'tags':{'active_tags':['Ethereum', 'Ether', 'EVM', 'Chain'], 'index_option':'indexed'},
-                'number_label':this.get_blockchain_data('s'),
-                'number_label_large': this.get_blockchain_data('l'),
-                'banner-icon':{'header':'ETHT', 'subtitle':'Ethereum Testnet', 'image':EthereumTestnet},
-                'chain_id':{'title':this.props.app_state.chain_id, 'details':'Chain ID', 'size' :'l'},
-                'peer_count':{'title':this.props.app_state.number_of_peers, 'details':'Number of Peers', 'size' :'l'},
-                'network_type':{'title':this.props.app_state.network_type, 'details':'Network Type', 'size' :'l'},
-                
-                'gas_used_chart_data_label':{'title':'Gas Used', 'details':'Amount of gas used in the last 100 blocks', 'size' :'l'},
-                'gas_used_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_gas_used_data_points()},
-                'gas_used_chart_data_average':{'title':number_with_commas(this.get_gas_used_data_point_average()), 'details':'Average Gas Used', 'size' :'l'},
-                'highest_gas_consumed':{'title':number_with_commas(this.get_highest_gas_figure()), 'details':'Highest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
-                'lowest_gas_consumed':{'title':number_with_commas(this.get_lowest_gas_figure()), 'details':'Lowest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
 
-                'transaction_count_chart_data_label':{'title':'Transactions Processed', 'details':'Amount of transactions processed in the last 100 blocks', 'size' :'l'},
-                'transaction_count_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points()},
-                
-
-                'gas_limit':{'title':number_with_commas(this.get_latest_block_data().gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
-                'base_fee_per_gas':{'title':number_with_commas(this.get_latest_block_data().baseFeePerGas), 'details':'Base Fee per Gas Unit', 'size' :'l'},
-            }
-        ]
-    }
 
     get_blockchain_data(size){
         return{
@@ -541,6 +825,43 @@ class PostDetailSection extends Component {
                     
                 </div>
             );
+    }
+
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        if(diff < 60){//less than 1 min
+            return 'now';
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + ' min' 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + ' hr' + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + ' dy' + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + ' wk' + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + ' yr' + s;
+        }
     }
 
 
