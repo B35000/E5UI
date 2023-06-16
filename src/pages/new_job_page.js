@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups';
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
+import Letter from './../assets/letter.png';
+import E5EmptyIcon from './../assets/e5empty_icon.png';
+import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
+
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 const Web3 = require('web3');
 
@@ -16,7 +22,7 @@ class NewJobPage extends Component {
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
-        entered_indexing_tags:[]
+        entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
     };
 
     get_new_job_page_tags_object(){
@@ -25,7 +31,7 @@ class NewJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images', 'video'], [0]
+                ['or','',0], ['e','text', 'images'], [0]
             ],
         };
     }
@@ -47,14 +53,19 @@ class NewJobPage extends Component {
         };
     }
 
+
+
+
+
     render(){
         return(
-            <div style={{'margin':'10px 0px 0px 10px'}}>
+            <div style={{'padding':'10px 20px 0px 10px'}}>
+
                 <div className="row">
-                    <div className="col-9" style={{'margin': '0px 0px 0px 10px'}}>
+                    <div className="col-10" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-2" style={{'margin': '0px 0px 0px 50px'}}>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
                     </div>
                 </div>
@@ -119,8 +130,8 @@ class NewJobPage extends Component {
         if(size == 's'){
             return(
                 <div>
-                    {this.render_tags_part()}
-                    {this.render_detail_item('0')}
+                    {this.render_title_tags_part()}
+                    
                     {this.render_new_job_object()}
                 </div>
             )
@@ -129,7 +140,7 @@ class NewJobPage extends Component {
             return(
                 <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
                     <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_tags_part()}
+                        {this.render_title_tags_part()}
                     </div>
                     <div className="col-6">
                         {this.render_new_job_object()}
@@ -140,7 +151,7 @@ class NewJobPage extends Component {
         }
     }
 
-    render_tags_part(){
+    render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new job'})}
@@ -148,7 +159,7 @@ class NewJobPage extends Component {
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Job, then tap a tag to remove it.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Job'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
@@ -159,8 +170,14 @@ class NewJobPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_title_text_input_field_changed(text){
+        this.setState({entered_title_text: text})
     }
 
     when_index_text_input_field_changed(text){
@@ -198,11 +215,11 @@ class NewJobPage extends Component {
         this.props.notify('tag removed', 200)
     }
 
-    when_title_text_input_field_changed(text){
-        this.setState({entered_title_text: text})
-    }
+   
 
 
+
+    
     render_new_job_object(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -221,12 +238,14 @@ class NewJobPage extends Component {
 
 
 
+
+
     render_enter_text_part(){
         var size = this.props.size
 
         if(size == 's'){
             return(
-                <div>
+                <div style={{'padding': '0px 10px 0px 0px'}}>
                     {this.render_text_part()}
                     {this.render_detail_item('0')}
                     {this.render_entered_texts()}
@@ -282,25 +301,150 @@ class NewJobPage extends Component {
     }
 
     when_add_text_button_tapped(){
+        var typed_word = this.state.entered_text.trim();
 
+        if(typed_word == ''){
+            this.props.notify('type something!', 400)
+        }else{
+            var entered_text = this.get_edited_text_object()
+            var cloned_entered_text_array = this.state.entered_text_objects.slice()
+            cloned_entered_text_array.push(entered_text);
+            this.setState({entered_text_objects: cloned_entered_text_array, entered_text:''})
+        }
     }
 
     render_entered_texts(){
-
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.entered_text_objects
+        return ( 
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.reverse().map((item, index) => (
+                        <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>
+                            {this.render_detail_item('4',item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
     }
+
+    when_text_clicked(item){
+        var cloned_array = this.state.entered_text_objects.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_text_objects: cloned_array})
+    }
+
 
 
 
 
 
     render_enter_image_part(){
+        var size = this.props.size
 
+        return(
+            <div style={{'padding': '10px 10px 0px 0px'}}>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Black picks gif, grey picks image'})}
+                {this.render_create_image_ui_buttons_part()}
+                {this.render_image_part()}
+                
+            </div>
+        )
     }
 
-    render_enter_video_part(){
+    /* renders the buttons for pick images, set images and clear images */
+    render_create_image_ui_buttons_part(){
+      return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+            </div>
 
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+            </div>
+
+        </div>
+      )
     }
 
+    /* called when images have been picked from picker */
+    when_image_gif_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
+                    clonedArray.push(ev.target.result);
+                    this.setState({entered_image_objects: clonedArray});
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            this.props.notify('Your selected '+e.target.files.length+image+' been added.',500);
+        }
+    }
+
+    render_image_part(){
+        var size = this.props.size
+        var col = Math.round(this.props.app_state.width / 100)
+        var rowHeight = 100;
+
+        if(this.state.entered_image_objects.length == 0){
+            var items = ['1','1','1']
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            var items = this.state.entered_image_objects
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div onClick={() => this.when_image_clicked(index)}>
+                                    <img src={item} style={{height:100 ,width:100}} />
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+    when_image_clicked(index){
+        var cloned_array = this.state.entered_image_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_image_objects: cloned_array})
+    }
 
 
 
@@ -308,7 +452,7 @@ class NewJobPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)}/>
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} />
             </div>
         )
 
