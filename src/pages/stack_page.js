@@ -255,10 +255,17 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':'Wallet Seed', 'details':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove', 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <TextInput height={30} placeholder={'Enter word...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
+                <div className="row">
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Enter word...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
+                        {this.render_detail_item('5',{'text':'Add','action':'when_add_word_button_tapped'})}
+                    </div>
+                </div>
 
                 {this.render_detail_item('1',{'active_tags':this.state.added_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_seed_word'})}
-                {this.render_detail_item('5',{'text':'Add Word','action':'when_add_word_button_tapped'})}
+                
 
                 {this.render_detail_item('0')}
 

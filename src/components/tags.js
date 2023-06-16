@@ -191,6 +191,18 @@ class tags extends Component {
                       }
                   } 
               }
+              if(options_type == 'xor'){
+                  //set the option picked
+                  if(prev_item.startsWith('v.')){
+                      clone[prev_item_tag][3/* chain_options */][0] = pos;/* record the selected tag position in the chain options array */
+                      clone[prev_item_tag+active] = pos;
+                  }
+                  else{
+                      if(clone[active][2/* selected_options */][0] != pos){
+                          clone[active][2/* selected_options */][0] = pos;/* record the selected tag position in the selected options array */
+                      }
+                  } 
+              }
               else if(options_type == 'and'){
                   var array_pos = 2/* selected_options */;
                   var modify_item = active;

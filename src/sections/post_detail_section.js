@@ -476,9 +476,10 @@ class PostDetailSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['base_fee_per_gas'])}
                     {this.render_detail_item('0')}
-
+                    
+                    <div style={{height:10}}/>
                     {this.render_detail_item('5', {'text':'Send Receive Ether', 'action': 'send_receive_ether'})}
-
+                    <div style={{height:10}}/>
                     {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
 
                     {this.render_detail_item('0')}
@@ -707,9 +708,9 @@ class PostDetailSection extends Component {
                     </div>
 
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
-                    
+                    <div style={{height:10}}/>
                     {this.render_detail_item('5', item['mint_burn_button'])}
-
+                    <div style={{height:10}}/>
                     {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
 
                     {this.render_detail_item('0')}
@@ -1027,9 +1028,10 @@ class PostDetailSection extends Component {
                     </div>
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
-
+                    
+                    <div style={{height:10}}/>
                     {this.render_detail_item('5', item['mint_burn_button'])}
-
+                    <div style={{height:10}}/>
                     {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
                     
 

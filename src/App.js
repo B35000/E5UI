@@ -293,7 +293,7 @@ class App extends Component {
     if(target == '0'){
       return(
         <div>
-          <NewJobPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} />
+          <NewJobPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} />
         </div>
       )
     }
@@ -508,6 +508,8 @@ class App extends Component {
     const web3 = new Web3('http://127.0.0.1:8545/');
     
     let block = await web3.eth.getBlock('latest');
+    this.setState({current_block: block});
+
     let number = block.number;
     const targetAddress = account.address;
     var transactions = []

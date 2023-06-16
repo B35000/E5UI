@@ -197,7 +197,7 @@ class ViewGroups extends Component {
               action = object_data['action']
             }
             return(
-                <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'10px 0px 10px 5px','padding': '0px 0px 0px 0px'}}>
+                <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <button style={{'background-color': '#444444', 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize'}}>
                       {text}
                     </button>
@@ -338,6 +338,12 @@ class ViewGroups extends Component {
         else if(action_id == 'open_wiki'){
             this.props.open_wiki()
         }
+        else if(action_id == 'add_indexing_tag'){
+            this.props.add_indexing_tag_for_new_job()
+        }
+        else if(action_id == 'when_add_text_button_tapped'){
+            this.props.when_add_text_button_tapped()
+        }
     }
 
     when_tag_item_clicked(tag, pos, action_id){
@@ -346,6 +352,9 @@ class ViewGroups extends Component {
         }
         else if(action_id == 'delete_entered_seed_word'){
             this.props.delete_entered_seed_word(tag, pos)
+        }
+        else if(action_id == 'delete_entered_tag_word'){
+            this.props.delete_entered_tag(tag, pos)
         }
     }
 

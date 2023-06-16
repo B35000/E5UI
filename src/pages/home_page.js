@@ -369,7 +369,7 @@ class home_page extends Component {
       }
       else if(this.state.page == 'e'){
         var selected_item = this.state.explore_page_tags_object['i'].active
-        var data = {'E5s':'5','posts':'6','channels':'7'};
+        var data = {'posts':'6','channels':'7'};
         if(data[selected_item] == null) return ''
         return data[selected_item];
       }
