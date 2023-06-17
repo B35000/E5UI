@@ -434,6 +434,7 @@ class SendReceiveEtherPage extends Component {
         
     }
 
+
     calculate_bar_width(amount){
         var figure = ''
         if(amount == null){
@@ -476,7 +477,7 @@ class SendReceiveEtherPage extends Component {
     render_amount_number_picker(){
         return(
             <div>
-                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance)}/>
             </div>
         )
     }
@@ -484,9 +485,18 @@ class SendReceiveEtherPage extends Component {
     render_gas_price_number_picker(){
         return(
             <div>
-                <NumberPicker number_limit={bigInt('1e15')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance)}/>
             </div>
         )
+    }
+
+    get_balance_power_limit(balance){        
+        if(balance < 1_000_000_000){
+            return 0
+        }else{
+            var power = balance.toString().length - 9
+            return power
+        }
     }
 
     when_new_gas_price_figure_set(amount){

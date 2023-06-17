@@ -66,7 +66,10 @@ class NewJobPage extends Component {
                         <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
+                        <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
+                            {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
+                        </div>
+                        
                     </div>
                 </div>
                 
@@ -340,6 +343,7 @@ class NewJobPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_text_objects: cloned_array})
+        
     }
 
 
@@ -456,6 +460,27 @@ class NewJobPage extends Component {
             </div>
         )
 
+    }
+
+
+
+    finish_creating_object(){
+        var index_tags = this.state.entered_indexing_tags
+        var title = this.state.entered_title_text
+        var texts = this.state.entered_text_objects
+        var images = this.state.entered_image_objects
+        var id = Math.round(new Date().getTime()/1000);
+
+        if(index_tags.length == 0){
+            this.props.notify('add some tags first!', 700)
+        }
+        else if(title == ''){
+            this.props.notify('add a title for your post', 700)
+        }else{
+            var obj = {'tags':index_tags, 'title':title, 'texts':texts, 'images': images, 'id':id, 'type': 'job'}
+            this.props.create_job_object(obj)
+            this.props.notify('transaction added to stack', 700);
+        }
     }
 
 }
