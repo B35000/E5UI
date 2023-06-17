@@ -74,7 +74,7 @@ class ViewGroups extends Component {
             var relativepower = object_data != null ? object_data['relativepower']:'500 blocks'
             if(style == 's'){
               return ( 
-                  <div style={{'margin': '0px 20px 0px 20px'}}>                   
+                  <div style={{'margin': '0px 10px 0px 10px'}}>                   
                       <div style={{ height: 2, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
                           <div className="progress" style={{ height: 2, width: "100%", 'background-color': '#BFBFBF' }}>
                               <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>

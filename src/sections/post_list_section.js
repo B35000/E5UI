@@ -31,7 +31,12 @@ class PostListSection extends Component {
         var selected_page = this.props.page;
         if(selected_page == '?'){
             var selected_tag = this.props.work_page_tags_object['i'].active
-            if(selected_tag == 'contracts' || selected_tag == 'e'){
+            if(selected_tag == 'jobs' || selected_tag == 'e'){
+                return(
+                <div>{this.render_jobs_list_group()}</div>
+                )
+            }
+            else if(selected_tag == 'contracts'){
                 return(
                 <div>{this.render_contracts_list_group()}</div>
                 )
@@ -92,6 +97,76 @@ class PostListSection extends Component {
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
+
+    render_jobs_list_group(){
+       var middle = this.props.height-123;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var jobs_in_stack = this.fetch_created_job_posts();
+        return ( 
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {jobs_in_stack.map((item, index) => (
+                        <li style={{'padding': '5px'}}>
+                            {this.render_stack_job_item(item, index)}
+                        </li>
+                    ))}
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
+                </ul>
+            </div>
+        ); 
+    }
+
+    fetch_created_job_posts(){
+        return this.props.app_state.created_object_array
+    }
+
+    render_stack_job_item(item_data, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.get_stack_job_item_object(item_data)
+        return ( 
+            <div onClick={() => this.when_job_post_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('4', item['title'])}
+                    </div>
+                    <div style={{height: 20}}/>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['id'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        );
+    }
+
+    get_stack_job_item_object(item_data){
+        return{
+            'tags':{'active_tags':item_data['tags'], 'index_option':'indexed'},
+            'title':{'text':item_data['title'], 'font':'Sans-serif', 'textsize':'15px'},
+            'id': { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(item_data['id']), 'number':`${number_with_commas(item_data['id'])}`, 'barcolor':'', 'relativepower':'stack ID', }
+        }
+    }
+
+    when_job_post_item_clicked(item){
+        this.props.when_job_post_item_clicked(item)
+    }
+
+    render_job_object(item, index){
+
+    }
+
+
 
     
     render_contracts_list_group(){
@@ -213,6 +288,12 @@ class PostListSection extends Component {
                             {this.render_E5s_object(item['data'], index, item['id'])}
                         </li>
                     ))}
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
+                    <div style={{'padding': '5px'}}>
+                        {this.render_empty_object()}
+                    </div>
                 </ul>
             </div>
         );
@@ -567,6 +648,11 @@ class PostListSection extends Component {
         console.log('selected: '+index);
         this.props.when_spends_object_clicked(index)
     }
+
+
+
+
+
 
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']

@@ -13,6 +13,7 @@ import Tags from './../components/tags';
 import PostDetailSection from '../sections/post_detail_section';
 import PostListSection from './../sections/post_list_section';
 
+
 import CanvasJSReact from './../externals/canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -37,7 +38,7 @@ class home_page extends Component {
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
         selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null,
-        view_post_bottomsheet: false, 
+        view_post_bottomsheet: false
     };
 
 
@@ -150,6 +151,7 @@ class home_page extends Component {
                     </div>
 
                     {this.render_view_object_bottomsheet()}
+                    
                 </div>
             );
         }
@@ -432,9 +434,7 @@ class home_page extends Component {
     }
 
 
-
-
-
+    
     
 
 
@@ -442,7 +442,8 @@ class home_page extends Component {
     render_post_list_group(size){
         return(
             <PostListSection size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} 
-            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)}
+            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)}
+
             open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme}/>
         )
     }
@@ -476,16 +477,38 @@ class home_page extends Component {
         }
     }
 
+    when_job_post_item_clicked(item){
+        this.setState({selected_job_post_item: item})
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
+
+
+
+
+
     render_post_detail_object(size){
         return(
             <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} 
 
-            selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item}
+            selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item}
 
-            height={this.props.height} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)}/>
+            height={this.props.height} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)}
+            
+            when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)}/>
         )
     }
 
+
+    when_view_image_clicked(index, images){
+        this.props.when_view_image_clicked(index, images)
+    }
+
+    when_edit_job_tapped(){
+        this.props.when_edit_job_tapped(this.props.app_state.created_object_array[this.state.selected_job_post_item])
+    }
 
 
     

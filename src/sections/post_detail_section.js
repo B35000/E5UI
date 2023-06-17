@@ -10,6 +10,9 @@ import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
 import End35 from './../assets/end35.png';
 
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
 var bigInt = require("big-integer");
 
 
@@ -32,6 +35,7 @@ class PostDetailSection extends Component {
         navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(),
         navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(),
         navigate_view_e5_list_detail_tags_object: this.get_navigate_view_e5_list_detail_tags(),
+        navigate_view_jobs_list_detail_tags_object: this.get_navigate_view_jobs_list_detail_tags(),
     };
 
     get_navigate_view_ethers_list_detail_tags(){
@@ -79,6 +83,16 @@ class PostDetailSection extends Component {
         }
     }
 
+    get_navigate_view_jobs_list_detail_tags(){
+        return{
+          'i':{
+              active:'e', 
+          },
+          'e':[
+              ['or','',0], ['e','details','responses'],[0]
+          ],
+        }
+    }
 
 
 
@@ -96,7 +110,12 @@ class PostDetailSection extends Component {
         var selected_page = this.props.page;
         if(selected_page == '?'){
             var selected_tag = this.props.work_page_tags_object['i'].active
-            if(selected_tag == 'contracts' || selected_tag == 'e'){
+            if(selected_tag == 'jobs' || selected_tag == 'e'){
+                return(
+                <div>{this.render_jobs_list_detail()}</div>
+                )
+            }
+            else if(selected_tag == 'contracts' ){
                 return(
                 <div>{this.render_contracts_list_detail()}</div>
                 )
@@ -152,6 +171,155 @@ class PostDetailSection extends Component {
         }
     }
 
+
+    render_jobs_list_detail(){
+        if(this.props.selected_job_post_item == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_jobs_details_section()}
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                        <Tags page_tags_object={this.state.navigate_view_jobs_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_jobs_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_navigate_view_jobs_list_detail_tags_object_updated(tag_group){
+        this.setState({navigate_view_jobs_list_detail_tags_object: tag_group})
+    }
+
+    render_jobs_details_section(){
+        var selected_item = this.get_selected_item(this.state.navigate_view_jobs_list_detail_tags_object, this.state.navigate_view_jobs_list_detail_tags_object['i'].active)
+
+        if(selected_item == 'details' || selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_job_posts_main_details_section()}
+                </div>
+            )
+        }else if(selected_item == 'responses'){
+            return(
+                <div>
+                    
+                </div>
+            )
+            
+        }
+    }
+
+    render_job_posts_main_details_section(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-70
+        var size = this.props.screensize
+        if(size == 'm'){
+            he = this.props.height-190;
+        }
+        var item = this.get_stack_job_item_object()
+
+        return(
+            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    {this.render_detail_item('4', item['title'])}
+                    <div style={{height:20}}/>
+                    {this.render_detail_item('2', item['id'])}
+                    {this.render_detail_item('0')}
+                    {this.render_set_text_items()}
+                    {this.render_detail_item('0')}
+                    {this.render_set_images()}
+                    <div onClick={() => this.when_edit_job_tapped()}>
+                        {this.render_detail_item('5', {'text':'Edit Job', 'action':''})}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    when_edit_job_tapped(){
+        this.props.when_edit_job_tapped()
+    }
+
+    get_stack_job_item_object(){
+        var item_data = this.props.app_state.created_object_array[this.props.selected_job_post_item]
+        return{
+            'tags':{'active_tags':item_data['tags'], 'index_option':'indexed'},
+            'title':{'text':item_data['title'], 'font':'Sans-serif', 'textsize':'15px'},
+            'id': { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(item_data['id']), 'number':`${number_with_commas(item_data['id'])}`, 'barcolor':'', 'relativepower':'stack ID', }
+        }
+    }
+
+
+
+    render_set_text_items(){
+        var item_data = this.props.app_state.created_object_array[this.props.selected_job_post_item]
+        var added_text_items = item_data['texts']
+        return ( 
+            <div style={{overflow: 'auto'}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {added_text_items.map((item, index) => (
+                        <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                            {this.render_detail_item('4',item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    }
+
+    render_set_images(){
+        var item_data = this.props.app_state.created_object_array[this.props.selected_job_post_item]
+        var added_image_items = item_data['images']
+        var col = Math.round((this.props.app_state.width/2) / 100)
+        var rowHeight = 100;
+
+        if(added_image_items.length == 0){
+            var items = ['1','1','1']
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            var items = added_image_items
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div onClick={() => this.when_view_image_clicked(index, items)}>
+                                    <img src={item} style={{height:100 ,width:100}} />
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+    when_view_image_clicked(index, images){
+        this.props.when_view_image_clicked(index, images)
+    }
 
 
     render_contracts_list_detail(){

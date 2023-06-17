@@ -32,7 +32,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -40,6 +40,12 @@ class App extends Component {
     created_object_array:[],
     account_balance:0
   };
+
+
+  constructor(props) {
+    super(props);
+    this.new_job_page = React.createRef();
+  }
 
   componentDidMount() {
     console.log("mounted");
@@ -154,6 +160,7 @@ class App extends Component {
         {this.render_stack_bottomsheet()}
         {this.render_wiki_bottomsheet()}
         {this.render_new_object_bottomsheet()}
+        {this.render_view_image_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -161,7 +168,12 @@ class App extends Component {
 
   render_page(){
     return(
-      <Home_page screensize={this.getScreenSize()} width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} open_new_object={this.open_new_object.bind(this)}/>
+      <Home_page 
+      screensize={this.getScreenSize()} 
+      width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
+      open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
+      open_new_object={this.open_new_object.bind(this)} 
+      when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)}/>
     )
   }
 
@@ -267,6 +279,8 @@ class App extends Component {
   }
 
 
+
+
   render_new_object_bottomsheet(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     return(
@@ -286,6 +300,7 @@ class App extends Component {
 
   open_new_object(target){
     this.setState({new_object_target: target});
+    this.new_job_page.current.set_action('create')
     this.open_new_object_bottomsheet()
   }
 
@@ -295,18 +310,90 @@ class App extends Component {
     if(target == '0'){
       return(
         <div>
-          <NewJobPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)}/>
+          <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)}/>
         </div>
       )
     }
     
   }
 
-  create_job_object(obj){
+  create_job_object(obj, action){
     var clone_created_object_array = this.state.created_object_array.slice()
-    clone_created_object_array.push(obj)
+    if(action == 'create'){
+      obj['pos'] = clone_created_object_array.length
+      clone_created_object_array.push(obj)
+    }else{
+       //it was an edit action
+      var index = clone_created_object_array.indexOf(obj);
+      if (index > -1) { // only splice array when item is found
+        clone_created_object_array.splice(index, 1); // 2nd parameter means remove one item only
+      }else{
+        index = obj['pos'];
+        clone_created_object_array.splice(index, 1);
+      }
+      clone_created_object_array.push(obj)
+    }
     this.setState({created_object_array: clone_created_object_array})
+    
+    var me = this;
+    setTimeout(function() {
+      me.open_new_object_bottomsheet()
+    }, (1 * 1000));
+    
   }
+
+  when_edit_created_job_tapped(obj){
+    this.new_job_page.current.set_fileds_for_edit_action(obj)
+    this.new_job_page.current.set_action('edit')
+    this.open_new_object_bottomsheet()
+  }
+
+
+
+
+
+
+
+
+  render_view_image_bottomsheet(){
+      var background_color = 'transparent';
+      return(
+        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_image_bottomsheet.bind(this)} open={this.state.view_image_bottomsheet} style={{'z-index':'6'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'transparent','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+            <div style={{ height: this.state.height, width: this.state.width, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'black', 'border-radius': '0px 0px 0px 0px', 'border-width': '0px','margin': '0px 0px 0px 0px'}}>
+                {this.render_view_image()}
+            </div>
+        </SwipeableBottomSheet>
+      )
+    }
+
+    open_view_image_bottomsheet(){
+        if(this.state != null){
+            this.setState({view_image_bottomsheet: !this.state.view_image_bottomsheet});
+        }
+    }
+
+    /* fullscreen image rendered in bottomsheet when image item is tapped */
+    render_view_image(){
+      var images = this.state.view_images == null ? [] : this.state.view_images;
+      var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
+      return(
+        <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px'}}>
+          <SwipeableViews index={pos}>
+            {images.map((item, index) => ( 
+              <img src={item} style={{height:'auto',width:'100%'}} />
+            ))}
+          </SwipeableViews>
+        </div> 
+      );
+    }
+
+    when_view_image_clicked(index, images){
+        this.setState({view_images: images, view_images_pos: index})
+        this.open_view_image_bottomsheet()
+    }
+
+
+
 
 
 

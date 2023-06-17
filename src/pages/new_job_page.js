@@ -478,11 +478,21 @@ class NewJobPage extends Component {
             this.props.notify('add a title for your post', 700)
         }else{
             var obj = {'tags':index_tags, 'title':title, 'texts':texts, 'images': images, 'id':id, 'type': 'job'}
-            this.props.create_job_object(obj)
+            this.props.create_job_object(obj, this.state.action)
+
+            this.setState({entered_indexing_tags:[],entered_title_text:'', entered_text_objects:[], entered_image_objects:[]})
             this.props.notify('transaction added to stack', 700);
         }
     }
 
+
+    set_fileds_for_edit_action(obj){
+        this.setState({entered_indexing_tags: obj['tags'], entered_title_text: obj['title'], entered_text_objects: obj['texts'], entered_image_objects: obj['images']})
+    }
+
+    set_action(action){
+        this.setState({action: action})
+    }
 }
 
 
