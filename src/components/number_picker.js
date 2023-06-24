@@ -23,7 +23,7 @@ class NumberPicker extends Component {
 
     get_create_number_data(){
       return{
-        'number':  this.get_number_from_power_limit(),
+        'number': this.get_number_from_power_limit(),
         'power':0,
         'editpos':0,
         'powerlimit':this.get_power_limit(),
@@ -32,12 +32,7 @@ class NumberPicker extends Component {
     }
 
     get_power_limit(){
-      if(this.props.power_limit == null){
-        return 63
-      }
-      else{
-        return this.props.power_limit 
-      }
+      return this.props.power_limit 
     }
 
     get_number_from_power_limit(){
@@ -84,7 +79,14 @@ class NumberPicker extends Component {
       var label_shadow_color = this.props.theme['number_picker_label_shadow']
       var number_picker_power_color = this.props.theme['number_picker_power_color']
       var number_picker_power_shadow_color = this.props.theme['number_picker_power_shadow_color']
-
+      
+      if(this.props.number_limit < 1000){
+        return(
+          <div  style={{'display': 'flex','flex-direction': 'row'}}>
+            {this.render_number_label_item(label_background_color,label_shadow_color,0, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(0)), 65)}
+          </div>
+        );
+      }else{
         return(
           <div  style={{'display': 'flex','flex-direction': 'row'}}>
             {this.render_number_label_item(label_background_color,label_shadow_color,2, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(2)), 65)}
@@ -96,6 +98,7 @@ class NumberPicker extends Component {
             {this.render_number_label_item(number_picker_power_color,number_picker_power_shadow_color,3,this.state.create_number_data['power'], 60)}
           </div>
         );
+      }
     }
 
     render_number_label_item(background_color, shadow_color, pos, number, width){
@@ -107,16 +110,26 @@ class NumberPicker extends Component {
     }
 
     render_number_picker_sliders(){
-      return(
-        <div style={{'margin':'20px 0px 0px 0px'}}>
-          <div style={{height:'100%', width:'94%', 'margin':'7px 0px 0px 0px'}}>
-              <Slider value={this.get_number_value()}  whenNumberChanged={(e)=>this.when_number_input_slider_changed(e)} unitIncrease={()=>this.when_number_slider_button_tapped()} unitDecrease={()=>this.when_number_slider_button_double_tapped()} theme={this.props.theme}/>
+      if(this.props.number_limit < 1000){
+        return(
+          <div style={{'margin':'20px 0px 0px 0px'}}>
+            <div style={{height:'100%', width:'94%', 'margin':'7px 0px 0px 0px'}}>
+                <Slider value={this.get_number_value()}  whenNumberChanged={(e)=>this.when_number_input_slider_changed(e)} unitIncrease={()=>this.when_number_slider_button_tapped()} unitDecrease={()=>this.when_number_slider_button_double_tapped()} theme={this.props.theme}/>
+            </div>
           </div>
-          <div style={{height:'100%', width:'94%', 'margin':'10px 0px 0px 0px'}}>
-              <Slider value={this.get_power_value()}  whenNumberChanged={(e)=>this.when_power_input_slider_changed(e)} unitIncrease={()=>this.when_power_slider_button_tapped()} unitDecrease={()=>this.when_power_slider_button_double_tapped()} theme={this.props.theme}/>
+        )
+      }else{
+        return(
+          <div style={{'margin':'20px 0px 0px 0px'}}>
+            <div style={{height:'100%', width:'94%', 'margin':'7px 0px 0px 0px'}}>
+                <Slider value={this.get_number_value()}  whenNumberChanged={(e)=>this.when_number_input_slider_changed(e)} unitIncrease={()=>this.when_number_slider_button_tapped()} unitDecrease={()=>this.when_number_slider_button_double_tapped()} theme={this.props.theme}/>
+            </div>
+            <div style={{height:'100%', width:'94%', 'margin':'10px 0px 0px 0px'}}>
+                <Slider value={this.get_power_value()}  whenNumberChanged={(e)=>this.when_power_input_slider_changed(e)} unitIncrease={()=>this.when_power_slider_button_tapped()} unitDecrease={()=>this.when_power_slider_button_double_tapped()} theme={this.props.theme}/>
+            </div>
           </div>
-        </div>
-      )
+        )
+      }
     }
 
     when_number_input_slider_changed(number){

@@ -20,6 +20,8 @@ import SendReceiveEtherPage from './pages/send_receive_ether_page'
 import StackPage from './pages/stack_page'
 import WikiPage from './pages/wiki_page'
 import NewJobPage from './pages/new_job_page'
+import NewTokenPage from './pages/new_token_page'
+import NewSubscriptionPage from './pages/new_subscription_page'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -300,7 +302,9 @@ class App extends Component {
 
   open_new_object(target){
     this.setState({new_object_target: target});
-    this.new_job_page.current.set_action('create')
+    if(this.new_job_page.current != null){
+      this.new_job_page.current.set_action('create')
+    }
     this.open_new_object_bottomsheet()
   }
 
@@ -312,6 +316,18 @@ class App extends Component {
         <div>
           <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)}/>
         </div>
+      )
+    }
+    else if(target == '8'){
+      return(
+        <div>
+          <NewTokenPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+        </div>
+      )
+    }
+    else if(target == '3'){
+      return(
+        <NewSubscriptionPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
       )
     }
     
@@ -347,6 +363,9 @@ class App extends Component {
     this.new_job_page.current.set_action('edit')
     this.open_new_object_bottomsheet()
   }
+
+
+
 
 
 
@@ -500,7 +519,8 @@ class App extends Component {
   /* prompts an alert notification from the top */
   prompt_top_notification(data, duration){
       var time = duration == null ? 1000: duration;
-      console.log('prompting notification!-------------')
+      // data = 'toast item blah blah blah '
+      // time = 1500000
       toast(this.render_toast_item(data), {
           position: "top-center",
           autoClose: time,
@@ -523,12 +543,12 @@ class App extends Component {
 
     return ( 
           <div>
-              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px', 'height':'40px', 'width':'auto','display': 'flex','flex-direction': 'row'}}>
-                  <div style={{'padding': '0px 0px 0px 15px','display': 'flex','align-items': 'center'}}> 
-                      <img src={AlertIcon} style={{height:'20px',width:'auto'}} />
+              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px','display': 'flex','flex-direction': 'row'}}>
+                  <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
+                      <img src={AlertIcon} style={{height:25,width:'auto'}} />
                   </div>
-                  <div style={{'padding': '0px 0px 0px 8px', 'margin':'17px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
-                      <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1'}}>{message}</p>
+                  <div style={{'padding': '0px 0px 0px 8px', 'margin':'5px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
+                      <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1', 'margin':'0px'}}>{message}</p>
                   </div>
               </div>
           </div>
