@@ -22,6 +22,8 @@ import WikiPage from './pages/wiki_page'
 import NewJobPage from './pages/new_job_page'
 import NewTokenPage from './pages/new_token_page'
 import NewSubscriptionPage from './pages/new_subscription_page'
+import NewContractPage from './pages/new_contract_page'
+import NewPostPage from './pages/new_post_page'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -330,6 +332,16 @@ class App extends Component {
         <NewSubscriptionPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
       )
     }
+    else if(target == '1'){
+      return(
+        <NewContractPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+      )
+    }
+    else if(target == '6'){
+      return(
+        <NewPostPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+      )
+    }
     
   }
 
@@ -545,7 +557,7 @@ class App extends Component {
           <div>
               <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px','display': 'flex','flex-direction': 'row'}}>
                   <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
-                      <img src={AlertIcon} style={{height:25,width:'auto'}} />
+                      <img src={AlertIcon} style={{height:25,width:'auto','scale': '0.7'}} />
                   </div>
                   <div style={{'padding': '0px 0px 0px 8px', 'margin':'5px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
                       <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1', 'margin':'0px'}}>{message}</p>

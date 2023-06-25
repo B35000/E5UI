@@ -20,43 +20,84 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
-class NewSubscriptionPage extends Component {
+class NewContractPage extends Component {
     
     state = {
         selected: 0,
-        new_subscription_tags_object: this.get_new_subscription_tags_object(),
-        authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(),
-        maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'',
+        new_contract_tags_object: this.get_new_contract_tags_object(),
+        default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
 
-        new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
         exchange_id:'', price_amount:0, price_data:[],
     };
 
-
-    get_new_subscription_tags_object(){
+    get_new_contract_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','configuration', 'authorities', 'prices'], [1]
+                ['xor','',0], ['e','configuration', 'authorities', 'entry-fees'], [1]
             ],
         };
     }
 
-
-    get_cancellable_tags_object(){
+    get_auto_wait_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','false', 'true'], [1]
+                ['xor','',0], ['e','no', 'yes'], [1]
             ],
         };
     }
+
+    get_can_modify_contract_as_moderator(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','modifiable', 'non-modifiable'], [1]
+            ],
+        };
+    }
+
+    get_can_extend_enter_contract_at_any_time(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','enabled', 'disabled'], [1]
+            ],
+        };
+    }
+
+    get_bounty_limit_type(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','relative', 'absolute'], [2]
+            ],
+        };
+    }
+
+    get_contract_force_exit_enabled(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','enabled', 'disabled'], [1]
+            ],
+        };
+    }
+
 
     get_new_token_interactible_moderator_tags_object(){
         return{
@@ -69,16 +110,9 @@ class NewSubscriptionPage extends Component {
         };
     }
 
-    get_new_token_access_rights_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
-            ],
-        };
-    }
+
+
+
 
     render(){
         return(
@@ -86,7 +120,7 @@ class NewSubscriptionPage extends Component {
                 <div style={{'padding':'10px 20px 0px 10px'}}>
                     <div className="row">
                         <div className="col-10" style={{'padding': '5px 0px 0px 10px'}}>
-                            <Tags page_tags_object={this.state.new_subscription_tags_object} tag_size={'l'} when_tags_updated={this.when_new_subscription_tags_object.bind(this)} theme={this.props.theme}/>
+                            <Tags page_tags_object={this.state.new_contract_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -106,13 +140,13 @@ class NewSubscriptionPage extends Component {
         )
     }
 
-    when_new_subscription_tags_object(tag_obj){
-        this.setState({when_new_subscription_tags_object: tag_obj})
+    when_new_contract_tags_object(tag_obj){
+        this.setState({new_contract_tags_object: tag_obj})
     }
 
 
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.new_subscription_tags_object, this.state.new_subscription_tags_object['i'].active)
+        var selected_item = this.get_selected_item(this.state.new_contract_tags_object, this.state.new_contract_tags_object['i'].active)
 
         if(selected_item == 'configuration'){
             return(
@@ -128,7 +162,7 @@ class NewSubscriptionPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'prices'){
+        else if(selected_item == 'entry-fees'){
             return(
                 <div>
                     {this.render_prices_part()}
@@ -174,75 +208,178 @@ class NewSubscriptionPage extends Component {
 
     render_configuration_part_one(){
         return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>  
+            <div>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_vote_bounty_split_proportion), 'details':'Vote Bounty Split Proportion', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':'Maximum Extend Enter Contract Limit', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_extend_enter_contract_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Cancellable', 'details':'If set to true, subscription payers can refund their subscription payments', 'size':'l'})}
+
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.default_proposal_expiry_duration_limit), 'details':'Proposal Expiry Duration Limit', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_proposal_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_enter_contract_duration), 'details':'Maximum Enter Contract Duration', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_enter_contract_duration.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':'Auto Wait', 'details':'If set to yes, all new proposals sent to your new contract are automatically voted wait for each participant in the contract', 'size':'l'})}
 
                 <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
+                <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.time_unit), 'details':'Time Unit', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
-
-                {this.render_detail_item('0')}
             </div>
         )
     }
 
-   
-
-    when_minimum_buy_amount(amount){
-        this.setState({minimum_buy_amount: amount})
+    when_default_vote_bounty_split_proportion(number){
+        this.setState({default_vote_bounty_split_proportion: number})
     }
 
-    when_cancellable_tags_object(tag_obj){
-        this.setState({cancellable_tags_object: tag_obj})
+    when_max_extend_enter_contract_limit(number){
+        this.setState({max_extend_enter_contract_limit: number})
     }
 
-    when_time_unit(amount){
-        this.setState({time_unit: amount})
+    when_default_minimum_end_vote_bounty_amount(number){
+        this.setState({default_minimum_end_vote_bounty_amount: number})
+    }
+
+    when_default_proposal_expiry_duration_limit(number){
+        this.setState({default_proposal_expiry_duration_limit: number})
+    }
+
+    when_max_enter_contract_duration(number){
+        this.setState({max_enter_contract_duration: number})
+    }
+
+    when_auto_wait_tags_object(tag_obj){
+        this.setState({auto_wait_tags_object: tag_obj})
+    }
+
+    when_default_minimum_spend_vote_bounty_amount(number){
+        this.setState({default_minimum_spend_vote_bounty_amount: number})
     }
 
     render_configuration_part_two(){
         return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':this.format_power_figure(this.state.maximum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.maximum_buy_amount), 'number':this.format_account_balance_figure(this.state.maximum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
-                </div>
+            <div>
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.proposal_modify_expiry_duration_limit), 'details':'Proposal Modify Expiry Duration Limit', 'size':'l'})}
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
+
+
+                {this.render_detail_item('3', {'title':'Moderator Modify Privelage', 'details':'If set to modifiable, you as a moderator can directly modify your contracts configuration', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':'Unlimited Extend Contract Time', 'details':'If set to enabled, you can extend your stay in this contract at any time after entry', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.maximum_proposal_expiry_submit_expiry_time_difference), 'details':'Maximum Proposal Expiry Submit Expiry time difference', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_proposal_expiry_submit_expiry_time_difference.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':'Bounty Limit Type', 'details':'If set to absolute, the bounty limits set for end and spend will be used as is', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+
+
+
+                {this.render_detail_item('3', {'title':'Force Exit Enabled', 'details':'If set to enabled, you as a moderator can force other members of the contract to exit the contract', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+
+
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Cancellable Balance Amount', 'subtitle':this.format_power_figure(this.state.minimum_cancellable_balance_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_cancellable_balance_amount), 'number':this.format_account_balance_figure(this.state.minimum_cancellable_balance_amount), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
             </div>
         )
     }
 
-    when_maximum_buy_amount(amount){
-        this.setState({maximum_buy_amount:amount})
+    when_proposal_modify_expiry_duration_limit(number){
+        this.setState({proposal_modify_expiry_duration_limit: number})
     }
 
-    when_minimum_cancellable_balance_amount(amount){
-        this.setState({minimum_cancellable_balance_amount: amount})
+    when_can_modify_contract_as_moderator(tag_obj){
+        this.setState({can_modify_contract_as_moderator: tag_obj})
+    }
+
+    when_can_extend_enter_contract_at_any_time(tag_obj){
+        this.setState({can_extend_enter_contract_at_any_time: tag_obj})
+    }
+
+    when_maximum_proposal_expiry_submit_expiry_time_difference(number){
+        this.setState({maximum_proposal_expiry_submit_expiry_time_difference: number})
+    }
+
+    when_bounty_limit_type(tag_obj){
+        this.setState({bounty_limit_type: tag_obj})
+    }
+
+    when_contract_force_exit_enabled(tag_obj){
+        this.setState({contract_force_exit_enabled: tag_obj})
     }
 
 
@@ -253,7 +390,6 @@ class NewSubscriptionPage extends Component {
         if(size == 's'){
             return(
                 <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_subscription_authority_target()}
                     {this.render_moderator_interactible_ui()}
                 </div>
             )
@@ -262,10 +398,9 @@ class NewSubscriptionPage extends Component {
             return(
                 <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
                     <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_subscription_authority_target()}
+                        {this.render_moderator_interactible_ui()}
                     </div>
                     <div className="col-6">
-                        {this.render_moderator_interactible_ui()}
                     </div>
                 </div>
                 
@@ -273,47 +408,6 @@ class NewSubscriptionPage extends Component {
         }
     }
 
-    render_subscription_authority_target(){
-        return(
-            <div>
-                 {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the exchange will be restricted to moderators and specified accounts', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set the authority ID for your new subscription'})}
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Authority...'} when_text_input_field_changed={this.when_authority_text_input_field_changed.bind(this)} text={this.state.authority_id} theme={this.props.theme}/>
-
-                {this.load_account_suggestions('authority_id')}
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set the subscription beneficiary ID for your new subscription'})}
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Beneficiary ID...'} when_text_input_field_changed={this.when_subscription_beneficiary.bind(this)} text={this.state.subscription_beneficiary} theme={this.props.theme}/>
-
-                {this.load_account_suggestions('subscription_beneficiary')}
-
-                {this.render_detail_item('0')}
-
-               
-            </div>
-        )
-    }
-
-    when_authority_text_input_field_changed(text){
-        this.setState({authority_id: text})
-    }
-
-    when_subscription_beneficiary(text){
-        this.setState({subscription_beneficiary: text})
-    }
-
-    when_new_token_access_rights_tags_object(tag_obj){
-        this.setState({new_token_access_rights_tags_object: tag_obj})
-    }
 
 
     render_moderator_interactible_ui(){
@@ -736,9 +830,6 @@ class NewSubscriptionPage extends Component {
         if(target_type == 'authority_id'){
             this.setState({authority_id: item['id']})
         }
-        else if(target_type == 'subscription_beneficiary'){
-            this.setState({subscription_beneficiary: item['id']})
-        }
         else if(target_type == 'moderator_id'){
             this.setState({moderator_id: item['id']})
         }
@@ -856,11 +947,10 @@ class NewSubscriptionPage extends Component {
     }
 
 
+
     finish_creating_object(){
-
+        
     }
-
-
 
 
 }
@@ -868,4 +958,4 @@ class NewSubscriptionPage extends Component {
 
 
 
-export default NewSubscriptionPage;
+export default NewContractPage;

@@ -365,7 +365,7 @@ class home_page extends Component {
     get_e_plus_button_mapping(){
       if(this.state.page == '?'){
         var selected_item = this.state.work_page_tags_object['i'].active
-        var data = {'jobs':'0','contracts':'1','proposals':'2','subscriptions':'3','storefronts':'4'};
+        var data = {'jobs':'0','contracts':'1','subscriptions':'3','storefronts':'4'};
         if(data[selected_item] == null) return ''
         return data[selected_item];
       }

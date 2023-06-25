@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import CanvasJSReact from './../externals/canvasjs.react';
 import E5EmptyIcon from './../assets/e5empty_icon.png';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -283,6 +285,25 @@ class ViewGroups extends Component {
                 </div>
             );
         }
+        else if(item_id =='9'){/* images-list */
+            var col = Math.round(this.props.width / 65)
+            var rowHeight = 65;
+            var items = object_data == null ? [] :object_data['images'];
+            var items_pos = object_data == null ? 0 : object_data['pos'];
+            return(
+                <div style={{'margin':'5px 0px 0px 10px'}}>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div onClick={() => this.when_image_clicked(item, index)}>
+                                    <img src={item} style={{height:65 ,width:65}} />
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            ) 
+        }
 
     }
 
@@ -356,6 +377,11 @@ class ViewGroups extends Component {
         else if(action_id == 'delete_entered_tag_word'){
             this.props.delete_entered_tag(tag, pos)
         }
+    }
+
+    when_image_clicked(item, index){
+        
+        
     }
 
 }

@@ -10,19 +10,20 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
+
 function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-class NewJobPage extends Component {
+class NewPostPage extends Component {
     
-    state = {
+     state = {
         selected: 0,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[]
+        entered_objects:[],
     };
 
     get_new_job_page_tags_object(){
@@ -157,12 +158,12 @@ class NewJobPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new job'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new post'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Job'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Post'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
@@ -560,8 +561,7 @@ class NewJobPage extends Component {
         else if(title == ''){
             this.props.notify('add a title for your post', 700)
         }else{
-            var obj = {'tags':index_tags, 'title':title, 'texts':texts, 'images': images, 'id':id, 'type': 'job'}
-            this.props.create_job_object(obj, this.state.action)
+            
 
             this.setState({entered_indexing_tags:[],entered_title_text:'', entered_text_objects:[], entered_image_objects:[]})
             this.props.notify('transaction added to stack', 700);
@@ -576,9 +576,11 @@ class NewJobPage extends Component {
     set_action(action){
         this.setState({action: action})
     }
+
+
 }
 
 
 
 
-export default NewJobPage;
+export default NewPostPage;
