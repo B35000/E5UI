@@ -45,7 +45,7 @@ class App extends Component {
     details_orientation: 'right',
     new_object_target: '0',
     created_object_array:[],
-    account_balance:0
+    account_balance:0, stack_items:[],
   };
 
 
@@ -322,40 +322,40 @@ class App extends Component {
     if(target == '0'){
       return(
         <div>
-          <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)}/>
+          <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
         </div>
       )
     }
     else if(target == '8'){
       return(
         <div>
-          <NewTokenPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+          <NewTokenPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
         </div>
       )
     }
     else if(target == '3'){
       return(
-        <NewSubscriptionPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+        <NewSubscriptionPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '1'){
       return(
-        <NewContractPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+        <NewContractPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '6'){
       return(
-        <NewPostPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+        <NewPostPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '7'){
       return(
-        <NewChannelPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+        <NewChannelPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '4'){
       return(
-        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)}/>
+        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     
@@ -421,6 +421,12 @@ class App extends Component {
     add_data_to_new_store_item(data){
       this.new_storefront_page.current.add_data_to_new_store_item(data)
       this.open_new_store_item_bottomsheet()
+    }
+
+    when_add_new_object_to_stack(state_obj){
+      var stack_clone = this.state.stack_items.slice()
+      stack_clone.push(state_obj)
+      this.setState({stack_items: stack_clone})
     }
 
 

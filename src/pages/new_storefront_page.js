@@ -17,17 +17,30 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class NewStorefrontPage extends Component {
     
     state = {
-        selected: 0,
+        id: makeid(32), type:'storefront',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[], store_items:[], 
+        entered_objects:[], store_items:[], delivery_included_tags_object: this.get_delivery_included_tags_object()
     };
 
+    /* it says 'job' here because I lazily copy-pasted this from the other file */
     get_new_job_page_tags_object(){
         return{
             'i':{
@@ -57,6 +70,16 @@ class NewStorefrontPage extends Component {
     }
 
 
+    get_delivery_included_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','included', 'not-included'], [1]
+            ],
+        };
+    }
 
 
 
@@ -137,7 +160,7 @@ class NewStorefrontPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '10px 0px 0px 20px'}}>
+                <div style={{'padding': '10px 0px 0px 10px'}}>
                     <div style={{'padding': '5px'}} onClick={()=>this.create_new_store_item()}>
                         {this.render_detail_item('5', {'text':'New Store Item', 'action':'finish_creating_object'})}
                     </div>
@@ -206,7 +229,7 @@ class NewStorefrontPage extends Component {
                                         {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                                         <div style={{height: 10}}/>
                                         {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':item.entered_title_text})}
-
+                                        <div style={{height: 10}}/>
                                         {this.render_detail_item('3',{'title':item.entered_objects.length, 'details':'metadata item groups','size':'l'})}
 
                                         <div style={{'padding': '5px'}} onClick={()=>this.edit_storefront_item(item)}>
@@ -258,12 +281,12 @@ class NewStorefrontPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new post'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Store'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Post'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Store'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
@@ -274,6 +297,13 @@ class NewStorefrontPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Delivery Options', 'details':'If set to included, you are responsible for delivering your storefront items purchased.', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.delivery_included_tags_object} tag_size={'l'} when_tags_updated={this.when_delivery_included_tags_object.bind(this)} theme={this.props.theme}/>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -286,6 +316,10 @@ class NewStorefrontPage extends Component {
 
     when_index_text_input_field_changed(text){
         this.setState({entered_tag_text: text})
+    }
+
+    when_delivery_included_tags_object(tag_obj){
+        this.setState({delivery_included_tags_object: tag_obj})
     }
 
     add_indexing_tag_for_new_job(){
@@ -659,11 +693,11 @@ class NewStorefrontPage extends Component {
             this.props.notify('add some tags first!', 700)
         }
         else if(title == ''){
-            this.props.notify('add a title for your post', 700)
+            this.props.notify('add a title for your Store', 700)
         }else{
-            
+            this.props.when_add_new_object_to_stack(this.state)
 
-            this.setState({entered_indexing_tags:[],entered_title_text:'', entered_text_objects:[], entered_image_objects:[]})
+            this.setState({ id: makeid(32), type:'storefront', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], store_items:[], delivery_included_tags_object: this.get_delivery_included_tags_object() })
             this.props.notify('transaction added to stack', 700);
         }
     }

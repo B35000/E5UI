@@ -20,10 +20,23 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
+
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class NewSubscriptionPage extends Component {
     
     state = {
-        selected: 0,
+        id: makeid(32), type:'subscription',
         new_subscription_tags_object: this.get_new_subscription_tags_object(),
         authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(),
         maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'',
@@ -694,10 +707,18 @@ class NewSubscriptionPage extends Component {
     }
 
     get_suggested_tokens(){
-        return[
+        var items = [
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
-        ]
+        ];
+        var stack_items = this.props.app_state.stack_items;
+        for(var i=0; i<stack_items.length; i++){
+            if(stack_items[i].type == 'token'){
+                items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
+            }
+        }
+
+        return items;
     }
 
     when_price_suggestion_clicked(item, pos, target_type){
@@ -857,7 +878,11 @@ class NewSubscriptionPage extends Component {
 
 
     finish_creating_object(){
+        this.props.when_add_new_object_to_stack(this.state)
 
+        this.setState({ id: makeid(32), type:'subscription', new_subscription_tags_object: this.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
+
+        this.props.notify('transaction added to stack', 700);
     }
 
 

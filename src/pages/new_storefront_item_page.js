@@ -12,9 +12,14 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
+var bigInt = require("big-integer");
 
 function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function bgN(number, power) {
+  return bigInt((number+"e"+power)).toString();
 }
 
 function makeid(length) {
@@ -32,12 +37,13 @@ function makeid(length) {
 class NewStorefrontItemPage extends Component {
     
     state = {
-        id: makeid(32),
+        id: makeid(32), type:'storefront-item',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[],
+        entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
+        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0
     };
 
     get_new_job_page_tags_object(){
@@ -46,7 +52,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images'], [0]
+                ['or','',0], ['e','text', 'images', 'item-price'], [0]
             ],
         };
     }
@@ -68,6 +74,17 @@ class NewStorefrontItemPage extends Component {
         };
     }
 
+
+    get_purchase_option_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','direct', 'via-contract'], [1]
+            ],
+        };
+    }
 
 
 
@@ -126,10 +143,10 @@ class NewStorefrontItemPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'video'){
+        else if(selected_item == 'item-price'){
             return(
                 <div>
-                    {this.render_enter_video_part()}
+                    {this.render_enter_item_price_part()}
                 </div>
             ) 
         }
@@ -189,6 +206,22 @@ class NewStorefrontItemPage extends Component {
                     </div>
                 </div>
                 {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Purchase Options', 'details':'If set to direct, buyers will make direct transfers when adding the items to their bags and carts while via-contract, youre set to receive a contract (if the item is of high value)', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Units', 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':'units', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+
+                {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
@@ -200,6 +233,14 @@ class NewStorefrontItemPage extends Component {
 
     when_index_text_input_field_changed(text){
         this.setState({entered_tag_text: text})
+    }
+
+    when_purchase_option_tags_object(tag_obj){
+        this.setState({purchase_option_tags_object: tag_obj})
+    }
+
+    when_available_unit_count(number){
+        this.setState({available_unit_count: number})
     }
 
     add_indexing_tag_for_new_job(){
@@ -550,6 +591,180 @@ class NewStorefrontItemPage extends Component {
 
 
 
+
+
+
+    render_enter_item_price_part(){
+        var size = this.props.size
+        var height = this.props.height-150
+
+        if(size == 's'){
+            return(
+                <div style={{overflow: 'auto', maxHeight: height}}>
+                    {this.render_set_token_and_amount_part()}
+                    <div style={{height: 20}}/>
+                    {this.render_set_prices_list_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_set_token_and_amount_part()}
+                    </div>
+                    <div className="col-6">
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_set_token_and_amount_part(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired price and click add', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id')}
+                <div style={{height: 20}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
+                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_exchange_id_input_field_changed(text){
+        this.setState({exchange_id: text})
+    }
+
+    when_price_amount(amount){
+        this.setState({price_amount: amount})
+    }
+
+    when_add_price_set(){
+        var exchange_id = this.state.exchange_id
+        var amount = this.state.price_amount
+        if(isNaN(exchange_id)){
+            this.props.notify('please put a valid exchange id', 600)
+        }
+        else if(amount == 0){
+            this.props.notify('please put a valid amount', 600)
+        }
+        else{
+            var price_data_clone = this.state.price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data: price_data_clone});
+            this.props.notify('added price!', 400)
+        }
+    }
+
+    render_set_prices_list_part(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.price_data
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':'tokens', })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    when_amount_clicked(item){
+        var cloned_array = this.state.price_data.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({price_data: cloned_array})
+    }
+
+
+    load_token_suggestions(target_type){
+        var items = this.get_suggested_tokens()
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_tokens(){
+        var items = [
+            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+        ];
+        var stack_items = this.props.app_state.stack_items;
+        for(var i=0; i<stack_items.length; i++){
+            if(stack_items[i].type == 'token'){
+                items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
+            }
+        }
+
+        return items;
+    }
+
+    when_price_suggestion_clicked(item, pos, target_type){
+        this.setState({exchange_id: item['id']})
+    }
+
+
+
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
@@ -558,6 +773,103 @@ class NewStorefrontItemPage extends Component {
             </div>
         )
 
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
+    calculate_bar_width(amount){
+        var figure = ''
+        if(amount == null){
+            amount = 0
+        }
+        if(amount < bigInt('1e9')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
+        }
+        else if(amount < bigInt('1e18')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
+        }
+        else if(amount < bigInt('1e36')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
+        }
+        else{
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
+        }
+
+        return figure+'%'
+    }
+
+    format_power_figure(amount){
+        var power = 'e72'
+        if(amount < bigInt('1e9')){
+            power = 'e9'
+        }
+        else if(amount < bigInt('1e18')){
+            power = 'e18'
+        }
+        else if(amount < bigInt('1e36')){
+            power = 'e36'
+        }
+        else{
+            power = 'e72'
+        }
+        return power
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ ' sec'
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + ' min' 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + ' hr' + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + ' dy' + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + ' wk' + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + ' yr' + s;
+        }
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
     }
 
 
@@ -579,7 +891,8 @@ class NewStorefrontItemPage extends Component {
             var data = this.state;
             this.props.add_data_to_new_store_item(data)
 
-            this.setState({ id: makeid(32), get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            this.setState({ id: makeid(32), get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
+            purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0 })
 
             this.props.notify('transaction added to stack', 700);
         }

@@ -22,13 +22,23 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
-
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
 
 
 class NewTokenPage extends Component {
     
     state = {
-        selected: 0,
+        id: makeid(32), type:'token',
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
 
         new_token_type_tags_object: this.get_new_token_type_tags_object(),
@@ -1118,10 +1128,18 @@ class NewTokenPage extends Component {
     }
 
     get_suggested_tokens(){
-        return[
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s', 'image':EndImg}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s','image':SpendImg}},
-        ]
+        var items = [
+            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+        ];
+        var stack_items = this.props.app_state.stack_items;
+        for(var i=0; i<stack_items.length; i++){
+            if(stack_items[i].type == 'token'){
+                items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
+            }
+        }
+
+        return items;
     }
 
     when_price_suggestion_clicked(item, pos, target_type){
@@ -1318,36 +1336,41 @@ class NewTokenPage extends Component {
 
 
     finish_creating_object(){
-        var token_type = this.get_selected_item(this.state.new_token_type_tags_object, this.state.new_token_type_tags_object['i'].active)
+        // var token_type = this.get_selected_item(this.state.new_token_type_tags_object, this.state.new_token_type_tags_object['i'].active)
 
-        if(this.state.trust_fee_proportion == 0){
-            this.props.notify('you cant set 0% as a trust fee', 1800)
-        }
-        else if(token_type =='uncapped' && this.state.block_limit <= this.state.default_exchange_amount_buy_limit && this.state.block_limit !=0){
-            this.props.notify('your preferred block limit should exceed the buy limit set',1800)
-        }
-        else if(token_type == 'uncapped' && this.state.maturity_limit <= this.state.block_limit && this.state.maturity_limit !=0){
-            this.props.notify('your preferred maturity limit should exceed the block limit set',1800)
-        }
-        else if(this.state.token_exchange_ratio_x == 0){
-            this.props.notify('please set your preferred exchange ratio x', 1800)
-        }
-        else if(this.state.token_exchange_ratio_y == 0){
-            this.props.notify('please set your preferred exchange ratio y', 1800)
-        }
-        else if(token_type == 'capped' && this.state.price_data.length == 0){
-            this.props.notify('please specify token prices for buying your token',1800)
-        }
-        else if(token_type == 'capped' && this.state.token_exchange_liquidity_total_supply != this.state.token_exchange_ratio_x){
-            this.props.notify('your tokens supply and exchange ratio x should match',1800)
-        }
-        else if(token_type == 'capped' && this.state.token_exchange_liquidity_total_supply <100_000){
-            this.props.notify('your tokens supply should be greater than 100,000',1800)
-        }
-        else{
-            var obj = this.state
+        // if(this.state.trust_fee_proportion == 0){
+        //     this.props.notify('you cant set 0% as a trust fee', 1800)
+        // }
+        // else if(token_type =='uncapped' && this.state.block_limit <= this.state.default_exchange_amount_buy_limit && this.state.block_limit !=0){
+        //     this.props.notify('your preferred block limit should exceed the buy limit set',1800)
+        // }
+        // else if(token_type == 'uncapped' && this.state.maturity_limit <= this.state.block_limit && this.state.maturity_limit !=0){
+        //     this.props.notify('your preferred maturity limit should exceed the block limit set',1800)
+        // }
+        // else if(this.state.token_exchange_ratio_x == 0){
+        //     this.props.notify('please set your preferred exchange ratio x', 1800)
+        // }
+        // else if(this.state.token_exchange_ratio_y == 0){
+        //     this.props.notify('please set your preferred exchange ratio y', 1800)
+        // }
+        // else if(token_type == 'capped' && this.state.price_data.length == 0){
+        //     this.props.notify('please specify token prices for buying your token',1800)
+        // }
+        // else if(token_type == 'capped' && this.state.token_exchange_liquidity_total_supply != this.state.token_exchange_ratio_x){
+        //     this.props.notify('your tokens supply and exchange ratio x should match',1800)
+        // }
+        // else if(token_type == 'capped' && this.state.token_exchange_liquidity_total_supply <100_000){
+        //     this.props.notify('your tokens supply should be greater than 100,000',1800)
+        // }
+        // else{
+            
+        // }
 
-        }
+        this.props.when_add_new_object_to_stack(this.state)
+
+        this.setState({ id: makeid(32), type:'token', new_token_page_tags_object: this.get_new_token_page_tags_object(), new_token_type_tags_object: this.get_new_token_type_tags_object(), token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, default_exchange_amount_sell_limit:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, trust_fee_proportion:bigInt('1e16'), block_limit:0, new_token_unlocked_liquidity_tags_object:this.get_new_token_unlocked_liquidity_tags_object(), new_token_unlocked_supply_tags_object:this.get_new_token_unlocked_supply_tags_object(), new_token_fully_custom_tags_object:this.get_new_token_fully_custom_tags_object(), internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(), default_authority_mint_limit:0, new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(), maturity_limit:0, token_exchange_ratio_x:0, token_exchange_ratio_y:0, exchange_authority:'', trust_fee_target:'', exchange_id:'', price_amount:0, price_data:[], new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[] })
+
+        this.props.notify('transaction added to stack', 700);
 
     }
 

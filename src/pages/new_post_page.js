@@ -15,10 +15,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class NewPostPage extends Component {
     
      state = {
-        selected: 0,
+        id: makeid(32), type:'post',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
@@ -553,7 +565,6 @@ class NewPostPage extends Component {
         var title = this.state.entered_title_text
         var texts = this.state.entered_text_objects
         var images = this.state.entered_image_objects
-        var id = Math.round(new Date().getTime()/1000);
 
         if(index_tags.length == 0){
             this.props.notify('add some tags first!', 700)
@@ -562,8 +573,9 @@ class NewPostPage extends Component {
             this.props.notify('add a title for your post', 700)
         }else{
             
+            this.props.when_add_new_object_to_stack(this.state)
 
-            this.setState({entered_indexing_tags:[],entered_title_text:'', entered_text_objects:[], entered_image_objects:[]})
+            this.setState({ id: makeid(32), type:'post', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
             this.props.notify('transaction added to stack', 700);
         }
     }
