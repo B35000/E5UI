@@ -24,6 +24,9 @@ import NewTokenPage from './pages/new_token_page'
 import NewSubscriptionPage from './pages/new_subscription_page'
 import NewContractPage from './pages/new_contract_page'
 import NewPostPage from './pages/new_post_page'
+import NewChannelPage from './pages/new_channel_page'
+import NewStorefrontPage from './pages/new_storefront_page'
+import NewStorefrontItemPage from './pages/new_storefront_item_page';
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -36,7 +39,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -49,6 +52,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.new_job_page = React.createRef();
+    this.new_storefront_page = React.createRef();
+    this.new_storefront_item_page = React.createRef();
   }
 
   componentDidMount() {
@@ -165,6 +170,7 @@ class App extends Component {
         {this.render_wiki_bottomsheet()}
         {this.render_new_object_bottomsheet()}
         {this.render_view_image_bottomsheet()}
+        {this.render_create_store_item_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -342,6 +348,16 @@ class App extends Component {
         <NewPostPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
       )
     }
+    else if(target == '7'){
+      return(
+        <NewChannelPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+      )
+    }
+    else if(target == '4'){
+      return(
+        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)}/>
+      )
+    }
     
   }
 
@@ -376,7 +392,36 @@ class App extends Component {
     this.open_new_object_bottomsheet()
   }
 
+  edit_storefront_item(item){
+    this.new_storefront_item_page.current.set_fileds_for_edit_action(item)
+    this.open_new_store_item_bottomsheet()
+  }
 
+
+
+  render_create_store_item_bottomsheet(){
+        var background_color = this.state.theme['send_receive_ether_background_color'];
+        var size = this.getScreenSize();
+        return(
+            <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_store_item_bottomsheet.bind(this)} open={this.state.new_store_item_bottomsheet} style={{'z-index':'7'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+                <div style={{ height: this.state.height-70, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                    <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_data_to_new_store_item={this.add_data_to_new_store_item.bind(this)}/>
+                </div>
+            </SwipeableBottomSheet>
+        )
+    }
+
+
+    open_new_store_item_bottomsheet(){
+      if(this.state != null){
+        this.setState({new_store_item_bottomsheet: !this.state.new_store_item_bottomsheet});
+      }
+    }
+
+    add_data_to_new_store_item(data){
+      this.new_storefront_page.current.add_data_to_new_store_item(data)
+      this.open_new_store_item_bottomsheet()
+    }
 
 
 

@@ -55,8 +55,11 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','basic-configuration', 'secondary-configuration', 'token-authorities', 'token-prices'], [1]
+                ['xor','',0], ['e','basic', 'e.custom', 'token-authorities', 'token-prices'], [1]
             ],
+            'custom':[
+              ['xor','e',1], ['custom','basic-configuration', 'secondary-configuration'], [1],
+          ],
         };
     }
 
@@ -185,9 +188,13 @@ class NewTokenPage extends Component {
 
 
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, this.state.new_token_page_tags_object['i'].active)
+        var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'e')
 
-        if(selected_item == 'basic-configuration' || selected_item == 'e'){
+        if(this.state.new_token_page_tags_object['i'].active == 'custom'){
+            selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'custom')
+        }
+
+        if(selected_item == 'basic-configuration'){
             return(
                 <div>
                     {this.render_basic_configuration_token_part()}
@@ -215,12 +222,110 @@ class NewTokenPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == 'basic'){
+            return(
+                <div>
+                    {this.render_simple_token_list()}
+                </div>
+            )
+        }
     }
 
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
+    }
+
+
+    render_simple_token_list(){
+        var size = this.props.size
+        var height = this.props.height-150
+
+        if(size == 's'){
+            return(
+                <div style={{overflow: 'auto', maxHeight: height}}>
+                    {this.render_simple_token_part_one()}
+                    <div style={{height:20}}/>
+                    {this.render_simple_token_part_two()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_simple_token_part_one()}
+                    </div>
+                    <div className="col-6">
+                        {this.render_simple_token_part_two()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_simple_token_part_one(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Set the token type', 'details':'Capped token (with limited supply) or uncapped token (with unlimited supply)', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.new_token_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_type_tags_object.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_supply_if_capped()}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+
+                {this.render_detail_item('0')}
+
+            </div>
+        )
+    }
+
+    render_supply_if_capped(){
+        var capped = this.get_selected_item(this.state.new_token_type_tags_object, 'e')
+        if(capped == 'capped'){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                    {this.render_detail_item('0')}
+                </div> 
+            )
+        }
+    }
+
+    render_simple_token_part_two(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
+
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+
+                {this.render_detail_item('0')}
+            </div>
+        )
     }
 
 
@@ -265,13 +370,7 @@ class NewTokenPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
+                {this.render_supply_if_capped()}
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
