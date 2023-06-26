@@ -10,6 +10,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 var bigInt = require("big-integer");
 
 function number_with_commas(x) {
@@ -463,9 +466,12 @@ class NewSubscriptionPage extends Component {
 
                 <div style={{height:20}}/>
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
-                </LocalizationProvider>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
 
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>

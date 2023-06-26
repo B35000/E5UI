@@ -132,7 +132,7 @@ class App extends Component {
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#868686',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787',
         
-        'slider_color':'white', 'toast_background_color':'white',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light'
       }
     }
     else if(theme == 'dark'){
@@ -152,7 +152,7 @@ class App extends Component {
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#868686',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 
         
-        'slider_color':'white','toast_background_color':'#333333',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark'
       }
     }
   }
