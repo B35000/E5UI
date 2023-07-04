@@ -176,7 +176,9 @@ class SendReceiveEtherPage extends Component {
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', this.get_number_balance_object())}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance), 'number':this.format_account_balance_figure(this.props.app_state.account_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance/10**18), 'number':this.format_account_balance_figure(this.props.app_state.account_balance/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
                 </div>
                 {this.render_amount_number_picker()}
                 <div style={{height: 10}}/>
@@ -406,18 +408,6 @@ class SendReceiveEtherPage extends Component {
     get_account_address(){
         if(this.props.app_state.account != null){
             return this.props.app_state.account.address;
-        }
-    }
-
-    get_number_balance_object(){
-        return{
-            'style':'l',
-            'title':'Balance in Ether',
-            'subtitle':this.format_power_figure(this.props.app_state.account_balance),
-            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance),
-            'number':this.format_account_balance_figure(this.props.app_state.account_balance),
-            'barcolor':'#606060',
-            'relativepower':'wei',
         }
     }
 

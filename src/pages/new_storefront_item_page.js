@@ -749,12 +749,12 @@ class NewStorefrontItemPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var stack_items = this.props.app_state.stack_items;
-        for(var i=0; i<stack_items.length; i++){
-            if(stack_items[i].type == 'token'){
-                items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
-            }
-        }
+        // var stack_items = this.props.app_state.stack_items;
+        // for(var i=0; i<stack_items.length; i++){
+        //     if(stack_items[i].type == 'token'){
+        //         items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
+        //     }
+        // }
 
         return items;
     }

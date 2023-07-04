@@ -28,10 +28,31 @@ import NewChannelPage from './pages/new_channel_page'
 import NewStorefrontPage from './pages/new_storefront_page'
 import NewStorefrontItemPage from './pages/new_storefront_item_page';
 
+import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
+import { LotusClient } from 'filecoin.js'
+import { create } from 'ipfs-http-client'
+
+
 const Web3 = require('web3');
 const ethers = require("ethers");
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
+
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
+function bgN(number, power) {
+  return bigInt((number+"e"+power)).toString();
+}
 
 class App extends Component {
 
@@ -149,7 +170,7 @@ class App extends Component {
 
         'chart_color':'#333333','chart_background_color':'#232323',
 
-        'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#868686',
+        'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 
         
         'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark'
@@ -243,7 +264,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -263,6 +284,54 @@ class App extends Component {
 
   when_details_orientation_changed(orientation){
     this.setState({details_orientation: orientation})
+  }
+
+  run_transaction_with_e = async (strs, ints, adds) => {
+    const web3 = new Web3('http://127.0.0.1:8545/');
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    var v5/* t_limits */ = [1000000000000, 1000000000000];
+    const gasPrice = await web3.eth.getGasPrice();
+    console.log("gasPrice: "+gasPrice);
+    const gasLimit = 5_300_000;
+
+    console.log('---------------d-----------')
+    console.log(me.state.account)
+    // const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+    // const privateKey = me.state.account.privateKey.toString();
+    // const senderAccount = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+    // contractInstance.methods.e(v5/* t_limits */, adds, ints, strs)
+    //   .send({
+    //     from: senderAccount.address, 
+    //     value: 35,
+    //     gasPrice, 
+    //     gasLimit 
+    //   })
+    //   .on('transactionHash', (hash) => {
+    //     console.log('e Transaction hash:', hash);
+    //   })
+    //   .on('receipt', (receipt) => {
+    //     console.log('e Transaction receipt:', receipt);
+    //   });
+
+    var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
+
+    var tx = {
+        gas: gasLimit,
+        to: contractAddress,
+        data: encoded
+    }
+    web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
+        web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
+          console.log('e Transaction receipt:', receipt);
+          me.setState({stack_items: []})
+        });
+    })
+
   }
 
 
@@ -322,40 +391,40 @@ class App extends Component {
     if(target == '0'){
       return(
         <div>
-          <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+          <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
         </div>
       )
     }
     else if(target == '8'){
       return(
         <div>
-          <NewTokenPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+          <NewTokenPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
         </div>
       )
     }
     else if(target == '3'){
       return(
-        <NewSubscriptionPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewSubscriptionPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
       )
     }
     else if(target == '1'){
       return(
-        <NewContractPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewContractPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
       )
     }
     else if(target == '6'){
       return(
-        <NewPostPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewPostPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
       )
     }
     else if(target == '7'){
       return(
-        <NewChannelPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewChannelPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
       )
     }
     else if(target == '4'){
       return(
-        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
       )
     }
     
@@ -409,7 +478,7 @@ class App extends Component {
                 </div>
             </SwipeableBottomSheet>
         )
-    }
+  }
 
 
     open_new_store_item_bottomsheet(){
@@ -425,7 +494,25 @@ class App extends Component {
 
     when_add_new_object_to_stack(state_obj){
       var stack_clone = this.state.stack_items.slice()
+      var edit_id = -1
+      for(var i=0; i<stack_clone.length; i++){
+        if(stack_clone[i].id == state_obj.edit_object){
+          edit_id = i
+        }
+      }
+      if(edit_id != -1){
+        
+      }
       stack_clone.push(state_obj)
+      this.setState({stack_items: stack_clone})
+    }
+
+    delete_object_from_stack(item){
+      var stack_clone = this.state.stack_items.slice()
+      const index = stack_clone.indexOf(item);
+      if (index > -1) { // only splice array when item is found
+        stack_clone.splice(index, 1); // 2nd parameter means remove one item only
+      }
       this.setState({stack_items: stack_clone})
     }
 
@@ -478,111 +565,10 @@ class App extends Component {
 
 
 
-
-  load_e5_data = async () => {
-    this.setState({should_keep_synchronizing_bottomsheet_open: true});
-    
-    const steps = 10;
-    const incr_count = 100/steps;
-    const web3 = new Web3('http://127.0.0.1:8545/');
-    const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = '0x02b0B4EFd909240FCB2Eb5FAe060dC60D112E3a4'
-    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
-
-
-    const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; 
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-    this.setState({account: account});
-
-    this.get_transaction_history(account)
-    this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
-
-    web3.eth.getBalance(account.address).then(balance => {
-      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, account_balance: balance});
-    }).catch(error => {
-      console.error('Error:', error);
-    });
-
-    await web3.eth.net.getId().then(id =>{
-      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, chain_id: id});
-    })
-
-    await web3.eth.net.getPeerCount().then(peers =>{
-      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, number_of_peers: peers});
-    })
-
-    await web3.eth.net.getNetworkType().then(type =>{
-      this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count, network_type: type});
-    })
-
-    web3.eth.getBlockNumber().then(blockNumber => {
-        var last_blocks = [];
-        var start = blockNumber-100;
-        if(blockNumber < 100){
-          start = 0;
-        }
-        for (let i = start; i <= blockNumber; i++) {
-          web3.eth.getBlock(i).then(block => {
-            last_blocks.push(block);
-          })
-        }
-
-        this.setState({E15last_blocks: last_blocks, E15number_of_blocks: blockNumber, syncronizing_progress:this.state.syncronizing_progress+incr_count});
-    });
-    
-    contractInstance.getPastEvents('e7', {
-      fromBlock: 0,
-      toBlock: 'latest'
-    }, (error, events) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log('loaded addresses')
-        this.setState({E35_addresses: events[0].returnValues.p5, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
-        
-      }
-    });
-
-    contractInstance.getPastEvents('e4', {}, (error, events) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({E15_runs: events, syncronizing_progress:this.state.syncronizing_progress+incr_count}); 
-      }
-    });
-
-    const G5contractArtifact = require('./contract_abis/G5.json');
-    const G5_address = '0xFD6F7A6a5c21A3f503EBaE7a473639974379c351'
-    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
-    var main_contract_ids = [2];
-    G5contractInstance.methods.f78(main_contract_ids, false).call((error, result) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({E15_contract_data: result, contract_id_data:['E35'], syncronizing_progress:this.state.syncronizing_progress+incr_count});
-      }
-    });
-
-    const H5contractArtifact = require('./contract_abis/H5.json');
-    const H5_address = '0x5302E909d1e93e30F05B5D6Eea766363D14F9892';
-    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
-    var token_ids = [3, 5];
-    H5contractInstance.methods.f86(token_ids).call((error, result) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({E15_exchange_data: result, E15_exchange_id_data:token_ids, should_keep_synchronizing_bottomsheet_open: false, syncronizing_progress:this.state.syncronizing_progress+incr_count});
-        this.prompt_top_notification('syncronized!', 500);
-      }
-    });
-
-  }
-
-
   /* prompts an alert notification from the top */
   prompt_top_notification(data, duration){
       var time = duration == null ? 1000: duration;
-      // data = 'toast item blah blah blah '
+      // data = 'toast item blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah '
       // time = 1500000
       toast(this.render_toast_item(data), {
           position: "top-center",
@@ -606,7 +592,7 @@ class App extends Component {
 
     return ( 
           <div>
-              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px','display': 'flex','flex-direction': 'row'}}>
+              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px','display': 'flex','flex-direction': 'row', width: 300}}>
                   <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
                       <img src={AlertIcon} style={{height:25,width:'auto','scale': '0.7'}} />
                   </div>
@@ -619,6 +605,124 @@ class App extends Component {
   }
 
 
+
+
+
+  load_e5_data = async () => {
+    this.setState({should_keep_synchronizing_bottomsheet_open: true});
+    
+    const steps = 9;
+    const incr_count = 100/steps;
+    const web3 = new Web3('ws://127.0.0.1:8545/');
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+
+    this.when_wallet_data_updated(['(32)'], 0, '')
+    this.inc_synch_progress()
+
+    await web3.eth.net.getId().then(id =>{
+      this.inc_synch_progress()
+      this.setState({chain_id: id});
+    })
+
+    await web3.eth.net.getPeerCount().then(peers =>{
+      this.setState({ number_of_peers: peers});
+      this.inc_synch_progress()
+    })
+
+    await web3.eth.net.getNetworkType().then(type =>{
+      this.setState({ network_type: type});
+      this.inc_synch_progress()
+    })
+
+    web3.eth.getBlockNumber().then(blockNumber => {
+        var last_blocks = [];
+        var start = blockNumber-100;
+        if(blockNumber < 100){
+          start = 0;
+        }
+        for (let i = start; i <= blockNumber; i++) {
+          web3.eth.getBlock(i).then(block => {
+            last_blocks.push(block);
+          })
+        }
+
+        this.setState({E15last_blocks: last_blocks, E15number_of_blocks: blockNumber});
+        this.inc_synch_progress()
+    });
+
+
+
+    contractInstance.events['e4']({
+      filter: { p1/* sender_account_id */: 1002 }
+    })
+    .on('data', event => {
+      console.log('Event:', event);
+      
+    })
+    .on('error', error => {
+      console.error('Error-----------:', error);
+    });
+    
+    contractInstance.getPastEvents('e7', {
+      fromBlock: 0,
+      toBlock: 'latest'
+    }, (error, events) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('loaded addresses')
+        this.setState({E35_addresses: events[0].returnValues.p5});
+        this.inc_synch_progress()
+        
+      }
+    });
+
+    contractInstance.getPastEvents('e4', {}, (error, events) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({E15_runs: events}); 
+        this.inc_synch_progress()
+      }
+    });
+
+    const G5contractArtifact = require('./contract_abis/G5.json');
+    const G5_address = '0x0B306BF915C4d645ff596e518fAf3F9669b97016'
+    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+    var main_contract_ids = [2];
+    G5contractInstance.methods.f78(main_contract_ids, false).call((error, result) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({E15_contract_data: result, contract_id_data:['E35']});
+        this.inc_synch_progress()
+      }
+    });
+
+    const H5contractArtifact = require('./contract_abis/H5.json');
+    const H5_address = '0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE';
+    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
+    var token_ids = [3, 5];
+    H5contractInstance.methods.f86(token_ids).call((error, result) => {
+      if (error) {
+        console.error(error);
+      } else {
+        this.setState({E15_exchange_data: result, E15_exchange_id_data:token_ids, should_keep_synchronizing_bottomsheet_open: false});
+        this.inc_synch_progress()
+        this.prompt_top_notification('syncronized!', 500);
+      }
+    });
+
+  }
+
+  inc_synch_progress(){
+    const steps = 9;
+    const incr_count = 100/steps;
+    this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
+  }
 
   send_ether_to_target(recipientAddress, amount, gasPrice, state){
     const web3 = new Web3('http://127.0.0.1:8545/');
@@ -662,11 +766,12 @@ class App extends Component {
 
     web3.eth.getBalance(account.address).then(balance => {
       this.setState({account_balance: balance});
-      this.prompt_top_notification('wallet set!', 200)
     }).catch(error => {
       console.error('Error:', error);
     });
 
+    this.get_filecoin_wallet(seed);
+    this.store_data_in_ipfs()
     this.get_transaction_history(account)
   }
 
@@ -680,6 +785,105 @@ class App extends Component {
     const account = web3.eth.accounts.privateKeyToAccount(wallet.privateKey);
     return account;
   }
+
+  get_filecoin_wallet = async (seed) => {
+    const connector = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
+    const hdWalletMnemonic = seed;
+    const hdDerivationPath = `m/44'/461'/0'/0/0`;
+    const lotusClient = new LotusClient(connector);
+
+    const walletProvider = new MnemonicWalletProvider( lotusClient, hdWalletMnemonic, hdDerivationPath );
+    const myAddress = await walletProvider.getDefaultAddress();
+    console.log(myAddress);
+
+    const balance = await lotusClient.wallet.balance(myAddress);
+    console.log('Wallet balance:', balance);
+
+
+
+    const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
+    const amount = 10**14; // Amount in FIL (1 FIL = 1e18)
+    // Send the transaction
+    // const message = await walletProvider.createMessage({
+    //   From: lotusClient.wallet.getDefaultAddress(),
+    //   To: recipientAddress,
+    //   Value: amount,
+    // });
+    // const cid = await walletProvider.sendMessage(message)
+
+    // console.log('Transaction CID:', cid);
+    // const receipt = await walletProvider.client.state.waitMsg(cid);
+    // if (receipt) {
+    //   console.log('Transaction confirmed!');
+    // } else {
+    //   console.log('Transaction failed or pending.');
+    // }
+  }
+
+  store_data_in_ipfs = async () => {
+    const projectId = '2RryKWCGNDlwzCa9yTG25TumLK4';
+    const projectSecret = '494188d509a288e4df6da34864f6e141';
+    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    const client = create({
+      host: 'ipfs.infura.io',
+      port: 5001,
+      protocol: 'https',
+      apiPath: '/api/v0',
+      headers: {
+        authorization: auth,
+      }
+    })
+
+    try {
+      const added = await client.add('hello world bry onyoni')
+      console.log(added)
+      console.log('Stored string on IPFS with CID:', added.path.toString());
+
+      const response = await fetch(`https://ipfs.io/ipfs/${added.cid}`);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data from IPFS. Status: ${response.status}`);
+      }
+      const data = await response.text();
+      console.log('Retrieved data from IPFS:', data);
+      // Do something with the retrieved data
+    } catch (error) {
+      console.log('Error uploading file: ', error)
+    }
+
+
+  }
+
+  send_filecoin = async (seed) => {
+    const provider = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
+    const lotusClient = new LotusClient(provider);
+    const hdDerivationPath = `m/44'/461'/0'/0/0`;
+    const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
+
+    const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
+    const amount = 10**14; // Amount in FIL (1 FIL = 1e18)
+    // const myAddress = await walletProvider.getDefaultAddress();
+
+    // console.log('walletProvider.address:---------------',myAddress)
+
+    // Send the transaction
+    // const message = await walletProvider.createMessage({
+    //   From: walletProvider.address,
+    //   To: recipientAddress,
+    //   Value: amount,
+    // });
+    // const cid = await walletProvider.sendMessage(message)
+
+    // console.log('Transaction CID:', cid);
+    // const receipt = await walletProvider.client.state.waitMsg(cid);
+    // if (receipt) {
+    //   console.log('Transaction confirmed!');
+    // } else {
+    //   console.log('Transaction failed or pending.');
+    // }
+
+  }
+
+  
 
 
   get_transaction_history = async (account) => {

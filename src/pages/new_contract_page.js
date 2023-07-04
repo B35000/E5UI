@@ -12,6 +12,7 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Draggable } from "react-drag-reorder";
 
 var bigInt = require("big-integer");
 
@@ -39,6 +40,7 @@ class NewContractPage extends Component {
     
     state = {
         id: makeid(32), type:'contract',
+        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_contract_tags_object: this.get_new_contract_tags_object(),
         default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
 
@@ -53,7 +55,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','configuration', 'authorities', 'entry-fees'], [1]
+                ['or','',0], ['e','configuration', 'authorities', 'entry-fees'], [0]
             ],
         };
     }
@@ -163,6 +165,13 @@ class NewContractPage extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.new_contract_tags_object, this.state.new_contract_tags_object['i'].active)
 
+        if(selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_enter_tags_part()}
+                </div>
+            )    
+        }else
         if(selected_item == 'configuration'){
             return(
                 <div>
@@ -191,6 +200,194 @@ class NewContractPage extends Component {
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
+
+    render_enter_tags_part(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_title_tags_part()}
+                    
+                    {this.render_new_job_object()}
+                    {this.render_detail_item('0')}
+                    {this.render_created_obj_objects()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-6">
+                        {this.render_new_job_object()}
+                        {this.render_detail_item('0')}
+                        {this.render_created_obj_objects()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_title_tags_part(){
+        return(
+            <div style={{'padding':'0px 15px 0px 10px'}}>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Contract'})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Contract'})}
+                <div style={{height:10}}/>
+
+                <div className="row">
+                    <div className="col-9" style={{'margin': '0px 0px 0px 10px'}}>
+                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-2" style={{'padding': '0px 5px 0px 0px'}}>
+                        {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
+                    </div>
+                </div>
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_title_text_input_field_changed(text){
+        this.setState({entered_title_text: text})
+    }
+
+    when_index_text_input_field_changed(text){
+        this.setState({entered_tag_text: text})
+    }
+
+    add_indexing_tag_for_new_job(){
+        var typed_word = this.state.entered_tag_text.trim();
+
+        if(typed_word == ''){
+            this.props.notify('type something!', 400)
+        }
+        else if(this.hasWhiteSpace(typed_word)){
+            this.props.notify('enter one word!', 400)
+        }
+        else{
+            var cloned_seed_array = this.state.entered_indexing_tags.slice()
+            cloned_seed_array.push(typed_word)
+            this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
+            this.props.notify('tag added!', 200)
+        }
+    }
+
+    hasWhiteSpace(s) {
+        return s.indexOf(' ') >= 0;
+    }
+
+    delete_entered_tag_word(word, pos){
+        var cloned_seed_array = this.state.entered_indexing_tags.slice()
+        const index = cloned_seed_array.indexOf(word);
+        if (index > -1) { // only splice array when item is found
+            cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_indexing_tags: cloned_seed_array})
+        this.props.notify('tag removed', 200)
+    }
+
+   
+
+
+
+    
+    render_new_job_object(){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return ( 
+            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                    {this.render_detail_item('0')}
+
+                </div>         
+            </div>
+        );
+    }
+
+    render_created_obj_objects(){
+        var items = this.fetch_obj_states()
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
+                                    <div style={{'padding': '5px 0px 5px 5px'}}>
+                                        {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+                                        <div style={{height: 10}}/>
+                                        {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':item.entered_title_text})}
+                                        <div style={{'padding': '5px'}} onClick={()=>this.delete_obj(item, index)}>
+                                            {this.render_detail_item('5', {'text':'Delete', 'action':''})}
+                                        </div>
+                                    </div>         
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    fetch_obj_states(){
+        var all_states = this.props.app_state.stack_items
+        var channel_states = []
+        for(var i=0; i<all_states.length; i++){
+            if(all_states[i].type == 'contract'){
+                channel_states.push(all_states[i])
+            }
+        }
+
+        return channel_states
+    }
+
+    delete_obj(item, index){
+        this.props.delete_object_from_stack(item)
+        this.props.notify('item removed',700)
+    }
+
+
+
+
 
 
     render_configuration_part(){
@@ -810,12 +1007,12 @@ class NewContractPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var stack_items = this.props.app_state.stack_items;
-        for(var i=0; i<stack_items.length; i++){
-            if(stack_items[i].type == 'token'){
-                items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
-            }
-        }
+        // var stack_items = this.props.app_state.stack_items;
+        // for(var i=0; i<stack_items.length; i++){
+        //     if(stack_items[i].type == 'token'){
+        //         items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
+        //     }
+        // }
 
         return items;
     }
@@ -869,7 +1066,7 @@ class NewContractPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} />
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
             </div>
         )
 
@@ -975,12 +1172,21 @@ class NewContractPage extends Component {
 
 
     finish_creating_object(){
+        var index_tags = this.state.entered_indexing_tags
+        var title = this.state.entered_title_text
 
-        this.props.when_add_new_object_to_stack(this.state)
+        if(index_tags.length == 0){
+            this.props.notify('add some tags first!', 700)
+        }
+        else if(title == ''){
+            this.props.notify('add a name first!', 700)
+        }else{
+            this.props.when_add_new_object_to_stack(this.state)
         
-        this.setState({ id: makeid(32), type:'contract', new_contract_tags_object: this.get_new_contract_tags_object(), default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
+            this.setState({ id: makeid(32), type:'contract', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_contract_tags_object: this.get_new_contract_tags_object(), default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
 
-        this.props.notify('transaction added to stack', 700);
+            this.props.notify('transaction added to stack', 700);
+        }
     }
 
 
