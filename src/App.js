@@ -66,7 +66,10 @@ class App extends Component {
     details_orientation: 'right',
     new_object_target: '0',
     created_object_array:[],
-    account_balance:0, stack_items:[],
+    account_balance:0, stack_items:[], 
+    created_subscriptions:[], all_subscriptions:[], 
+    created_contracts:[], all_contracts:[], 
+    created_tokens:[], all_tokens:[]
   };
 
 
@@ -286,7 +289,7 @@ class App extends Component {
     this.setState({details_orientation: orientation})
   }
 
-  run_transaction_with_e = async (strs, ints, adds) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit) => {
     const web3 = new Web3('http://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
@@ -296,27 +299,7 @@ class App extends Component {
     var v5/* t_limits */ = [1000000000000, 1000000000000];
     const gasPrice = await web3.eth.getGasPrice();
     console.log("gasPrice: "+gasPrice);
-    const gasLimit = 5_300_000;
-
-    console.log('---------------d-----------')
-    console.log(me.state.account)
-    // const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
-    // const privateKey = me.state.account.privateKey.toString();
-    // const senderAccount = web3.eth.accounts.privateKeyToAccount(privateKey);
-
-    // contractInstance.methods.e(v5/* t_limits */, adds, ints, strs)
-    //   .send({
-    //     from: senderAccount.address, 
-    //     value: 35,
-    //     gasPrice, 
-    //     gasLimit 
-    //   })
-    //   .on('transactionHash', (hash) => {
-    //     console.log('e Transaction hash:', hash);
-    //   })
-    //   .on('receipt', (receipt) => {
-    //     console.log('e Transaction receipt:', receipt);
-    //   });
+    const gasLimit = run_gas_limit;
 
     var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
 
@@ -329,6 +312,7 @@ class App extends Component {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           console.log('e Transaction receipt:', receipt);
           me.setState({stack_items: []})
+          me.get_accounts_data(me.state.account)
         });
     })
 
@@ -611,16 +595,13 @@ class App extends Component {
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
     
-    const steps = 9;
-    const incr_count = 100/steps;
+
     const web3 = new Web3('ws://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
 
-    this.when_wallet_data_updated(['(32)'], 0, '')
-    this.inc_synch_progress()
 
     await web3.eth.net.getId().then(id =>{
       this.inc_synch_progress()
@@ -653,6 +634,9 @@ class App extends Component {
         this.inc_synch_progress()
     });
 
+    const gasPrice = await web3.eth.getGasPrice();
+    this.setState({gas_price: gasPrice})
+
 
 
     contractInstance.events['e4']({
@@ -665,29 +649,11 @@ class App extends Component {
     .on('error', error => {
       console.error('Error-----------:', error);
     });
-    
-    contractInstance.getPastEvents('e7', {
-      fromBlock: 0,
-      toBlock: 'latest'
-    }, (error, events) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log('loaded addresses')
-        this.setState({E35_addresses: events[0].returnValues.p5});
-        this.inc_synch_progress()
-        
-      }
-    });
 
-    contractInstance.getPastEvents('e4', {}, (error, events) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({E15_runs: events}); 
-        this.inc_synch_progress()
-      }
-    });
+    this.when_wallet_data_updated(['(32)'], 0, '')
+    this.inc_synch_progress()
+
+    
 
     const G5contractArtifact = require('./contract_abis/G5.json');
     const G5_address = '0x0B306BF915C4d645ff596e518fAf3F9669b97016'
@@ -719,7 +685,7 @@ class App extends Component {
   }
 
   inc_synch_progress(){
-    const steps = 9;
+    const steps = 4;
     const incr_count = 100/steps;
     this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
   }
@@ -772,7 +738,7 @@ class App extends Component {
 
     this.get_filecoin_wallet(seed);
     this.store_data_in_ipfs()
-    this.get_transaction_history(account)
+    this.get_accounts_data(account)
   }
 
   get_account_from_seed(seed){
@@ -930,6 +896,101 @@ class App extends Component {
           }
           return 0;
       });
+  }
+
+  get_accounts_data = async (account) => {
+    const web3 = new Web3('ws://127.0.0.1:8545/');
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+    var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
+    var contract_addresses = contract_addresses_events[0].returnValues.p5
+    this.setState({E35_addresses: contract_addresses})
+    
+    var accounts = await contractInstance.methods.f167([],[account.address], 2).call((error, result) => {});
+    console.log('account id----------------',accounts[0])
+
+
+    var events = await contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* sender_account_id */: accounts[0] } }, (error, events) => {});
+    this.setState({E15_runs: events});
+    console.log(events[0])
+
+    
+
+    const F5contractArtifact = require('./contract_abis/F5.json');
+    const F5_address = contract_addresses[2];
+    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+    
+    var created_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* sender_account_id */: accounts[0], p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
+    var created_subscriptions = []
+    for(var i=0; i<created_subscription_events.length; i++){
+      var id = created_subscription_events[i].returnValues.p1
+      created_subscriptions.push(id)
+    }
+    var created_subscription_data = await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
+    var created_subscription_object_data = []
+    for(var i=0; i<created_subscription_events.length; i++){
+      created_subscription_object_data.push({'id':created_subscription_events[i], 'data':created_subscription_data[i]})
+    }
+    this.setState({created_subscriptions: created_subscription_object_data})
+    console.log('subscription count: '+created_subscription_object_data.length)
+
+    var all_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
+    this.setState({all_subscriptions: all_subscription_events})
+
+
+
+    const G5contractArtifact = require('./contract_abis/G5.json');
+    const G5_address = contract_addresses[3];
+    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+    var created_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* sender_account_id */: accounts[0], p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
+    var created_contracts = [2]
+    for(var i=0; i<created_contract_events.length; i++){
+      var id = created_contract_events[i].returnValues.p1
+      created_contracts.push(id)
+    }
+
+    var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
+    var created_contract_object_data = []
+    for(var i=0; i<created_contracts.length; i++){
+      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i]})
+    }
+
+    this.setState({created_contracts: created_contract_object_data})
+    console.log('contract count: '+created_contract_object_data.length)
+
+    var all_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
+    this.setState({all_contracts: all_contract_events})
+
+
+
+
+
+    const H5contractArtifact = require('./contract_abis/H5.json');
+    const H5_address = contract_addresses[5];
+    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
+
+    var created_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* sender_account_id */: accounts[0], p2/* object_type */:31/* token_exchange */ } }, (error, events) => {});
+    var created_tokens = [3, 5]
+    for(var i=0; i<created_token_events.length; i++){
+      var id = created_token_events[i].returnValues.p1
+      created_tokens.push(id)
+    }
+
+    var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
+    var created_token_object_data = []
+    for(var i=0; i<created_tokens.length; i++){
+      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i]})
+    }
+
+    this.setState({created_tokens: created_token_object_data})
+    console.log('token count: '+created_token_object_data.length)
+
+    var all_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange_id */ } }, (error, events) => {});
+    this.setState({all_tokens: all_token_events})
+
   }
 
 

@@ -511,6 +511,10 @@ class PostListSection extends Component {
 
 
 
+
+
+
+
     render_ends_list_group(){
         var middle = this.props.height-123;
         var size = this.props.size;
@@ -539,12 +543,11 @@ class PostListSection extends Component {
 
     get_exchange_tokens(exchange_type){
         var token_exchanges = []
-        var exchanges_from_sync = this.props.app_state.E15_exchange_data;
-        var exchange_ids_from_sync = this.props.app_state.E15_exchange_id_data
+        var exchanges_from_sync = this.props.app_state.created_tokens
         for (let i = 0; i < exchanges_from_sync.length; i++) {
-            var type = exchanges_from_sync[i][0][3/* <3>token_type */]
+            var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i], 'id':exchange_ids_from_sync[i], 'E5': 'E15'})
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35'})
             }
         }
         return token_exchanges
@@ -560,7 +563,7 @@ class PostListSection extends Component {
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 10px 0px 10px'}}>
-                        {this.render_detail_item('8', item['label'])}
+                        {this.render_detail_item('3', item['label'])}
                     </div>
                     <div style={{height: 20}}/>
                     {this.render_detail_item('2', item['number_label'])}

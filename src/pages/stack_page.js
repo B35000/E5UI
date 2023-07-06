@@ -5,6 +5,7 @@ import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 
 import Letter from './../assets/letter.png';
+import Dialog from "@mui/material/Dialog";
 
 var bigInt = require("big-integer");
 
@@ -26,7 +27,7 @@ class StackPage extends Component {
         get_orientation_tags_object: this.get_orientation_tags_object(),
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         typed_word:'',added_tags:[],set_salt: 0,
-        run_gas_limit:0, run_gas_price:0, hidden:[]
+        run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false
     };
 
     get_stack_page_tags_object(){
@@ -71,7 +72,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','a','e','i','o','u','?','$','%','#','!'], [1]
+                ['or','',0], ['e','a','i','o','u','?','$','%','#','!'], [1]
             ],
         };
     }
@@ -145,6 +146,7 @@ class StackPage extends Component {
             return(
                 <div style={{'padding': '0px 20px 0px 10px'}}>
                     {this.render_stack_run_settings_part()}
+                    {this.render_run_history_items()}
                 </div>
             )
         }
@@ -155,6 +157,7 @@ class StackPage extends Component {
                         {this.render_stack_run_settings_part()}
                     </div>
                     <div className="col-6">
+                        {this.render_run_history_items()}
                     </div>
                 </div>
                 
@@ -175,19 +178,6 @@ class StackPage extends Component {
 
                 {this.render_detail_item('0')}
 
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Wei', 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Ether', 'subtitle':this.format_power_figure(this.state.run_gas_price/10**18), 'barwidth':this.calculate_bar_width(this.state.run_gas_price/10**18), 'number':this.format_account_balance_figure(this.state.run_gas_price/10**18), 'barcolor':'', 'relativepower':'Ether', })}
-
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_price/10**9), 'number':this.format_account_balance_figure(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'Gwei', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={9}/>
-
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -200,6 +190,62 @@ class StackPage extends Component {
         this.setState({run_gas_price: number})
     }
 
+    render_run_history_items(){
+         var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.props.app_state.E15_runs
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
+                                    <div style={{'padding': '5px 0px 5px 5px'}}>
+                                        {this.render_detail_item('3',{'title':item.returnValues.p3, 'details':'Transaction ID','size':'l'})}
+                                        <div style={{height: 10}}/>
+                                        {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'l'})}
+                                        <div style={{height: 10}}/>
+                                        {this.render_detail_item('3',{'title':this.get_time_difference(item.returnValues.p8), 'details':'Timestamp','size':'l'})}
+                                        <div style={{height: 10}}/>
+                                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
+                                        
+                                    </div>         
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
 
     render_stack_run_section(){
         var size = this.props.size
@@ -210,6 +256,7 @@ class StackPage extends Component {
                     {this.render_stack_gas_part()}
                     {this.render_detail_item('0')}
                     {this.render_stack_transactions_part()}
+                    {this.render_dialog_ui()}
                 </div>
             )
         }
@@ -222,6 +269,7 @@ class StackPage extends Component {
                     <div className="col-6">
                         {this.render_stack_transactions_part()}
                     </div>
+                    {this.render_dialog_ui()}
                 </div>
                 
             )
@@ -325,6 +373,14 @@ class StackPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'units', })}
                 </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price', 'subtitle':this.format_power_figure(this.props.app_state.gas_price), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price), 'number':this.format_account_balance_figure(this.props.app_state.gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.props.app_state.gas_price/10**9), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price/10**9), 'number':this.format_account_balance_figure(this.props.app_state.gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                </div>
+                
 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.run_transactions()}>
@@ -391,11 +447,70 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(subscription_obj)
                 }
+                else if(txs[i].type == 'post'){
+                    var post_obj = this.format_post_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(post_obj)
+                }
+                else if(txs[i].type == 'job'){
+                    var job_obj = this.format_job_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(job_obj)
+                }
+                else if(txs[i].type == 'channel'){
+                    var channel_obj = this.format_channel_object(txs[i])
+                    strs.push([['']])
+                    adds.push([])
+                    ints.push(channel_obj)
+                }
+                else if(txs[i].type == 'storefront'){
+                    var storefront_data = this.format_storefront_object(txs[i], ints)
+                    for(var i=0; i<storefront_data.objs; i++){
+                        ints.push(storefront_data.objs[i])
+                    }
+                    ints.push(storefront_data.metadata_action)
+                    strs.push([storefront_data.metadata_action_strings])
+                    adds.push([])
+                }
             }
             
         }
 
-        this.props.run_transaction_with_e(strs, ints, adds)
+        var account_balance = this.props.app_state.account_balance
+        var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
+        var run_gas_price = this.props.app_state.gas_price
+
+        if(ints.length > 0){
+            if(account_balance < (run_gas_limit * run_gas_price)){
+                this.setState({invalid_ether_amount_dialog_box: true})
+            }else{   
+                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit)
+            }
+        }else{
+            this.props.notify('add some transactions first!',600)
+        }
+        
+    }
+
+    render_dialog_ui(){
+        return(
+            <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.invalid_ether_amount_dialog_box}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                    
+                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Issue With Run</h4>
+
+                    {this.render_detail_item('3', {'title':'Invalid Balance', 'details':'You need ether to run your transactions', 'size':'s'})}
+
+                </div>
+                
+            </Dialog>
+        )
+    }
+
+    cancel_dialog_box(){
+        this.setState({invalid_ether_amount_dialog_box: false})
     }
 
     format_contract_object(t){
@@ -577,6 +692,50 @@ class StackPage extends Component {
       }
 
       return obj
+    }
+
+    format_post_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 18, 0]
+        ]
+        return obj
+    }
+
+    format_job_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 17, 0]
+        ]
+        return obj
+    }
+
+    format_channel_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 36, 0]
+        ]
+        return obj
+    }
+
+    format_storefront_object(t, ints){
+        var objs = []
+        var metadata_action_strings = []
+        var obj = [/* storefront object */ [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 28, 0] ]
+        objs.push(obj)
+        var storefront_stack_id = ints.length
+        var metadata_action = [ /* set metadata */
+            [20000, 1, 0],
+            [], [],/* target objects */
+            []/* contexts */, 
+            []/* int_data */
+        ]
+        for(var i=0; i<t.store_items; i++){
+            objs.push([/* storefront item object */ [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 27, 0] ])
+            metadata_action[1].push(storefront_stack_id)
+            metadata_action[2].push(35)
+            metadata_action[3].push(storefront_stack_id+i+1)
+            metadata_action[4].push(0)
+            metadata_action_strings.push('')
+        }
+        return {objs: objs, metadata_action: metadata_action, metadata_action_strings: metadata_action_strings}
     }
 
 

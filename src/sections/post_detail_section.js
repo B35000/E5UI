@@ -1028,17 +1028,18 @@ class PostDetailSection extends Component {
 
     get_exchange_tokens(exchange_type){
         var token_exchanges = []
-        var exchanges_from_sync = this.props.app_state.E15_exchange_data;
-        var exchange_ids_from_sync = this.props.app_state.E15_exchange_id_data
+        // var exchanges_from_sync = this.props.app_state.E15_exchange_data;
+        // var exchange_ids_from_sync = this.props.app_state.E15_exchange_id_data
+        var exchanges_from_sync = this.props.app_state.created_tokens
         for (let i = 0; i < exchanges_from_sync.length; i++) {
-            var type = exchanges_from_sync[i][0][3/* <3>token_type */]
+            var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
             
             var img = type  == 3 ? EndImg: SpendImg
-            if(exchange_ids_from_sync[i] == 3) img = E35EndImg
-            else if(exchange_ids_from_sync[i] == 5) img = E35SpendImg
+            if(exchanges_from_sync[i]['id'] == 3) img = E35EndImg
+            else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i], 'id':exchange_ids_from_sync[i], 'E5': 'E15', 'img':img}, )
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img}, )
             }
         }
         return token_exchanges

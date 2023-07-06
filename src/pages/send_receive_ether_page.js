@@ -253,7 +253,7 @@ class SendReceiveEtherPage extends Component {
 
         if(items.length == 0){
             return(
-                <div>
+                <div style={{'padding':'10px 0px 0px 0px'}}>
                     {this.render_empty_detail_object()}
                     <div style={{height: 5}}/>
                     {this.render_empty_detail_object()}
@@ -281,7 +281,7 @@ class SendReceiveEtherPage extends Component {
             he = this.props.app_state.height-190;
         }
         return(
-            <div style={{height:he, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+            <div style={{height:150, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
