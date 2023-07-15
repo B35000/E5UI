@@ -323,10 +323,10 @@ class StackPage extends Component {
     render_stack_item(item, index){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var op = this.state.hidden.includes(index) ? 0.5 : 1.0
-        var txt = this.state.hidden.includes(index) ? 'show' : 'hide'
+        // var op = this.state.hidden.includes(index) ? 0.5 : 1.0
+        // var txt = this.state.hidden.includes(index) ? 'show' : 'hide'
         return(
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px', opacity: op}}>
+            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
@@ -335,9 +335,6 @@ class StackPage extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item)),'size':'l'})}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '5px'}} onClick={()=>this.show_hide_stack_item(index)}>
-                        {this.render_detail_item('5', {'text':txt, 'action':''})}
-                    </div>
 
                 </div>         
             </div>
@@ -421,7 +418,7 @@ class StackPage extends Component {
     }
 
 
-    run_transactions(){
+    run_transactions = async () => {
         var txs = this.props.app_state.stack_items
         var strs = []
         var ints = []
@@ -474,9 +471,64 @@ class StackPage extends Component {
                     strs.push([storefront_data.metadata_action_strings])
                     adds.push([])
                 }
+
             }
             
         }
+
+        var metadata_action = [ /* set metadata */
+            [20000, 1, 0],
+            [], [],/* target objects */
+            []/* contexts */, 
+            []/* int_data */
+        ]
+        var metadata_strings = [ [] ]
+
+        for(var i=0; i<txs.length; i++){
+            if(!this.state.hidden.includes(i)){
+                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'){
+                    metadata_action[1].push(i)
+                    metadata_action[2].push(35)
+                    metadata_action[3].push(0)
+                    metadata_action[4].push(0)
+                    var ipfs_obj = await this.get_object_ipfs_index(txs[i]);
+                    metadata_strings[0].push(ipfs_obj.toString())
+                }
+            }
+        }
+        ints.push(metadata_action)
+        strs.push(metadata_strings)
+        adds.push([])
+
+
+        var index_data_in_tags = [ /* index data in tags */
+            [20000, 12, 0],
+            [], []/* target objects */
+        ]
+
+        var index_data_strings = [ [], [] ]
+
+        for(var i=0; i<txs.length; i++){
+            if(!this.state.hidden.includes(i)){
+                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'){
+                    var tx_tags = txs[i].entered_indexing_tags
+                    index_data_in_tags[1].push(i)
+                    index_data_in_tags[2].push(35)
+                    index_data_strings[0].push('en')
+                    index_data_strings[1].push('')
+                    for(var t=0; t<tx_tags.length; t++){
+                        index_data_in_tags[1].push(i)
+                        index_data_in_tags[2].push(35)
+                        index_data_strings[0].push(tx_tags[t])
+                        index_data_strings[1].push('')
+                    }
+                }
+            }
+        }
+
+        ints.push(index_data_in_tags)
+        strs.push(index_data_strings)
+        adds.push([])
 
         var account_balance = this.props.app_state.account_balance
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
@@ -492,6 +544,12 @@ class StackPage extends Component {
             this.props.notify('add some transactions first!',600)
         }
         
+    }
+
+    get_object_ipfs_index(tx){
+        var object_as_string = JSON.stringify(tx)
+        var obj_cid = this.props.store_data_in_infura(object_as_string)
+        return obj_cid
     }
 
     render_dialog_ui(){

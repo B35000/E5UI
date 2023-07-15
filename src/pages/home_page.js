@@ -38,7 +38,9 @@ class home_page extends Component {
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
         selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null,
-        view_post_bottomsheet: false
+        view_post_bottomsheet: false,
+
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[],
     };
 
 
@@ -423,14 +425,15 @@ class home_page extends Component {
 
     when_tags_updated(tag_group){
         if(this.state.page == '?'){
-            return this.setState({work_page_tags_object: tag_group})
+            this.setState({work_page_tags_object: tag_group})
         }
         else if(this.state.page == 'e'){
-            return this.setState({explore_page_tags_object: tag_group})
+            this.setState({explore_page_tags_object: tag_group})
         }
         else{
-            return this.setState({wallet_page_tags_object: tag_group})
+            this.setState({wallet_page_tags_object: tag_group})
         }
+        this.setState({ selected_job_post_item:null, selected_contract_item:null, selected_subscription_item:null, selected_post_item:null, selected_channel_item:null})
     }
 
 
@@ -442,9 +445,12 @@ class home_page extends Component {
     render_post_list_group(size){
         return(
             <PostListSection size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} 
-            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)}
+            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)}
 
-            open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme}/>
+            open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
+            
+            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs}
+            />
         )
     }
 
@@ -464,7 +470,6 @@ class home_page extends Component {
 
     when_spends_object_clicked(index){
         this.setState({selected_spend_item: index})
-        
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -477,8 +482,59 @@ class home_page extends Component {
         }
     }
 
-    when_job_post_item_clicked(item){
-        this.setState({selected_job_post_item: item})
+    when_job_post_item_clicked(index){
+        this.setState({selected_job_post_item: index})
+        var viewed_jobs_clone = this.state.viewed_jobs.slice()
+        var pos = viewed_jobs_clone.indexOf(index)
+        if(pos == -1){
+            viewed_jobs_clone.push(index)
+            this.setState({viewed_jobs: viewed_jobs_clone})
+        }
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
+    when_contract_item_clicked(index){
+        this.setState({selected_contract_item: index})
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
+    when_subscription_item_clicked(index){
+        this.setState({selected_subscription_item: index})
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
+    when_post_item_clicked(index){
+        this.setState({selected_post_item: index})
+
+        var viewed_posts_clone = this.state.viewed_posts.slice()
+        var pos = viewed_posts_clone.indexOf(index)
+        if(pos == -1){
+            viewed_posts_clone.push(index)
+            this.setState({viewed_posts: viewed_posts_clone})
+        }
+
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
+
+    when_channel_item_clicked(index){
+        this.setState({selected_channel_item: index})
+
+        var viewed_channel_clone = this.state.viewed_channels.slice()
+        var pos = viewed_channel_clone.indexOf(index)
+        if(pos == -1){
+            viewed_channel_clone.push(index)
+            this.setState({viewed_channels: viewed_channel_clone})
+        }
+
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -493,11 +549,14 @@ class home_page extends Component {
         return(
             <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} 
 
-            selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item}
+            selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item}
 
-            height={this.props.height} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)}
+            height={this.props.height} screensize={this.props.screensize} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)}
             
-            when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)}/>
+            when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
+            
+            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs}
+            />
         )
     }
 

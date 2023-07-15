@@ -295,7 +295,7 @@ class ViewGroups extends Component {
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
-                                <div onClick={() => this.when_image_clicked(item, index)}>
+                                <div onClick={() => this.when_image_clicked(items, index)}>
                                     <img src={item} style={{height:65 ,width:65}} />
                                 </div> 
                             </ImageListItem>
@@ -379,7 +379,7 @@ class ViewGroups extends Component {
         }
     }
 
-    when_image_clicked(item, index){
+    when_image_clicked(items, index){
         
         
     }

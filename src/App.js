@@ -69,7 +69,8 @@ class App extends Component {
     account_balance:0, stack_items:[], 
     created_subscriptions:[], all_subscriptions:[], 
     created_contracts:[], all_contracts:[], 
-    created_tokens:[], all_tokens:[]
+    created_tokens:[], all_tokens:[],
+    created_jobs:[]
   };
 
 
@@ -207,7 +208,7 @@ class App extends Component {
       width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
       open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
       open_new_object={this.open_new_object.bind(this)} 
-      when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)}/>
+      when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)} fetch_objects_data={this.fetch_objects_data.bind(this)}/>
     )
   }
 
@@ -267,7 +268,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -308,11 +309,14 @@ class App extends Component {
         to: contractAddress,
         data: encoded
     }
+
+    this.prompt_top_notification('running your transactions...', 600)
     web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           console.log('e Transaction receipt:', receipt);
           me.setState({stack_items: []})
           me.get_accounts_data(me.state.account)
+          this.prompt_top_notification('run complete!', 600)
         });
     })
 
@@ -564,7 +568,7 @@ class App extends Component {
           progress: undefined,
           transition: Slide,
           containerId:"id",
-          toastId:"tid",
+          toastId:data,
           hideProgressBar: true,
           style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:'auto'}
       });
@@ -805,7 +809,7 @@ class App extends Component {
       console.log(added)
       console.log('Stored string on IPFS with CID:', added.path.toString());
 
-      const response = await fetch(`https://ipfs.io/ipfs/${added.cid}`);
+      const response = await fetch(`https://ipfs.io/ipfs/${added.path.toString()}`);
       if (!response.ok) {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response.status}`);
       }
@@ -907,9 +911,12 @@ class App extends Component {
     var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
     var contract_addresses = contract_addresses_events[0].returnValues.p5
     this.setState({E35_addresses: contract_addresses})
+    // console.log(contract_addresses)
     
     var accounts = await contractInstance.methods.f167([],[account.address], 2).call((error, result) => {});
     console.log('account id----------------',accounts[0])
+
+    this.setState({user_account_id: accounts[0]})
 
 
     var events = await contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* sender_account_id */: accounts[0] } }, (error, events) => {});
@@ -930,14 +937,17 @@ class App extends Component {
     }
     var created_subscription_data = await F5contractInstance.methods.f74(created_subscriptions).call((error, result) => {});
     var created_subscription_object_data = []
-    for(var i=0; i<created_subscription_events.length; i++){
-      created_subscription_object_data.push({'id':created_subscription_events[i], 'data':created_subscription_data[i]})
+    for(var i=0; i<created_subscriptions.length; i++){
+      var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3);
+      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i]})
     }
     this.setState({created_subscriptions: created_subscription_object_data})
     console.log('subscription count: '+created_subscription_object_data.length)
 
     var all_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
     this.setState({all_subscriptions: all_subscription_events})
+
+
 
 
 
@@ -955,7 +965,9 @@ class App extends Component {
     var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
     var created_contract_object_data = []
     for(var i=0; i<created_contracts.length; i++){
-      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i]})
+      var contracts_data = await this.fetch_objects_data(created_contracts[i], web3);
+      var event = i>0 ? created_contract_events[i-1]: null
+      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event})
     }
 
     this.setState({created_contracts: created_contract_object_data})
@@ -963,6 +975,8 @@ class App extends Component {
 
     var all_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
     this.setState({all_contracts: all_contract_events})
+
+
 
 
 
@@ -982,7 +996,9 @@ class App extends Component {
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
     var created_token_object_data = []
     for(var i=0; i<created_tokens.length; i++){
-      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i]})
+      var tokens_data = await this.fetch_objects_data(created_tokens[i], web3);
+      var event = i>1 ? created_token_events[i-2]: null
+      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event})
     }
 
     this.setState({created_tokens: created_token_object_data})
@@ -990,6 +1006,107 @@ class App extends Component {
 
     var all_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange_id */ } }, (error, events) => {});
     this.setState({all_tokens: all_token_events})
+
+
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_post_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 18/* 18(post object) */ } }, (error, events) => {});
+    var created_posts = []
+    for(var i=0; i<created_post_events.length; i++){
+      var id = created_post_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
+        var post_data = await this.fetch_objects_data(id, web3);
+        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i]})
+      }
+    }
+    this.setState({created_posts: created_posts})
+    console.log('post count: '+created_posts.length)
+
+
+    var created_channel_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 36/* 36(type_channel_target) */ } }, (error, events) => {});
+    var created_channel = []
+    for(var i=0; i<created_channel_events.length; i++){
+      var id = created_channel_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
+        var channel_data = await this.fetch_objects_data(id, web3);
+        created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i]})
+      }
+    }
+    this.setState({created_channels: created_channel})
+    console.log('channel count: '+created_channel.length)
+
+
+
+    var created_job_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 17/* 17(job_object) */ } }, (error, events) => {});
+    var created_job = []
+    for(var i=0; i<created_job_events.length; i++){
+      var id = created_job_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
+        var job_data = await this.fetch_objects_data(id, web3);
+        created_job.push({'id':id, 'ipfs':job_data, 'event': created_job_events[i]})
+      }
+    }
+    this.setState({created_jobs: created_job})
+    console.log('job count: '+created_job.length)
+
+  }
+
+
+  store_data_in_infura = async (data) => {
+    const projectId = '2RryKWCGNDlwzCa9yTG25TumLK4';
+    const projectSecret = '494188d509a288e4df6da34864f6e141';
+    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    const client = create({
+      host: 'ipfs.infura.io',
+      port: 5001,
+      protocol: 'https',
+      apiPath: '/api/v0',
+      headers: {
+        authorization: auth,
+      }
+    })
+
+    try {
+      const added = await client.add(data)
+      console.log('Stored string on IPFS with CID:', added.path.toString());
+
+      return added.path.toString()
+    } catch (error) {
+      console.log('Error uploading file: ', error)
+    }
+  }
+
+
+  fetch_objects_data = async (id, web3) => {
+    // const web3 = new Web3('ws://127.0.0.1:8545/');
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    var target_id = id;
+    var events = await E52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: target_id} }, (error, events) => {});
+    if(events.length == 0) return;
+    var cid = events[events.length - 1].returnValues.p4
+    if(cid == 'e3') return;
+    console.log('loaded events: ',events)
+
+    try {
+      const response = await fetch(`https://ipfs.io/ipfs/${cid}`);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
+      }
+      const data = await response.text();
+      console.log('Retrieved data from IPFS:', JSON.parse(data));
+      return JSON.parse(data);
+      // Do something with the retrieved data
+    } catch (error) {
+      console.log('Error uploading file: ', error)
+    }
 
   }
 

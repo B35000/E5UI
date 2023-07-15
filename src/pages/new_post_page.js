@@ -637,8 +637,8 @@ class NewPostPage extends Component {
         var texts = this.state.entered_text_objects
         var images = this.state.entered_image_objects
 
-        if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+        if(index_tags.length < 3){
+            this.props.notify('add at least 3 tags first!', 700)
         }
         else if(title == ''){
             this.props.notify('add a title for your post', 700)

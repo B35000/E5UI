@@ -17,6 +17,7 @@ class PostListSection extends Component {
     
     state = {
         selected: 0,
+        viewed_posts:[]
     };
 
     render(){
@@ -99,107 +100,209 @@ class PostListSection extends Component {
     }
 
     render_jobs_list_group(){
-       var middle = this.props.height-123;
+       var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-123;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var jobs_in_stack = this.fetch_created_job_posts();
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {jobs_in_stack.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_stack_job_item(item, index)}
-                        </li>
-                    ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                </ul>
-            </div>
-        ); 
+        var items = this.get_job_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_job_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        } 
     }
 
-    fetch_created_job_posts(){
-        return this.props.app_state.created_object_array
+    get_job_items(){
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        if(this.props.work_page_tags_object['i'].active != 'jobs'){
+            return this.props.app_state.created_jobs 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_jobs
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_jobs = []
+            for(var i=0; i<this.props.viewed_jobs.length; i++){
+                my_viewed_jobs.push(this.props.app_state.created_jobs[this.props.viewed_jobs[i]])
+            }
+            return my_viewed_jobs
+        }
+        else {
+            var my_jobs = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_jobs.length; i++){
+                var post_author = this.props.app_state.created_jobs[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_jobs.push(this.props.app_state.created_jobs[i])
+                }
+            }
+            return my_jobs
+        }
     }
 
-    render_stack_job_item(item_data, index){
+    render_job_object(object, index){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.get_stack_job_item_object(item_data)
-        return ( 
-            <div onClick={() => this.when_job_post_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+        var item = this.format_job_item(object)
+        return(
+            <div onClick={() => this.when_job_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_detail_item('4', item['title'])}
+                        {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{height: 20}}/>
-                    <div style={{'margin':'0px 0px 0px 0px'}}>
-                        {this.render_detail_item('2', item['id'])}
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
                     </div>
                     
                 </div>         
             </div>
-        );
+        )
     }
 
-    get_stack_job_item_object(item_data){
-        return{
-            'tags':{'active_tags':item_data['tags'], 'index_option':'indexed'},
-            'title':{'text':item_data['title'], 'font':'Sans-serif', 'textsize':'15px'},
-            'id': { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(item_data['id']), 'number':`${number_with_commas(item_data['id'])}`, 'barcolor':'', 'relativepower':'stack ID', }
+    format_job_item(object){
+        var tags = object['ipfs'] == null ? ['Job'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
-    when_job_post_item_clicked(item){
-        this.props.when_job_post_item_clicked(item)
-    }
-
-    render_job_object(item, index){
-
+    when_job_item_clicked(index){
+        this.props.when_job_post_item_clicked(index)
     }
 
 
 
     
     render_contracts_list_group(){
+        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_contract_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
+        var items = this.get_contract_items()
 
-    render_contract_object(){
-        var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_contract_item(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        
+    }
+
+    get_contract_items(){
+        var items = this.props.app_state.created_contracts
+        var final_list = []
+        for(var i=0; i<items.length; i++){
+            if(items[i]['id'] != 2){
+                final_list.push(items[i])
+            }
+        }
+        return final_list.reverse()
+    }
+
+    render_contract_item(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_contract_item(object)
+        return(
+            <div onClick={() => this.when_contract_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_contract_item(object){
+        var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+        }
+    }
+
+    when_contract_item_clicked(index){
+        this.props.when_contract_item_clicked(index)
     }
 
 
@@ -239,37 +342,91 @@ class PostListSection extends Component {
 
 
     render_subscription_list_group(){
+        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_subscription_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
+        var items = this.get_subscription_items()
 
-    render_subscription_object(){
-        var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_subscription_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
     }
+
+    get_subscription_items(){
+        var items = this.props.app_state.created_subscriptions
+        return items.reverse()
+    }
+
+    render_subscription_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_subscription_item(object)
+        return(
+            <div onClick={() => this.when_subscription_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    when_subscription_item_clicked(index){
+        this.props.when_subscription_item_clicked(index)
+    }
+
+    format_subscription_item(object){
+        var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+        }
+    }
+
+
 
 
 
@@ -348,72 +505,236 @@ class PostListSection extends Component {
 
 
     render_posts_list_group(){
+        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_posts_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
+        var items = this.get_post_items()
 
-    render_posts_object(){
-        var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_post_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    get_post_items(){
+        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
+
+        if(this.props.explore_page_tags_object['i'].active != 'posts'){
+            return this.props.app_state.created_posts 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_posts
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_posts = []
+            for(var i=0; i<this.props.viewed_posts.length; i++){
+                my_viewed_posts.push(this.props.app_state.created_posts[this.props.viewed_posts[i]])
+            }
+            return my_viewed_posts
+        }
+        else {
+            var my_posts = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_posts.length; i++){
+                var post_author = this.props.app_state.created_posts[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_posts.push(this.props.app_state.created_posts[i])
+                }else{
+                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
+                }
+            }
+            return my_posts
+        }
+
+        
+    }
+
+    render_post_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_post_item(object)
+        return(
+            <div onClick={() => this.when_post_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_post_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    when_post_item_clicked(index){
+        this.props.when_post_item_clicked(index)
     }
 
 
 
     render_channels_list_group(){
+        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = ['0','1','2','3'];
-        return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_channels_object()}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
+        var items = this.get_channel_items()
 
-    render_channels_object(){
-        var background_color = this.props.theme['card_background_color']
-        return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_channel_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
     }
+
+    render_channel_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_channel_item(object)
+        return(
+            <div onClick={() => this.when_channel_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    get_channel_items(){
+        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
+
+        if(this.props.explore_page_tags_object['i'].active != 'channels'){
+            return this.props.app_state.created_channels 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_channels
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_channels = []
+            for(var i=0; i<this.props.viewed_channels.length; i++){
+                my_viewed_channels.push(this.props.app_state.created_channels[this.props.viewed_channels[i]])
+            }
+            return my_viewed_channels
+        }
+        else {
+            var my_channels = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_channels.length; i++){
+                var channel_author = this.props.app_state.created_channels[i]['event'].returnValues.p5
+                if(channel_author.toString() == myid.toString()){
+                    my_channels.push(this.props.app_state.created_channels[i])
+                }
+            }
+            return my_channels
+        }
+    }
+
+    format_channel_item(object){
+        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    when_channel_item_clicked(index){
+        this.props.when_channel_item_clicked(index)
+    }
+
+
+
+
 
 
 
@@ -680,6 +1001,48 @@ class PostListSection extends Component {
             </div>
         )
 
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ ' sec'
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + ' min' 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + ' hr' + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + ' dy' + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + ' wk' + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return number_with_commas(num) + ' yr' + s;
+        }
     }
 
 
