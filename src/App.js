@@ -27,11 +27,14 @@ import NewPostPage from './pages/new_post_page'
 import NewChannelPage from './pages/new_channel_page'
 import NewStorefrontPage from './pages/new_storefront_page'
 import NewStorefrontItemPage from './pages/new_storefront_item_page';
+import NewMintActionPage from './pages/mint_dump_token_page';
+import NewTransferActionPage from './pages/transfer_token_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
 import { create } from 'ipfs-http-client'
 
+import { Filecoin } from 'filecoin.js';
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -60,17 +63,18 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
     new_object_target: '0',
     created_object_array:[],
-    account_balance:0, stack_items:[], 
+    account_balance:0, stack_items:[],
     created_subscriptions:[], all_subscriptions:[], 
     created_contracts:[], all_contracts:[], 
     created_tokens:[], all_tokens:[],
-    created_jobs:[]
+    created_jobs:[], 
+    mint_dump_actions:[{},],
   };
 
 
@@ -79,6 +83,8 @@ class App extends Component {
     this.new_job_page = React.createRef();
     this.new_storefront_page = React.createRef();
     this.new_storefront_item_page = React.createRef();
+    this.new_mint_dump_token_page = React.createRef();
+    this.new_transfer_token_page = React.createRef();
   }
 
   componentDidMount() {
@@ -127,7 +133,7 @@ class App extends Component {
           return 'e';//l
       }
       else if(width > 730){
-          return 'm';
+          return 'e'; //m
       }else{
           if(width < 280){
               return 'e';
@@ -196,6 +202,8 @@ class App extends Component {
         {this.render_new_object_bottomsheet()}
         {this.render_view_image_bottomsheet()}
         {this.render_create_store_item_bottomsheet()}
+        {this.render_mint_token_bottomsheet()}
+        {this.render_transfer_token_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -208,7 +216,11 @@ class App extends Component {
       width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
       open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
       open_new_object={this.open_new_object.bind(this)} 
-      when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)} fetch_objects_data={this.fetch_objects_data.bind(this)}/>
+      when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)} fetch_objects_data={this.fetch_objects_data.bind(this)}
+      
+      show_mint_token_bottomsheet={this.show_mint_token_bottomsheet.bind(this)}
+      show_transfer_bottomsheet={this.show_transfer_bottomsheet.bind(this)}
+      />
     )
   }
 
@@ -290,10 +302,10 @@ class App extends Component {
     this.setState({details_orientation: orientation})
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei) => {
     const web3 = new Web3('http://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
+    const contractAddress = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
 
@@ -306,6 +318,7 @@ class App extends Component {
 
     var tx = {
         gas: gasLimit,
+        value: wei,
         to: contractAddress,
         data: encoded
     }
@@ -365,11 +378,16 @@ class App extends Component {
     }
   }
 
-  open_new_object(target){
+  open_new_object(target, mint_burn_token_item){
     this.setState({new_object_target: target});
     if(this.new_job_page.current != null){
       this.new_job_page.current.set_action('create')
     }
+
+    // if(this.new_mint_dump_token_page.current != null){
+    //   this.new_mint_dump_token_page.current.set_token(mint_burn_token_item)
+    // }
+
     this.open_new_object_bottomsheet()
   }
 
@@ -415,6 +433,11 @@ class App extends Component {
         <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
       )
     }
+    // else if(target == '101'){
+    //   return(
+    //     <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction_to_stack.bind(this)}/>
+    //   );
+    // }
     
   }
 
@@ -507,7 +530,92 @@ class App extends Component {
 
 
 
+  render_mint_token_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_mint_token_bottomsheet.bind(this)} open={this.state.mint_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)} reset_stack_items={this.reset_stack_items.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
 
+
+  open_mint_token_bottomsheet(){
+    if(this.state != null){
+        this.setState({mint_token_bottomsheet: !this.state.mint_token_bottomsheet});
+      }
+  }
+
+  show_mint_token_bottomsheet(mint_burn_token_item){
+    if(this.new_mint_dump_token_page.current != null){
+      this.new_mint_dump_token_page.current.set_token(mint_burn_token_item)
+    }
+
+    this.open_mint_token_bottomsheet()
+  }
+
+
+  add_buy_sell_transaction(tx){
+    var stack_clone = this.state.stack_items.slice()
+    var array = [tx]
+    var mint_dump_actions_clone = this.state.mint_dump_actions.slice()
+    var existing_action = mint_dump_actions_clone[0][tx['exchange']['id']]
+    if(existing_action == null){
+      // var tx_clone = JSON.parse(JSON.stringify(tx))
+      stack_clone = stack_clone.concat(array)
+      mint_dump_actions_clone[0][tx['exchange']['id']] = stack_clone.length -1
+    }else{
+      stack_clone[existing_action] = tx
+    }
+    this.setState({mint_dump_actions: mint_dump_actions_clone})
+    this.setState({stack_items: stack_clone})
+    // this.setState({stack_items: stack_clone, mint_dump_actions: mint_dump_actions_clone})
+  }
+
+  reset_stack_items(){
+  }
+
+
+
+
+
+
+
+  render_transfer_token_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_transfer_token_bottomsheet.bind(this)} open={this.state.transfer_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <NewTransferActionPage ref={this.new_transfer_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_transfer_transactions_to_stack={this.add_transfer_transactions_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+
+  open_transfer_token_bottomsheet(){
+    if(this.state != null){
+        this.setState({transfer_token_bottomsheet: !this.state.transfer_token_bottomsheet});
+      }
+  }
+
+  show_transfer_bottomsheet(token_item){
+    if(this.new_transfer_token_page.current != null){
+      this.new_transfer_token_page.current.set_token(token_item)
+    }
+
+    this.open_transfer_token_bottomsheet()
+  }
+
+  add_transfer_transactions_to_stack(state){
+    var stack_clone = this.state.stack_items.slice()
+    stack_clone.push(state)
+    this.setState({stack_items: stack_clone})
+  }
 
 
 
@@ -602,10 +710,12 @@ class App extends Component {
 
     const web3 = new Web3('ws://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
+    const contractAddress = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
 
+    var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
+    var contract_addresses = contract_addresses_events[0].returnValues.p5
 
     await web3.eth.net.getId().then(id =>{
       this.inc_synch_progress()
@@ -660,7 +770,7 @@ class App extends Component {
     
 
     const G5contractArtifact = require('./contract_abis/G5.json');
-    const G5_address = '0x0B306BF915C4d645ff596e518fAf3F9669b97016'
+    const G5_address = contract_addresses[3].toString()
     const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
     var main_contract_ids = [2];
     G5contractInstance.methods.f78(main_contract_ids, false).call((error, result) => {
@@ -673,7 +783,7 @@ class App extends Component {
     });
 
     const H5contractArtifact = require('./contract_abis/H5.json');
-    const H5_address = '0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE';
+    const H5_address = contract_addresses[5].toString()
     const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
     var token_ids = [3, 5];
     H5contractInstance.methods.f86(token_ids).call((error, result) => {
@@ -769,7 +879,7 @@ class App extends Component {
     const balance = await lotusClient.wallet.balance(myAddress);
     console.log('Wallet balance:', balance);
 
-
+    // this.send_filecoin(seed)
 
     const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
     const amount = 10**14; // Amount in FIL (1 FIL = 1e18)
@@ -831,13 +941,13 @@ class App extends Component {
 
     const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
     const amount = 10**14; // Amount in FIL (1 FIL = 1e18)
-    // const myAddress = await walletProvider.getDefaultAddress();
+    const myAddress = await walletProvider.getDefaultAddress();
 
-    // console.log('walletProvider.address:---------------',myAddress)
+    console.log('walletProvider.address:---------------',myAddress)
 
     // Send the transaction
     // const message = await walletProvider.createMessage({
-    //   From: walletProvider.address,
+    //   From: walletProvider.getDefaultAccount(),
     //   To: recipientAddress,
     //   Value: amount,
     // });
@@ -851,6 +961,17 @@ class App extends Component {
     //   console.log('Transaction failed or pending.');
     // }
 
+    const filecoin = new Filecoin(lotusClient, { walletProvider });
+    try {
+      const result = await filecoin.send(
+        walletProvider.getDefaultAddress(),
+        recipientAddress,
+        amount
+      );
+      console.log('Transaction Hash:', result['/']);
+    } catch (error) {
+      console.error('Error sending Filecoin:', error);
+    }
   }
 
   
@@ -905,13 +1026,13 @@ class App extends Component {
   get_accounts_data = async (account) => {
     const web3 = new Web3('ws://127.0.0.1:8545/');
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'
+    const contractAddress = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
     var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
     var contract_addresses = contract_addresses_events[0].returnValues.p5
     this.setState({E35_addresses: contract_addresses})
-    // console.log(contract_addresses)
+    console.log(contract_addresses)
     
     var accounts = await contractInstance.methods.f167([],[account.address], 2).call((error, result) => {});
     console.log('account id----------------',accounts[0])
@@ -929,7 +1050,7 @@ class App extends Component {
     const F5_address = contract_addresses[2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
     
-    var created_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* sender_account_id */: accounts[0], p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
+    var created_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
     var created_subscriptions = []
     for(var i=0; i<created_subscription_events.length; i++){
       var id = created_subscription_events[i].returnValues.p1
@@ -955,7 +1076,7 @@ class App extends Component {
     const G5_address = contract_addresses[3];
     const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
 
-    var created_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* sender_account_id */: accounts[0], p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
+    var created_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
     var created_contracts = [2]
     for(var i=0; i<created_contract_events.length; i++){
       var id = created_contract_events[i].returnValues.p1
@@ -986,19 +1107,30 @@ class App extends Component {
     const H5_address = contract_addresses[5];
     const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
-    var created_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* sender_account_id */: accounts[0], p2/* object_type */:31/* token_exchange */ } }, (error, events) => {});
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = contract_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var created_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange */ } }, (error, events) => {});
+    console.log('created tokens ---------------------------')
+    console.log(created_token_events)
     var created_tokens = [3, 5]
+    var created_token_depths = [0,0]
     for(var i=0; i<created_token_events.length; i++){
       var id = created_token_events[i].returnValues.p1
       created_tokens.push(id)
+      created_token_depths.push(0)
     }
 
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
+    var token_balances = await H52contractInstance.methods.f140e(created_tokens, accounts[0], created_token_depths).call((error, result) => {});
+    console.log('token balances --------------------')
+    console.log(token_balances)
     var created_token_object_data = []
     for(var i=0; i<created_tokens.length; i++){
       var tokens_data = await this.fetch_objects_data(created_tokens[i], web3);
       var event = i>1 ? created_token_events[i-2]: null
-      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event})
+      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i] })
     }
 
     this.setState({created_tokens: created_token_object_data})
@@ -1044,6 +1176,8 @@ class App extends Component {
 
     var created_job_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 17/* 17(job_object) */ } }, (error, events) => {});
     var created_job = []
+    console.log('created job events-------------')
+    console.log(await created_job_events)
     for(var i=0; i<created_job_events.length; i++){
       var id = created_job_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')

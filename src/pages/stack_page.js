@@ -415,6 +415,9 @@ class StackPage extends Component {
         else if(t.type == 'token'){
             return 676263 + (50_000 * t.price_data.length)
         }
+        else if(t.type == 'buy-sell'){
+            return 493469
+        }
     }
 
 
@@ -423,6 +426,7 @@ class StackPage extends Component {
         var strs = []
         var ints = []
         var adds = []
+        var wei = 0;
 
         for(var i=0; i<txs.length; i++){
             if(!this.state.hidden.includes(i)){
@@ -470,6 +474,22 @@ class StackPage extends Component {
                     ints.push(storefront_data.metadata_action)
                     strs.push([storefront_data.metadata_action_strings])
                     adds.push([])
+                }
+                else if(txs[i].type == 'buy-sell'){
+                    var buy_sell_obj = this.format_buy_sell_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(buy_sell_obj)
+                    if(txs[i]['exchange']['id'] == 3 && txs[i]['action'] == 0){
+                        //if we're buying end
+                        wei = ( bigInt(txs[i]['exchange']['data'][4][0]) * bigInt(txs[i]['amount']) )+35
+                    }
+                }
+                else if(txs[i].type == 'transfer'){
+                    var transfer_object = this.format_transfer_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(transfer_object)
                 }
 
             }
@@ -538,7 +558,7 @@ class StackPage extends Component {
             if(account_balance < (run_gas_limit * run_gas_price)){
                 this.setState({invalid_ether_amount_dialog_box: true})
             }else{   
-                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit)
+                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei)
             }
         }else{
             this.props.notify('add some transactions first!',600)
@@ -652,11 +672,11 @@ class StackPage extends Component {
         var maturity_limit = t.maturity_limit
         var minimum_entered_contracts_for_first_buy = t.minimum_entered_contracts_for_first_buy
         var active_block_limit_reduction_proportion = type == 'capped' ? 0 : bgN(100,16)
-        var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? token_exchange_liquidity_total_supply: t.token_exchange_ratio_x
+        var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? token_exchange_liquidity_total_supply.toString(): t.token_exchange_ratio_x.toString()
         if(token_exchange_ratio_x != token_exchange_liquidity_total_supply){
-            token_exchange_ratio_x = token_exchange_liquidity_total_supply
+            token_exchange_ratio_x = token_exchange_liquidity_total_supply.toString()
         }
-        var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? 1 : t.token_exchange_ratio_y
+        var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? default_exchange_amount_buy_limit : t.token_exchange_ratio_y.toString()
         var exchange_authority = t.exchange_authority == '' ? 53 : parseInt(t.exchange_authority)
         var exchange_authority_type = 23
         if(exchange_authority == 53){
@@ -794,6 +814,55 @@ class StackPage extends Component {
             metadata_action_strings.push('')
         }
         return {objs: objs, metadata_action: metadata_action, metadata_action_strings: metadata_action_strings}
+    }
+
+    format_buy_sell_object(t){
+        var obj = [/* buy end/spend */
+        [30000, 8, 0],
+        [], [],/* exchanges */
+        [], [],/* receivers */
+        []/* amounts */, [],/* action */
+        []/* lower_bounds */, []/* upper_bounds */
+      ];
+
+      obj[1].push(t['exchange']['id'])
+      obj[2].push(23)
+      obj[3].push(t['recipient'])
+      if(t['recipient'] == 53){
+        obj[4].push(53)
+      }else{
+        obj[4].push(23)
+      }
+      obj[5].push(t['amount'])
+      obj[6].push(t['action'])
+
+      return obj
+    }
+
+    format_transfer_object(t){
+        var obj = [/* send tokens to another account */
+        [30000, 1, 0],
+        [], [],/* exchanges */
+        [], [],/* receivers */
+        [],/* amounts */
+        []/* depths */
+      ]
+      var added_txs = t.stack_items
+      for(var i=0; i<added_txs.length; i++){
+        obj[1].push(added_txs[i]['exchange']['id'])
+        obj[2].push(23)
+
+        obj[3].push(added_txs[i]['recipient'])
+        if(added_txs[i]['recipient'] == 53){
+            obj[4].push(53)
+        }else{
+            obj[4].push(23)
+        }
+        obj[5].push(added_txs[i]['amount'])
+        obj[6].push(0)
+      }
+      
+      return obj
     }
 
 

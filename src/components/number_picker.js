@@ -148,7 +148,7 @@ class NumberPicker extends Component {
       }
       clone['number'] = new_number;
       
-      if(bigInt(new_number) < this.props.number_limit){
+      if(bigInt(new_number) <= this.props.number_limit){
         if(!clone['picked_powers'].includes(this.state.create_number_data['power'])){
           clone['picked_powers'].push(this.state.create_number_data['power']);
         }

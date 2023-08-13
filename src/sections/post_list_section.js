@@ -259,14 +259,38 @@ class PostListSection extends Component {
     }
 
     get_contract_items(){
-        var items = this.props.app_state.created_contracts
-        var final_list = []
-        for(var i=0; i<items.length; i++){
-            if(items[i]['id'] != 2){
-                final_list.push(items[i])
-            }
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        if(this.props.work_page_tags_object['i'].active != 'contracts'){
+            return this.props.app_state.created_contracts.reverse()
         }
-        return final_list.reverse()
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_contracts.reverse()
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_contracts = []
+            for(var i=0; i<this.props.viewed_contracts.length; i++){
+                my_viewed_contracts.push(this.props.app_state.created_contracts[this.props.viewed_contracts[i]])
+            }
+            return my_viewed_contracts.reverse()
+        }
+        else if(selected_option_name == 'received'){
+            return this.props.app_state.created_contracts.reverse()
+        }
+        else {
+            var my_contracts = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
+                var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_contracts.push(this.props.app_state.created_contracts[i])
+                }else{
+                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
+                }
+            }
+            return my_contracts.reverse()
+        }
     }
 
     render_contract_item(object, index){
@@ -386,8 +410,41 @@ class PostListSection extends Component {
     }
 
     get_subscription_items(){
-        var items = this.props.app_state.created_subscriptions
-        return items.reverse()
+        // var items = this.props.app_state.created_subscriptions
+        // return items.reverse()
+
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        if(this.props.work_page_tags_object['i'].active != 'subscriptions'){
+            return this.props.app_state.created_subscriptions.reverse()
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_subscriptions.reverse()
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_subscriptions = []
+            for(var i=0; i<this.props.viewed_subscriptions.length; i++){
+                my_viewed_subscriptions.push(this.props.app_state.created_subscriptions[this.props.viewed_subscriptions[i]])
+            }
+            return my_viewed_subscriptions.reverse()
+        }
+        else if(selected_option_name == 'paid'){
+            return this.props.app_state.created_subscriptions.reverse()
+        }
+        else {
+            var my_subscriptions = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_subscriptions.length; i++){
+                var post_author = this.props.app_state.created_subscriptions[i]['event'] == null ? 0 : this.props.app_state.created_subscriptions[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_subscriptions.push(this.props.app_state.created_subscriptions[i])
+                }else{
+                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
+                }
+            }
+            return my_subscriptions.reverse()
+        }
     }
 
     render_subscription_object(object, index){

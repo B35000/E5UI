@@ -37,7 +37,7 @@ class ViewGroups extends Component {
             var tag_background_color = this.props.theme['tag_background_color'];
             var tag_shadow = this.props.theme['tag_shadow'];
             var when_tapped = 'null'
-            if(object_data != null){
+            if(object_data != null || object_data['active_tags'] != null){
               active_tags = object_data['active_tags']
               if(object_data['index_option'] == 'indexed'){
                 tag_background_color = this.props.theme['indexed_tag_background'];
@@ -159,7 +159,6 @@ class ViewGroups extends Component {
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
-                                {/* light mode , title: #444444, details:#BFBFBF , Sans-serif , Times New Roman  */}
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{details}</p>
                             </div>

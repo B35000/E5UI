@@ -498,14 +498,38 @@ class PostDetailSection extends Component {
 
 
     get_contract_items(){
-        var items = this.props.app_state.created_contracts
-        var final_list = []
-        for(var i=0; i<items.length; i++){
-            if(items[i]['id'] != 2){
-                final_list.push(items[i])
-            }
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        if(this.props.work_page_tags_object['i'].active != 'contracts'){
+            return this.props.app_state.created_contracts.reverse()
         }
-        return final_list.reverse()
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_contracts.reverse()
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_contracts = []
+            for(var i=0; i<this.props.viewed_contracts.length; i++){
+                my_viewed_contracts.push(this.props.app_state.created_contracts[this.props.viewed_contracts[i]])
+            }
+            return my_viewed_contracts.reverse()
+        }
+        else if(selected_option_name == 'received'){
+            return this.props.app_state.created_contracts.reverse()
+        }
+        else {
+            var my_contracts = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
+                var post_author = this.props.app_state.created_contracts[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_contracts.push(this.props.app_state.created_contracts[i])
+                }else{
+                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
+                }
+            }
+            return my_contracts.reverse()
+        }
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
@@ -662,8 +686,41 @@ class PostDetailSection extends Component {
     }
 
     get_subscription_items(){
-        var items = this.props.app_state.created_subscriptions
-        return items.reverse()
+        // var items = this.props.app_state.created_subscriptions
+        // return items.reverse()
+
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        if(this.props.work_page_tags_object['i'].active != 'subscriptions'){
+            return this.props.app_state.created_subscriptions.reverse()
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_subscriptions.reverse()
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_subscriptions = []
+            for(var i=0; i<this.props.viewed_subscriptions.length; i++){
+                my_viewed_subscriptions.push(this.props.app_state.created_subscriptions[this.props.viewed_subscriptions[i]])
+            }
+            return my_viewed_subscriptions.reverse()
+        }
+        else if(selected_option_name == 'paid'){
+            return this.props.app_state.created_subscriptions.reverse()
+        }
+        else {
+            var my_subscriptions = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_subscriptions.length; i++){
+                var post_author = this.props.app_state.created_subscriptions[i]['event'] == null ? 0 : this.props.app_state.created_subscriptions[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_subscriptions.push(this.props.app_state.created_subscriptions[i])
+                }else{
+                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
+                }
+            }
+            return my_subscriptions.reverse()
+        }
     }
 
     render_subscription_logs(){
@@ -1215,7 +1272,7 @@ class PostDetailSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('5', {'text':'Send Receive Ether', 'action': 'send_receive_ether'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
+                    {/* {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})} */}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -1378,7 +1435,7 @@ class PostDetailSection extends Component {
             he = this.props.height-190;
         }
         var item = this.get_end_data();
-                return(
+        return(
             <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
@@ -1444,15 +1501,22 @@ class PostDetailSection extends Component {
 
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('5', item['mint_burn_button'])}
+
+                    <div onClick={()=>this.open_mint_burn_token_ui()}>
+                        {this.render_detail_item('5', item['mint_burn_button'])}
+                    </div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
+                    {/* {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})} */}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    open_mint_burn_token_ui(){
+        this.props.open_mint_burn_token_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
     }
 
     get_end_data(){
@@ -1606,7 +1670,7 @@ class PostDetailSection extends Component {
             else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img}, )
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance']}, )
             }
         }
         return token_exchanges
@@ -1765,10 +1829,20 @@ class PostDetailSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
                     
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Mint or Dump the token at a specified account', 'title':'Mint/Dump'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('5', item['mint_burn_button'])}
+                    <div onClick={()=>this.open_mint_burn_spend_token_ui()}>
+                        {this.render_detail_item('5', item['mint_burn_button'])}
+                    </div>
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Make a token transfer to a specified account', 'title':'Send/Transfer'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})}
+                    <div onClick={()=>this.open_transfer_ui()}>
+                        {this.render_detail_item('5', {'text':'Transfer', 'action':''},)}
+                    </div>
+                    
                     
 
                     {this.render_detail_item('0')}
@@ -1776,6 +1850,14 @@ class PostDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    open_mint_burn_spend_token_ui(){
+        this.props.open_mint_burn_token_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
+    }
+
+    open_transfer_ui(){
+        this.props.open_transfer_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
     }
 
     get_spend_data(){

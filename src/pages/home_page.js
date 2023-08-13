@@ -40,7 +40,7 @@ class home_page extends Component {
         selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null,
         view_post_bottomsheet: false,
 
-        viewed_posts:[],viewed_channels:[],viewed_jobs:[],
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[]
     };
 
 
@@ -52,7 +52,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','e.jobs','e.contracts', 'e.proposals','e.subscriptions', 'e.storefronts'], [0]
+              ['or','',0], ['e','e.jobs','e.contracts', 'e.proposals','e.subscriptions'], [0]
           ],
           'jobs':[
               ['or','e',1], ['jobs','all','viewed','created'], [1],[1]
@@ -64,7 +64,7 @@ class home_page extends Component {
               ['or','e',1], ['proposals','all','received','created','voted'], [1],[1]
           ],
           'subscriptions':[
-              ['or','e',1], ['subscriptions','all','paid','created'], [1],[1]
+              ['or','e',1], ['subscriptions','all','paid','viewed','created'], [1],[1]
           ],
           'storefronts':[
               ['or','',0], ['storefronts','stores','bags'], [1],[1]
@@ -449,7 +449,7 @@ class home_page extends Component {
 
             open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
             
-            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs}
+            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions}
             />
         )
     }
@@ -497,6 +497,14 @@ class home_page extends Component {
 
     when_contract_item_clicked(index){
         this.setState({selected_contract_item: index})
+
+        var viewed_contracts_clone = this.state.viewed_contracts.slice()
+        var pos = viewed_contracts_clone.indexOf(index)
+        if(pos == -1){
+            viewed_contracts_clone.push(index)
+            this.setState({viewed_contracts: viewed_contracts_clone})
+        }
+
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -504,6 +512,14 @@ class home_page extends Component {
 
     when_subscription_item_clicked(index){
         this.setState({selected_subscription_item: index})
+
+        var viewed_subscriptions_clone = this.state.viewed_subscriptions.slice()
+        var pos = viewed_subscriptions_clone.indexOf(index)
+        if(pos == -1){
+            viewed_subscriptions_clone.push(index)
+            this.setState({viewed_subscriptions: viewed_subscriptions_clone})
+        }
+
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -555,7 +571,9 @@ class home_page extends Component {
             
             when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
             
-            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs}
+            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} 
+
+            open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)}
             />
         )
     }
@@ -567,6 +585,14 @@ class home_page extends Component {
 
     when_edit_job_tapped(){
         this.props.when_edit_job_tapped(this.props.app_state.created_object_array[this.state.selected_job_post_item])
+    }
+
+    open_mint_burn_token_ui(item){
+        this.props.show_mint_token_bottomsheet(item);
+    }
+
+    open_transfer_ui(item){
+        this.props.show_transfer_bottomsheet(item)
     }
 
 
