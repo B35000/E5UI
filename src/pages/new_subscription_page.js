@@ -50,8 +50,14 @@ class NewSubscriptionPage extends Component {
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
         exchange_id:'', price_amount:0, price_data:[],
+
+        page:0,
     };
 
+    constructor(props) {
+        super(props);
+        this.number_picker_ref = React.createRef();
+    }
 
     get_new_subscription_tags_object(){
         return{
@@ -142,7 +148,7 @@ class NewSubscriptionPage extends Component {
         if(selected_item == 'configuration'){
             return(
                 <div>
-                    {this.render_configuration_part()}
+                    {this.render_subscription_list()}
                 </div>
             ) 
         }
@@ -456,6 +462,148 @@ class NewSubscriptionPage extends Component {
     when_minimum_cancellable_balance_amount(amount){
         this.setState({minimum_cancellable_balance_amount: amount})
     }
+
+
+
+    render_subscription_list(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':'Create a basic E5 subscription'})}
+                <div style={{height:20}}/>
+                {this.render_subscription_section_parts()}
+
+                <div style={{height:20}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                        {this.show_previous_button()}
+                    </div>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.show_next_button()}
+                    </div>
+                </div>
+                
+            </div>
+        )
+    }
+
+
+    show_next_button(){
+        var page = this.state.page
+        if(page < 4){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_next_page()}>
+                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    show_previous_button(){
+        var page = this.state.page
+        if(page != 0){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_previous_page()}>
+                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    render_subscription_section_parts(){
+        var page = this.state.page
+
+        if(page == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Buy Amount', 'details':'Minimum amount that can be paid for your new subscription.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 1){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Cancellable', 'details':'If set to true, subscription payers can refund their subscription payments', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 2){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Time Unit', 'details':'the amount of time thats used as a unit when paying for your new subscription', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.time_unit), 'details':'Time Unit', 'size':'l'})}
+
+                   <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
+                </div>
+            )
+        }
+        else if(page == 3){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Maximum Buy Amount', 'details':'Maximum amount of time units that can be paid for your new subscription.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':this.format_power_figure(this.state.maximum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.maximum_buy_amount), 'number':this.format_account_balance_figure(this.state.maximum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 4){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Cancellable Balance Amount', 'details':'the minimum amount of time units that can be left when cancelling your new subscriptions payments', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Cancellable Balance Amount', 'subtitle':this.format_power_figure(this.state.minimum_cancellable_balance_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_cancellable_balance_amount), 'number':this.format_account_balance_figure(this.state.minimum_cancellable_balance_amount), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+    }
+
+    enter_next_page(){
+        var page = this.state.page
+        if(page < 18){
+            this.setState({page: this.state.page+1})
+            this.reset_the_number_picker()
+        }
+    }
+
+    enter_previous_page(){
+        var page = this.state.page
+        if(page > 0){
+            this.setState({page: this.state.page-1})
+            this.reset_the_number_picker()
+        }
+    }
+
+    reset_the_number_picker(){
+        if(this.number_picker_ref.current != null){
+            this.number_picker_ref.current.reset_number_picker()
+        }
+    }
+
+
+
+
 
 
     render_authorities_part(){

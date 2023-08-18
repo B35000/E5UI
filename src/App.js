@@ -75,6 +75,8 @@ class App extends Component {
     created_tokens:[], all_tokens:[],
     created_jobs:[], 
     mint_dump_actions:[{},],
+
+    web3:'http://127.0.0.1:8545/', e5_address:'0x95401dc811bb5740090279Ba06cfA8fcF6113778'
   };
 
 
@@ -303,9 +305,9 @@ class App extends Component {
   }
 
   run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei) => {
-    const web3 = new Web3('http://127.0.0.1:8545/');
+    const web3 = new Web3(this.state.web3);
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
+    const contractAddress = this.state.e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
 
@@ -324,15 +326,60 @@ class App extends Component {
     }
 
     this.prompt_top_notification('running your transactions...', 600)
+    console.log('-------------------')
     web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
+      console.log('-------------------')
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           console.log('e Transaction receipt:', receipt);
           me.setState({stack_items: []})
           me.get_accounts_data(me.state.account)
           this.prompt_top_notification('run complete!', 600)
+        }) .on('error', (error) => {
+          console.error('Transaction error:', error);
+          this.prompt_top_notification('run failed. Check your stacks transactions and try again', 1500)
         });
     })
 
+    // this.prompt_top_notification('running your transactions...', 600)
+    // web3.eth.accounts.wallet.add(me.state.account.privateKey);
+    // contractInstance.methods.e(v5/* t_limits */, adds, ints, strs)
+    //     .send({
+    //       from: me.state.account.address, 
+    //       value: wei,
+    //       gasPrice, 
+    //       gasLimit 
+    //     })
+    //     .on('transactionHash', (hash) => {
+    //       console.log('e Transaction hash:', hash);
+    //     })
+    //     .on('receipt', (receipt) => {
+    //       console.log('e Transaction receipt:', receipt);
+    //       me.setState({stack_items: []})
+    //       me.get_accounts_data(me.state.account)
+    //       this.prompt_top_notification('run complete!', 600)
+    //     }).on('error', (error) => {
+    //       console.error('Transaction error:', error);
+    //       this.prompt_top_notification('run failed. Check your stacks transactions and try again', 1500)
+    //     });
+
+
+    // this.prompt_top_notification('running your transactions...', 600)
+    // const provider = new ethers.providers.JsonRpcProvider(this.state.web3);
+    // const wallet = new ethers.Wallet(me.state.account.privateKey, provider);
+    // const signer = provider.getSigner();
+    // const contract = new ethers.Contract(contractAddress, contractArtifact.abi, signer);
+    // const tx = await contract.connect(wallet).e(v5/* t_limits */, adds, ints, strs, { gasLimit: gasLimit, value: wei })
+    // const receipt = await tx.wait();
+
+    // if (receipt.status === 1) {
+    //   console.log('Transaction successful. Transaction hash:', receipt.transactionHash);
+    //   me.setState({stack_items: []})
+    //   me.get_accounts_data(me.state.account)
+    //   this.prompt_top_notification('run complete!', 600)
+    // } else {
+    //   console.log('Transaction failed. Transaction hash:', receipt.transactionHash);
+    //   this.prompt_top_notification('run failed. Check your stacks transactions and try again', 1500)
+    // }
   }
 
 
@@ -536,7 +583,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_mint_token_bottomsheet.bind(this)} open={this.state.mint_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)} reset_stack_items={this.reset_stack_items.bind(this)}/>
+            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)} reset_stack_items={this.reset_stack_items.bind(this)} get_balance_in_exchange={this.get_balance_in_exchange.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -805,7 +852,7 @@ class App extends Component {
   }
 
   send_ether_to_target(recipientAddress, amount, gasPrice, state){
-    const web3 = new Web3('http://127.0.0.1:8545/');
+    const web3 = new Web3(this.state.web3);
     const me = this;
     web3.eth.sendTransaction({
     from: state.account.address,
@@ -840,7 +887,7 @@ class App extends Component {
   when_wallet_data_updated(added_tags, set_salt, selected_item){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
 
-    const web3 = new Web3('http://127.0.0.1:8545/');
+    const web3 = new Web3(this.state.web3);
     const account = this.get_account_from_seed(seed);
     this.setState({account: account});
 
@@ -856,7 +903,7 @@ class App extends Component {
   }
 
   get_account_from_seed(seed){
-    const web3 = new Web3('http://127.0.0.1:8545/');
+    const web3 = new Web3(this.state.web3);
     const mnemonic = seed.trim();
     const seedBytes = mnemonicToSeedSync(mnemonic);
     const hdNode = ethers.utils.HDNode.fromSeed(seedBytes);
@@ -978,7 +1025,7 @@ class App extends Component {
 
 
   get_transaction_history = async (account) => {
-    const web3 = new Web3('http://127.0.0.1:8545/');
+    const web3 = new Web3(this.state.web3);
     
     let block = await web3.eth.getBlock('latest');
     this.setState({current_block: block});
@@ -1024,9 +1071,9 @@ class App extends Component {
   }
 
   get_accounts_data = async (account) => {
-    const web3 = new Web3('ws://127.0.0.1:8545/');
+    const web3 = new Web3(this.state.web3);
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = '0x95401dc811bb5740090279Ba06cfA8fcF6113778'
+    const contractAddress = this.state.e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
     var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
@@ -1242,6 +1289,22 @@ class App extends Component {
       console.log('Error uploading file: ', error)
     }
 
+  }
+
+
+
+  get_balance_in_exchange = async (exchange_id) => {
+      if(exchange_id == 0){
+          return this.state.account_balance
+      }
+      const web3 = new Web3(this.state.web3);
+      const H52contractArtifact = require('./contract_abis/H52.json');
+      const H52_address = this.state.E35_addresses[6];
+      const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+      
+      var token_balances = await H52contractInstance.methods.f140e([exchange_id], this.state.user_account_id, [0]).call((error, result) => {});
+
+      return token_balances[0]
   }
 
 

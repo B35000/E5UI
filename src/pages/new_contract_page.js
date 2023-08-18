@@ -41,13 +41,20 @@ class NewContractPage extends Component {
     state = {
         id: makeid(32), type:'contract',
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
-        new_contract_tags_object: this.get_new_contract_tags_object(),
+        new_contract_tags_object: this.get_new_contract_tags_object(), new_contract_type_tags_object:this.get_new_contract_type_tags_object(),
         default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
-        exchange_id:'', price_amount:0, price_data:[],
+        exchange_id:'', price_amount:0, price_data:[], 
+
+        page:0,
     };
+
+    constructor(props) {
+        super(props);
+        this.number_picker_ref = React.createRef();
+    }
 
     get_new_contract_tags_object(){
         return{
@@ -128,6 +135,18 @@ class NewContractPage extends Component {
     }
 
 
+    get_new_contract_type_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','private', 'public'], [1]
+            ],
+        };
+    }
+
+
 
 
 
@@ -136,10 +155,10 @@ class NewContractPage extends Component {
             <div>
                 <div style={{'padding':'10px 20px 0px 10px'}}>
                     <div className="row">
-                        <div className="col-10" style={{'padding': '5px 0px 0px 10px'}}>
+                        <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                             <Tags page_tags_object={this.state.new_contract_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
-                        <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
                                 {this.render_detail_item('5', {'text':'Finish', 'action':''})}
                             </div>
@@ -175,7 +194,7 @@ class NewContractPage extends Component {
         if(selected_item == 'configuration'){
             return(
                 <div>
-                    {this.render_configuration_part()}
+                    {this.render_contract_list()}
                 </div>
             ) 
         }
@@ -390,89 +409,8 @@ class NewContractPage extends Component {
 
 
 
-    render_configuration_part(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_configuration_part_one()}
-                    <div style={{height: 20}}/>
-                    {this.render_configuration_part_two()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_configuration_part_one()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_configuration_part_two()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
-
-    render_configuration_part_one(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_vote_bounty_split_proportion), 'details':'Vote Bounty Split Proportion', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':'Maximum Extend Enter Contract Limit', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_extend_enter_contract_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.default_proposal_expiry_duration_limit), 'details':'Proposal Expiry Duration Limit', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_proposal_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_enter_contract_duration), 'details':'Maximum Enter Contract Duration', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_enter_contract_duration.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':'Auto Wait', 'details':'If set to yes, all new proposals sent to your new contract are automatically voted wait for each participant in the contract', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-            </div>
-        )
+    when_new_contract_type_tags_object(tag_obj){
+        this.setState({new_contract_type_tags_object: tag_obj})
     }
 
     when_default_vote_bounty_split_proportion(number){
@@ -503,72 +441,6 @@ class NewContractPage extends Component {
         this.setState({default_minimum_spend_vote_bounty_amount: number})
     }
 
-    render_configuration_part_two(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.proposal_modify_expiry_duration_limit), 'details':'Proposal Modify Expiry Duration Limit', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':'Moderator Modify Privelage', 'details':'If set to modifiable, you as a moderator can directly modify your contracts configuration', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':'Unlimited Extend Contract Time', 'details':'If set to enabled, you can extend your stay in this contract at any time after entry', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.maximum_proposal_expiry_submit_expiry_time_difference), 'details':'Maximum Proposal Expiry Submit Expiry time difference', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_proposal_expiry_submit_expiry_time_difference.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':'Bounty Limit Type', 'details':'If set to absolute, the bounty limits set for end and spend will be used as is', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-
-
-                {this.render_detail_item('3', {'title':'Force Exit Enabled', 'details':'If set to enabled, you as a moderator can force other members of the contract to exit the contract', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-            </div>
-        )
-    }
 
     when_proposal_modify_expiry_duration_limit(number){
         this.setState({proposal_modify_expiry_duration_limit: number})
@@ -593,6 +465,247 @@ class NewContractPage extends Component {
     when_contract_force_exit_enabled(tag_obj){
         this.setState({contract_force_exit_enabled: tag_obj})
     }
+
+
+
+
+    render_contract_list(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':'Create a basic E5 contract'})}
+                <div style={{height:20}}/>
+                {this.render_contract_section_parts()}
+
+                <div style={{height:20}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                        {this.show_previous_button()}
+                    </div>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.show_next_button()}
+                    </div>
+                </div>
+                
+            </div>
+        )
+    }
+
+    show_next_button(){
+        var page = this.state.page
+        if(page < 13){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_next_page()}>
+                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    show_previous_button(){
+        var page = this.state.page
+        if(page != 0){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_previous_page()}>
+                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+
+    render_contract_section_parts(){
+        var page = this.state.page
+
+        if(page == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Contract Type', 'details':'Set the type of contract, either private or public', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_contract_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_type_tags_object.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(page == 1){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Vote Bounty Split Proportion', 'details':'the mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_vote_bounty_split_proportion), 'details':'Vote Bounty Split Proportion', 'size':'l'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                </div>
+            )
+        }
+        else if(page == 2){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Maximum Extend Enter Contract Limit', 'details':'the maximum amount of time a sender can extend their stay in your new contract.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':'Maximum Extend Enter Contract Limit', 'size':'l'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_extend_enter_contract_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 3){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum End Bounty Amount', 'details':'The imimum amount of end that can be used as bounty for creating a proposal for your new contract.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 4){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Proposal Expiry Duration Limit', 'details':'the minimum amount of time difference that can be used while setting the expiry time for a new proposal sent to your new contract.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.default_proposal_expiry_duration_limit), 'details':'Proposal Expiry Duration Limit', 'size':'l'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_proposal_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 5){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Maximum Enter Contract Duration', 'details':'maximum amount of time a sender can enter your new contract for.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_enter_contract_duration), 'details':'Maximum Enter Contract Duration', 'size':'l'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_enter_contract_duration.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 6){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Auto Wait', 'details':'If set to yes, all new proposals sent to your new contract are automatically voted wait for each participant in the contract', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
+
+                </div>
+            )
+        }
+        else if(page == 7){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Proposal Modify Expiry Duration Limit', 'details':'the period of time before the expiry of a proposal, during which the proposal cannot be modified', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.proposal_modify_expiry_duration_limit), 'details':'Proposal Modify Expiry Duration Limit', 'size':'l'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 8){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Moderator Modify Privelage', 'details':'If set to modifiable, you as a moderator can directly modify your contracts configuration', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
+
+                </div>
+            )
+        }
+        else if(page == 9){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Unlimited Extend Contract Time', 'details':'If set to enabled, you can extend your stay in this contract at any time after entry', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 10){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Maximum Proposal Expiry Submit Expiry time difference', 'details':'the maximum difference in time between the proposal expiry and submit expiry time for all proposals set to your new contract.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.maximum_proposal_expiry_submit_expiry_time_difference), 'details':'Maximum Proposal Expiry Submit Expiry time difference', 'size':'l'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_proposal_expiry_submit_expiry_time_difference.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 11){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Bounty Limit Type', 'details':'If set to absolute, the bounty limits set for end and spend will be used as is', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 12){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Force Exit Enabled', 'details':'If set to enabled, you as a moderator can force other members of the contract to exit the contract', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 13){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Spend Bounty Amount', 'details':'the minimum amount of spend that can be used as bounty for new proposals targeting your new contract.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+    }
+
+    
+    enter_next_page(){
+        var page = this.state.page
+        if(page < 18){
+            this.setState({page: this.state.page+1})
+            this.reset_the_number_picker()
+        }
+    }
+
+    enter_previous_page(){
+        var page = this.state.page
+        if(page > 0){
+            this.setState({page: this.state.page-1})
+            this.reset_the_number_picker()
+        }
+    }
+
+    reset_the_number_picker(){
+        if(this.number_picker_ref.current != null){
+            this.number_picker_ref.current.reset_number_picker()
+        }
+    }
+
+
 
 
     render_authorities_part(){

@@ -1435,6 +1435,8 @@ class PostDetailSection extends Component {
             he = this.props.height-190;
         }
         var item = this.get_end_data();
+        var selected_item = this.props.selected_end_item
+        var selected_object = this.get_exchange_tokens(3)[selected_item]
         return(
             <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -1500,13 +1502,26 @@ class PostDetailSection extends Component {
                     </div>
 
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
-                    <div style={{height:10}}/>
+                    {this.render_detail_item('0')}
 
+                    {this.render_detail_item('3', {'size':'l', 'details':'Buy or Sell the token for a specified account', 'title':'Buy/Sell'})}
+                    <div style={{height:10}}/>
                     <div onClick={()=>this.open_mint_burn_token_ui()}>
                         {this.render_detail_item('5', item['mint_burn_button'])}
                     </div>
+                    {this.render_detail_item('0')}
+                    
+                    {this.render_detail_item('3', {'size':'l', 'details':'Transfer some tokens to  a specified account', 'title':'Transfer'})}
                     <div style={{height:10}}/>
-                    {/* {this.render_detail_item('5', {'text':'Open Wiki','action':'open_wiki'})} */}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_end_transfer_ui()}>
+                        {this.render_detail_item('5', {'text':'Transfer', 'action':''},)}
+                    </div>
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -1517,6 +1532,10 @@ class PostDetailSection extends Component {
 
     open_mint_burn_token_ui(){
         this.props.open_mint_burn_token_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    }
+
+    open_end_transfer_ui(){
+        this.props.open_transfer_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
     }
 
     get_end_data(){
@@ -1735,6 +1754,8 @@ class PostDetailSection extends Component {
             he = this.props.height-190;
         }
         var item = this.get_spend_data();
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
         return(
             <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -1838,6 +1859,13 @@ class PostDetailSection extends Component {
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'details':'Make a token transfer to a specified account', 'title':'Send/Transfer'})}
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_transfer_ui()}>
                         {this.render_detail_item('5', {'text':'Transfer', 'action':''},)}

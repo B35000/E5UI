@@ -7,6 +7,7 @@ import Letter from './../assets/letter.png';
 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
+import AddStack from './../assets/e5empty_icon3.png'; 
 
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -62,7 +63,9 @@ class NewTokenPage extends Component {
 
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
 
-        moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[]
+        moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
+
+        page:0, custom_page:0
     };
 
     get_new_token_page_tags_object(){
@@ -71,7 +74,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','basic', 'e.custom', 'token-authorities', 'token-prices'], [0]
+                ['or','',0], ['e','basic', 'custom', 'token-authorities', 'token-prices'], [0]
             ],
             'custom':[
               ['xor','e',1], ['custom','basic-configuration', 'secondary-configuration'], [1],
@@ -177,10 +180,10 @@ class NewTokenPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
                 <div className="row">
-                    <div className="col-10" style={{'padding': '5px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.new_token_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
                             {this.render_detail_item('5', {'text':'Finish', 'action':''})}
                         </div>
@@ -199,16 +202,16 @@ class NewTokenPage extends Component {
 
 
     when_new_token_page_tags_updated(tag_obj){
-        this.setState({new_token_page_tags_object: tag_obj})
+        this.setState({new_token_page_tags_object: tag_obj, page:0, custom_page:0})
     }
 
 
     render_everything(){
         var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'e')
 
-        if(this.state.new_token_page_tags_object['i'].active == 'custom'){
-            selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'custom')
-        }
+        // if(this.state.new_token_page_tags_object['i'].active == 'custom'){
+        //     selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'custom')
+        // }
 
         if(selected_item == 'e'){
             return(
@@ -216,18 +219,19 @@ class NewTokenPage extends Component {
                     {this.render_enter_tags_part()}
                 </div>
             )    
-        }else
-        if(selected_item == 'basic-configuration'){
-            return(
-                <div>
-                    {this.render_basic_configuration_token_part()}
-                </div>
-            )    
         }
-        else if(selected_item == 'secondary-configuration'){
+        // else
+        // if(selected_item == 'basic-configuration'){
+        //     return(
+        //         <div>
+        //             {this.render_basic_configuration_token_part()}
+        //         </div>
+        //     )    
+        // }
+        else if(selected_item == 'custom'){
             return(
                 <div>
-                    {this.render_secondary_configuration_token_part()}
+                    {this.render_custom_configuration_token_part()}
                 </div>
             ) 
         }
@@ -377,7 +381,7 @@ class NewTokenPage extends Component {
         );
     }
 
-       render_created_obj_objects(){
+    render_created_obj_objects(){
         var items = this.fetch_obj_states()
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -448,177 +452,6 @@ class NewTokenPage extends Component {
 
 
 
-
-    render_simple_token_list(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_simple_token_part_one()}
-                    <div style={{height:20}}/>
-                    {this.render_simple_token_part_two()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_simple_token_part_one()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_simple_token_part_two()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
-
-    render_simple_token_part_one(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':'Set the token type', 'details':'Capped token (with limited supply) or uncapped token (with unlimited supply)', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_type_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_supply_if_capped()}
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
-
-                {this.render_detail_item('0')}
-
-            </div>
-        )
-    }
-
-    render_supply_if_capped(){
-        var capped = this.get_selected_item(this.state.new_token_type_tags_object, 'e')
-        if(capped == 'capped'){
-            return(
-                <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
-                    </div>
-
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                    {this.render_detail_item('0')}
-                </div> 
-            )
-        }
-    }
-
-    render_simple_token_part_two(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
-
-                {this.render_detail_item('0')}
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
-
-                {this.render_detail_item('0')}
-            </div>
-        )
-    }
-
-
-    render_basic_configuration_token_part(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_basic_configuration_token_part_one()}
-                    <div style={{height: 20}}/>
-                    {this.render_basic_configuration_token_part_two()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_basic_configuration_token_part_one()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_basic_configuration_token_part_two()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
-
-
-    render_basic_configuration_token_part_one(){
-
-        return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>
-
-                {this.render_detail_item('3', {'title':'Set the token type', 'details':'Capped token (with limited supply) or uncapped token (with unlimited supply)', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_type_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-                {this.render_supply_if_capped()}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.minimum_time_between_swap), 'details':'Minimum Time Between Swap', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
-
-                {this.render_detail_item('0')}
-            </div>
-        )
-    }
-
     when_new_token_type_tags_object(tag_obj){
         this.setState({new_token_type_tags_object: tag_obj})
     }
@@ -637,60 +470,6 @@ class NewTokenPage extends Component {
 
     when_default_exchange_amount_sell_limit(amount){
         this.setState({default_exchange_amount_sell_limit: amount})
-    }
-
-
-
-    render_basic_configuration_token_part_two(){
-       
-        return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_transactions_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_transactions_between_swap), 'barcolor':'', 'relativepower':'transactions', })}
-                </div>
-
-                <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Blocks Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_blocks_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_blocks_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_blocks_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
-                </div>
-
-                <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_blocks_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
-                </div>
-
-                <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_transactions_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_transactions_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
-                </div>
-
-                <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
-                </div>
-
-                <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-            </div>
-        )
     }
 
     when_minimum_transactions_between_swap(amount){
@@ -717,99 +496,6 @@ class NewTokenPage extends Component {
         this.setState({minimum_entered_contracts_for_first_buy: amount})
     }
 
-
-
-
-
-    render_secondary_configuration_token_part(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_secondary_token_configuration_part_one()}
-                    <div style={{height: 20}}/>
-                    {this.render_secondary_token_configuration_part_two()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_secondary_token_configuration_part_one()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_secondary_token_configuration_part_two()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
-
-    render_secondary_token_configuration_part_one(){
-        return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('3', {'title':'Unlocked Liquidity', 'details':'If set to unlocked, You have direct access to the token exchanges liquidity', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_unlocked_liquidity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_liquidity_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':'Unlocked Supply', 'details':'If set to unlocked, you can mint more of the token outside the exchange', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_unlocked_supply_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_supply_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('3', {'title':'Fully Custom', 'details':'If set to fully-custom, you have full access to the token exchanges configuration', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_fully_custom_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_fully_custom_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Block Limit', 'subtitle':this.format_power_figure(this.state.block_limit), 'barwidth':this.calculate_bar_width(this.state.block_limit), 'number':this.format_account_balance_figure(this.state.block_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_authority_mint_limit), 'details':'Authority Mint Limit', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_authority_mint_limit.bind(this)} theme={this.props.theme} power_limit={9}/>
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('3', {'title':'Halving type (for Uncapped Tokens)', 'details':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Maturity Limit', 'subtitle':this.format_power_figure(this.state.maturity_limit), 'barwidth':this.calculate_bar_width(this.state.maturity_limit), 'number':this.format_account_balance_figure(this.state.maturity_limit), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maturity_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-            </div>
-        )
-    }
 
     when_new_token_unlocked_liquidity_tags_object(tag_obj){
         this.setState({new_token_unlocked_liquidity_tags_object: tag_obj})
@@ -838,63 +524,6 @@ class NewTokenPage extends Component {
     when_maturity_limit(amount){
         this.setState({maturity_limit: amount})
     }
-    
-
-
-    render_secondary_token_configuration_part_two(){
-        return(
-            <div style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.internal_block_halfing_proportion), 'details':'Internal Block Halving Proportion', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('3', {'title':this.format_proportion(this.state.block_limit_reduction_proportion), 'details':'Block Limit Reduction Proportion', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Block Reset Limit', 'subtitle':this.format_power_figure(this.state.block_reset_limit), 'barwidth':this.calculate_bar_width(this.state.block_reset_limit), 'number':this.format_account_balance_figure(this.state.block_reset_limit), 'barcolor':'', 'relativepower':'blocks', })}
-                </div>
-
-                <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_block_reset_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('3', {'title':'Block Limit Sensitivity (for Uncapped Tokens)', 'details':'The sensitivity of your new exchange to increasing demand', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio X', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_x), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_x), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_x), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_x.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_y), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_y), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_y), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-                
-            </div>
-        )
-    }
 
     when_internal_block_halfing_proportion(amount){
         this.setState({internal_block_halfing_proportion: amount})
@@ -919,6 +548,514 @@ class NewTokenPage extends Component {
     when_token_exchange_ratio_y(amount){
         this.setState({token_exchange_ratio_y: amount})
     }
+
+
+
+
+    render_simple_token_list(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':'Create a basic E5 token'})}
+                <div style={{height:20}}/>
+                {this.render_basic_token_section_parts()}
+
+                <div style={{height:20}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                        {this.show_previous_button()}
+                    </div>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.show_next_button()}
+                    </div>
+                </div>
+                
+            </div>
+        )
+    }
+
+    show_next_button(){
+        var page = this.state.page
+        if(page < 4){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_next_page()}>
+                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    show_previous_button(){
+        var page = this.state.page
+        if(page != 0){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_previous_page()}>
+                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    render_basic_token_section_parts(){
+        var page = this.state.page
+
+        if(page == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Set the token type', 'details':'Capped token (with limited supply) or uncapped token (with unlimited supply)', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_type_tags_object.bind(this)} theme={this.props.theme}/>
+
+                </div>
+            )
+        }
+        else if(page == 1){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Token Supply', 'details':'The supply of a capped token available for buying (for capped tokens)', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 2){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Buy Limit', 'details':'the maximum amount of tokens that can be bought in one transaction.', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                </div>
+            )
+        }
+        else if(page == 3){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Trust Fee', 'details':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
+                </div>
+            )
+        }
+        else if(page == 4){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Sell Limit', 'details':'The maximum amount of your new token a sender can sell in a transaction.', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                </div>
+            )
+        }
+        else if(page == 5){
+            return(
+                <div>
+                    
+                </div>
+            )
+        }
+
+    }
+
+    enter_next_page(){
+        var page = this.state.page
+        if(page < 18){
+            this.setState({page: this.state.page+1})
+        }
+    }
+
+    enter_previous_page(){
+        var page = this.state.page
+        if(page > 0){
+            this.setState({page: this.state.page-1})
+        }
+    }
+
+
+
+
+
+    render_custom_configuration_token_part(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':'Create a custom E5 token'})}
+                <div style={{height:20}}/>
+                {this.render_custom_token_section_parts()}
+
+                <div style={{height:20}}/>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                        {this.show_custom_previous_button()}
+                    </div>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.show_custom_next_button()}
+                    </div>
+                </div>
+                
+            </div>
+        )
+    }
+
+    show_custom_next_button(){
+        var page = this.state.custom_page
+        if(page < 22){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_custom_next_page()}>
+                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+    show_custom_previous_button(){
+        var page = this.state.custom_page
+        if(page != 0){
+            return(
+                <div style={{'padding': '5px'}} onClick={()=>this.enter_custom_previous_page()}>
+                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
+                </div>
+            )
+        }
+    }
+
+
+    render_custom_token_section_parts(){
+         var page = this.state.custom_page
+
+        if(page == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Set the token type', 'details':'Capped token (with limited supply) or uncapped token (with unlimited supply)', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <Tags page_tags_object={this.state.new_token_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_type_tags_object.bind(this)} theme={this.props.theme}/>
+
+                </div>
+            )
+        }
+        else if(page == 1){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Token Supply', 'details':'The supply of a capped token available for buying (for capped tokens)', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 2){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Buy Limit', 'details':'the maximum amount of tokens that can be bought in one transaction.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                </div>
+            )
+        }
+        else if(page == 3){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Sell Limit', 'details':'The maximum amount of your new token a sender can sell in a transaction.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                </div>
+            )
+        }
+        else if(page == 4){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Time Between Swap', 'details':'the minimum amount of time a sender has to wait between making a swap for a given token.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.minimum_time_between_swap), 'details':'Minimum Time Between Swap', 'size':'l'})}
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 5){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Trust Fee', 'details':'proportion or percentage fee enforced on all contract spending that takes place using token.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 6){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Transactions Between Swap', 'details':'the minimum number of transactions sender has to make between swaps for your new token.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_transactions_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_transactions_between_swap), 'barcolor':'', 'relativepower':'transactions', })}
+                    </div>
+
+                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 7){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Blocks Between Swap', 'details':'the minimum number of blocks sender has to wait between making a swap for your new token.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Blocks Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_blocks_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_blocks_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_blocks_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
+                    </div>
+
+                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_blocks_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 8){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Entered Contracts Between Swap', 'details':'the minimum amount of contracts sender should enter before interacting with your new exchange again.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
+                    </div>
+
+                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 9){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Transactions For First Buy', 'details':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_transactions_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_transactions_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
+                    </div>
+
+                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 10){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Entered Contracts For First Buy', 'details':'The minimum number of contracts sender should have entered before first buy.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
+                    </div>
+
+                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 11){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Unlocked Liquidity', 'details':'If set to unlocked, You have direct access to the token exchanges liquidity', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_unlocked_liquidity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_liquidity_tags_object.bind(this)} theme={this.props.theme}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 12){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Unlocked Supply', 'details':'If set to unlocked, you can mint more of the token outside the exchange', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_unlocked_supply_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_supply_tags_object.bind(this)} theme={this.props.theme}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 13){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Fully Custom', 'details':'If set to fully-custom, you have full access to the token exchanges configuration', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_fully_custom_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_fully_custom_tags_object.bind(this)} theme={this.props.theme}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 14){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Block Limit', 'details':'the maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Block Limit', 'subtitle':this.format_power_figure(this.state.block_limit), 'barwidth':this.calculate_bar_width(this.state.block_limit), 'number':this.format_account_balance_figure(this.state.block_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 15){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Halving type (for Uncapped Tokens)', 'details':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(page == 16){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Maturity Limit', 'details':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is less than its default set value.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Maturity Limit', 'subtitle':this.format_power_figure(this.state.maturity_limit), 'barwidth':this.calculate_bar_width(this.state.maturity_limit), 'number':this.format_account_balance_figure(this.state.maturity_limit), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maturity_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 17){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Internal Block Halving Proportion', 'details':'proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.internal_block_halfing_proportion), 'details':'Internal Block Halving Proportion', 'size':'l'})}
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                </div>
+            )
+        }
+        else if(page == 18){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Block Limit Reduction Proportion', 'details':'proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.block_limit_reduction_proportion), 'details':'Block Limit Reduction Proportion', 'size':'l'})}
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                </div>
+            )
+        }
+        else if(page == 19){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Block Reset Limit', 'details':'the maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Block Reset Limit', 'subtitle':this.format_power_figure(this.state.block_reset_limit), 'barwidth':this.calculate_bar_width(this.state.block_reset_limit), 'number':this.format_account_balance_figure(this.state.block_reset_limit), 'barcolor':'', 'relativepower':'blocks', })}
+                    </div>
+
+                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_block_reset_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+        else if(page == 20){
+            return(
+                <div>
+                    
+                    {this.render_detail_item('3', {'title':'Block Limit Sensitivity (for Uncapped Tokens)', 'details':'The sensitivity of your new exchange to increasing demand', 'size':'l'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(page == 21){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Exchange Ratio X', 'details':'The buy output exchange ratio X for your new token (formula being: x * y = k)', 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio X', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_x), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_x), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_x), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_x.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    
+                </div>
+            )
+        }
+        else if(page == 22){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Exchange Ratio Y', 'details':'The buy input exchange ratio Y for your new token (formula being: x * y = k)', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_y), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_y), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_y), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+    }
+
+    enter_custom_next_page(){
+        var page = this.state.custom_page
+        if(page < 22){
+            this.setState({custom_page: this.state.custom_page+1})
+        }
+    }
+
+    enter_custom_previous_page(){
+        var page = this.state.custom_page
+        if(page > 0){
+            this.setState({custom_page: this.state.custom_page-1})
+        }
+    }
+
+
+
+
 
 
 

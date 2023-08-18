@@ -323,10 +323,10 @@ class StackPage extends Component {
     render_stack_item(item, index){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        // var op = this.state.hidden.includes(index) ? 0.5 : 1.0
-        // var txt = this.state.hidden.includes(index) ? 'show' : 'hide'
+        var op = this.state.hidden.includes(item) ? 0.5 : 1.0
+        var txt = this.state.hidden.includes(item) ? 'show' : 'hide'
         return(
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
+            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px', opacity: op}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
@@ -335,6 +335,10 @@ class StackPage extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item)),'size':'l'})}
                     <div style={{height: 10}}/>
+
+                    <div style={{'padding': '5px'}} onClick={()=>this.show_hide_stack_item(item)}>
+                        {this.render_detail_item('5', {'text':txt, 'action':''})}
+                    </div>
 
                 </div>         
             </div>
@@ -423,30 +427,183 @@ class StackPage extends Component {
 
     run_transactions = async () => {
         var txs = this.props.app_state.stack_items
+        var amount = bigInt('35555555555434333222223343444333344334333444333434333333344333')
         var strs = []
         var ints = []
         var adds = []
         var wei = 0;
 
         for(var i=0; i<txs.length; i++){
-            if(!this.state.hidden.includes(i)){
+            if(!this.state.hidden.includes(txs[i])){
                 if(txs[i].type == 'contract'){
                     var contract_obj = this.format_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(contract_obj)
+                    
+
+                    var contract_type = this.get_selected_item(txs[i].new_contract_type_tags_object, txs[i].new_contract_type_tags_object['i'].active)
+
+                    var contract_stack_id = ints.length-1
+                    if(contract_type == 'private'){
+                        var enable_interactibles_checker = [ /* enable interactible checkers */
+                            [20000, 5, 0],
+                            [contract_stack_id], [35]/* target objects */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(enable_interactibles_checker)
+                    }
+
+                    if(txs[i].interactibles.length != 0){
+                        var add_interactibles_accounts = [ /* set account to be interactible */
+                            [20000, 2, 0],
+                            [], [],/* target objects */
+                            [], [],/* target account ids*/
+                            []/* interacible expiry time limit */
+                        ]
+
+                        for(var j = 0; j < txs[i].interactibles.length; j++){
+                            add_interactibles_accounts[1].push(contract_stack_id)
+                            add_interactibles_accounts[2].push(35)
+                            add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
+                            add_interactibles_accounts[4].push(23)
+                            add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_interactibles_accounts)
+        
+                    }
+                    if(txs[i].moderators.length != 0){
+                        var add_moderator_accounts = [ /* set account as mod */
+                            [20000, 4, 0],
+                            [], [],/* target objects */
+                            [], []/* target moderator account ids*/
+                        ]
+
+                        for(var j = 0; j < txs[i].moderators.length; j++){
+                            add_moderator_accounts[1].push(contract_stack_id)
+                            add_moderator_accounts[2].push(35)
+                            add_moderator_accounts[3].push(txs[i].moderators[j])
+                            add_moderator_accounts[4].push(23)
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_moderator_accounts)
+                    }
                 }
                 else if(txs[i].type == 'token'){
                     var token_obj = this.format_token_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(token_obj)
+
+                    var token_stack_id = ints.length-1
+                    if(txs[i].interactibles.length != 0){
+                        var enable_interactibles_checker = [ /* enable interactible checkers */
+                            [20000, 5, 0],
+                            [token_stack_id], [35]/* target objects */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(enable_interactibles_checker)
+
+                        var add_interactibles_accounts = [ /* set account to be interactible */
+                            [20000, 2, 0],
+                            [], [],/* target objects */
+                            [], [],/* target account ids*/
+                            []/* interacible expiry time limit */
+                        ]
+
+                        for(var j = 0; j < txs[i].interactibles.length; j++){
+                            add_interactibles_accounts[1].push(token_stack_id)
+                            add_interactibles_accounts[2].push(35)
+                            add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
+                            add_interactibles_accounts[4].push(23)
+                            add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_interactibles_accounts)
+        
+                    }
+                    if(txs[i].moderators.length != 0){
+                        var add_moderator_accounts = [ /* set account as mod */
+                            [20000, 4, 0],
+                            [], [],/* target objects */
+                            [], []/* target moderator account ids*/
+                        ]
+
+                        for(var j = 0; j < txs[i].moderators.length; j++){
+                            add_moderator_accounts[1].push(token_stack_id)
+                            add_moderator_accounts[2].push(35)
+                            add_moderator_accounts[3].push(txs[i].moderators[j])
+                            add_moderator_accounts[4].push(23)
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_moderator_accounts)
+                    }
                 }
                 else if(txs[i].type == 'subscription'){
                     var subscription_obj = this.format_subscription_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(subscription_obj)
+
+                    var subscription_stack_id = ints.length-1
+                    if(txs[i].interactibles.length != 0){
+                        var enable_interactibles_checker = [ /* enable interactible checkers */
+                            [20000, 5, 0],
+                            [subscription_stack_id], [35]/* target objects */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(enable_interactibles_checker)
+                        
+                        var add_interactibles_accounts = [ /* set account to be interactible */
+                            [20000, 2, 0],
+                            [], [],/* target objects */
+                            [], [],/* target account ids*/
+                            []/* interacible expiry time limit */
+                        ]
+
+                        for(var j = 0; j < txs[i].interactibles.length; j++){
+                            add_interactibles_accounts[1].push(subscription_stack_id)
+                            add_interactibles_accounts[2].push(35)
+                            add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
+                            add_interactibles_accounts[4].push(23)
+                            add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_interactibles_accounts)
+        
+                    }
+                    if(txs[i].moderators.length != 0){
+                        var add_moderator_accounts = [ /* set account as mod */
+                            [20000, 4, 0],
+                            [], [],/* target objects */
+                            [], []/* target moderator account ids*/
+                        ]
+
+                        for(var j = 0; j < txs[i].moderators.length; j++){
+                            add_moderator_accounts[1].push(subscription_stack_id)
+                            add_moderator_accounts[2].push(35)
+                            add_moderator_accounts[3].push(txs[i].moderators[j])
+                            add_moderator_accounts[4].push(23)
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_moderator_accounts)
+                    }
                 }
                 else if(txs[i].type == 'post'){
                     var post_obj = this.format_post_object(txs[i])
@@ -482,7 +639,7 @@ class StackPage extends Component {
                     ints.push(buy_sell_obj)
                     if(txs[i]['exchange']['id'] == 3 && txs[i]['action'] == 0){
                         //if we're buying end
-                        wei = ( bigInt(txs[i]['exchange']['data'][4][0]) * bigInt(txs[i]['amount']) )+35
+                        wei = (bigInt(txs[i]['exchange']['data'][4][0]).multiply(txs[i]['amount']).add(35)).toString()
                     }
                 }
                 else if(txs[i].type == 'transfer'){
@@ -505,7 +662,7 @@ class StackPage extends Component {
         var metadata_strings = [ [] ]
 
         for(var i=0; i<txs.length; i++){
-            if(!this.state.hidden.includes(i)){
+            if(!this.state.hidden.includes(txs[i])){
                 if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'){
                     metadata_action[1].push(i)
                     metadata_action[2].push(35)
@@ -529,7 +686,7 @@ class StackPage extends Component {
         var index_data_strings = [ [], [] ]
 
         for(var i=0; i<txs.length; i++){
-            if(!this.state.hidden.includes(i)){
+            if(!this.state.hidden.includes(txs[i])){
                 if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'){
                     var tx_tags = txs[i].entered_indexing_tags
                     index_data_in_tags[1].push(i)
@@ -643,40 +800,54 @@ class StackPage extends Component {
     }
 
     format_token_object(t){
+        //.toString().toLocaleString('fullwide', {useGrouping:false})
         var type = this.get_selected_item(t.new_token_type_tags_object, t.new_token_type_tags_object['i'].active);
         var new_token_type_tags_object = type == 'capped' ? 3 : 5
-        var token_exchange_liquidity_total_supply = t.token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : t.token_exchange_liquidity_total_supply.toString()
+        var token_exchange_liquidity_total_supply = t.token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : 
+        t.token_exchange_liquidity_total_supply
         if(type == 'uncapped'){
             token_exchange_liquidity_total_supply = 0
         }
-        var default_exchange_amount_buy_limit = t.default_exchange_amount_buy_limit == 0 ? 100_000_000 : t.default_exchange_amount_buy_limit.toString()
-        var minimum_transactions_between_swap = t.minimum_transactions_between_swap
-        var minimum_blocks_between_swap = t.minimum_blocks_between_swap
-        var minimum_time_between_swap = t.minimum_time_between_swap
-        var default_exchange_amount_sell_limit = t.default_exchange_amount_sell_limit == 0 ? 100_000_000 : t.default_exchange_amount_sell_limit.toString()
-        // var default_exchange_amount_sell_limit = 100_000_000
-        var minimum_entered_contracts_between_swap = t.minimum_entered_contracts_between_swap
-        var minimum_transactions_for_first_buy = t.minimum_transactions_for_first_buy
-        var trust_fee_proportion = t.trust_fee_proportion == 0 ? bgN(1,16) : t.trust_fee_proportion.toString()
-        // var trust_fee_proportion = bgN(1,16)
-        var block_limit = t.block_limit
+        var default_exchange_amount_buy_limit = t.default_exchange_amount_buy_limit == 0 ? 100_000_000 : 
+        t.default_exchange_amount_buy_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        
+        var minimum_transactions_between_swap = t.minimum_transactions_between_swap.toString().toLocaleString('fullwide', {useGrouping:false})
+        var minimum_blocks_between_swap = t.minimum_blocks_between_swap.toString().toLocaleString('fullwide', {useGrouping:false})
+        var minimum_time_between_swap = t.minimum_time_between_swap.toString().toLocaleString('fullwide', {useGrouping:false})
+        var default_exchange_amount_sell_limit = t.default_exchange_amount_sell_limit == 0 ? 100_000_000 : t.default_exchange_amount_sell_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        var minimum_entered_contracts_between_swap = t.minimum_entered_contracts_between_swap.toString().toLocaleString('fullwide', {useGrouping:false})
+        var minimum_transactions_for_first_buy = t.minimum_transactions_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
+        var trust_fee_proportion = t.trust_fee_proportion == 0 ? bgN(1,16) : t.trust_fee_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
+        
+        var block_limit = t.block_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        
         var new_token_unlocked_liquidity_tags_object = this.get_selected_item(t.new_token_unlocked_liquidity_tags_object, t.new_token_unlocked_liquidity_tags_object['i'].active) == 'unlocked' ? 1 : 0
         var new_token_unlocked_supply_tags_object = this.get_selected_item(t.new_token_unlocked_supply_tags_object, t.new_token_unlocked_supply_tags_object['i'].active) == 'unlocked' ? 1 : 0
         var new_token_fully_custom_tags_object = this.get_selected_item(t.new_token_fully_custom_tags_object, t.new_token_fully_custom_tags_object['i'].active) == 'fully-custom' ? 1 : 0
-        var internal_block_halfing_proportion = t.internal_block_halfing_proportion
-        var block_limit_reduction_proportion = t.block_limit_reduction_proportion
-        var block_reset_limit = t.block_reset_limit
-        var new_token_block_limit_sensitivity_tags_object = parseInt(this.get_selected_item(t.new_token_block_limit_sensitivity_tags_object, t.new_token_block_limit_sensitivity_tags_object['i'].active))
-        var default_authority_mint_limit = t.default_authority_mint_limit == 0 ? bgN(1,16) : t.default_authority_mint_limit
-        var new_token_halving_type_tags_object = this.get_selected_item(t.new_token_halving_type_tags_object, t.new_token_halving_type_tags_object['i'].active) == 'spread' ? 1 : 0
-        var maturity_limit = t.maturity_limit
-        var minimum_entered_contracts_for_first_buy = t.minimum_entered_contracts_for_first_buy
+        var internal_block_halfing_proportion = t.internal_block_halfing_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
+        var block_limit_reduction_proportion = t.block_limit_reduction_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
+        var block_reset_limit = t.block_reset_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        
+        var new_token_block_limit_sensitivity_tags_object = parseInt(this.get_selected_item(t.new_token_block_limit_sensitivity_tags_object, t.new_token_block_limit_sensitivity_tags_object['i'].active)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var default_authority_mint_limit = t.default_authority_mint_limit == 0 ? bgN(1,16).toString().toLocaleString('fullwide', {useGrouping:false}) : t.default_authority_mint_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        
+        var new_token_halving_type_tags_object = (this.get_selected_item(t.new_token_halving_type_tags_object, t.new_token_halving_type_tags_object['i'].active) == 'spread' ? 1 : 0).toString().toLocaleString('fullwide', {useGrouping:false})
+        var maturity_limit = t.maturity_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        
+        var minimum_entered_contracts_for_first_buy = t.minimum_entered_contracts_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
         var active_block_limit_reduction_proportion = type == 'capped' ? 0 : bgN(100,16)
-        var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? token_exchange_liquidity_total_supply.toString(): t.token_exchange_ratio_x.toString()
-        if(token_exchange_ratio_x != token_exchange_liquidity_total_supply){
-            token_exchange_ratio_x = token_exchange_liquidity_total_supply.toString()
+        var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? '1000': t.token_exchange_ratio_x.toString().toLocaleString('fullwide', {useGrouping:false})
+        if(type == 'capped' && token_exchange_ratio_x != token_exchange_liquidity_total_supply){
+            token_exchange_liquidity_total_supply = token_exchange_ratio_x;
         }
-        var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? default_exchange_amount_buy_limit : t.token_exchange_ratio_y.toString()
+        var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? '1000' : t.token_exchange_ratio_y.toString().toLocaleString('fullwide', {useGrouping:false})
+        if(token_exchange_ratio_x == '0'){
+            token_exchange_ratio_x = '1000'
+        }
+        if(token_exchange_ratio_y == '0'){
+            token_exchange_ratio_y = '1000'
+        }
+        
         var exchange_authority = t.exchange_authority == '' ? 53 : parseInt(t.exchange_authority)
         var exchange_authority_type = 23
         if(exchange_authority == 53){
@@ -704,13 +875,26 @@ class StackPage extends Component {
             [], []
         ]
 
+        console.log('---------------------e----------------')
+        console.log(obj)
+
       if(t.price_data.length == 0){
-        obj[7].push(3)
-        obj[8].push(23)
-        obj[9].push(1)
-        obj[10].push(23)
-        obj[11].push(0)
-        obj[12].push(23)
+        if(new_token_type_tags_object == 5){
+            obj[7].push(0)
+            obj[8].push(23)
+            obj[9].push(0)
+            obj[10].push(23)
+            obj[11].push(0)
+            obj[12].push(23)
+        }else{
+            obj[7].push(3)
+            obj[8].push(23)
+            obj[9].push(1)
+            obj[10].push(23)
+            obj[11].push(0)
+            obj[12].push(23)
+        }
+        
       }else{
         for(var i=0; i<t.price_data.length; i++){
             obj[7].push(parseInt(t.price_data[i]['id']))
@@ -817,6 +1001,7 @@ class StackPage extends Component {
     }
 
     format_buy_sell_object(t){
+        var amm = bigInt(100)
         var obj = [/* buy end/spend */
         [30000, 8, 0],
         [], [],/* exchanges */
@@ -824,6 +1009,10 @@ class StackPage extends Component {
         []/* amounts */, [],/* action */
         []/* lower_bounds */, []/* upper_bounds */
       ];
+
+
+      var amount = bigInt(t['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+      obj[5].push(amount)
 
       obj[1].push(t['exchange']['id'])
       obj[2].push(23)
@@ -833,11 +1022,12 @@ class StackPage extends Component {
       }else{
         obj[4].push(23)
       }
-      obj[5].push(t['amount'])
+      
       obj[6].push(t['action'])
 
       return obj
     }
+
 
     format_transfer_object(t){
         var obj = [/* send tokens to another account */

@@ -8,6 +8,7 @@ import AddStack from './../assets/e5empty_icon3.png';
 import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
+const Web3 = require('web3');
 
 
 function number_with_commas(x) {
@@ -110,7 +111,7 @@ class NewMintActionPage extends Component {
 
                 <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
-                <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
+                <div style={{'padding': '5px'}} onClick={()=>  this.add_transaction()}>
                     {this.render_detail_item('5', {'text':'Add Transaction To Stack', 'action':''})}
                 </div>
 
@@ -125,7 +126,7 @@ class NewMintActionPage extends Component {
         var amount = this.state.amount
         var return_buy_amounts = buy_amounts.slice()
         for(var i = 0; i < buy_amounts.length; i++){
-            return_buy_amounts[i] = bigInt(buy_amounts[i]) * bigInt(amount)
+            return_buy_amounts[i] = bigInt(bigInt(buy_amounts[i]).multiply(bigInt(amount)) )
         }
         return return_buy_amounts
     }
@@ -257,7 +258,7 @@ class NewMintActionPage extends Component {
     }
 
 
-    add_transaction(){
+    add_transaction() {
         var clone = this.state.stack_items.slice()
         var selected_stack_item = this.state.stack_item_selected
 
@@ -274,19 +275,31 @@ class NewMintActionPage extends Component {
             this.props.notify('please put a valid amount', 600)
         }
         else{
-            if(clone.length == 0){
-                clone.push({'id':makeid(4), 'data':[]})
+            if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){
+                this.props.notify('you dont have enough tokens for that')
             }
-            clone[selected_stack_item]['data'].splice(0, 1)
-            var tx = {id:makeid(8), type:'buy-sell', 'amount':''+amount, 'recipient':recipient, 'action':stack_action, 'exchange':this.state.token_item, entered_indexing_tags:['buy', 'mint', 'token']}
-            clone[selected_stack_item]['data'].push(tx)
-            this.setState({stack_items: clone})
-            this.props.notify('transaction added!', 600)
+            else{
+                if(clone.length == 0){
+                    clone.push({'id':makeid(4), 'data':[]})
+                }
+                clone[selected_stack_item]['data'].splice(0, 1)
+                var tx = {id:makeid(8), type:'buy-sell', 'amount':bigInt(amount), 'recipient':recipient, 'action':stack_action, 'exchange':this.state.token_item, entered_indexing_tags:['buy', 'mint', 'token']}
+                clone[selected_stack_item]['data'].push(tx)
+                this.setState({stack_items: clone})
+                this.props.notify('transaction added!', 600)
 
-            this.props.add_buy_sell_transaction_to_stack(tx)
-            this.props.reset_stack_items()
+                this.props.add_buy_sell_transaction_to_stack(tx)
+                this.props.reset_stack_items()
+            }
         }
         
+    }
+
+    check_if_sender_has_tokens_for_sell(){
+        if(this.state.token_item['balance'] < this.state.amount){
+            return false
+        }
+        return true
     }
 
 

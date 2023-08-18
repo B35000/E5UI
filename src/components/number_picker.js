@@ -52,10 +52,25 @@ class NumberPicker extends Component {
                     {this.render_number_label_group()}
                     {this.render_number_picker_sliders()}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('1', this.get_number_power_data())}
+                    <div className="row">
+                        <div className="col-8" style={{'padding': '5px 0px 0px 10px'}}>
+                            {this.render_detail_item('1', this.get_number_power_data())}
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
+                            <div style={{'padding': '5px'}} onClick={()=>this.reset_number_picker()}>
+                                {this.render_detail_item('5', {'text':'reset', 'action':''})}
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         )
+    }
+
+    reset_number_picker(){
+      this.setState({create_number_data: this.get_create_number_data()})
     }
 
     get_number_power_data(){
