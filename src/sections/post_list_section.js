@@ -262,21 +262,21 @@ class PostListSection extends Component {
         var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
 
         if(this.props.work_page_tags_object['i'].active != 'contracts'){
-            return this.props.app_state.created_contracts.reverse()
+            return this.props.app_state.created_contracts
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_contracts.reverse()
+            return this.props.app_state.created_contracts
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_contracts = []
             for(var i=0; i<this.props.viewed_contracts.length; i++){
                 my_viewed_contracts.push(this.props.app_state.created_contracts[this.props.viewed_contracts[i]])
             }
-            return my_viewed_contracts.reverse()
+            return my_viewed_contracts
         }
         else if(selected_option_name == 'received'){
-            return this.props.app_state.created_contracts.reverse()
+            return this.props.app_state.created_contracts
         }
         else {
             var my_contracts = []
@@ -289,7 +289,7 @@ class PostListSection extends Component {
                     console.log('sender not post author: author->'+post_author+', sender id->'+myid)
                 }
             }
-            return my_contracts.reverse()
+            return my_contracts
         }
     }
 

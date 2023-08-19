@@ -145,7 +145,7 @@ class ViewGroups extends Component {
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                     <div className="row" style={{height:'100%', width:'100%'}}>
                         <div className="col-2">
-                            <img src={img} style={{height:55 ,width:'auto'}} />
+                            <img src={img} style={{height:45 ,width:'auto'}} />
                         </div>
                         <div className="col-6">
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 

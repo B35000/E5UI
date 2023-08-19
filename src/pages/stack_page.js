@@ -427,7 +427,6 @@ class StackPage extends Component {
 
     run_transactions = async () => {
         var txs = this.props.app_state.stack_items
-        var amount = bigInt('35555555555434333222223343444333344334333444333434333333344333')
         var strs = []
         var ints = []
         var adds = []
@@ -647,6 +646,18 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(transfer_object)
+                }
+                else if(txs[i].type == 'enter-contract'){
+                    var enter_object = this.format_enter_contract_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(enter_object)
+                }
+                else if(txs[i].type == 'extend-contract'){
+                    var extend_object = this.format_extend_contract_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(extend_object)
                 }
 
             }
@@ -875,9 +886,6 @@ class StackPage extends Component {
             [], []
         ]
 
-        console.log('---------------------e----------------')
-        console.log(obj)
-
       if(t.price_data.length == 0){
         if(new_token_type_tags_object == 5){
             obj[7].push(0)
@@ -1028,7 +1036,6 @@ class StackPage extends Component {
       return obj
     }
 
-
     format_transfer_object(t){
         var obj = [/* send tokens to another account */
         [30000, 1, 0],
@@ -1052,6 +1059,36 @@ class StackPage extends Component {
         obj[6].push(0)
       }
       
+      return obj
+    }
+
+    format_enter_contract_object(t){
+        var obj = [/* enter a contract */
+        [30000, 3, 0],
+        [], [],/* contract ids */
+        []/* expiry time (seconds) */
+      ];
+
+      obj[1].push(t.contract_item['id'])
+      obj[2].push(23)
+
+      obj[3].push(t.interactible_timestamp)
+
+      return obj
+    }
+
+
+    format_extend_contract_object(t){
+        var obj = [/* extend enter contract */
+        [30000, 14, 0],
+        [], [],/* contract ids */
+        []/* expiry time (seconds) */
+      ]
+
+      obj[1].push(t.contract_item['id'])
+      obj[2].push(23)
+      obj[3].push(t.interactible_timestamp)
+
       return obj
     }
 

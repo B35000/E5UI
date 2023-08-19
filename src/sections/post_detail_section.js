@@ -445,10 +445,72 @@ class PostDetailSection extends Component {
                     {this.render_detail_item('3', item['entry_fees'])}
                     <div style={{height: 10}}/>
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('0')}
+
+                    {this.show_enter_contract_button()}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    show_enter_contract_button(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        if(object['id'] != 2){
+            return(
+                <div>
+                    {this.show_entered_contract_data()}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'details':'Enter a contract to participate in its consensus', 'title':'Enter Contract'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=>this.open_enter_contract_ui()}>
+                        {this.render_detail_item('5', {'text':'Enter', 'action':''},)}
+                    </div>
+                    
+                    <div style={{height:10}}/>
+                    
+                    {this.render_detail_item('3', {'size':'l', 'details':'Extend your stay in the contract', 'title':'Extend Stay'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=>this.open_extend_contract_ui()}>
+                        {this.render_detail_item('5', {'text':'Enter', 'action':''},)}
+                    </div>
+
+                    
+                </div>
+            )
+        }
+    }
+
+
+    show_entered_contract_data(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if(expiry_time_in_seconds != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                </div>
+            )
+        }
+    }
+
+    open_enter_contract_ui(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        this.props.open_enter_contract_ui(object)
+    }
+
+    open_extend_contract_ui(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        this.props.open_extend_contract_ui(object)
     }
 
 
@@ -501,34 +563,34 @@ class PostDetailSection extends Component {
         var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
 
         if(this.props.work_page_tags_object['i'].active != 'contracts'){
-            return this.props.app_state.created_contracts.reverse()
+            return this.props.app_state.created_contracts
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_contracts.reverse()
+            return this.props.app_state.created_contracts
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_contracts = []
             for(var i=0; i<this.props.viewed_contracts.length; i++){
                 my_viewed_contracts.push(this.props.app_state.created_contracts[this.props.viewed_contracts[i]])
             }
-            return my_viewed_contracts.reverse()
+            return my_viewed_contracts
         }
         else if(selected_option_name == 'received'){
-            return this.props.app_state.created_contracts.reverse()
+            return this.props.app_state.created_contracts
         }
         else {
             var my_contracts = []
             var myid = this.props.app_state.user_account_id
             for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
-                var post_author = this.props.app_state.created_contracts[i]['event'].returnValues.p3
+                var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
                 if(post_author.toString() == myid.toString()){
                     my_contracts.push(this.props.app_state.created_contracts[i])
                 }else{
                     console.log('sender not post author: author->'+post_author+', sender id->'+myid)
                 }
             }
-            return my_contracts.reverse()
+            return my_contracts
         }
     }
 

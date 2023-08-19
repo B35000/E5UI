@@ -573,7 +573,7 @@ class home_page extends Component {
             
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} 
 
-            open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)}
+            open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)} open_enter_contract_ui={this.open_enter_contract_ui.bind(this)} open_extend_contract_ui={this.open_extend_contract_ui.bind(this)}
             />
         )
     }
@@ -595,6 +595,13 @@ class home_page extends Component {
         this.props.show_transfer_bottomsheet(item)
     }
 
+    open_enter_contract_ui(item){
+        this.props.show_enter_contract_bottomsheet(item)
+    }
+
+    open_extend_contract_ui(item){
+        this.props.show_extend_contract_bottomsheet(item)
+    }
 
     
 
