@@ -659,6 +659,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(extend_object)
                 }
+                else if(txs[i].type == 'exit-contract'){
+                    var exit_object = this.format_exit_contract_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(exit_object)
+                }
 
             }
             
@@ -814,8 +820,7 @@ class StackPage extends Component {
         //.toString().toLocaleString('fullwide', {useGrouping:false})
         var type = this.get_selected_item(t.new_token_type_tags_object, t.new_token_type_tags_object['i'].active);
         var new_token_type_tags_object = type == 'capped' ? 3 : 5
-        var token_exchange_liquidity_total_supply = t.token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : 
-        t.token_exchange_liquidity_total_supply
+        var token_exchange_liquidity_total_supply = t.token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : t.token_exchange_liquidity_total_supply.toString().toLocaleString('fullwide', {useGrouping:false})
         if(type == 'uncapped'){
             token_exchange_liquidity_total_supply = 0
         }
@@ -846,18 +851,21 @@ class StackPage extends Component {
         var maturity_limit = t.maturity_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
         var minimum_entered_contracts_for_first_buy = t.minimum_entered_contracts_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        var default_exchange_ratio_value = '1000';
+        if(type == 'capped'){
+            default_exchange_ratio_value = token_exchange_liquidity_total_supply;
+        }
+
         var active_block_limit_reduction_proportion = type == 'capped' ? 0 : bgN(100,16)
-        var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? '1000': t.token_exchange_ratio_x.toString().toLocaleString('fullwide', {useGrouping:false})
+        var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? default_exchange_ratio_value: t.token_exchange_ratio_x.toString().toLocaleString('fullwide', {useGrouping:false})
+
+        var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? default_exchange_ratio_value : t.token_exchange_ratio_y.toString().toLocaleString('fullwide', {useGrouping:false})
+
         if(type == 'capped' && token_exchange_ratio_x != token_exchange_liquidity_total_supply){
-            token_exchange_liquidity_total_supply = token_exchange_ratio_x;
+            token_exchange_ratio_x = token_exchange_liquidity_total_supply;
         }
-        var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? '1000' : t.token_exchange_ratio_y.toString().toLocaleString('fullwide', {useGrouping:false})
-        if(token_exchange_ratio_x == '0'){
-            token_exchange_ratio_x = '1000'
-        }
-        if(token_exchange_ratio_y == '0'){
-            token_exchange_ratio_y = '1000'
-        }
+        
         
         var exchange_authority = t.exchange_authority == '' ? 53 : parseInt(t.exchange_authority)
         var exchange_authority_type = 23
@@ -885,6 +893,9 @@ class StackPage extends Component {
             [], [],
             [], []
         ]
+
+        console.log('--------------56------------')
+        console.log(obj)
 
       if(t.price_data.length == 0){
         if(new_token_type_tags_object == 5){
@@ -1090,6 +1101,18 @@ class StackPage extends Component {
       obj[3].push(t.interactible_timestamp)
 
       return obj
+    }
+
+
+    format_exit_contract_object(t){
+        var obj = [/* exit contract */
+            [30000, 11, 0],
+            [], []/* contract ids */
+        ]
+        obj[1].push(t.contract_item['id'])
+        obj[2].push(23)
+
+        return obj;
     }
 
 

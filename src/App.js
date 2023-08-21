@@ -31,6 +31,8 @@ import NewMintActionPage from './pages/mint_dump_token_page';
 import NewTransferActionPage from './pages/transfer_token_page';
 import EnterContractPage from './pages/enter_contract_page';
 import ExtendContractPage from './pages/extend_contract_page';
+import ExitContractPage from './pages/exit_contract_page';
+import NewProposalPage from './pages/new_proposal_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -65,7 +67,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -91,6 +93,8 @@ class App extends Component {
     this.new_transfer_token_page = React.createRef();
     this.enter_contract_page = React.createRef();
     this.extend_contract_page = React.createRef();
+    this.exit_contract_page = React.createRef();
+    this.new_proposal_page = React.createRef();
   }
 
   componentDidMount() {
@@ -212,6 +216,8 @@ class App extends Component {
         {this.render_transfer_token_bottomsheet()}
         {this.render_enter_contract_bottomsheet()}
         {this.render_extend_contract_bottomsheet()}
+        {this.render_exit_contract_bottomsheet()}
+        {this.render_new_proposal_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -230,6 +236,8 @@ class App extends Component {
       show_transfer_bottomsheet={this.show_transfer_bottomsheet.bind(this)}
       show_enter_contract_bottomsheet={this.show_enter_contract_bottomsheet.bind(this)}
       show_extend_contract_bottomsheet={this.show_extend_contract_bottomsheet.bind(this)}
+      show_exit_contract_bottomsheet={this.show_exit_contract_bottomsheet.bind(this)}
+      show_new_proposal_bottomsheet={this.show_new_proposal_bottomsheet.bind(this)}
       />
     )
   }
@@ -701,7 +709,6 @@ class App extends Component {
     this.open_enter_contract_bottomsheet()
   }
 
-
   enter_contract(state){
     var stack_clone = this.state.stack_items.slice()
     stack_clone.push(state)
@@ -738,11 +745,78 @@ class App extends Component {
     this.open_extend_contract_bottomsheet()
   }
 
-
   extend_contract(state){
     var stack_clone = this.state.stack_items.slice()
     stack_clone.push(state)
     this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+  render_exit_contract_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_exit_contract_bottomsheet.bind(this)} open={this.state.exit_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ExitContractPage ref={this.exit_contract_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} exit_contract={this.exit_contract.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_exit_contract_bottomsheet(){
+    if(this.state != null){
+        this.setState({exit_contract_bottomsheet: !this.state.exit_contract_bottomsheet});
+      }
+  }
+
+  show_exit_contract_bottomsheet(contract_item){
+    if(this.exit_contract_page.current != null){
+      this.exit_contract_page.current.set_contract(contract_item)
+    }
+
+    this.open_exit_contract_bottomsheet()
+  }
+
+  exit_contract(state){
+    var stack_clone = this.state.stack_items.slice()
+    stack_clone.push(state)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+  render_new_proposal_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_proposal_bottomsheet.bind(this)} open={this.state.new_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_new_proposal_bottomsheet(){
+    if(this.state != null){
+        this.setState({new_proposal_bottomsheet: !this.state.new_proposal_bottomsheet});
+      }
+  }
+
+  show_new_proposal_bottomsheet(contract_item){
+    if(this.new_proposal_page.current != null){
+      this.new_proposal_page.current.set_contract(contract_item)
+    }
+
+    this.open_new_proposal_bottomsheet()
   }
 
 
@@ -922,18 +996,23 @@ class App extends Component {
       if (error) {
         console.error(error);
       } else {
-        this.setState({E15_exchange_data: result, E15_exchange_id_data:token_ids, should_keep_synchronizing_bottomsheet_open: false});
+        this.setState({E15_exchange_data: result, E15_exchange_id_data:token_ids});
         this.inc_synch_progress()
-        this.prompt_top_notification('syncronized!', 500);
+        
       }
     });
 
   }
 
   inc_synch_progress(){
-    const steps = 4;
+    const steps = 13;
     const incr_count = 100/steps;
+    if(this.state.syncronizing_progress+incr_count >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == true){
+      this.prompt_top_notification('syncronized!', 500);
+      this.setState({should_keep_synchronizing_bottomsheet_open: false})
+    }
     this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
+
   }
 
   send_ether_to_target(recipientAddress, amount, gasPrice, state){
@@ -984,7 +1063,7 @@ class App extends Component {
 
     this.get_filecoin_wallet(seed);
     this.store_data_in_ipfs()
-    this.get_accounts_data(account)
+    this.get_accounts_data(account, true)
   }
 
   get_account_from_seed(seed){
@@ -1155,7 +1234,7 @@ class App extends Component {
       });
   }
 
-  get_accounts_data = async (account) => {
+  get_accounts_data = async (account, is_syncing) => {
     const web3 = new Web3(this.state.web3);
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.state.e5_address
@@ -1165,17 +1244,27 @@ class App extends Component {
     var contract_addresses = contract_addresses_events[0].returnValues.p5
     this.setState({E35_addresses: contract_addresses})
     console.log(contract_addresses)
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
     
     var accounts = await contractInstance.methods.f167([],[account.address], 2).call((error, result) => {});
     console.log('account id----------------',accounts[0])
-    this.setState({user_account_id: accounts[0]})
+    var account = accounts[0] == 0 ? 1 : accounts[0]
+    this.setState({user_account_id: account})
 
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
 
-    var events = await contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* sender_account_id */: accounts[0] } }, (error, events) => {});
+    var events = await contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* sender_account_id */: account } }, (error, events) => {});
     this.setState({E15_runs: events});
     console.log(events[0])
 
-    
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
 
     const F5contractArtifact = require('./contract_abis/F5.json');
     const F5_address = contract_addresses[2];
@@ -1200,6 +1289,9 @@ class App extends Component {
     this.setState({all_subscriptions: all_subscription_events})
 
 
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
 
 
 
@@ -1213,22 +1305,23 @@ class App extends Component {
 
     var created_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
     var created_contracts = [2]
-    var accounts_for_expiry_time = [[accounts[0]]]
+    var accounts_for_expiry_time = [[account]]
     for(var i=0; i<created_contract_events.length; i++){
       var id = created_contract_events[i].returnValues.p1
       created_contracts.push(id)
-      accounts_for_expiry_time.push([accounts[0]])
+      accounts_for_expiry_time.push([account])
     }
 
     var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
-    console.log('-------------------------3---------------')
-    console.log(entered_timestamp_data)
     var created_contract_object_data = []
     for(var i=0; i<created_contracts.length; i++){
       var contracts_data = await this.fetch_objects_data(created_contracts[i], web3);
       var event = i>0 ? created_contract_events[i-1]: null
-      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0]})
+      var end_balance = await this.get_balance_in_exchange(3, created_contracts[i]);
+      var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i]);
+
+      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance})
     }
 
     this.setState({created_contracts: created_contract_object_data})
@@ -1238,6 +1331,9 @@ class App extends Component {
     this.setState({all_contracts: all_contract_events})
 
 
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
 
 
 
@@ -1252,25 +1348,28 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     var created_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange */ } }, (error, events) => {});
-    console.log('created tokens ---------------------------')
-    console.log(created_token_events)
     var created_tokens = [3, 5]
     var created_token_depths = [0,0]
+    var exchange_accounts = [account, account]
     for(var i=0; i<created_token_events.length; i++){
       var id = created_token_events[i].returnValues.p1
       created_tokens.push(id)
       created_token_depths.push(0)
+      exchange_accounts.push(account)
     }
 
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
-    var token_balances = await H52contractInstance.methods.f140e(created_tokens, accounts[0], created_token_depths).call((error, result) => {});
-    console.log('token balances --------------------')
-    console.log(token_balances)
+    var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
+
+    var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
+    
     var created_token_object_data = []
     for(var i=0; i<created_tokens.length; i++){
       var tokens_data = await this.fetch_objects_data(created_tokens[i], web3);
       var event = i>1 ? created_token_events[i-2]: null
-      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i] })
+
+      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i]})
+
     }
 
     this.setState({created_tokens: created_token_object_data})
@@ -1278,6 +1377,20 @@ class App extends Component {
 
     var all_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange_id */ } }, (error, events) => {});
     this.setState({all_tokens: all_token_events})
+
+
+    var end_balance_of_E5 = await this.get_balance_in_exchange(3, 2)
+    var spend_balance_of_E5 = await this.get_balance_in_exchange(5, 2)
+    var end_balance_of_burn_account = await this.get_balance_in_exchange(3, 0)
+
+    this.setState({end_balance_of_E5:end_balance_of_E5, spend_balance_of_E5:spend_balance_of_E5, end_balance_of_burn_account: end_balance_of_burn_account})
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
 
 
 
@@ -1299,6 +1412,13 @@ class App extends Component {
     console.log('post count: '+created_posts.length)
 
 
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
     var created_channel_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 36/* 36(type_channel_target) */ } }, (error, events) => {});
     var created_channel = []
     for(var i=0; i<created_channel_events.length; i++){
@@ -1312,6 +1432,10 @@ class App extends Component {
     this.setState({created_channels: created_channel})
     console.log('channel count: '+created_channel.length)
 
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
 
 
     var created_job_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 17/* 17(job_object) */ } }, (error, events) => {});
@@ -1328,6 +1452,10 @@ class App extends Component {
     }
     this.setState({created_jobs: created_job})
     console.log('job count: '+created_job.length)
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
 
   }
 
@@ -1385,16 +1513,13 @@ class App extends Component {
 
 
 
-  get_balance_in_exchange = async (exchange_id) => {
-      if(exchange_id == 0){
-          return this.state.account_balance
-      }
+  get_balance_in_exchange = async (exchange_id, account) => {
       const web3 = new Web3(this.state.web3);
       const H52contractArtifact = require('./contract_abis/H52.json');
       const H52_address = this.state.E35_addresses[6];
       const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
       
-      var token_balances = await H52contractInstance.methods.f140e([exchange_id], this.state.user_account_id, [0]).call((error, result) => {});
+      var token_balances = await H52contractInstance.methods.f140e([exchange_id], account, [0]).call((error, result) => {});
 
       return token_balances[0]
   }

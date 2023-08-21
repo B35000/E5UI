@@ -5,12 +5,6 @@ import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 
 
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-
 var bigInt = require("big-integer");
 
 function number_with_commas(x) {
@@ -22,23 +16,24 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
-class ExtendContractPage extends Component {
+
+class ExitContractPage extends Component {
     
     state = {
-        selected: 0, type:'extend-contract',
-        contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0}, extend_contract_title_tags_object:this.get_extend_contract_title_tags_object(),
-        interactible_timestamp:0,
-        entered_indexing_tags:['extend', 'contract']
+        selected: 0, type:'exit-contract',
+        contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0},
+        exit_contract_title_tags_object:this.get_exit_contract_title_tags_object(), 
+        entered_indexing_tags:['exit', 'contract']
     };
 
 
-    get_extend_contract_title_tags_object(){
+    get_exit_contract_title_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','extend-contract'], [1]
+                ['xor','',0], ['e','exit-contract'], [1]
             ],
         };
     }
@@ -49,12 +44,10 @@ class ExtendContractPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.extend_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_extend_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags page_tags_object={this.state.exit_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_exit_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'padding': '5px'}} onClick={()=>this.finish_extending_contract_ui()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
-                        </div>
+                        
                         
                     </div>
                 </div>
@@ -65,36 +58,45 @@ class ExtendContractPage extends Component {
         )
     }
 
-
-    when_extend_contract_title_tags_object_updated(tag_obj){
-        this.setState({extend_contract_title_tags_object:tag_obj})
+    when_exit_contract_title_tags_object_updated(tag_obj){
+        this.setState({exit_contract_title_tags_object: tag_obj})
     }
 
 
     render_everything(){
         var contract_config = this.state.contract_item['data'][1]
-        var expiry_time_in_seconds = this.state.contract_item['entry_expiry']
-        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        var item = this.format_contract_item()
+
         return(
             <div>
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'})}
                 <div style={{height:10}}/>
 
+                <div style={{height:'auto', width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                    <div style={{'padding': '5px 0px 5px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                        
+                    </div>         
+                </div>
+
+                <div style={{height: 10}}/>
                 {this.show_entered_contract_data()}
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Extend Entry exipry time', 'details':'Set the new time after which you will not participate in the contract', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
-                    <CssBaseline />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
-                    </LocalizationProvider>
-                </ThemeProvider>
-                <div style={{height:10}}/>
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Exit the specific contract'})}
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.finish_exiting_contract_ui()}>
+                    {this.render_detail_item('5', {'text':'Exit Contract', 'action':''})}
+                </div>
             </div>
         )
     }
@@ -103,7 +105,7 @@ class ExtendContractPage extends Component {
     show_entered_contract_data(){
         var expiry_time_in_seconds = this.state.contract_item['entry_expiry']
         var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
-
+        
         if(expiry_time_in_seconds != 0){
             return(
                 <div>
@@ -116,11 +118,19 @@ class ExtendContractPage extends Component {
         }
     }
 
-    when_new_dat_time_value_set(value){
-        const selectedDate = value instanceof Date ? value : new Date(value);
-        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
-        this.setState({interactible_timestamp: timeInSeconds})
+
+    format_contract_item(){
+        var object = this.state.contract_item
+        var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+        }
     }
+
 
 
     set_contract(contract){
@@ -223,12 +233,20 @@ class ExtendContractPage extends Component {
         return ((proportion/10**18) * 100)+'%';
     }
 
+    get_number_width(number){
+        var last_two_digits = number.toString().slice(0, 1)+'0';
+        if(number > 10){
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
 
-    finish_extending_contract_ui(){
-        if(this.state.contract_item['entry_expiry'] > this.state.interactible_timestamp){
-            this.props.notify('You cant set a time before the current expiry time', 1500);
+
+    finish_exiting_contract_ui(){
+        if(this.state.contract_item['entry_expiry'] == 0){
+            this.props.notify('You cant exit a contract you havent entered', 1500);
         }else{
-            this.props.extend_contract(this.state)
+            this.props.exit_contract(this.state)
             this.props.notify('transaction added to stack', 700);
         }
         
@@ -240,4 +258,4 @@ class ExtendContractPage extends Component {
 
 
 
-export default ExtendContractPage;
+export default ExitContractPage;

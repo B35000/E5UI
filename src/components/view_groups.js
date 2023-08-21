@@ -142,12 +142,13 @@ class ViewGroups extends Component {
                     img = object_data['image'];
                 }
                return (
-                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                    <div className="row" style={{height:'100%', width:'100%'}}>
-                        <div className="col-2">
-                            <img src={img} style={{height:45 ,width:'auto'}} />
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                        <div>
+                            <img src={img} style={{height:50 ,width:'auto'}} />
                         </div>
-                        <div className="col-6">
+                        <div style={{'margin':'0px 0px 0px 5px'}}>
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
                             <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none' }}>{details}</p>
                         </div>
@@ -302,6 +303,27 @@ class ViewGroups extends Component {
                     </ImageList>
                 </div>
             ) 
+        }
+        else if(item_id=='10'){/* text2 */
+            var font = 'Sans-serif';/* Sans-serif , Times New Roman */
+            var textsize = '15px';
+            var text = 'some random text';
+            var color = this.props.theme['primary_text_color'];
+
+            if(object_data!=null){
+              font = object_data['font'];
+              textsize = object_data['textsize'];
+              text = object_data['text'];
+            }
+
+            return(
+                <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => console.log('text-tapped')}>
+                      <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none'}}>{this.format_text_if_empty_or_null(text)}</p>
+                    </div>
+                </div>
+                
+            );
         }
 
     }

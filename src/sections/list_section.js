@@ -6,6 +6,8 @@ import ViewGroups from './../components/view_groups';
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import End35 from './../assets/end35.png';
+import E35EndImg from './../assets/e35_end_token.png';
+import E35SpendImg from './../assets/e35_spend_token.png';
 
 
 function number_with_commas(x) {
@@ -537,7 +539,7 @@ class PostListSection extends Component {
                     </div>
                     <div style={{height: 10}}/>
                     <div style={{'margin':'0px 10px 0px 10px'}}>
-                        {this.render_detail_item('3', item['address'])}
+                        {this.render_detail_item('10', item['address'])}
                     </div>
                     
                 </div>         
@@ -551,7 +553,7 @@ class PostListSection extends Component {
         return {
                 'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': obj[name]},
                 'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
-                'address':{'title':'Contract Address', 'details':add_obj['e35'], 'size':'l'}
+                'address':{'font':'Sans-serif', 'text':add_obj['e35'], 'textsize':'13px'}
             }
     }
 
@@ -905,7 +907,7 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li onClick={() => this.when_ends_object_clicked(index)} style={{'padding': '5px'}}>
-                            {this.render_ends_object(item['data'], index, item['id'])}
+                            {this.render_ends_object(item['data'], index, item['id'], item['img'])}
                         </li>
                     ))}
                     <div style={{'padding': '5px'}}>
@@ -924,24 +926,29 @@ class PostListSection extends Component {
         var exchanges_from_sync = this.props.app_state.created_tokens
         for (let i = 0; i < exchanges_from_sync.length; i++) {
             var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
+
+            var img = type  == 3 ? EndImg: SpendImg
+            if(exchanges_from_sync[i]['id'] == 3) img = E35EndImg
+            else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
+
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35'})
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img})
             }
         }
         return token_exchanges
     }
 
-    render_ends_object(object_array, index, token_id){
+    render_ends_object(object_array, index, token_id, img){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.get_exchanges_data(object_array, token_id)
+        var item = this.get_exchanges_data(object_array, token_id, img)
         return ( 
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 10px 0px 10px'}}>
-                        {this.render_detail_item('3', item['label'])}
+                        {this.render_detail_item('8', item['label'])}
                     </div>
                     <div style={{height: 20}}/>
                     {this.render_detail_item('2', item['number_label'])}
@@ -954,9 +961,8 @@ class PostListSection extends Component {
         this.props.when_ends_object_clicked(index)
     }
 
-    get_exchanges_data(object_array, token_id){
+    get_exchanges_data(object_array, token_id, img){
         var type = object_array[0][3/* <3>token_type */] == 3 ? 'end': 'spend'
-        var img = object_array[0][3/* <3>token_type */]  == 3 ? EndImg: SpendImg
         var supply = object_array[2][2/* <2>token_exchange_liquidity/total_supply */]
         return{
             'tags':{'active_tags':[''+token_id, ''+type, 'token'], 'index_option':'indexed', 'when_tapped':''},
@@ -992,7 +998,7 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li onClick={() => this.when_spends_object_item_clicked(index)} style={{'padding': '5px'}}>
-                            {this.render_ends_object(item['data'], index, item['id'])}
+                            {this.render_spends_object(item['data'], index, item['id'], item['img'])}
                         </li>
                     ))}
                     <div style={{'padding': '5px'}}>
@@ -1006,10 +1012,10 @@ class PostListSection extends Component {
         );
     }
 
-    render_spends_object(object_array, index, token_id){
+    render_spends_object(object_array, index, token_id, img){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.get_exchanges_data(object_array, token_id)
+        var item = this.get_exchanges_data(object_array, token_id, img)
         return ( 
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
