@@ -37,10 +37,10 @@ class home_page extends Component {
         work_page_tags_object:this.get_main_page_tag_object('?'), 
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
-        selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null,
+        selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null,
         view_post_bottomsheet: false,
 
-        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[]
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],
     };
 
 
@@ -58,10 +58,10 @@ class home_page extends Component {
               ['or','e',1], ['jobs','all','viewed','created'], [1],[1]
           ],
           'contracts':[
-              ['or','e',1], ['contracts','all','viewed','created','received'], [1],[1]
+              ['or','e',1], ['contracts','all','viewed','created','entered'], [1],[1]
           ],
           'proposals':[
-              ['or','e',1], ['proposals','all','received','created','voted'], [1],[1]
+              ['or','e',1], ['proposals','my-proposals', 'viewed', 'created'], [1],[1]
           ],
           'subscriptions':[
               ['or','e',1], ['subscriptions','all','paid','viewed','created'], [1],[1]
@@ -339,7 +339,7 @@ class home_page extends Component {
         if(size == 'l') width = this.props.width - 10;
         return(
             <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', height: 50,  width: '99%'}}>
-                <div style={{ height: 40,  width: width}}>
+                <div style={{ height: 50,  width: width}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
                 
@@ -445,11 +445,11 @@ class home_page extends Component {
     render_post_list_group(size){
         return(
             <PostListSection size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} 
-            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)}
+            when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)}
 
             open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
             
-            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions}
+            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals}
             />
         )
     }
@@ -557,6 +557,22 @@ class home_page extends Component {
     }
 
 
+    when_proposal_item_clicked(index){
+        this.setState({selected_proposal_item: index})
+
+        var viewed_proposals_clone = this.state.viewed_proposals.slice()
+        var pos = viewed_proposals_clone.indexOf(index)
+        if(pos == -1){
+            viewed_proposals_clone.push(index)
+            this.setState({viewed_proposals: viewed_proposals_clone})
+        }
+
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+    }
+
+
 
 
 
@@ -565,13 +581,13 @@ class home_page extends Component {
         return(
             <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} 
 
-            selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item}
+            selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item}
 
             height={this.props.height} screensize={this.props.screensize} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)}
             
             when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
             
-            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} 
+            viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals}
 
             open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)} open_enter_contract_ui={this.open_enter_contract_ui.bind(this)} open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} open_new_proposal_ui={this.open_new_proposal_ui.bind(this)}
             />

@@ -165,6 +165,14 @@ class template extends Component {
                     {this.show_enter_contract_button()}
 
                     {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Send a proposal to the contract to perform a specified action', 'title':'Send Proposal'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=> this.open_new_proposal_ui()}>
+                        {this.render_detail_item('5', {'text':'Send', 'action':''},)}
+                    </div>
+
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
@@ -210,15 +218,6 @@ class template extends Component {
 
                     <div onClick={()=>this.open_exit_contract_ui()}>
                         {this.render_detail_item('5', {'text':'Exit', 'action':''},)}
-                    </div>
-
-                    {this.render_detail_item('0')}
-
-                    {this.render_detail_item('3', {'size':'l', 'details':'Send a proposal to the contract to perform a specified action', 'title':'Send Proposal'})}
-                    <div style={{height:10}}/>
-
-                    <div onClick={()=> this.open_new_proposal_ui()}>
-                        {this.render_detail_item('5', {'text':'Send', 'action':''},)}
                     </div>
                     
                 </div>

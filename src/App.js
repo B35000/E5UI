@@ -90,7 +90,8 @@ class App extends Component {
     created_jobs:[], 
     mint_dump_actions:[{},],
 
-    web3:'http://127.0.0.1:8545/', e5_address:'0x95401dc811bb5740090279Ba06cfA8fcF6113778'
+    web3:'http://127.0.0.1:8545/', e5_address:'0xFD471836031dc5108809D173A067e8486B9047A3',
+    sync_steps:14,
   };
 
 
@@ -1019,7 +1020,7 @@ class App extends Component {
   }
 
   inc_synch_progress(){
-    const steps = 13;
+    const steps = this.state.sync_steps;
     const incr_count = 100/steps;
     if(this.state.syncronizing_progress+incr_count >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == true){
       this.prompt_top_notification('syncronized!', 500);
@@ -1322,6 +1323,79 @@ class App extends Component {
     if(is_syncing){
       this.inc_synch_progress()
     }
+
+
+
+
+
+
+
+
+    var contracts_ive_entered_events = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */} }, (error, events) => {});
+    var contracts_ive_entered = []
+    for(var i=0; i<contracts_ive_entered_events.length; i++){
+      var contract = contracts_ive_entered_events[i].returnValues.p1
+      contracts_ive_entered.push(contract)
+    }
+
+    var contracts_ive_exited_events = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc */:account, p3/* action */:11 /* <11>exit_contract */} }, (error, events) => {});
+    for(var i=0; i<contracts_ive_exited_events.length; i++){
+      var contract = contracts_ive_exited_events[i].returnValues.p1
+      const index = contracts_ive_entered.indexOf(contract);
+      if (index > -1) { // only splice array when item is found
+          contracts_ive_entered.splice(index, 1); // 2nd parameter means remove one item only
+      }
+    }
+
+    var all_force_exit_events = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* action */:18 /* <18>contract_force_exit_accounts */} }, (error, events) => {});
+    for(var i=0; i<all_force_exit_events.length; i++){
+      if(all_force_exit_events[i].returnValues.p5 == account.toString()){
+        var force_exit_contract_id = all_force_exit_events[i].returnValues.p1
+        const index = contracts_ive_entered.indexOf(force_exit_contract_id);
+        if (index > -1) { // only splice array when item is found
+            contracts_ive_entered.splice(index, 1); // 2nd parameter means remove one item only
+        }
+      }
+    }
+
+    var my_proposals_events = []
+    var my_proposal_ids = []
+    for(var i=0; i<contracts_ive_entered.length; i++){
+      var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */:contracts_ive_entered[i]} }, (error, events) => {});
+
+      for(var i=0; i<contracts_proposals.length; i++){
+        my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p4))
+        my_proposals_events.push(contracts_proposals[i])
+      }
+
+    }
+
+    var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */:2} }, (error, events) => {});
+
+    for(var i=0; i<contracts_proposals.length; i++){
+      my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p4))
+      my_proposals_events.push(contracts_proposals[i])
+    }
+
+    var created_proposal_object_data = []
+    var created_proposal_data = await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
+    for(var i=0; i<my_proposal_ids.length; i++){
+      var proposals_data = await this.fetch_objects_data(my_proposal_ids[i], web3);
+      var event = my_proposals_events[i]
+      var end_balance = await this.get_balance_in_exchange(3, my_proposal_ids[i]);
+      var spend_balance = await this.get_balance_in_exchange(5, my_proposal_ids[i]);
+
+      created_proposal_object_data.push({'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance})
+    }
+
+    this.setState({my_proposals: created_proposal_object_data})
+    console.log('contract count: '+created_proposal_object_data.length)
+    
+    
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
 
 
 
