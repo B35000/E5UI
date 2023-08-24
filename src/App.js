@@ -39,9 +39,15 @@ import { LotusClient } from 'filecoin.js'
 import { create } from 'ipfs-http-client'
 
 import { Filecoin } from 'filecoin.js';
+import { LotusRPC } from '@filecoin-shipyard/lotus-client-rpc'
+import { mainnet } from '@filecoin-shipyard/lotus-client-schema'
+import { NodejsProvider } from '@filecoin-shipyard/lotus-client-provider-nodejs'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
+const { Wallet } = require('ethers');
+// const fetchh = require('node-fetch');
+
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
@@ -59,6 +65,10 @@ function makeid(length) {
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
+}
+
+async function balance(addr, client){
+  
 }
 
 class App extends Component {
@@ -799,7 +809,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_proposal_bottomsheet.bind(this)} open={this.state.new_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+            <NewProposalPage ref={this.new_proposal_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_proposal_to_stack={this.when_add_new_proposal_to_stack.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -819,7 +829,11 @@ class App extends Component {
     this.open_new_proposal_bottomsheet()
   }
 
-
+  when_add_new_proposal_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
 
 
 
@@ -1090,25 +1104,7 @@ class App extends Component {
     const balance = await lotusClient.wallet.balance(myAddress);
     console.log('Wallet balance:', balance);
 
-    // this.send_filecoin(seed)
-
-    const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
-    const amount = 10**14; // Amount in FIL (1 FIL = 1e18)
-    // Send the transaction
-    // const message = await walletProvider.createMessage({
-    //   From: lotusClient.wallet.getDefaultAddress(),
-    //   To: recipientAddress,
-    //   Value: amount,
-    // });
-    // const cid = await walletProvider.sendMessage(message)
-
-    // console.log('Transaction CID:', cid);
-    // const receipt = await walletProvider.client.state.waitMsg(cid);
-    // if (receipt) {
-    //   console.log('Transaction confirmed!');
-    // } else {
-    //   console.log('Transaction failed or pending.');
-    // }
+    this.send_filecoin(seed)
   }
 
   store_data_in_ipfs = async () => {
@@ -1145,20 +1141,23 @@ class App extends Component {
   }
 
   send_filecoin = async (seed) => {
-    const provider = new HttpJsonRpcConnector({ url: 'https://rpc.ankr.com/filecoin', token: '' });
+    const provider = new HttpJsonRpcConnector({ url: 'https://api.node.glif.io/rpc/v0', token: '' });
     const lotusClient = new LotusClient(provider);
     const hdDerivationPath = `m/44'/461'/0'/0/0`;
     const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
 
     const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
-    const amount = 10**14; // Amount in FIL (1 FIL = 1e18)
+    const amount = 10**5; // Amount in FIL (1 FIL = 1e18)
     const myAddress = await walletProvider.getDefaultAddress();
 
     console.log('walletProvider.address:---------------',myAddress)
+    console.log(walletProvider)
 
-    // Send the transaction
+    var from = await walletProvider.privateKey
+
+    // // Send the transaction
     // const message = await walletProvider.createMessage({
-    //   From: walletProvider.getDefaultAccount(),
+    //   From: myAddress,
     //   To: recipientAddress,
     //   Value: amount,
     // });
@@ -1172,17 +1171,6 @@ class App extends Component {
     //   console.log('Transaction failed or pending.');
     // }
 
-    const filecoin = new Filecoin(lotusClient, { walletProvider });
-    try {
-      const result = await filecoin.send(
-        walletProvider.getDefaultAddress(),
-        recipientAddress,
-        amount
-      );
-      console.log('Transaction Hash:', result['/']);
-    } catch (error) {
-      console.error('Error sending Filecoin:', error);
-    }
   }
 
   

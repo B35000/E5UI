@@ -338,7 +338,7 @@ class home_page extends Component {
         var width = this.props.width - 80;
         if(size == 'l') width = this.props.width - 10;
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', height: 40,  width: '99%'}}>
+            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', height: 50,  width: '99%'}}>
                 <div style={{ height: 40,  width: width}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>

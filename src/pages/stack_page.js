@@ -665,6 +665,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(exit_object)
                 }
+                else if(txs[i].type == 'proposal'){
+                    var proposal_obj = this.format_proposal_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(proposal_obj)
+                }
 
             }
             
@@ -680,7 +686,7 @@ class StackPage extends Component {
 
         for(var i=0; i<txs.length; i++){
             if(!this.state.hidden.includes(txs[i])){
-                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'){
+                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'|| txs[i].type == 'proposal'){
                     metadata_action[1].push(i)
                     metadata_action[2].push(35)
                     metadata_action[3].push(0)
@@ -704,7 +710,7 @@ class StackPage extends Component {
 
         for(var i=0; i<txs.length; i++){
             if(!this.state.hidden.includes(txs[i])){
-                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'){
+                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront' || txs[i].type == 'proposal'){
                     var tx_tags = txs[i].entered_indexing_tags
                     index_data_in_tags[1].push(i)
                     index_data_in_tags[2].push(35)
@@ -766,17 +772,17 @@ class StackPage extends Component {
     }
 
     format_contract_object(t){
-        var default_vote_bounty_split_proportion = t.default_vote_bounty_split_proportion == 0 ? bgN(1,16) : t.default_vote_bounty_split_proportion
-        var max_extend_enter_contract_limit = t.max_extend_enter_contract_limit == 0 ? 36_000_000 : t.max_extend_enter_contract_limit
-        var default_minimum_end_vote_bounty_amount = t.default_minimum_end_vote_bounty_amount == 0 ? 5000 : t.default_minimum_end_vote_bounty_amount
-        var default_proposal_expiry_duration_limit = t.default_proposal_expiry_duration_limit == 0 ? 30_000 : t.default_proposal_expiry_duration_limit
-        var max_enter_contract_duration = t.max_enter_contract_duration == 0 ? bgN(1, 16) : t.max_enter_contract_duration
+        var default_vote_bounty_split_proportion = t.default_vote_bounty_split_proportion == 0 ? bgN(1,16) : t.default_vote_bounty_split_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
+        var max_extend_enter_contract_limit = t.max_extend_enter_contract_limit == 0 ? 36_000_000 : t.max_extend_enter_contract_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        var default_minimum_end_vote_bounty_amount = t.default_minimum_end_vote_bounty_amount == 0 ? 5000 : t.default_minimum_end_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        var default_proposal_expiry_duration_limit = t.default_proposal_expiry_duration_limit == 0 ? 30_000 : t.default_proposal_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        var max_enter_contract_duration = t.max_enter_contract_duration == 0 ? bgN(1, 16) : t.max_enter_contract_duration.toString().toLocaleString('fullwide', {useGrouping:false})
         var auto_wait_for_all_proposals_for_all_voters = this.get_selected_item(t.auto_wait_tags_object, t.auto_wait_tags_object['i'].active) == 'no' ? 0 : 1
-        var default_minimum_spend_vote_bounty_amount = t.default_minimum_spend_vote_bounty_amount == 0 ? 5000 : t.default_minimum_spend_vote_bounty_amount
-        var proposal_modify_expiry_duration_limit = t.proposal_modify_expiry_duration_limit == 0 ? 3600 : t.proposal_modify_expiry_duration_limit
+        var default_minimum_spend_vote_bounty_amount = t.default_minimum_spend_vote_bounty_amount == 0 ? 5000 : t.default_minimum_spend_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        var proposal_modify_expiry_duration_limit = t.proposal_modify_expiry_duration_limit == 0 ? 3600 : t.proposal_modify_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         var can_modify_contract_as_moderator = this.get_selected_item(t.can_modify_contract_as_moderator, t.can_modify_contract_as_moderator['i'].active) == 'modifiable' ? 1 : 0
         var can_extend_enter_contract_at_any_time = this.get_selected_item(t.can_extend_enter_contract_at_any_time, t.can_extend_enter_contract_at_any_time['i'].active) == 'enabled' ? 1 : 0
-        var maximum_proposal_expiry_submit_expiry_time_difference = t.maximum_proposal_expiry_submit_expiry_time_difference == 0 ? bgN(1,16) : t.maximum_proposal_expiry_submit_expiry_time_difference
+        var maximum_proposal_expiry_submit_expiry_time_difference = t.maximum_proposal_expiry_submit_expiry_time_difference == 0 ? bgN(1,16).toString().toLocaleString('fullwide', {useGrouping:false}) : t.maximum_proposal_expiry_submit_expiry_time_difference.toString().toLocaleString('fullwide', {useGrouping:false})
         var bounty_limit_type = this.get_selected_item(t.bounty_limit_type, t.bounty_limit_type['i'].active) == 'relative' ? 0 : 1
         var contract_force_exit_enabled = this.get_selected_item(t.contract_force_exit_enabled, t.contract_force_exit_enabled['i'].active) == 'enabled' ? 1 : 0
 
@@ -934,12 +940,12 @@ class StackPage extends Component {
         if(exchange_authority == 53){
             exchange_authority_type = 53
         }
-        var minimum_buy_amount = t.minimum_buy_amount == 0 ? 1 : t.minimum_buy_amount
+        var minimum_buy_amount = t.minimum_buy_amount == 0 ? 1 : t.minimum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var cancellable_tags_object = this.get_selected_item(t.cancellable_tags_object, t.cancellable_tags_object['i'].active) == 'true' ? 1 : 0
-        var maximum_buy_amount = t.maximum_buy_amount
-        var minimum_cancellable_balance_amount = t.minimum_cancellable_balance_amount
-        var time_unit = t.time_unit
-        var subscription_beneficiary = t.subscription_beneficiary == '' ? 53 : parseInt(t.subscription_beneficiary)
+        var maximum_buy_amount = t.maximum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        var minimum_cancellable_balance_amount = t.minimum_cancellable_balance_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        var time_unit = t.time_unit.toString().toLocaleString('fullwide', {useGrouping:false})
+        var subscription_beneficiary = t.subscription_beneficiary == '' ? 53 : parseInt(t.subscription_beneficiary).toString().toLocaleString('fullwide', {useGrouping:false})
         var subscription_beneficiary_type = 23
         if(subscription_beneficiary == 53){
             subscription_beneficiary_type = 53
@@ -1088,7 +1094,6 @@ class StackPage extends Component {
       return obj
     }
 
-
     format_extend_contract_object(t){
         var obj = [/* extend enter contract */
         [30000, 14, 0],
@@ -1103,7 +1108,6 @@ class StackPage extends Component {
       return obj
     }
 
-
     format_exit_contract_object(t){
         var obj = [/* exit contract */
             [30000, 11, 0],
@@ -1113,6 +1117,114 @@ class StackPage extends Component {
         obj[2].push(23)
 
         return obj;
+    }
+
+    format_proposal_object(t){
+        var consensus_obj = {'spend':0,'reconfig':1, 'exchange-transfer':6}
+        var consensus_type_tag = this.get_selected_item(t.new_proposal_type_tags_object, t.new_proposal_type_tags_object['i'].active)
+        var consensus_type = consensus_obj[consensus_type_tag]
+        var proposal_expiry_time = t.proposal_expiry_time.toString().toLocaleString('fullwide', {useGrouping:false})
+        var consensus_submit_expiry_time = t.proposal_submit_expiry_time.toString().toLocaleString('fullwide', {useGrouping:false})
+        var target_contract_authority = t.contract_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+        var modify_target = t.modify_target_id.toString().toLocaleString('fullwide', {useGrouping:false})
+        if(modify_target == ''){
+            modify_target = '0'
+        }
+
+        var obj = [/* create proposal */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 32, 0],
+            [0], [23],
+            [consensus_type, proposal_expiry_time, 0/* 2 */, consensus_submit_expiry_time, 0, target_contract_authority, 0/* 6 */, 0, 0, modify_target], 
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+            [], [],
+            [], [],/* 8 */
+            [], [],/* 4 <exchanges> */
+            [], [],
+            [], [],/* 14 */
+            [], [],
+            [], [],/* 18 */
+            [], [],
+            [], []/* bounty depths */
+        ]
+
+        for(var i = 0; i<t.bounty_values.length; i++){
+            //set the bounty data
+            obj[5].push(t.bounty_values[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[6].push(23)
+
+            obj[7].push(t.bounty_values[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[8].push(23)
+
+            obj[21].push(0)
+            obj[22].push(23)
+        }
+
+        if(consensus_type_tag == 'spend'){
+            for(var i=0; i<t.spend_actions.length; i++){
+                obj[9].push(t.spend_actions[i]['spend_token'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[10].push(23)
+
+                obj[11].push(t.spend_actions[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[12].push(23)
+
+                obj[13].push(t.spend_actions[i]['spend_target'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[14].push(23)
+
+                obj[15].push(0)/* depths */
+                obj[16].push(23)
+
+                obj[17].push(0)/* depths */
+                obj[18].push(23)
+
+                obj[19].push(0)/* depths */
+                obj[20].push(23)
+            }
+        }
+        else if(consensus_type_tag == 'reconfig'){
+            for(var i=0; i<t.reconfig_values.length; i++){
+                obj[9].push(t.reconfig_values[i]['pos'][0])
+                obj[10].push(23)
+
+                obj[11].push(t.reconfig_values[i]['pos'][1])
+                obj[12].push(23)
+
+                obj[13].push(t.reconfig_values[i]['value'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[14].push(23)
+
+                obj[15].push(0)/* depths */
+                obj[16].push(23)
+
+                obj[17].push(0)/* depths */
+                obj[18].push(23)
+
+                obj[19].push(0)/* depths */
+                obj[20].push(23)
+
+            }
+        }
+        else if(consensus_type_tag == 'exchange-transfer'){
+            for(var i=0; i<t.exchange_transfer_values.length; i++){
+                obj[9].push(t.exchange_transfer_values[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[10].push(23)
+
+                obj[11].push(t.exchange_transfer_values[i]['receiver'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[12].push(23)
+
+                obj[13].push(t.exchange_transfer_values[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[14].push(23)
+
+                obj[15].push(0)/* depths */
+                obj[16].push(23)
+
+                obj[17].push(t.exchange_transfer_values[i]['token'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[18].push(23)
+                
+                obj[19].push(0)/* depths */
+                obj[20].push(23)
+            }
+        }
+
+        return obj
     }
 
 

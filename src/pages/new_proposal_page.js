@@ -23,16 +23,47 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class template extends Component {
     
     state = {
-        selected: 0, type:'new-proposal', entered_indexing_tags:['new', 'proposal'],
+        selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
+        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
+
         new_proposal_title_tags_object:this.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:this.get_new_proposal_type_tags_object(),
+        reconfig_items_tags_object:this.get_reconfig_items_tags_object(),
+
+        auto_wait_tags_object:this.get_auto_wait_tags_object(),
+        can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(),
+        can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),
+        bounty_limit_type: this.get_bounty_limit_type(),
+        contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
+        new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
+        new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(),
+
         page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
         proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
         modify_target_id:'', spend_target_input_text:'', spend_token_input_text:'', 
-        spend_amount:0, spend_actions:[],
+        spend_amount:0, spend_actions:[], 
+        
+        reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
+        reconfig_values:[],
+
+        exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
+
+        bounty_exchange_target:'', bounty_amount:0, bounty_values:[]
     };
 
 
@@ -42,7 +73,7 @@ class template extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','proposal-configuration','proposal-data','bounty-data'], [1]
+                ['or','',0], ['e','proposal-configuration','proposal-data','bounty-data'], [0]
             ],
         };
     }
@@ -57,6 +88,107 @@ class template extends Component {
             ],
         };
     }
+
+
+    get_reconfig_items_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e','e.contract','e.subscription', 'e.exchange'], [0]
+            ],
+            'contract':[
+                ['xor','',0], ['contract','Vote Bounty Split Proportion','Maximum Extend Enter Contract Limit', 'Minimum End Bounty Amount', 'Proposal Expiry Duration Limit', 'Maximum Enter Contract Duration', 'Auto Wait', 'Proposal Modify Expiry Duration Limit', 'Moderator Modify Privelage', 'Unlimited Extend Contract Time', 'Maximum Proposal Expiry Submit Expiry time difference', 'Bounty Limit Type', 'Force Exit Enabled', 'Minimum Spend Bounty Amount'], [1]
+            ],
+            'subscription':[
+                ['xor','',0], ['subscription','Minimum Buy Amount','Cancellable', 'Time Unit', 'Maximum Buy Amount', 'Minimum Cancellable Balance Amount'], [1]
+            ],
+            'exchange':[
+                ['xor','',0], ['exchange','Buy Limit','Trust Fee', 'Sell Limit', 'Minimum Time Between Swap', 'Minimum Transactions Between Swap', 'Minimum Blocks Between Swap', 'Minimum Entered Contracts Between Swap', 'Minimum Transactions For First Buy', 'Minimum Entered Contracts For First Buy', 'Block Limit', 'Halving type', 'Maturity Limit', 'Internal Block Halving Proportion', 'Block Limit Reduction Proportion', 'Block Reset Limit', 'Block Limit Sensitivity', 'Exchange Ratio X', 'Exchange Ratio Y'], [1]
+            ],
+        };
+    }
+
+    get_auto_wait_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','no', 'yes'], [1]
+            ],
+        };
+    }
+
+
+    get_can_modify_contract_as_moderator(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','modifiable', 'non-modifiable'], [1]
+            ],
+        };
+    }
+
+    get_can_extend_enter_contract_at_any_time(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','enabled', 'disabled'], [1]
+            ],
+        };
+    }
+
+    get_bounty_limit_type(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','relative', 'absolute'], [2]
+            ],
+        };
+    }
+
+    get_contract_force_exit_enabled(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','enabled', 'disabled'], [1]
+            ],
+        };
+    }
+
+    get_new_token_halving_type_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','fixed', 'spread'], [1]
+            ],
+        };
+    }
+
+
+    get_new_token_block_limit_sensitivity_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1', '2', '3', '4', '5'], [1]
+            ],
+        };
+    }
+
 
     render(){
         return(
@@ -73,7 +205,7 @@ class template extends Component {
                 </div>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Create your new proposal for contract ID: '+this.state.contract_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Create your new proposal for contract ID: '+this.state.contract_item['id']})}
 
                 <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
@@ -91,7 +223,14 @@ class template extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.new_proposal_title_tags_object, this.state.new_proposal_title_tags_object['i'].active)
 
-        if(selected_item == 'proposal-configuration'){
+        if(selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_enter_tags_part()}
+                </div>
+            )
+        }
+        else if(selected_item == 'proposal-configuration'){
             return(
                 <div>
                     {this.render_proposal_configuration_data()}
@@ -106,7 +245,11 @@ class template extends Component {
             )
         }
         else if(selected_item == 'bounty-data'){
-
+            return(
+                <div>
+                    {this.render_bounty_data_ui()}
+                </div>
+            )   
         }
     }
 
@@ -118,6 +261,99 @@ class template extends Component {
     }
 
 
+
+
+
+
+    render_enter_tags_part(){
+        return(
+            <div>
+                {this.render_title_tags_part()}
+                
+                {this.render_new_job_object()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+        render_title_tags_part(){
+        return(
+            <div style={{'padding':'0px 15px 0px 10px'}}>
+                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Proposal'})}
+                <div style={{height:10}}/>
+
+                <div className="row">
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}} onClick={() => this.add_indexing_tag_for_new_job()}>
+                        {this.render_detail_item('5', {'text':'Add', 'action':''})}
+                    </div>
+                </div>
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    when_title_text_input_field_changed(text){
+        this.setState({entered_title_text: text})
+    }
+
+    when_index_text_input_field_changed(text){
+        this.setState({entered_tag_text: text})
+    }
+
+    add_indexing_tag_for_new_job(){
+        var typed_word = this.state.entered_tag_text.trim();
+
+        if(typed_word == ''){
+            this.props.notify('type something!', 400)
+        }
+        else if(this.hasWhiteSpace(typed_word)){
+            this.props.notify('enter one word!', 400)
+        }
+        else{
+            var cloned_seed_array = this.state.entered_indexing_tags.slice()
+            cloned_seed_array.push(typed_word)
+            this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
+            this.props.notify('tag added!', 200)
+        }
+    }
+
+    hasWhiteSpace(s) {
+        return s.indexOf(' ') >= 0;
+    }
+
+    delete_entered_tag_word(word, pos){
+        var cloned_seed_array = this.state.entered_indexing_tags.slice()
+        const index = cloned_seed_array.indexOf(word);
+        if (index > -1) { // only splice array when item is found
+            cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_indexing_tags: cloned_seed_array})
+        this.props.notify('tag removed', 200)
+    }
+
+    render_new_job_object(){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return ( 
+            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                    {this.render_detail_item('0')}
+
+                </div>         
+            </div>
+        );
+    }
 
 
 
@@ -308,6 +544,38 @@ class template extends Component {
                 {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
             ]
         }
+        else if(type == 'reconfig_target_id'){
+            return[
+                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
+                {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+            ]
+        }
+        else if(type == 'exchange_transfer_target'){
+            return[
+                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
+                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+            ]
+        }
+        else if(type =='bounty_exchange_target'){
+            return[
+                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
+                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+            ]
+        }
+        else if(type == 'exchange_transfer_receiver'){
+            return[
+                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
+                {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+            ]
+        }
+        else if(type == 'token_target'){
+            return[
+                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
+                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+            ]
+        }
         
     }
 
@@ -321,7 +589,26 @@ class template extends Component {
         else if(type == 'spend_token'){
             this.setState({spend_token_input_text: item['id']})
         }
+        else if(type == 'reconfig_target_id'){
+            this.setState({reconfig_target_id: item['id']})
+        }
+        else if(type == 'exchange_transfer_target'){
+            this.setState({exchange_transfer_target: item['id']})
+        }
+        else if(type == 'bounty_exchange_target'){
+            this.setState({bounty_exchange_target: item['id']})
+        }
+        else if(type == 'exchange_transfer_receiver'){
+            this.setState({exchange_transfer_receiver: item['id']})
+        }
+        else if(type == 'token_target'){
+            this.setState({token_target: item['id']})
+        }
     }
+
+
+
+
 
 
 
@@ -337,14 +624,19 @@ class template extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'buy'){
-
-        }
         else if(selected_item == 'reconfig'){
-
+            return(
+                <div>
+                    {this.render_reconfig_proposal_ui()}
+                </div>
+            )
         }
         else if(selected_item == 'exchange-transfer'){
-
+            return(
+                <div>
+                    {this.render_exchange_transfer_ui()}
+                </div>
+            )
         }
     }
 
@@ -496,6 +788,751 @@ class template extends Component {
 
 
 
+
+
+
+
+
+    render_reconfig_proposal_ui(){
+        return(
+            <div>
+                <Tags page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:20}}/>
+
+                {this.load_reconfig_item_selectors()}
+                <div style={{height:20}}/>
+
+                {this.load_reconfig_items()}
+            </div>
+        )
+    }
+
+    when_reconfig_items_tags_object_updated(tag_obj){
+        this.setState({reconfig_items_tags_object:tag_obj})
+    }
+
+
+    load_reconfig_item_selectors(){
+        var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
+
+
+        if(selected_item == 'e'){
+            return(<div></div>)
+        }
+
+        var properties = this.get_target_configuration(selected_item)
+        var ui = properties['picker']
+
+        if(ui == 'number'){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
+
+                    <div style={{height:20}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
+                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                </div>
+                </div>
+            )
+        }
+        else if(ui == 'proportion'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.reconfig_proportion), 'details':selected_item, 'size':'l'})}
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proportion_changed.bind(this)} power_limit={properties['powerlimit']} theme={this.props.theme} />
+
+                    <div style={{height:20}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
+                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                </div>
+                </div>
+            )
+        }
+        else if(ui == 'time'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.reconfig_duration), 'details':selected_item, 'size':'l'})}
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
+                    <div style={{height:20}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
+                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                </div>
+                </div>
+            )
+        }
+        else if(ui == 'tag'){
+            return(
+                <div>
+                    {this.load_tags_ui()}
+                    <div style={{height:20}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
+                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                </div>
+                </div>
+            )
+        }
+        else if(ui == 'id'){
+            return(
+                <div>
+                    <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+
+                    {this.load_account_suggestions('reconfig_target_id')}
+
+                    <div style={{height:20}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
+                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                </div>
+                </div>
+            )
+        }
+    }
+
+    when_amount_changed(number){
+        this.setState({reconfig_number: number})
+    }
+
+    when_proportion_changed(number){
+        this.setState({reconfig_proportion: number})
+    }
+
+    when_time_changed(number){
+        this.setState({reconfig_duration: number})
+    }
+
+    when_reconfig_target_id_text_input_field_changed(text){
+        this.setState({reconfig_target_id: text})
+    }
+
+    get_target_configuration(property){
+        var obj = {
+            'Vote Bounty Split Proportion':{'position':[1,1], 'picker':'proportion', 'powerlimit':9},
+            'Maximum Extend Enter Contract Limit':{'position':[1,2], 'picker':'time', 'powerlimit':63}, 
+            'Minimum End Bounty Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63}, 
+            'Proposal Expiry Duration Limit':{'position':[1,5], 'picker':'time', 'powerlimit':63}, 
+            'Maximum Enter Contract Duration':{'position':[1,6], 'picker':'time', 'powerlimit':63}, 
+            'Auto Wait':{'position':[1,8], 'picker':'tag', 'powerlimit':63}, 
+            'Proposal Modify Expiry Duration Limit':{'position':[1,27], 'picker':'time', 'powerlimit':63},
+            'Moderator Modify Privelage':{'position':[1,28], 'picker':'tag', 'powerlimit':9}, 
+            'Unlimited Extend Contract Time':{'position':[1,29], 'picker':'tag', 'powerlimit':9}, 
+            'Maximum Proposal Expiry Submit Expiry time difference':{'position':[1,36], 'picker':'time', 'powerlimit':63}, 
+            'Bounty Limit Type':{'position':[1,37], 'picker':'tag', 'powerlimit':9}, 
+            'Force Exit Enabled':{'position':[1,38], 'picker':'tag', 'powerlimit':9}, 
+            'Minimum Spend Bounty Amount':{'position':[1,10], 'picker':'number', 'powerlimit':63},
+
+
+            'Target Authority':{'position':[1,0], 'picker':'id', 'powerlimit':63},
+            'Target Beneficiary':{'position':[1,6], 'picker':'id', 'powerlimit':63},
+            'Minimum Buy Amount':{'position':[1,1], 'picker':'number', 'powerlimit':63},
+            'Maximum Buy Amount':{'position':[1,3], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Cancellable Balance Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63},
+
+
+            'Buy Limit':{'position':[1,0], 'picker':'number', 'powerlimit':63},
+            'Trust Fee':{'position':[1,7], 'picker':'proportion', 'powerlimit':9}, 
+            'Sell Limit':{'position':[1,11], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Time Between Swap':{'position':[1,4], 'picker':'time', 'powerlimit':63}, 
+            'Minimum Transactions Between Swap':{'position':[1,2], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Blocks Between Swap':{'position':[1,3], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Entered Contracts Between Swap':{'position':[1,13], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Transactions For First Buy':{'position':[1,17], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Entered Contracts For First Buy':{'position':[1,18], 'picker':'number', 'powerlimit':63}, 
+            'Block Limit':{'position':[1,1], 'picker':'number', 'powerlimit':63}, 
+            'Halving type':{'position':[1,15], 'picker':'tag', 'powerlimit':63}, 
+            'Maturity Limit':{'position':[1,16], 'picker':'number', 'powerlimit':63}, 
+            'Internal Block Halving Proportion':{'position':[1,5], 'picker':'proportion', 'powerlimit':9}, 
+            'Block Limit Reduction Proportion':{'position':[1,6], 'picker':'proportion', 'powerlimit':9}, 
+            'Block Reset Limit':{'position':[1,8], 'picker':'number', 'powerlimit':63}, 
+            'Block Limit Sensitivity':{'position':[1,12], 'picker':'tag', 'powerlimit':63}, 
+            'Exchange Ratio X':{'position':[2,0], 'picker':'number', 'powerlimit':63}, 
+            'Exchange Ratio Y':{'position':[2,1], 'picker':'number', 'powerlimit':63},
+        }
+
+        return obj[property]
+    }
+
+
+    load_tags_ui(){
+        var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
+
+        if(selected_item == 'Auto Wait'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == 'Moderator Modify Privelage'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == 'Unlimited Extend Contract Time'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == 'Bounty Limit Type'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == 'Force Exit Enabled'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == 'Halving type'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+        else if(selected_item == 'Block Limit Sensitivity'){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    
+                    <div style={{height:20}}/>
+                    <Tags page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+    }
+
+    when_auto_wait_tags_object(tag_obj){
+        this.setState({auto_wait_tags_object: tag_obj})
+    }
+
+    when_can_modify_contract_as_moderator(tag_obj){
+        this.setState({can_modify_contract_as_moderator: tag_obj})
+    }
+
+    when_can_extend_enter_contract_at_any_time(tag_obj){
+        this.setState({can_extend_enter_contract_at_any_time: tag_obj})
+    }
+
+    when_bounty_limit_type(tag_obj){
+        this.setState({bounty_limit_type: tag_obj})
+    }
+
+    when_contract_force_exit_enabled(tag_obj){
+        this.setState({contract_force_exit_enabled: tag_obj})
+    }
+
+    when_new_token_halving_type_tags_object(tag_obj){
+        this.setState({new_token_halving_type_tags_object: tag_obj})
+    }
+
+    when_new_token_block_limit_sensitivity_tags_object(tag_obj){
+        this.setState({new_token_block_limit_sensitivity_tags_object: tag_obj})
+    }
+
+
+    add_reconfiguration_item(){
+        var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
+
+        var properties = this.get_target_configuration(selected_item)
+        var ui = properties['picker']
+        var position = properties['position']
+        var reconfig_vaules_clone = this.state.reconfig_values.slice()
+
+        if(ui == 'number'){
+            var number = this.state.reconfig_number;
+            reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
+            this.setState({reconfig_values: reconfig_vaules_clone, reconfig_number:0})
+            this.props.notify('reconfig action added!', 600)
+        }
+        else if(ui == 'proportion'){
+            var number = this.state.reconfig_proportion;
+            reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
+            this.setState({reconfig_values: reconfig_vaules_clone, reconfig_proportion: 0})
+            this.props.notify('reconfig action added!', 600)
+        }
+        else if(ui == 'time'){
+            var number = this.state.reconfig_duration;
+            reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
+            this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
+            this.props.notify('reconfig action added!', 600)
+        }
+        else if(ui == 'tag'){
+            var number = this.get_tag_value()
+            reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
+            this.setState({reconfig_values: reconfig_vaules_clone})
+            this.props.notify('reconfig action added!', 600)
+        }
+        else if(ui == 'id'){
+            var number = this.state.reconfig_target_id;
+            if(isNaN(number)){
+                this.props.notify('please put a valid account id', 600)
+            }
+            else{
+                reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
+                this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
+                this.props.notify('reconfig action added!', 600)
+            }
+        }
+    }
+
+
+    get_tag_value(){
+        var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
+
+        if(selected_item == 'Auto Wait'){
+            var item = this.get_selected_item(this.state.auto_wait_tags_object, this.state.auto_wait_tags_object['i'].active)
+            var value = item == 'no' ? 0 : 1
+            return value;
+        }
+        else if(selected_item == 'Moderator Modify Privelage'){
+            var item = this.get_selected_item(this.state.can_modify_contract_as_moderator, this.state.can_modify_contract_as_moderator['i'].active)
+            var value = item == 'non-modifiable' ? 0 : 1
+            return value;
+        }
+        else if(selected_item == 'Unlimited Extend Contract Time'){
+            var item = this.get_selected_item(this.state.can_extend_enter_contract_at_any_time, this.state.can_extend_enter_contract_at_any_time['i'].active)
+            var value = item == 'disabled' ? 0 : 1
+            return value;
+        }
+        else if(selected_item == 'Bounty Limit Type'){
+            var item = this.get_selected_item(this.state.bounty_limit_type, this.state.bounty_limit_type['i'].active)
+            var value = item == 'relative' ? 0 : 1
+            return value;
+        }
+        else if(selected_item == 'Force Exit Enabled'){
+            var item = this.get_selected_item(this.state.contract_force_exit_enabled, this.state.contract_force_exit_enabled['i'].active)
+            var value = item == 'disabled' ? 0 : 1
+            return value;
+        }
+        else if(selected_item == 'Halving type'){
+            var item = this.get_selected_item(this.state.new_token_halving_type_tags_object, this.state.new_token_halving_type_tags_object['i'].active)
+            var value = item == 'fixed' ? 0 : 1
+            return value;
+        }
+        else if(selected_item == 'Block Limit Sensitivity'){
+            var item = this.get_selected_item(this.state.new_token_block_limit_sensitivity_tags_object, this.state.new_token_block_limit_sensitivity_tags_object['i'].active)
+            var value = parseInt(item)
+            return value;
+        }
+    }
+
+
+    load_reconfig_items(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.reconfig_values
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_reconfig_value(item)}
+                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    render_reconfig_value(item){
+        var title = item['title'];
+        var ui = item['type']
+        var number = item['value']
+        if(ui == 'number'){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+                </div>
+            )
+        }
+        else if(ui == 'proportion'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'time'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+
+                </div>
+            )
+        }
+        else if(ui == 'tag'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'id'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    get_tag_selected_item(title, number){
+        var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
+
+        return obj[title][number]
+    }
+
+
+    when_added_modify_item_clicked(item){
+        var cloned_array = this.state.reconfig_values.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({reconfig_values: cloned_array})
+        this.props.notify('reconfig action removed!', 600)
+    }
+
+
+
+
+
+
+
+
+
+    render_exchange_transfer_ui(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Target Exchange', 'details':'Set the exchange id you wish to run the exchange transfer from', 'size':'l'})}
+                <div style={{height:20}}/>
+                <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_exchange_transfer_target_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_target} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('exchange_transfer_target')}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':'Target Receiver', 'details':'Set the account set to receive the token amounts', 'size':'l'})}
+                <div style={{height:20}}/>
+                <TextInput height={30} placeholder={'Target Receiver...'} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('exchange_transfer_receiver')}
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':'Token Targets', 'details':'Set the targeted token ID your transfering from the exchange', 'size':'l'})}
+                <div style={{height:20}}/>
+                <TextInput height={30} placeholder={'Token Target ID...'} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('token_target')}
+                {this.render_detail_item('0')}
+
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Targeted Amount', 'subtitle':this.format_power_figure(this.state.exchange_transfer_amount), 'barwidth':this.calculate_bar_width(this.state.exchange_transfer_amount), 'number':this.format_account_balance_figure(this.state.exchange_transfer_amount), 'barcolor':'', 'relativepower':'units', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_exchange_transfer_amount_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{height:20}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.add_exchange_transfer_item()}>
+                    {this.render_detail_item('5', {'text':'Add Transfer Action', 'action':''})}
+                </div>
+
+                {this.load_transfer_actions()}
+
+            </div>
+        )
+    }
+
+    when_exchange_transfer_target_text_input_field_changed(text){
+        this.setState({exchange_transfer_target: text})
+    }
+
+    when_exchange_transfer_amount_changed(amount){
+        this.setState({exchange_transfer_amount:amount})
+    }
+
+    when_exchange_transfer_receiver_text_input_field_changed(text){
+        this.setState({exchange_transfer_receiver: text})
+    }
+
+    when_token_target_text_input_field_changed(text){
+        this.setState({token_target: text})
+    }
+
+
+    add_exchange_transfer_item(){
+        var target_exchange = this.state.exchange_transfer_target
+        var target_amount = this.state.exchange_transfer_amount
+        var target_receiver = this.state.exchange_transfer_receiver
+        var targeted_token = this.state.token_target
+
+        if(isNaN(target_exchange) || target_exchange == ''){
+            this.props.notify('please put a valid exchange id', 600)
+        }
+        else if(isNaN(target_receiver) || target_receiver == ''){
+            this.props.notify('please put a valid receiver id', 600)
+        }
+        else if(isNaN(targeted_token) || targeted_token == ''){
+            this.props.notify('please put a valid token id', 600)
+        }
+        else if(target_amount == 0){
+            this.props.notify('please put a valid amount', 600)
+        }
+        else{
+            var exchange_transfer_values_clone = this.state.exchange_transfer_values.slice()
+            var tx = {'exchange':target_exchange, 'amount':target_amount, 'receiver':target_receiver, 'token':targeted_token}
+            exchange_transfer_values_clone.push(tx)
+            this.setState({exchange_transfer_values: exchange_transfer_values_clone, exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_receiver:'', token_target:''})
+
+            this.props.notify('transfer action added', 600)
+        }
+    }
+
+    load_transfer_actions(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.exchange_transfer_values
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_transfer_action_value_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':'tokens', })}
+                                </div>
+                                <div style={{height:5}}/>
+                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':'Exchange ID:'+item['exchange'], 'size':'s'})}
+                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_transfer_action_value_clicked(item){
+        var cloned_array = this.state.exchange_transfer_values.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({exchange_transfer_values: cloned_array})
+        this.props.notify('transfer action removed!', 600)
+    }
+
+
+
+
+
+
+
+
+    render_bounty_data_ui(){
+        return(
+            <div>
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'The first bounty exchange should be the End or Spend Exchange'})}
+                {this.render_detail_item('0')}
+
+                <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
+
+                {this.load_account_suggestions('bounty_exchange_target')}
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Targeted Amount', 'subtitle':this.format_power_figure(this.state.bounty_amount), 'barwidth':this.calculate_bar_width(this.state.bounty_amount), 'number':this.format_account_balance_figure(this.state.bounty_amount), 'barcolor':'', 'relativepower':'units', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_bounty_amount_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{height:20}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.add_bounty_item()}>
+                    {this.render_detail_item('5', {'text':'Add Bounty', 'action':''})}
+                </div>
+
+                {this.render_bounty_amounts()}
+            </div>
+        )
+    }
+
+    when_bounty_exchange_target_text_input_field_changed(text){
+        this.setState({bounty_exchange_target: text})
+    }
+
+    when_bounty_amount_changed(amount){
+        this.setState({bounty_amount: amount})
+    }
+
+    add_bounty_item(){
+        var target_exchange = this.state.bounty_exchange_target
+        var target_amount = this.state.bounty_amount
+
+        if(isNaN(target_exchange) || target_exchange == ''){
+            this.props.notify('please put a valid exchange id', 600)
+        }
+        else if(target_amount == 0){
+            this.props.notify('please put a valid amount', 600)
+        }
+        else{
+            var bounty_values_clone = this.state.bounty_values.slice()
+            var tx = {'exchange':target_exchange, 'amount':target_amount}
+            bounty_values_clone.push(tx)
+
+            this.setState({bounty_values: bounty_values_clone, bounty_exchange_target:'', bounty_amount:0})
+
+            this.props.notify('bounty value added', 600)
+        }
+    }
+
+
+    render_bounty_amounts(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.bounty_values
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_bounty_value_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token ID: '+item['exchange'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':'tokens', })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_bounty_value_clicked(item){
+        var cloned_array = this.state.bounty_values.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({bounty_values: cloned_array})
+        this.props.notify('bounty action removed!', 600)
+    }
+
+
+
+
+
+
+
+
+
+
+
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
@@ -512,11 +1549,57 @@ class template extends Component {
     }
 
     finish_creating_object(){
+        var index_tags = this.state.entered_indexing_tags
+        var title = this.state.entered_title_text
 
+        if(index_tags.length == 0){
+            this.props.notify('add some tags first!', 700)
+        }
+        else if(title == ''){
+            this.props.notify('add a title first!', 700)
+        }else{
+            this.props.when_add_new_proposal_to_stack(this.state)
+
+            this.setState({selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
+            contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
+            entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
+
+            new_proposal_title_tags_object:this.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:this.get_new_proposal_type_tags_object(),
+            reconfig_items_tags_object:this.get_reconfig_items_tags_object(),
+
+            auto_wait_tags_object:this.get_auto_wait_tags_object(),
+            can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(),
+            can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),
+            bounty_limit_type: this.get_bounty_limit_type(),
+            contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
+            new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
+            new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(),
+
+            page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
+            proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
+            modify_target_id:'', spend_target_input_text:'', spend_token_input_text:'', 
+            spend_amount:0, spend_actions:[], 
+            
+            reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
+            reconfig_values:[],
+
+            exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
+
+            bounty_exchange_target:'', bounty_amount:0, bounty_values:[]})
+
+            this.props.notify('transaction added to stack', 700);
+        }
     }
 
 
 
+
+
+
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
+    }
 
     format_account_balance_figure(amount){
         if(amount == null){

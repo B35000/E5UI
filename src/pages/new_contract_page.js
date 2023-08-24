@@ -808,7 +808,7 @@ class NewContractPage extends Component {
     }
 
     render_added_moderators(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -1042,7 +1042,7 @@ class NewContractPage extends Component {
     }
 
     render_set_prices_list_part(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
