@@ -33,7 +33,8 @@ import EnterContractPage from './pages/enter_contract_page';
 import ExtendContractPage from './pages/extend_contract_page';
 import ExitContractPage from './pages/exit_contract_page';
 import NewProposalPage from './pages/new_proposal_page';
-import VoteProposalPage from './pages/vote_proposal_page'
+import VoteProposalPage from './pages/vote_proposal_page';
+import SubmitProposalPage from './pages/submit_proposal_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -78,7 +79,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false,submit_proposal_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -108,6 +109,7 @@ class App extends Component {
     this.exit_contract_page = React.createRef();
     this.new_proposal_page = React.createRef();
     this.vote_proposal_page = React.createRef();
+    this.submit_proposal_page = React.createRef();
   }
 
   componentDidMount() {
@@ -232,6 +234,7 @@ class App extends Component {
         {this.render_exit_contract_bottomsheet()}
         {this.render_new_proposal_bottomsheet()}
         {this.render_vote_proposal_bottomsheet()}
+        {this.render_submit_proposal_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -253,6 +256,7 @@ class App extends Component {
       show_exit_contract_bottomsheet={this.show_exit_contract_bottomsheet.bind(this)}
       show_new_proposal_bottomsheet={this.show_new_proposal_bottomsheet.bind(this)}
       show_vote_proposal_bottomsheet={this.show_vote_proposal_bottomsheet.bind(this)}
+      show_submit_proposal_bottomsheet={this.show_submit_proposal_bottomsheet.bind(this)}
       />
     )
   }
@@ -875,6 +879,43 @@ class App extends Component {
 
 
   add_vote_proposal_action_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+  render_submit_proposal_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_submit_proposal_bottomsheet.bind(this)} open={this.state.submit_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <SubmitProposalPage ref={this.submit_proposal_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_submit_proposal_action_to_stack={this.add_submit_proposal_action_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_submit_proposal_bottomsheet(){
+    if(this.state != null){
+        this.setState({submit_proposal_bottomsheet: !this.state.submit_proposal_bottomsheet});
+      }
+  }
+
+  show_submit_proposal_bottomsheet(proposal_item){
+    if(this.submit_proposal_page.current != null){
+      this.submit_proposal_page.current.set_proposal(proposal_item)
+    }
+
+    this.open_submit_proposal_bottomsheet()
+  }
+
+
+  add_submit_proposal_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
     stack_clone.push(state_obj)
     this.setState({stack_items: stack_clone})

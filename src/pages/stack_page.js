@@ -677,7 +677,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(vote_obj)
                 }
-
+                else if(txs[i].type == 'submit'){
+                    var submit_obj = this.format_submit_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(submit_obj)
+                }
             }
             
         }
@@ -1248,6 +1253,15 @@ class StackPage extends Component {
             obj[5].push(23)
             obj[6].push(0)
         }
+
+        return obj
+    }
+
+    format_submit_object(t){
+        var obj = [/* submit consensus request */
+            [30000, 5, 0/* payer_account_data_start */, 0/* payer_account_data_end */, 0/* vote_proposal_bounty_data_start */, 0/* vote_proposal_bounty_data_end */, 0],
+            [t.proposal_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* targets */
+        ]
 
         return obj
     }

@@ -123,8 +123,6 @@ class VoteProposalPage extends Component {
                     {this.render_detail_item('3', {'title':''+this.get_vote_title(object['account_vote']), 'details':'Your On-Chain recorded vote', 'size':'l'})}
 
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':'Cast your new vote using the tags below ', 'textsize':'14px', 'font':'Sans-serif'})}
-                    <div style={{height:10}}/>
                     <Tags page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
             </div>
         )

@@ -130,7 +130,8 @@ class ProposalDetailsSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
 
@@ -185,6 +186,13 @@ class ProposalDetailsSection extends Component {
                     </div>
 
                     {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Submit Proposal', 'details':'Submit the proposal to perform its actions', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_sumbit_proposal_ui()}>
+                        {this.render_detail_item('5', {'text':'Submit Proposal', 'action':''})}
+                    </div>
+
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
@@ -193,6 +201,10 @@ class ProposalDetailsSection extends Component {
 
     open_vote_proposal_ui(){
         this.props.open_vote_proposal_ui(this.get_proposal_items()[this.props.selected_proposal_item])
+    }
+
+    open_sumbit_proposal_ui(){
+        this.props.open_sumbit_proposal_ui(this.get_proposal_items()[this.props.selected_proposal_item])
     }
 
     render_modify_target_if_any(item){
