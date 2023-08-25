@@ -16,7 +16,7 @@ function number_with_commas(x) {
 }
 
 
-class template extends Component {
+class ContractDetailsSection extends Component {
     
     state = {
         selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(),
@@ -35,7 +35,7 @@ class template extends Component {
 
     render(){
         return(
-        <div>{this.render_contracts_list_detail()}</div>
+            <div>{this.render_contracts_list_detail()}</div>
         )
     }
 
@@ -488,4 +488,4 @@ class template extends Component {
 
 
 
-export default template;
+export default ContractDetailsSection;

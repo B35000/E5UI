@@ -109,10 +109,10 @@ class NewSubscriptionPage extends Component {
             <div>
                 <div style={{'padding':'10px 20px 0px 10px'}}>
                     <div className="row">
-                        <div className="col-10" style={{'padding': '5px 0px 0px 10px'}}>
+                        <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                             <Tags page_tags_object={this.state.new_subscription_tags_object} tag_size={'l'} when_tags_updated={this.when_new_subscription_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
-                        <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
                                 {this.render_detail_item('5', {'text':'Finish', 'action':''})}
                             </div>
@@ -291,7 +291,7 @@ class NewSubscriptionPage extends Component {
         );
     }
 
-       render_created_obj_objects(){
+    render_created_obj_objects(){
         var items = this.fetch_obj_states()
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -636,7 +636,7 @@ class NewSubscriptionPage extends Component {
     render_subscription_authority_target(){
         return(
             <div>
-                 {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the exchange will be restricted to moderators and specified accounts', 'size':'l'})}
+                 {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the subscription will be restricted to moderators and specified accounts', 'size':'l'})}
 
                 <div style={{height:20}}/>
                 <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
@@ -934,7 +934,7 @@ class NewSubscriptionPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'An exchange by its id, then the desired price and click add', 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>

@@ -55,19 +55,19 @@ class home_page extends Component {
               ['or','',0], ['e','e.jobs','e.contracts', 'e.proposals','e.subscriptions'], [0]
           ],
           'jobs':[
-              ['or','e',1], ['jobs','all','viewed','created'], [1],[1]
+              ['xor','e',1], ['jobs','all','viewed','created'], [1],[1]
           ],
           'contracts':[
-              ['or','e',1], ['contracts','all','viewed','created','entered'], [1],[1]
+              ['xor','e',1], ['contracts','all','viewed','created','entered'], [1],[1]
           ],
           'proposals':[
-              ['or','e',1], ['proposals','my-proposals', 'viewed', 'created'], [1],[1]
+              ['xor','e',1], ['proposals','my-proposals', 'viewed', 'created'], [1],[1]
           ],
           'subscriptions':[
-              ['or','e',1], ['subscriptions','all','paid','viewed','created'], [1],[1]
+              ['xor','e',1], ['subscriptions','all','paid','viewed','created'], [1],[1]
           ],
           'storefronts':[
-              ['or','',0], ['storefronts','stores','bags'], [1],[1]
+              ['xor','',0], ['storefronts','stores','bags'], [1],[1]
           ],
         };
       }
@@ -80,13 +80,13 @@ class home_page extends Component {
               ['or','',0], ['e','e.E5s','e.posts','e.channels'], [0]
           ],
           'E5s':[
-              ['or','',0], ['E5s','info ℹ️','indexdata 📊','blockexplorer 🗺️', 'tipjar 🍯'], [1],[1]
+              ['xor','',0], ['E5s','info ℹ️','blockexplorer 🗺️'], [1],[1]
           ],
           'posts':[
-              ['or','',0], ['posts','all','viewed','created'], [1],[1]
+              ['xor','',0], ['posts','all','viewed','created'], [1],[1]
           ],
           'channels':[
-              ['or','',0], ['channels','all','viewed','created'], [1],[1]
+              ['xor','',0], ['channels','all','viewed','created'], [1],[1]
           ],
           
         }
@@ -252,7 +252,7 @@ class home_page extends Component {
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                      {this.render_navbar_button('s','0px 0px 0px 0px', ExploreIconImg, 'auto', '30px','5px 0px 0px 0px','????','Deployed E5s')}
+                      {this.render_navbar_button('s','0px 0px 0px 0px', ExploreIconImg, 'auto', '30px','5px 0px 0px 0px','Explore','Deployed E5s')}
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
@@ -338,8 +338,8 @@ class home_page extends Component {
         var width = this.props.width - 80;
         if(size == 'l') width = this.props.width - 10;
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', height: 50,  width: '99%'}}>
-                <div style={{ height: 50,  width: width}}>
+            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', height: 60,  width: '99%'}}>
+                <div style={{width: width}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
                 
@@ -590,6 +590,7 @@ class home_page extends Component {
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals}
 
             open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)} open_enter_contract_ui={this.open_enter_contract_ui.bind(this)} open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} open_new_proposal_ui={this.open_new_proposal_ui.bind(this)}
+            open_vote_proposal_ui={this.open_vote_proposal_ui.bind(this)}
             />
         )
     }
@@ -625,6 +626,10 @@ class home_page extends Component {
 
     open_new_proposal_ui(item){
         this.props.show_new_proposal_bottomsheet(item)
+    }
+
+    open_vote_proposal_ui(item){
+        this.props.show_vote_proposal_bottomsheet(item)
     }
     
 

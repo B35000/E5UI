@@ -671,6 +671,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(proposal_obj)
                 }
+                else if(txs[i].type == 'vote'){
+                    var vote_obj = this.format_vote_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(vote_obj)
+                }
 
             }
             
@@ -1222,6 +1228,25 @@ class StackPage extends Component {
                 obj[19].push(0)/* depths */
                 obj[20].push(23)
             }
+        }
+
+        return obj
+    }
+
+    format_vote_object(t){
+        var vote = this.get_selected_item(t.new_vote_tags_object, t.new_vote_tags_object['i'].active)
+        var votes_obj = {'yes':1, 'wait':2, 'no':3}
+        var obj = [/* vote proposal */
+            [30000, 4, 0],
+            [t.proposal_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* proposal ids */
+            [votes_obj[vote]],/* votes */
+            [], [], []/* target bounty exchanges */
+        ]
+
+        for(var i=0; i<t.bounty_exchanges.length; i++){
+            obj[4].push(t.bounty_exchanges[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[5].push(23)
+            obj[6].push(0)
         }
 
         return obj

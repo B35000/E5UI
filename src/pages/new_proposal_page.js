@@ -771,7 +771,7 @@ class template extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_when_spend_action_clicked(index)}>
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_when_spend_action_clicked(item)}>
                                 {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' tokens', 'details':'target: '+item['spend_target']+', token: '+item['spend_token'], 'size':'s'})}
                             </li>
                         ))}
@@ -781,6 +781,15 @@ class template extends Component {
         }
     }
 
+    when_when_spend_action_clicked(item){
+        var cloned_array = this.state.spend_actions.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({spend_actions: cloned_array})
+        this.props.notify('spend action removed!', 600)
+    }
 
 
 

@@ -28,11 +28,13 @@ class ViewGroups extends Component {
         var border_radius = '7px';
 
         if(item_id=='0'){/* line */
+            /* {this.render_detail_item('0')} */
             return(
                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '20px 20px 20px 20px'}}/>
             );
         }
         else if(item_id=='1'){/* tags */
+            /* {this.render_detail_item('1', {'active_tags':tags, 'index_option':'indexed'})} */
             var active_tags = ['tag1','tag2','tag3']
             var tag_background_color = this.props.theme['tag_background_color'];
             var tag_shadow = this.props.theme['tag_shadow'];
@@ -67,6 +69,7 @@ class ViewGroups extends Component {
         }
         else if(item_id=='2'){/* number */
             //'':{'style':'','title':'', 'subtitle':'', 'barwidth':'', 'number':'', 'relativepower':''},
+            /* {this.render_detail_item('3', {'style':'','title':'', 'subtitle':'', 'barwidth':'', 'number':'', 'relativepower':''})} */
             var style = object_data != null ? object_data['style']: 'l'
             var title = object_data != null ? object_data['title']:'Post Block Number'
             var subtitle = object_data != null ? object_data['subtitle']:'depth'
@@ -74,6 +77,11 @@ class ViewGroups extends Component {
             var number = object_data != null ? object_data['number']:'123,445,555'
             var barcolor = this.props.theme['bar_color']
             var relativepower = object_data != null ? object_data['relativepower']:'500 blocks'
+            
+            if(number == 0){
+                number = '000,000,000'
+            }
+
             if(style == 's'){
               return ( 
                   <div style={{'margin': '0px 10px 0px 10px'}}>                   
@@ -124,6 +132,7 @@ class ViewGroups extends Component {
             }
         }
         else if(item_id=='3' || item_id=='8'){/* label-id */
+            /* {this.render_detail_item('3', {'title':'', 'details':'', 'size':'l'})} */
             var title = 'Author';
             var details = 'e25885';
             var size = 'l';
@@ -169,6 +178,7 @@ class ViewGroups extends Component {
             }
         }
         else if(item_id=='4'){/* text */
+            /* {this.render_detail_item('4', {'text':'', 'textsize':'', 'font':''})} */
             var font = 'Sans-serif';/* Sans-serif , Times New Roman */
             var textsize = '15px';
             var text = 'some random text';
@@ -182,7 +192,7 @@ class ViewGroups extends Component {
 
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => console.log('text-tapped')}>
+                    <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => console.log('text-tapped')}>
                       <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 5px 5px 10px','border-radius': '8px' }}>
                           <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none'}}>{this.format_text_if_empty_or_null(text)}</p>
                       </div>
@@ -192,6 +202,7 @@ class ViewGroups extends Component {
             );
         }
         else if(item_id=='5'){/* button */
+            /* {this.render_detail_item('3', {'text':'', 'action':''})} */
             var text = 'buy'
             var action = 'none'
             if(object_data!= null){

@@ -117,13 +117,25 @@ class EndDetailSection extends Component {
             else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data']} )
-
-                // console.log('--------------e------------------')
-                // console.log(exchanges_from_sync[i]['account_data'])
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event']} )
             }
         }
-        return token_exchanges
+
+        var sorted_token_exchange_data = []
+        var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < token_exchanges.length; i++) {
+            if(token_exchanges[i]['event'].returnValues.p3.toString() == myid.toString()){
+                sorted_token_exchange_data.push(token_exchanges[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < token_exchanges.length; i++) {
+            if(!sorted_token_exchange_data.includes(token_exchanges[i])){
+                sorted_token_exchange_data.push(token_exchanges[i])
+            }
+        }
+
+        return sorted_token_exchange_data
     }
 
     render_end_main_details_section(){

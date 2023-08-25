@@ -244,7 +244,7 @@ class ExitContractPage extends Component {
 
     finish_exiting_contract_ui(){
         if(this.state.contract_item['entry_expiry'] == 0){
-            this.props.notify('You cant exit a contract you havent entered', 1500);
+            this.props.notify(`You can't exit a contract you haven't entered`, 1500);
         }else{
             this.props.exit_contract(this.state)
             this.props.notify('transaction added to stack', 700);
