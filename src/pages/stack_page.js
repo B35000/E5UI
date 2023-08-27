@@ -683,6 +683,19 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(submit_obj)
                 }
+                else if(txs[i].type == 'pay-subscription'){
+                    var pay_subscription = this.format_pay_subscription_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(pay_subscription)
+                }
+                else if(txs[i].type == 'cancel-subscription'){
+                    var cancel_subscription = this.format_cancel_subscription_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(cancel_subscription)
+                }
+                
             }
             
         }
@@ -1264,6 +1277,25 @@ class StackPage extends Component {
         ]
 
         return obj
+    }
+
+    format_pay_subscription_object(t){
+        var obj = [/* pay subscription */
+        [30000, 2, 0],
+        [t.subscription_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target subscription ids */
+        [t.time_units.toString().toLocaleString('fullwide', {useGrouping:false})]/* subscription buy amounts */
+      ]
+      return obj
+    }
+
+
+    format_cancel_subscription_object(t){
+        var obj = [/* pay subscription */
+        [30000, 12, 0],
+        [t.subscription_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target subscription ids */
+        [t.time_units.toString().toLocaleString('fullwide', {useGrouping:false})]/* subscription buy amounts */
+      ]
+      return obj
     }
 
 

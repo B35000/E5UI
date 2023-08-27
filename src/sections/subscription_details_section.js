@@ -122,15 +122,58 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['subscription_beneficiary'])}
                     <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['payment_amount'])}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['entry_fees'])}
                     <div style={{height: 10}}/>
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
                     <div style={{height: 10}}/>
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Pay Subscription', 'details':'Pay for the subscription for your account', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_pay_subscription_ui()}>
+                        {this.render_detail_item('5', {'text':'Pay Subscription', 'action':''})}
+                    </div>
+
+                    {this.render_cancel_button()}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    open_pay_subscription_ui(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        this.props.open_pay_subscription_ui(object)
+    }
+
+    open_cancel_subscription_ui(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        this.props.open_cancel_subscription_ui(object)
+    }
+
+    render_cancel_button(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        var subscription_config = object['data'][1]
+
+        if(subscription_config[2] == 1/* cancellable */){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Cancel Subscription', 'details':'Cancel your subscription payment and receive your tokens back', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_cancel_subscription_ui()}>
+                        {this.render_detail_item('5', {'text':'Cancel Subscription', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
     }
 
      render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
@@ -174,6 +217,8 @@ class SubscriptionDetailsSection extends Component {
             'minimum_cancellable_balance_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${number_with_commas(subscription_config[4])}`, 'barcolor':'', 'relativepower':'time-units', },
 
             'time_unit': {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'l'},
+
+            'payment_amount': {'title':this.get_time_diff(object['payment']), 'details':'Remaining Subscription Time', 'size':'l'},
 
             'subscription_beneficiary': {'title':subscription_beneficiary, 'details':'Subscription Beneficiary', 'size':'l'},
 

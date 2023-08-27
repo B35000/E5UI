@@ -38,11 +38,11 @@ class tags extends Component {
                 }
                 
             }
-        }
+        }//
         return(
             <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow':'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px', '-ms-overflow-style': 'none','overflow-y': 'hidden'}}>
                 {active_tags.map((item, index) => (
-                    <li style={{'display': 'inline-block', 'padding': '5px', '-ms-overflow-style': 'none', 'scrollbar-width': 'none', height:30}}>
+                    <li style={{'display': 'inline-block', 'padding': '5px', '-ms-overflow-style': 'none', 'scrollbar-width': 'none', height:50}}>
                         {this.render_tag_button(index,selected,item,tag_size)}
                     </li>
                 ))}

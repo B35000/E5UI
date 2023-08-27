@@ -107,7 +107,8 @@ class SpendDetailSection extends Component {
         var sorted_token_exchange_data = []
         var myid = this.props.app_state.user_account_id
         for (let i = 0; i < token_exchanges.length; i++) {
-            if(token_exchanges[i]['event'].returnValues.p3.toString() == myid.toString()){
+            var author_account = token_exchanges[i]['event'] == null ? '':token_exchanges[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
                 sorted_token_exchange_data.push(token_exchanges[i])
             }
         }

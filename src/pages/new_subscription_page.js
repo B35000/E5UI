@@ -736,7 +736,7 @@ class NewSubscriptionPage extends Component {
     }
 
     when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id
+        var moderator_id = this.state.moderator_id.trim()
         if(isNaN(moderator_id)){
             this.props.notify('please put a valid account id', 600)
         }
@@ -839,7 +839,7 @@ class NewSubscriptionPage extends Component {
     }
 
     when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id
+        var interactible_id = this.state.interactible_id.trim()
         if(isNaN(interactible_id)){
             this.props.notify('please put a valid account id', 600)
         }
@@ -966,7 +966,7 @@ class NewSubscriptionPage extends Component {
     }
 
     when_add_price_set(){
-        var exchange_id = this.state.exchange_id
+        var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
         if(isNaN(exchange_id)){
             this.props.notify('please put a valid exchange id', 600)

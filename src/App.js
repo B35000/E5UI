@@ -34,21 +34,19 @@ import ExtendContractPage from './pages/extend_contract_page';
 import ExitContractPage from './pages/exit_contract_page';
 import NewProposalPage from './pages/new_proposal_page';
 import VoteProposalPage from './pages/vote_proposal_page';
-import SubmitProposalPage from './pages/submit_proposal_page'
+import SubmitProposalPage from './pages/submit_proposal_page';
+import PaySubscriptionPage from './pages/pay_subscription_page';
+import CancelSubscriptionPage from './pages/cancel_subscription_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
 import { create } from 'ipfs-http-client'
-
-import { Filecoin } from 'filecoin.js';
-import { LotusRPC } from '@filecoin-shipyard/lotus-client-rpc'
-import { mainnet } from '@filecoin-shipyard/lotus-client-schema'
-import { NodejsProvider } from '@filecoin-shipyard/lotus-client-provider-nodejs'
+import { Filecoin, FilecoinClient } from 'filecoin.js';
+// import { WalletKey } from '@zondax/izari-filecoin'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
 const { Wallet } = require('ethers');
-// const fetchh = require('node-fetch');
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
@@ -79,7 +77,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false,submit_proposal_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -93,7 +91,7 @@ class App extends Component {
     mint_dump_actions:[{},],
 
     web3:'http://127.0.0.1:8545/', e5_address:'0xFD471836031dc5108809D173A067e8486B9047A3',
-    sync_steps:14,
+    sync_steps:19,
   };
 
 
@@ -110,6 +108,8 @@ class App extends Component {
     this.new_proposal_page = React.createRef();
     this.vote_proposal_page = React.createRef();
     this.submit_proposal_page = React.createRef();
+    this.pay_subscription_page = React.createRef();
+    this.cancel_subscription_page = React.createRef();
   }
 
   componentDidMount() {
@@ -235,6 +235,8 @@ class App extends Component {
         {this.render_new_proposal_bottomsheet()}
         {this.render_vote_proposal_bottomsheet()}
         {this.render_submit_proposal_bottomsheet()}
+        {this.render_pay_subscription_bottomsheet()}
+        {this.render_cancel_subscription_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -257,6 +259,8 @@ class App extends Component {
       show_new_proposal_bottomsheet={this.show_new_proposal_bottomsheet.bind(this)}
       show_vote_proposal_bottomsheet={this.show_vote_proposal_bottomsheet.bind(this)}
       show_submit_proposal_bottomsheet={this.show_submit_proposal_bottomsheet.bind(this)}
+      show_pay_subscription_bottomsheet={this.show_pay_subscription_bottomsheet.bind(this)}
+      show_cancel_subscription_bottomsheet={this.show_cancel_subscription_bottomsheet.bind(this)}
       />
     )
   }
@@ -810,8 +814,6 @@ class App extends Component {
 
 
 
-
-
   render_new_proposal_bottomsheet(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
@@ -920,6 +922,95 @@ class App extends Component {
     stack_clone.push(state_obj)
     this.setState({stack_items: stack_clone})
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_pay_subscription_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_pay_subscription_bottomsheet.bind(this)} open={this.state.pay_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <PaySubscriptionPage ref={this.pay_subscription_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_pay_subscription_to_stack={this.add_pay_subscription_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_pay_subscription_bottomsheet(){
+    if(this.state != null){
+        this.setState({pay_subscription_bottomsheet: !this.state.pay_subscription_bottomsheet});
+      }
+  }
+
+  show_pay_subscription_bottomsheet(subscription_item){
+    if(this.pay_subscription_page.current != null){
+      this.pay_subscription_page.current.set_subscription(subscription_item)
+    }
+
+    this.open_pay_subscription_bottomsheet()
+  }
+
+  add_pay_subscription_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+
+  render_cancel_subscription_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_cancel_subscription_bottomsheet.bind(this)} open={this.state.cancel_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <CancelSubscriptionPage ref={this.cancel_subscription_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_cancel_subscription_to_stack={this.add_cancel_subscription_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_cancel_subscription_bottomsheet(){
+    if(this.state != null){
+        this.setState({cancel_subscription_bottomsheet: !this.state.cancel_subscription_bottomsheet});
+      }
+  }
+
+  show_cancel_subscription_bottomsheet(subscription_item){
+    if(this.cancel_subscription_page.current != null){
+      this.cancel_subscription_page.current.set_subscription(subscription_item)
+    }
+
+    this.open_cancel_subscription_bottomsheet()
+  }
+
+  add_cancel_subscription_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
 
 
 
@@ -1193,7 +1284,8 @@ class App extends Component {
     const balance = await lotusClient.wallet.balance(myAddress);
     console.log('Wallet balance:', balance);
 
-    this.send_filecoin(seed)
+    // this.send_filecoin(seed)
+    // this.initialize_storage_deal(seed)
   }
 
   store_data_in_ipfs = async () => {
@@ -1230,35 +1322,86 @@ class App extends Component {
   }
 
   send_filecoin = async (seed) => {
-    const provider = new HttpJsonRpcConnector({ url: 'https://api.node.glif.io/rpc/v0', token: '' });
+    const provider = new HttpJsonRpcConnector({ url: 'https://api.node.glif.io', token: '' });
     const lotusClient = new LotusClient(provider);
     const hdDerivationPath = `m/44'/461'/0'/0/0`;
     const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
 
     const recipientAddress = 'f1vyte2sq5qcntdchamob3efvaapay5e4eebuwfty';
-    const amount = 10**5; // Amount in FIL (1 FIL = 1e18)
+    const amount = '1000000000000'; // Amount in FIL (1 FIL = 1e18)
     const myAddress = await walletProvider.getDefaultAddress();
 
     console.log('walletProvider.address:---------------',myAddress)
     console.log(walletProvider)
 
-    var from = await walletProvider.privateKey
+    var privateKey = await walletProvider.getSigner().getPrivateKey(myAddress)
+    console.log('private key: ---------------',privateKey);
 
-    // // Send the transaction
-    // const message = await walletProvider.createMessage({
-    //   From: myAddress,
-    //   To: recipientAddress,
-    //   Value: amount,
-    // });
-    // const cid = await walletProvider.sendMessage(message)
 
-    // console.log('Transaction CID:', cid);
-    // const receipt = await walletProvider.client.state.waitMsg(cid);
-    // if (receipt) {
-    //   console.log('Transaction confirmed!');
-    // } else {
-    //   console.log('Transaction failed or pending.');
-    // }
+    const nonce = await lotusClient.mpool.getNonce(myAddress);
+
+    // Send the transaction
+    const message = await walletProvider.createMessage({
+      From: myAddress,
+      To: recipientAddress,
+      Value: amount.toString().toLocaleString('fullwide', {useGrouping:false}),
+      GasPrice: '1000000000',
+      GasLimit: 900000,
+      gasPremium: 17768082,
+      GasFeeCap:17768082,
+      Nonce: nonce,
+    });
+
+    try{
+      const cid = await walletProvider.sendSignedMessage(
+        await walletProvider.signMessage(message)
+      );
+      console.log('Transaction CID:', cid);
+    }catch(e){
+      console.log(e)
+    }
+
+
+
+
+    
+
+  }
+
+  initialize_storage_deal = async (seed) => {
+    const provider = new HttpJsonRpcConnector({ url: 'https://api.node.glif.io/rpc/v0', token: '' });
+    const lotusClient = new LotusClient(provider);
+    const hdDerivationPath = `m/44'/461'/0'/0/0`;
+    const walletProvider = new MnemonicWalletProvider(lotusClient, seed, hdDerivationPath);
+
+    const myAddress = await walletProvider.getDefaultAddress();
+
+    console.log('walletProvider.address:---------------',myAddress)
+    console.log(walletProvider)
+
+    var privateKey = await walletProvider.getSigner().getPrivateKey(myAddress)
+    console.log('private key: ---------------',privateKey);
+
+    
+
+    const minerAddress = 'f01393827';
+    const data = Buffer.from('Hello, World!');
+    // const walletKey = WalletKey.fromPrivateKey(Buffer.from(privateKey, 'hex'));
+
+    // Define storage deal parameters
+    
+    const dealInfo = await walletProvider.client.client.startDeal({
+      Data: data.toString('base64'),
+      Wallet: myAddress,
+      Miner: minerAddress,
+      StartEpoch: 0, // Use -1 to start the deal ASAP
+      EndEpoch: 10000, // Use 0 to make the deal perpetual
+      PieceSize: 1000,
+      VerifiedDeal: false,
+      Client: myAddress
+    });
+
+    console.log('Storage Deal CID:', dealInfo.ProposalCid);
 
   }
 
@@ -1367,7 +1510,9 @@ class App extends Component {
     var created_subscription_object_data = []
     for(var i=0; i<created_subscriptions.length; i++){
       var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3);
-      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i]})
+      var my_payment = await F5contractInstance.methods.f229([created_subscriptions[i]], [[account]]).call((error, result) => {});
+
+      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0]})
     }
     this.setState({created_subscriptions: created_subscription_object_data})
     console.log('subscription count: '+created_subscription_object_data.length)

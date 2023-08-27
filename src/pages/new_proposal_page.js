@@ -717,8 +717,8 @@ class template extends Component {
 
 
     add_spend_action_to_list(){
-        var spend_target = this.state.spend_target_input_text;
-        var spend_token = this.state.spend_token_input_text;
+        var spend_target = this.state.spend_target_input_text.trim()
+        var spend_token = this.state.spend_token_input_text.trim()
         var amount = this.state.spend_amount;
 
         if(isNaN(spend_target) || spend_target == ''){
@@ -1103,7 +1103,7 @@ class template extends Component {
             this.props.notify('reconfig action added!', 600)
         }
         else if(ui == 'id'){
-            var number = this.state.reconfig_target_id;
+            var number = this.state.reconfig_target_id.trim()
             if(isNaN(number)){
                 this.props.notify('please put a valid account id', 600)
             }
@@ -1334,10 +1334,10 @@ class template extends Component {
 
 
     add_exchange_transfer_item(){
-        var target_exchange = this.state.exchange_transfer_target
+        var target_exchange = this.state.exchange_transfer_target.trim()
         var target_amount = this.state.exchange_transfer_amount
-        var target_receiver = this.state.exchange_transfer_receiver
-        var targeted_token = this.state.token_target
+        var target_receiver = this.state.exchange_transfer_receiver.trim()
+        var targeted_token = this.state.token_target.trim()
 
         if(isNaN(target_exchange) || target_exchange == ''){
             this.props.notify('please put a valid exchange id', 600)
@@ -1459,7 +1459,7 @@ class template extends Component {
     }
 
     add_bounty_item(){
-        var target_exchange = this.state.bounty_exchange_target
+        var target_exchange = this.state.bounty_exchange_target.trim()
         var target_amount = this.state.bounty_amount
 
         if(isNaN(target_exchange) || target_exchange == ''){
