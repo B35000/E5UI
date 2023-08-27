@@ -142,6 +142,8 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_collect_button()}
 
+                    {this.render_auth_modify_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -162,6 +164,11 @@ class SubscriptionDetailsSection extends Component {
     open_collect_subscription_ui(){
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_collect_subscription_ui(object)
+    }
+    
+    open_modify_subscription_ui(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        this.props.open_modify_subscription_ui(object)
     }
 
     render_cancel_button(){
@@ -197,6 +204,26 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_collect_subscription_ui()}>
                         {this.render_detail_item('5', {'text':'Collect Subscription', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_auth_modify_button(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        var subscription_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id
+
+        if(subscription_config[0] == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Modify Subscription', 'details':'Modify the configuration of the subscription.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_modify_subscription_ui()}>
+                        {this.render_detail_item('5', {'text':'Modify Subscription', 'action':''})}
                     </div>
                 </div>
             )

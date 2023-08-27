@@ -694,13 +694,18 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(cancel_subscription)
-                }
-                
+                } 
                 else if(txs[i].type == 'collect-subscription'){
                     var collect_subscription = this.format_collect_subscription_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(collect_subscription)
+                }
+                else if(txs[i].type == 'modify-subscription'){
+                    var modify_subscription = this.format_modify_subscription_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(modify_subscription)
                 }
             }
             
@@ -1315,6 +1320,28 @@ class StackPage extends Component {
       for(var i=0; i< t.subscription_item['paid_accounts'].length; i++){
         obj[3].push(t.subscription_item['paid_accounts'][i].toString().toLocaleString('fullwide', {useGrouping:false}))
       }
+
+        return obj
+    }
+
+
+    format_modify_subscription_object(t){
+        var obj = [/* auth modify subscription */
+            [20000, 11, 0],
+            [], [],/* targets */
+            [],/* target_array_pos */
+            [],/* target_array_items */
+            [], []/* new_items */
+        ]
+
+        for(var i=0; i<t.reconfig_values.length; i++){
+            obj[1].push(t.subscription_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+            obj[3].push(t.reconfig_values[i]['pos'][0].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[4].push(t.reconfig_values[i]['pos'][1].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[5].push(t.reconfig_values[i]['value'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[6].push(23)
+        }
 
         return obj
     }
