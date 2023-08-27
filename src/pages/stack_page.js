@@ -86,7 +86,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 0px 0px 10px'}}>
                 <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme}/>
                 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -696,6 +696,12 @@ class StackPage extends Component {
                     ints.push(cancel_subscription)
                 }
                 
+                else if(txs[i].type == 'collect-subscription'){
+                    var collect_subscription = this.format_collect_subscription_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(collect_subscription)
+                }
             }
             
         }
@@ -1296,6 +1302,21 @@ class StackPage extends Component {
         [t.time_units.toString().toLocaleString('fullwide', {useGrouping:false})]/* subscription buy amounts */
       ]
       return obj
+    }
+
+
+    format_collect_subscription_object(t){
+        var obj = [/* collect subscription */
+        [30000, 13, 0],
+        [t.subscription_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target subscription ids */
+        [],/* subscription collect accounts */
+      ]
+
+      for(var i=0; i< t.subscription_item['paid_accounts'].length; i++){
+        obj[3].push(t.subscription_item['paid_accounts'][i].toString().toLocaleString('fullwide', {useGrouping:false}))
+      }
+
+        return obj
     }
 
 

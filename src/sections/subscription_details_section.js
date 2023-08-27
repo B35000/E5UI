@@ -140,6 +140,8 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_cancel_button()}
 
+                    {this.render_collect_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -155,6 +157,11 @@ class SubscriptionDetailsSection extends Component {
     open_cancel_subscription_ui(){
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_cancel_subscription_ui(object)
+    }
+
+    open_collect_subscription_ui(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        this.props.open_collect_subscription_ui(object)
     }
 
     render_cancel_button(){
@@ -176,7 +183,27 @@ class SubscriptionDetailsSection extends Component {
         }
     }
 
-     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+    render_collect_button(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        var subscription_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id
+
+        if(subscription_config[0] == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Collect Subscription', 'details':'Collect the subscription payments from the subscription account', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_collect_subscription_ui()}>
+                        {this.render_detail_item('5', {'text':'Collect Subscription', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>

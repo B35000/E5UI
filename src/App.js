@@ -36,7 +36,8 @@ import NewProposalPage from './pages/new_proposal_page';
 import VoteProposalPage from './pages/vote_proposal_page';
 import SubmitProposalPage from './pages/submit_proposal_page';
 import PaySubscriptionPage from './pages/pay_subscription_page';
-import CancelSubscriptionPage from './pages/cancel_subscription_page'
+import CancelSubscriptionPage from './pages/cancel_subscription_page';
+import CollectSubscriptionPage from './pages/collect_subscription_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -77,7 +78,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -110,6 +111,7 @@ class App extends Component {
     this.submit_proposal_page = React.createRef();
     this.pay_subscription_page = React.createRef();
     this.cancel_subscription_page = React.createRef();
+    this.collect_subscription_page = React.createRef();
   }
 
   componentDidMount() {
@@ -237,6 +239,7 @@ class App extends Component {
         {this.render_submit_proposal_bottomsheet()}
         {this.render_pay_subscription_bottomsheet()}
         {this.render_cancel_subscription_bottomsheet()}
+        {this.render_collect_subscription_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -261,6 +264,7 @@ class App extends Component {
       show_submit_proposal_bottomsheet={this.show_submit_proposal_bottomsheet.bind(this)}
       show_pay_subscription_bottomsheet={this.show_pay_subscription_bottomsheet.bind(this)}
       show_cancel_subscription_bottomsheet={this.show_cancel_subscription_bottomsheet.bind(this)}
+      show_collect_subscription_bottomsheet={this.show_collect_subscription_bottomsheet.bind(this)}
       />
     )
   }
@@ -1019,6 +1023,49 @@ class App extends Component {
 
 
 
+  render_collect_subscription_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_collect_subscription_bottomsheet.bind(this)} open={this.state.collect_subscription_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <CollectSubscriptionPage ref={this.collect_subscription_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_collect_subscription_to_stack={this.add_collect_subscription_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_collect_subscription_bottomsheet(){
+    if(this.state != null){
+        this.setState({collect_subscription_bottomsheet: !this.state.collect_subscription_bottomsheet});
+      }
+  }
+
+  show_collect_subscription_bottomsheet(subscription_item){
+    if(this.collect_subscription_page.current != null){
+      this.collect_subscription_page.current.set_subscription(subscription_item)
+    }
+
+    this.open_collect_subscription_bottomsheet()
+  }
+
+  add_collect_subscription_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   render_view_image_bottomsheet(){
       var background_color = 'transparent';
       return(
@@ -1055,6 +1102,17 @@ class App extends Component {
         this.setState({view_images: images, view_images_pos: index})
         this.open_view_image_bottomsheet()
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1512,7 +1570,28 @@ class App extends Component {
       var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3);
       var my_payment = await F5contractInstance.methods.f229([created_subscriptions[i]], [[account]]).call((error, result) => {});
 
-      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0]})
+      var paid_accounts = [];
+      var paid_amounts = [];
+
+      if(created_subscription_events[i].returnValues.p3 == account){
+        //if the sender is the authority of the subscription
+        var all_subscription_payment_events = await F5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */:created_subscriptions[i] } }, (error, events) => {});
+        
+        for(var j=0; j<all_subscription_payment_events.length; j++){
+          var account_in_focus = all_subscription_payment_events[j].returnValues.p2
+          
+          if(!paid_accounts.includes(account_in_focus)){
+            var collectible_time_value = await F5contractInstance.methods.f235([created_subscriptions[i]], [[account_in_focus]]).call((error, result) => {});
+            
+            if(collectible_time_value[0][0] != 0){
+              paid_accounts.push(account_in_focus)
+              paid_amounts.push(collectible_time_value[0][0])
+            }
+          }
+        }
+      }
+
+      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts})
     }
     this.setState({created_subscriptions: created_subscription_object_data})
     console.log('subscription count: '+created_subscription_object_data.length)
@@ -1524,6 +1603,10 @@ class App extends Component {
     if(is_syncing){
       this.inc_synch_progress()
     }
+
+
+
+
 
 
 
