@@ -8,6 +8,8 @@ import Letter from './../assets/letter.png';
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import AddStack from './../assets/e5empty_icon3.png'; 
+import E5EmptyIcon from './../assets/e5empty_icon.png';
+import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -46,7 +48,7 @@ class NewTokenPage extends Component {
     state = {
         id: makeid(32), type:'token',
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
-        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
+        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:EndImg,
 
         new_token_type_tags_object: this.get_new_token_type_tags_object(),
         token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0,   
@@ -192,7 +194,7 @@ class NewTokenPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -298,9 +300,15 @@ class NewTokenPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
+
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Token'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Name...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a symbol for your new Token'})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Enter Symbol...'} when_text_input_field_changed={this.when_symbol_text_input_field_changed.bind(this)} text={this.state.entered_symbol_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Token'})}
@@ -314,6 +322,14 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+
+                {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set an image for your new Token'})}
+                <div style={{height:10}}/>
+                {this.render_create_image_ui_buttons_part()}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -327,6 +343,10 @@ class NewTokenPage extends Component {
 
     when_index_text_input_field_changed(text){
         this.setState({entered_tag_text: text})
+    }
+
+    when_symbol_text_input_field_changed(text){
+        this.setState({entered_symbol_text: text.toUpperCase()})
     }
 
     add_indexing_tag_for_new_job(){
@@ -359,6 +379,46 @@ class NewTokenPage extends Component {
         this.setState({entered_indexing_tags: cloned_seed_array})
         this.props.notify('tag removed', 200)
     }
+
+
+    /* renders the buttons for pick images, set images and clear images */
+    render_create_image_ui_buttons_part(){
+      return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
+            <div style={{'padding': '5px', width:45, 'height':45}}>
+                <img src={this.state.token_image} style={{height:50 ,width:50}} />
+            </div>
+
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px', 'margin':'0px 0px 0px 10px'}}>
+                <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)}/>
+            </div>
+
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 0px'}}>
+                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)}/>
+            </div>
+
+            
+
+        </div>
+      )
+    }
+
+
+    when_image_gif_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    this.setState({token_image: ev.target.result});
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+        }
+    }
+
+
 
    
 

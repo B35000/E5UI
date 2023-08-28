@@ -108,7 +108,7 @@ class NewProposalPage extends Component {
                 ['xor','',0], ['subscription','Minimum Buy Amount','Target Authority', 'Target Beneficiary', 'Maximum Buy Amount', 'Minimum Cancellable Balance Amount'], [1]
             ],
             'exchange':[
-                ['xor','',0], ['exchange','Buy Limit','Trust Fee', 'Sell Limit', 'Minimum Time Between Swap', 'Minimum Transactions Between Swap', 'Minimum Blocks Between Swap', 'Minimum Entered Contracts Between Swap', 'Minimum Transactions For First Buy', 'Minimum Entered Contracts For First Buy', 'Block Limit', 'Halving type', 'Maturity Limit', 'Internal Block Halving Proportion', 'Block Limit Reduction Proportion', 'Block Reset Limit', 'Block Limit Sensitivity', 'Exchange Ratio X', 'Exchange Ratio Y'], [1]
+                ['xor','',0], ['exchange','Buy Limit','Trust Fee', 'Sell Limit', 'Minimum Time Between Swap', 'Minimum Transactions Between Swap', 'Minimum Blocks Between Swap', 'Minimum Entered Contracts Between Swap', 'Minimum Transactions For First Buy', 'Minimum Entered Contracts For First Buy', 'Block Limit', 'Halving type', 'Maturity Limit', 'Internal Block Halving Proportion', 'Block Limit Reduction Proportion', 'Block Reset Limit', 'Block Limit Sensitivity'], [1]
             ],
         };
     }

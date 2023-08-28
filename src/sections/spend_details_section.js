@@ -99,7 +99,7 @@ class SpendDetailSection extends Component {
             else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event']} )
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'],'ipfs':exchanges_from_sync[i]['ipfs']} )
 
             }
         }
@@ -138,6 +138,7 @@ class SpendDetailSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
                     {this.render_detail_item('3', item['token_type'])}
                     <div style={{height:10}}/>
                     
@@ -258,7 +259,7 @@ class SpendDetailSection extends Component {
                         {this.render_detail_item('5', {'text':'Transfer', 'action':''},)}
                     </div>
                     
-                    
+                    {this.render_auth_modify_button()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -273,6 +274,29 @@ class SpendDetailSection extends Component {
 
     open_transfer_ui(){
         this.props.open_transfer_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
+    }
+
+    open_modify_token_ui(){
+        this.props.open_modify_token_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
+    }
+
+    render_auth_modify_button(){
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        var contract_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Modify Token', 'details':'Modify the configuration of the exchange directly.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_modify_token_ui()}>
+                        {this.render_detail_item('5', {'text':'Modify Subscription', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
     }
 
     get_spend_data(){
@@ -293,9 +317,16 @@ class SpendDetailSection extends Component {
         if(title == 5){
             title = 'SPEND'
         }
+
+        var item = selected_object;
+        var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
+        var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
+        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
+        var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         
         return{
-            'banner-icon':{'header':title, 'subtitle':'Exchange', 'image':img},
+            'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
+            'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
             'token_id': {'title':'ID: '+selected_object['id'], 'details':'Token Identifier', 'size':'l'},
             'token_type': {'title':'Token Type', 'details':type, 'size':'l'},
 

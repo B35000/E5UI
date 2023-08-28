@@ -17,29 +17,26 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-class ModifyContractPage extends Component {
+class ModifyTokenPage extends Component {
     
     state = {
-        selected: 0,type:'modify-contract', entered_indexing_tags:['modify', 'contract', 'auth'],
-        contract_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_contract_title_tags_object:this.get_modify_contract_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
+        selected: 0,type:'modify-token', entered_indexing_tags:['modify', 'token', 'auth'],
+        token_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_token_title_tags_object:this.get_modify_token_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
 
-        auto_wait_tags_object:this.get_auto_wait_tags_object(),
-        can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(),
-        can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),
-        bounty_limit_type: this.get_bounty_limit_type(),
-        contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
+        new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
+        new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(),
 
         reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
         reconfig_values:[],
     };
 
-    get_modify_contract_title_tags_object(){
+    get_modify_token_title_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modify-contract'], [1]
+                ['xor','',0], ['e','modify-token-exchange'], [1]
             ],
         };
     }
@@ -50,65 +47,33 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','Vote Bounty Split Proportion','Maximum Extend Enter Contract Limit', 'Minimum End Bounty Amount', 'Proposal Expiry Duration Limit', 'Maximum Enter Contract Duration', 'Auto Wait', 'Proposal Modify Expiry Duration Limit', 'Moderator Modify Privelage', 'Unlimited Extend Contract Time', 'Maximum Proposal Expiry Submit Expiry time difference', 'Bounty Limit Type', 'Force Exit Enabled', 'Minimum Spend Bounty Amount'], [1]
+                ['xor','',0], ['e','Buy Limit','Trust Fee', 'Sell Limit', 'Minimum Time Between Swap', 'Minimum Transactions Between Swap', 'Minimum Blocks Between Swap', 'Minimum Entered Contracts Between Swap', 'Minimum Transactions For First Buy', 'Minimum Entered Contracts For First Buy', 'Block Limit', 'Halving type', 'Maturity Limit', 'Internal Block Halving Proportion', 'Block Limit Reduction Proportion', 'Block Reset Limit', 'Block Limit Sensitivity'], [1]
             ],
         };
     }
 
-    get_auto_wait_tags_object(){
+    get_new_token_halving_type_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','no', 'yes'], [1]
+                ['xor','',0], ['e','fixed', 'spread'], [1]
             ],
         };
     }
 
-    get_can_modify_contract_as_moderator(){
+    get_new_token_block_limit_sensitivity_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modifiable', 'non-modifiable'], [1]
+                ['xor','',0], ['e','1', '2', '3', '4', '5'], [1]
             ],
         };
     }
 
-    get_can_extend_enter_contract_at_any_time(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
-            ],
-        };
-    }
-
-    get_bounty_limit_type(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','relative', 'absolute'], [2]
-            ],
-        };
-    }
-
-    get_contract_force_exit_enabled(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
-            ],
-        };
-    }
 
     render(){
         return(
@@ -116,7 +81,7 @@ class ModifyContractPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.modify_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_modify_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags page_tags_object={this.state.modify_token_title_tags_object} tag_size={'l'} when_tags_updated={this.when_modify_token_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -131,15 +96,15 @@ class ModifyContractPage extends Component {
         )
     }
 
-    when_modify_contract_title_tags_object_updated(tag_obj){
-        this.setState({modify_contract_title_tags_object: tag_obj})
+    when_modify_token_title_tags_object_updated(tag_obj){
+        this.setState({modify_token_title_tags_object: tag_obj})
     }
 
 
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Make changes to the configuration of the contract ID: '+this.state.contract_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Make changes to the configuration of the token ID: '+this.state.token_item['id']})}
 
                 {this.render_detail_item('0')}
 
@@ -166,7 +131,6 @@ class ModifyContractPage extends Component {
 
     load_reconfig_item_selectors(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
-
 
         if(selected_item == 'e'){
             return(<div></div>)
@@ -262,19 +226,24 @@ class ModifyContractPage extends Component {
 
     get_target_configuration(property){
         var obj = {
-            'Vote Bounty Split Proportion':{'position':[1,1], 'picker':'proportion', 'powerlimit':9},
-            'Maximum Extend Enter Contract Limit':{'position':[1,2], 'picker':'time', 'powerlimit':63}, 
-            'Minimum End Bounty Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63}, 
-            'Proposal Expiry Duration Limit':{'position':[1,5], 'picker':'time', 'powerlimit':63}, 
-            'Maximum Enter Contract Duration':{'position':[1,6], 'picker':'time', 'powerlimit':63}, 
-            'Auto Wait':{'position':[1,8], 'picker':'tag', 'powerlimit':63}, 
-            'Proposal Modify Expiry Duration Limit':{'position':[1,27], 'picker':'time', 'powerlimit':63},
-            'Moderator Modify Privelage':{'position':[1,28], 'picker':'tag', 'powerlimit':9}, 
-            'Unlimited Extend Contract Time':{'position':[1,29], 'picker':'tag', 'powerlimit':9}, 
-            'Maximum Proposal Expiry Submit Expiry time difference':{'position':[1,36], 'picker':'time', 'powerlimit':63}, 
-            'Bounty Limit Type':{'position':[1,37], 'picker':'tag', 'powerlimit':9}, 
-            'Force Exit Enabled':{'position':[1,38], 'picker':'tag', 'powerlimit':9}, 
-            'Minimum Spend Bounty Amount':{'position':[1,10], 'picker':'number', 'powerlimit':63},
+            'Buy Limit':{'position':[1,0], 'picker':'number', 'powerlimit':63},
+            'Trust Fee':{'position':[1,7], 'picker':'proportion', 'powerlimit':9}, 
+            'Sell Limit':{'position':[1,11], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Time Between Swap':{'position':[1,4], 'picker':'time', 'powerlimit':63}, 
+            'Minimum Transactions Between Swap':{'position':[1,2], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Blocks Between Swap':{'position':[1,3], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Entered Contracts Between Swap':{'position':[1,13], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Transactions For First Buy':{'position':[1,17], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Entered Contracts For First Buy':{'position':[1,18], 'picker':'number', 'powerlimit':63}, 
+            'Block Limit':{'position':[1,1], 'picker':'number', 'powerlimit':63}, 
+            'Halving type':{'position':[1,15], 'picker':'tag', 'powerlimit':63}, 
+            'Maturity Limit':{'position':[1,16], 'picker':'number', 'powerlimit':63}, 
+            'Internal Block Halving Proportion':{'position':[1,5], 'picker':'proportion', 'powerlimit':9}, 
+            'Block Limit Reduction Proportion':{'position':[1,6], 'picker':'proportion', 'powerlimit':9}, 
+            'Block Reset Limit':{'position':[1,8], 'picker':'number', 'powerlimit':63}, 
+            'Block Limit Sensitivity':{'position':[1,12], 'picker':'tag', 'powerlimit':63}, 
+            'Exchange Ratio X':{'position':[2,0], 'picker':'number', 'powerlimit':63}, 
+            'Exchange Ratio Y':{'position':[2,1], 'picker':'number', 'powerlimit':63},
         }
 
         return obj[property]
@@ -284,76 +253,35 @@ class ModifyContractPage extends Component {
     load_tags_ui(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Auto Wait'){
+        if(selected_item == 'Halving type'){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
-
+                    
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
-        else if(selected_item == 'Moderator Modify Privelage'){
+        else if(selected_item == 'Block Limit Sensitivity'){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
-
+                    
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
-                </div>
-            )
-        }
-        else if(selected_item == 'Unlimited Extend Contract Time'){
-            return(
-                <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
-
-                    <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
-                </div>
-            )
-        }
-        else if(selected_item == 'Bounty Limit Type'){
-            return(
-                <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
-
-                    <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
-                </div>
-            )
-        }
-        else if(selected_item == 'Force Exit Enabled'){
-            return(
-                <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
-
-                    <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+                    <Tags page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
     }
 
-    when_auto_wait_tags_object(tag_obj){
-        this.setState({auto_wait_tags_object: tag_obj})
+
+    when_new_token_halving_type_tags_object(tag_obj){
+        this.setState({new_token_halving_type_tags_object: tag_obj})
     }
 
-    when_can_modify_contract_as_moderator(tag_obj){
-        this.setState({can_modify_contract_as_moderator: tag_obj})
-    }
-
-    when_can_extend_enter_contract_at_any_time(tag_obj){
-        this.setState({can_extend_enter_contract_at_any_time: tag_obj})
-    }
-
-    when_bounty_limit_type(tag_obj){
-        this.setState({bounty_limit_type: tag_obj})
-    }
-
-    when_contract_force_exit_enabled(tag_obj){
-        this.setState({contract_force_exit_enabled: tag_obj})
+    when_new_token_block_limit_sensitivity_tags_object(tag_obj){
+        this.setState({new_token_block_limit_sensitivity_tags_object: tag_obj})
     }
 
 
@@ -402,33 +330,17 @@ class ModifyContractPage extends Component {
         }
     }
 
-
     get_tag_value(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Auto Wait'){
-            var item = this.get_selected_item(this.state.auto_wait_tags_object, this.state.auto_wait_tags_object['i'].active)
-            var value = item == 'no' ? 0 : 1
+        if(selected_item == 'Halving type'){
+            var item = this.get_selected_item(this.state.new_token_halving_type_tags_object, this.state.new_token_halving_type_tags_object['i'].active)
+            var value = item == 'fixed' ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Moderator Modify Privelage'){
-            var item = this.get_selected_item(this.state.can_modify_contract_as_moderator, this.state.can_modify_contract_as_moderator['i'].active)
-            var value = item == 'non-modifiable' ? 0 : 1
-            return value;
-        }
-        else if(selected_item == 'Unlimited Extend Contract Time'){
-            var item = this.get_selected_item(this.state.can_extend_enter_contract_at_any_time, this.state.can_extend_enter_contract_at_any_time['i'].active)
-            var value = item == 'disabled' ? 0 : 1
-            return value;
-        }
-        else if(selected_item == 'Bounty Limit Type'){
-            var item = this.get_selected_item(this.state.bounty_limit_type, this.state.bounty_limit_type['i'].active)
-            var value = item == 'relative' ? 0 : 1
-            return value;
-        }
-        else if(selected_item == 'Force Exit Enabled'){
-            var item = this.get_selected_item(this.state.contract_force_exit_enabled, this.state.contract_force_exit_enabled['i'].active)
-            var value = item == 'disabled' ? 0 : 1
+        else if(selected_item == 'Block Limit Sensitivity'){
+            var item = this.get_selected_item(this.state.new_token_block_limit_sensitivity_tags_object, this.state.new_token_block_limit_sensitivity_tags_object['i'].active)
+            var value = parseInt(item)
             return value;
         }
     }
@@ -479,6 +391,7 @@ class ModifyContractPage extends Component {
         }
     }
 
+
     render_reconfig_value(item){
         var title = item['title'];
         var ui = item['type']
@@ -524,10 +437,11 @@ class ModifyContractPage extends Component {
     }
 
     get_tag_selected_item(title, number){
-        var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}}
+        var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
 
         return obj[title][number]
     }
+
 
     when_added_modify_item_clicked(item){
         var cloned_array = this.state.reconfig_values.slice()
@@ -578,20 +492,15 @@ class ModifyContractPage extends Component {
 
 
 
-
-
-
-
-
-    set_contract(contract_item){
-        this.setState({contract_item: contract_item})
+    set_token(token_item){
+        this.setState({token_item: token_item})
     }
 
     finish(){
         if(this.state.reconfig_values.length == 0){
             this.props.notify('you cant stack no changes', 700)
         }else{
-            this.props.add_modify_contract_to_stack(this.state)
+            this.props.add_modify_token_to_stack(this.state)
             this.setState({reconfig_values:[]})
             this.props.notify('transaction added to stack', 700);
         }
@@ -600,7 +509,8 @@ class ModifyContractPage extends Component {
 
 
 
-    /* renders the specific element in the post or detail object */
+
+       /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
             <div>
@@ -716,9 +626,13 @@ class ModifyContractPage extends Component {
         }
     }
 
+
+
+
+
 }
 
 
 
 
-export default ModifyContractPage;
+export default ModifyTokenPage;

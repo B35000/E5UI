@@ -997,7 +997,7 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li onClick={() => this.when_ends_object_clicked(index)} style={{'padding': '5px'}}>
-                            {this.render_ends_object(item['data'], index, item['id'], item['img'])}
+                            {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                         </li>
                     ))}
                     <div style={{'padding': '5px'}}>
@@ -1022,7 +1022,7 @@ class PostListSection extends Component {
             else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
 
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'event':exchanges_from_sync[i]['event']})
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs']})
             }
         }
         var sorted_token_exchange_data = []
@@ -1043,10 +1043,10 @@ class PostListSection extends Component {
         return sorted_token_exchange_data
     }
 
-    render_ends_object(object_array, index, token_id, img){
+    render_ends_object(object_array, index, token_id, img, item){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.get_exchanges_data(object_array, token_id, img)
+        var item = this.get_exchanges_data(object_array, token_id, img, item)
         return ( 
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
@@ -1066,12 +1066,16 @@ class PostListSection extends Component {
         this.props.when_ends_object_clicked(index)
     }
 
-    get_exchanges_data(object_array, token_id, img){
+    get_exchanges_data(object_array, token_id, img, item){
         var type = object_array[0][3/* <3>token_type */] == 3 ? 'end': 'spend'
         var supply = object_array[2][2/* <2>token_exchange_liquidity/total_supply */]
+        var active_tags = item['ipfs'] == null ? [''+token_id, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
+        var name = item['ipfs'] == null ? 'Token Id: '+token_id : item['ipfs'].entered_title_text
+        var symbol = item['ipfs'] == null ? 'Token Type: '+type : item['ipfs'].entered_symbol_text
+        var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         return{
-            'tags':{'active_tags':[''+token_id, ''+type, 'token'], 'index_option':'indexed', 'when_tapped':''},
-            'label':{'title':'Token Id: '+token_id,'details':'Token Type: '+type, 'size':'l', 'image':img},
+            'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
+            'label':{'title':name,'details':symbol, 'size':'l', 'image':image},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(supply), 'number':`${this.format_account_balance_figure(supply)}`, 'barcolor':'#606060', 'relativepower':'balance',}
         }
     }
@@ -1103,7 +1107,7 @@ class PostListSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li onClick={() => this.when_spends_object_item_clicked(index)} style={{'padding': '5px'}}>
-                            {this.render_spends_object(item['data'], index, item['id'], item['img'])}
+                            {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </li>
                     ))}
                     <div style={{'padding': '5px'}}>
@@ -1117,10 +1121,10 @@ class PostListSection extends Component {
         );
     }
 
-    render_spends_object(object_array, index, token_id, img){
+    render_spends_object(object_array, index, token_id, img, object){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.get_exchanges_data(object_array, token_id, img)
+        var item = this.get_exchanges_data(object_array, token_id, img, object)
         return ( 
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>

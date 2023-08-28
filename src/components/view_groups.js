@@ -145,6 +145,12 @@ class ViewGroups extends Component {
             if(size == 'l'){
                 font_size = ['17px', '13px', 19];
             }
+            if(title == ''){
+                title = '...'
+            }
+            if(details == ''){
+                details = '...'
+            }
             if(item_id == '8'){
                 var img = E5EmptyIcon;
                 if(object_data != null){
