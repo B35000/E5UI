@@ -41,6 +41,7 @@ import CollectSubscriptionPage from './pages/collect_subscription_page';
 import ModifySubscriptionPage from './pages/modify_subscription_page';
 import ModifyContractPage from './pages/modify_contract_page';
 import ModifyTokenPage from './pages/modify_token_page'
+import ExchangeTransferPage from './pages/exchanage_transfer_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -81,7 +82,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -118,6 +119,7 @@ class App extends Component {
     this.modify_subscription_page = React.createRef();
     this.modify_contract_page = React.createRef();
     this.modify_token_page = React.createRef();
+    this.exchange_transfer_page = React.createRef();
   }
 
   componentDidMount() {
@@ -249,6 +251,7 @@ class App extends Component {
         {this.render_modify_subscription_bottomsheet()}
         {this.render_modify_contract_bottomsheet()}
         {this.render_modify_token_bottomsheet()}
+        {this.render_exchange_transfer_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -277,6 +280,7 @@ class App extends Component {
       show_modify_subscription_bottomsheet={this.show_modify_subscription_bottomsheet.bind(this)}
       show_modify_contract_bottomsheet={this.show_modify_contract_bottomsheet.bind(this)}
       show_modify_token_bottomsheet={this.show_modify_token_bottomsheet.bind(this)}
+      show_exchange_transfer_bottomsheet={this.show_exchange_transfer_bottomsheet.bind(this)}
       />
     )
   }
@@ -1156,6 +1160,9 @@ class App extends Component {
 
 
 
+
+
+
   render_modify_token_bottomsheet(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
@@ -1188,6 +1195,45 @@ class App extends Component {
     this.setState({stack_items: stack_clone})
   }
 
+
+
+
+
+
+
+
+
+  render_exchange_transfer_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_exchange_transfer_bottomsheet.bind(this)} open={this.state.exchange_transfer_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ExchangeTransferPage ref={this.exchange_transfer_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_exchange_transfer_to_stack={this.add_exchange_transfer_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_exchange_transfer_bottomsheet(){
+    if(this.state != null){
+        this.setState({exchange_transfer_bottomsheet: !this.state.exchange_transfer_bottomsheet});
+      }
+  }
+
+  show_exchange_transfer_bottomsheet(token_item){
+    if(this.exchange_transfer_page.current != null){
+      this.exchange_transfer_page.current.set_token(token_item)
+    }
+
+    this.open_exchange_transfer_bottomsheet()
+  }
+
+  add_exchange_transfer_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
 
 
 

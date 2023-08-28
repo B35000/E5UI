@@ -155,6 +155,9 @@ class EndDetailSection extends Component {
                     
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
+                    
+                    {this.render_detail_item('3', item['token_id'])}
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['token_type'])}
                     <div style={{height:10}}/>
                     
@@ -266,6 +269,10 @@ class EndDetailSection extends Component {
         this.props.open_modify_token_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
     }
 
+    open_exchange_transfers_ui(){
+        this.props.open_exchange_transfers_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    }
+
 
     render_auth_modify_button(){
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
@@ -283,10 +290,25 @@ class EndDetailSection extends Component {
                     </div>
                 </div>
             )
-        }else{
-            console.log('-----------------------555------------------------')
-            console.log(contract_config[9/* exchange_authority */])
-            console.log(my_account)
+        }
+    }
+
+    render_auth_modify_button(){
+        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        var contract_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Exchange Transfer', 'details':'Transfer tokens from the exchanges account to a specified target.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_exchange_transfers_ui()}>
+                        {this.render_detail_item('5', {'text':'Run Transfers', 'action':''})}
+                    </div>
+                </div>
+            )
         }
     }
 

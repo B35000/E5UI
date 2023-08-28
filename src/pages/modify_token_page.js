@@ -510,7 +510,7 @@ class ModifyTokenPage extends Component {
 
 
 
-       /* renders the specific element in the post or detail object */
+    /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
             <div>

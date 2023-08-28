@@ -719,6 +719,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(modify_token)
                 }
+                else if(txs[i].type == 'exchange-transfer'){
+                    var exchange_transfer_obj = this.format_exchange_transfer_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(exchange_transfer_obj)
+                }
             }
             
         }
@@ -1214,8 +1220,14 @@ class StackPage extends Component {
                 obj[11].push(t.spend_actions[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[12].push(23)
 
-                obj[13].push(t.spend_actions[i]['spend_target'].toString().toLocaleString('fullwide', {useGrouping:false}))
-                obj[14].push(23)
+                var receiver = t.spend_actions[i]['spend_target']
+                var receiver_type = 23
+                if(receiver == 53){
+                    receiver_type = 53
+                }
+
+                obj[13].push(receiver.toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[14].push(receiver_type)
 
                 obj[15].push(0)/* depths */
                 obj[16].push(23)
@@ -1254,8 +1266,14 @@ class StackPage extends Component {
                 obj[9].push(t.exchange_transfer_values[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[10].push(23)
 
-                obj[11].push(t.exchange_transfer_values[i]['receiver'].toString().toLocaleString('fullwide', {useGrouping:false}))
-                obj[12].push(23)
+                var receiver = t.exchange_transfer_values[i]['receiver']
+                var receiver_type = 23
+                if(receiver == 53){
+                    receiver_type = 53
+                }
+
+                obj[11].push(receiver.toString().toLocaleString('fullwide', {useGrouping:false}))
+                obj[12].push(receiver_type)
 
                 obj[13].push(t.exchange_transfer_values[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[14].push(23)
@@ -1311,7 +1329,6 @@ class StackPage extends Component {
       return obj
     }
 
-
     format_cancel_subscription_object(t){
         var obj = [/* pay subscription */
         [30000, 12, 0],
@@ -1320,7 +1337,6 @@ class StackPage extends Component {
       ]
       return obj
     }
-
 
     format_collect_subscription_object(t){
         var obj = [/* collect subscription */
@@ -1335,7 +1351,6 @@ class StackPage extends Component {
 
         return obj
     }
-
 
     format_modify_subscription_object(t){
         var obj = [/* auth modify subscription */
@@ -1358,7 +1373,6 @@ class StackPage extends Component {
         return obj
     }
 
-
     format_modify_contract_object(t){
         var obj = [/* auth modify contract */
             [20000, 15, 0],
@@ -1380,8 +1394,6 @@ class StackPage extends Component {
         return obj
     }
 
-
-
     format_modify_token_object(t){
         var obj = [/* auth modify token exchange */
             [20000, 3, 0],
@@ -1401,6 +1413,40 @@ class StackPage extends Component {
         }
 
         return obj
+    }
+
+    format_exchange_transfer_object(t){
+        var obj = [/* exchange transfer */
+            [30000, 17, 0],
+            [], [],/* exchange ids */
+            [], [],/* receivers */
+            [], [],/* amounts/depths */
+            [], [],/* token targets */
+        ]
+
+
+        for(var i=0; i<t.exchange_transfer_values.length; i++){
+            obj[1].push(t.exchange_transfer_values[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+
+            var receiver = t.exchange_transfer_values[i]['receiver']
+            var receiver_type = 23
+            if(receiver == 53){
+                receiver_type = 53
+            }
+
+            obj[3].push(receiver.toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[4].push(receiver_type)
+
+            obj[5].push(t.exchange_transfer_values[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+
+            obj[6].push(0)/* depths */
+
+            obj[7].push(t.exchange_transfer_values[i]['token'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[8].push(23)
+        }
+
+        return obj;
     }
 
 
