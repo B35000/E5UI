@@ -725,6 +725,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(exchange_transfer_obj)
                 }
+                else if(txs[i].type == 'force-exit'){
+                    var force_exit_obj = this.format_force_exit_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(force_exit_obj)
+                }
             }
             
         }
@@ -1449,6 +1455,22 @@ class StackPage extends Component {
         return obj;
     }
 
+    format_force_exit_object(t){
+        //.toString().toLocaleString('fullwide', {useGrouping:false})
+        var obj = [/* force exit account */
+            [30000, 18, 0],
+            [], [],/* contract ids */
+            []/* target account */
+        ]
+
+        for(var i=0; i<t.force_exit_accounts.length; i++){
+            obj[1].push(t.contract_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+            obj[3].push(t.force_exit_accounts[i].toString().toLocaleString('fullwide', {useGrouping:false}))
+        }
+
+        return obj
+    }
 
 
 

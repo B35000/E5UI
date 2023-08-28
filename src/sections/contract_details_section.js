@@ -174,6 +174,8 @@ class ContractDetailsSection extends Component {
 
                     {this.render_auth_modify_button()}
 
+                    {this.render_force_exit_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -257,7 +259,27 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':'Modify Contract', 'details':'Modify the configuration of the contract directly.', 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_modify_contract_ui()}>
-                        {this.render_detail_item('5', {'text':'Modify Subscription', 'action':''})}
+                        {this.render_detail_item('5', {'text':'Modify Contract', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    render_force_exit_button(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var contract_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 2 && object['event'].returnValues.p3 == my_account && contract_config[38/* contract_force_exit_enabled */] == 1){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Force Exit Accounts', 'details':'Remove an account from the contract directly.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_force_exit_ui()}>
+                        {this.render_detail_item('5', {'text':'Force Exit Accounts', 'action':''})}
                     </div>
                 </div>
             )
@@ -287,6 +309,11 @@ class ContractDetailsSection extends Component {
     open_modify_contract_ui(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_modify_contract_ui(object)
+    }
+
+    open_force_exit_ui(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        this.props.open_force_exit_ui(object)
     }
 
 

@@ -40,8 +40,9 @@ import CancelSubscriptionPage from './pages/cancel_subscription_page';
 import CollectSubscriptionPage from './pages/collect_subscription_page';
 import ModifySubscriptionPage from './pages/modify_subscription_page';
 import ModifyContractPage from './pages/modify_contract_page';
-import ModifyTokenPage from './pages/modify_token_page'
-import ExchangeTransferPage from './pages/exchanage_transfer_page'
+import ModifyTokenPage from './pages/modify_token_page';
+import ExchangeTransferPage from './pages/exchanage_transfer_page';
+import ForceExitPage from './pages/force_exit_account_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -82,7 +83,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -120,6 +121,7 @@ class App extends Component {
     this.modify_contract_page = React.createRef();
     this.modify_token_page = React.createRef();
     this.exchange_transfer_page = React.createRef();
+    this.force_exit_page = React.createRef();
   }
 
   componentDidMount() {
@@ -252,6 +254,7 @@ class App extends Component {
         {this.render_modify_contract_bottomsheet()}
         {this.render_modify_token_bottomsheet()}
         {this.render_exchange_transfer_bottomsheet()}
+        {this.render_force_exit_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -281,6 +284,7 @@ class App extends Component {
       show_modify_contract_bottomsheet={this.show_modify_contract_bottomsheet.bind(this)}
       show_modify_token_bottomsheet={this.show_modify_token_bottomsheet.bind(this)}
       show_exchange_transfer_bottomsheet={this.show_exchange_transfer_bottomsheet.bind(this)}
+      show_force_exit_bottomsheet={this.show_force_exit_bottomsheet.bind(this)}
       />
     )
   }
@@ -1240,6 +1244,40 @@ class App extends Component {
 
 
 
+  render_force_exit_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_force_exit_bottomsheet.bind(this)} open={this.state.force_exit_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ForceExitPage ref={this.force_exit_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_force_exit_to_stack={this.add_force_exit_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_force_exit_bottomsheet(){
+    if(this.state != null){
+        this.setState({force_exit_bottomsheet: !this.state.force_exit_bottomsheet});
+      }
+  }
+
+  show_force_exit_bottomsheet(contract_item){
+    if(this.force_exit_page.current != null){
+      this.force_exit_page.current.set_contract(contract_item)
+    }
+
+    this.open_force_exit_bottomsheet()
+  }
+
+  add_force_exit_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
 
 
 
@@ -1816,7 +1854,18 @@ class App extends Component {
       var end_balance = await this.get_balance_in_exchange(3, created_contracts[i]);
       var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i]);
 
-      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance})
+      var entered_accounts = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i] } }, (error, events) => {});
+
+      var contract_entered_accounts = []
+      for(var e=0; e<entered_accounts.length; e++){
+        var account_entered_time = await G52contractInstance.methods.f266([created_contracts[i]], [[entered_accounts[e].returnValues.p2]], 3).call((error, result) => {});
+
+        if(!contract_entered_accounts.includes(entered_accounts[e].returnValues.p2) && account_entered_time > Date.now()/1000){
+          contract_entered_accounts.push(entered_accounts[e].returnValues.p2)
+        }
+      }
+
+      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts})
     }
 
     this.setState({created_contracts: created_contract_object_data})
