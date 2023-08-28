@@ -323,6 +323,7 @@ class ModifySubscriptionPage extends Component {
             this.props.notify('you cant stack no changes', 700)
         }else{
             this.props.add_modify_subscription_to_stack(this.state)
+            this.setState({reconfig_values:[]})
             this.props.notify('transaction added to stack', 700);
         }
     }

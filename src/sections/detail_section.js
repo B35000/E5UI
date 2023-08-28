@@ -64,7 +64,7 @@ class PostDetailSection extends Component {
                     open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} 
                     open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} 
                     work_page_tags_object={this.props.work_page_tags_object} 
-                    viewed_contracts={this.props.viewed_contracts} open_new_proposal_ui={this.props.open_new_proposal_ui.bind(this)}/>
+                    viewed_contracts={this.props.viewed_contracts} open_new_proposal_ui={this.props.open_new_proposal_ui.bind(this)} open_modify_contract_ui={this.props.open_modify_contract_ui.bind(this)}/>
                 )
             }
             else if(selected_tag == 'proposals' ){

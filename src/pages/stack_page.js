@@ -706,6 +706,12 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(modify_subscription)
+                }   
+                else if(txs[i].type == 'modify-contract'){
+                    var modify_contract = this.format_modify_contract_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(modify_contract)
                 }
             }
             
@@ -1336,6 +1342,28 @@ class StackPage extends Component {
 
         for(var i=0; i<t.reconfig_values.length; i++){
             obj[1].push(t.subscription_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+            obj[3].push(t.reconfig_values[i]['pos'][0].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[4].push(t.reconfig_values[i]['pos'][1].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[5].push(t.reconfig_values[i]['value'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[6].push(23)
+        }
+
+        return obj
+    }
+
+
+    format_modify_contract_object(t){
+        var obj = [/* auth modify contract */
+            [20000, 15, 0],
+            [], [],/* targets */
+            [],/* target_array_pos */
+            [],/* target_array_items */
+            [], []/* new_items */
+        ]
+
+        for(var i=0; i<t.reconfig_values.length; i++){
+            obj[1].push(t.contract_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
             obj[2].push(23)
             obj[3].push(t.reconfig_values[i]['pos'][0].toString().toLocaleString('fullwide', {useGrouping:false}))
             obj[4].push(t.reconfig_values[i]['pos'][1].toString().toLocaleString('fullwide', {useGrouping:false}))

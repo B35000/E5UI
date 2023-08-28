@@ -35,7 +35,7 @@ function makeid(length) {
     return result;
 }
 
-class template extends Component {
+class NewProposalPage extends Component {
     
     state = {
         selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
@@ -56,7 +56,9 @@ class template extends Component {
         page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
         proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
         
-        modify_target_id:'', spend_target_input_text:'', spend_token_input_text:'', 
+        modify_target_id:'', 
+        
+        spend_target_input_text:'', spend_token_input_text:'', 
         spend_amount:0, spend_actions:[], 
         
         reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
@@ -122,7 +124,6 @@ class template extends Component {
         };
     }
 
-
     get_can_modify_contract_as_moderator(){
         return{
             'i':{
@@ -177,7 +178,6 @@ class template extends Component {
             ],
         };
     }
-
 
     get_new_token_block_limit_sensitivity_tags_object(){
         return{
@@ -1720,4 +1720,4 @@ class template extends Component {
 
 
 
-export default template;
+export default NewProposalPage;
