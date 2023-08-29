@@ -223,6 +223,9 @@ class ContractDetailsSection extends Component {
                     <div onClick={()=>this.open_exit_contract_ui()}>
                         {this.render_detail_item('5', {'text':'Exit', 'action':''},)}
                     </div>
+
+
+                    {this.render_archive_button_if_author()}
                     
                 </div>
             )
@@ -242,6 +245,12 @@ class ContractDetailsSection extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':'Youre not part of the contract', 'textsize':'13px', 'font':'Sans-serif'})}
                 </div>
             )
         }
@@ -286,6 +295,23 @@ class ContractDetailsSection extends Component {
         }
     }
 
+    render_archive_button_if_author(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var my_account = this.props.app_state.user_account_id
+        if(object['event'].returnValues.p3 == my_account && object['data'][1][15] < Date.now()/1000){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Archive Contract', 'details':'Delete the contracts data to free up space in the blockchain', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_archive_contract_ui()}>
+                        {this.render_detail_item('5', {'text':'Archive Contract', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
     open_enter_contract_ui(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_enter_contract_ui(object)
@@ -314,6 +340,11 @@ class ContractDetailsSection extends Component {
     open_force_exit_ui(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_force_exit_ui(object)
+    }
+
+    open_archive_contract_ui(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        this.props.open_archive_proposal_ui(object)
     }
 
 

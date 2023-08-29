@@ -42,7 +42,8 @@ import ModifySubscriptionPage from './pages/modify_subscription_page';
 import ModifyContractPage from './pages/modify_contract_page';
 import ModifyTokenPage from './pages/modify_token_page';
 import ExchangeTransferPage from './pages/exchanage_transfer_page';
-import ForceExitPage from './pages/force_exit_account_page'
+import ForceExitPage from './pages/force_exit_account_page';
+import ArchiveProposalPage from './pages/archive_proposals_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -83,7 +84,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -98,6 +99,8 @@ class App extends Component {
 
     web3:'http://127.0.0.1:8545/', e5_address:'0xFD471836031dc5108809D173A067e8486B9047A3',
     sync_steps:19,
+
+    token_directory:{}
   };
 
 
@@ -122,6 +125,7 @@ class App extends Component {
     this.modify_token_page = React.createRef();
     this.exchange_transfer_page = React.createRef();
     this.force_exit_page = React.createRef();
+    this.archive_proposal_page = React.createRef();
   }
 
   componentDidMount() {
@@ -255,6 +259,7 @@ class App extends Component {
         {this.render_modify_token_bottomsheet()}
         {this.render_exchange_transfer_bottomsheet()}
         {this.render_force_exit_bottomsheet()}
+        {this.render_archive_proposal_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -285,6 +290,7 @@ class App extends Component {
       show_modify_token_bottomsheet={this.show_modify_token_bottomsheet.bind(this)}
       show_exchange_transfer_bottomsheet={this.show_exchange_transfer_bottomsheet.bind(this)}
       show_force_exit_bottomsheet={this.show_force_exit_bottomsheet.bind(this)}
+      show_archive_proposal_bottomsheet={this.show_archive_proposal_bottomsheet.bind(this)}
       />
     )
   }
@@ -1284,6 +1290,51 @@ class App extends Component {
 
 
 
+
+  render_archive_proposal_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_archive_proposal_bottomsheet.bind(this)} open={this.state.archive_proposal_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ArchiveProposalPage ref={this.archive_proposal_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_archive_proposal_action_to_stack={this.add_archive_proposal_action_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_archive_proposal_bottomsheet(){
+    if(this.state != null){
+        this.setState({archive_proposal_bottomsheet: !this.state.archive_proposal_bottomsheet});
+      }
+  }
+
+  show_archive_proposal_bottomsheet(proposal_item){
+    if(this.archive_proposal_page.current != null){
+      this.archive_proposal_page.current.set_object(proposal_item)
+    }
+
+    this.open_archive_proposal_bottomsheet()
+  }
+
+
+  add_archive_proposal_action_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   render_view_image_bottomsheet(){
       var background_color = 'transparent';
       return(
@@ -1865,7 +1916,7 @@ class App extends Component {
         }
       }
 
-      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts})
+      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts })
     }
 
     this.setState({created_contracts: created_contract_object_data})
@@ -1945,7 +1996,15 @@ class App extends Component {
 
       var senders_vote_in_proposal = await G52contractInstance.methods.f237([my_proposal_ids[i]], [[account]]).call((error, result) => {});
 
-      created_proposal_object_data.push({'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0]})
+      var proposal_voters = await G52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* consensus_id */:my_proposal_ids[i]} }, (error, events) => {});
+      var archive_participants = []
+      for(var o=0; o<proposal_voters.length; o++){
+        if(!archive_participants.includes(proposal_voters[o].returnValues.p3)){
+          archive_participants.push(proposal_voters[o].returnValues.p3)
+        }
+      }
+
+      created_proposal_object_data.push({'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants })
     }
 
     this.setState({my_proposals: created_proposal_object_data})
@@ -1990,7 +2049,13 @@ class App extends Component {
       var tokens_data = await this.fetch_objects_data(created_tokens[i], web3);
       var event = i>1 ? created_token_events[i-2]: null
 
-      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i]})
+      var depth_values = []
+      for(var j=0; j<created_token_data[i][3].length; j++){
+        depth_values.push(0)
+      }
+      var exchanges_balances = await H52contractInstance.methods.f140e(created_token_data[i][3], created_tokens[i], depth_values).call((error, result) => {});
+
+      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances})
 
     }
 
@@ -2006,6 +2071,17 @@ class App extends Component {
     var end_balance_of_burn_account = await this.get_balance_in_exchange(3, 0)
 
     this.setState({end_balance_of_E5:end_balance_of_E5, spend_balance_of_E5:spend_balance_of_E5, end_balance_of_burn_account: end_balance_of_burn_account})
+
+    var token_symbol_directory = {}
+    for(var u=0; u<created_token_object_data.length; u++){
+      var token_name = created_token_object_data[u]['ipfs'] == null ? 'tokens' : created_token_object_data[u]['ipfs'].entered_symbol_text
+      var token_id = created_token_object_data[u]['id']
+      if(token_id == 3) token_name = 'END'
+      if(token_id == 5) token_name = 'SPEND'
+      token_symbol_directory[token_id] = token_name;
+    }
+    this.setState({token_directory: token_symbol_directory});
+
 
     if(is_syncing){
       this.inc_synch_progress()

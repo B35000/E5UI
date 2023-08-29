@@ -5,7 +5,6 @@ import TextInput from './../components/text_input';
 
 import Letter from './../assets/letter.png';
 
-
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -17,35 +16,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-class VoteProposalPage extends Component {
+class ArchiveProposalPage extends Component {
     
     state = {
-        selected: 0, type:'vote', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:['vote', 'proposal'],
-        vote_proposal_title_tags_object: this.get_vote_proposal_title_tags_object(),
-        new_vote_tags_object: this.get_new_vote_tags_object(), 
+        selected: 0, type:'archive', object_item:{'id':'', 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['archive', 'object'],
 
-        bounty_exchange_target:'', bounty_exchanges:[]
+        archive_proposal_title_tags_object: this.get_archive_proposal_title_tags_object(),
+        bounty_target:'', bounty_exchanges:[]
     };
 
-    get_vote_proposal_title_tags_object(){
+    get_archive_proposal_title_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','vote', 'bounties'], [1]
-            ],
-        };
-    }
-
-
-    get_new_vote_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','wait', 'yes', 'no'], [1]
+                ['xor','',0], ['e','archive-object'], [1]
             ],
         };
     }
@@ -56,110 +42,36 @@ class VoteProposalPage extends Component {
                 <div style={{'padding':'10px 20px 0px 10px'}}>
                     <div className="row">
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                            <Tags page_tags_object={this.state.vote_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_vote_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                            <Tags page_tags_object={this.state.archive_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_archive_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                            <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
+                            <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
                                 {this.render_detail_item('5', {'text':'Finish', 'action':''})}
                             </div>
                         </div>
                     </div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':'Cast your vote in proposal ID: '+this.state.proposal_item['id'], 'textsize':'14px', 'font':'Sans-serif'})} 
+                    {this.render_detail_item('4', {'text':'Archive your specified contract or proposal ID: '+this.state.object_item['id'], 'textsize':'14px', 'font':'Sans-serif'})} 
                     <div style={{height:10}}/>
-
                     {this.render_everything()}
-
                 </div>
+
+                
             </div>
         )
     }
 
-    when_vote_proposal_title_tags_object_updated(tag_obj){
-        this.setState({vote_proposal_title_tags_object:tag_obj})
+    when_archive_proposal_title_tags_object_updated(tag_obj){
+        this.setState({archive_proposal_title_tags_object: tag_obj})
     }
-
 
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.vote_proposal_title_tags_object, this.state.vote_proposal_title_tags_object['i'].active)
-
-        if(selected_item == 'vote'){
-            return(
-                <div>
-                    {this.render_cast_vote_part()}
-                </div>
-            )    
-        }else
-        if(selected_item == 'bounties'){
-            return(
-                <div>
-                    {this.render_collect_bounties_part()}
-                </div>
-            ) 
-        }
-    }
-
-    get_selected_item(object, option){
-        var selected_item = object[option][2][0]
-        var picked_item = object[option][1][selected_item];
-        return picked_item
-    }
-
-
-    render_cast_vote_part(){
-        var object = this.state.proposal_item
+        var object = this.state.object_item
         return(
             <div>
+                {this.render_detail_item('3', {'title':this.state.object_item['archive_accounts'].length+' accounts', 'details':'The number of participants in the proposal /contract.', 'size':'l'})}
+                
                 <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+object['consensus_data'][0]+' WAIT votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+object['consensus_data'][1]+' YES votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'})}
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+object['consensus_data'][2]+' NO votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'})}
-
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':''+this.get_vote_title(object['account_vote']), 'details':'Your On-Chain recorded vote', 'size':'l'})}
-
-                    <div style={{height:10}}/>
-                    <Tags page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
-            </div>
-        )
-    }
-
-    when_new_vote_tags_object_updated(tag_obj){
-        this.setState({new_vote_tags_object: tag_obj})
-    }
-
-    get_proportion_of_total(object, vote_count){
-        var sum = bigInt(object['consensus_data'][0]) + bigInt(object['consensus_data'][1]) + bigInt(object['consensus_data'][2]);
-
-        if(sum == bigInt(0)){
-            return 0
-        }
-
-        var prop = (bigInt(vote_count).divide(sum)).multiply(100)
-
-        if(isNaN(prop)){
-            return 0
-        }
-        return prop
-    }
-
-    get_vote_title(vote){
-        var obj = {1:'Yes', 2:'Wait', 3:'No', 0:'None'}
-        return obj[vote]
-    }
-
-
-
-
-    render_collect_bounties_part(){
-        var object = this.state.proposal_item
-
-        return(
-            <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', {'style':'l', 'title':'End Bounty Balance', 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':'END', })}
                 </div>
@@ -171,11 +83,10 @@ class VoteProposalPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Targeted Bounty Exchanges', 'details':'Specify which exchanges you wish to collect bounty from. You can only collect bounty while voting for the very first time.', 'size':'l'})}
-
+                {this.render_detail_item('3', {'title':'Bounty Exchanges', 'details':'Specify Bounty Exchange to collect the contracts/proposals remaining balance', 'size':'l'})}
+                
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Target Exchange ID...'} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
-
                 <div style={{height:10}}/>
                 {this.load_account_suggestions('bounty_exchange_target')}
 
@@ -191,7 +102,7 @@ class VoteProposalPage extends Component {
     }
 
     when_bounty_target_text_input_field_changed(text){
-        this.setState({bounty_exchange_target: text})
+        this.setState({bounty_target: text})
     }
 
     add_bounty_exchange_item(){
@@ -222,6 +133,7 @@ class VoteProposalPage extends Component {
         }
         return includes;
     }
+
 
     render_bounty_exchanges(){
         var middle = this.props.height-100;
@@ -274,6 +186,7 @@ class VoteProposalPage extends Component {
     }
 
 
+
     load_account_suggestions(type){
         var items = this.get_suggested_accounts(type)
         var background_color = this.props.theme['card_background_color']
@@ -309,24 +222,14 @@ class VoteProposalPage extends Component {
     }
 
 
-
-
-
-
-    set_proposal(proposal){
-        this.setState({proposal_item: proposal})
+    set_object(proposal){
+        this.setState({object_item: proposal})
     }
 
-
-    finish_creating_object(){
-        this.props.add_vote_proposal_action_to_stack(this.state)
-        this.props.notify('transaction added to stack', 700);
+    finish(){
+        this.props.add_archive_proposal_action_to_stack(this.state)
+        this.props.notify('transaction added to stack!', 600)
     }
-
-
-
-
-
 
 
     /* renders the specific element in the post or detail object */
@@ -402,10 +305,59 @@ class VoteProposalPage extends Component {
         return power
     }
 
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_from_now(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = number_date - now;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ ' sec'
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + ' min' 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + ' hr' + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + ' dy' + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + ' wk' + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return number_with_commas(num) + ' yr' + s;
+        }
+    }
 
 }
 
 
 
 
-export default VoteProposalPage;
+export default ArchiveProposalPage;

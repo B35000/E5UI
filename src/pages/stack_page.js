@@ -360,9 +360,9 @@ class StackPage extends Component {
         return(
             <div>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance), 'number':this.format_account_balance_figure(this.props.app_state.account_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance), 'number':this.format_account_balance_figure(this.props.app_state.account_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance/10**18), 'number':this.format_account_balance_figure(this.props.app_state.account_balance/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance/10**18), 'number':(this.props.app_state.account_balance/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -730,6 +730,12 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(force_exit_obj)
+                }
+                else if(txs[i].type == 'archive'){
+                    var archive_obj = this.format_archive_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(archive_obj)
                 }
             }
             
@@ -1471,6 +1477,37 @@ class StackPage extends Component {
 
         return obj
     }
+
+    format_archive_object(t){
+        var obj = [/* archive proposal/contract */
+            [30000, 15, 0],
+            [t.object_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* proposal/contract ids */
+            /* for target 1004 */
+            [],/* voters/participants */
+            [],[]/* exchanges to loot */
+        ]
+
+        for(var i=0; i<t.object_item['archive_accounts'].length; i++){
+            obj[3].push(t.object_item['archive_accounts'][i].toString().toLocaleString('fullwide', {useGrouping:false}));
+        }
+
+        for(var i=0; i<t.bounty_exchanges.length; i++){
+            obj[4].push(t.bounty_exchanges[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}));
+            obj[5].push(0)
+        }
+
+        return obj
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 

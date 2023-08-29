@@ -33,7 +33,7 @@ class template extends Component {
     state = {
         selected: 0, type: 'transfer',
         new_transfer_action_page_tags_object: this.get_new_transfer_action_page_tags_object(),
-        recipient_id:'', amount:0, token_item: {'balance':1}, stack_items:[], debit_balance:0,
+        recipient_id:'', amount:0, token_item: {'balance':1, 'id':0}, stack_items:[], debit_balance:0,
         entered_indexing_tags:['transfer', 'send', 'token']
     };
 
@@ -70,9 +70,9 @@ class template extends Component {
                     <div style={{height:10}}/> 
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':'tokens', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[this.state.token_item['id']], })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance after Set Transfers', 'subtitle':this.format_power_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barwidth':this.calculate_bar_width(this.state.token_item['balance'] - this.state.debit_balance), 'number':this.format_account_balance_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barcolor':'', 'relativepower':'tokens', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance after Set Transfers', 'subtitle':this.format_power_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barwidth':this.calculate_bar_width(this.state.token_item['balance'] - this.state.debit_balance), 'number':this.format_account_balance_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[this.state.token_item['id']], })}
                     </div>
 
                     {this.render_everything()}
@@ -185,7 +185,7 @@ class template extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_stack_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' tokens', 'details':'recipient account: '+item['recipient'], 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.props.app_state.token_directory[this.state.token_item['id']], 'details':'recipient account: '+item['recipient'], 'size':'l'})}
                             </li>
                         ))}
                     </ul>

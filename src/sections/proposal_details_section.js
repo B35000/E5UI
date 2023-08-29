@@ -192,6 +192,8 @@ class ProposalDetailsSection extends Component {
                         {this.render_detail_item('5', {'text':'Submit Proposal', 'action':''})}
                     </div>
 
+                    {this.render_archive_button_if_author()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -205,6 +207,27 @@ class ProposalDetailsSection extends Component {
 
     open_sumbit_proposal_ui(){
         this.props.open_sumbit_proposal_ui(this.get_proposal_items()[this.props.selected_proposal_item])
+    }
+
+    open_archive_proposal_ui(){
+        this.props.open_archive_proposal_ui(this.get_proposal_items()[this.props.selected_proposal_item])
+    }
+
+    render_archive_button_if_author(){
+        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        var my_account = this.props.app_state.user_account_id
+        if(object['event'].returnValues.p3 == my_account && object['data'][1][3] < Date.now()/1000){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Archive Proposal', 'details':'Delete the proposals data to free up space in the blockchain', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_archive_proposal_ui()}>
+                        {this.render_detail_item('5', {'text':'Archive Proposal', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_modify_target_if_any(item){

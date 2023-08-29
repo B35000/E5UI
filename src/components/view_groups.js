@@ -105,10 +105,10 @@ class ViewGroups extends Component {
                 return ( 
                     <div style={{'margin': '5px 20px 0px 15px'}}>
                         <div className="row">
-                            <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
+                            <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
                             <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7}} className="fw-bold">{title}</p>
                             </div>
-                            <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
+                            <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
                                 <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '11px', height: 7, 'padding-top':' 0.5px'}} className="text-end">{subtitle}</p>
                             </div>
                         </div>

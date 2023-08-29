@@ -99,7 +99,7 @@ class SpendDetailSection extends Component {
             else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'],'ipfs':exchanges_from_sync[i]['ipfs']} )
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'],'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances']} )
 
             }
         }
@@ -132,7 +132,7 @@ class SpendDetailSection extends Component {
         var item = this.get_spend_data();
         var selected_item = this.props.selected_spend_item
         var selected_object = this.get_exchange_tokens(5)[selected_item]
-
+        var symbol = selected_object['ipfs'] == null ? 'tokens' : selected_object['ipfs'].entered_symbol_text
         return(
             <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -232,13 +232,10 @@ class SpendDetailSection extends Component {
                     
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Block', 'title':selected_object['account_data'][0]})}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Timestamp', 'title': this.get_time_difference(selected_object['account_data'][1]) })}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Transactions Count', 'title':selected_object['account_data'][2]})}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Entered Contracts Count', 'title':selected_object['account_data'][3]})}
+                    {this.render_last_swap_block()}
+                    {this.render_last_swap_timestamp()}
+                    {this.render_last_swap_transaction_count()}
+                    {this.render_last_entered_contracts_count()}
 
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':'Mint or Dump the token at a specified account', 'title':'Mint/Dump'})}
@@ -253,7 +250,7 @@ class SpendDetailSection extends Component {
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':'tokens', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
                     </div>
 
                     <div style={{height:10}}/>
@@ -262,6 +259,8 @@ class SpendDetailSection extends Component {
                     </div>
                     
                     {this.render_auth_modify_button()}
+
+                    {this.render_exchange_transfer_button()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -284,6 +283,63 @@ class SpendDetailSection extends Component {
 
     open_exchange_transfers_ui(){
         this.props.open_exchange_transfers_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
+    }
+
+
+    render_last_swap_block(){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+
+        if(selected_object['account_data'][0] != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Block', 'title':selected_object['account_data'][0]})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_last_swap_timestamp(){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+
+        if(selected_object['account_data'][1] != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Timestamp', 'title': this.get_time_difference(selected_object['account_data'][1]) })}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_last_swap_transaction_count(){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+
+        if(selected_object['account_data'][2] != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Transactions Count', 'title':selected_object['account_data'][2]})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
+
+    render_last_entered_contracts_count(){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+
+        if(selected_object['account_data'][3] !=0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Last Entered Contracts Count', 'title':selected_object['account_data'][3]})}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
     }
 
     render_auth_modify_button(){
@@ -313,9 +369,13 @@ class SpendDetailSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-
+                    
+                    
                     {this.render_detail_item('3', {'title':'Exchange Transfer', 'details':'Transfer tokens from the exchanges account to a specified target.', 'size':'l'})}
                     <div style={{height:10}}/>
+                    {this.render_buy_token_uis()}
+                    <div style={{height:10}}/>
+                    
                     <div onClick={()=>this.open_exchange_transfers_ui()}>
                         {this.render_detail_item('5', {'text':'Run Transfers', 'action':''})}
                     </div>
@@ -359,7 +419,7 @@ class SpendDetailSection extends Component {
             'unlocked_liquidity': {'title':'Unlocked Liquidity', 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
             'fully_custom': {'title':'Fully Custom', 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
 
-            'buy_limit':{'style':'l','title':'Mint Limit', 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':'tokens'},
+            'buy_limit':{'style':'l','title':'Mint Limit', 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':symbol},
             
             'minimum_transactions_between_swap': {'title':selected_obj_config[2], 'details':'Minimum Transactions Between Swap', 'size':'l'},
             'minimum_blocks_between_swap': {'title':selected_obj_config[3], 'details':'Minimum Blocks Between Swap', 'size':'l'},
@@ -369,20 +429,20 @@ class SpendDetailSection extends Component {
             'exchange_authority': {'title':'Authority: '+is_auth_main_contract, 'details':'Exchange Authority Identifier', 'size':'l'},
             'trust_fee_target': {'title':'Target: '+is_trust_fee_target_main_contract, 'details':'Trust Fee Target Identifier', 'size':'l'},
 
-            'sell_limit':{'style':'l','title':'Sell Limit', 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':'tokens'},
+            'sell_limit':{'style':'l','title':'Sell Limit', 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':symbol},
 
             'minimum_entered_contracts_between_swap': {'title':selected_obj_config[13], 'details':'Minimum Entered Contracts Between Swap', 'size':'l'},
             'minimum_transactions_for_first_buy': {'title':selected_obj_config[17], 'details':'Minimum Transactions For First Buy', 'size':'l'},
             'minimum_entered_contracts_for_first_buy': {'title':selected_obj_config[18], 'details':'Minimum Entered Contracts For First Buy', 'size':'l'},
 
-            'ratio_x':{'style':'l','title':'Exchange Ratio X', 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':'tokens'},
-            'ratio_y':{'style':'l','title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':'tokens'},
+            'ratio_x':{'style':'l','title':'Exchange Ratio X', 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':''},
+            'ratio_y':{'style':'l','title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':''},
             'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':'Exchange Ratio X:Y', 'size':'l'},
 
-            'exchanges_liquidity':{'style':'l','title':'Circulating Supply', 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':'tokens'},
+            'exchanges_liquidity':{'style':'l','title':'Circulating Supply', 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':symbol},
             'mint_burn_button':{'text':'Mint/Burn Token', 'action':''},
 
-            'block_limit':{'style':'l','title':'Block Limit', 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':'tokens'},
+            'block_limit':{'style':'l','title':'Block Limit', 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':symbol},
             'internal_block_halfing_proportion': {'title':this.format_proportion(selected_obj_config[5]), 'details':'Internal Block Halving Proportion', 'size':'l'},
             'block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_config[6]), 'details':'Block Limit Reduction Proportion', 'size':'l'},
             
@@ -390,9 +450,9 @@ class SpendDetailSection extends Component {
             'block_limit_sensitivity': {'title':selected_obj_config[12], 'details':'Block Limit Sensitivity', 'size':'l'},
             'default_authority_mint_limit': {'title':this.format_proportion(selected_obj_config[14]), 'details':'Authority Mint Limit (percentage of supply)', 'size':'l'},
             'block_halfing_type': {'title':halfing_type, 'details':'Halving Type', 'size':'l'},
-            'maturity_limit':{'style':'l','title':'Maturity Limit', 'subtitle':this.format_power_figure(selected_obj_config[16]), 'barwidth':this.calculate_bar_width(selected_obj_config[16]), 'number':this.format_account_balance_figure(selected_obj_config[16]), 'relativepower':'tokens'},
+            'maturity_limit':{'style':'l','title':'Maturity Limit', 'subtitle':this.format_power_figure(selected_obj_config[16]), 'barwidth':this.calculate_bar_width(selected_obj_config[16]), 'number':this.format_account_balance_figure(selected_obj_config[16]), 'relativepower':symbol},
 
-            'current_block_mint_total':{'style':'l','title':'Current Block Mint Total', 'subtitle':this.format_power_figure(selected_obj_ratio_config[4]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[4]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[4]), 'relativepower':'tokens'},
+            'current_block_mint_total':{'style':'l','title':'Current Block Mint Total', 'subtitle':this.format_power_figure(selected_obj_ratio_config[4]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[4]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[4]), 'relativepower':symbol},
             'active_block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_ratio_config[6]), 'details':'Active Block Limit Reduction Proportion', 'size':'l'},
             '':{},
             '':{},
@@ -401,6 +461,26 @@ class SpendDetailSection extends Component {
             '':{},
             '':{},
         }
+    }
+
+    render_buy_token_uis(){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+        var buy_tokens = selected_object['data'][3]
+        var buy_amounts = selected_object['exchanges_balances']
+        var buy_depths = selected_object['data'][5]
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {buy_tokens.map((item, index) => (
+                        <li style={{'padding': '1px'}}>
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.props.app_state.token_directory[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            
+        )
     }
 
     render_spend_block_history_logs(){
