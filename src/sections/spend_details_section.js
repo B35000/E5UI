@@ -114,6 +114,11 @@ class SpendDetailSection extends Component {
         }
         sorted_token_exchange_data.reverse()
         for (let i = 0; i < token_exchanges.length; i++) {
+            if(!sorted_token_exchange_data.includes(token_exchanges[i]) && token_exchanges['balance'] != 0){
+                sorted_token_exchange_data.push(token_exchanges[i])
+            }
+        }
+        for (let i = 0; i < token_exchanges.length; i++) {
             if(!sorted_token_exchange_data.includes(token_exchanges[i])){
                 sorted_token_exchange_data.push(token_exchanges[i])
             }
@@ -262,6 +267,8 @@ class SpendDetailSection extends Component {
 
                     {this.render_exchange_transfer_button()}
 
+                    {this.render_freeze_unfreeze_tokens_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -283,6 +290,10 @@ class SpendDetailSection extends Component {
 
     open_exchange_transfers_ui(){
         this.props.open_exchange_transfers_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
+    }
+
+    open_freeze_unfreeze_ui(){
+        this.props.open_freeze_unfreeze_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
     }
 
 
@@ -368,8 +379,7 @@ class SpendDetailSection extends Component {
         if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
-                    {this.render_detail_item('0')}
-                    
+                    {this.render_detail_item('0')}         
                     
                     {this.render_detail_item('3', {'title':'Exchange Transfer', 'details':'Transfer tokens from the exchanges account to a specified target.', 'size':'l'})}
                     <div style={{height:10}}/>
@@ -378,6 +388,25 @@ class SpendDetailSection extends Component {
                     
                     <div onClick={()=>this.open_exchange_transfers_ui()}>
                         {this.render_detail_item('5', {'text':'Run Transfers', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_freeze_unfreeze_tokens_button(){
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        var contract_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Freeze/Unfreeze Tokens', 'details':'Freeze or unfreeze a given accounts balance.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_freeze_unfreeze_ui()}>
+                        {this.render_detail_item('5', {'text':'Freeze/Unfreeze', 'action':''})}
                     </div>
                 </div>
             )

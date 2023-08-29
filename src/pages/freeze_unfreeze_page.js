@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups';
+import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
@@ -8,12 +8,13 @@ import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
 
-function number_with_commas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
+}
+
+function number_with_commas(x) {
+    if(x == null) x = '';
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function makeid(length) {
@@ -28,22 +29,20 @@ function makeid(length) {
     return result;
 }
 
-class template extends Component {
+class FreezeUnfreezePage extends Component {
     
     state = {
-        selected: 0, type: 'transfer',
-        new_transfer_action_page_tags_object: this.get_new_transfer_action_page_tags_object(),
-        recipient_id:'', amount:0, token_item: {'balance':1, 'id':0}, stack_items:[], debit_balance:0,
-        entered_indexing_tags:['transfer', 'send', 'token']
+        selected: 0, type: 'freeze/unfreeze', token_item:{'id':0}, entered_indexing_tags:['freeze', 'unfreeze', 'account'], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
+        recipient_id:'',  freeze_unfreeze_amount:0, freeze_unfreeze_actions:[]
     };
 
-    get_new_transfer_action_page_tags_object(){
+    get_freeze_unfreeze_action_page_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','transfer'], [1]
+                ['xor','',0], ['e','freeze', 'unfreeze'], [1]
             ],
         };
     }
@@ -51,83 +50,58 @@ class template extends Component {
     render(){
         return(
             <div style={{'padding':'10px 20px 0px 10px'}}>
-
                 <div className="row">
-                    <div className="col-9" style={{'padding': '0px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.new_transfer_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_transfer_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                        <Tags page_tags_object={this.state.freeze_unfreeze_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_freeze_unfreeze_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'padding': '5px'}} onClick={()=>this.add_transactions_to_stack()}>
+                        <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
                             {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
                         </div>
                         
                     </div>
                 </div>
-                
-                <div style={{'margin':'20px 0px 0px 0px'}}>
-                    {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Transfer the specified token'})}
 
-                    <div style={{height:10}}/> 
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[this.state.token_item['id']], })}
-
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance after Set Transfers', 'subtitle':this.format_power_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barwidth':this.calculate_bar_width(this.state.token_item['balance'] - this.state.debit_balance), 'number':this.format_account_balance_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[this.state.token_item['id']], })}
-                    </div>
-
-                    {this.render_everything()}
-                </div>
-                
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Freeze or Unfreeze the token '+this.state.token_item['id']+' for a specified set of accounts'})}
+                <div style={{height:10}}/>
+                {this.render_everything()}
             </div>
         )
     }
 
-    when_new_transfer_action_page_tags_object_updated(tag_obj){
-        this.setState({new_transfer_action_page_tags_object: tag_obj})
+    when_freeze_unfreeze_action_page_tags_object_updated(tag_obj){
+        this.setState({freeze_unfreeze_action_page_tags_object: tag_obj})
     }
 
 
     render_everything(){
         return(
-            <div> 
-                <div style={{height:10}}/>
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the recipient of the transfer action', 'title':'Recipient of action'})}
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':'Set the account to be frozen or unfroozen', 'title':'Account ID'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Recipient ID'} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
-                {this.load_account_suggestions()}
-
+                <TextInput height={30} placeholder={'Account ID'} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Amount set to submit/receive for the buy/sell action', 'title':'Fees for Action'})}
+                {this.render_detail_item('3', {'size':'l', 'details':'Set the amount to freeze or unfreeze.', 'title':'Action Amount.'})}
 
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Transfer Amount', 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Transfer Amount', 'subtitle':this.format_power_figure(this.state.freeze_unfreeze_amount), 'barwidth':this.calculate_bar_width(this.state.freeze_unfreeze_amount), 'number':this.format_account_balance_figure(this.state.freeze_unfreeze_amount), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[this.state.token_item['id']], })}
                 </div>
 
                 <div style={{height:10}}/>
 
-                <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
-                    {this.render_detail_item('5', {'text':'Add Transaction', 'action':''})}
+                    {this.render_detail_item('5', {'text':'Add Action', 'action':''})}
                 </div>
 
-                {this.render_stack_transactions()}
-
+                {this.render_freeze_unfreeze_transactions()}
             </div>
         )
-    }
-
-    get_number_limit(){
-        if(this.state.token_item['balance'] != null){
-            var balance =  this.state.token_item['balance']
-            var balance_after_transfers = balance - this.state.debit_balance
-            return balance_after_transfers;
-        }
-        else return bigInt('1e72')
     }
 
     when_recipient_input_field_changed(text){
@@ -135,13 +109,18 @@ class template extends Component {
     }
 
     when_amount_set(amount){
-        this.setState({amount: amount})
+        this.setState({freeze_unfreeze_amount: amount})
     }
 
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
 
     add_transaction(){
-        var clone = this.state.stack_items.slice()
-        var amount = this.state.amount
+        var clone = this.state.freeze_unfreeze_actions.slice()
+        var amount = this.state.freeze_unfreeze_amount
         var recipient = this.state.recipient_id.trim()
 
         if(isNaN(recipient) || recipient == ''){
@@ -151,24 +130,28 @@ class template extends Component {
             this.props.notify('please put a valid amount', 600)
         }
         else{
-            var tx = {id:makeid(8), type:'transfer', 'amount':''+amount, 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
+            var action = this.get_selected_item(this.state.freeze_unfreeze_action_page_tags_object, 'e')
+            var stack_action = 1
+            if(action == 'unfreeze') stack_action = 0
 
+            var tx = {'amount':amount, 'recipient':recipient, 'action':stack_action, 'action-name':action}
             clone.push(tx)
-            this.setState({stack_items: clone, debit_balance: this.state.debit_balance + amount})
-            this.props.notify('transaction added!', 600)
+            this.setState({freeze_unfreeze_actions: clone, recipient_id: '', freeze_unfreeze_amount:0})
+            this.props.notify('action added!', 600)
         }
     }
 
-    render_stack_transactions(){
+
+    render_freeze_unfreeze_transactions(){
         var middle = this.props.height-500;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.stack_items
+        var items = this.state.freeze_unfreeze_actions
 
         if(items.length == 0){
-            items = [0]
+            items = [0, 1]
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -185,13 +168,12 @@ class template extends Component {
                 </div>
             )
         }else{
-            var items = this.state.stack_items
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_stack_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.props.app_state.token_directory[this.state.token_item['id']], 'details':'recipient account: '+item['recipient'], 'size':'l'})}
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_freeze_unfreeze_item_clicked(item)}>
+                                {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.props.app_state.token_directory[this.state.token_item['id']], 'details':'Target Account ID: '+item['recipient'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -201,42 +183,34 @@ class template extends Component {
     }
 
 
-    when_stack_item_clicked(item, index){
-        var cloned_array = this.state.stack_items.slice()
-        cloned_array.splice(index, 1);
-        this.setState({stack_items: cloned_array, debit_balance: this.state.debit_balance - bigInt(item.amount)})
-        this.props.notify('transaction removed!', 600)
+    when_freeze_unfreeze_item_clicked(item){
+        var cloned_array = this.state.freeze_unfreeze_actions.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({freeze_unfreeze_actions: cloned_array})
+        this.props.notify('action removed!', 600)
     }
 
 
-    load_account_suggestions(){
-        var items = this.get_suggested_accounts()
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
-        )
+
+
+
+    set_token(token_item){
+        this.setState({token_item: token_item})
     }
 
-    get_suggested_accounts(){
-        return[
-            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-            {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-            {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
-        ]
+    finish(){
+        if(this.state.freeze_unfreeze_actions.length == 0){
+            this.props.notify('you cant stack no changes', 700)
+        }else{
+            this.props.add_freeze_unfreeze_to_stack(this.state)
+            this.setState({freeze_unfreeze_actions:[]})
+            this.props.notify('transaction added to stack', 700);
+        }
     }
 
-    when_suggestion_clicked(item, pos){
-        this.setState({recipient_id: item['id']})
-    }
 
 
     /* renders the specific element in the post or detail object */
@@ -347,21 +321,9 @@ class template extends Component {
     }
 
 
-
-    set_token(item){
-        this.setState({token_item: item})
-    }
-
-
-    add_transactions_to_stack(){
-        this.props.add_transfer_transactions_to_stack(this.state)
-        this.props.notify('transactions added to stack!', 600)
-    }
-
-
 }
 
 
 
 
-export default template;
+export default FreezeUnfreezePage;

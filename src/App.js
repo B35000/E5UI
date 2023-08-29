@@ -43,7 +43,8 @@ import ModifyContractPage from './pages/modify_contract_page';
 import ModifyTokenPage from './pages/modify_token_page';
 import ExchangeTransferPage from './pages/exchanage_transfer_page';
 import ForceExitPage from './pages/force_exit_account_page';
-import ArchiveProposalPage from './pages/archive_proposals_page'
+import ArchiveProposalPage from './pages/archive_proposals_page';
+import FreezeUnfreezePage from './pages/freeze_unfreeze_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -84,7 +85,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -126,6 +127,7 @@ class App extends Component {
     this.exchange_transfer_page = React.createRef();
     this.force_exit_page = React.createRef();
     this.archive_proposal_page = React.createRef();
+    this.freeze_unfreeze_page = React.createRef();
   }
 
   componentDidMount() {
@@ -260,6 +262,7 @@ class App extends Component {
         {this.render_exchange_transfer_bottomsheet()}
         {this.render_force_exit_bottomsheet()}
         {this.render_archive_proposal_bottomsheet()}
+        {this.render_freeze_unfreeze_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -291,6 +294,7 @@ class App extends Component {
       show_exchange_transfer_bottomsheet={this.show_exchange_transfer_bottomsheet.bind(this)}
       show_force_exit_bottomsheet={this.show_force_exit_bottomsheet.bind(this)}
       show_archive_proposal_bottomsheet={this.show_archive_proposal_bottomsheet.bind(this)}
+      show_freeze_unfreeze_bottomsheet={this.show_freeze_unfreeze_bottomsheet.bind(this)}
       />
     )
   }
@@ -1325,6 +1329,42 @@ class App extends Component {
   }
 
 
+
+
+
+
+
+  render_freeze_unfreeze_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_freeze_unfreeze_bottomsheet.bind(this)} open={this.state.freeze_unfreeze_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <FreezeUnfreezePage ref={this.freeze_unfreeze_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_freeze_unfreeze_to_stack={this.add_freeze_unfreeze_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_freeze_unfreeze_bottomsheet(){
+    if(this.state != null){
+        this.setState({freeze_unfreeze_bottomsheet: !this.state.freeze_unfreeze_bottomsheet});
+      }
+  }
+
+  show_freeze_unfreeze_bottomsheet(token_item){
+    if(this.freeze_unfreeze_page.current != null){
+      this.freeze_unfreeze_page.current.set_token(token_item)
+    }
+
+    this.open_freeze_unfreeze_bottomsheet()
+  }
+
+  add_freeze_unfreeze_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
 
 
 

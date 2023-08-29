@@ -737,6 +737,12 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(archive_obj)
                 }
+                else if(txs[i].type == 'freeze/unfreeze'){
+                    var freeze_unfreeze_obj = this.format_freeze_unfreeze_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(freeze_unfreeze_obj)
+                }
             }
             
         }
@@ -1494,6 +1500,30 @@ class StackPage extends Component {
         for(var i=0; i<t.bounty_exchanges.length; i++){
             obj[4].push(t.bounty_exchanges[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}));
             obj[5].push(0)
+        }
+
+        return obj
+    }
+
+
+    format_freeze_unfreeze_object(t){
+        var obj = [/* auth freeze tokens [1-freeze_tokens , 0-unfreeze_tokens] */
+            [30000, 6, 0],
+            [], [],/* target_exchanges */
+            [], [],/* target_account_ids */
+            [],/* freeze_amounts */
+            [],/* action */
+            []/* depths */
+        ]
+
+        for(var i=0; i<t.freeze_unfreeze_actions.length; i++){
+            obj[1].push(t.token_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+            obj[3].push(t.freeze_unfreeze_actions[i]['recipient'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[4].push(23)
+            obj[5].push(t.freeze_unfreeze_actions[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[6].push(t.freeze_unfreeze_actions[i]['action'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[7].push(0)
         }
 
         return obj

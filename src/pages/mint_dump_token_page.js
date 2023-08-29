@@ -303,7 +303,7 @@ class NewMintActionPage extends Component {
     }
 
 
-     get_selected_item(object, option){
+    get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
@@ -319,7 +319,7 @@ class NewMintActionPage extends Component {
         var items = this.state.stack_items
 
         if(items.length == 0){
-            items = [0]
+            items = [0, 1]
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
