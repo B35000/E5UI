@@ -99,7 +99,7 @@ class SpendDetailSection extends Component {
             else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'],'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances']} )
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'],'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'] } )
 
             }
         }
@@ -145,6 +145,8 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     {this.render_detail_item('3', item['token_id'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['token_type'])}
                     <div style={{height:10}}/>
@@ -219,8 +221,8 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', item['block_reset_limit'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['block_limit_sensitivity'])}
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['default_authority_mint_limit'])}
+                    {/* <div style={{height:10}}/> */}
+                    {/* {this.render_detail_item('3', item['default_authority_mint_limit'])} */}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['block_halfing_type'])}
 
@@ -269,11 +271,23 @@ class SpendDetailSection extends Component {
 
                     {this.render_freeze_unfreeze_tokens_button()}
 
+                    {this.render_authmint_tokens_button()}
+
+                    {this.render_moderator_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_access_rights_status(value){
+        if(value == true){
+            return 'Enabled'
+        }else{
+            return 'Disabled'
+        }
     }
 
     open_mint_burn_spend_token_ui(){
@@ -294,6 +308,14 @@ class SpendDetailSection extends Component {
 
     open_freeze_unfreeze_ui(){
         this.props.open_freeze_unfreeze_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
+    }
+
+    open_authmint_ui(){
+        this.props.open_authmint_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
+    }
+
+    open_moderator_ui(){
+        this.props.open_moderator_ui(this.get_exchange_tokens(5)[this.props.selected_spend_item])
     }
 
 
@@ -407,6 +429,44 @@ class SpendDetailSection extends Component {
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_freeze_unfreeze_ui()}>
                         {this.render_detail_item('5', {'text':'Freeze/Unfreeze', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    render_authmint_tokens_button(){
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        var contract_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'AuthMint Tokens', 'details':'Bypass the exchanges restrictions and mint your token as an authority', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_authmint_ui()}>
+                        {this.render_detail_item('5', {'text':'AuthMint', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_moderator_button(){
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_moderator_ui()}>
+                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
                     </div>
                 </div>
             )

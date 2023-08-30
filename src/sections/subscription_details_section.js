@@ -97,6 +97,10 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
+
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -144,11 +148,21 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_auth_modify_button()}
 
+                    {this.render_moderator_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_access_rights_status(value){
+        if(value == true){
+            return 'Enabled'
+        }else{
+            return 'Disabled'
+        }
     }
 
     open_pay_subscription_ui(){
@@ -169,6 +183,11 @@ class SubscriptionDetailsSection extends Component {
     open_modify_subscription_ui(){
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_modify_subscription_ui(object)
+    }
+
+    open_moderator_ui(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        this.props.open_moderator_ui(object)
     }
 
     render_cancel_button(){
@@ -224,6 +243,25 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_modify_subscription_ui()}>
                         {this.render_detail_item('5', {'text':'Modify Subscription', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_moderator_button(){
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        var my_account = this.props.app_state.user_account_id
+
+        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_moderator_ui()}>
+                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
                     </div>
                 </div>
             )

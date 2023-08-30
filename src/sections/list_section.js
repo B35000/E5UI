@@ -1077,7 +1077,7 @@ class PostListSection extends Component {
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image},
-            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(supply), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',}
+            'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',}
         }
     }
 

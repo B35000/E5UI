@@ -277,7 +277,7 @@ class NewProposalPage extends Component {
         )
     }
 
-        render_title_tags_part(){
+    render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>

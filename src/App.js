@@ -44,7 +44,9 @@ import ModifyTokenPage from './pages/modify_token_page';
 import ExchangeTransferPage from './pages/exchanage_transfer_page';
 import ForceExitPage from './pages/force_exit_account_page';
 import ArchiveProposalPage from './pages/archive_proposals_page';
-import FreezeUnfreezePage from './pages/freeze_unfreeze_page'
+import FreezeUnfreezePage from './pages/freeze_unfreeze_page';
+import AuthMintPage from './pages/authmint_page';
+import ModeratorPage from './pages/moderator_page';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -85,7 +87,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false,
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
@@ -128,6 +130,8 @@ class App extends Component {
     this.force_exit_page = React.createRef();
     this.archive_proposal_page = React.createRef();
     this.freeze_unfreeze_page = React.createRef();
+    this.authmint_page = React.createRef();
+    this.moderator_page = React.createRef();
   }
 
   componentDidMount() {
@@ -263,6 +267,8 @@ class App extends Component {
         {this.render_force_exit_bottomsheet()}
         {this.render_archive_proposal_bottomsheet()}
         {this.render_freeze_unfreeze_bottomsheet()}
+        {this.render_authmint_bottomsheet()}
+        {this.render_moderator_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -295,6 +301,8 @@ class App extends Component {
       show_force_exit_bottomsheet={this.show_force_exit_bottomsheet.bind(this)}
       show_archive_proposal_bottomsheet={this.show_archive_proposal_bottomsheet.bind(this)}
       show_freeze_unfreeze_bottomsheet={this.show_freeze_unfreeze_bottomsheet.bind(this)}
+      show_authmint_bottomsheet={this.show_authmint_bottomsheet.bind(this)}
+      show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
       />
     )
   }
@@ -1375,6 +1383,84 @@ class App extends Component {
 
 
 
+  render_authmint_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_authmint_bottomsheet.bind(this)} open={this.state.authmint_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <AuthMintPage ref={this.authmint_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_authmint_to_stack={this.add_authmint_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_authmint_bottomsheet(){
+    if(this.state != null){
+        this.setState({authmint_bottomsheet: !this.state.authmint_bottomsheet});
+      }
+  }
+
+  show_authmint_bottomsheet(token_item){
+    if(this.authmint_page.current != null){
+      this.authmint_page.current.set_token(token_item)
+    }
+
+    this.open_authmint_bottomsheet()
+  }
+
+  add_authmint_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+  render_moderator_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_moderator_bottomsheet.bind(this)} open={this.state.moderator_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ModeratorPage ref={this.moderator_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_moderator_to_stack={this.add_moderator_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_moderator_bottomsheet(){
+    if(this.state != null){
+        this.setState({moderator_bottomsheet: !this.state.moderator_bottomsheet});
+      }
+  }
+
+  show_moderator_bottomsheet(item){
+    if(this.moderator_page.current != null){
+      this.moderator_page.current.set_object(item)
+    }
+
+    this.open_moderator_bottomsheet()
+  }
+
+  add_moderator_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+
+
+
   render_view_image_bottomsheet(){
       var background_color = 'transparent';
       return(
@@ -1900,12 +1986,33 @@ class App extends Component {
         }
       }
 
-      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts})
+      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+      var old_moderators = []
+
+      for(var e=0; e<moderator_data.length; e++){
+        var mod_id = moderator_data[e].returnValues.p3
+        old_moderators.push(mod_id)
+      }
+
+      var mod_status_values = await E52contractInstance.methods.f255([created_subscriptions[i]], [old_moderators]).call((error, result) => {});
+
+      var moderators = []
+      for(var e=0; e<old_moderators.length; e++){
+        var their_status = mod_status_values[0][e]
+        if(their_status == true){
+          moderators.push(old_moderators[e])
+        }
+      }
+
+      var interactible_checker_status_values = await E52contractInstance.methods.f254([created_subscriptions[i]],0).call((error, result) => {});
+
+      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0]})
     }
     this.setState({created_subscriptions: created_subscription_object_data})
     console.log('subscription count: '+created_subscription_object_data.length)
 
     var all_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
+    
     this.setState({all_subscriptions: all_subscription_events})
 
 
@@ -1956,7 +2063,28 @@ class App extends Component {
         }
       }
 
-      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts })
+
+      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+      var old_moderators = []
+
+      for(var e=0; e<moderator_data.length; e++){
+        var mod_id = moderator_data[e].returnValues.p3
+        old_moderators.push(mod_id)
+      }
+
+      var mod_status_values = await E52contractInstance.methods.f255([created_contracts[i]], [old_moderators]).call((error, result) => {});
+
+      var moderators = []
+      for(var e=0; e<old_moderators.length; e++){
+        var their_status = mod_status_values[0][e]
+        if(their_status == true){
+          moderators.push(old_moderators[e])
+        }
+      }
+
+      var interactible_checker_status_values = await E52contractInstance.methods.f254([created_contracts[i]],0).call((error, result) => {});
+
+      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] })
     }
 
     this.setState({created_contracts: created_contract_object_data})
@@ -2095,7 +2223,29 @@ class App extends Component {
       }
       var exchanges_balances = await H52contractInstance.methods.f140e(created_token_data[i][3], created_tokens[i], depth_values).call((error, result) => {});
 
-      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances})
+
+
+      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+      var old_moderators = []
+
+      for(var e=0; e<moderator_data.length; e++){
+        var mod_id = moderator_data[e].returnValues.p3
+        old_moderators.push(mod_id)
+      }
+
+      var mod_status_values = await E52contractInstance.methods.f255([created_tokens[i]], [old_moderators]).call((error, result) => {});
+
+      var moderators = []
+      for(var e=0; e<old_moderators.length; e++){
+        var their_status = mod_status_values[0][e]
+        if(their_status == true){
+          moderators.push(old_moderators[e])
+        }
+      }
+
+      var interactible_checker_status_values = await E52contractInstance.methods.f254([created_tokens[i]],0).call((error, result) => {});
+
+      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] })
 
     }
 

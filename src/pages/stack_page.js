@@ -743,6 +743,22 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(freeze_unfreeze_obj)
                 }
+                else if(txs[i].type == 'authmint'){
+                    var authmint_obj = this.format_authmint_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(authmint_obj)
+                }
+                else if(txs[i].type == 'access-rights-settings'){
+                    var access_rights_obj = this.format_access_rights_object(txs[i])
+                    
+                    for(var t=0; t<access_rights_obj.length; t++){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(access_rights_obj[t])
+                    }    
+                }
+                
             }
             
         }
@@ -1505,7 +1521,6 @@ class StackPage extends Component {
         return obj
     }
 
-
     format_freeze_unfreeze_object(t){
         var obj = [/* auth freeze tokens [1-freeze_tokens , 0-unfreeze_tokens] */
             [30000, 6, 0],
@@ -1529,7 +1544,116 @@ class StackPage extends Component {
         return obj
     }
 
+    format_authmint_object(t){
+        var obj = [/* auth mint token */
+            [30000, 9, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            []/* amounts */, [],/* action */
+            []/* lower_bounds */, []/* upper_bounds */
+        ]
 
+        for(var i=0; i<t.authmint_actions.length; i++){
+            obj[1].push(t.token_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+
+            var receiver = t.authmint_actions[i]['recipient']
+            var receiver_type = 23
+            if(receiver == 53){
+                receiver_type = 53
+            }
+            obj[3].push(receiver.toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[4].push(receiver_type)
+            obj[5].push(t.authmint_actions[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[6].push(0)
+        }
+
+        return obj
+    }
+
+    format_access_rights_object(t){
+        //.toString().toLocaleString('fullwide', {useGrouping:false})
+        var obj = []
+        var set_account_as_mod_obj = [ /* set account as mod */
+            [20000, 4, 0],
+            [], [],/* target objects */
+            [], []/* target moderator account ids*/
+        ];
+
+        var enable_interactable_checkers = [ /* enable interactible checkers */
+            [20000, 5, 0],
+            [], []/* target objects */
+        ]
+
+        var revoke_auth_mod_privelages = [/* revoke author's moderator privelages */
+            [20000, 16, 0],
+            [], [],/* target objects */
+        ]
+
+        var access_rights = [ /* set account to be interactible */
+            [20000, 2, 0],
+            [], [],/* target objects */
+            [], [],/* target account ids*/
+            []/* interacible expiry time limit */
+        ]
+
+        var blocked_accounts = [/* block account */
+            [20000, 17, 0],
+            [], [],/* target objects */
+            [], [],/* target account ids */
+            []/* expiry_time */
+        ]
+
+        for(var i=0; i<t.all_actions.length; i++){
+            var action = t.all_actions[i].type;
+            if(action == 'moderator'){
+                set_account_as_mod_obj[1].push(t.object_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                set_account_as_mod_obj[2].push(23)
+                set_account_as_mod_obj[3].push(t.all_actions[i]['account'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                set_account_as_mod_obj[4].push(23)
+            }
+            else if(action == 'interactable-checkers'){
+                enable_interactable_checkers[1].push(t.object_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                enable_interactable_checkers[2].push(23)
+            }
+            else if(action == 'author-moderator-privelages'){
+                revoke_auth_mod_privelages[1].push(t.object_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                revoke_auth_mod_privelages[2].push(23)
+            }
+            else if(action == 'access-rights'){
+                access_rights[1].push(t.object_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                access_rights[2].push(23)
+                access_rights[3].push(t.all_actions[i]['account'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                access_rights[4].push(23)
+                access_rights[5].push(t.all_actions[i]['time'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            }
+            else if(action == 'blocked-access'){
+                blocked_accounts[1].push(t.object_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                blocked_accounts[2].push(23)
+                blocked_accounts[3].push(t.all_actions[i]['account'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                blocked_accounts[4].push(23)
+                blocked_accounts[5].push(t.all_actions[i]['time'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            }
+        }
+
+        if(set_account_as_mod_obj[1].length > 0){
+            obj.push(set_account_as_mod_obj)
+        }
+        if(enable_interactable_checkers[1].length > 0){
+            obj.push(enable_interactable_checkers)
+        }
+        if(revoke_auth_mod_privelages[1].length > 0){
+            obj.push(revoke_auth_mod_privelages)
+        }
+        if(access_rights[1].length > 0){
+            obj.push(access_rights)
+        }
+        if(blocked_accounts[1].length > 0){
+            obj.push(blocked_accounts)
+        }
+
+        return obj
+    }
 
 
 

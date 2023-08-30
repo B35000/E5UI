@@ -117,7 +117,7 @@ class EndDetailSection extends Component {
             else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'] })
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'] })
             }
         }
 
@@ -163,6 +163,8 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('1', item['tags'])}
                     
                     {this.render_detail_item('3', item['token_id'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['token_type'])}
                     <div style={{height:10}}/>
@@ -265,11 +267,21 @@ class EndDetailSection extends Component {
 
                     {this.render_freeze_unfreeze_tokens_button()}
 
+                    {this.render_moderator_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_access_rights_status(value){
+        if(value == true){
+            return 'Enabled'
+        }else{
+            return 'Disabled'
+        }
     }
 
     open_mint_burn_token_ui(){
@@ -290,6 +302,10 @@ class EndDetailSection extends Component {
 
     open_freeze_unfreeze_ui(){
         this.props.open_freeze_unfreeze_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    }
+
+    open_moderator_ui(){
+        this.props.open_moderator_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
     }
 
 
@@ -405,6 +421,24 @@ class EndDetailSection extends Component {
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_freeze_unfreeze_ui()}>
                         {this.render_detail_item('5', {'text':'Freeze/Unfreeze', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_moderator_button(){
+        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_moderator_ui()}>
+                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
                     </div>
                 </div>
             )
