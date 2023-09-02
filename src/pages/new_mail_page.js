@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups';
+import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
-import NumberPicker from './../components/number_picker';
-
 import Letter from './../assets/letter.png';
 import E5EmptyIcon from './../assets/e5empty_icon.png';
 import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
@@ -13,10 +11,6 @@ import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
 var bigInt = require("big-integer");
-
-function number_with_commas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
@@ -34,15 +28,21 @@ function makeid(length) {
     return result;
 }
 
-class NewJobPage extends Component {
+function number_with_commas(x) {
+    if(x == null) x = '';
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+class NewMailPage extends Component {
     
     state = {
-        id: makeid(8), type:'job',
-        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
+        selected: 0,
+        id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'],
+        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* i copypasted these! sue me 😁 */
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
-        entered_tag_text: '', entered_title_text:'', entered_text:'',
+        entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
+        entered_objects:[], recipients:[]
     };
 
     get_new_job_page_tags_object(){
@@ -51,7 +51,7 @@ class NewJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images', 'targeted-pay'], [0]
+                ['or','',0], ['e','text', 'images'], [0]
             ],
         };
     }
@@ -72,10 +72,6 @@ class NewJobPage extends Component {
             ],
         };
     }
-
-
-
-
 
     render(){
         return(
@@ -102,7 +98,7 @@ class NewJobPage extends Component {
         )
     }
 
-     when_new_job_page_tags_updated(tag_group){
+    when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
 
@@ -131,12 +127,12 @@ class NewJobPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'targeted-pay'){
+        else if(selected_item == 'recipients'){
             return(
                 <div>
-                    {this.render_enter_item_price_part()}
+                    {this.render_recipients_part()}
                 </div>
-            ) 
+            )
         }
     }
 
@@ -154,10 +150,7 @@ class NewJobPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
-                    
                     {this.render_new_job_object()}
-                    {this.render_detail_item('0')}
-                    {this.render_created_obj_objects()}
                 </div>
             )
         }
@@ -169,8 +162,6 @@ class NewJobPage extends Component {
                     </div>
                     <div className="col-6">
                         {this.render_new_job_object()}
-                        {this.render_detail_item('0')}
-                        {this.render_created_obj_objects()}
                     </div>
                 </div>
                 
@@ -181,23 +172,28 @@ class NewJobPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new job'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new mail'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={60} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Job'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set the recipient for your message'})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_target_recipient_input_field_changed.bind(this)} text={this.state.target_recipient} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Post'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -275,74 +271,6 @@ class NewJobPage extends Component {
             </div>
         );
     }
-
-    render_created_obj_objects(){
-        var items = this.fetch_obj_states()
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                <div style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                                    <div style={{'padding': '5px 0px 5px 5px'}}>
-                                        {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
-                                        <div style={{height: 10}}/>
-                                        {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':item.entered_title_text})}
-                                        <div style={{'padding': '5px'}} onClick={()=>this.delete_obj(item, index)}>
-                                            {this.render_detail_item('5', {'text':'Delete', 'action':''})}
-                                        </div>
-                                    </div>         
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    fetch_obj_states(){
-        var all_states = this.props.app_state.stack_items
-        var channel_states = []
-        for(var i=0; i<all_states.length; i++){
-            if(all_states[i].type == 'job'){
-                channel_states.push(all_states[i])
-            }
-        }
-
-        return channel_states
-    }
-
-    delete_obj(item, index){
-        this.props.delete_object_from_stack(item)
-        this.props.notify('item removed',700)
-    }
-
 
 
 
@@ -476,10 +404,9 @@ class NewJobPage extends Component {
 
     render_enter_image_part(){
         var size = this.props.size
-
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Black picks gif, grey picks image. Then tap to remove.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove and click add images to add them to the object.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -520,7 +447,6 @@ class NewJobPage extends Component {
             var cloned_array = this.state.entered_objects.slice()
             cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
             this.setState({entered_objects: cloned_array, entered_image_objects:[]})
-            this.props.notify('images added!', 800)
         }
     }
 
@@ -533,11 +459,12 @@ class NewJobPage extends Component {
                     const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
                     clonedArray.push(ev.target.result);
                     this.setState({entered_image_objects: clonedArray});
+                    
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been added.',500);
+            this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 
@@ -630,104 +557,68 @@ class NewJobPage extends Component {
 
 
 
-    render_enter_item_price_part(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_set_token_and_amount_part()}
-                    <div style={{height: 20}}/>
-                    {this.render_set_prices_list_part()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_set_token_and_amount_part()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_set_prices_list_part()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
 
 
-    render_set_token_and_amount_part(){
+
+    render_recipients_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired price and click add', 'size':'l'})}
-
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set some recipients for your new mail'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_target_recipient_input_field_changed.bind(this)} text={this.state.target_recipient} theme={this.props.theme}/>
+                <div style={{height:10}}/>
 
-                {this.load_token_suggestions('exchange_id')}
-                <div style={{height: 20}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
+                <div style={{'padding': '5px'}} onClick={()=>this.add_recipient_account()}>
+                    {this.render_detail_item('5', {'text':'Add Account', 'action':''})}
                 </div>
+                <div style={{height:10}}/>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
-
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
-                </div>
+                {this.render_recipients_transactions()}
             </div>
         )
     }
 
-    when_exchange_id_input_field_changed(text){
-        this.setState({exchange_id: text})
+    when_target_recipient_input_field_changed(text){
+        this.setState({target_recipient: text})
     }
 
-    when_price_amount(amount){
-        this.setState({price_amount: amount})
-    }
+    add_recipient_account(){
+        var clone = this.state.recipients.slice()
+        var recipient = this.state.target_recipient
 
-    when_add_price_set(){
-        var exchange_id = this.state.exchange_id.trim()
-        var amount = this.state.price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(recipient) || recipient == ''){
+            this.props.notify('please put a valid account id', 600)
         }
-        else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+        else if(clone.includes(recipient)){
+            this.props.notify('you cant include the same recipient twice', 600)
         }
         else{
-            var price_data_clone = this.state.price_data.slice()
-            price_data_clone.push({'id':exchange_id, 'amount':amount})
-            this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 400)
+            clone.push(recipient)
+            this.setState({recipients: clone, target_recipient:''})
+            this.props.notify('recipent account added!', 600)
         }
     }
 
-    render_set_prices_list_part(){
+
+
+    render_recipients_transactions(){
         var middle = this.props.height-500;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = this.state.recipients
 
         if(items.length == 0){
-            items = [0,3,0]
+            items = [0, 1]
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -740,64 +631,29 @@ class NewJobPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
-                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
-                                </div>
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_item_clicked(item)}>
+                                {this.render_detail_item('3', {'title':'Recipient ID: '+item, 'details':'Account', 'size':'s'})}
                             </li>
                         ))}
                     </ul>
                 </div>
             )
         }
-        
     }
 
-    when_amount_clicked(item){
-        var cloned_array = this.state.price_data.slice()
+
+    when_item_clicked(item){
+        var cloned_array = this.state.recipients.slice()
         const index = cloned_array.indexOf(item);
         if (index > -1) { // only splice array when item is found
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
-        this.setState({price_data: cloned_array})
+        this.setState({recipients: cloned_array})
+        this.props.notify('account removed!', 600)
     }
 
 
-    load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
-        )
-    }
 
-    get_suggested_tokens(){
-        var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
-        ];
-        var stack_items = this.props.app_state.stack_items;
-        for(var i=0; i<stack_items.length; i++){
-            if(stack_items[i].type == 'token'){
-                items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
-            }
-        }
-
-        return items;
-    }
-
-    when_price_suggestion_clicked(item, pos, target_type){
-        this.setState({exchange_id: item['id']})
-    }
 
 
 
@@ -805,107 +661,14 @@ class NewJobPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
             </div>
         )
 
     }
 
-    format_account_balance_figure(amount){
-        if(amount == null){
-            amount = 0;
-        }
-        if(amount < 1_000_000_000){
-            return number_with_commas(amount.toString())
-        }else{
-            var power = amount.toString().length - 9
-            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
-        }
-        
-    }
+    show_images(){
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
-        }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
-    }
-
-    format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
-        }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
-        }
-        else{
-            power = 'e72'
-        }
-        return power
-    }
-
-    /* gets a formatted time diffrence from now to a given time */
-    get_time_difference(time){
-        var number_date = Math.round(parseInt(time));
-        var now = Math.round(new Date().getTime()/1000);
-
-        var diff = now - number_date;
-        return this.get_time_diff(diff)
-    }
-
-    get_time_diff(diff){
-        if(diff < 60){//less than 1 min
-            var num = diff
-            var s = num > 1 ? 's': '';
-            return num+ ' sec'
-        }
-        else if(diff < 60*60){//less than 1 hour
-            var num = Math.floor(diff/(60));
-            var s = num > 1 ? 's': '';
-            return num + ' min' 
-        }
-        else if(diff < 60*60*24){//less than 24 hours
-            var num = Math.floor(diff/(60*60));
-            var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
-        }
-        else if(diff < 60*60*24*7){//less than 7 days
-            var num = Math.floor(diff/(60*60*24));
-            var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
-        }
-        else if(diff < 60*60*24*7*53){//less than 1 year
-            var num = Math.floor(diff/(60*60*24*7));
-            var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
-        }
-        else {//more than a year
-            var num = Math.floor(diff/(60*60*24*7*53));
-            var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
-        }
-    }
-
-    format_proportion(proportion){
-        return ((proportion/10**18) * 100)+'%';
     }
 
 
@@ -913,31 +676,34 @@ class NewJobPage extends Component {
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
+        var recipient = this.state.target_recipient.trim()
 
-        if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+        if(index_tags.length < 3){
+            this.props.notify('add at least 3 tags first!', 700)
         }
         else if(title == ''){
-            this.props.notify('add a title for your post', 700)
-        }else{
-            this.props.when_add_new_object_to_stack(this.state)
+            this.props.notify('add a title for your mail', 700)
+        }
+        // else if(recipients.length == 0){
+        //     this.props.notify('set at least one recipient', 700)
+        // }
+        else if(isNaN(recipient) || recipient == ''){
+            this.props.notify('that recipient isnt a valid account', 700)
+        }
+        else{ 
+            this.props.when_add_new_mail_to_stack(this.state)
 
-            this.setState({ id: makeid(32), type:'job', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[] })
+            this.setState({ selected: 0, id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'], get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* i copypasted these! sue me 😁 */ get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[]})
+            
             this.props.notify('transaction added to stack', 700);
         }
     }
 
 
-    set_fileds_for_edit_action(obj){
-        this.setState({entered_indexing_tags: obj['tags'], entered_title_text: obj['title'], entered_text_objects: obj['texts'], entered_image_objects: obj['images']})
-    }
 
-    set_action(action){
-        this.setState({action: action})
-    }
 }
 
 
 
 
-export default NewJobPage;
+export default NewMailPage;

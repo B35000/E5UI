@@ -39,7 +39,7 @@ function makeid(length) {
 class NewContractPage extends Component {
     
     state = {
-        id: makeid(32), type:'contract',
+        id: makeid(8), type:'contract',
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_contract_tags_object: this.get_new_contract_tags_object(), new_contract_type_tags_object:this.get_new_contract_type_tags_object(),
         default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
@@ -263,10 +263,10 @@ class NewContractPage extends Component {
                 <div style={{height:10}}/>
 
                 <div className="row">
-                    <div className="col-9" style={{'margin': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-2" style={{'padding': '0px 5px 0px 0px'}}>
+                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
@@ -293,6 +293,9 @@ class NewContractPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(this.state.entered_indexing_tags.includes(typed_word)){
+            this.props.notify('you cant enter the same word twice', 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()

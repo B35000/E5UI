@@ -32,7 +32,7 @@ function makeid(length) {
 class ExchangeTransferPage extends Component {
     
     state = {
-        selected: 0,id: makeid(32), type:'exchange-transfer', entered_indexing_tags:['exchange', 'transfer'],
+        selected: 0,id: makeid(8), type:'exchange-transfer', entered_indexing_tags:['exchange', 'transfer'],
         token_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
         new_transfer_title_tags_object:this.get_new_transfer_title_tags_object(),
 
@@ -272,6 +272,14 @@ class ExchangeTransferPage extends Component {
 
 
     set_token(token_item){
+        if(this.state.token_item['id'] != token_item['id']){
+            this.setState({
+                selected: 0,id: makeid(8), type:'exchange-transfer', entered_indexing_tags:['exchange', 'transfer'],
+                token_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
+                new_transfer_title_tags_object:this.get_new_transfer_title_tags_object(),
+                exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
+            })
+        }
         this.setState({token_item: token_item})
     }
 

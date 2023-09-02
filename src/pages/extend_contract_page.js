@@ -22,10 +22,22 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class ExtendContractPage extends Component {
     
     state = {
-        selected: 0, type:'extend-contract',
+        selected: 0,id:makeid(8), type:'extend-contract',
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0}, extend_contract_title_tags_object:this.get_extend_contract_title_tags_object(),
         interactible_timestamp:0,
         entered_indexing_tags:['extend', 'contract']
@@ -124,6 +136,14 @@ class ExtendContractPage extends Component {
 
 
     set_contract(contract){
+        if(this.state.contract_item['id'] != contract['id']){
+            this.setState({
+                selected: 0,id:makeid(8), type:'extend-contract',
+                contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0}, extend_contract_title_tags_object:this.get_extend_contract_title_tags_object(),
+                interactible_timestamp:0,
+                entered_indexing_tags:['extend', 'contract']
+            })
+        }
         this.setState({contract_item: contract})
     }
 

@@ -17,10 +17,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class AuthMintPage extends Component {
     
     state = {
-        selected: 0, type: 'authmint', entered_indexing_tags:['auth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
+        selected: 0,id:makeid(8), type: 'authmint', entered_indexing_tags:['auth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
 
         recipient_id:'', amount:0, authmint_actions:[]
     };
@@ -213,6 +225,12 @@ class AuthMintPage extends Component {
 
 
     set_token(token_item){
+        if(this.state.token_item['id'] != token_item['id']){
+            this.setState({
+                selected: 0,id:makeid(8), type: 'authmint', entered_indexing_tags:['auth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
+                recipient_id:'', amount:0, authmint_actions:[]
+            })
+        }
         this.setState({token_item: token_item})
     }
 

@@ -17,10 +17,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class ModifyContractPage extends Component {
     
     state = {
-        selected: 0,type:'modify-contract', entered_indexing_tags:['modify', 'contract', 'auth'],
+        selected: 0,id:makeid(8),type:'modify-contract', entered_indexing_tags:['modify', 'contract', 'auth'],
         contract_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_contract_title_tags_object:this.get_modify_contract_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
 
         auto_wait_tags_object:this.get_auto_wait_tags_object(),
@@ -584,6 +596,19 @@ class ModifyContractPage extends Component {
 
 
     set_contract(contract_item){
+        if(this.state.contract_item['id'] != contract_item['id']){
+            this.setState({
+                selected: 0,id:makeid(8),type:'modify-contract', entered_indexing_tags:['modify', 'contract', 'auth'],
+                contract_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_contract_title_tags_object:this.get_modify_contract_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
+                auto_wait_tags_object:this.get_auto_wait_tags_object(),
+                can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(),
+                can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),
+                bounty_limit_type: this.get_bounty_limit_type(),
+                contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
+                reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
+                reconfig_values:[],
+            })
+        }
         this.setState({contract_item: contract_item})
     }
 

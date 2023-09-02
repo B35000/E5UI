@@ -14,10 +14,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class CancelSubscriptionPage extends Component {
     
     state = {
-        selected: 0, type:'cancel-subscription', entered_indexing_tags:['cancel', 'subscription'],
+        selected: 0,id:makeid(8), type:'cancel-subscription', entered_indexing_tags:['cancel', 'subscription'],
         subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'payment':0}, cancel_subscription_title_tags_object:this.get_cancel_subscription_title_tags_object(), time_units:0
     };
 
@@ -122,6 +134,12 @@ class CancelSubscriptionPage extends Component {
 
 
     set_subscription(subscription_item){
+        if(this.state.subscription_item['id'] != subscription_item['id']){
+            this.setState({
+                selected: 0,id:makeid(8), type:'cancel-subscription', entered_indexing_tags:['cancel', 'subscription'],
+                subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'payment':0}, cancel_subscription_title_tags_object:this.get_cancel_subscription_title_tags_object(), time_units:0
+            })
+        }
         this.setState({subscription_item: subscription_item})
     }
 

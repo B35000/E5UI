@@ -37,7 +37,7 @@ function makeid(length) {
 class NewStorefrontItemPage extends Component {
     
     state = {
-        id: makeid(32), type:'storefront-item',
+        id: makeid(8), type:'storefront-item',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
@@ -198,10 +198,10 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
 
                 <div className="row">
-                    <div className="col-9" style={{'margin': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-2" style={{'padding': '0px 5px 0px 0px'}}>
+                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
@@ -251,6 +251,9 @@ class NewStorefrontItemPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(this.state.entered_indexing_tags.includes(typed_word)){
+            this.props.notify('you cant enter the same word twice', 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
@@ -440,7 +443,7 @@ class NewStorefrontItemPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Black picks gif, grey picks image. Then tap to remove.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove one and click add images to add them to the object.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -498,7 +501,7 @@ class NewStorefrontItemPage extends Component {
                 reader.readAsDataURL(e.target.files[i]);
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been added.',500);
+            this.props.notify('Your selected '+e.target.files.length+image+' been stage.',500);
         }
     }
 

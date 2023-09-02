@@ -17,10 +17,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class ModifyTokenPage extends Component {
     
     state = {
-        selected: 0,type:'modify-token', entered_indexing_tags:['modify', 'token', 'auth'],
+        selected: 0,id:makeid(8),type:'modify-token', entered_indexing_tags:['modify', 'token', 'auth'],
         token_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_token_title_tags_object:this.get_modify_token_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
 
         new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
@@ -493,6 +505,16 @@ class ModifyTokenPage extends Component {
 
 
     set_token(token_item){
+        if(this.state.token_item['id'] != token_item['id']){
+            this.setState({
+                selected: 0,id:makeid(8),type:'modify-token', entered_indexing_tags:['modify', 'token', 'auth'],
+                token_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_token_title_tags_object:this.get_modify_token_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
+                new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
+                new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(),
+                reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
+                reconfig_values:[],
+            })
+        }
         this.setState({token_item: token_item})
     }
 

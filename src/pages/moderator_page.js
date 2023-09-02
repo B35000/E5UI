@@ -39,7 +39,7 @@ function makeid(length) {
 class ModeratorPage extends Component {
     
     state = {
-        selected: 0, type: 'access-rights-settings', entered_indexing_tags:['access', 'rights', 'settings'], new_moderator_action_page_tags_object: this.get_new_moderator_action_page_tags_object(), object_item:{'id':0, 'moderators':[]}, all_actions:[],
+        selected: 0, id:makeid(8), type: 'access-rights-settings', entered_indexing_tags:['access', 'rights', 'settings'], new_moderator_action_page_tags_object: this.get_new_moderator_action_page_tags_object(), object_item:{'id':0, 'moderators':[]}, all_actions:[],
 
         access_rights_enabled_tags_object: this.get_access_rights_enabled_tags_object(),
 
@@ -490,6 +490,15 @@ class ModeratorPage extends Component {
 
 
     set_object(item){
+        if(this.state.object_item['id'] != item['id']){
+            this.setState({
+                selected: 0, id:makeid(8), type: 'access-rights-settings', entered_indexing_tags:['access', 'rights', 'settings'], new_moderator_action_page_tags_object: this.get_new_moderator_action_page_tags_object(), object_item:{'id':0, 'moderators':[]}, all_actions:[],
+                access_rights_enabled_tags_object: this.get_access_rights_enabled_tags_object(),
+                entered_moderator_text:'', has_added_remove_auth_mod_status_tx:false,
+                entered_interactable_text:'', interactable_expiry_time: Date.now()/1000,
+                entered_blocked_text:'', blocked_expiry_time: Date.now()/1000
+            })
+        }
         this.setState({object_item: item})
     }
 

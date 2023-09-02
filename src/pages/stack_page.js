@@ -14,6 +14,18 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
@@ -144,7 +156,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 20px 0px 10px'}}>
+                <div style={{'padding': '0px 10px 0px 0px'}}>
                     {this.render_stack_run_settings_part()}
                     {this.render_run_history_items()}
                 </div>
@@ -193,7 +205,7 @@ class StackPage extends Component {
     render_run_history_items(){
          var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var middle = this.props.height-300;
+        var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -226,13 +238,13 @@ class StackPage extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
                                     <div style={{'padding': '5px 0px 5px 5px'}}>
-                                        {this.render_detail_item('3',{'title':item.returnValues.p3, 'details':'Transaction ID','size':'l'})}
+                                        {this.render_detail_item('3',{'title':item.returnValues.p3, 'details':'Transaction ID','size':'s'})}
                                         <div style={{height: 10}}/>
-                                        {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'l'})}
+                                        {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'s'})}
                                         <div style={{height: 10}}/>
-                                        {this.render_detail_item('3',{'title':this.get_time_difference(item.returnValues.p8), 'details':'Timestamp','size':'l'})}
+                                        {this.render_detail_item('3',{'title':this.get_time_difference(item.returnValues.p8), 'details':'Timestamp','size':'s'})}
                                         <div style={{height: 10}}/>
-                                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
+                                        {this.render_detail_item('2', { 'style':'s', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
                                         
                                     </div>         
                                 </div>
@@ -275,7 +287,6 @@ class StackPage extends Component {
             )
         }
     }
-
 
     render_stack_transactions_part(){
         var background_color = this.props.theme['card_background_color']
@@ -331,9 +342,9 @@ class StackPage extends Component {
                     {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'title':'Stack ID - '+index, 'details':item.id,'size':'l'})}
+                    {this.render_detail_item('3',{'title':'Stack ID - '+index, 'details':item.id,'size':'s'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item)),'size':'l'})}
+                    {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item)),'size':'s'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'padding': '5px'}} onClick={()=>this.show_hide_stack_item(item)}>
@@ -400,7 +411,7 @@ class StackPage extends Component {
             gas += g
         }
 
-        return gas
+        return gas +200000
     }
 
     get_estimated_gas(t){
@@ -408,25 +419,86 @@ class StackPage extends Component {
             return 61315
         }
         else if(t.type == 'contract'){
-            return 664043 + (60_000 * t.price_data.length)
+            return 964043 + (60_000 * t.price_data.length)
         }
         else if(t.type == 'storefront'){
-            return 61315 + (61_315 * t.store_items.length)
+            return 91315 + (61_315 * t.store_items.length)
         }
         else if(t.type == 'subscription'){
-            return 330605 + (60_000 * t.price_data.length)
+            return 630605 + (60_000 * t.price_data.length)
         }
         else if(t.type == 'token'){
-            return 676263 + (50_000 * t.price_data.length)
+            return 976263 + (50_000 * t.price_data.length)
         }
         else if(t.type == 'buy-sell'){
-            return 493469
+            return 793469
         }
+        else if(t.type == 'transfer'){
+            return 100_132 +(32_000 * t.stack_items.length)
+        }
+        else if(t.type == 'enter-contract'){
+            return 563061
+        }
+        else if(t.type == 'extend-contract'){
+            return 426227
+        }
+        else if(t.type == 'exit-contract'){
+            return 481612
+        }
+        else if(t.type == 'proposal'){
+            return 809949 + (98_818 * t.bounty_values.length)
+        }
+        else if(t.type == 'vote'){
+            return 485179
+        }
+        else if(t.type == 'submit'){
+            return 562392
+        }
+        else if(t.type == 'pay-subscription'){
+            return 351891
+        }
+        else if(t.type == 'cancel-subscription'){
+            return 276496
+        }
+        else if(t.type == 'collect-subscription'){
+            return 273441
+        }
+        else if(t.type == 'modify-subscription'){
+            return 234392
+        }
+        else if(t.type == 'modify-contract'){
+            return 630599
+        }
+        else if(t.type == 'modify-token'){
+            return 376037
+        }
+        else if(t.type == 'exchange-transfer'){
+            return 240068
+        }
+        else if(t.type == 'force-exit'){
+            return 438394
+        }
+        else if(t.type == 'archive'){
+            return 1037673
+        }
+        else if(t.type == 'freeze/unfreeze'){
+            return 405717
+        }
+        else if(t.type == 'authmint'){
+            return 493989
+        }
+        else if(t.type == 'access-rights-settings'){
+            return 170897
+        }
+
     }
 
 
     run_transactions = async () => {
         var txs = this.props.app_state.stack_items
+        if(txs.length > 0){
+            this.props.notify('running your transactions...', 600)
+        }
         var strs = []
         var ints = []
         var adds = []
@@ -758,10 +830,20 @@ class StackPage extends Component {
                         ints.push(access_rights_obj[t])
                     }    
                 }
+                else if(txs[i].type == 'mail'){
+                    var mail_obj = await this.format_mail_object(txs[i])
+                    
+                    strs.push(mail_obj.str)
+                    adds.push([])
+                    ints.push(mail_obj.int)    
+                }
                 
             }
             
         }
+
+
+
 
         var metadata_action = [ /* set metadata */
             [20000, 1, 0],
@@ -788,6 +870,10 @@ class StackPage extends Component {
         adds.push([])
 
 
+
+
+
+
         var index_data_in_tags = [ /* index data in tags */
             [20000, 12, 0],
             [], []/* target objects */
@@ -803,12 +889,12 @@ class StackPage extends Component {
                     index_data_in_tags[2].push(35)
                     index_data_strings[0].push('en')
                     index_data_strings[1].push('')
-                    for(var t=0; t<tx_tags.length; t++){
-                        index_data_in_tags[1].push(i)
-                        index_data_in_tags[2].push(35)
-                        index_data_strings[0].push(tx_tags[t])
-                        index_data_strings[1].push('')
-                    }
+                    // for(var t=0; t<tx_tags.length; t++){
+                    //     index_data_in_tags[1].push(i)
+                    //     index_data_in_tags[2].push(35)
+                    //     index_data_strings[0].push(tx_tags[t])
+                    //     index_data_strings[1].push('')
+                    // }
                 }
             }
         }
@@ -817,11 +903,35 @@ class StackPage extends Component {
         strs.push(index_data_strings)
         adds.push([])
 
+
+
+
+        if(this.props.app_state.E15_runs.length == 0){
+            //if its the first time running a transaction
+            var obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [0], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            string_obj[0].push(await this.get_account_public_key())
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(obj)
+        }
+
+
+
+
+
         var account_balance = this.props.app_state.account_balance
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
         var run_gas_price = this.props.app_state.gas_price
 
-        if(ints.length > 0){
+        if(txs.length > 0){
             if(account_balance < (run_gas_limit * run_gas_price)){
                 this.setState({invalid_ether_amount_dialog_box: true})
             }else{   
@@ -837,6 +947,10 @@ class StackPage extends Component {
         var object_as_string = JSON.stringify(tx)
         var obj_cid = this.props.store_data_in_infura(object_as_string)
         return obj_cid
+    }
+
+    get_account_public_key = async () => {
+        return await this.props.get_account_public_key()
     }
 
     render_dialog_ui(){
@@ -1655,6 +1769,74 @@ class StackPage extends Component {
         return obj
     }
 
+    format_mail_object = async (t) =>{
+        var obj = [ /* set data */
+        [20000, 13, 0],
+        [], [],/* target objects */
+        [], /* contexts */
+        [] /* int_data */
+      ]
+
+      var string_obj = [[]]
+
+      var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t));
+
+    //   for(var i=0; i<t.recipients.length; i++){
+    //       var recipient_account = t.recipients[i]
+    //       var context = 30
+    //       var int_data = Date.now()
+
+    //       obj[1].push(recipient_account)
+    //       obj[2].push(23)
+    //       obj[3].push(context)
+    //       obj[4].push(int_data)
+
+    //       string_obj[0].push(string_data)
+    //   }
+
+        var recipient_account = t.target_recipient
+        var context = 30
+        var int_data = Date.now()
+
+        obj[1].push(recipient_account)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+      return {int: obj, str: string_obj}
+    }
+
+
+    get_encrypted_mail_message = async (t) =>{
+        var key = makeid(35)
+        var encrypted_obj = this.props.encrypt_data_object(t, key)
+        var recipent_data = {}
+        // for(var i=0; i<t.recipients.length; i++){
+        //     var recipient = t.recipients[i]
+        //     var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient)
+
+        //     if(recipients_pub_key_hash != ''){
+        //         var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+
+        //         recipent_data[parseInt(recipient)] = encrypted_key
+        //     }
+        // }
+        var recipient = t.target_recipient
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient)
+
+        if(recipients_pub_key_hash != ''){
+            var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
+            recipent_data[parseInt(recipient)] = encrypted_key
+        }
+
+        var uint8array = await this.props.get_account_raw_public_key() 
+        var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
+        recipent_data[this.props.app_state.user_account_id] = my_encrypted_key
+
+        return {'obj':encrypted_obj, 'recipient_data':recipent_data}
+    }
 
 
 

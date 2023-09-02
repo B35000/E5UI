@@ -32,7 +32,7 @@ function makeid(length) {
 class ForceExitPage extends Component {
     
     state = {
-        selected: 0,id: makeid(32), type:'force-exit', entered_indexing_tags:['force', 'exit', 'accounts'],
+        selected: 0,id: makeid(8), type:'force-exit', entered_indexing_tags:['force', 'exit', 'accounts'],
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'participants':[]},
         new_force_exit_title_tags_object:this.get_new_force_exit_title_tags_object(),
 
@@ -211,6 +211,14 @@ class ForceExitPage extends Component {
 
 
     set_contract(contract_item){
+        if(this.state.contract_item['id'] != contract_item['id']){
+            this.setState({
+                selected: 0,id: makeid(8), type:'force-exit', entered_indexing_tags:['force', 'exit', 'accounts'],
+                contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'participants':[]},
+                new_force_exit_title_tags_object:this.get_new_force_exit_title_tags_object(),
+                force_exit_target:'', force_exit_accounts:[]
+            })
+        }
         this.setState({contract_item: contract_item})
     }
 

@@ -54,6 +54,11 @@ class PostListSection extends Component {
                 <div>{this.render_subscription_list_group()}</div>
                 )
             }
+            else if(selected_tag == 'mail'){
+                return(
+                <div>{this.render_mail_list_group()}</div>
+                )
+            }
         }
         else if(selected_page == 'e'){
             var selected_tag = this.props.explore_page_tags_object['i'].active
@@ -579,6 +584,170 @@ class PostListSection extends Component {
 
 
 
+    render_mail_list_group(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-123;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_mail_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_mail_object_or_null(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+    get_mail_items(){
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        if(this.props.work_page_tags_object['i'].active != 'mail'){
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
+                var convo_id = this.props.app_state.received_mail['received_mail'][i]
+                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+
+        if(selected_option_name == 'all'){
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
+                var convo_id = this.props.app_state.created_mail['created_mail'][i]
+                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
+                var convo_id = this.props.app_state.received_mail['received_mail'][i]
+                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+        else if(selected_option_name == 'received'){
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
+                var convo_id = this.props.app_state.received_mail['received_mail'][i]
+                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+        else {
+            //sent
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
+                var convo_id = this.props.app_state.created_mail['created_mail'][i]
+                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+    }
+
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    render_mail_object_or_null(object, index){
+        if(object['ipfs'] == null){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_mail_object(object, index)}
+                </div>
+            )
+        }
+    }
+
+    render_mail_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_mail_item(object)
+        return(
+            <div onClick={() => this.when_mail_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 0px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('4', item['id'])}
+                    </div>
+                    <div style={{'padding': '10px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    when_mail_item_clicked(item){
+        this.props.when_mail_item_clicked(item)
+    }
+
+    format_mail_item(object){
+        var tags_to_use = [object['type']];
+        var tags = object['ipfs'] == null ? ['Mail'] : object['ipfs'].entered_indexing_tags
+        var final_tags = tags_to_use.concat(tags)
+        var title = object['ipfs'] == null ? 'Mail ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        return {
+            'tags':{'active_tags':final_tags, 'index_option':'indexed'},
+            'id':{'textsize':'14px', 'text':title, 'font':'Sans-serif'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+
+
+
+
     render_E5s_list_group(){
         var middle = this.props.height-123;
         var size = this.props.size;
@@ -650,6 +819,8 @@ class PostListSection extends Component {
     when_E5_item_clicked(index){
         this.props.when_E5_item_clicked(index)
     }
+
+
 
 
 
@@ -767,6 +938,8 @@ class PostListSection extends Component {
     when_post_item_clicked(index){
         this.props.when_post_item_clicked(index)
     }
+
+
 
 
 

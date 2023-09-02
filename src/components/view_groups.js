@@ -418,8 +418,7 @@ class ViewGroups extends Component {
     }
 
     when_image_clicked(items, index){
-        
-        
+        this.props.show_images(items, index)
     }
 
 }

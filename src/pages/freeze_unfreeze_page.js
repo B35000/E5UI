@@ -32,7 +32,7 @@ function makeid(length) {
 class FreezeUnfreezePage extends Component {
     
     state = {
-        selected: 0, type: 'freeze/unfreeze', token_item:{'id':0}, entered_indexing_tags:['freeze', 'unfreeze', 'account'], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
+        selected: 0, id:makeid(8), type: 'freeze/unfreeze', token_item:{'id':0}, entered_indexing_tags:['freeze', 'unfreeze', 'account'], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
         recipient_id:'',  freeze_unfreeze_amount:0, freeze_unfreeze_actions:[]
     };
 
@@ -198,6 +198,12 @@ class FreezeUnfreezePage extends Component {
 
 
     set_token(token_item){
+        if(this.state.token_item['id'] != token_item['id']){
+            this.setState({
+                selected: 0, id:makeid(8), type: 'freeze/unfreeze', token_item:{'id':0}, entered_indexing_tags:['freeze', 'unfreeze', 'account'], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
+                recipient_id:'',  freeze_unfreeze_amount:0, freeze_unfreeze_actions:[]
+            })
+        }
         this.setState({token_item: token_item})
     }
 

@@ -47,6 +47,7 @@ import ArchiveProposalPage from './pages/archive_proposals_page';
 import FreezeUnfreezePage from './pages/freeze_unfreeze_page';
 import AuthMintPage from './pages/authmint_page';
 import ModeratorPage from './pages/moderator_page';
+import NewMailPage from './pages/new_mail_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -56,9 +57,15 @@ import { Filecoin, FilecoinClient } from 'filecoin.js';
 
 const Web3 = require('web3');
 const ethers = require("ethers");
-const { Wallet } = require('ethers');
+// const { Wallet } = require('ethers');
+const privateKeyToPublicKey = require('ethereum-private-key-to-public-key')
+const ecies = require('ecies-geth');
+var textEncoding = require('text-encoding'); 
+var CryptoJS = require("crypto-js"); 
 
-window.Buffer = window.Buffer || require("buffer").Buffer;
+var TextDecoder = textEncoding.TextDecoder;
+
+window.Buffer = window.Buffer || Buffer;
 
 
 function makeid(length) {
@@ -75,6 +82,18 @@ function makeid(length) {
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
+}
+
+String.prototype.hexEncode = function(){
+    var hex, i;
+
+    var result = "";
+    for (i=0; i<this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += ("000"+hex).slice(-4);
+    }
+
+    return result
 }
 
 async function balance(addr, client){
@@ -100,8 +119,8 @@ class App extends Component {
     created_jobs:[], 
     mint_dump_actions:[{},],
 
-    web3:'http://127.0.0.1:8545/', e5_address:'0xFD471836031dc5108809D173A067e8486B9047A3',
-    sync_steps:19,
+    web3:'http://127.0.0.1:8545/', e5_address:'0x172076E0166D1F9Cc711C77Adf8488051744980C',
+    sync_steps:25,
 
     token_directory:{}
   };
@@ -132,11 +151,13 @@ class App extends Component {
     this.freeze_unfreeze_page = React.createRef();
     this.authmint_page = React.createRef();
     this.moderator_page = React.createRef();
+    this.new_mail_page = React.createRef();
   }
 
   componentDidMount() {
     console.log("mounted");
-    this.load_e5_data(); 
+    this.load_e5_data();
+     
 
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
@@ -278,7 +299,7 @@ class App extends Component {
     return(
       <Home_page 
       screensize={this.getScreenSize()} 
-      width={this.state.width} height={this.state.height} app_state={this.state} open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
+      width={this.state.width} height={this.state.height} app_state={this.state} notify={this.prompt_top_notification.bind(this)}open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
       open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
       open_new_object={this.open_new_object.bind(this)} 
       when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)} fetch_objects_data={this.fetch_objects_data.bind(this)}
@@ -303,8 +324,30 @@ class App extends Component {
       show_freeze_unfreeze_bottomsheet={this.show_freeze_unfreeze_bottomsheet.bind(this)}
       show_authmint_bottomsheet={this.show_authmint_bottomsheet.bind(this)}
       show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
+      show_images={this.show_images.bind(this)}
+
+      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)}
       />
     )
+  }
+
+  add_mail_to_stack_object(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'mail-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'mail-messages', entered_indexing_tags:['send', 'mail'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
   }
 
 
@@ -363,7 +406,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -406,7 +449,7 @@ class App extends Component {
         data: encoded
     }
 
-    this.prompt_top_notification('running your transactions...', 600)
+    
     console.log('-------------------')
     web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
       console.log('-------------------')
@@ -512,10 +555,6 @@ class App extends Component {
       this.new_job_page.current.set_action('create')
     }
 
-    // if(this.new_mint_dump_token_page.current != null){
-    //   this.new_mint_dump_token_page.current.set_token(mint_burn_token_item)
-    // }
-
     this.open_new_object_bottomsheet()
   }
 
@@ -561,11 +600,11 @@ class App extends Component {
         <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
       )
     }
-    // else if(target == '101'){
-    //   return(
-    //     <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction_to_stack.bind(this)}/>
-    //   );
-    // }
+    else if(target == '5'){
+      return(
+        <NewMailPage ref={this.new_mail_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)}/>
+      );
+    }
     
   }
 
@@ -606,6 +645,11 @@ class App extends Component {
   }
 
 
+  when_add_new_mail_to_stack(state){
+    var stack_clone = this.state.stack_items.slice()
+    stack_clone.push(state)
+    this.setState({stack_items: stack_clone})
+  }
 
   render_create_store_item_bottomsheet(){
         var background_color = this.state.theme['send_receive_ether_background_color'];
@@ -1478,6 +1522,11 @@ class App extends Component {
         }
     }
 
+    show_images(images, pos){
+      this.setState({view_images:images, view_images_pos: pos })
+      this.open_view_image_bottomsheet()
+    }
+
     /* fullscreen image rendered in bottomsheet when image item is tapped */
     render_view_image(){
       var images = this.state.view_images == null ? [] : this.state.view_images;
@@ -1538,12 +1587,15 @@ class App extends Component {
 
   /* renders the toast item used */
   render_toast_item(message){
-
+    var width = this.state.width
+    if(width > 400){
+      width = 350
+    }
     return ( 
           <div>
-              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 0px 0px 5px','display': 'flex','flex-direction': 'row', width: 300}}>
+              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 5px 0px 5px','display': 'flex','flex-direction': 'row', width: width-40}}>
                   <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
-                      <img src={AlertIcon} style={{height:25,width:'auto','scale': '0.7'}} />
+                      <img src={AlertIcon} style={{height:25,width:'auto','scale': '0.9'}} />
                   </div>
                   <div style={{'padding': '0px 0px 0px 8px', 'margin':'5px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
                       <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1', 'margin':'0px'}}>{message}</p>
@@ -1709,7 +1761,6 @@ class App extends Component {
     });
 
     this.get_filecoin_wallet(seed);
-    this.store_data_in_ipfs()
     this.get_accounts_data(account, true)
   }
 
@@ -1739,39 +1790,6 @@ class App extends Component {
 
     // this.send_filecoin(seed)
     // this.initialize_storage_deal(seed)
-  }
-
-  store_data_in_ipfs = async () => {
-    const projectId = '2RryKWCGNDlwzCa9yTG25TumLK4';
-    const projectSecret = '494188d509a288e4df6da34864f6e141';
-    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
-    const client = create({
-      host: 'ipfs.infura.io',
-      port: 5001,
-      protocol: 'https',
-      apiPath: '/api/v0',
-      headers: {
-        authorization: auth,
-      }
-    })
-
-    try {
-      const added = await client.add('hello world bry onyoni')
-      console.log(added)
-      console.log('Stored string on IPFS with CID:', added.path.toString());
-
-      const response = await fetch(`https://ipfs.io/ipfs/${added.path.toString()}`);
-      if (!response.ok) {
-        throw new Error(`Failed to retrieve data from IPFS. Status: ${response.status}`);
-      }
-      const data = await response.text();
-      console.log('Retrieved data from IPFS:', data);
-      // Do something with the retrieved data
-    } catch (error) {
-      console.log('Error uploading file: ', error)
-    }
-
-
   }
 
   send_filecoin = async (seed) => {
@@ -1838,23 +1856,23 @@ class App extends Component {
     
 
     const minerAddress = 'f01393827';
-    const data = Buffer.from('Hello, World!');
+    // const data = Buffer.from('Hello, World!');
     // const walletKey = WalletKey.fromPrivateKey(Buffer.from(privateKey, 'hex'));
 
     // Define storage deal parameters
     
-    const dealInfo = await walletProvider.client.client.startDeal({
-      Data: data.toString('base64'),
-      Wallet: myAddress,
-      Miner: minerAddress,
-      StartEpoch: 0, // Use -1 to start the deal ASAP
-      EndEpoch: 10000, // Use 0 to make the deal perpetual
-      PieceSize: 1000,
-      VerifiedDeal: false,
-      Client: myAddress
-    });
+    // const dealInfo = await walletProvider.client.client.startDeal({
+    //   Data: data.toString('base64'),
+    //   Wallet: myAddress,
+    //   Miner: minerAddress,
+    //   StartEpoch: 0, // Use -1 to start the deal ASAP
+    //   EndEpoch: 10000, // Use 0 to make the deal perpetual
+    //   PieceSize: 1000,
+    //   VerifiedDeal: false,
+    //   Client: myAddress
+    // });
 
-    console.log('Storage Deal CID:', dealInfo.ProposalCid);
+    // console.log('Storage Deal CID:', dealInfo.ProposalCid);
 
   }
 
@@ -1913,6 +1931,7 @@ class App extends Component {
     const contractAddress = this.state.e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
+    /* ---------------------------------------- CONTRACT ADDRESSES -------------------------------------- */
     var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
     var contract_addresses = contract_addresses_events[0].returnValues.p5
     this.setState({E35_addresses: contract_addresses})
@@ -1921,6 +1940,12 @@ class App extends Component {
       this.inc_synch_progress()
     }
     
+
+
+
+
+
+    /* ---------------------------------------- ACCOUNT DATA ------------------------------------------- */
     var accounts = await contractInstance.methods.f167([],[account.address], 2).call((error, result) => {});
     console.log('account id----------------',accounts[0])
     var account = accounts[0] == 0 ? 1 : accounts[0]
@@ -1949,6 +1974,7 @@ class App extends Component {
 
 
 
+    /* ---------------------------------------- SUBSCRIPTION DATA ------------------------------------------- */
     const F5contractArtifact = require('./contract_abis/F5.json');
     const F5_address = contract_addresses[2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
@@ -2025,7 +2051,7 @@ class App extends Component {
 
 
 
-
+    /* ---------------------------------------- CONTRACT DATA ------------------------------------------- */
     const G5contractArtifact = require('./contract_abis/G5.json');
     const G5_address = contract_addresses[3];
     const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
@@ -2104,7 +2130,7 @@ class App extends Component {
 
 
 
-
+    /* ---------------------------------------- PROPOSAL DATA ------------------------------------------- */
     var contracts_ive_entered_events = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */} }, (error, events) => {});
     var contracts_ive_entered = []
     for(var i=0; i<contracts_ive_entered_events.length; i++){
@@ -2188,6 +2214,8 @@ class App extends Component {
 
 
 
+
+    /* ---------------------------------------- TOKEN DATA ------------------------------------------- */
     const H5contractArtifact = require('./contract_abis/H5.json');
     const H5_address = contract_addresses[5];
     const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
@@ -2283,7 +2311,7 @@ class App extends Component {
 
 
     
-
+    /* ---------------------------------------- POST DATA ------------------------------------------- */
     var created_post_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 18/* 18(post object) */ } }, (error, events) => {});
     var created_posts = []
     for(var i=0; i<created_post_events.length; i++){
@@ -2305,6 +2333,10 @@ class App extends Component {
 
 
 
+
+
+
+    /* ---------------------------------------- CHANNEL DATA ------------------------------------------- */
     var created_channel_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 36/* 36(type_channel_target) */ } }, (error, events) => {});
     var created_channel = []
     for(var i=0; i<created_channel_events.length; i++){
@@ -2324,6 +2356,17 @@ class App extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    /* ---------------------------------------- JOB DATA ------------------------------------------- */
     var created_job_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 17/* 17(job_object) */ } }, (error, events) => {});
     var created_job = []
     console.log('created job events-------------')
@@ -2343,12 +2386,85 @@ class App extends Component {
       this.inc_synch_progress()
     }
 
+
+
+
+
+
+
+
+
+
+    /* ---------------------------------------- MAIL DATA ------------------------------------------- */
+    var my_created_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc_id */: account, p3/* context */:30 } }, (error, events) => {});
+    var created_mail = []
+    var mail_activity = {}
+    for(var i=0; i<my_created_mail_events.length; i++){
+      var convo_id = my_created_mail_events[i].returnValues.p5
+      var cid = my_created_mail_events[i].returnValues.p4
+      var ipfs = await this.fetch_objects_data_from_ipfs(cid)
+
+      if(!created_mail.includes(convo_id)){
+        created_mail.push(convo_id)
+        if(mail_activity[convo_id] == null){
+          mail_activity[convo_id] = []
+        }
+
+        try{
+          var ipfs_obj = await this.get_ipfs_object(ipfs)
+          mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1})
+        }catch(e){
+          console.log(e)
+        }
+      }
+    }
+    this.setState({created_mail: {'created_mail':created_mail, 'mail_activity':mail_activity}})
+    console.log('created mail count: '+created_mail.length)
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+    var my_received_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:30 } }, (error, events) => {});
+    var received_mail = []
+    var mail_activity = {}
+    for(var i=0; i<my_received_mail_events.length; i++){
+      var convo_id = my_received_mail_events[i].returnValues.p5
+      var cid = my_received_mail_events[i].returnValues.p4
+      var ipfs = await this.fetch_objects_data_from_ipfs(cid)
+
+      if(!received_mail.includes(convo_id)){
+        received_mail.push(convo_id)
+        if(mail_activity[convo_id] == null){
+          mail_activity[convo_id] = []
+        }
+
+        try{
+          var ipfs_obj = await this.get_ipfs_object(ipfs)
+          mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1})
+        }catch(e){
+          console.log(e)
+        }
+      }
+    }
+    this.setState({received_mail: {'received_mail':received_mail, 'mail_activity':mail_activity}})
+    console.log('received mail count: '+created_mail.length)
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+    /* ---------------------------------------- ------------------------------------------- */
+    /* ---------------------------------------- ------------------------------------------- */
+    /* ---------------------------------------- ------------------------------------------- */
+    /* ---------------------------------------- ------------------------------------------- */
   }
 
 
   store_data_in_infura = async (data) => {
     const projectId = '2RryKWCGNDlwzCa9yTG25TumLK4';
     const projectSecret = '494188d509a288e4df6da34864f6e141';
+    // const auth = ''
     const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
     const client = create({
       host: 'ipfs.infura.io',
@@ -2372,7 +2488,6 @@ class App extends Component {
 
 
   fetch_objects_data = async (id, web3) => {
-    // const web3 = new Web3('ws://127.0.0.1:8545/');
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.E35_addresses[1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
@@ -2383,6 +2498,12 @@ class App extends Component {
     if(cid == 'e3') return;
     console.log('loaded events: ',events)
 
+    const response = await this.fetch_objects_data_from_ipfs(cid)
+    return response
+
+  }
+
+  fetch_objects_data_from_ipfs = async (cid) => {
     try {
       const response = await fetch(`https://ipfs.io/ipfs/${cid}`);
       if (!response.ok) {
@@ -2394,7 +2515,6 @@ class App extends Component {
     } catch (error) {
       console.log('Error uploading file: ', error)
     }
-
   }
 
 
@@ -2410,6 +2530,133 @@ class App extends Component {
       return token_balances[0]
   }
 
+
+
+
+
+
+
+  encrypt_data = async () => {
+    var address = await this.get_accounts_address(1002)
+    console.log(address)
+
+    const web3 = new Web3(this.state.web3);
+    console.log(this.state.account)
+    const privateKey = this.state.account.privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+
+    // const pubKey = secp256k1.publicKeyCreate(Uint8Array.from(this.state.account.privateKey.slice(1)), false)
+    // const publicKey = privateKeyToPublicKey(privateKey).toString('hex')
+    
+    var data = 'hello world'
+    var private_key_to_use = Buffer.from(hash)
+    const publicKeyA = await ecies.getPublic(private_key_to_use);
+    // console.log(publicKeyA)
+    
+    const encrypted_data = (await ecies.encrypt(publicKeyA, Buffer.from(data)))
+    // console.log(encrypted_data)
+    var string = (new Uint8Array(encrypted_data)).toString()
+
+    var uint8array = Uint8Array.from(string.split(',').map(x=>parseInt(x,10)));
+    // console.log(uint8array)
+    var plain_text = await ecies.decrypt(private_key_to_use, uint8array)
+    // console.log(plain_text.toString())
+
+
+    var ciphertext = CryptoJS.AES.encrypt('my message', 'secret key 123').toString();
+    var bytes  = CryptoJS.AES.decrypt(ciphertext, 'secret key 123');
+    var originalText = bytes.toString(CryptoJS.enc.Utf8);
+    // console.log(originalText)
+
+    this.get_accounts_public_key(1002)
+  }
+
+  get_accounts_address = async (account_id) => {
+    const web3 = new Web3(this.state.web3);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.state.e5_address
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+    return await contractInstance.methods.f289(account_id).call((error, result) => {});
+  }
+
+
+
+
+
+
+  get_account_public_key = async () => {
+    const web3 = new Web3(this.state.web3);
+    const privateKey = this.state.account.privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    var private_key_to_use = Buffer.from(hash)
+    const publicKeyA = await ecies.getPublic(private_key_to_use);
+    var key = (new Uint8Array(publicKeyA)).toString()//oh my god
+
+    var object_as_string = JSON.stringify({'key':key})
+    var obj_cid = await this.store_data_in_infura(object_as_string)
+    return obj_cid
+  }
+
+  get_account_raw_public_key = async () => {
+    const web3 = new Web3(this.state.web3);
+    const privateKey = this.state.account.privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    var private_key_to_use = Buffer.from(hash)
+    const publicKeyA = await ecies.getPublic(private_key_to_use);
+    return publicKeyA
+  }
+
+  encrypt_data_object(tx, key){
+    var object_as_string = JSON.stringify(tx)
+    var ciphertext = CryptoJS.AES.encrypt(object_as_string, key).toString();
+    return ciphertext
+  }
+
+  get_accounts_public_key = async (account) => {
+    const web3 = new Web3(this.state.web3);
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    var events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:0} }, (error, events) => {});
+
+    if(events.length == 0){
+      return ''
+    }
+
+    var obj_key = await this.fetch_objects_data_from_ipfs(events[events.length-1].returnValues.p4)
+    var uint8array = Uint8Array.from(obj_key['key'].split(',').map(x=>parseInt(x,10))); 
+    return uint8array
+  }
+
+  encrypt_key_with_accounts_public_key_hash = async (key, pub_key_hash) => {
+    const encrypted_data = (await ecies.encrypt(pub_key_hash, Buffer.from(key)))
+    var string = (new Uint8Array(encrypted_data)).toString()
+    return string
+  }
+
+  get_ipfs_object = async (encrypted_ipfs_obj) => {
+    const web3 = new Web3(this.state.web3);
+    const privateKey = this.state.account.privateKey
+    var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
+    var private_key_to_use = Buffer.from(hash)
+
+    var encrypted_key = encrypted_ipfs_obj['recipient_data'][this.state.user_account_id]
+    var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
+    
+    var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+    var encrypted_object = encrypted_ipfs_obj['obj']
+    
+    try{
+      var bytes  = CryptoJS.AES.decrypt(encrypted_object, my_key.toString());
+      var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      return JSON.parse(originalText);
+    }catch(e){
+      console.log(e)
+      return null
+    }
+    
+  }
 
 }
 

@@ -19,6 +19,7 @@ import ChannelDetailsSection from './channel_details_section'
 import EthersDetailsSection from './ethers_details_section'
 import EndDetailsSection from './end_detail_section'
 import SpendDetailSection from './spend_details_section'
+import MailDetailsSection from './mail_details_section'
 
 var bigInt = require("big-integer");
 
@@ -42,7 +43,7 @@ class PostDetailSection extends Component {
 
     render(){
         return(
-            <div>
+            <div style={{}}>
                 {this.render_post_detail_object()}
             </div>
         )
@@ -54,7 +55,7 @@ class PostDetailSection extends Component {
             var selected_tag = this.props.work_page_tags_object['i'].active
             if(selected_tag == 'jobs' || selected_tag == 'e'){
                 return(
-                    <JobDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_job_post_item={this.props.selected_job_post_item} work_page_tags_object={this.props.work_page_tags_object} viewed_jobs={this.props.viewed_jobs}/>
+                    <JobDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_job_post_item={this.props.selected_job_post_item} work_page_tags_object={this.props.work_page_tags_object} viewed_jobs={this.props.viewed_jobs} show_images={this.props.show_images.bind(this)}/>
                 )
             }
             else if(selected_tag == 'contracts' ){
@@ -79,6 +80,11 @@ class PostDetailSection extends Component {
                     />
                 )
             }
+            else if(selected_tag == 'mail'){
+                return(
+                    <MailDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_mail_item={this.props.selected_mail_item} work_page_tags_object={this.props.work_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)}/>
+                )
+            }
         }
         else if(selected_page == 'e'){
             var selected_tag = this.props.explore_page_tags_object['i'].active
@@ -89,12 +95,12 @@ class PostDetailSection extends Component {
             }
             else if(selected_tag == 'posts' ){
                 return(
-                    <PostsDetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_post_item={this.props.selected_post_item} viewed_posts={this.props.viewed_posts} explore_page_tags_object={this.props.explore_page_tags_object}/>
+                    <PostsDetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_post_item={this.props.selected_post_item} viewed_posts={this.props.viewed_posts} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)}/>
                 )
             }
             else if(selected_tag == 'channels' ){
                 return(
-                    <ChannelDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_channel_item={this.props.selected_channel_item} viewed_channels={this.props.viewed_channels} explore_page_tags_object={this.props.explore_page_tags_object}/>
+                    <ChannelDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_channel_item={this.props.selected_channel_item} viewed_channels={this.props.viewed_channels} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)}/>
                 )
             }
         }

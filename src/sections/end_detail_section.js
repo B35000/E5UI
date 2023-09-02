@@ -53,9 +53,9 @@ class EndDetailSection extends Component {
             )
         }else{
             return(
-                <div>
+                <div style={{}}>
                     {this.render_end_details_section()}
-                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
                         <Tags page_tags_object={this.state.navigate_view_end_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_end_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
@@ -146,7 +146,7 @@ class EndDetailSection extends Component {
 
     render_end_main_details_section(){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-70
+        var he = this.props.height-60
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
@@ -156,7 +156,7 @@ class EndDetailSection extends Component {
         var selected_object = this.get_exchange_tokens(3)[selected_item]
         var symbol = selected_object['ipfs'] == null ? 'tokens' : selected_object['ipfs'].entered_symbol_text
         return(
-            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
@@ -430,7 +430,7 @@ class EndDetailSection extends Component {
     render_moderator_button(){
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var my_account = this.props.app_state.user_account_id
-        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+        if(object['id'] != 3 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(
                 <div>
                     {this.render_detail_item('0')}

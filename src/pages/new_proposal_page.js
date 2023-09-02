@@ -38,7 +38,7 @@ function makeid(length) {
 class NewProposalPage extends Component {
     
     state = {
-        selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
+        selected: 0, id: makeid(8), type:'proposal', entered_indexing_tags:['new', 'proposal'],
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
@@ -317,6 +317,9 @@ class NewProposalPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(this.state.entered_indexing_tags.includes(typed_word)){
+            this.props.notify('you cant enter the same word twice', 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()

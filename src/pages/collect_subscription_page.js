@@ -16,10 +16,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class CollectSubscriptionPage extends Component {
     
     state = {
-        selected: 0,type:'collect-subscription', entered_indexing_tags:['collect', 'subscription', 'payments'],
+        selected: 0, id:makeid(8),type:'collect-subscription', entered_indexing_tags:['collect', 'subscription', 'payments'],
         subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'paid_accounts':[], 'paid_amounts':[]}, collect_subscription_title_tags_object:this.get_collect_subscription_title_tags_object()
     };
 
@@ -124,6 +136,12 @@ class CollectSubscriptionPage extends Component {
 
 
     set_subscription(subscription_item){
+        if(this.state.subscription_item['id'] != subscription_item['id']){
+            this.setState({
+                selected: 0, id:makeid(8),type:'collect-subscription', entered_indexing_tags:['collect', 'subscription', 'payments'],
+                subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'paid_accounts':[], 'paid_amounts':[]}, collect_subscription_title_tags_object:this.get_collect_subscription_title_tags_object()
+            })
+        }
         this.setState({subscription_item: subscription_item})
     }
 

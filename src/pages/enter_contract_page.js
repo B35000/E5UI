@@ -37,7 +37,7 @@ function makeid(length) {
 class EnterContractPage extends Component {
     
     state = {
-        selected: 0, type:'enter-contract', 
+        selected: 0, type:'enter-contract', id:makeid(8),
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:0,
         entered_indexing_tags:['enter', 'contract']
     };
@@ -110,6 +110,13 @@ class EnterContractPage extends Component {
 
 
     set_contract(contract){
+        if(this.state.contract_item['id'] != contract['id']){
+            this.setState({
+                selected: 0, type:'enter-contract', id:makeid(8),
+                contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:0,
+                entered_indexing_tags:['enter', 'contract']
+            })
+        }
         this.setState({contract_item: contract})
     }
 

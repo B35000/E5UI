@@ -13,11 +13,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class SubmitProposalPage extends Component {
     
     state = {
-        selected: 0, type:'submit', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['submit', 'proposal'],
-
+        selected: 0,id:makeid(8), type:'submit', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['submit', 'proposal'],
         submit_proposal_title_tags_object: this.get_submit_proposal_title_tags_object()
     };
 
@@ -143,6 +154,12 @@ class SubmitProposalPage extends Component {
 
 
     set_proposal(proposal){
+        if(this.state.proposal_item['id'] != proposal['id']){
+            this.setState({
+                selected: 0,id:makeid(8), type:'submit', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['submit', 'proposal'],
+                submit_proposal_title_tags_object: this.get_submit_proposal_title_tags_object()
+            })
+        }
         this.setState({proposal_item: proposal})
     }
 

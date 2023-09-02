@@ -46,7 +46,7 @@ function makeid(length) {
 class NewTokenPage extends Component {
     
     state = {
-        id: makeid(32), type:'token',
+        id: makeid(8), type:'token',
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:EndImg,
 
@@ -315,10 +315,10 @@ class NewTokenPage extends Component {
                 <div style={{height:10}}/>
 
                 <div className="row">
-                    <div className="col-9" style={{'margin': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-2" style={{'padding': '0px 5px 0px 0px'}}>
+                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
@@ -357,6 +357,9 @@ class NewTokenPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(this.state.entered_indexing_tags.includes(typed_word)){
+            this.props.notify('you cant enter the same word twice', 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()

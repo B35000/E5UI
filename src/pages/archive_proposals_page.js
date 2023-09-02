@@ -16,10 +16,22 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class ArchiveProposalPage extends Component {
     
     state = {
-        selected: 0, type:'archive', object_item:{'id':'', 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['archive', 'object'],
+        selected: 0, id:makeid(8), type:'archive', object_item:{'id':'', 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['archive', 'object'],
 
         archive_proposal_title_tags_object: this.get_archive_proposal_title_tags_object(),
         bounty_target:'', bounty_exchanges:[]
@@ -223,6 +235,13 @@ class ArchiveProposalPage extends Component {
 
 
     set_object(proposal){
+        if(this.state.object_item['id'] != proposal['id']){
+            this.setState({
+                selected: 0, id:makeid(8), type:'archive', object_item:{'id':0, 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['archive', 'object'],
+                archive_proposal_title_tags_object: this.get_archive_proposal_title_tags_object(),
+                bounty_target:'', bounty_exchanges:[]
+            })
+        }
         this.setState({object_item: proposal})
     }
 

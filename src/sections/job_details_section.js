@@ -27,7 +27,7 @@ class JobDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','details','responses'],[0]
+              ['xor','',0], ['e','details','responses'],[1]
           ],
         }
     }
@@ -95,7 +95,8 @@ class JobDetailsSection extends Component {
                     {this.render_job_posts_main_details_section()}
                 </div>
             )
-        }else if(selected_item == 'responses'){
+        }
+        else if(selected_item == 'responses'){
             return(
                 <div>
                     {this.render_job_post_responses()}
@@ -133,7 +134,39 @@ class JobDetailsSection extends Component {
                             <div style={{height:10}}/>
                         </div>
                     ))}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts they are offering for the job.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_price_amounts()}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    render_price_amounts(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        var items = object['ipfs'].price_data
+        console.log('-----------------------333------------------')
+        console.log(items)
+        return(
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
@@ -262,10 +295,61 @@ class JobDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme}  width={width}/>
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme}  width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 
+    }
+
+    format_power_figure(amount){
+        var power = 'e72'
+        if(amount < bigInt('1e9')){
+            power = 'e9'
+        }
+        else if(amount < bigInt('1e18')){
+            power = 'e18'
+        }
+        else if(amount < bigInt('1e36')){
+            power = 'e36'
+        }
+        else{
+            power = 'e72'
+        }
+        return power
+    }
+
+    calculate_bar_width(amount){
+        var figure = ''
+        if(amount == null){
+            amount = 0
+        }
+        if(amount < bigInt('1e9')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
+        }
+        else if(amount < bigInt('1e18')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
+        }
+        else if(amount < bigInt('1e36')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
+        }
+        else{
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
+        }
+
+        return figure+'%'
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
     }
 
 

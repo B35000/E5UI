@@ -31,7 +31,7 @@ function makeid(length) {
 class template extends Component {
     
     state = {
-        selected: 0, type: 'transfer',
+        selected: 0,id:makeid(8), type: 'transfer',
         new_transfer_action_page_tags_object: this.get_new_transfer_action_page_tags_object(),
         recipient_id:'', amount:0, token_item: {'balance':1, 'id':0}, stack_items:[], debit_balance:0,
         entered_indexing_tags:['transfer', 'send', 'token']
@@ -349,6 +349,14 @@ class template extends Component {
 
 
     set_token(item){
+        if(this.state.token_item['id'] != item['id']){
+            this.setState({
+                selected: 0,id:makeid(8), type: 'transfer',
+                new_transfer_action_page_tags_object: this.get_new_transfer_action_page_tags_object(),
+                recipient_id:'', amount:0, token_item: {'balance':1, 'id':0}, stack_items:[], debit_balance:0,
+                entered_indexing_tags:['transfer', 'send', 'token']
+            })
+        }
         this.setState({token_item: item})
     }
 

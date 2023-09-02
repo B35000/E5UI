@@ -17,13 +17,24 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 class VoteProposalPage extends Component {
     
     state = {
-        selected: 0, type:'vote', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:['vote', 'proposal'],
+        selected: 0, id:makeid(8), type:'vote', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:['vote', 'proposal'],
         vote_proposal_title_tags_object: this.get_vote_proposal_title_tags_object(),
         new_vote_tags_object: this.get_new_vote_tags_object(), 
-
         bounty_exchange_target:'', bounty_exchanges:[]
     };
 
@@ -314,6 +325,14 @@ class VoteProposalPage extends Component {
 
 
     set_proposal(proposal){
+        if(this.state.proposal_item['id'] != proposal['id']){
+            this.setState({
+                selected: 0, id:makeid(8), type:'vote', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:['vote', 'proposal'],
+                vote_proposal_title_tags_object: this.get_vote_proposal_title_tags_object(),
+                new_vote_tags_object: this.get_new_vote_tags_object(), 
+                bounty_exchange_target:'', bounty_exchanges:[]
+            })
+        }
         this.setState({proposal_item: proposal})
     }
 

@@ -34,7 +34,7 @@ function makeid(length) {
 class NewMintActionPage extends Component {
     
     state = {
-        selected: 0,
+        selected: 0, id:makeid(8),
         new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
         recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, stack_item_selected:0, 
         stack_items:[],
@@ -511,6 +511,14 @@ class NewMintActionPage extends Component {
 
 
     set_token(item){
+        if(this.state.token_item['id'] != item['id']){
+            this.setState( {
+                selected: 0, id:makeid(8),
+                new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
+                recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, stack_item_selected:0, 
+                stack_items:[],
+            })
+        }
         this.setState({token_item: item})
     }
 
