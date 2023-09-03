@@ -326,7 +326,7 @@ class App extends Component {
       show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
       show_images={this.show_images.bind(this)}
 
-      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)}
+      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)}
       />
     )
   }
@@ -349,6 +349,30 @@ class App extends Component {
     }
     this.setState({stack_items: stack})
   }
+
+
+  add_channel_message_to_stack_object(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'channel-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'channel-messages', entered_indexing_tags:['send', 'channel','messages'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+  }
+
+
+
+
 
 
   render_synchronizing_bottomsheet(){
@@ -2344,7 +2368,14 @@ class App extends Component {
       var hash = web3.utils.keccak256('en')
       if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
         var channel_data = await this.fetch_objects_data(id, web3);
-        created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i]})
+
+        var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
+        var messages = []
+        for(var j=0; j<created_channel_data.length; j++){
+          var ipfs_message = await this.fetch_objects_data_from_ipfs(created_channel_data[j].returnValues.p4)
+          messages.push(ipfs_message)
+        }
+        created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':messages})
       }
     }
     this.setState({created_channels: created_channel})
@@ -2396,12 +2427,13 @@ class App extends Component {
 
 
     /* ---------------------------------------- MAIL DATA ------------------------------------------- */
-    var my_created_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc_id */: account, p3/* context */:30 } }, (error, events) => {});
+    var my_created_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc_id */: account, p3/* context */:'30' } }, (error, events) => {});
     var created_mail = []
     var mail_activity = {}
     for(var i=0; i<my_created_mail_events.length; i++){
       var convo_id = my_created_mail_events[i].returnValues.p5
       var cid = my_created_mail_events[i].returnValues.p4
+      
       var ipfs = await this.fetch_objects_data_from_ipfs(cid)
 
       if(!created_mail.includes(convo_id)){
@@ -2421,7 +2453,7 @@ class App extends Component {
     }
 
 
-    var my_received_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:30 } }, (error, events) => {});
+    var my_received_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:'30' } }, (error, events) => {});
     var received_mail = []
     var mail_activity = {}
     for(var i=0; i<my_received_mail_events.length; i++){
@@ -2434,12 +2466,6 @@ class App extends Component {
         if(mail_activity[convo_id] == null){
           mail_activity[convo_id] = []
         }
-
-        // try{
-          
-        // }catch(e){
-        //   console.log(e)
-        // }
       }
       var ipfs_obj = await this.get_ipfs_object(ipfs)
       mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1})
@@ -2639,9 +2665,12 @@ class App extends Component {
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
 
+    if(encrypted_ipfs_obj['recipient_data'] == null){
+      return null
+    }
     var encrypted_key = encrypted_ipfs_obj['recipient_data'][this.state.user_account_id]
     var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
-    
+  
     var my_key = await ecies.decrypt(private_key_to_use, uint8array)
     var encrypted_object = encrypted_ipfs_obj['obj']
     
@@ -2649,8 +2678,6 @@ class App extends Component {
     try{
       var bytes  = CryptoJS.AES.decrypt(encrypted_object, my_key.toString());
       var originalText = bytes.toString(CryptoJS.enc.Utf8);
-      console.log('------------------------333------------------------')
-      console.log(JSON.parse(originalText))
       return JSON.parse(originalText);
     }catch(e){
       console.log(e)

@@ -812,7 +812,7 @@ class PostListSection extends Component {
         return {
                 'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': obj[name]},
                 'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
-                'address':{'font':'Sans-serif', 'text':add_obj['e35'], 'textsize':'13px'}
+                'address':{'font':'Sans-serif', 'text':add_obj['e35'], 'textsize':'12px'}
             }
     }
 

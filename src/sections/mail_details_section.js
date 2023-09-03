@@ -218,6 +218,7 @@ class MailDetailsSection extends Component {
 
 
 
+
     render_mail_responses(){
         var he = this.props.height-90
         var size = this.props.screensize
@@ -448,6 +449,11 @@ class MailDetailsSection extends Component {
     }
 
 
+
+
+
+
+    
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];

@@ -844,6 +844,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
+                else if(txs[i].type == 'channel-messages'){
+                    var message_obj = await this.format_channel_message_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)    
+                }
                 
             }
             
@@ -1849,6 +1856,38 @@ class StackPage extends Component {
     }
 
 
+    format_channel_message_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            console.log('-------------------e------------------')
+            console.log(t.messages_to_deliver[i]['id'])
+
+            var target_id = t.messages_to_deliver[i]['id']
+            var context = 35
+            var int_data = 0
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
+
+
 
 
 
@@ -1946,7 +1985,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 30px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'padding': '0px 10px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
