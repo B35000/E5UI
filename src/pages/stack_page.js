@@ -837,6 +837,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(mail_obj.int)    
                 }
+                else if(txs[i].type == 'mail-messages'){
+                    var message_obj = await this.format_message_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)    
+                }
                 
             }
             
@@ -1777,22 +1784,8 @@ class StackPage extends Component {
         [] /* int_data */
       ]
 
-      var string_obj = [[]]
-
-      var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t));
-
-    //   for(var i=0; i<t.recipients.length; i++){
-    //       var recipient_account = t.recipients[i]
-    //       var context = 30
-    //       var int_data = Date.now()
-
-    //       obj[1].push(recipient_account)
-    //       obj[2].push(23)
-    //       obj[3].push(context)
-    //       obj[4].push(int_data)
-
-    //       string_obj[0].push(string_data)
-    //   }
+        var string_obj = [[]]
+        var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t, t.target_recipient));
 
         var recipient_account = t.target_recipient
         var context = 30
@@ -1808,22 +1801,11 @@ class StackPage extends Component {
       return {int: obj, str: string_obj}
     }
 
-
-    get_encrypted_mail_message = async (t) =>{
+    get_encrypted_mail_message = async (t, recip) =>{
         var key = makeid(35)
         var encrypted_obj = this.props.encrypt_data_object(t, key)
         var recipent_data = {}
-        // for(var i=0; i<t.recipients.length; i++){
-        //     var recipient = t.recipients[i]
-        //     var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient)
-
-        //     if(recipients_pub_key_hash != ''){
-        //         var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
-
-        //         recipent_data[parseInt(recipient)] = encrypted_key
-        //     }
-        // }
-        var recipient = t.target_recipient
+        var recipient = recip
         var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient)
 
         if(recipients_pub_key_hash != ''){
@@ -1838,6 +1820,33 @@ class StackPage extends Component {
         return {'obj':encrypted_obj, 'recipient_data':recipent_data}
     }
 
+    format_message_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            var recipient_account = t.messages_to_deliver[i]['recipient']
+            var context = 30
+            var int_data = t.messages_to_deliver[i].convo_id
+
+            var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t.messages_to_deliver[i], t.messages_to_deliver[i]['recipient']));
+
+            obj[1].push(recipient_account)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
 
 
 
@@ -1938,9 +1947,6 @@ class StackPage extends Component {
         if(size == 's'){
             return(
                 <div style={{'padding': '0px 30px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Set the seed and salt for your preferred wallet', 'color':'dark-grey'})}
-                    <div style={{height: 20}}/>
-
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
@@ -1994,7 +2000,6 @@ class StackPage extends Component {
 
                 {this.render_detail_item('3',{'title':'Wallet Thyme', 'details':'Set the preferred thyme for your wallet', 'size':'l'})}
                 <Tags page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
-                {this.render_detail_item('0')}
 
                 {this.render_detail_item('5',{'text':'Set Wallet','action':'when_set_wallet_button_tapped'})}
                 {this.render_detail_item('0')}

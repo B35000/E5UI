@@ -2409,14 +2409,9 @@ class App extends Component {
         if(mail_activity[convo_id] == null){
           mail_activity[convo_id] = []
         }
-
-        try{
-          var ipfs_obj = await this.get_ipfs_object(ipfs)
-          mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1})
-        }catch(e){
-          console.log(e)
-        }
       }
+      var ipfs_obj = await this.get_ipfs_object(ipfs)
+      mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1})
     }
     this.setState({created_mail: {'created_mail':created_mail, 'mail_activity':mail_activity}})
     console.log('created mail count: '+created_mail.length)
@@ -2440,13 +2435,14 @@ class App extends Component {
           mail_activity[convo_id] = []
         }
 
-        try{
-          var ipfs_obj = await this.get_ipfs_object(ipfs)
-          mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1})
-        }catch(e){
-          console.log(e)
-        }
+        // try{
+          
+        // }catch(e){
+        //   console.log(e)
+        // }
       }
+      var ipfs_obj = await this.get_ipfs_object(ipfs)
+      mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1})
     }
     this.setState({received_mail: {'received_mail':received_mail, 'mail_activity':mail_activity}})
     console.log('received mail count: '+created_mail.length)
@@ -2618,13 +2614,15 @@ class App extends Component {
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.E35_addresses[1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-    var events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:0} }, (error, events) => {});
+    var events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:'0'} }, (error, events) => {});
 
-    if(events.length == 0){
+    var filtered_events = events;
+
+    if(filtered_events.length == 0){
       return ''
     }
 
-    var obj_key = await this.fetch_objects_data_from_ipfs(events[events.length-1].returnValues.p4)
+    var obj_key = await this.fetch_objects_data_from_ipfs(filtered_events[filtered_events.length-1].returnValues.p4)
     var uint8array = Uint8Array.from(obj_key['key'].split(',').map(x=>parseInt(x,10))); 
     return uint8array
   }
@@ -2647,9 +2645,12 @@ class App extends Component {
     var my_key = await ecies.decrypt(private_key_to_use, uint8array)
     var encrypted_object = encrypted_ipfs_obj['obj']
     
+
     try{
       var bytes  = CryptoJS.AES.decrypt(encrypted_object, my_key.toString());
       var originalText = bytes.toString(CryptoJS.enc.Utf8);
+      console.log('------------------------333------------------------')
+      console.log(JSON.parse(originalText))
       return JSON.parse(originalText);
     }catch(e){
       console.log(e)

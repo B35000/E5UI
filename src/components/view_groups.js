@@ -308,7 +308,7 @@ class ViewGroups extends Component {
             var items = object_data == null ? [] :object_data['images'];
             var items_pos = object_data == null ? 0 : object_data['pos'];
             return(
-                <div style={{'margin':'5px 0px 0px 10px'}}>
+                <div style={{'margin':'5px 0px 0px 0px'}}>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>

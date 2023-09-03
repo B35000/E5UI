@@ -226,12 +226,14 @@ class MailDetailsSection extends Component {
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        {this.render_top_title()}
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages()}
                     </div>
                 </div>
 
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
-                    {/* {this.render_image_picker()} */}
+                    {this.render_image_picker()}
                     <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
                         <TextInput height={30} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
@@ -242,6 +244,17 @@ class MailDetailsSection extends Component {
                 </div>
             </div>
             
+        )
+    }
+
+    render_top_title(){
+        var mail = this.get_mail_items()[this.props.selected_mail_item];
+        var sender = mail['sender']
+        var recipient = mail['recipient']
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':sender+' with '+recipient, 'details':'conversation', 'size':'l'})} 
+            </div>
         )
     }
 
@@ -281,7 +294,7 @@ class MailDetailsSection extends Component {
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div key={index}>
-                                    {this.render_detail_item('3', {'title':item['sender'], 'details':item['ipfs']['message'], 'size':'s'})} 
+                                    {this.render_stack_message_item(item['ipfs'])}  
                                     <div style={{height:3}}/>
                                 </div>
                             </li> 
@@ -289,7 +302,7 @@ class MailDetailsSection extends Component {
                         {stacked_items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div >
-                                    {this.render_detail_item('3', {'title':item['sender'], 'details':item['message'], 'size':'s'})} 
+                                    {this.render_stack_message_item(item)} 
                                     <div style={{height:3}}/>
                                 </div>
                             </li>
@@ -298,6 +311,49 @@ class MailDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_stack_message_item(item){
+        if(item.type == 'message'){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                          </div>
+                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                          </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{this.format_message(item['message'])}</p>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                          </div>
+                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                          </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{this.format_message(item['message'])}</p>
+
+                    {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+    format_message(message){
+        if(message == ''){
+            return '...'
+        }
+        return message
     }
 
     get_convo_messages(){
@@ -318,8 +374,19 @@ class MailDetailsSection extends Component {
     get_stacked_items(){
         var mail = this.get_mail_items()[this.props.selected_mail_item];
         var convo_id = mail['convo_id']
-        var stacked_items = this.state.stacked_messages[0][convo_id]
-        if(stacked_items == null) return []
+
+        var stack = this.props.app_state.stack_items
+        var stacked_items = []
+        for(var i=0; i<stack.length; i++){
+            if(stack[i].type == 'mail-messages'){
+                for(var e=0; e<stack[i].messages_to_deliver.length; e++){
+                    var message_obj = stack[i].messages_to_deliver[e]
+                    if(message_obj.convo_id == convo_id){
+                        stacked_items.push(message_obj)
+                    }
+                }
+            }
+        }
         return stacked_items
     }
 
@@ -340,14 +407,13 @@ class MailDetailsSection extends Component {
             for(var i = 0; i < e.target.files.length; i++){ 
                 let reader = new FileReader();
                 reader.onload = function(ev){
-                    const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
-                    clonedArray.push(ev.target.result);
-                    this.setState({entered_image_objects: clonedArray});
+                    var image = ev.target.result
+                    this.add_image_to_stack(image)
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
             }
-            var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+            // var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 
@@ -362,22 +428,23 @@ class MailDetailsSection extends Component {
             this.props.notify('type something first', 600)
         }else{
             var convo_id = mail['convo_id']
-            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'recipient':mail['convo_with']}
+            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'recipient':mail['convo_with'], 'time':Date.now()/1000}
             this.props.add_mail_to_stack_object(tx)
-            
-            var clone = this.state.stacked_messages.slice()
-            if(clone[0][convo_id] == null){
-                clone[0][convo_id] = []
-            }
-            clone[0][convo_id].push(tx)
 
-            this.setState({entered_text:'', stacked_messages: clone})
+            this.setState({entered_text:''})
             this.props.notify('message added to stack', 600)
         }
     }
 
-    add_images_to_stack(){
+    add_image_to_stack(image){
+        var message = this.state.entered_text.trim()
+        var mail = this.get_mail_items()[this.props.selected_mail_item];
+        var convo_id = mail['convo_id']
+        var tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id, 'recipient':mail['convo_with'],'time':Date.now()/1000}
+        this.props.add_mail_to_stack_object(tx)
 
+        this.setState({entered_text:''})
+        this.props.notify('message added to stack', 600)
     }
 
 
