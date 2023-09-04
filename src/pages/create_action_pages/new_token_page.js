@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups';
-import Tags from './../components/tags';
-import NumberPicker from './../components/number_picker';
-import TextInput from './../components/text_input';
-import Letter from './../assets/letter.png';
+import ViewGroups from '../../components/view_groups';
+import Tags from '../../components/tags';
+import NumberPicker from '../../components/number_picker';
+import TextInput from '../../components/text_input';
+import Letter from '../../assets/letter.png';
 
-import EndImg from './../assets/end_token_icon.png';
-import SpendImg from './../assets/spend_token_icon.png';
-import AddStack from './../assets/e5empty_icon3.png'; 
-import E5EmptyIcon from './../assets/e5empty_icon.png';
-import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
+import EndImg from '../../assets/end_token_icon.png';
+import SpendImg from '../../assets/spend_token_icon.png';
+import AddStack from '../../assets/e5empty_icon3.png'; 
+import E5EmptyIcon from '../../assets/e5empty_icon.png';
+import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
 
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";

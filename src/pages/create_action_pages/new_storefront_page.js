@@ -1,20 +1,15 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups';
-import Tags from './../components/tags';
-import TextInput from './../components/text_input';
-import Letter from './../assets/letter.png';
-import E5EmptyIcon from './../assets/e5empty_icon.png';
-import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
+import ViewGroups from '../../components/view_groups';
+import Tags from '../../components/tags';
+import TextInput from '../../components/text_input';
+
+import Letter from '../../assets/letter.png';
+import E5EmptyIcon from '../../assets/e5empty_icon.png';
+import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
+
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
-
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Draggable } from "react-drag-reorder";
 
 
@@ -34,50 +29,25 @@ function makeid(length) {
     return result;
 }
 
-class NewChannelPage extends Component {
+class NewStorefrontPage extends Component {
     
     state = {
-        id: makeid(8), type:'channel',
+        id: makeid(8), type:'storefront',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[],
-
-        new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), 
-        new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
-        moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
+        entered_objects:[], store_items:[], delivery_included_tags_object: this.get_delivery_included_tags_object()
     };
 
+    /* it says 'job' here because I lazily copy-pasted this from the other file */
     get_new_job_page_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images', 'authorities'], [0]
-            ],
-        };
-    }
-
-    get_new_token_interactible_moderator_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','moderators', 'interactible'], [1]
-            ],
-        };
-    }
-
-    get_new_token_access_rights_tags_object(){
-        return{
-            'i':{
-                active:'e', 
-            },
-            'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['or','',0], ['e','text', 'images', 'store-items'], [0]
             ],
         };
     }
@@ -100,6 +70,16 @@ class NewChannelPage extends Component {
     }
 
 
+    get_delivery_included_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','included', 'not-included'], [1]
+            ],
+        };
+    }
 
 
 
@@ -108,10 +88,10 @@ class NewChannelPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
                 <div className="row">
-                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                    <div className="col-10" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
                             {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
                         </div>
@@ -120,7 +100,7 @@ class NewChannelPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
+                <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -128,9 +108,11 @@ class NewChannelPage extends Component {
         )
     }
 
-     when_new_job_page_tags_updated(tag_group){
+    when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
+
+     
 
 
     render_everything(){
@@ -157,10 +139,10 @@ class NewChannelPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'authorities'){
+        else if(selected_item == 'store-items'){
             return(
                 <div>
-                    {this.render_authorities_part()}
+                    {this.render_enter_store_items_part()}
                 </div>
             ) 
         }
@@ -173,6 +155,102 @@ class NewChannelPage extends Component {
     }
 
 
+    render_enter_store_items_part(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div style={{'padding': '10px 0px 0px 10px'}}>
+                    <div style={{'padding': '5px'}} onClick={()=>this.create_new_store_item()}>
+                        {this.render_detail_item('5', {'text':'New Store Item', 'action':'finish_creating_object'})}
+                    </div>
+                    
+                    {this.render_created_store_items()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-6" style={{'padding': '10px 0px 0px 20px'}}>
+                        <div style={{'padding': '5px'}} onClick={()=>this.create_new_store_item()}>
+                            {this.render_detail_item('5', {'text':'New Store Item', 'action':'finish_creating_object'})}
+                        </div>
+                        {this.render_created_store_items()}
+                    </div>
+                    <div className="col-6">
+                        
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    create_new_store_item(){
+        this.props.open_new_store_item_bottomsheet()
+    }
+
+    render_created_store_items(){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var items = this.state.store_items;
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+
+        if(items.length == 0){
+            items = [1,2,3]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
+                                    <div style={{'padding': '5px 0px 5px 5px'}}>
+                                        {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+                                        <div style={{height: 10}}/>
+                                        {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':item.entered_title_text})}
+                                        <div style={{height: 10}}/>
+                                        {this.render_detail_item('3',{'title':item.entered_objects.length, 'details':'metadata item groups','size':'l'})}
+
+                                        <div style={{'padding': '5px'}} onClick={()=>this.edit_storefront_item(item)}>
+                                            {this.render_detail_item('5', {'text':'Edit', 'action':''})}
+                                        </div>
+
+                                    </div>         
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    edit_storefront_item(item){
+        this.props.edit_storefront_item(item)
+    }
+
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -180,6 +258,7 @@ class NewChannelPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
+                    
                     {this.render_new_job_object()}
                     {this.render_detail_item('0')}
                     {this.render_created_obj_objects()}
@@ -206,12 +285,12 @@ class NewChannelPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Channel'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Store'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
-                <div style={{height:20}}/>
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Channel'})}
+                {this.render_detail_item('0')}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Store'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
@@ -222,6 +301,13 @@ class NewChannelPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Delivery Options', 'details':'If set to included, you are responsible for delivering your storefront items purchased.', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.delivery_included_tags_object} tag_size={'l'} when_tags_updated={this.when_delivery_included_tags_object.bind(this)} theme={this.props.theme}/>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -234,6 +320,10 @@ class NewChannelPage extends Component {
 
     when_index_text_input_field_changed(text){
         this.setState({entered_tag_text: text})
+    }
+
+    when_delivery_included_tags_object(tag_obj){
+        this.setState({delivery_included_tags_object: tag_obj})
     }
 
     add_indexing_tag_for_new_job(){
@@ -354,7 +444,7 @@ class NewChannelPage extends Component {
         var all_states = this.props.app_state.stack_items
         var channel_states = []
         for(var i=0; i<all_states.length; i++){
-            if(all_states[i].type == 'channel'){
+            if(all_states[i].type == 'storefront'){
                 channel_states.push(all_states[i])
             }
         }
@@ -654,267 +744,6 @@ class NewChannelPage extends Component {
 
 
 
-    render_authorities_part(){
-        var size = this.props.size
-        var height = this.props.height-150
-
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_moderator_interactible_ui()}
-                </div>
-            )
-        }
-    }
-
-    render_subscription_authority_target(){
-        return(
-            <div>
-                 {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the channel will be restricted to moderators and specified accounts', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
-            </div>
-        )
-    }
-
-    when_new_token_access_rights_tags_object(tag_obj){
-        this.setState({new_token_access_rights_tags_object: tag_obj})
-    }
-
-
-    render_moderator_interactible_ui(){
-        return(
-            <div>
-                <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/>
-
-                {this.render_moderator_or_interactible_setting()}
-            </div>
-        )
-    }
-
-    when_new_token_interactible_moderator_tags_object(tag_obj){
-        this.setState({new_token_interactible_moderator_tags_object: tag_obj})
-    }
-
-    render_moderator_or_interactible_setting(){
-        var selected_item = this.get_selected_item(this.state.new_token_interactible_moderator_tags_object, this.state.new_token_interactible_moderator_tags_object['i'].active)
-
-        if(selected_item == 'moderators' || selected_item == 'e'){
-            return(
-                <div>
-                    {this.render_moderator_settings()}
-                </div>
-            )    
-        }
-        else if(selected_item == 'interactible'){
-            return(
-                <div>
-                    {this.render_interactible_settings()}
-                </div>
-            ) 
-        }
-    }
-
-
-    render_moderator_settings(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
-
-
-                <div style={{height: 10}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
-                </div>
-
-                {this.render_added_moderators()}
-            </div>
-        )
-    }
-
-    when_moderator_id_input_field_changed(text){
-        this.setState({moderator_id: text})
-    }
-
-    when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id)){
-            this.props.notify('please put a valid account id', 600)
-        }
-        else{
-            var moderators_clone = this.state.moderators.slice()
-            moderators_clone.push(parseInt(moderator_id))
-            this.setState({moderators: moderators_clone});
-            this.props.notify('added moderator!', 400)
-        }
-    }
-
-    render_added_moderators(){
-        var middle = this.props.height-200;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = this.state.moderators
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-            )
-        }else{
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item, 'details':'Account ID', 'size':'l'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    when_moderator_account_clicked(item){
-        var cloned_array = this.state.moderators.slice()
-        const index = cloned_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({moderators: cloned_array})
-    }
-
-    render_interactible_settings(){
-        return(
-            <div>
-                <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Interactible ID'} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
-
-                <div style={{height:20}}/>
-
-                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
-                    <CssBaseline />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
-                    </LocalizationProvider>
-                </ThemeProvider>
-
-                <div style={{height:20}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Interactible Account', 'action':''})}
-                </div>
-                
-                <div style={{height:20}}/>
-                {this.render_set_interactible_accounts()}
-            </div>
-        )
-    }
-
-    when_interactible_id_input_field_changed(text){
-        this.setState({interactible_id: text})
-    }
-
-    when_new_dat_time_value_set(value){
-        const selectedDate = value instanceof Date ? value : new Date(value);
-        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
-        this.setState({interactible_timestamp: timeInSeconds})
-    }
-
-    when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id)){
-            this.props.notify('please put a valid account id', 600)
-        }
-        else{
-            var interactibles_clone = this.state.interactibles.slice()
-            interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
-            this.setState({interactibles: interactibles_clone});
-            this.props.notify('added interactible account!', 400)
-        }
-    }
-
-    render_set_interactible_accounts(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = this.state.interactibles
-
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-            )
-        }else{
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Interactible Account ID: '+item['id'], 'details':'Until: '+(new Date(item['timestamp']*1000)), 'size':'l'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    when_interactible_account_clicked(item){
-        var cloned_array = this.state.interactibles.slice()
-        const index = cloned_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({interactibles: cloned_array})
-    }
-
-
-
-
-    
-
-
-
-
-
-
-
-
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         return(
@@ -938,13 +767,11 @@ class NewChannelPage extends Component {
             this.props.notify('add some tags first!', 700)
         }
         else if(title == ''){
-            this.props.notify('add a title for your channel', 700)
+            this.props.notify('add a title for your Store', 700)
         }else{
-            
             this.props.when_add_new_object_to_stack(this.state)
 
-            this.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
-            
+            this.setState({ id: makeid(32), type:'storefront', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], store_items:[], delivery_included_tags_object: this.get_delivery_included_tags_object() })
             this.props.notify('transaction added to stack', 700);
         }
     }
@@ -958,10 +785,30 @@ class NewChannelPage extends Component {
         this.setState({action: action})
     }
 
+    add_data_to_new_store_item(data){
+        var clone_data = this.state.store_items.slice()
+        var pos = -1;
+        for(var i=0; i<clone_data.length; i++){
+            if(clone_data[i].id == data.id){
+                pos = i
+            }
+        }
+        if(pos == -1){
+            clone_data.push(data)
+            this.props.notify('your item has been addded!',700)
+        }else{
+            clone_data[pos] = data;
+            this.props.notify('your item has been updated!',700)
+        }
+        
+        this.setState({store_items: clone_data})
+        
+    }
+
 
 }
 
 
 
 
-export default NewChannelPage;
+export default NewStorefrontPage;

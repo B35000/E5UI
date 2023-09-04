@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups'
-import Tags from './../components/tags';
+import ViewGroups from '../../components/view_groups'
+import Tags from '../../components/tags';
 
 var bigInt = require("big-integer");
 

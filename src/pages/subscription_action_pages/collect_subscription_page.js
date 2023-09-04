@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups'
-import Tags from './../components/tags';
-import NumberPicker from './../components/number_picker';
+import ViewGroups from '../../components/view_groups'
+import Tags from '../../components/tags';
+import NumberPicker from '../../components/number_picker';
+
+import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
 
@@ -26,20 +28,20 @@ function makeid(length) {
     return result;
 }
 
-class CancelSubscriptionPage extends Component {
+class CollectSubscriptionPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8), type:'cancel-subscription', entered_indexing_tags:['cancel', 'subscription'],
-        subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'payment':0}, cancel_subscription_title_tags_object:this.get_cancel_subscription_title_tags_object(), time_units:0
+        selected: 0, id:makeid(8),type:'collect-subscription', entered_indexing_tags:['collect', 'subscription', 'payments'],
+        subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'paid_accounts':[], 'paid_amounts':[]}, collect_subscription_title_tags_object:this.get_collect_subscription_title_tags_object()
     };
 
-    get_cancel_subscription_title_tags_object(){
+    get_collect_subscription_title_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','cancel-subscription'], [1]
+                ['xor','',0], ['e','collect-subscription'], [1]
             ],
         };
     }
@@ -50,7 +52,7 @@ class CancelSubscriptionPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.cancel_subscription_title_tags_object} tag_size={'l'} when_tags_updated={this.when_cancel_subscription_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags page_tags_object={this.state.collect_subscription_title_tags_object} tag_size={'l'} when_tags_updated={this.when_collect_subscription_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -65,50 +67,46 @@ class CancelSubscriptionPage extends Component {
         )
     }
 
-    when_cancel_subscription_title_tags_object_updated(tag_obj){
-        this.setState({cancel_subscription_title_tags_object: tag_obj})
+    when_collect_subscription_title_tags_object_updated(tag_obj){
+        this.setState({collect_subscription_title_tags_object: tag_obj})
     }
 
 
     render_everything(){
-        var subscription_config = this.state.subscription_item['data'][1]
-        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Cancel the subscription ID: '+this.state.subscription_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Collect token payments for the subscription ID: '+this.state.subscription_item['id']})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'s'})}
-
+                {this.render_detail_item('3', {'title':''+this.get_time_diff(this.get_total_subscription_collectible_time()), 'details':'Total Collectible Time', 'size':'s'})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.subscription_item['payment']), 'details':'Remaining Subscription Time', 'size':'l'})}
 
-                {this.render_detail_item('0')}
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Time Units To Cancel', 'subtitle':this.format_power_figure(this.state.time_units), 'barwidth':this.calculate_bar_width(this.state.time_units), 'number':this.format_account_balance_figure(this.state.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
-
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_units_set.bind(this)} theme={this.props.theme} power_limit={27}/>
+                {this.render_detail_item('3', {'title':''+this.get_total_subscription_collectible_timeunits(), 'details':'Total Collectible Time Units', 'size':'s'})}
+                <div style={{height: 10}}/>
 
                 {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+
+                {this.render_paid_subscriptions()}
             </div>
         )
     }
 
-    get_time_units_time(){
-        var subscription_config = this.state.subscription_item['data'][1]
-        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
-        var final_time = bigInt(time_unit).multiply(this.state.time_units)
-        return this.get_time_diff(final_time)
+    get_total_subscription_collectible_time(){
+        var paid_amount_items = this.state.subscription_item['paid_amounts']
+        var total_time = 0;
+        for(var i=0; i<paid_amount_items.length; i++){
+            total_time += paid_amount_items[i]
+        }
+        return total_time;
     }
 
-    when_time_units_set(number){
-        this.setState({time_units: number})
+    get_total_subscription_collectible_timeunits(){
+        var subscription_config = this.state.subscription_item['data'][1]
+        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+
+        return bigInt(this.get_total_subscription_collectible_time()).divide(bigInt(time_unit))
     }
 
 
@@ -128,30 +126,77 @@ class CancelSubscriptionPage extends Component {
     }
 
     calculate_final_amount(price){
-        return bigInt(price).multiply(this.state.time_units)
+        return bigInt(price).multiply(this.get_total_subscription_collectible_timeunits())
     }
+
+
+
+
 
 
 
     set_subscription(subscription_item){
         if(this.state.subscription_item['id'] != subscription_item['id']){
             this.setState({
-                selected: 0,id:makeid(8), type:'cancel-subscription', entered_indexing_tags:['cancel', 'subscription'],
-                subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'payment':0}, cancel_subscription_title_tags_object:this.get_cancel_subscription_title_tags_object(), time_units:0
+                selected: 0, id:makeid(8),type:'collect-subscription', entered_indexing_tags:['collect', 'subscription', 'payments'],
+                subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'paid_accounts':[], 'paid_amounts':[]}, collect_subscription_title_tags_object:this.get_collect_subscription_title_tags_object()
             })
         }
         this.setState({subscription_item: subscription_item})
     }
 
-    finish(){
-        var time_units_picked = this.state.time_units
-        if(time_units_picked == 0){
-            this.props.notify('set a valid time unit amount!', 700)
+    render_paid_subscriptions(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.subscription_item['paid_accounts']
+        var paid_amount_items = this.state.subscription_item['paid_amounts']
+
+        if(items.length == 0){
+            items = [0,3]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '3px'}} onClick={()=>console.log()}>
+                                <div style={{height:50, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
         }else{
-            this.props.add_cancel_subscription_to_stack(this.state)
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_transfer_action_value_clicked(item)}>
+                                {this.render_detail_item('3', {'title':'Account ID: '+item, 'details':'Collectible time: '+this.get_time_diff(paid_amount_items[index]), 'size':'s'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    finish(){
+        var time_units = this.get_total_subscription_collectible_timeunits()
+        if(time_units == 0){
+            this.props.notify('you cant collect no time units', 700)
+        }else{
+            this.props.add_collect_subscription_to_stack(this.state)
             this.props.notify('transaction added to stack', 700);
         }
     }
+
+
 
 
 
@@ -268,10 +313,9 @@ class CancelSubscriptionPage extends Component {
     }
 
 
-
 }
 
 
 
 
-export default CancelSubscriptionPage;
+export default CollectSubscriptionPage;

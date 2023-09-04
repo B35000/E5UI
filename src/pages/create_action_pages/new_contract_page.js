@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups';
-import Tags from './../components/tags';
-import NumberPicker from './../components/number_picker';
-import TextInput from './../components/text_input';
+import ViewGroups from '../../components/view_groups';
+import Tags from '../../components/tags';
+import NumberPicker from '../../components/number_picker';
+import TextInput from '../../components/text_input';
 
-import Letter from './../assets/letter.png';
+import Letter from '../../assets/letter.png';
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -167,7 +167,7 @@ class NewContractPage extends Component {
                     </div>
                     
                     
-                    <div style={{'margin':'20px 0px 0px 0px'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
                         {this.render_everything()}   
                     </div>
                     
@@ -1010,8 +1010,6 @@ class NewContractPage extends Component {
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
-                {this.render_detail_item('0')}
-
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
                 </div>
@@ -1059,9 +1057,9 @@ class NewContractPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>

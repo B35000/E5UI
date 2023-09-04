@@ -128,22 +128,68 @@ class JobDetailsSection extends Component {
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
-                    {items.map((item, index) => (
-                        <div key={index}>
-                            {this.render_detail_item(item['type'], item['data'])} 
-                            <div style={{height:10}}/>
-                        </div>
-                    ))}
+                    {this.render_item_data(items)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts they are offering for the job.', 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_price_amounts()}
+
+                    {this.render_detail_item('3', {'title':'Apply for the job', 'details':'Respond to the ad with a contract and apply for the job', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_respond_to_job_ui()}>
+                        {this.render_detail_item('5', {'text':'Apply', 'action':''})}
+                    </div>
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    render_item_data(items){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        if(items.length == 0){
+            items = [0, 1, 2]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            {this.render_detail_item(item['type'], item['data'])} 
+                            <div style={{height:10}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    open_respond_to_job_ui(){
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        this.props.open_respond_to_job_ui(object)
     }
 
     render_price_amounts(){

@@ -55,7 +55,7 @@ class PostDetailSection extends Component {
             var selected_tag = this.props.work_page_tags_object['i'].active
             if(selected_tag == 'jobs' || selected_tag == 'e'){
                 return(
-                    <JobDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_job_post_item={this.props.selected_job_post_item} work_page_tags_object={this.props.work_page_tags_object} viewed_jobs={this.props.viewed_jobs} show_images={this.props.show_images.bind(this)}/>
+                    <JobDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_job_post_item={this.props.selected_job_post_item} work_page_tags_object={this.props.work_page_tags_object} viewed_jobs={this.props.viewed_jobs} show_images={this.props.show_images.bind(this)} open_respond_to_job_ui={this.props.open_respond_to_job_ui.bind(this)}/>
                 )
             }
             else if(selected_tag == 'contracts' ){

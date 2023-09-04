@@ -53,7 +53,7 @@ class NumberPicker extends Component {
                     {this.render_number_picker_sliders()}
                     <div style={{height: 10}}/>
                     <div className="row">
-                        <div className="col-8" style={{'padding': '5px 0px 0px 10px'}}>
+                        <div className="col-8" style={{'padding': '0px 0px 0px 10px'}}>
                             {this.render_detail_item('1', this.get_number_power_data())}
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>

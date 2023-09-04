@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import Tags from './../components/tags';
-import ViewGroups from './../components/view_groups'
-import TextInput from './../components/text_input';
-import NumberPicker from './../components/number_picker';
+import Tags from '../../components/tags';
+import ViewGroups from '../../components/view_groups'
+import TextInput from '../../components/text_input';
+import NumberPicker from '../../components/number_picker';
 
 
 var bigInt = require("big-integer");

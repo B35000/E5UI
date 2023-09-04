@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups'
-import Tags from './../components/tags';
-import TextInput from './../components/text_input';
-import NumberPicker from './../components/number_picker';
+import ViewGroups from '../../components/view_groups'
+import Tags from '../../components/tags';
+import TextInput from '../../components/text_input';
+import NumberPicker from '../../components/number_picker';
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -10,7 +10,7 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import Letter from './../assets/letter.png';
+import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
 

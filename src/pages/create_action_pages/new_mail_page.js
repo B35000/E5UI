@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups'
-import Tags from './../components/tags';
-import TextInput from './../components/text_input';
-import Letter from './../assets/letter.png';
-import E5EmptyIcon from './../assets/e5empty_icon.png';
-import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
+import ViewGroups from '../../components/view_groups'
+import Tags from '../../components/tags';
+import TextInput from '../../components/text_input';
+import Letter from '../../assets/letter.png';
+import E5EmptyIcon from '../../assets/e5empty_icon.png';
+import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';

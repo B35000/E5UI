@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups';
-import Tags from './../components/tags';
-import TextInput from './../components/text_input';
-import NumberPicker from './../components/number_picker';
+import ViewGroups from '../../components/view_groups';
+import Tags from '../../components/tags';
+import TextInput from '../../components/text_input';
+import NumberPicker from '../../components/number_picker';
 
-import AddStack from './../assets/e5empty_icon3.png'; 
-import Letter from './../assets/letter.png';
+import AddStack from '../../assets/e5empty_icon3.png'; 
+import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
 const Web3 = require('web3');

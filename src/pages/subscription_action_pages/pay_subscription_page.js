@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ViewGroups from './../components/view_groups'
-import Tags from './../components/tags';
-import NumberPicker from './../components/number_picker';
+import ViewGroups from '../../components/view_groups'
+import Tags from '../../components/tags';
+import NumberPicker from '../../components/number_picker';
 
 var bigInt = require("big-integer");
 
