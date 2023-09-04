@@ -122,7 +122,7 @@ class App extends Component {
     web3:'http://127.0.0.1:8545/', e5_address:'0x172076E0166D1F9Cc711C77Adf8488051744980C',
     sync_steps:25,
 
-    token_directory:{}
+    token_directory:{}, object_messages:{}
   };
 
 
@@ -326,7 +326,7 @@ class App extends Component {
       show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
       show_images={this.show_images.bind(this)}
 
-      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)}
+      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)}
       />
     )
   }
@@ -370,6 +370,25 @@ class App extends Component {
     this.setState({stack_items: stack})
   }
 
+
+  add_post_reply_to_stack(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'post-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'post-messages', entered_indexing_tags:['send', 'post','comment'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+  }
 
 
 
@@ -1617,7 +1636,7 @@ class App extends Component {
     }
     return ( 
           <div>
-              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '0px 5px 0px 5px','display': 'flex','flex-direction': 'row', width: width-40}}>
+              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '5px 5px 5px 5px','display': 'flex','flex-direction': 'row', width: width-40}}>
                   <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
                       <img src={AlertIcon} style={{height:25,width:'auto','scale': '0.9'}} />
                   </div>
@@ -2369,13 +2388,41 @@ class App extends Component {
       if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
         var channel_data = await this.fetch_objects_data(id, web3);
 
-        var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
-        var messages = []
-        for(var j=0; j<created_channel_data.length; j++){
-          var ipfs_message = await this.fetch_objects_data_from_ipfs(created_channel_data[j].returnValues.p4)
-          messages.push(ipfs_message)
+
+        var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+        var old_moderators = []
+
+        for(var e=0; e<moderator_data.length; e++){
+          var mod_id = moderator_data[e].returnValues.p3
+          old_moderators.push(mod_id)
         }
-        created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':messages})
+
+        var mod_status_values = await E52contractInstance.methods.f255([id], [old_moderators]).call((error, result) => {});
+
+        var moderators = []
+        for(var e=0; e<old_moderators.length; e++){
+          var their_status = mod_status_values[0][e]
+          if(their_status == true){
+            moderators.push(old_moderators[e])
+          }
+        }
+
+        var interactible_checker_status_values = await E52contractInstance.methods.f254([id],0).call((error, result) => {});
+
+        var my_interactable_time_value = await E52contractInstance.methods.f256([id], [[account]], 0,2).call((error, result) => {});
+
+        var my_blocked_time_value = await E52contractInstance.methods.f256([id], [[account]], 0,3).call((error, result) => {});
+
+        if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 || !moderators.includes(account))){
+
+        }
+        else if(my_blocked_time_value[0][0] > Date.now()/1000){
+
+        }
+        else{
+          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0] });
+        }
+
       }
     }
     this.setState({created_channels: created_channel})
@@ -2427,7 +2474,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- MAIL DATA ------------------------------------------- */
-    var my_created_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc_id */: account, p3/* context */:'30' } }, (error, events) => {});
+    var my_created_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc_id */: account, p3/* context */:30 } }, (error, events) => {});
     var created_mail = []
     var mail_activity = {}
     for(var i=0; i<my_created_mail_events.length; i++){
@@ -2453,7 +2500,7 @@ class App extends Component {
     }
 
 
-    var my_received_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:'30' } }, (error, events) => {});
+    var my_received_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:30 } }, (error, events) => {});
     var received_mail = []
     var mail_activity = {}
     for(var i=0; i<my_received_mail_events.length; i++){
@@ -2684,6 +2731,25 @@ class App extends Component {
       return null
     }
     
+  }
+
+
+  get_objects_messages = async (id) => {
+    const web3 = new Web3(this.state.web3);
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
+    var messages = []
+    for(var j=0; j<created_channel_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_channel_data[j].returnValues.p4)
+      messages.push(ipfs_message)
+    }
+    
+    var clone = JSON.parse(JSON.stringify(this.state.object_messages))
+    clone[id] = messages
+    this.setState({object_messages: clone})
   }
 
 }

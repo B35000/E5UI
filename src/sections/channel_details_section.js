@@ -52,9 +52,9 @@ class ChannelDetailsSection extends Component {
             )
         }else{
             return(
-                <div>
+                <div style={{}}>
                     {this.render_channel_details_section()}
-                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
                         <Tags page_tags_object={this.state.navigate_view_channel_list_detail_tags} tag_size={'l'} when_tags_updated={this.when_navigate_view_channel_list_detail_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
@@ -125,6 +125,45 @@ class ChannelDetailsSection extends Component {
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
+                    {this.render_item_data(items)}
+
+                    {this.render_moderator_button()}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_item_data(items){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        if(items.length == 0){
+            items = [0, 1, 2]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
                     {items.map((item, index) => (
                         <div key={index}>
                             {this.render_detail_item(item['type'], item['data'])} 
@@ -132,8 +171,32 @@ class ChannelDetailsSection extends Component {
                         </div>
                     ))}
                 </div>
-            </div>
-        )
+            )
+        }
+    }
+
+    render_moderator_button(){
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        var my_account = this.props.app_state.user_account_id
+
+        if((object['moderators'].includes(my_account) || object['event'].returnValues.p5 == my_account)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_moderator_ui()}>
+                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_moderator_ui(){
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        this.props.open_moderator_ui(object)
     }
 
     get_channel_items(){
@@ -209,8 +272,7 @@ class ChannelDetailsSection extends Component {
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
-            </div>
-            
+            </div> 
         )
     }
 
@@ -224,15 +286,34 @@ class ChannelDetailsSection extends Component {
         )
     }
 
+    constructor(props) {
+        super(props);
+        this.messagesEnd = React.createRef();
+    }
+
+    scrollToBottom = () => {
+        // if (this.messagesEnd.current){
+        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        // }
+    }
+
+    componentDidMount() {
+        // this.scrollToBottom();
+    }
+
+    componentDidUpdate() {
+    //  this.scrollToBottom();
+    }
+
 
     render_sent_received_messages(){
-        var middle = this.props.height-100;
+        var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages()
-        var stacked_items = this.get_stacked_items()
+        var items = this.get_convo_messages().reverse()
+        var stacked_items = this.get_stacked_items().reverse()
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -255,9 +336,13 @@ class ChannelDetailsSection extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
+                        
+
+                        
+
+                        {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div key={index}>
                                     {this.render_stack_message_item(item)}  
@@ -265,14 +350,19 @@ class ChannelDetailsSection extends Component {
                                 </div>
                             </li> 
                         ))}
-                        {stacked_items.map((item, index) => (
-                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                        
+                        {stacked_items.reverse().map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px', 'opacity':'0.6'}} onClick={()=>console.log()}>
                                 <div >
                                     {this.render_stack_message_item(item)} 
                                     <div style={{height:3}}/>
                                 </div>
                             </li>
                         ))}
+
+
+                        <div ref={this.messagesEnd}/>
+                        
                     </ul>
                 </div>
             )
@@ -292,7 +382,7 @@ class ChannelDetailsSection extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
                 </div>
             )
         }else{
@@ -307,7 +397,7 @@ class ChannelDetailsSection extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
 
                     {this.render_detail_item('9',item['image-data'])}
                 </div>
@@ -324,7 +414,8 @@ class ChannelDetailsSection extends Component {
 
     get_convo_messages(){
         var object = this.get_channel_items()[this.props.selected_channel_item];
-        return object['messages']
+        // return object['messages']
+        return this.props.app_state.object_messages[object['id']]
     }
 
     get_stacked_items(){
@@ -382,17 +473,35 @@ class ChannelDetailsSection extends Component {
         var object = this.get_channel_items()[this.props.selected_channel_item];
         if(message == ''){
             this.props.notify('type something first', 600)
-        }else{
+        }
+        else if(this.props.app_state.user_account_id == 1){
+            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+        }
+        else if(!this.is_object_interactable()){
+            return
+        }
+        else{
             var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'time':Date.now()/1000}
 
             this.props.add_channel_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
             this.props.notify('message added to stack', 600)
+            
+            if (this.messagesEnd.current){
+                this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+            }
         }
     }
 
     add_image_to_stack(image){
+        if(this.props.app_state.user_account_id == 1){
+            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            return
+        }
+        else if(!this.is_object_interactable()){
+            return
+        }
         var message = this.state.entered_text.trim()
         var object = this.get_channel_items()[this.props.selected_channel_item];
         var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id,'time':Date.now()/1000}
@@ -401,6 +510,26 @@ class ChannelDetailsSection extends Component {
 
         this.setState({entered_text:''})
         this.props.notify('message added to stack', 600)
+
+        if (this.messagesEnd.current){
+            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }
+
+    is_object_interactable(){
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        var access_rights_setting =  object['access_rights_enabled']
+        var my_account = this.props.app_state.user_account_id
+
+        if(access_rights_setting == true && (object['my_interactible_time_value'] < Date.now()/1000 && !object['moderators'].includes(my_account)) ){
+            this.props.notify('You cant do that. The channel is access restricted', 600)
+            return false
+        }
+        else if(object['my_blocked_time_value'] > Date.now()/1000){
+            this.props.notify('You cant do that. Youve been blocked from the channel for '+(this.get_time_diff(object['my_blocked_time_value'] - Date.now()/1000)), 600)
+            return false
+        }
+        return true
     }
 
 

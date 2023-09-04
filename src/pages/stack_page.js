@@ -383,7 +383,7 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas To Be Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'units', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -411,12 +411,12 @@ class StackPage extends Component {
             gas += g
         }
 
-        return gas +200000
+        return gas
     }
 
     get_estimated_gas(t){
         if(t.type == 'channel' || t.type == 'job' || t.type == 'post'){
-            return 61315
+            return 344622
         }
         else if(t.type == 'contract'){
             return 964043 + (60_000 * t.price_data.length)
@@ -693,6 +693,55 @@ class StackPage extends Component {
                     strs.push([['']])
                     adds.push([])
                     ints.push(channel_obj)
+
+                    var channel_stack_id = ints.length-1
+                    if(txs[i].interactibles.length != 0){
+                        var enable_interactibles_checker = [ /* enable interactible checkers */
+                            [20000, 5, 0],
+                            [channel_stack_id], [35]/* target objects */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(enable_interactibles_checker)
+                        
+                        var add_interactibles_accounts = [ /* set account to be interactible */
+                            [20000, 2, 0],
+                            [], [],/* target objects */
+                            [], [],/* target account ids*/
+                            []/* interacible expiry time limit */
+                        ]
+
+                        for(var j = 0; j < txs[i].interactibles.length; j++){
+                            add_interactibles_accounts[1].push(channel_stack_id)
+                            add_interactibles_accounts[2].push(35)
+                            add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
+                            add_interactibles_accounts[4].push(23)
+                            add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_interactibles_accounts)
+        
+                    }
+                    if(txs[i].moderators.length != 0){
+                        var add_moderator_accounts = [ /* set account as mod */
+                            [20000, 4, 0],
+                            [], [],/* target objects */
+                            [], []/* target moderator account ids*/
+                        ]
+
+                        for(var j = 0; j < txs[i].moderators.length; j++){
+                            add_moderator_accounts[1].push(channel_stack_id)
+                            add_moderator_accounts[2].push(35)
+                            add_moderator_accounts[3].push(txs[i].moderators[j])
+                            add_moderator_accounts[4].push(23)
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(add_moderator_accounts)
+                    }
                 }
                 else if(txs[i].type == 'storefront'){
                     var storefront_data = this.format_storefront_object(txs[i], ints)
@@ -851,7 +900,13 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                
+                else if(txs[i].type == 'post-messages'){
+                    var message_obj = await this.format_post_comment_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)    
+                }
             }
             
         }
@@ -1867,9 +1922,6 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            console.log('-------------------e------------------')
-            console.log(t.messages_to_deliver[i]['id'])
-
             var target_id = t.messages_to_deliver[i]['id']
             var context = 35
             var int_data = 0
@@ -1887,7 +1939,33 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
+    format_post_comment_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
 
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            var target_id = t.messages_to_deliver[i]['id']
+            var context = 35
+            var int_data = 0
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
 
 
 

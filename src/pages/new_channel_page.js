@@ -8,6 +8,13 @@ import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
+
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { Draggable } from "react-drag-reorder";
 
 
@@ -36,6 +43,10 @@ class NewChannelPage extends Component {
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[],
+
+        new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), 
+        new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
+        moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
     };
 
     get_new_job_page_tags_object(){
@@ -44,7 +55,29 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images'], [0]
+                ['or','',0], ['e','text', 'images', 'authorities'], [0]
+            ],
+        };
+    }
+
+    get_new_token_interactible_moderator_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','moderators', 'interactible'], [1]
+            ],
+        };
+    }
+
+    get_new_token_access_rights_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','enabled', 'disabled'], [1]
             ],
         };
     }
@@ -75,7 +108,7 @@ class NewChannelPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
                 <div className="row">
-                    <div className="col-9" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
@@ -87,7 +120,7 @@ class NewChannelPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -124,10 +157,10 @@ class NewChannelPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'video'){
+        else if(selected_item == 'authorities'){
             return(
                 <div>
-                    {this.render_enter_video_part()}
+                    {this.render_authorities_part()}
                 </div>
             ) 
         }
@@ -176,8 +209,8 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Channel'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <div style={{height:20}}/>
 
-                {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Channel'})}
                 <div style={{height:10}}/>
 
@@ -618,6 +651,267 @@ class NewChannelPage extends Component {
         }
         this.setState({entered_image_objects: cloned_array})
     }
+
+
+
+    render_authorities_part(){
+        var size = this.props.size
+        var height = this.props.height-150
+
+        if(size == 's'){
+            return(
+                <div style={{overflow: 'auto', maxHeight: height}}>
+                    {this.render_moderator_interactible_ui()}
+                </div>
+            )
+        }
+    }
+
+    render_subscription_authority_target(){
+        return(
+            <div>
+                 {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the channel will be restricted to moderators and specified accounts', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
+            </div>
+        )
+    }
+
+    when_new_token_access_rights_tags_object(tag_obj){
+        this.setState({new_token_access_rights_tags_object: tag_obj})
+    }
+
+
+    render_moderator_interactible_ui(){
+        return(
+            <div>
+                <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/>
+
+                {this.render_moderator_or_interactible_setting()}
+            </div>
+        )
+    }
+
+    when_new_token_interactible_moderator_tags_object(tag_obj){
+        this.setState({new_token_interactible_moderator_tags_object: tag_obj})
+    }
+
+    render_moderator_or_interactible_setting(){
+        var selected_item = this.get_selected_item(this.state.new_token_interactible_moderator_tags_object, this.state.new_token_interactible_moderator_tags_object['i'].active)
+
+        if(selected_item == 'moderators' || selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_moderator_settings()}
+                </div>
+            )    
+        }
+        else if(selected_item == 'interactible'){
+            return(
+                <div>
+                    {this.render_interactible_settings()}
+                </div>
+            ) 
+        }
+    }
+
+
+    render_moderator_settings(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
+
+
+                <div style={{height: 10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
+                    {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
+                </div>
+
+                {this.render_added_moderators()}
+            </div>
+        )
+    }
+
+    when_moderator_id_input_field_changed(text){
+        this.setState({moderator_id: text})
+    }
+
+    when_add_moderator_button_tapped(){
+        var moderator_id = this.state.moderator_id.trim()
+        if(isNaN(moderator_id)){
+            this.props.notify('please put a valid account id', 600)
+        }
+        else{
+            var moderators_clone = this.state.moderators.slice()
+            moderators_clone.push(parseInt(moderator_id))
+            this.setState({moderators: moderators_clone});
+            this.props.notify('added moderator!', 400)
+        }
+    }
+
+    render_added_moderators(){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.moderators
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
+                                {this.render_detail_item('3', {'title':''+item, 'details':'Account ID', 'size':'l'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_moderator_account_clicked(item){
+        var cloned_array = this.state.moderators.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({moderators: cloned_array})
+    }
+
+    render_interactible_settings(){
+        return(
+            <div>
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Interactible ID'} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
+
+                <div style={{height:20}}/>
+
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
+                    </LocalizationProvider>
+                </ThemeProvider>
+
+                <div style={{height:20}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>
+                    {this.render_detail_item('5', {'text':'Add Interactible Account', 'action':''})}
+                </div>
+                
+                <div style={{height:20}}/>
+                {this.render_set_interactible_accounts()}
+            </div>
+        )
+    }
+
+    when_interactible_id_input_field_changed(text){
+        this.setState({interactible_id: text})
+    }
+
+    when_new_dat_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({interactible_timestamp: timeInSeconds})
+    }
+
+    when_add_interactible_button_tapped(){
+        var interactible_id = this.state.interactible_id.trim()
+        if(isNaN(interactible_id)){
+            this.props.notify('please put a valid account id', 600)
+        }
+        else{
+            var interactibles_clone = this.state.interactibles.slice()
+            interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
+            this.setState({interactibles: interactibles_clone});
+            this.props.notify('added interactible account!', 400)
+        }
+    }
+
+    render_set_interactible_accounts(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.interactibles
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
+                                {this.render_detail_item('3', {'title':'Interactible Account ID: '+item['id'], 'details':'Until: '+(new Date(item['timestamp']*1000)), 'size':'l'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_interactible_account_clicked(item){
+        var cloned_array = this.state.interactibles.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({interactibles: cloned_array})
+    }
+
+
+
+
+    
+
+
+
+
+
 
 
 

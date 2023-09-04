@@ -75,7 +75,7 @@ class NewPostPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
                 <div className="row">
-                    <div className="col-9" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
@@ -87,7 +87,7 @@ class NewPostPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -173,7 +173,7 @@ class NewPostPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 15px 0px 10px'}}>
+            <div style={{'padding':'0px 10px 0px 10px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set a title for your new post'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>

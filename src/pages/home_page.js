@@ -264,7 +264,7 @@ class home_page extends Component {
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', StackIconImg, 'auto', '30px','3px 0px 0px 0px','Stack','Runs on E')}
+                    {this.render_navbar_button('s','0px 0px 0px 0px', StackIconImg, 'auto', '30px','3px 0px 0px 0px','Stack','Runs on e')}
                   </div>
               </div>
           );
@@ -528,7 +528,7 @@ class home_page extends Component {
         }
     }
 
-    when_post_item_clicked(index){
+    when_post_item_clicked(index, id){
         this.setState({selected_post_item: index})
 
         var viewed_posts_clone = this.state.viewed_posts.slice()
@@ -538,13 +538,15 @@ class home_page extends Component {
             this.setState({viewed_posts: viewed_posts_clone})
         }
 
+        this.props.get_objects_messages(id)
+
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
 
-    when_channel_item_clicked(index){
+    when_channel_item_clicked(index, id){
         this.setState({selected_channel_item: index})
 
         var viewed_channel_clone = this.state.viewed_channels.slice()
@@ -553,6 +555,8 @@ class home_page extends Component {
             viewed_channel_clone.push(index)
             this.setState({viewed_channels: viewed_channel_clone})
         }
+
+        this.props.get_objects_messages(id)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -605,7 +609,7 @@ class home_page extends Component {
                 open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)} open_enter_contract_ui={this.open_enter_contract_ui.bind(this)} open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} open_new_proposal_ui={this.open_new_proposal_ui.bind(this)}
                 open_vote_proposal_ui={this.open_vote_proposal_ui.bind(this)} open_sumbit_proposal_ui={this.open_sumbit_proposal_ui.bind(this)} open_pay_subscription_ui={this.open_pay_subscription_ui.bind(this)} open_cancel_subscription_ui={this.open_cancel_subscription_ui.bind(this)} open_collect_subscription_ui={this.open_collect_subscription_ui.bind(this)} open_modify_subscription_ui={this.open_modify_subscription_ui.bind(this)} open_modify_contract_ui={this.open_modify_contract_ui.bind(this)} open_modify_token_ui={this.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.open_exchange_transfers_ui.bind(this)} open_force_exit_ui={this.open_force_exit_ui.bind(this)} open_archive_proposal_ui={this.open_archive_proposal_ui.bind(this)} open_freeze_unfreeze_ui={this.open_freeze_unfreeze_ui.bind(this)} open_authmint_ui={this.open_authmint_ui.bind(this)} open_moderator_ui={this.open_moderator_ui.bind(this)} show_images={this.props.show_images.bind(this)}
 
-                add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)}
+                add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)}
                 />
             </div>
         )

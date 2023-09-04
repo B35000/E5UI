@@ -95,12 +95,12 @@ class PostDetailSection extends Component {
             }
             else if(selected_tag == 'posts' ){
                 return(
-                    <PostsDetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_post_item={this.props.selected_post_item} viewed_posts={this.props.viewed_posts} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)}/>
+                    <PostsDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_post_item={this.props.selected_post_item} viewed_posts={this.props.viewed_posts} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)} notify={this.props.notify.bind(this)}/>
                 )
             }
             else if(selected_tag == 'channels' ){
                 return(
-                    <ChannelDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_channel_item={this.props.selected_channel_item} viewed_channels={this.props.viewed_channels} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)}/>
+                    <ChannelDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_channel_item={this.props.selected_channel_item} viewed_channels={this.props.viewed_channels} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} />
                 )
             }
         }

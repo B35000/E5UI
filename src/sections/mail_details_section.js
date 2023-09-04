@@ -125,18 +125,52 @@ class MailDetailsSection extends Component {
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
-                    {items.map((item, index) => (
-                        <div key={index}>
-                            {this.render_detail_item(item['type'], item['data'])} 
-                            <div style={{height:10}}/>
-                        </div>
-                    ))}
+                    {this.render_item_data(items)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    render_item_data(items){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        if(items.length == 0){
+            items = [0, 1, 2]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            {this.render_detail_item(item['type'], item['data'])} 
+                            <div style={{height:10}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
     }
 
 
@@ -259,15 +293,33 @@ class MailDetailsSection extends Component {
         )
     }
 
+    constructor(props) {
+        super(props);
+        this.messagesEnd = React.createRef();
+    }
+
+    scrollToBottom = () => {
+        // if (this.messagesEnd.current){
+        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        // }
+    }
+
+    componentDidMount() {
+        // this.scrollToBottom();
+    }
+
+    componentDidUpdate() {
+        // this.scrollToBottom();
+    }
 
     render_sent_received_messages(){
-        var middle = this.props.height-100;
+        var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages()
-        var stacked_items = this.get_stacked_items()
+        var items = this.get_convo_messages().reverse()
+        var stacked_items = this.get_stacked_items().reverse()
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -292,7 +344,9 @@ class MailDetailsSection extends Component {
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
+                        
+                        
+                        {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div key={index}>
                                     {this.render_stack_message_item(item['ipfs'])}  
@@ -300,14 +354,17 @@ class MailDetailsSection extends Component {
                                 </div>
                             </li> 
                         ))}
-                        {stacked_items.map((item, index) => (
-                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+
+                        {stacked_items.reverse().map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px', 'opacity':'0.7'}} onClick={()=>console.log()}>
                                 <div >
                                     {this.render_stack_message_item(item)} 
                                     <div style={{height:3}}/>
                                 </div>
                             </li>
                         ))}
+
+                        <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
             )
@@ -327,7 +384,7 @@ class MailDetailsSection extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
                 </div>
             )
         }else{
@@ -342,7 +399,7 @@ class MailDetailsSection extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
 
                     {this.render_detail_item('9',item['image-data'])}
                 </div>
@@ -434,6 +491,10 @@ class MailDetailsSection extends Component {
 
             this.setState({entered_text:''})
             this.props.notify('message added to stack', 600)
+
+            if (this.messagesEnd.current){
+                this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+            }
         }
     }
 
@@ -446,6 +507,10 @@ class MailDetailsSection extends Component {
 
         this.setState({entered_text:''})
         this.props.notify('message added to stack', 600)
+
+        if (this.messagesEnd.current){
+            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        }
     }
 
 

@@ -711,7 +711,7 @@ class NewJobPage extends Component {
     }
 
     render_set_prices_list_part(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-300;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -722,18 +722,18 @@ class NewJobPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
             )
         }else{
             return(
