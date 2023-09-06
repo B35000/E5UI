@@ -20,7 +20,7 @@ function number_with_commas(x) {
 class ChannelDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_channel_list_detail_tags: this.get_navigate_view_channel_list_detail_tags()
+        selected: 0, navigate_view_channel_list_detail_tags: this.get_navigate_view_channel_list_detail_tags(), entered_text:''
     };
 
     get_navigate_view_channel_list_detail_tags(){
@@ -286,26 +286,6 @@ class ChannelDetailsSection extends Component {
         )
     }
 
-    constructor(props) {
-        super(props);
-        this.messagesEnd = React.createRef();
-    }
-
-    scrollToBottom = () => {
-        // if (this.messagesEnd.current){
-        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        // }
-    }
-
-    componentDidMount() {
-        // this.scrollToBottom();
-    }
-
-    componentDidUpdate() {
-    //  this.scrollToBottom();
-    }
-
-
     render_sent_received_messages(){
         var middle = this.props.height-200;
         var size = this.props.size;
@@ -338,10 +318,6 @@ class ChannelDetailsSection extends Component {
             return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        
-
-                        
-
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                                 <div key={index}>
@@ -359,10 +335,6 @@ class ChannelDetailsSection extends Component {
                                 </div>
                             </li>
                         ))}
-
-
-                        <div ref={this.messagesEnd}/>
-                        
                     </ul>
                 </div>
             )
@@ -442,7 +414,7 @@ class ChannelDetailsSection extends Component {
             <div>
                 <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                     <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} />
                 </div>
             </div>
         )
@@ -488,9 +460,9 @@ class ChannelDetailsSection extends Component {
             this.setState({entered_text:''})
             this.props.notify('message added to stack', 600)
             
-            if (this.messagesEnd.current){
-                this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-            }
+            // if (this.messagesEnd.current){
+            //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+            // }
         }
     }
 
@@ -511,9 +483,9 @@ class ChannelDetailsSection extends Component {
         this.setState({entered_text:''})
         this.props.notify('message added to stack', 600)
 
-        if (this.messagesEnd.current){
-            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        }
+        // if (this.messagesEnd.current){
+        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        // }
     }
 
     is_object_interactable(){

@@ -291,7 +291,7 @@ class StackPage extends Component {
     render_stack_transactions_part(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var middle = this.props.height-300;
+        var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -337,7 +337,7 @@ class StackPage extends Component {
         var op = this.state.hidden.includes(item) ? 0.5 : 1.0
         var txt = this.state.hidden.includes(item) ? 'show' : 'hide'
         return(
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px', opacity: op}}>
+            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
@@ -512,7 +512,6 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(contract_obj)
                     
-
                     var contract_type = this.get_selected_item(txs[i].new_contract_type_tags_object, txs[i].new_contract_type_tags_object['i'].active)
 
                     var contract_stack_id = ints.length-1
@@ -573,7 +572,10 @@ class StackPage extends Component {
                     ints.push(token_obj)
 
                     var token_stack_id = ints.length-1
-                    if(txs[i].interactibles.length != 0){
+                    
+                    var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
+
+                    if(access_rights_setting == 'enabled'){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
                             [token_stack_id], [35]/* target objects */
@@ -581,7 +583,9 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
-
+                    }
+                    
+                    if(txs[i].interactibles.length != 0){
                         var add_interactibles_accounts = [ /* set account to be interactible */
                             [20000, 2, 0],
                             [], [],/* target objects */
@@ -628,7 +632,10 @@ class StackPage extends Component {
                     ints.push(subscription_obj)
 
                     var subscription_stack_id = ints.length-1
-                    if(txs[i].interactibles.length != 0){
+
+                    var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
+
+                    if(access_rights_setting == 'enabled'){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
                             [subscription_stack_id], [35]/* target objects */
@@ -636,14 +643,16 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
-                        
+                    }
+                    
+                    if(txs[i].interactibles.length != 0){
                         var add_interactibles_accounts = [ /* set account to be interactible */
                             [20000, 2, 0],
                             [], [],/* target objects */
                             [], [],/* target account ids*/
                             []/* interacible expiry time limit */
                         ]
-
+                    
                         for(var j = 0; j < txs[i].interactibles.length; j++){
                             add_interactibles_accounts[1].push(subscription_stack_id)
                             add_interactibles_accounts[2].push(35)
@@ -695,7 +704,10 @@ class StackPage extends Component {
                     ints.push(channel_obj)
 
                     var channel_stack_id = ints.length-1
-                    if(txs[i].interactibles.length != 0){
+                    
+                    var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
+
+                    if(access_rights_setting == 'enabled'){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
                             [channel_stack_id], [35]/* target objects */
@@ -703,7 +715,9 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
-                        
+                    }
+
+                    if(txs[i].interactibles.length != 0){
                         var add_interactibles_accounts = [ /* set account to be interactible */
                             [20000, 2, 0],
                             [], [],/* target objects */
@@ -906,6 +920,34 @@ class StackPage extends Component {
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
+                }  
+                else if(txs[i].type == 'job-response'){
+                    var message_obj = await this.format_job_application_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)    
+                }
+                else if(txs[i].type == 'accept-job-application'){
+                    var message_obj = await this.format_accept_application_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                }
+                else if(txs[i].type == 'job-messages'){
+                    var message_obj = await this.format_job_comment_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)    
+                }
+                else if(txs[i].type == 'proposal-messages'){
+                    var message_obj = await this.format_proposal_message_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)    
                 }
             }
             
@@ -994,8 +1036,6 @@ class StackPage extends Component {
 
 
 
-
-
         var account_balance = this.props.app_state.account_balance
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
         var run_gas_price = this.props.app_state.gas_price
@@ -1044,11 +1084,11 @@ class StackPage extends Component {
     format_contract_object(t){
         var default_vote_bounty_split_proportion = t.default_vote_bounty_split_proportion == 0 ? bgN(1,16) : t.default_vote_bounty_split_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
         var max_extend_enter_contract_limit = t.max_extend_enter_contract_limit == 0 ? 36_000_000 : t.max_extend_enter_contract_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-        var default_minimum_end_vote_bounty_amount = t.default_minimum_end_vote_bounty_amount == 0 ? 5000 : t.default_minimum_end_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        var default_minimum_end_vote_bounty_amount = t.default_minimum_end_vote_bounty_amount == 0 ? 0 : t.default_minimum_end_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var default_proposal_expiry_duration_limit = t.default_proposal_expiry_duration_limit == 0 ? 30_000 : t.default_proposal_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         var max_enter_contract_duration = t.max_enter_contract_duration == 0 ? bgN(1, 16) : t.max_enter_contract_duration.toString().toLocaleString('fullwide', {useGrouping:false})
         var auto_wait_for_all_proposals_for_all_voters = this.get_selected_item(t.auto_wait_tags_object, t.auto_wait_tags_object['i'].active) == 'no' ? 0 : 1
-        var default_minimum_spend_vote_bounty_amount = t.default_minimum_spend_vote_bounty_amount == 0 ? 5000 : t.default_minimum_spend_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        var default_minimum_spend_vote_bounty_amount = t.default_minimum_spend_vote_bounty_amount == 0 ? 0 : t.default_minimum_spend_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var proposal_modify_expiry_duration_limit = t.proposal_modify_expiry_duration_limit == 0 ? 3600 : t.proposal_modify_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         var can_modify_contract_as_moderator = this.get_selected_item(t.can_modify_contract_as_moderator, t.can_modify_contract_as_moderator['i'].active) == 'modifiable' ? 1 : 0
         var can_extend_enter_contract_at_any_time = this.get_selected_item(t.can_extend_enter_contract_at_any_time, t.can_extend_enter_contract_at_any_time['i'].active) == 'enabled' ? 1 : 0
@@ -1910,7 +1950,6 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-
     format_channel_message_object = async (t) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
@@ -1967,9 +2006,119 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
+    format_job_application_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var target_id = t.job_item['id']
+        var context = 36
+        var int_data = Date.now()
+
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id}
+
+        var string_data = await this.get_object_ipfs_index(application_obj);
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_accept_application_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var target_id = t.application_item['job_id']
+        var context = 37
+        var int_data = t.application_item['id']
+
+        var application_obj = {'accepted':true}
+
+        var string_data = await this.get_object_ipfs_index(application_obj);
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
 
 
 
+        return {int: obj, str: string_obj}
+    }
+
+    format_job_comment_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            var target_id = t.messages_to_deliver[i]['id']
+            var context = 35
+            var int_data = 0
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_proposal_message_object = async (t) => {
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.messages_to_deliver.length; i++){
+            var target_id = t.messages_to_deliver[i]['id']
+            var context = 35
+            var int_data = 0
+
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
 
 
 

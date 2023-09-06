@@ -662,7 +662,7 @@ class NewJobPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
@@ -675,8 +675,6 @@ class NewJobPage extends Component {
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
@@ -785,12 +783,6 @@ class NewJobPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var stack_items = this.props.app_state.stack_items;
-        for(var i=0; i<stack_items.length; i++){
-            if(stack_items[i].type == 'token'){
-                items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
-            }
-        }
 
         return items;
     }

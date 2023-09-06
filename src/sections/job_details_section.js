@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
-
+import TextInput from './../components/text_input';
 import Letter from './../assets/letter.png'; 
+import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 
 var bigInt = require("big-integer");
 
@@ -18,7 +19,7 @@ function number_with_commas(x) {
 class JobDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_jobs_list_detail_tags_object: this.get_navigate_view_jobs_list_detail_tags(),
+        selected: 0, navigate_view_jobs_list_detail_tags_object: this.get_navigate_view_jobs_list_detail_tags(), entered_text:''
     };
 
     get_navigate_view_jobs_list_detail_tags(){
@@ -27,7 +28,7 @@ class JobDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','details','responses'],[1]
+              ['xor','',0], ['e','details','responses', 'activity'],[1]
           ],
         }
     }
@@ -104,6 +105,13 @@ class JobDetailsSection extends Component {
             )
             
         }
+        else if(selected_item == 'activity'){
+            return(
+                <div>
+                    {this.render_job_message_activity()}
+                </div>
+            )
+        }
     }
 
     render_job_posts_main_details_section(){
@@ -118,7 +126,7 @@ class JobDetailsSection extends Component {
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
 
         return(
-            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -135,7 +143,7 @@ class JobDetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_price_amounts()}
 
-                    {this.render_detail_item('3', {'title':'Apply for the job', 'details':'Respond to the ad with a contract and apply for the job', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Apply for the job', 'details':'Respond to the ad with a contract and apply for the job(This action is irreversible)', 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_respond_to_job_ui()}>
                         {this.render_detail_item('5', {'text':'Apply', 'action':''})}
@@ -200,8 +208,6 @@ class JobDetailsSection extends Component {
         }
         var object = this.get_job_items()[this.props.selected_job_post_item];
         var items = object['ipfs'].price_data
-        console.log('-----------------------333------------------')
-        console.log(items)
         return(
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -311,12 +317,381 @@ class JobDetailsSection extends Component {
     }
 
 
-    render_job_post_responses(){
 
+
+
+
+
+
+    render_job_post_responses(){
+        var he = this.props.height-40
+
+        return(
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    {this.render_job_post_top_title()}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    {this.render_job_post_sent_received_messages()}
+                </div>
+            </div>
+        )
+    }
+
+    render_job_post_top_title(){
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Job Responses', 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_job_post_sent_received_messages(){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.get_job_details_responses()
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}}>
+                                <div key={index}>
+                                    {this.render_job_response_item(item)}  
+                                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                                </div>
+                            </li> 
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_job_details_responses(){
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id){
+            return this.props.app_state.job_responses[object['id']]
+        }else{
+            var filtered_responses = []
+            var all_responses = this.props.app_state.job_responses[object['id']]
+            for(var i=0; i<all_responses.length; i++){
+                if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id){
+                    filtered_responses.push(all_responses[i])
+                }
+            }
+            return filtered_responses
+        }
+    }
+
+    render_job_response_item(item){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var is_application_accepted = item['is_response_accepted'];
+
+        if(is_application_accepted){
+            return(
+                <div onClick={() => this.view_contract(item)}>
+                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    <div style={{height:3}}/>
+                    
+                    {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'s'})}
+                    <div style={{height:3}}/>
+
+                    {this.render_detail_item('3', {'title':'Accepted', 'details':'The job owner picked this application', 'size':'s'})}
+                    
+                </div>
+            )
+        }else{
+            return(
+                <div onClick={() => this.view_contract(item)}>
+                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    <div style={{height:3}}/>
+                    
+                    {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'s'})}
+                    
+                </div>
+            )
+        }
+        
+    }
+
+    view_contract(item){
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id){
+            this.props.view_application_contract(item)
+        }
     }
 
 
-     render_empty_detail_object(){
+
+
+
+    render_job_message_activity(){
+        var he = this.props.height-90
+        var size = this.props.screensize
+        
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        {this.render_top_title()}
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        {this.render_sent_received_messages()}
+                    </div>
+                </div>
+
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
+                    {this.render_image_picker()}
+                    <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
+                        <TextInput height={30} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                    </div>
+
+                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                        {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
+                    </div>
+                </div>
+            </div> 
+        )
+    }
+
+    render_top_title(){
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':object['ipfs'].entered_title_text, 'size':'l'})} 
+            </div>
+        )
+    }
+
+    render_sent_received_messages(){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.get_convo_messages().reverse()
+        var stacked_items = this.get_stacked_items().reverse()
+
+        if(items.length == 0 && stacked_items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div key={index}>
+                                    {this.render_stack_message_item(item)}  
+                                    <div style={{height:3}}/>
+                                </div>
+                            </li> 
+                        ))}
+                        
+                        {stacked_items.reverse().map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px', 'opacity':'0.6'}} onClick={()=>console.log()}>
+                                <div >
+                                    {this.render_stack_message_item(item)} 
+                                    <div style={{height:3}}/>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_stack_message_item(item){
+        if(item.type == 'message'){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                          </div>
+                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                          </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                          </div>
+                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                          </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+
+                    {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+    format_message(message){
+        if(message == ''){
+            return '...'
+        }
+        return message
+    }
+
+    get_convo_messages(){
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        // return object['messages']
+        return this.props.app_state.object_messages[object['id']]
+    }
+
+    get_stacked_items(){
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        var convo_id = object['id']
+
+        var stack = this.props.app_state.stack_items
+        var stacked_items = []
+        for(var i=0; i<stack.length; i++){
+            if(stack[i].type == 'job-messages'){
+                for(var e=0; e<stack[i].messages_to_deliver.length; e++){
+                    var message_obj = stack[i].messages_to_deliver[e]
+                    if(message_obj['id'] == convo_id){
+                        stacked_items.push(message_obj)
+                    }
+                }
+            }
+        }
+        return stacked_items
+    }
+
+    render_image_picker(){
+        return(
+            <div>
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} />
+                </div>
+            </div>
+        )
+    }
+
+    /* called when images have been picked from picker */
+    when_image_gif_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    var image = ev.target.result
+                    this.add_image_to_stack(image)
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            // var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+        }
+    }
+
+    when_entered_text_input_field_changed(text){
+        this.setState({entered_text: text})
+    }
+
+    add_message_to_stack(){
+        var message = this.state.entered_text.trim()
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        if(message == ''){
+            this.props.notify('type something first', 600)
+        }
+        else if(this.props.app_state.user_account_id == 1){
+            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+        }
+        else{
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'time':Date.now()/1000}
+
+            this.props.add_job_message_to_stack_object(tx)
+
+            this.setState({entered_text:''})
+            this.props.notify('message added to stack', 600)
+            
+            // if (this.messagesEnd.current){
+            //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+            // }
+        }
+    }
+
+    add_image_to_stack(image){
+        if(this.props.app_state.user_account_id == 1){
+            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            return
+        }
+        var message = this.state.entered_text.trim()
+        var object = this.get_job_items()[this.props.selected_job_post_item];
+        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id,'time':Date.now()/1000}
+
+        this.props.add_job_message_to_stack_object(tx)
+
+        this.setState({entered_text:''})
+        this.props.notify('message added to stack', 600)
+
+        // if (this.messagesEnd.current){
+        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        // }
+    }
+
+
+
+
+
+
+
+
+
+    render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         var size = this.props.screensize
@@ -396,6 +771,52 @@ class JobDetailsSection extends Component {
             return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
         }
         
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ ' sec'
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + ' min' 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + ' hr' + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + ' dy' + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + ' wk' + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + ' yr' + s;
+        }
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
     }
 
 

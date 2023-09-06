@@ -485,7 +485,7 @@ class home_page extends Component {
         }
     }
 
-    when_job_post_item_clicked(index){
+    when_job_post_item_clicked(index, id){
         this.setState({selected_job_post_item: index})
         var viewed_jobs_clone = this.state.viewed_jobs.slice()
         var pos = viewed_jobs_clone.indexOf(index)
@@ -493,6 +493,10 @@ class home_page extends Component {
             viewed_jobs_clone.push(index)
             this.setState({viewed_jobs: viewed_jobs_clone})
         }
+
+        this.props.get_job_objects_responses(id)
+        this.props.get_objects_messages(id)
+
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -564,7 +568,7 @@ class home_page extends Component {
     }
 
 
-    when_proposal_item_clicked(index){
+    when_proposal_item_clicked(index, id){
         this.setState({selected_proposal_item: index})
 
         var viewed_proposals_clone = this.state.viewed_proposals.slice()
@@ -573,6 +577,8 @@ class home_page extends Component {
             viewed_proposals_clone.push(index)
             this.setState({viewed_proposals: viewed_proposals_clone})
         }
+
+        this.props.get_objects_messages(id)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -609,7 +615,7 @@ class home_page extends Component {
                 open_mint_burn_token_ui={this.open_mint_burn_token_ui.bind(this)} open_transfer_ui={this.open_transfer_ui.bind(this)} open_enter_contract_ui={this.open_enter_contract_ui.bind(this)} open_extend_contract_ui={this.open_extend_contract_ui.bind(this)} open_exit_contract_ui={this.open_exit_contract_ui.bind(this)} open_new_proposal_ui={this.open_new_proposal_ui.bind(this)}
                 open_vote_proposal_ui={this.open_vote_proposal_ui.bind(this)} open_sumbit_proposal_ui={this.open_sumbit_proposal_ui.bind(this)} open_pay_subscription_ui={this.open_pay_subscription_ui.bind(this)} open_cancel_subscription_ui={this.open_cancel_subscription_ui.bind(this)} open_collect_subscription_ui={this.open_collect_subscription_ui.bind(this)} open_modify_subscription_ui={this.open_modify_subscription_ui.bind(this)} open_modify_contract_ui={this.open_modify_contract_ui.bind(this)} open_modify_token_ui={this.open_modify_token_ui.bind(this)} open_exchange_transfers_ui={this.open_exchange_transfers_ui.bind(this)} open_force_exit_ui={this.open_force_exit_ui.bind(this)} open_archive_proposal_ui={this.open_archive_proposal_ui.bind(this)} open_freeze_unfreeze_ui={this.open_freeze_unfreeze_ui.bind(this)} open_authmint_ui={this.open_authmint_ui.bind(this)} open_moderator_ui={this.open_moderator_ui.bind(this)} show_images={this.props.show_images.bind(this)}
 
-                add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)} open_respond_to_job_ui={this.open_respond_to_job_ui.bind(this)}
+                add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)} open_respond_to_job_ui={this.open_respond_to_job_ui.bind(this)} view_application_contract={this.view_application_contract.bind(this)} add_job_message_to_stack_object={this.props.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.props.add_proposal_message_to_stack_object.bind(this)}
                 />
             </div>
         )
@@ -706,6 +712,10 @@ class home_page extends Component {
 
     open_respond_to_job_ui(item){
         this.props.show_respond_to_job_bottomsheet(item)
+    }
+
+    view_application_contract(item){
+        this.props.show_view_application_contract_bottomsheet(item)
     }
 
 }

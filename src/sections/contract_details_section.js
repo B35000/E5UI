@@ -158,6 +158,8 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', item['bounty_limit_type'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['contract_force_exit_enabled'])}
+
+                    {this.show_contract_balance(item)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['entry_fees'])}
@@ -245,13 +247,12 @@ class ContractDetailsSection extends Component {
         }
     }
 
-
     show_entered_contract_data(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if(expiry_time_in_seconds != 0){
+        if(expiry_time_in_seconds != 0 && time_to_expiry > 0){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
@@ -287,7 +288,6 @@ class ContractDetailsSection extends Component {
             )
         }
     }
-
 
     render_force_exit_button(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
@@ -384,6 +384,28 @@ class ContractDetailsSection extends Component {
         this.props.open_moderator_ui(object)
     }
 
+    show_contract_balance(item){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if(time_to_expiry > 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['end_balance'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['spend_balance'])}
+                    </div>
+                </div>
+            )
+        }
+    }
+
 
     get_contract_details_data(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
@@ -426,6 +448,10 @@ class ContractDetailsSection extends Component {
             'contract_force_exit_enabled': {'title':contract_force_exit_enabled, 'details':'Contract Force Exit', 'size':'l'},
 
             'entry_fees': {'title':'Entry Fees', 'details':object['data'][2].length+' tokens used', 'size':'l'},
+
+            'end_balance':{'style':'l', 'title':'End Bounty Balance', 'subtitle':this.format_power_figure(object['end_balance']), 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':`END`, },
+
+            'spend_balance':{'style':'l', 'title':'Spend Bounty Balance', 'subtitle':this.format_power_figure(object['spend_balance']), 'barwidth':this.get_number_width(object['spend_balance']), 'number':` ${number_with_commas(object['spend_balance'])}`, 'barcolor':'', 'relativepower':`SPEND`, },
         }
     }
 
@@ -467,11 +493,11 @@ class ContractDetailsSection extends Component {
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
         return(
-            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth: '+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':'tokens'})}
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':'tokens'})}
                         </li>
                     ))}
                 </ul>

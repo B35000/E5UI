@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+import TextInput from './../components/text_input';
+import NumberPicker from './../components/number_picker';
 
 import Letter from './../assets/letter.png';
 
@@ -37,7 +39,7 @@ class RespondToJobPage extends Component {
     
     state = {
         selected: 0, job_item:{'id':0},  type:'job-response', id:makeid(8),
-        entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null,
+        entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[]
     };
 
     get_respond_to_job_title_tags_object(){
@@ -53,7 +55,7 @@ class RespondToJobPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.respond_to_job_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_job_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -91,14 +93,14 @@ class RespondToJobPage extends Component {
         else if(selected_item == 'expiry-time'){
             return(
                 <div>
-                    
+                    {this.render_application_expiry_time()}
                 </div>
             )
         }
         else if(selected_item == 'amount'){
             return(
                 <div>
-                    
+                    {this.render_application_prices()}
                 </div>
             )
         }
@@ -116,14 +118,13 @@ class RespondToJobPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, create one to see it here'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, first create one then youll see it here. You cant use a contract youve used in another job application.'})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
             </div>
         )
     }
-
 
     render_my_contracts(){
         var background_color = this.props.theme['card_background_color']
@@ -176,9 +177,13 @@ class RespondToJobPage extends Component {
         for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
             var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
             if(post_author.toString() == myid.toString()){
-                my_contracts.push(this.props.app_state.created_contracts[i])
-            }else{
-                console.log('sender not post author: author->'+post_author+', sender id->'+myid)
+                if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
+                    my_contracts.push(this.props.app_state.created_contracts[i])
+                }else{
+                    if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
+                        my_contracts.push(this.props.app_state.created_contracts[i])
+                    }
+                }
             }
         }
         return my_contracts
@@ -201,8 +206,8 @@ class RespondToJobPage extends Component {
                         <div style={{'padding': '20px 0px 0px 0px'}}>
                             {this.render_detail_item('2', item['age'])}
                         </div>
-                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 10px 10px 10px'}}/>
-                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 10px 10px 10px'}}/>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 10px 15px 10px'}}/>
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 10px 15px 10px'}}/>
                     </div>         
                 </div>
             )
@@ -244,17 +249,210 @@ class RespondToJobPage extends Component {
 
 
 
+
+
+
+    render_application_expiry_time(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your application'})}
+
+                <div style={{height:20}}/>
+                <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
+                    <CssBaseline />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_date_time_value_set(newValue)} />
+                    </LocalizationProvider>
+                </ThemeProvider>
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(this.state.application_expiry_time * 1000)), 'size':'l'})}
+
+            </div>
+        )
+    }
+
+
+    when_new_date_time_value_set(value){
+        const selectedDate = value instanceof Date ? value : new Date(value);
+        const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
+        this.setState({application_expiry_time: timeInSeconds})
+    }
+
+
+
+
+
+
+    render_application_prices(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id')}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
+                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                </div>
+
+                {this.render_set_prices_list_part()}
+            </div>
+        )
+    }
+
+    when_exchange_id_input_field_changed(text){
+        this.setState({exchange_id: text})
+    }
+
+    when_price_amount(amount){
+        this.setState({price_amount: amount})
+    }
+
+    when_add_price_set(){
+        var exchange_id = this.state.exchange_id.trim()
+        var amount = this.state.price_amount
+        if(isNaN(exchange_id) || exchange_id == ''){
+            this.props.notify('please put a valid exchange id', 600)
+        }
+        else if(amount == 0){
+            this.props.notify('please put a valid amount', 600)
+        }
+        else{
+            var price_data_clone = this.state.price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data: price_data_clone});
+            this.props.notify('added price!', 400)
+        }
+    }
+
+    render_set_prices_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.price_data
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    when_amount_clicked(item){
+        var cloned_array = this.state.price_data.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({price_data: cloned_array})
+    }
+
+
+
+    load_token_suggestions(target_type){
+        var items = this.get_suggested_tokens()
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_tokens(){
+        var items = [
+            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+        ];
+
+        return items;
+    }
+
+    when_price_suggestion_clicked(item, pos, target_type){
+        this.setState({exchange_id: item['id']})
+    }
+
+
+
+
+
+
+
     set_object(job_post){
         if(this.state.job_item['id'] != job_post['id']){
             this.setState({
-                
+                selected: 0, job_item:{'id':0},  type:'job-response', id:makeid(8),
+                entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[]
             })
         }
         this.setState({job_item: job_post})
     }
 
     finish_creating_response(){
+        var selected_contract = this.state.picked_contract
+        var selected_time = this.state.application_expiry_time
 
+        if(selected_contract == null){
+            this.props.notify('you need to pick a contract first', 600)
+        }
+        else if(selected_time-Date.now()/1000 < 300){
+            this.props.notify('you cant set an expiry time thats less than five minutes from now', 600)
+        }
+        else{
+            this.props.add_respond_to_job_to_stack(this.state)
+            this.setState({
+                selected: 0, job_item:{'id':0},  type:'job-response', id:makeid(8),
+                entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[]
+            })
+            this.props.notify('transaction added to stack', 600)
+        }
     }
 
 
@@ -273,6 +471,19 @@ class RespondToJobPage extends Component {
             </div>
         )
 
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
     }
 
     get_number_width(number){

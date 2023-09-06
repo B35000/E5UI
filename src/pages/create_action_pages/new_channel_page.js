@@ -77,7 +77,7 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e','enabled', 'disabled'], [2]
             ],
         };
     }
@@ -209,8 +209,10 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Channel'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
-                <div style={{height:20}}/>
+                {this.render_detail_item('0')}
+                {this.render_subscription_authority_target()}
 
+                {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Channel'})}
                 <div style={{height:10}}/>
 
@@ -222,6 +224,7 @@ class NewChannelPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>

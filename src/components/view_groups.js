@@ -79,7 +79,7 @@ class ViewGroups extends Component {
             var relativepower = object_data != null ? object_data['relativepower']:'500 blocks'
             
             if(number == 0){
-                number = '000,000,000'
+                number = '000'
             }
 
             if(style == 's'){

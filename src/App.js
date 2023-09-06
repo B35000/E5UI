@@ -54,8 +54,8 @@ import CollectSubscriptionPage from './pages/subscription_action_pages/collect_s
 import ModifySubscriptionPage from './pages/subscription_action_pages/modify_subscription_page';
 
 import ModeratorPage from './pages/moderator_page';
-
-import RespondToJobPage from './pages/respond_to_job_page'
+import RespondToJobPage from './pages/respond_to_job_page';
+import ViewApplicationContractPage from './pages/view_application_contract_page';
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -114,7 +114,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
@@ -128,10 +128,10 @@ class App extends Component {
     created_jobs:[], 
     mint_dump_actions:[{},],
 
-    web3:'http://127.0.0.1:8545/', e5_address:'0x172076E0166D1F9Cc711C77Adf8488051744980C',
-    sync_steps:25,
+    web3:'http://127.0.0.1:8545/', e5_address:'0x19cEcCd6942ad38562Ee10bAfd44776ceB67e923',
+    sync_steps:27,
 
-    token_directory:{}, object_messages:{}
+    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}
   };
 
 
@@ -162,6 +162,7 @@ class App extends Component {
     this.moderator_page = React.createRef();
     this.new_mail_page = React.createRef();
     this.respond_to_job_page = React.createRef();
+    this.view_application_contract_page = React.createRef();
   }
 
   componentDidMount() {
@@ -301,6 +302,7 @@ class App extends Component {
         {this.render_authmint_bottomsheet()}
         {this.render_moderator_bottomsheet()}
         {this.render_respond_to_job_bottomsheet()}
+        {this.render_view_application_contract_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -337,7 +339,7 @@ class App extends Component {
       show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
       show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
 
-      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)}
+      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)}
       />
     )
   }
@@ -361,7 +363,6 @@ class App extends Component {
     this.setState({stack_items: stack})
   }
 
-
   add_channel_message_to_stack_object(message){
     var stack = this.state.stack_items.slice()
     var pos = -1
@@ -381,7 +382,6 @@ class App extends Component {
     this.setState({stack_items: stack})
   }
 
-
   add_post_reply_to_stack(message){
     var stack = this.state.stack_items.slice()
     var pos = -1
@@ -393,6 +393,44 @@ class App extends Component {
     }
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:'post-messages', entered_indexing_tags:['send', 'post','comment'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+  }
+
+  add_job_message_to_stack_object(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'job-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'job-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+  }
+
+  add_proposal_message_to_stack_object(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'proposal-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'proposal-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[]}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1586,10 +1624,56 @@ class App extends Component {
     var stack_clone = this.state.stack_items.slice()      
     stack_clone.push(state_obj)
     this.setState({stack_items: stack_clone})
+
+    var clone = JSON.parse(JSON.stringify(this.state.my_contract_applications))
+    clone[state_obj.picked_contract['id']] = state_obj.application_expiry_time
+    this.setState({my_contract_applications: clone})
   }
 
 
 
+
+
+
+
+
+
+
+  render_view_application_contract_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_application_contract_bottomsheet.bind(this)} open={this.state.view_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ViewApplicationContractPage ref={this.view_application_contract_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_acceptance_action_to_stack={this.add_job_acceptance_action_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_application_contract_bottomsheet(){
+    if(this.state != null){
+      this.setState({view_application_contract_bottomsheet: !this.state.view_application_contract_bottomsheet});
+    }
+  }
+
+  show_view_application_contract_bottomsheet(item){
+    if(this.view_application_contract_page.current != null){
+      this.view_application_contract_page.current.set_object(item)
+    }
+
+    this.open_view_application_contract_bottomsheet()
+  }
+
+
+  add_job_acceptance_action_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+
+    this.show_enter_contract_bottomsheet(state_obj.application_item['contract'])
+    this.open_view_application_contract_bottomsheet()
+  }
 
 
 
@@ -1687,9 +1771,9 @@ class App extends Component {
     if(width > 400){
       width = 350
     }
-    return ( 
+    return (
           <div>
-              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '5px 5px 5px 5px','display': 'flex','flex-direction': 'row', width: width-40}}>
+              <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40}}>
                   <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
                       <img src={AlertIcon} style={{height:25,width:'auto','scale': '0.9'}} />
                   </div>
@@ -2128,7 +2212,17 @@ class App extends Component {
 
       var interactible_checker_status_values = await E52contractInstance.methods.f254([created_subscriptions[i]],0).call((error, result) => {});
 
-      created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0]})
+      var my_interactable_time_value = await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,2).call((error, result) => {});
+
+      var my_blocked_time_value = await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {});
+
+      if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){}
+      else if(my_blocked_time_value[0][0] > Date.now()/1000){}
+      else{
+        created_subscription_object_data.push({'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0]})
+      }
+
+      
     }
     this.setState({created_subscriptions: created_subscription_object_data})
     console.log('subscription count: '+created_subscription_object_data.length)
@@ -2168,6 +2262,7 @@ class App extends Component {
     var created_contract_data = await G5contractInstance.methods.f78(created_contracts, false).call((error, result) => {});
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
     var created_contract_object_data = []
+    var created_contract_mapping = {}
     for(var i=0; i<created_contracts.length; i++){
       var contracts_data = await this.fetch_objects_data(created_contracts[i], web3);
       var event = i>0 ? created_contract_events[i-1]: null
@@ -2206,10 +2301,24 @@ class App extends Component {
 
       var interactible_checker_status_values = await E52contractInstance.methods.f254([created_contracts[i]],0).call((error, result) => {});
 
-      created_contract_object_data.push({'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] })
+      var my_interactable_time_value = await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,2).call((error, result) => {});
+
+      var my_blocked_time_value = await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {});
+
+      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactable_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0] }
+
+      if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
+      }
+      else if(my_blocked_time_value[0][0] > Date.now()/1000){
+
+      }
+      else{
+        created_contract_object_data.push(contract_obj)
+      }
+      created_contract_mapping[created_contracts[i]] = contract_obj
     }
 
-    this.setState({created_contracts: created_contract_object_data})
+    this.setState({created_contracts: created_contract_object_data, created_contract_mapping: created_contract_mapping})
     console.log('contract count: '+created_contract_object_data.length)
 
     var all_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
@@ -2258,9 +2367,12 @@ class App extends Component {
     var my_proposal_ids = []
     for(var i=0; i<contracts_ive_entered.length; i++){
       var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */:contracts_ive_entered[i]} }, (error, events) => {});
+      console.log('---------------------------eee------------------------')
+      console.log(contracts_proposals)
 
       for(var i=0; i<contracts_proposals.length; i++){
-        my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p4))
+        my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p2)) //<--------issue! should be p4
+        
         my_proposals_events.push(contracts_proposals[i])
       }
 
@@ -2269,7 +2381,7 @@ class App extends Component {
     var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */:2} }, (error, events) => {});
 
     for(var i=0; i<contracts_proposals.length; i++){
-      my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p4))
+      my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p2))//<--------issue! should be p4
       my_proposals_events.push(contracts_proposals[i])
     }
 
@@ -2294,7 +2406,12 @@ class App extends Component {
         }
       }
 
-      created_proposal_object_data.push({'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants })
+      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants }
+
+      console.log('---------------------------ter------------------------')
+      console.log(obj)
+
+      created_proposal_object_data.push(obj)
     }
 
     this.setState({my_proposals: created_proposal_object_data})
@@ -2369,7 +2486,19 @@ class App extends Component {
 
       var interactible_checker_status_values = await E52contractInstance.methods.f254([created_tokens[i]],0).call((error, result) => {});
 
-      created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] })
+      var my_interactable_time_value = await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,2).call((error, result) => {});
+
+      var my_blocked_time_value = await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {});
+
+      if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
+
+      }
+      else if(my_blocked_time_value[0][0] > Date.now()/1000){
+
+      }
+      else{
+        created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] })
+      }
 
     }
 
@@ -2510,8 +2639,29 @@ class App extends Component {
         created_job.push({'id':id, 'ipfs':job_data, 'event': created_job_events[i]})
       }
     }
-    this.setState({created_jobs: created_job})
+
+    var my_created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* target_id */: account, p3/* context */:36 } }, (error, events) => {});
+    var my_applications = []
+    var my_contract_applications = {}
+    for(var i=0; i<my_created_job_respnse_data.length; i++){
+      var ipfs_data = await this.fetch_objects_data_from_ipfs(my_created_job_respnse_data[i].returnValues.p4)
+      my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i]})
+
+      var picked_contract_id = ipfs_data['picked_contract_id']
+      var application_expiry_time = ipfs_data['application_expiry_time']
+
+      if(my_contract_applications[picked_contract_id] != null){
+        if(my_contract_applications[picked_contract_id] < application_expiry_time){
+          my_contract_applications[picked_contract_id] = application_expiry_time
+        }
+      }else{
+        my_contract_applications[picked_contract_id] = application_expiry_time
+      }
+    }
+
+    this.setState({created_jobs: created_job, my_applications:my_applications, my_contract_applications:my_contract_applications})
     console.log('job count: '+created_job.length)
+    console.log('job applications count: '+my_applications.length)
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -2803,6 +2953,48 @@ class App extends Component {
     var clone = JSON.parse(JSON.stringify(this.state.object_messages))
     clone[id] = messages
     this.setState({object_messages: clone})
+  }
+
+  get_job_objects_responses = async (id) =>{
+    const web3 = new Web3(this.state.web3);
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:36 } }, (error, events) => {});
+
+    var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:37 } }, (error, events) => {});
+
+    var messages = []
+    for(var j=0; j<created_job_respnse_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_job_respnse_data[j].returnValues.p4)
+      ipfs_message['contract'] = this.state.created_contract_mapping[ipfs_message['picked_contract_id']]
+      ipfs_message['id'] = created_job_respnse_data[j].returnValues.p5
+      ipfs_message['job_id'] = id;
+
+
+      var filtered_events = []
+      for(var i=0; i<application_responses.length; i++){
+        if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
+          filtered_events.push(application_responses[i])
+        }
+      }
+      if(filtered_events.length > 0){
+        var last_response = filtered_events[filtered_events.length -1]
+        var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs(last_response.returnValues.p4)
+        console.log(last_response_ipfs_obj)
+        ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+      }else{
+        ipfs_message['is_response_accepted'] = false
+      }
+
+      messages.push(ipfs_message)
+    }
+
+    var clone = JSON.parse(JSON.stringify(this.state.job_responses))
+    clone[id] = messages
+    this.setState({job_responses: clone})
+
   }
 
 }
