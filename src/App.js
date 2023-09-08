@@ -56,6 +56,7 @@ import ModifySubscriptionPage from './pages/subscription_action_pages/modify_sub
 import ModeratorPage from './pages/moderator_page';
 import RespondToJobPage from './pages/respond_to_job_page';
 import ViewApplicationContractPage from './pages/view_application_contract_page';
+import ViewTransactionPage from './pages/view_transaction_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -114,7 +115,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
@@ -131,12 +132,17 @@ class App extends Component {
     web3:'http://127.0.0.1:8545/', e5_address:'0x19cEcCd6942ad38562Ee10bAfd44776ceB67e923',
     sync_steps:27,
 
-    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}
+    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[]
   };
 
 
   constructor(props) {
     super(props);
+    this.new_contract_page = React.createRef();
+    this.new_token_page = React.createRef();
+    this.new_subscription_page = React.createRef();
+    this.new_post_page = React.createRef();
+    this.new_channel_page = React.createRef();
     this.new_job_page = React.createRef();
     this.new_storefront_page = React.createRef();
     this.new_storefront_item_page = React.createRef();
@@ -163,6 +169,7 @@ class App extends Component {
     this.new_mail_page = React.createRef();
     this.respond_to_job_page = React.createRef();
     this.view_application_contract_page = React.createRef();
+    this.view_transaction_page = React.createRef();
   }
 
   componentDidMount() {
@@ -277,6 +284,7 @@ class App extends Component {
         {this.render_synchronizing_bottomsheet()}
         {this.render_send_receive_ether_bottomsheet()}
         {this.render_stack_bottomsheet()}
+        {this.render_view_transaction_bottomsheet()}
         {this.render_wiki_bottomsheet()}
         {this.render_new_object_bottomsheet()}
         {this.render_view_image_bottomsheet()}
@@ -303,6 +311,7 @@ class App extends Component {
         {this.render_moderator_bottomsheet()}
         {this.render_respond_to_job_bottomsheet()}
         {this.render_view_application_contract_bottomsheet()}
+        
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -498,7 +507,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -598,6 +607,21 @@ class App extends Component {
     // }
   }
 
+  view_transaction(tx, index){
+    this.show_view_transaction_bottomsheet(tx, index)
+  }
+
+  show_hide_stack_item(item){
+        var clone_array = this.state.hidden.slice()
+        const index = clone_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            clone_array.splice(index, 1); // 2nd parameter means remove one item only
+        }else{
+            clone_array.push(item)
+        }
+        this.setState({hidden: clone_array})
+    }
+
 
 
 
@@ -641,12 +665,8 @@ class App extends Component {
     }
   }
 
-  open_new_object(target, mint_burn_token_item){
+  open_new_object(target){
     this.setState({new_object_target: target});
-    if(this.new_job_page.current != null){
-      this.new_job_page.current.set_action('create')
-    }
-
     this.open_new_object_bottomsheet()
   }
 
@@ -656,40 +676,40 @@ class App extends Component {
     if(target == '0'){
       return(
         <div>
-          <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} create_job_object={this.create_job_object.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
+          <NewJobPage ref={this.new_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
         </div>
       )
     }
     else if(target == '8'){
       return(
         <div>
-          <NewTokenPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
+          <NewTokenPage ref={this.new_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
         </div>
       )
     }
     else if(target == '3'){
       return(
-        <NewSubscriptionPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
+        <NewSubscriptionPage ref={this.new_subscription_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '1'){
       return(
-        <NewContractPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
+        <NewContractPage ref={this.new_contract_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '6'){
       return(
-        <NewPostPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
+        <NewPostPage ref={this.new_post_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '7'){
       return(
-        <NewChannelPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
+        <NewChannelPage ref={this.new_channel_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} />
       )
     }
     else if(target == '4'){
       return(
-        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} delete_object_from_stack={this.delete_object_from_stack.bind(this)}/>
+        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
       )
     }
     else if(target == '5'){
@@ -697,31 +717,6 @@ class App extends Component {
         <NewMailPage ref={this.new_mail_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)}/>
       );
     }
-    
-  }
-
-  create_job_object(obj, action){
-    var clone_created_object_array = this.state.created_object_array.slice()
-    if(action == 'create'){
-      obj['pos'] = clone_created_object_array.length
-      clone_created_object_array.push(obj)
-    }else{
-       //it was an edit action
-      var index = clone_created_object_array.indexOf(obj);
-      if (index > -1) { // only splice array when item is found
-        clone_created_object_array.splice(index, 1); // 2nd parameter means remove one item only
-      }else{
-        index = obj['pos'];
-        clone_created_object_array.splice(index, 1);
-      }
-      clone_created_object_array.push(obj)
-    }
-    this.setState({created_object_array: clone_created_object_array})
-    
-    var me = this;
-    setTimeout(function() {
-      me.open_new_object_bottomsheet()
-    }, (1 * 1000));
     
   }
 
@@ -771,25 +766,25 @@ class App extends Component {
       var stack_clone = this.state.stack_items.slice()
       var edit_id = -1
       for(var i=0; i<stack_clone.length; i++){
-        if(stack_clone[i].id == state_obj.edit_object){
+        if(stack_clone[i].id == state_obj.id){
           edit_id = i
         }
       }
       if(edit_id != -1){
-        
+        stack_clone[edit_id] = state_obj
+      }else{
+        stack_clone.push(state_obj)
       }
-      stack_clone.push(state_obj)
       this.setState({stack_items: stack_clone})
     }
 
-    delete_object_from_stack(item){
-      var stack_clone = this.state.stack_items.slice()
-      const index = stack_clone.indexOf(item);
-      if (index > -1) { // only splice array when item is found
-        stack_clone.splice(index, 1); // 2nd parameter means remove one item only
-      }
-      this.setState({stack_items: stack_clone})
-    }
+
+
+
+
+
+
+
 
 
 
@@ -800,7 +795,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_mint_token_bottomsheet.bind(this)} open={this.state.mint_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)} reset_stack_items={this.reset_stack_items.bind(this)} get_balance_in_exchange={this.get_balance_in_exchange.bind(this)}/>
+            <NewMintActionPage ref={this.new_mint_dump_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_buy_sell_transaction_to_stack={this.add_buy_sell_transaction.bind(this)}get_balance_in_exchange={this.get_balance_in_exchange.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -822,24 +817,20 @@ class App extends Component {
   }
 
 
-  add_buy_sell_transaction(tx){
+  add_buy_sell_transaction(state_obj){
     var stack_clone = this.state.stack_items.slice()
-    var array = [tx]
-    var mint_dump_actions_clone = this.state.mint_dump_actions.slice()
-    var existing_action = mint_dump_actions_clone[0][tx['exchange']['id']]
-    if(existing_action == null){
-      // var tx_clone = JSON.parse(JSON.stringify(tx))
-      stack_clone = stack_clone.concat(array)
-      mint_dump_actions_clone[0][tx['exchange']['id']] = stack_clone.length -1
-    }else{
-      stack_clone[existing_action] = tx
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
     }
-    this.setState({mint_dump_actions: mint_dump_actions_clone})
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
-    // this.setState({stack_items: stack_clone, mint_dump_actions: mint_dump_actions_clone})
-  }
-
-  reset_stack_items(){
   }
 
 
@@ -875,11 +866,24 @@ class App extends Component {
     this.open_transfer_token_bottomsheet()
   }
 
-  add_transfer_transactions_to_stack(state){
+  add_transfer_transactions_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()
-    stack_clone.push(state)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
+
+
+
 
 
 
@@ -910,11 +914,24 @@ class App extends Component {
     this.open_enter_contract_bottomsheet()
   }
 
-  enter_contract(state){
+  enter_contract(state_obj){
     var stack_clone = this.state.stack_items.slice()
-    stack_clone.push(state)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
+
+
+
 
 
 
@@ -946,9 +963,19 @@ class App extends Component {
     this.open_extend_contract_bottomsheet()
   }
 
-  extend_contract(state){
+  extend_contract(state_obj){
     var stack_clone = this.state.stack_items.slice()
-    stack_clone.push(state)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1012,6 +1039,7 @@ class App extends Component {
 
   show_new_proposal_bottomsheet(contract_item){
     if(this.new_proposal_page.current != null){
+      this.new_proposal_page.current.reset_state()
       this.new_proposal_page.current.set_contract(contract_item)
     }
 
@@ -1020,7 +1048,17 @@ class App extends Component {
 
   when_add_new_proposal_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1060,7 +1098,17 @@ class App extends Component {
 
   add_vote_proposal_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1142,7 +1190,17 @@ class App extends Component {
 
   add_pay_subscription_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1685,6 +1743,200 @@ class App extends Component {
 
 
 
+
+  render_view_transaction_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_transaction_bottomsheet(){
+    if(this.state != null){
+      this.setState({view_transaction_bottomsheet: !this.state.view_transaction_bottomsheet});
+    }
+  }
+
+  show_view_transaction_bottomsheet(item, index){
+    if(this.view_transaction_page.current != null){
+      this.view_transaction_page.current.set_transaction(item, index)
+    }
+
+    this.open_view_transaction_bottomsheet()
+  }
+
+
+  delete_transaction(item){
+    var stack_clone = this.state.stack_items.slice()
+    const index = stack_clone.indexOf(item);
+    if (index > -1) { // only splice array when item is found
+      stack_clone.splice(index, 1); // 2nd parameter means remove one item only
+    }
+    this.setState({stack_items: stack_clone})
+    this.open_view_transaction_bottomsheet()
+  }
+
+
+  open_edit_object_uis(tx){
+    if(tx.type == 'contract'){
+        this.open_new_object('1')
+        if(this.new_contract_page.current){
+          this.new_contract_page.current?.set_state(tx)
+        }
+    }
+    else if(tx.type == 'token'){
+        this.open_new_object('8')
+        if(this.new_token_page.current){
+          this.new_token_page.current?.set_state(tx)
+        }
+    }
+    else if(tx.type == 'subscription'){
+        this.open_new_object('3')
+        if(this.new_subscription_page.current){
+          this.new_subscription_page.current?.set_state(tx)
+        }
+    }
+    else if(tx.type == 'post'){
+        this.open_new_object('6')
+        if(this.new_post_page.current){
+          this.new_post_page.current?.setState(tx)
+        }
+    }
+    else if(tx.type == 'job'){
+        this.open_new_object('0')
+        if(this.new_job_page.current){
+          this.new_job_page.current?.setState(tx)
+        }
+    }
+    else if(tx.type == 'channel'){
+        this.open_new_object('7')
+        if(this.new_channel_page.current){
+          this.new_channel_page.current?.setState(tx)
+        }
+    }
+    else if(tx.type == 'storefront'){
+        this.open_new_object('4')
+        if(this.new_storefront_page.current){
+          this.new_storefront_page.current?.setState(tx)
+        }
+    }
+    else if(tx.type == 'buy-sell'){
+      this.open_mint_token_bottomsheet()
+      if(this.new_mint_dump_token_page.current){
+        this.new_mint_dump_token_page.current?.setState(tx)
+      }
+    }
+    else if(tx.type == 'transfer'){
+      this.open_transfer_token_bottomsheet()
+      if(this.new_transfer_token_page.current){
+        this.new_transfer_token_page.current?.setState(tx)
+      }
+    }
+    else if(tx.type == 'enter-contract'){
+      this.open_enter_contract_bottomsheet()
+      if(this.enter_contract_page.current){
+        this.enter_contract_page.current?.setState(tx)
+      } 
+    }
+    else if(tx.type == 'extend-contract'){
+      this.open_extend_contract_bottomsheet()
+      if(this.extend_contract_page.current){
+        this.extend_contract_page.current?.setState(tx)
+      } 
+    }
+    else if(tx.type == 'proposal'){
+      this.open_new_proposal_bottomsheet()
+      if(this.new_proposal_page.current){
+        this.new_proposal_page.current?.setState(tx)
+      } 
+    }
+    else if(tx.type == 'vote'){
+      this.open_vote_proposal_bottomsheet()
+      if(this.vote_proposal_page.current){
+        this.vote_proposal_page.current?.setState(tx)
+      }
+    }
+    else if(tx.type == 'pay-subscription'){
+      this.open_pay_subscription_bottomsheet()
+      if(this.pay_subscription_page.current){
+        this.pay_subscription_page.current?.setState(tx)
+      } 
+    }
+    else if(tx.type == 'cancel-subscription'){
+        
+    } 
+    else if(tx.type == 'collect-subscription'){
+        
+    }
+    else if(tx.type == 'modify-subscription'){
+        
+    }   
+    else if(tx.type == 'modify-contract'){
+        
+    }
+    else if(tx.type == 'modify-token'){
+        
+    }
+    else if(tx.type == 'exchange-transfer'){
+        
+    }
+    else if(tx.type == 'force-exit'){
+        
+    }
+    else if(tx.type == 'archive'){
+        
+    }
+    else if(tx.type == 'freeze/unfreeze'){
+        
+    }
+    else if(tx.type == 'authmint'){
+        
+    }
+    else if(tx.type == 'access-rights-settings'){
+           
+    }
+    else if(tx.type == 'mail'){
+           
+    }
+    else if(tx.type == 'mail-messages'){
+           
+    }
+    else if(tx.type == 'channel-messages'){
+           
+    }
+    else if(tx.type == 'post-messages'){
+           
+    }  
+    else if(tx.type == 'job-response'){
+           
+    }
+    else if(tx.type == 'accept-job-application'){
+        
+    }
+    else if(tx.type == 'job-messages'){
+            
+    }
+    else if(tx.type == 'proposal-messages'){
+            
+    }
+        
+  }
+
+
+
+
+
+
+
+
+
+
+
   render_view_image_bottomsheet(){
       var background_color = 'transparent';
       return(
@@ -1784,6 +2036,15 @@ class App extends Component {
           </div>
       );
   }
+
+
+
+
+
+
+
+
+
 
 
 

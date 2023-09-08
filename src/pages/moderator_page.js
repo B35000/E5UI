@@ -83,7 +83,6 @@ class ModeratorPage extends Component {
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
                             {this.render_detail_item('5', {'text':'Finish', 'action':''})}
                         </div>
-                        
                     </div>
                 </div>
 

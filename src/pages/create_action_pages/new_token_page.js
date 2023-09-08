@@ -207,6 +207,10 @@ class NewTokenPage extends Component {
         this.setState({new_token_page_tags_object: tag_obj, page:0, custom_page:0})
     }
 
+    set_state(state){
+        this.setState(state)
+    }
+
 
     render_everything(){
         var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'e')
@@ -276,7 +280,6 @@ class NewTokenPage extends Component {
                     
                     {this.render_new_job_object()}
                     {this.render_detail_item('0')}
-                    {this.render_created_obj_objects()}
                 </div>
             )
         }
@@ -289,7 +292,6 @@ class NewTokenPage extends Component {
                     <div className="col-6">
                         {this.render_new_job_object()}
                         {this.render_detail_item('0')}
-                        {this.render_created_obj_objects()}
                     </div>
                 </div>
                 
@@ -442,73 +444,6 @@ class NewTokenPage extends Component {
                 </div>         
             </div>
         );
-    }
-
-    render_created_obj_objects(){
-        var items = this.fetch_obj_states()
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                <div style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                                    <div style={{'padding': '5px 0px 5px 5px'}}>
-                                        {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
-                                        <div style={{height: 10}}/>
-                                        {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':item.entered_title_text})}
-                                        <div style={{'padding': '5px'}} onClick={()=>this.delete_obj(item, index)}>
-                                            {this.render_detail_item('5', {'text':'Delete', 'action':''})}
-                                        </div>
-                                    </div>         
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    fetch_obj_states(){
-        var all_states = this.props.app_state.stack_items
-        var channel_states = []
-        for(var i=0; i<all_states.length; i++){
-            if(all_states[i].type == 'token'){
-                channel_states.push(all_states[i])
-            }
-        }
-
-        return channel_states
-    }
-
-    delete_obj(item, index){
-        this.props.delete_object_from_stack(item)
-        this.props.notify('item removed',700)
     }
 
 
@@ -1745,44 +1680,32 @@ class NewTokenPage extends Component {
 
 
     finish_creating_object(){
-        // var token_type = this.get_selected_item(this.state.new_token_type_tags_object, this.state.new_token_type_tags_object['i'].active)
-
-        // if(this.state.trust_fee_proportion == 0){
-        //     this.props.notify('you cant set 0% as a trust fee', 1800)
-        // }
-        // else if(token_type =='uncapped' && this.state.block_limit <= this.state.default_exchange_amount_buy_limit && this.state.block_limit !=0){
-        //     this.props.notify('your preferred block limit should exceed the buy limit set',1800)
-        // }
-        // else if(token_type == 'uncapped' && this.state.maturity_limit <= this.state.block_limit && this.state.maturity_limit !=0){
-        //     this.props.notify('your preferred maturity limit should exceed the block limit set',1800)
-        // }
-        // else if(this.state.token_exchange_ratio_x == 0){
-        //     this.props.notify('please set your preferred exchange ratio x', 1800)
-        // }
-        // else if(this.state.token_exchange_ratio_y == 0){
-        //     this.props.notify('please set your preferred exchange ratio y', 1800)
-        // }
-        // else if(token_type == 'capped' && this.state.price_data.length == 0){
-        //     this.props.notify('please specify token prices for buying your token',1800)
-        // }
-        // else if(token_type == 'capped' && this.state.token_exchange_liquidity_total_supply != this.state.token_exchange_ratio_x){
-        //     this.props.notify('your tokens supply and exchange ratio x should match',1800)
-        // }
-        // else if(token_type == 'capped' && this.state.token_exchange_liquidity_total_supply <100_000){
-        //     this.props.notify('your tokens supply should be greater than 100,000',1800)
-        // }
-        // else{
-            
-        // }
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
+        var symbol = this.state.entered_symbol_text;
 
         if(index_tags.length == 0){
             this.props.notify('add some tags first!', 700)
         }
         else if(title == ''){
             this.props.notify('add a name first!', 700)
-        }else{
+        }
+        else if(symbol == ''){
+            this.props.notify('add a symbol first!', 700)
+        }
+        else if(title.length > 10){
+            this.props.notify('that name is too long', 700)
+        }
+        else if(title.includes(' ') || title == 'END' || title == 'SPEND'){
+            this.props.notify('that name is invalid', 700)
+        }
+        else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND'){
+            this.props.notify('that symbol is invalid', 700)
+        }
+        else if(symbol.length > 6){
+            this.props.notify('that symbol is too long', 700)
+        }
+        else{
             this.props.when_add_new_object_to_stack(this.state)
 
             this.setState({ id: makeid(32), type:'token', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_token_page_tags_object: this.get_new_token_page_tags_object(), new_token_type_tags_object: this.get_new_token_type_tags_object(), token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, default_exchange_amount_sell_limit:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, trust_fee_proportion:bigInt('1e16'), block_limit:0, new_token_unlocked_liquidity_tags_object:this.get_new_token_unlocked_liquidity_tags_object(), new_token_unlocked_supply_tags_object:this.get_new_token_unlocked_supply_tags_object(), new_token_fully_custom_tags_object:this.get_new_token_fully_custom_tags_object(), internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(), default_authority_mint_limit:0, new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(), maturity_limit:0, token_exchange_ratio_x:0, token_exchange_ratio_y:0, exchange_authority:'', trust_fee_target:'', exchange_id:'', price_amount:0, price_data:[], new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[] })

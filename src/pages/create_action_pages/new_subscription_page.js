@@ -100,7 +100,7 @@ class NewSubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e','enabled', 'disabled'], [2]
             ],
         };
     }
@@ -133,6 +133,10 @@ class NewSubscriptionPage extends Component {
 
     when_new_subscription_tags_object(tag_obj){
         this.setState({when_new_subscription_tags_object: tag_obj})
+    }
+
+    set_state(state){
+        this.setState(state)
     }
 
 
@@ -185,7 +189,6 @@ class NewSubscriptionPage extends Component {
                     
                     {this.render_new_job_object()}
                     {this.render_detail_item('0')}
-                    {this.render_created_obj_objects()}
                 </div>
             )
         }
@@ -198,7 +201,6 @@ class NewSubscriptionPage extends Component {
                     <div className="col-6">
                         {this.render_new_job_object()}
                         {this.render_detail_item('0')}
-                        {this.render_created_obj_objects()}
                     </div>
                 </div>
                 
@@ -293,73 +295,6 @@ class NewSubscriptionPage extends Component {
                 </div>         
             </div>
         );
-    }
-
-    render_created_obj_objects(){
-        var items = this.fetch_obj_states()
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        if(items.length == 0){
-            items = [0,3,0]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                <div style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                                    <div style={{'padding': '5px 0px 5px 5px'}}>
-                                        {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
-                                        <div style={{height: 10}}/>
-                                        {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':item.entered_title_text})}
-                                        <div style={{'padding': '5px'}} onClick={()=>this.delete_obj(item, index)}>
-                                            {this.render_detail_item('5', {'text':'Delete', 'action':''})}
-                                        </div>
-                                    </div>         
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-    fetch_obj_states(){
-        var all_states = this.props.app_state.stack_items
-        var channel_states = []
-        for(var i=0; i<all_states.length; i++){
-            if(all_states[i].type == 'subscription'){
-                channel_states.push(all_states[i])
-            }
-        }
-
-        return channel_states
-    }
-
-    delete_obj(item, index){
-        this.props.delete_object_from_stack(item)
-        this.props.notify('item removed',700)
     }
 
 

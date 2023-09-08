@@ -296,8 +296,8 @@ class ViewGroups extends Component {
                     <img src={img} style={{height:'70%' ,width:'auto'}} />
 
                     <div style={{'margin':'0px 0px 0px 20px'}}> 
-                        <p style={{'font-size': '21px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:30}}>{header}</p>
-                        <p style={{'font-size': '16px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{subtitle}</p>
+                        <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{header}</p>
+                        <p style={{'font-size': '13px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{subtitle}</p>
                     </div>
                 </div>
             );

@@ -116,7 +116,7 @@ class ContractDetailsSection extends Component {
         var item = this.get_contract_details_data()
         var object = this.get_contract_items()[this.props.selected_contract_item]
         return(
-            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -169,13 +169,7 @@ class ContractDetailsSection extends Component {
 
                     {this.show_enter_contract_button()}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':'Send a proposal to the contract to perform a specified action', 'title':'Send Proposal'})}
-                    <div style={{height:10}}/>
-
-                    <div onClick={()=> this.open_new_proposal_ui()}>
-                        {this.render_detail_item('5', {'text':'Send', 'action':''},)}
-                    </div>
+                    {this.show_send_proposal_button()}
 
                     {this.render_auth_modify_button()}
 
@@ -200,7 +194,6 @@ class ContractDetailsSection extends Component {
 
     show_enter_contract_button(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
-        var contract_config = object['data'][1]
         if(object['id'] != 2){
             return(
                 <div>
@@ -216,7 +209,26 @@ class ContractDetailsSection extends Component {
                     
                     <div style={{height:10}}/>
 
+                    {this.show_extend_stay_in_contract_button()}
+                    
+                    {this.show_exit_contract_action()}
 
+                    {this.render_archive_button_if_author()}
+                    
+                </div>
+            )
+        }
+    }
+
+    show_extend_stay_in_contract_button(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        var contract_config = object['data'][1]
+        
+        if(expiry_time_in_seconds != 0 && time_to_expiry > contract_config[2]){
+            return(
+                <div>
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'size':'l', 'details':'Max Extend Enter Contract Limit', 'title':this.get_time_diff(contract_config[2])})}
@@ -229,19 +241,47 @@ class ContractDetailsSection extends Component {
                         {this.render_detail_item('5', {'text':'Extend', 'action':''},)}
                     </div>
 
+                </div>
+            )
+        }
+    }
 
+    show_send_proposal_button(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if(expiry_time_in_seconds != 0 && time_to_expiry > 0){
+            return(
+                <div>
                     {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Send a proposal to the contract to perform a specified action', 'title':'Send Proposal'})}
+                    <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'size':'l', 'details':'Exit from the contract and no longer participate in its consensus', 'title':'Exit Contract'})}
+                    <div onClick={()=> this.open_new_proposal_ui()}>
+                        {this.render_detail_item('5', {'text':'Send', 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
+
+    }
+
+    show_exit_contract_action(){
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if(expiry_time_in_seconds != 0){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                   {this.render_detail_item('3', {'size':'l', 'details':'Exit from the contract and no longer participate in its consensus', 'title':'Exit Contract'})}
                     <div style={{height:10}}/>
 
                     <div onClick={()=>this.open_exit_contract_ui()}>
                         {this.render_detail_item('5', {'text':'Exit', 'action':''},)}
                     </div>
-
-
-                    {this.render_archive_button_if_author()}
-                    
                 </div>
             )
         }
@@ -261,7 +301,14 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
                 </div>
             )
-        }else{
+        }else if(expiry_time_in_seconds != 0 && time_to_expiry < 0){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':'Your time in the contract has exipred, you can either extend your stay or exit then enter again.', 'textsize':'13px', 'font':'Sans-serif'})}
+                </div>
+            )
+        }
+        else{
             return(
                 <div>
                     {this.render_detail_item('4', {'text':'Youre not part of the contract', 'textsize':'13px', 'font':'Sans-serif'})}

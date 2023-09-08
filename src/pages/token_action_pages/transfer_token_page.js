@@ -53,7 +53,7 @@ class template extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
                 <div className="row">
-                    <div className="col-9" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.new_transfer_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_transfer_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
@@ -64,7 +64,7 @@ class template extends Component {
                     </div>
                 </div>
                 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Transfer the specified token'})}
 
                     <div style={{height:10}}/> 
@@ -154,7 +154,7 @@ class template extends Component {
             var tx = {id:makeid(8), type:'transfer', 'amount':''+amount, 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
 
             clone.push(tx)
-            this.setState({stack_items: clone, debit_balance: this.state.debit_balance + amount})
+            this.setState({stack_items: clone, debit_balance: this.state.debit_balance + amount, recipient_id:'', amount:0})
             this.props.notify('transaction added!', 600)
         }
     }

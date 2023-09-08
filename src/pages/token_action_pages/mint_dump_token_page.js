@@ -34,10 +34,9 @@ function makeid(length) {
 class NewMintActionPage extends Component {
     
     state = {
-        selected: 0, id:makeid(8),
+        selected: 0, id:makeid(8), type:'buy-sell', entered_indexing_tags:['mint', 'dump', 'token'],
         new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
-        recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, stack_item_selected:0, 
-        stack_items:[],
+        recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}
     };
 
 
@@ -57,8 +56,13 @@ class NewMintActionPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
                 <div className="row">
-                    <div className="col-10" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.new_mint_dump_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_mint_dump_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
+                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                        </div>
                     </div>
                 </div>
                 
@@ -111,13 +115,10 @@ class NewMintActionPage extends Component {
 
                 <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
-                <div style={{'padding': '5px'}} onClick={()=>  this.add_transaction()}>
+                {/* <div style={{'padding': '5px'}} onClick={()=>  this.add_transaction()}>
                     {this.render_detail_item('5', {'text':'Add Transaction To Stack', 'action':''})}
-                </div>
+                </div> */}
 
-
-                {/* {this.load_stack_items()} */}
-                {this.render_stack_transactions()}
             </div>
         )
     }
@@ -133,7 +134,7 @@ class NewMintActionPage extends Component {
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
         return(
-            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>
@@ -169,99 +170,9 @@ class NewMintActionPage extends Component {
     }
 
 
-    load_stack_items(){
-        return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <div className="row" style={{width:'110%'}}>
-                        <div className="col-2">
-                            <img src={AddStack} style={{height:55 ,width:'auto', 'margin':'5px 0px 0px 0px'}} onClick={() => this.when_new_stack_item_tapped()}/>
-                        </div>
-                        <div className="col-10">
-                            {this.render_stack_items_list()}
-                        </div>
-                    </div>
-                </div>
-        )
-    }
-
-    when_new_stack_item_tapped(){
-        var clone = this.state.stack_items.slice()
-        clone.push({'id':makeid(4), 'data':[]})
-        this.setState({stack_items: clone})
-    }
-
-    when_stack_item_tapped(index){
-        this.setState({stack_item_selected: index})
-    }
-
-
-    render_stack_items_list(){
-        var items = this.state.stack_items
-        if(items.length == 0){
-            var items = ['1','1','1']
-            return(
-                <div>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '0px 5px 0px 5px', '-ms-overflow-style': 'none'}}>
-                                <div style={{height:70, width:100, 'background-color': this.props.theme['card_background_color'], 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                    
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                        {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '0px 5px 0px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_stack_item_tapped(index)}>
-                                {this.render_stack_item(index)}
-                            </li>
-                        ))}
-                    </ul>
-                    
-                </div>
-            )
-        }
-    }
-
-    render_stack_item(index){
-        if(this.state.stack_item_selected == index){
-            return(
-                <div>
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '2px 0px 0px 0px'}}/>
-                    {this.render_detail_item('3', this.get_stack_item_data(index))}
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    {this.render_detail_item('3', this.get_stack_item_data(index))}
-                </div>
-            )
-        }
-        
-    }
-
-    get_stack_item_data(index){
-        var item_name = this.state.stack_items[index]['id']
-        var item_count = this.state.stack_items[index]['data'].length
-        return{
-            'title':index+'-'+item_name, 'details':item_count+' transactions', 'size':'l'
-        }
-    }
 
 
     add_transaction() {
-        var clone = this.state.stack_items.slice()
-        var selected_stack_item = this.state.stack_item_selected
-
         var amount = this.state.amount
         var recipient = this.state.recipient_id.trim()
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
@@ -279,17 +190,16 @@ class NewMintActionPage extends Component {
                 this.props.notify('you dont have enough tokens for that')
             }
             else{
-                if(clone.length == 0){
-                    clone.push({'id':makeid(4), 'data':[]})
-                }
-                clone[selected_stack_item]['data'].splice(0, 1)
-                var tx = {id:makeid(8), type:'buy-sell', 'amount':bigInt(amount), 'recipient':recipient, 'action':stack_action, 'exchange':this.state.token_item, entered_indexing_tags:['buy', 'mint', 'token']}
-                clone[selected_stack_item]['data'].push(tx)
-                this.setState({stack_items: clone})
+                // if(clone.length == 0){
+                //     clone.push({'id':makeid(4), 'data':[]})
+                // }
+                // clone[selected_stack_item]['data'].splice(0, 1)
+                // var tx = {id:makeid(8), type:'buy-sell', 'amount':bigInt(amount), 'recipient':recipient, 'action':stack_action, 'exchange':this.state.token_item, entered_indexing_tags:['buy', 'mint', 'token']}
+                // clone[selected_stack_item]['data'].push(tx)
+                // this.setState({transaction: tx})
                 this.props.notify('transaction added!', 600)
 
-                this.props.add_buy_sell_transaction_to_stack(tx)
-                this.props.reset_stack_items()
+                // this.props.add_buy_sell_transaction_to_stack(tx)
             }
         }
         
@@ -307,62 +217,6 @@ class NewMintActionPage extends Component {
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
-    }
-
-
-    render_stack_transactions(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = this.state.stack_items
-
-        if(items.length == 0){
-            items = [0, 1]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }else{
-            var selected_stack_item = this.state.stack_item_selected
-            var items = this.state.stack_items[selected_stack_item]['data']
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_stack_item_clicked(index)}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' tokens', 'details':''+item['recipient'], 'size':'l'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-    }
-
-
-    when_stack_item_clicked(index){
-        var cloned_array = this.state.stack_items.slice()
-        var selected_stack_item = this.state.stack_item_selected
-
-        // const index = cloned_array[selected_stack_item].indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            cloned_array[selected_stack_item]['data'].splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({stack_items: cloned_array})
-        this.props.notify('transaction removed!', 600)
     }
 
 
@@ -505,18 +359,51 @@ class NewMintActionPage extends Component {
         return ((proportion/10**18) * 100)+'%';
     }
 
-    add_action_to_stack(){
+    finish(){
+        var amount = this.state.amount
+        var recipient = this.state.recipient_id.trim()
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        var stack_action = 1
+        if(action == 'mint-buy') stack_action = 0
 
+        if(isNaN(recipient) || recipient == ''){
+            this.props.notify('please put a valid account id', 600)
+        }
+        else if(amount == 0){
+            this.props.notify('please put a valid amount', 600)
+        }
+        else{
+            if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){
+                this.props.notify('you dont have enough tokens for that')
+            }
+            else if(!this.check_if_sender_can_interact_with_exchange()){
+                this.props.notify('you cant interact with the same exchange twice in one run', 1200)
+            }
+            else{
+                this.props.add_buy_sell_transaction_to_stack(this.state)
+                this.setState({amount:0, recipient_id:''})
+                this.props.notify('transaction added to stack', 600)
+            }
+        }
+    }
+
+    check_if_sender_can_interact_with_exchange(){
+        var stack_transactions = this.props.app_state.stack_items
+        for(var i=0; i<stack_transactions.length; i++){
+            if(stack_transactions[i].type == 'buy-sell' && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id){
+                return false
+            }
+        }
+        return true
     }
 
 
     set_token(item){
         if(this.state.token_item['id'] != item['id']){
-            this.setState( {
-                selected: 0, id:makeid(8),
+            this.setState({
+                selected: 0, id:makeid(8), type:'buy-sell', entered_indexing_tags:['buy', 'mint', 'token'],
                 new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
-                recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, stack_item_selected:0, 
-                stack_items:[],
+                recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}
             })
         }
         this.setState({token_item: item})

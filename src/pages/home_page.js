@@ -52,7 +52,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','e.jobs','e.contracts', 'e.proposals','e.subscriptions', 'e.mail'], [0]
+              ['or','',0], ['e','e.jobs','e.contracts', 'e.proposals','e.subscriptions', 'e.storefronts', 'e.mail'], [0]
           ],
           'jobs':[
               ['xor','e',1], ['jobs','all','viewed','created'], [1],[1]

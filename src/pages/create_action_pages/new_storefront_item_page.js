@@ -94,10 +94,10 @@ class NewStorefrontItemPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
                 <div className="row">
-                    <div className="col-10" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-2" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
                             {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
                         </div>
@@ -106,7 +106,7 @@ class NewStorefrontItemPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -205,13 +205,7 @@ class NewStorefrontItemPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':'Purchase Options', 'details':'If set to direct, buyers will make direct transfers when adding the items to their bags and carts while via-contract, youre set to receive a contract (if the item is of high value)', 'size':'l'})}
-
-                <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object.bind(this)} theme={this.props.theme}/>
-
+                {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -638,12 +632,10 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height: 20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
@@ -663,7 +655,7 @@ class NewStorefrontItemPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id)){
+        if(isNaN(exchange_id) || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -692,9 +684,9 @@ class NewStorefrontItemPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -880,24 +872,32 @@ class NewStorefrontItemPage extends Component {
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
-        var texts = this.state.entered_text_objects
-        var images = this.state.entered_image_objects
-        var id = Math.round(new Date().getTime()/1000);
+        var price_amounts = this.state.price_data
 
         if(index_tags.length == 0){
             this.props.notify('add some tags first!', 700)
         }
         else if(title == ''){
             this.props.notify('add a title for your Item', 700)
-        }else{
+        }
+        else if(price_amounts.length == 0){
+            this.props.notify('you should add a price for your new item', 700)
+        }
+        else{
             
             var data = this.state;
             this.props.add_data_to_new_store_item(data)
 
-            this.setState({ id: makeid(32), get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-            purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0 })
+            this.setState({
+                id: makeid(8), type:'storefront-item',
+                get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
+                get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
+                entered_tag_text: '', entered_title_text:'', entered_text:'',
+                entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
+                entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
+                purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0
+            })
 
-            this.props.notify('transaction added to stack', 700);
         }
     }
 

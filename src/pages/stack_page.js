@@ -334,22 +334,22 @@ class StackPage extends Component {
     render_stack_item(item, index){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var op = this.state.hidden.includes(item) ? 0.5 : 1.0
-        var txt = this.state.hidden.includes(item) ? 'show' : 'hide'
+        var op = this.props.app_state.hidden.includes(item) ? 0.5 : 1.0
+        var txt = this.props.app_state.hidden.includes(item) ? 'show' : 'hide'
         return(
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
+            <div onClick={() => this.props.view_transaction(item, index)} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
-                    {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+                    {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3',{'title':'Stack ID - '+index, 'details':item.id,'size':'s'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item)),'size':'s'})}
+                    {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item))+' - '+number_with_commas(Math.floor(this.get_estimated_gas(item)*1.6)),'size':'s'})}
                     <div style={{height: 10}}/>
 
-                    <div style={{'padding': '5px'}} onClick={()=>this.show_hide_stack_item(item)}>
+                    {/* <div style={{'padding': '5px'}} onClick={()=>this.show_hide_stack_item(item)}>
                         {this.render_detail_item('5', {'text':txt, 'action':''})}
-                    </div>
+                    </div> */}
 
                 </div>         
             </div>
@@ -357,14 +357,7 @@ class StackPage extends Component {
     }
 
     show_hide_stack_item(item){
-        var clone_array = this.state.hidden.slice()
-        const index = clone_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            clone_array.splice(index, 1); // 2nd parameter means remove one item only
-        }else{
-            clone_array.push(item)
-        }
-        this.setState({hidden: clone_array})
+        this.props.show_hide_stack_item(item)
     }
 
     render_stack_gas_part(){
@@ -505,7 +498,7 @@ class StackPage extends Component {
         var wei = 0;
 
         for(var i=0; i<txs.length; i++){
-            if(!this.state.hidden.includes(txs[i])){
+            if(!this.props.app_state.hidden.includes(txs[i])){
                 if(txs[i].type == 'contract'){
                     var contract_obj = this.format_contract_object(txs[i])
                     strs.push([])
@@ -771,9 +764,9 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(buy_sell_obj)
-                    if(txs[i]['exchange']['id'] == 3 && txs[i]['action'] == 0){
+                    if(txs[i].token_item['id'] == 3 && this.get_action(txs[i]) == 0){
                         //if we're buying end
-                        wei = (bigInt(txs[i]['exchange']['data'][4][0]).multiply(txs[i]['amount']).add(35)).toString()
+                        wei = (bigInt(txs[i].token_item['data'][4][0]).multiply(txs[i].amount).add(35)).toString()
                     }
                 }
                 else if(txs[i].type == 'transfer'){
@@ -965,7 +958,7 @@ class StackPage extends Component {
         var metadata_strings = [ [] ]
 
         for(var i=0; i<txs.length; i++){
-            if(!this.state.hidden.includes(txs[i])){
+            if(!this.props.app_state.hidden.includes(txs[i])){
                 if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'|| txs[i].type == 'proposal'){
                     metadata_action[1].push(i)
                     metadata_action[2].push(35)
@@ -993,7 +986,7 @@ class StackPage extends Component {
         var index_data_strings = [ [], [] ]
 
         for(var i=0; i<txs.length; i++){
-            if(!this.state.hidden.includes(txs[i])){
+            if(!this.props.app_state.hidden.includes(txs[i])){
                 if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront' || txs[i].type == 'proposal'){
                     var tx_tags = txs[i].entered_indexing_tags
                     index_data_in_tags[1].push(i)
@@ -1210,9 +1203,6 @@ class StackPage extends Component {
             [], []
         ]
 
-        console.log('--------------56------------')
-        console.log(obj)
-
       if(t.price_data.length == 0){
         if(new_token_type_tags_object == 5){
             obj[7].push(0)
@@ -1273,7 +1263,7 @@ class StackPage extends Component {
       if(t.price_data.length == 0){
         obj[5].push(3)
         obj[6].push(23)
-        obj[7].push(10_000)
+        obj[7].push(1)
         obj[8].push(23)
         obj[9].push(0)
         obj[10].push(23)
@@ -1336,7 +1326,6 @@ class StackPage extends Component {
     }
 
     format_buy_sell_object(t){
-        var amm = bigInt(100)
         var obj = [/* buy end/spend */
         [30000, 8, 0],
         [], [],/* exchanges */
@@ -1346,21 +1335,28 @@ class StackPage extends Component {
       ];
 
 
-      var amount = bigInt(t['amount']).toString().toLocaleString('fullwide', {useGrouping:false})
+      var amount = bigInt(t.amount).toString().toLocaleString('fullwide', {useGrouping:false})
       obj[5].push(amount)
 
-      obj[1].push(t['exchange']['id'])
+      obj[1].push(t.token_item['id'])
       obj[2].push(23)
-      obj[3].push(t['recipient'])
-      if(t['recipient'] == 53){
+      obj[3].push(t.recipient_id)
+      if(t.recipient_id == 53){
         obj[4].push(53)
       }else{
         obj[4].push(23)
       }
       
-      obj[6].push(t['action'])
+      obj[6].push(this.get_action(t))
 
       return obj
+    }
+
+    get_action(t){
+        var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
+        var stack_action = 1
+        if(action == 'mint-buy') stack_action = 0
+        return stack_action
     }
 
     format_transfer_object(t){
@@ -2347,7 +2343,7 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
                 </div>

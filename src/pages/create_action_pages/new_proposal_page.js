@@ -1283,7 +1283,7 @@ class NewProposalPage extends Component {
                 <div style={{height:20}}/>
                 <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_exchange_transfer_target_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_target} theme={this.props.theme}/>
 
-                {this.load_account_suggestions('exchange_transfer_target')}
+                {/* {this.load_account_suggestions('exchange_transfer_target')} */}
                 {this.render_detail_item('0')}
 
 
@@ -1574,7 +1574,6 @@ class NewProposalPage extends Component {
             this.props.when_add_new_proposal_to_stack(this.state)
 
             this.setState({selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
-            contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
             entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
             new_proposal_title_tags_object:this.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:this.get_new_proposal_type_tags_object(),
@@ -1602,6 +1601,13 @@ class NewProposalPage extends Component {
 
             this.props.notify('transaction added to stack', 700);
         }
+    }
+
+
+    reset_state(){
+        this.setState({
+            selected: 0, id: makeid(32)
+        })
     }
 
 
