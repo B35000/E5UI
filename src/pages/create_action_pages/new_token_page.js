@@ -159,7 +159,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e','enabled', 'disabled'], [2]
             ],
         };
     }

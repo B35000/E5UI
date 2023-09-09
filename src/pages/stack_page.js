@@ -48,7 +48,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','run-settings','settings', 'wallet'], [0]
+                ['or','',0], ['e','stack','history','settings', 'wallet'], [0]
             ],
         };
         
@@ -121,10 +121,17 @@ class StackPage extends Component {
                 </div>
             )    
         }else 
-        if(selected_item == 'run-settings'){
+        if(selected_item == 'stack'){
             return(
                 <div>
-                    {this.render_stack_run_settings_section()}
+                    {this.render_stack_transactions_part()}
+                </div>
+            )    
+        }
+        if(selected_item == 'history'){
+            return(
+                <div>
+                    {this.render_run_history_items()}
                 </div>
             )    
         }
@@ -151,44 +158,18 @@ class StackPage extends Component {
     }
 
 
-    render_stack_run_settings_section(){
-        var size = this.props.size
-
-        if(size == 's'){
-            return(
-                <div style={{'padding': '0px 10px 0px 0px'}}>
-                    {this.render_stack_run_settings_part()}
-                    {this.render_run_history_items()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 10px 0px 10px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_stack_run_settings_part()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_run_history_items()}
-                    </div>
-                </div>
-                
-            )
-        }
-    }
-
     render_stack_run_settings_part(){
         var height = this.props.height-150
-
         return(
-            <div style={{overflow: 'auto', maxHeight: height}}>
+            <div style={{}}>
+                {this.render_detail_item('3', {'title':'Transaction Gas Limit', 'details':'The gas budget for your next run with E5. The default is set to 5.3 million gas.', 'size':'l'})}
+                <div style={{height:10}}/>
+
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Transaction Gas Limit', 'subtitle':this.format_power_figure(this.state.run_gas_limit), 'barwidth':this.calculate_bar_width(this.state.run_gas_limit), 'number':this.format_account_balance_figure(this.state.run_gas_limit), 'barcolor':'', 'relativepower':'units', })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_detail_item('0')}
 
             </div>
         )
@@ -267,23 +248,9 @@ class StackPage extends Component {
                 <div style={{'padding': '0px 10px 0px 0px'}}>
                     {this.render_stack_gas_part()}
                     {this.render_detail_item('0')}
-                    {this.render_stack_transactions_part()}
+                    {this.render_stack_run_settings_part()}
                     {this.render_dialog_ui()}
                 </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 15px 0px 15px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_stack_gas_part()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_stack_transactions_part()}
-                    </div>
-                    {this.render_dialog_ui()}
-                </div>
-                
             )
         }
     }
@@ -346,10 +313,6 @@ class StackPage extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item))+' - '+number_with_commas(Math.floor(this.get_estimated_gas(item)*1.6)),'size':'s'})}
                     <div style={{height: 10}}/>
-
-                    {/* <div style={{'padding': '5px'}} onClick={()=>this.show_hide_stack_item(item)}>
-                        {this.render_detail_item('5', {'text':txt, 'action':''})}
-                    </div> */}
 
                 </div>         
             </div>

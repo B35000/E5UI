@@ -403,7 +403,6 @@ class ModifyTokenPage extends Component {
         }
     }
 
-
     render_reconfig_value(item){
         var title = item['title'];
         var ui = item['type']

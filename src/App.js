@@ -1240,7 +1240,17 @@ class App extends Component {
 
   add_cancel_subscription_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1283,7 +1293,17 @@ class App extends Component {
 
   add_collect_subscription_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1325,7 +1345,17 @@ class App extends Component {
 
   add_modify_subscription_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1366,7 +1396,17 @@ class App extends Component {
 
   add_modify_contract_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1407,7 +1447,17 @@ class App extends Component {
 
   add_modify_token_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1447,7 +1497,17 @@ class App extends Component {
 
   add_exchange_transfer_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1484,7 +1544,17 @@ class App extends Component {
 
   add_force_exit_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1526,7 +1596,17 @@ class App extends Component {
 
   add_archive_proposal_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1564,7 +1644,17 @@ class App extends Component {
 
   add_freeze_unfreeze_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1605,7 +1695,17 @@ class App extends Component {
 
   add_authmint_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1641,7 +1741,17 @@ class App extends Component {
 
   add_moderator_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1749,7 +1859,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
             <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
@@ -1868,37 +1978,64 @@ class App extends Component {
       } 
     }
     else if(tx.type == 'cancel-subscription'){
-        
-    } 
-    else if(tx.type == 'collect-subscription'){
-        
+      this.open_cancel_subscription_bottomsheet()
+      if(this.cancel_subscription_page.current){
+        this.cancel_subscription_page.current?.setState(tx)
+      }
     }
     else if(tx.type == 'modify-subscription'){
-        
+        this.open_modify_subscription_bottomsheet()
+        if(this.modify_subscription_page.current){
+          this.modify_subscription_page.current?.setState(tx)
+        }
     }   
     else if(tx.type == 'modify-contract'){
-        
+        this.open_modify_contract_bottomsheet()
+        if(this.modify_contract_page.current){
+          this.modify_contract_page.current?.setState(tx)
+        }
     }
     else if(tx.type == 'modify-token'){
-        
+        this.open_modify_token_bottomsheet()
+        if(this.modify_token_page.current){
+          this.modify_token_page.current?.setState(tx)
+        }
     }
     else if(tx.type == 'exchange-transfer'){
-        
+        this.open_exchange_transfer_bottomsheet()
+        if(this.exchange_transfer_page.current){
+          this.exchange_transfer_page.current?.setState(tx)
+        }
     }
     else if(tx.type == 'force-exit'){
-        
+        this.open_force_exit_bottomsheet()
+        if(this.force_exit_page.current){
+          this.force_exit_page.current?.setState(tx)
+        }
     }
     else if(tx.type == 'archive'){
-        
+        this.open_archive_proposal_bottomsheet()
+        if(this.archive_proposal_page.current){
+          this.archive_proposal_page.current?.setState(tx)
+        }
     }
     else if(tx.type == 'freeze/unfreeze'){
-        
+        this.open_freeze_unfreeze_bottomsheet()
+        if(this.freeze_unfreeze_page.current){
+          this.freeze_unfreeze_page.current?.setState(tx)
+        }
     }
     else if(tx.type == 'authmint'){
-        
+        this.open_authmint_bottomsheet()
+        if(this.authmint_page.current){
+          this.authmint_page.current?.setState(tx)
+        }
     }
     else if(tx.type == 'access-rights-settings'){
-           
+        this.open_moderator_bottomsheet()
+        if(this.moderator_page.current){
+          this.moderator_page.current?.setState(tx)
+        }  
     }
     else if(tx.type == 'mail'){
            

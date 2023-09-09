@@ -94,8 +94,7 @@ class ForceExitPage extends Component {
                     {this.render_detail_item('5', {'text':'Add Force Exit Action', 'action':''})}
                 </div>
 
-
-                {this.load_transfer_actions()}
+                {this.load_force_exit_actions()}
 
             </div>
         )
@@ -122,7 +121,7 @@ class ForceExitPage extends Component {
     }
 
 
-    load_transfer_actions(){
+    load_force_exit_actions(){
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){

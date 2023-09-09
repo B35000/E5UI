@@ -35,8 +35,6 @@ class ViewTransactionPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 
-                <Tags page_tags_object={this.state.view_transactions_page_tags_object} tag_size={'l'} when_tags_updated={this.when_view_transactions_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
                 {this.render_everything()}
                 {this.render_transaction_details()}
             </div>
@@ -89,7 +87,7 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit'){
+        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription'){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':'Make some changes to the transaction', 'title':'Edit'})}
@@ -337,77 +335,77 @@ class ViewTransactionPage extends Component {
             else if(tx.type == 'cancel-subscription'){
                 return(
                     <div>
-                        
+                        {this.render_cancel_subscription_data()}
                     </div>
                 )
             } 
             else if(tx.type == 'collect-subscription'){
                 return(
                     <div>
-                        
+                        {this.render_collect_subscription_data()}
                     </div>
                 )
             }
             else if(tx.type == 'modify-subscription'){
                 return(
                     <div>
-                        
+                        {this.render_modify_subscription_data()}
                     </div>
                 )
             }   
             else if(tx.type == 'modify-contract'){
                 return(
                     <div>
-                        
+                        {this.render_modify_contract_data()}
                     </div>
                 )
             }
             else if(tx.type == 'modify-token'){
                 return(
                     <div>
-                        
+                        {this.render_modify_token_data()}
                     </div>
                 )
             }
             else if(tx.type == 'exchange-transfer'){
                 return(
                     <div>
-                        
+                        {this.render_exchange_transfer_data()}
                     </div>
                 )
             }
             else if(tx.type == 'force-exit'){
                 return(
                     <div>
-                        
+                        {this.render_force_exit_data()}
                     </div>
                 )
             }
             else if(tx.type == 'archive'){
                 return(
                     <div>
-                        
+                        {this.render_archive_data()}
                     </div>
                 )
             }
             else if(tx.type == 'freeze/unfreeze'){
                 return(
                     <div>
-                        
+                        {this.render_freeze_unfreeze_data()}
                     </div>
                 )
             }
             else if(tx.type == 'authmint'){
                 return(
                     <div>
-                        
+                        {this.render_authmint_data()}
                     </div>
                 )
             }
             else if(tx.type == 'access-rights-settings'){
                 return(
                     <div>
-                        
+                        {this.render_access_right_setting_data()}
                     </div>
                 )   
             }
@@ -1045,7 +1043,7 @@ class ViewTransactionPage extends Component {
       }
 
       var final_obj = [
-          [1], obj[3], obj[5], obj[7], obj[9], obj[11]
+          obj[1], obj[3], obj[5], obj[7], obj[9], obj[11]
       ]
 
       return final_obj
@@ -1197,7 +1195,7 @@ class ViewTransactionPage extends Component {
       }
 
       var final_obj = [
-          [1], obj[3], obj[5], obj[7], obj[9]
+          obj[1], obj[3], obj[5], obj[7], obj[9]
       ]
 
       return final_obj
@@ -1555,10 +1553,10 @@ class ViewTransactionPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -1806,7 +1804,7 @@ class ViewTransactionPage extends Component {
 
 
         var final_obj = [
-          [1], obj[3], obj[5], obj[7], obj[9], obj[11], obj[13], obj[15], obj[17], obj[19], obj[21]
+          obj[1], obj[3], obj[5], obj[7], obj[9], obj[11], obj[13], obj[15], obj[17], obj[19], obj[21]
       ]
 
       return final_obj
@@ -1887,10 +1885,10 @@ class ViewTransactionPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -1937,8 +1935,8 @@ class ViewTransactionPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={Letter} style={{height:40 ,width:'auto'}} />
                                     </div>
@@ -2032,8 +2030,8 @@ class ViewTransactionPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={Letter} style={{height:40 ,width:'auto'}} />
                                     </div>
@@ -2101,10 +2099,10 @@ class ViewTransactionPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -2141,7 +2139,7 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':'Time Units', 'subtitle':this.format_power_figure(item.time_units), 'barwidth':this.calculate_bar_width(item.time_units), 'number':this.format_account_balance_figure(item.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
                 </div>
                 <div style={{height: 10}}/>
-                {this.render_buy_token_uis(item.subscription_item['data'][2], item.subscription_item['data'][3], item.subscription_item['data'][4])}
+                {this.render_subscription_buy_token_uis(item.subscription_item['data'][2], item.subscription_item['data'][3], item.subscription_item['data'][4])}
 
                 {this.render_detail_item('0')}
 
@@ -2162,7 +2160,7 @@ class ViewTransactionPage extends Component {
         return bigInt(price).multiply(item.time_units)
     }
 
-    render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+    render_subscription_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
@@ -2176,6 +2174,854 @@ class ViewTransactionPage extends Component {
             
         )
     }
+
+
+
+
+
+
+    render_cancel_subscription_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var subscription_config = item.subscription_item['data'][1]
+        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Time Units To Cancel', 'subtitle':this.format_power_figure(item.time_units), 'barwidth':this.calculate_bar_width(item.time_units), 'number':this.format_account_balance_figure(item.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_subscription_buy_token_uis(item.subscription_item['data'][2], item.subscription_item['data'][3], item.subscription_item['data'][4])}
+
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+
+
+    render_collect_subscription_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+this.get_time_diff(this.get_total_subscription_collectible_time()), 'details':'Total Collectible Time', 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+this.get_total_subscription_collectible_timeunits(), 'details':'Total Collectible Time Units', 'size':'s'})}
+                <div style={{height: 10}}/>
+
+                {this.render_collect_subscription_buy_token_uis(item.subscription_item['data'][2], item.subscription_item['data'][3], item.subscription_item['data'][4])}
+
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    get_total_subscription_collectible_time(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var paid_amount_items = item.subscription_item['paid_amounts']
+        var total_time = 0;
+        for(var i=0; i<paid_amount_items.length; i++){
+            total_time += paid_amount_items[i]
+        }
+        return total_time;
+    }
+
+    get_total_subscription_collectible_timeunits(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var subscription_config = item.subscription_item['data'][1]
+        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+
+        return bigInt(this.get_total_subscription_collectible_time()).divide(bigInt(time_unit))
+    }
+
+    render_collect_subscription_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+         return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                    {buy_tokens.map((item, index) => (
+                        <li style={{'padding': '1px'}}>
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'relativepower':this.props.app_state.token_directory[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            
+        )
+    }
+
+    calculate_collect_subscription_final_amount(price){
+        return bigInt(price).multiply(this.get_total_subscription_collectible_timeunits())
+    }
+
+    get_total_subscription_collectible_timeunits(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var subscription_config = item.subscription_item['data'][1]
+        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+
+        return bigInt(this.get_total_subscription_collectible_time()).divide(bigInt(time_unit))
+    }
+
+
+
+
+
+
+
+
+    render_modify_subscription_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = item.reconfig_values
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Modify Subscription Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.load_reconfig_items()}
+            </div>
+        )
+    }
+
+    load_reconfig_items(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var reconfig_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = reconfig_item.reconfig_values
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_reconfig_value(item)}
+                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_reconfig_value(item){
+        var title = item['title'];
+        var ui = item['type']
+        var number = item['value']
+        if(ui == 'number'){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+                </div>
+            )
+        }
+        else if(ui == 'id'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+    render_modify_contract_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = item.reconfig_values
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Modify Contract Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.load_contract_reconfig_items()}
+            </div>
+        )
+    }
+
+    load_contract_reconfig_items(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = item.reconfig_values
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_contract_reconfig_value(item)}
+                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_contract_reconfig_value(item){
+        var title = item['title'];
+        var ui = item['type']
+        var number = item['value']
+        if(ui == 'number'){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+                </div>
+            )
+        }
+        else if(ui == 'proportion'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'time'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+
+                </div>
+            )
+        }
+        else if(ui == 'tag'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_contract_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'id'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    get_contract_tag_selected_item(title, number){
+        var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}}
+
+        return obj[title][number]
+    }
+
+
+
+
+
+
+
+
+    render_modify_token_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = item.reconfig_values
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Modify Token Exchange Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.load_token_reconfig_items()}
+            </div>
+        )
+    }
+
+    load_token_reconfig_items(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = item.reconfig_values
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                <div style={{height:5}}/>
+                                {this.render_token_reconfig_value(item)}
+                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_token_reconfig_value(item){
+        var title = item['title'];
+        var ui = item['type']
+        var number = item['value']
+        if(ui == 'number'){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+                </div>
+            )
+        }
+        else if(ui == 'proportion'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'time'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+
+                </div>
+            )
+        }
+        else if(ui == 'tag'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_token_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'id'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    get_token_tag_selected_item(title, number){
+        var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
+
+        return obj[title][number]
+    }
+
+
+
+
+
+
+
+
+
+    render_exchange_transfer_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = item.exchange_transfer_values
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Exchange Transfer Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.load_transfer_actions()}
+            </div>
+        )
+    }
+
+    load_transfer_actions(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transfer_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transfer_item.exchange_transfer_values
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['token']], })}
+                                </div>
+                                <div style={{height:5}}/>
+                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':'Exchange ID:'+item['exchange'], 'size':'s'})}
+                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+    render_force_exit_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.force_exit_accounts
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Force Exit Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.load_force_exit_actions()}
+            </div>
+        )
+    }
+
+
+    load_force_exit_actions(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.force_exit_accounts
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:5}}/>
+                                {this.render_detail_item('3', {'title':'Account ID: '+item, 'details':'Contract ID: '+transaction_item.contract_item['id'], 'size':'s'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+    render_archive_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.bounty_exchanges
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Archive Action', 'details':items.length+' bounty exchange(s) included', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_bounty_exchanges()}
+            </div>
+        )
+    }
+
+    render_bounty_exchanges(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.bounty_exchanges
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '10px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_detail_item('3', {'title':'Bounty Exchange ID: '+item['exchange'], 'details':'Default depth 0', 'size':'s'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+    render_freeze_unfreeze_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.freeze_unfreeze_actions
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Freeze/Unfreeze Action', 'details':items.length+' action(s) included', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_freeze_unfreeze_transactions()}
+
+            </div>
+        )
+    }
+
+    render_freeze_unfreeze_transactions(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.freeze_unfreeze_actions
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.props.app_state.token_directory[transaction_item.token_item['id']], 'details':'Target Account ID: '+item['recipient'], 'size':'s'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+    render_authmint_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.authmint_actions
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Authmint Actions', 'details':items.length+' action(s) included', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_authmint_transactions()}
+            </div>
+        )
+    }
+
+
+    render_authmint_transactions(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.authmint_actions
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':'Target Recipient ID: '+item['recipient'], 'size':'s'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+    render_access_right_setting_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.all_actions
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Access Rights Actions', 'details':items.length+' action(s) included', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_access_rights_transactions()}
+            </div>
+        )
+    }
+
+    render_access_rights_transactions(){
+        var middle = this.props.height-500;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.all_actions
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_item_clicked(item)}>
+                                {this.render_all_action_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_all_action_item(item){
+        var action = item.type;
+        if(action == 'moderator'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':action+' action: '+item['action'], 'details':'Target: '+item['account'], 'size':'s'})}
+                </div>
+            )
+        }
+        else if(action == 'interactable-checkers'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['setting'], 'size':'s'})}
+                </div>
+            )
+        }
+        else if(action == 'author-moderator-privelages'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: Revoke Privelages', 'size':'s'})}
+                </div>
+            )
+        }
+        else if(action == 'access-rights'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['account']+', time from now: '+this.get_time_from_now(item['time']), 'size':'s'})}
+                </div>
+            )
+        }
+        else if(action == 'blocked-access'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['account']+', time from now: '+this.get_time_from_now(item['time']), 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+    
+
+
+
 
 
 

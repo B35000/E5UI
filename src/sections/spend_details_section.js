@@ -388,7 +388,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', {'title':'Modify Token', 'details':'Modify the configuration of the exchange directly.', 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_modify_token_ui()}>
-                        {this.render_detail_item('5', {'text':'Modify Subscription', 'action':''})}
+                        {this.render_detail_item('5', {'text':'Modify Exchanage', 'action':''})}
                     </div>
                 </div>
             )
@@ -560,7 +560,7 @@ class SpendDetailSection extends Component {
         var buy_amounts = selected_object['exchanges_balances']
         var buy_depths = selected_object['data'][5]
         return(
-            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>

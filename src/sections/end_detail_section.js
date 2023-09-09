@@ -156,7 +156,7 @@ class EndDetailSection extends Component {
         var selected_object = this.get_exchange_tokens(3)[selected_item]
         var symbol = selected_object['ipfs'] == null ? 'tokens' : selected_object['ipfs'].entered_symbol_text
         return(
-            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
@@ -380,7 +380,7 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', {'title':'Modify Token', 'details':'Modify the configuration of the exchange directly.', 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_modify_token_ui()}>
-                        {this.render_detail_item('5', {'text':'Modify Subscription', 'action':''})}
+                        {this.render_detail_item('5', {'text':'Modify Exchange', 'action':''})}
                     </div>
                 </div>
             )
@@ -520,7 +520,7 @@ class EndDetailSection extends Component {
         var buy_amounts = selected_object['exchanges_balances']
         var buy_depths = selected_object['data'][5]
         return(
-            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>

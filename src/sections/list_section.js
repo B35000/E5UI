@@ -511,21 +511,21 @@ class PostListSection extends Component {
         var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
 
         if(this.props.work_page_tags_object['i'].active != 'subscriptions'){
-            return this.props.app_state.created_subscriptions.reverse()
+            return this.props.app_state.created_subscriptions
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_subscriptions.reverse()
+            return this.props.app_state.created_subscriptions
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_subscriptions = []
             for(var i=0; i<this.props.viewed_subscriptions.length; i++){
                 my_viewed_subscriptions.push(this.props.app_state.created_subscriptions[this.props.viewed_subscriptions[i]])
             }
-            return my_viewed_subscriptions.reverse()
+            return my_viewed_subscriptions
         }
         else if(selected_option_name == 'paid'){
-            return this.props.app_state.created_subscriptions.reverse()
+            return this.props.app_state.created_subscriptions
         }
         else {
             var my_subscriptions = []
@@ -538,7 +538,7 @@ class PostListSection extends Component {
                     console.log('sender not post author: author->'+post_author+', sender id->'+myid)
                 }
             }
-            return my_subscriptions.reverse()
+            return my_subscriptions
         }
     }
 

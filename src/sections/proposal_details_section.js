@@ -217,7 +217,7 @@ class ProposalDetailsSection extends Component {
     render_archive_button_if_author(){
         var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var my_account = this.props.app_state.user_account_id
-        if(object['event'].returnValues.p3 == my_account && object['data'][1][3] < Date.now()/1000){
+        if(object['event'].returnValues.p4/* supposed to be p3 */ == my_account && object['data'][1][3] < Date.now()/1000){
             return(
                 <div>
                     {this.render_detail_item('0')}
