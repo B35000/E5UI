@@ -209,7 +209,7 @@ class home_page extends Component {
         var size = this.props.screensize;
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
-            <div style={{ height: this.props.height+15, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <div style={{ height: this.props.height, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'auto'}}>
                 {this.render_post_detail_object(size)}
             </div>
         </SwipeableBottomSheet>

@@ -38,7 +38,7 @@ class NewMailPage extends Component {
     state = {
         selected: 0,
         id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'],
-        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* i copypasted these! sue me 😁 */
+        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* i copypasted these! sue me  */
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
@@ -447,6 +447,7 @@ class NewMailPage extends Component {
             var cloned_array = this.state.entered_objects.slice()
             cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
             this.setState({entered_objects: cloned_array, entered_image_objects:[]})
+            this.props.notify('images added!', 800)
         }
     }
 
@@ -688,7 +689,7 @@ class NewMailPage extends Component {
         //     this.props.notify('set at least one recipient', 700)
         // }
         else if(isNaN(recipient) || recipient == ''){
-            this.props.notify('that recipient isnt a valid account', 700)
+            this.props.notify('that recipient account is invalid', 700)
         }
         else{ 
             this.props.when_add_new_mail_to_stack(this.state)

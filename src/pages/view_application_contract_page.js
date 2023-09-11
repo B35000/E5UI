@@ -73,10 +73,10 @@ class ViewApplicationContractPage extends Component {
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'The contract they applied with is shown below.'})}
                     {this.render_contracts_data()}
 
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
                 
-                    {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
 
                     {this.render_detail_item('0')}
                     {this.render_application_price_amounts(item)}

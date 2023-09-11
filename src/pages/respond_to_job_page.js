@@ -118,7 +118,7 @@ class RespondToJobPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, first create one then youll see it here. You cant use a contract youve used in another job application.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.'})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -181,8 +181,8 @@ class RespondToJobPage extends Component {
                     my_contracts.push(this.props.app_state.created_contracts[i])
                 }else{
                     if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
-                        my_contracts.push(this.props.app_state.created_contracts[i])
                     }
+                    my_contracts.push(this.props.app_state.created_contracts[i])
                 }
             }
         }
@@ -267,6 +267,7 @@ class RespondToJobPage extends Component {
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(this.state.application_expiry_time * 1000)), 'size':'l'})}
+                <div style={{height:20}}/>
 
             </div>
         )

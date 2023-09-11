@@ -48,7 +48,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','stack','history','settings', 'wallet'], [0]
+                ['or','',0], ['e','stack','settings', 'wallet','history'], [0]
             ],
         };
         
@@ -216,14 +216,11 @@ class StackPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                                    <div style={{'padding': '5px 0px 5px 5px'}}>
-                                        {this.render_detail_item('3',{'title':item.returnValues.p3, 'details':'Transaction ID','size':'s'})}
-                                        <div style={{height: 10}}/>
-                                        {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'s'})}
-                                        <div style={{height: 10}}/>
-                                        {this.render_detail_item('3',{'title':this.get_time_difference(item.returnValues.p8), 'details':'Timestamp','size':'s'})}
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div onClick={() => this.props.show_view_transaction_log_bottomsheet(item)} style={{height:'auto', 'background-color': background_color, 'border-radius': '13px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 5px 0px'}}>
+                                    <div style={{'padding': '5px 0px 0px 5px'}}>
+                                        {this.render_detail_item('3',{'title':'Transaction ID: '+item.returnValues.p3, 'details':'Age: '+this.get_time_difference(item.returnValues.p8),'size':'s'})}
+            
                                         <div style={{height: 10}}/>
                                         {this.render_detail_item('2', { 'style':'s', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
                                         
@@ -258,7 +255,7 @@ class StackPage extends Component {
     render_stack_transactions_part(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var middle = this.props.height-200;
+        var middle = this.props.height-130;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -309,7 +306,7 @@ class StackPage extends Component {
                     {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'title':'Stack ID - '+index, 'details':item.id,'size':'s'})}
+                    {this.render_detail_item('3',{'details':'Stack ID ', 'title':item.id,'size':'s'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item))+' - '+number_with_commas(Math.floor(this.get_estimated_gas(item)*1.6)),'size':'s'})}
                     <div style={{height: 10}}/>
@@ -339,7 +336,7 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas To Be Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas To Be Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed())+' - '+this.format_account_balance_figure((Math.floor(this.estimated_gas_consumed()*1.6))), 'barcolor':'', 'relativepower':'gas', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -373,6 +370,9 @@ class StackPage extends Component {
     get_estimated_gas(t){
         if(t.type == 'channel' || t.type == 'job' || t.type == 'post'){
             return 344622
+        }
+        else if(t.type == 'mail'){
+            return 279695
         }
         else if(t.type == 'contract'){
             return 964043 + (60_000 * t.price_data.length)
@@ -445,6 +445,9 @@ class StackPage extends Component {
         }
         else if(t.type == 'access-rights-settings'){
             return 170897
+        }
+        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages'|| t.type == 'job-response' || t.type == 'accept-job-application' || t.type == 'job-messages' || t.type == 'proposal-messages'){
+            return 344622
         }
 
     }

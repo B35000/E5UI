@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import Letter from './../assets/letter.png'; 
+import Dialog from "@mui/material/Dialog";
+
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
 var bigInt = require("big-integer");
 
@@ -17,7 +21,7 @@ function number_with_commas(x) {
 class ViewTransactionPage extends Component {
     
     state = {
-        selected: 0, transaction_object:null, transaction_index: -1, view_transactions_page_tags_object: this.get_view_transactions_page_tags_object()
+        selected: 0, transaction_object:null, transaction_index: -1, view_transactions_page_tags_object: this.get_view_transactions_page_tags_object(), confirm_delete_dialog_box: false
     };
 
     get_view_transactions_page_tags_object(){
@@ -71,12 +75,14 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', {'size':'l', 'details':'Delete the transaction completely', 'title':'Delete'})}
                     <div style={{height:20}}/>
 
-                    <div onClick={()=> this.open_delete_action()}>
+                    <div onClick={()=> this.open_dialog_ui()}>
                         {this.render_detail_item('5', {'text':'Delete', 'action':''},)}
                     </div>
 
                     <div style={{height:20}}/>
                     {this.render_hide_transaction_button()}
+
+                    {this.render_dialog_ui()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -85,9 +91,38 @@ class ViewTransactionPage extends Component {
         }
     }
 
+
+    open_dialog_ui(){
+        this.setState({confirm_delete_dialog_box: true})
+    }
+
+    render_dialog_ui(){
+        return(
+            <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirm_delete_dialog_box}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                    
+                    <h5 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirm Delete Action</h5>
+
+                    {this.render_detail_item('3', {'title':'Are you sure?', 'details':'You cannot undo this action', 'size':'s'})}
+                    <div style={{height:20}}/>
+
+                    <div onClick={()=> this.open_delete_action()}>
+                        {this.render_detail_item('5', {'text':'Delete', 'action':''},)}
+                    </div>
+
+                </div>
+                
+            </Dialog>
+        )
+    }
+
+    cancel_dialog_box(){
+        this.setState({confirm_delete_dialog_box: false})
+    }
+
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription'){
+        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application'){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':'Make some changes to the transaction', 'title':'Edit'})}
@@ -124,8 +159,6 @@ class ViewTransactionPage extends Component {
             )
     }
 
-
-
     open_edit_object_uis(){
         this.props.open_edit_object_uis(this.props.app_state.stack_items[this.state.transaction_index])
     }
@@ -146,6 +179,9 @@ class ViewTransactionPage extends Component {
     get_estimated_gas(t){
         if(t.type == 'channel' || t.type == 'job' || t.type == 'post'){
             return 344622
+        }
+        else if(t.type == 'mail'){
+            return 279695
         }
         else if(t.type == 'contract'){
             return 964043 + (60_000 * t.price_data.length)
@@ -218,6 +254,15 @@ class ViewTransactionPage extends Component {
         }
         else if(t.type == 'access-rights-settings'){
             return 170897
+        }
+        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages' || t.type == 'job-messages' || t.type == 'proposal-messages'){
+            return 279695 +(18000 * t.messages_to_deliver.length)
+        }
+        else if(t.type == 'job-response'){
+            return 279695
+        }
+        else if(t.type == 'accept-job-application'){
+            return 279695
         }
 
     }
@@ -412,56 +457,56 @@ class ViewTransactionPage extends Component {
             else if(tx.type == 'mail'){
                 return(
                     <div>
-                        
+                        {this.render_mail_data()}
                     </div>
                 )    
             }
             else if(tx.type == 'mail-messages'){
                 return(
                     <div>
-                        
+                        {this.render_mail_message_data('Mail Messages')}
                     </div>
-                )   
+                ) 
             }
             else if(tx.type == 'channel-messages'){
                 return(
                     <div>
-                        
+                        {this.render_mail_message_data('Channel Messages')}
                     </div>
                 )   
             }
             else if(tx.type == 'post-messages'){
                 return(
                     <div>
-                        
+                        {this.render_mail_message_data('Post Messages')}
                     </div>
                 )   
             }  
             else if(tx.type == 'job-response'){
                 return(
                     <div>
-                        
+                        {this.render_job_response_data()}
                     </div>
                 )   
             }
             else if(tx.type == 'accept-job-application'){
                 return(
                     <div>
-                        
+                        {this.render_accept_job_application_data()}
                     </div>
                 )
             }
             else if(tx.type == 'job-messages'){
                 return(
                     <div>
-                        
+                        {this.render_mail_message_data('Job Messages')}
                     </div>
                 )    
             }
             else if(tx.type == 'proposal-messages'){
                 return(
                     <div>
-                        
+                        {this.render_mail_message_data('Proposal Messages')}
                     </div>
                 )    
             }
@@ -3016,6 +3061,305 @@ class ViewTransactionPage extends Component {
 
 
 
+
+
+
+    render_mail_data(){
+        var background_color = this.props.theme['card_background_color']
+        var object = this.format_mail_post();
+        var item = this.get_mail_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':object['ipfs'].target_recipient, 'details':'Target Recipient', 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('0')}
+                    {this.render_item_data(items)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    format_mail_post(){
+        return{'ipfs':this.props.app_state.stack_items[this.state.transaction_index]}
+    }
+
+    get_mail_details_data(object){
+        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+        }
+    }
+
+
+
+
+
+
+
+    render_mail_message_data(title){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var stacked_items = this.get_stacked_items()
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':title, 'details':stacked_items.length+' message(s) included', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_sent_received_messages()}
+            </div>
+        )
+    }
+
+
+    render_sent_received_messages(){
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var stacked_items = this.get_stacked_items()
+
+        if(stacked_items.length == 0){
+            stacked_items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {stacked_items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {stacked_items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div>
+                                    <SwipeableList>
+                                        <SwipeableListItem
+                                            swipeLeft={{
+                                            content: <div>Delete</div>,
+                                            action: () => this.delete_message_item(item)
+                                            }}>
+                                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                                        </SwipeableListItem>
+                                    </SwipeableList>
+                                    <div style={{height:3}}/>
+                                </div>
+                            </li>
+                        ))}
+
+                        <div ref={this.messagesEnd}/>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    delete_message_item(item){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        this.props.delete_message_item(item, transaction_item)
+    }
+
+    render_stack_message_item(item){
+        if(item.type == 'message'){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                          </div>
+                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                          </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{item['sender']}</p>
+                          </div>
+                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                          </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+
+                    {this.render_detail_item('9',item['image-data'])}
+                </div>
+            )
+        }
+    }
+
+    format_message(message){
+        if(message == ''){
+            return '...'
+        }
+        return message
+    }
+
+    get_stacked_items(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return transaction_item.messages_to_deliver
+    }
+
+
+
+
+    render_job_response_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Selected Contract', 'details':'The contract you picked for the application action', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_contract_item(transaction_item.picked_contract)}
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':'The expiry time you picked for the application action', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(transaction_item.application_expiry_time * 1000)), 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youre youll be charging for the job', 'size':'l'})}
+                {this.render_set_prices_list_part()}
+            </div>
+        )
+    }
+
+    render_contract_item(object){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_contract_item(object)
+
+        return(
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                </div>         
+            </div>
+        )
+    }
+
+    format_contract_item(object){
+        var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+        }
+    }
+
+    render_set_prices_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.price_data
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+
+
+
+
+
+    render_accept_job_application_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var item = transaction_item.application_item
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('0')}
+                
+            </div>  
+        )
+    }
 
 
     

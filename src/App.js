@@ -57,6 +57,7 @@ import ModeratorPage from './pages/moderator_page';
 import RespondToJobPage from './pages/respond_to_job_page';
 import ViewApplicationContractPage from './pages/view_application_contract_page';
 import ViewTransactionPage from './pages/view_transaction_page'
+import ViewTransactionLogPage from './pages/view_transaction_log'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -115,7 +116,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
@@ -170,6 +171,7 @@ class App extends Component {
     this.respond_to_job_page = React.createRef();
     this.view_application_contract_page = React.createRef();
     this.view_transaction_page = React.createRef();
+    this.view_transaction_log_page = React.createRef();
   }
 
   componentDidMount() {
@@ -311,7 +313,7 @@ class App extends Component {
         {this.render_moderator_bottomsheet()}
         {this.render_respond_to_job_bottomsheet()}
         {this.render_view_application_contract_bottomsheet()}
-        
+        {this.render_view_transaction_log_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -507,7 +509,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -732,9 +734,19 @@ class App extends Component {
   }
 
 
-  when_add_new_mail_to_stack(state){
+  when_add_new_mail_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()
-    stack_clone.push(state)
+    var edit_id = -1
+      for(var i=0; i<stack_clone.length; i++){
+        if(stack_clone[i].id == state_obj.id){
+          edit_id = i
+        }
+      }
+      if(edit_id != -1){
+        stack_clone[edit_id] = state_obj
+      }else{
+        stack_clone.push(state_obj)
+      }
     this.setState({stack_items: stack_clone})
   }
 
@@ -1790,7 +1802,17 @@ class App extends Component {
 
   add_respond_to_job_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
     this.setState({stack_items: stack_clone})
 
     var clone = JSON.parse(JSON.stringify(this.state.my_contract_applications))
@@ -1860,7 +1882,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)}/>
+            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -2038,30 +2060,70 @@ class App extends Component {
         }  
     }
     else if(tx.type == 'mail'){
-           
-    }
-    else if(tx.type == 'mail-messages'){
-           
-    }
-    else if(tx.type == 'channel-messages'){
-           
-    }
-    else if(tx.type == 'post-messages'){
-           
+        this.open_new_object('5')
+        if(this.new_mail_page.current){
+          this.new_mail_page.current?.setState(tx)
+        } 
     }  
     else if(tx.type == 'job-response'){
-           
-    }
-    else if(tx.type == 'accept-job-application'){
-        
-    }
-    else if(tx.type == 'job-messages'){
-            
-    }
-    else if(tx.type == 'proposal-messages'){
-            
+        this.open_respond_to_job_bottomsheet()
+        if(this.respond_to_job_page.current){
+          this.respond_to_job_page.current?.setState(tx)
+        }   
     }
         
+  }
+
+  delete_message_item(item, transaction_item){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].id == transaction_item.id){
+        pos = i
+        break;
+      }
+    }
+    if(pos != -1){
+      const index = stack[pos].messages_to_deliver.indexOf(item);
+      if (index > -1) { // only splice array when item is found
+        stack[pos].messages_to_deliver.splice(index, 1); // 2nd parameter means remove one item only
+      }
+      this.setState({stack_items: stack})
+    }
+    
+
+  }
+
+
+
+
+
+
+
+
+  render_view_transaction_log_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_log_bottomsheet.bind(this)} open={this.state.view_transaction_log_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ViewTransactionLogPage ref={this.view_transaction_log_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_transaction_log_bottomsheet(){
+    if(this.state != null){
+      this.setState({view_transaction_log_bottomsheet: !this.state.view_transaction_log_bottomsheet});
+    }
+  }
+
+  show_view_transaction_log_bottomsheet(item){
+    if(this.view_transaction_log_page.current != null){
+      this.view_transaction_log_page.current.set_transaction(item)
+    }
+    this.open_view_transaction_log_bottomsheet()
   }
 
 
