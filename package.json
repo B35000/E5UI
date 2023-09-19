@@ -19,7 +19,9 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@zondax/filecoin-signing-tools": "^2.4.2",
+    "@textile/eth-storage": "^1.0.0",
+    "@textile/near-storage": "^8.0.0",
+    "@zondax/filecoin-signing-tools": "^2.4.3",
     "@zondax/izari-filecoin": "^1.2.0",
     "assert": "^2.0.0",
     "axios": "^1.4.0",
@@ -34,6 +36,7 @@
     "crypto-es": "^2.0.4",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.8",
+    "dotenv": "^16.3.1",
     "eccrypto": "^1.1.6",
     "ecies-geth": "^1.6.13",
     "eciesjs": "^0.4.4",
@@ -46,16 +49,21 @@
     "ethers": "^5.6.9",
     "filecoin-api-client": "^0.5.2",
     "filecoin.js": "^0.0.5-alpha",
-    "html5-qrcode": "^2.3.8",
+    "fs": "0.0.1-security",
+    "graphql": "^16.8.0",
     "http": "^0.0.1-security",
+    "instascan-umd": "^1.0.1",
     "ipfs-http-client": "^60.0.1",
     "jsencrypt": "^3.3.2",
     "node-fetch": "2.6.1",
+    "ra-data-graphql": "^4.14.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
     "react-drag-reorder": "^1.2.0",
+    "react-instascan": "^1.0.0",
     "react-qr-code": "^2.0.11",
+    "react-qr-reader": "^3.0.0-beta-1",
     "react-scripts": "5.0.1",
     "react-swipeable-bottom-sheet": "^1.1.2",
     "react-swipeable-list": "^1.9.1",
@@ -67,7 +75,8 @@
     "text-encoding": "^0.7.0",
     "url": "^0.11.1",
     "web-vitals": "^2.1.4",
-    "web3": "^1.10.0"
+    "web3": "^1.10.0",
+    "web3.storage": "^4.5.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -92,5 +101,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "html5-qrcode": "^2.3.8"
   }
 }

@@ -135,6 +135,8 @@ class JobDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p5, 'details':'Author', 'size':'l'})}
+                    <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -404,7 +406,6 @@ class JobDetailsSection extends Component {
                             <li style={{'padding': '2px 5px 2px 5px'}}>
                                 <div key={index}>
                                     {this.render_job_response_item(item)}
-                                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                                 </div>
                             </li> 
                         ))}
@@ -445,7 +446,8 @@ class JobDetailsSection extends Component {
                     <div style={{height:3}}/>
 
                     {this.render_detail_item('3', {'title':'Accepted', 'details':'The job owner picked this application', 'size':'s'})}
-                    
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
         }else{
@@ -455,7 +457,7 @@ class JobDetailsSection extends Component {
                     <div style={{height:3}}/>
                     
                     {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'s'})}
-                    
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
         }
@@ -469,6 +471,12 @@ class JobDetailsSection extends Component {
         }
     }
 
+
+
+
+
+
+    
 
 
 

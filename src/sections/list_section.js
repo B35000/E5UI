@@ -59,6 +59,7 @@ class PostListSection extends Component {
                 <div>{this.render_mail_list_group()}</div>
                 )
             }
+            
         }
         else if(selected_page == 'e'){
             var selected_tag = this.props.explore_page_tags_object['i'].active
@@ -75,6 +76,16 @@ class PostListSection extends Component {
             else if(selected_tag == 'channels' ){
                 return(
                 <div>{this.render_channels_list_group()}</div>
+                )
+            }
+            else if(selected_tag == 'storefront'){
+                return(
+                <div>{this.render_storefront_item_list_group()}</div>
+                )
+            }
+            else if(selected_tag == 'bags'){
+                return(
+                <div>{this.render_bag_item_list_group()}</div>
                 )
             }
         }
@@ -105,6 +116,9 @@ class PostListSection extends Component {
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
+
+
+
 
     render_jobs_list_group(){
        var background_color = this.props.theme['card_background_color']
@@ -427,7 +441,7 @@ class PostListSection extends Component {
             var proposals = []
             var myid = this.props.app_state.user_account_id
             for(var i = 0; i < this.props.app_state.my_proposals.length; i++){
-                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p3
+                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p4/* should be p3 */
                 if(proposal_author.toString() == myid.toString()){
                     proposals.push(this.props.app_state.my_proposals[i])
                 }else{
@@ -747,6 +761,7 @@ class PostListSection extends Component {
 
 
 
+
     render_E5s_list_group(){
         var middle = this.props.height-123;
         var size = this.props.size;
@@ -1051,6 +1066,240 @@ class PostListSection extends Component {
 
     when_channel_item_clicked(index, object){
         this.props.when_channel_item_clicked(index, object['id'])
+    }
+
+
+
+
+
+
+    render_storefront_item_list_group(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-123;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_storefront_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_storefront_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        } 
+    }
+
+    get_storefront_items(){
+        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
+
+        if(this.props.explore_page_tags_object['i'].active != 'storefront'){
+            return this.props.app_state.created_stores 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_stores
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_stores = []
+            for(var i=0; i<this.props.viewed_stores.length; i++){
+                my_viewed_stores.push(this.props.app_state.created_stores[this.props.viewed_stores[i]])
+            }
+            return my_viewed_stores
+        }
+        else {
+            var my_stores = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_stores.length; i++){
+                var post_author = this.props.app_state.created_stores[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_stores.push(this.props.app_state.created_stores[i])
+                }
+            }
+            return my_stores
+        }
+    }
+
+    render_storefront_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_storefront_item(object)
+        return(
+            <div onClick={() => this.when_storefront_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_storefront_item(object){
+        var tags = object['ipfs'] == null ? ['Storefront'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    when_storefront_item_clicked(index, object){
+        this.props.when_storefront_post_item_clicked(index, object['id'])
+    }
+
+
+
+
+
+
+
+
+    render_bag_item_list_group(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-123;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_bag_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_bag_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        } 
+    }
+
+    get_bag_items(){
+        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
+
+        if(this.props.explore_page_tags_object['i'].active != 'bags'){
+            return this.props.app_state.created_stores 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_bags
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_bags = []
+            for(var i=0; i<this.props.viewed_bags.length; i++){
+                my_viewed_bags.push(this.props.app_state.created_bags[this.props.viewed_bags[i]])
+            }
+            return my_viewed_bags
+        }
+        else {
+            var my_bags = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_bags.length; i++){
+                var post_author = this.props.app_state.created_bags[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_bags.push(this.props.app_state.created_bags[i])
+                }
+            }
+            return my_bags
+        }
+    }
+
+    render_bag_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_bag_item(object)
+        return(
+            <div onClick={() => this.when_bag_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_bag_item(object){
+        var tags = [object['event'].returnValues.p3]
+        var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+' item(s) ordered'
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
+        }
+    }
+
+    when_bag_item_clicked(index, object){
+        this.props.when_bag_post_item_clicked(index, object['id'])
     }
 
 

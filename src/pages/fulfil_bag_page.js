@@ -35,15 +35,15 @@ function makeid(length) {
     return result;
 }
 
-class RespondToJobPage extends Component {
+class FulfilBagPage extends Component {
     
     state = {
-        selected: 0, job_item:{'id':0},  type:'job-response', id:makeid(8),
-        entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
+        selected: 0, bag_item:{'id':0} ,  type:'bag-response', id:makeid(8),
+        entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
     };
 
-    get_respond_to_job_title_tags_object(){
-        return{
+    get_respond_to_bag_title_tags_object(){
+         return{
             'i':{
                 active:'e', 
             },
@@ -52,6 +52,7 @@ class RespondToJobPage extends Component {
             ],
         };
     }
+
 
     get_pre_post_paid_option_tags_object(){
         return{
@@ -69,7 +70,7 @@ class RespondToJobPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.respond_to_job_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_job_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags page_tags_object={this.state.respond_to_bag_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_bag_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
@@ -85,14 +86,21 @@ class RespondToJobPage extends Component {
         )
     }
 
-    when_respond_to_job_title_tags_object_updated(tag_obj){
-        this.setState({respond_to_job_title_tags_object: tag_obj})
+    when_respond_to_bag_title_tags_object_updated(tag_obj){
+        this.setState({respond_to_bag_title_tags_object: tag_obj})
+    }
+
+    set_bag(item){
+        if(this.state.bag_item['id'] != item['id']){
+            this.setState({selected: 0 ,  type:'bag-response', id:makeid(8),
+            entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
+        }
+        this.setState({bag_item: item})
     }
 
 
-
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.respond_to_job_title_tags_object, this.state.respond_to_job_title_tags_object['i'].active)
+        var selected_item = this.get_selected_item(this.state.respond_to_bag_title_tags_object, this.state.respond_to_bag_title_tags_object['i'].active)
 
         if(selected_item == 'contract'){
             return(
@@ -122,6 +130,7 @@ class RespondToJobPage extends Component {
         var picked_item = object[option][1][selected_item];
         return picked_item
     }
+
 
 
     render_select_contract_parts(){
@@ -266,12 +275,10 @@ class RespondToJobPage extends Component {
 
 
 
-
-
     render_application_expiry_time(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your application'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your fulfilment application'})}
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -295,6 +302,7 @@ class RespondToJobPage extends Component {
         const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
         this.setState({application_expiry_time: timeInSeconds})
     }
+
 
 
 
@@ -338,6 +346,10 @@ class RespondToJobPage extends Component {
 
     when_price_amount(amount){
         this.setState({price_amount: amount})
+    }
+
+    when_pre_post_paid_option_tags_object_updated(tag_obj){
+        this.setState({pre_post_paid_option:tag_obj})
     }
 
     when_add_price_set(){
@@ -437,25 +449,12 @@ class RespondToJobPage extends Component {
         return items;
     }
 
+
+
     when_price_suggestion_clicked(item, pos, target_type){
         this.setState({exchange_id: item['id']})
     }
 
-
-
-
-
-
-
-    set_object(job_post){
-        if(this.state.job_item['id'] != job_post['id']){
-            this.setState({
-                selected: 0, job_item:{'id':0},  type:'job-response', id:makeid(8),
-                entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
-            })
-        }
-        this.setState({job_item: job_post})
-    }
 
     finish_creating_response(){
         var selected_contract = this.state.picked_contract
@@ -468,16 +467,13 @@ class RespondToJobPage extends Component {
             this.props.notify('you cant set an expiry time thats less than fifteen minutes from now', 600)
         }
         else{
-            this.props.add_respond_to_job_to_stack(this.state)
-            this.setState({
-                selected: 0,  type:'job-response', id:makeid(8),
-                entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
-            })
+            this.props.add_respond_to_bag_to_stack(this.state)
+            this.setState({selected: 0,  type:'bag-response', id:makeid(8),
+            entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
+
             this.props.notify('transaction added to stack', 600)
         }
     }
-
-
 
 
 
@@ -601,10 +597,9 @@ class RespondToJobPage extends Component {
         return ((proportion/10**18) * 100)+'%';
     }
 
-
 }
 
 
 
 
-export default RespondToJobPage;
+export default FulfilBagPage;

@@ -15,14 +15,14 @@ class Slider extends React.Component {
 
     when_button_clicked = (event) => {
         let me = this;
-        if(Date.now() - this.last_all_click_time < 200){
+        if(Date.now() - this.last_all_click_time < 400){
             me.props.unitDecrease()
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {
                 clearTimeout(this.all_timeout);
                 me.props.unitIncrease();
-            }, 200);
+            }, 400);
         }
         this.last_all_click_time = Date.now();
     }

@@ -58,12 +58,17 @@ import RespondToJobPage from './pages/respond_to_job_page';
 import ViewApplicationContractPage from './pages/view_application_contract_page';
 import ViewTransactionPage from './pages/view_transaction_page'
 import ViewTransactionLogPage from './pages/view_transaction_log'
+import AddToBagPage from './pages/add_to_bag_page'
+import FulfilBagPage from './pages/fulfil_bag_page'
+import ViewBagApplicationContractPage from './pages/view_bag_application_contract_page'
+import DirectPurchasetPage from './pages/direct_purchase_page'
+import ClearPurchasePage from './pages/clear_purchase_page'
+import ScanQrPage from './pages/scan_qr_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
 import { create } from 'ipfs-http-client'
-import { Filecoin, FilecoinClient } from 'filecoin.js';
-// import { WalletKey } from '@zondax/izari-filecoin'
+import { Web3Storage } from 'web3.storage'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -72,6 +77,7 @@ const privateKeyToPublicKey = require('ethereum-private-key-to-public-key')
 const ecies = require('ecies-geth');
 var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
+const { WalletKey } = require('@zondax/filecoin-signing-tools')
 
 var TextDecoder = textEncoding.TextDecoder;
 
@@ -116,7 +122,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
@@ -127,18 +133,19 @@ class App extends Component {
     created_subscriptions:[], all_subscriptions:[], 
     created_contracts:[], all_contracts:[], 
     created_tokens:[], all_tokens:[],
-    created_jobs:[], 
+    created_jobs:[], created_stores:[], created_bags:[],
     mint_dump_actions:[{},],
 
     web3:'http://127.0.0.1:8545/', e5_address:'0x19cEcCd6942ad38562Ee10bAfd44776ceB67e923',
-    sync_steps:27,
+    sync_steps:31, qr_code_scanning_page:'clear_purchaase',
 
-    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[]
+    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}
   };
 
 
   constructor(props) {
     super(props);
+    this.send_receive_ether_page = React.createRef();
     this.new_contract_page = React.createRef();
     this.new_token_page = React.createRef();
     this.new_subscription_page = React.createRef();
@@ -172,6 +179,12 @@ class App extends Component {
     this.view_application_contract_page = React.createRef();
     this.view_transaction_page = React.createRef();
     this.view_transaction_log_page = React.createRef();
+    this.add_to_bag_page = React.createRef();
+    this.fulfil_bag_page = React.createRef();
+    this.view_bag_application_contract_page = React.createRef();
+    this.direct_purchase_page = React.createRef();
+    this.clear_purchase_page = React.createRef();
+    this.scan_code_page = React.createRef();
   }
 
   componentDidMount() {
@@ -290,7 +303,6 @@ class App extends Component {
         {this.render_wiki_bottomsheet()}
         {this.render_new_object_bottomsheet()}
         {this.render_view_image_bottomsheet()}
-        {this.render_create_store_item_bottomsheet()}
         {this.render_mint_token_bottomsheet()}
         {this.render_transfer_token_bottomsheet()}
         {this.render_enter_contract_bottomsheet()}
@@ -314,6 +326,12 @@ class App extends Component {
         {this.render_respond_to_job_bottomsheet()}
         {this.render_view_application_contract_bottomsheet()}
         {this.render_view_transaction_log_bottomsheet()}
+        {this.render_add_to_bag_bottomsheet()}
+        {this.render_fulfil_bag_bottomsheet()}
+        {this.render_view_bag_application_contract_bottomsheet()}
+        {this.render_direct_purchase_bottomsheet()}
+        {this.render_clear_purchase_bottomsheet()}
+        {this.render_scan_code_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -350,7 +368,9 @@ class App extends Component {
       show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
       show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
 
-      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)}
+      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)}
+
+      get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)}
       />
     )
   }
@@ -489,7 +509,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <SendReceiveEtherPage app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance}/>
+              <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} size={size} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} start_scan={this.start_scan.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -711,7 +731,7 @@ class App extends Component {
     }
     else if(target == '4'){
       return(
-        <NewStorefrontPage ref={this.new_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} open_new_store_item_bottomsheet={this.open_new_store_item_bottomsheet.bind(this)} edit_storefront_item={this.edit_storefront_item.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)}/>
       )
     }
     else if(target == '5'){
@@ -726,11 +746,6 @@ class App extends Component {
     this.new_job_page.current.set_fileds_for_edit_action(obj)
     this.new_job_page.current.set_action('edit')
     this.open_new_object_bottomsheet()
-  }
-
-  edit_storefront_item(item){
-    this.new_storefront_item_page.current.set_fileds_for_edit_action(item)
-    this.open_new_store_item_bottomsheet()
   }
 
 
@@ -750,29 +765,6 @@ class App extends Component {
     this.setState({stack_items: stack_clone})
   }
 
-  render_create_store_item_bottomsheet(){
-        var background_color = this.state.theme['send_receive_ether_background_color'];
-        var size = this.getScreenSize();
-        return(
-            <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_store_item_bottomsheet.bind(this)} open={this.state.new_store_item_bottomsheet} style={{'z-index':'7'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-                <div style={{ height: this.state.height-70, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                    <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_data_to_new_store_item={this.add_data_to_new_store_item.bind(this)}/>
-                </div>
-            </SwipeableBottomSheet>
-        )
-  }
-
-
-    open_new_store_item_bottomsheet(){
-      if(this.state != null){
-        this.setState({new_store_item_bottomsheet: !this.state.new_store_item_bottomsheet});
-      }
-    }
-
-    add_data_to_new_store_item(data){
-      this.new_storefront_page.current.add_data_to_new_store_item(data)
-      this.open_new_store_item_bottomsheet()
-    }
 
     when_add_new_object_to_stack(state_obj){
       var stack_clone = this.state.stack_items.slice()
@@ -1882,7 +1874,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)}/>
+            <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -1951,10 +1943,10 @@ class App extends Component {
           this.new_channel_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'storefront'){
+    else if(tx.type == 'storefront-item'){
         this.open_new_object('4')
-        if(this.new_storefront_page.current){
-          this.new_storefront_page.current?.setState(tx)
+        if(this.new_storefront_item_page.current){
+          this.new_storefront_item_page.current?.setState(tx)
         }
     }
     else if(tx.type == 'buy-sell'){
@@ -2071,6 +2063,13 @@ class App extends Component {
           this.respond_to_job_page.current?.setState(tx)
         }   
     }
+    else if(tx.type == 'direct-purchase'){
+      this.open_direct_purchase_bottomsheet()
+      if(this.direct_purchase_page.current){
+        this.direct_purchase_page.current?.setState(tx)
+      } 
+    }
+
         
   }
 
@@ -2090,8 +2089,51 @@ class App extends Component {
       }
       this.setState({stack_items: stack})
     }
-    
+  }
 
+  when_edit_bag_item_tapped(item){
+    if(this.add_to_bag_page.current != null){
+      this.add_to_bag_page.current.setState(item)
+    }
+    this.open_add_to_bag_bottomsheet()
+  }
+
+  delete_bag_item(item){
+    var stack = this.state.stack_items.slice() 
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'storefront-bag'){
+        pos = i
+        break;
+      }
+    }
+
+    if(pos != -1){
+      const index = stack[pos].items_to_deliver.indexOf(item);
+      if (index > -1) { // only splice array when item is found
+        stack[pos].items_to_deliver.splice(index, 1); // 2nd parameter means remove one item only
+      }
+      this.setState({stack_items: stack})
+    }
+
+  }
+
+  delete_collected_signature(item, transaction_item){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].id == transaction_item.id){
+        pos = i
+        break;
+      }
+    }
+    if(pos != -1){
+      const index = stack[pos].items_to_clear.indexOf(item);
+      if (index > -1) { // only splice array when item is found
+        stack[pos].items_to_clear.splice(index, 1); // 2nd parameter means remove one item only
+      }
+      this.setState({stack_items: stack})
+    }
   }
 
 
@@ -2135,6 +2177,345 @@ class App extends Component {
 
 
 
+  render_add_to_bag_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_to_bag_bottomsheet.bind(this)} open={this.state.add_to_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <AddToBagPage ref={this.add_to_bag_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_item_to_bag_in_stack={this.add_bag_item_to_bag_in_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_add_to_bag_bottomsheet(){
+    if(this.state != null){
+      this.setState({add_to_bag_bottomsheet: !this.state.add_to_bag_bottomsheet});
+    }
+  }
+
+  show_add_to_bag_bottomsheet(item){
+    if(this.add_to_bag_page.current != null){
+      this.add_to_bag_page.current.set_transaction(item)
+    }
+    this.open_add_to_bag_bottomsheet()
+  }
+
+  add_bag_item_to_bag_in_stack(state_obj){
+    var stack = this.state.stack_items.slice() 
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'storefront-bag'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'storefront-bag', entered_indexing_tags:['storefront', 'bag', 'cart'], items_to_deliver:[]}
+      
+      tx.items_to_deliver.push(state_obj)
+      stack.push(tx)
+    }else{
+      var is_replica_found = false
+      for(var j=0; j<stack[pos].items_to_deliver.length; j++){
+        if(state_obj.id == stack[pos].items_to_deliver[j].id){
+          stack[pos].items_to_deliver[j] = state_obj
+          is_replica_found = true
+          break;
+        }
+      }
+      if(!is_replica_found){
+        stack[pos].items_to_deliver.push(state_obj)
+      }
+    }
+    this.setState({stack_items: stack})
+  }
+
+
+
+
+
+
+
+
+
+
+  render_fulfil_bag_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_fulfil_bag_bottomsheet.bind(this)} open={this.state.fulfil_bag_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <FulfilBagPage ref={this.fulfil_bag_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_respond_to_bag_to_stack={this.add_respond_to_bag_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_fulfil_bag_bottomsheet(){
+    if(this.state != null){
+      this.setState({fulfil_bag_bottomsheet: !this.state.fulfil_bag_bottomsheet});
+    }
+  }
+
+  show_fulfil_bag_bottomsheet(item){
+    if(this.fulfil_bag_page.current != null){
+      this.fulfil_bag_page.current.set_bag(item)
+    }
+    this.open_fulfil_bag_bottomsheet()
+  }
+
+  add_respond_to_bag_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+
+
+  render_view_bag_application_contract_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_bag_application_contract_bottomsheet.bind(this)} open={this.state.view_bag_application_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ViewBagApplicationContractPage ref={this.view_bag_application_contract_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_bag_acceptance_action_to_stack={this.add_bag_acceptance_action_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_bag_application_contract_bottomsheet(){
+    if(this.state != null){
+      this.setState({view_bag_application_contract_bottomsheet: !this.state.view_bag_application_contract_bottomsheet});
+    }
+  }
+
+  show_view_bag_application_contract_bottomsheet(item){
+    if(this.view_bag_application_contract_page.current != null){
+      this.view_bag_application_contract_page.current.set_object(item)
+    }
+
+    this.open_view_bag_application_contract_bottomsheet()
+  }
+
+
+  add_bag_acceptance_action_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    stack_clone.push(state_obj)
+    this.setState({stack_items: stack_clone})
+
+    this.show_enter_contract_bottomsheet(state_obj.application_item['contract'])
+    this.open_view_bag_application_contract_bottomsheet()
+  }
+
+
+
+
+
+
+
+
+
+
+
+  render_direct_purchase_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_direct_purchase_bottomsheet.bind(this)} open={this.state.direct_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <DirectPurchasetPage ref={this.direct_purchase_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_direct_purchase_to_stack={this.add_direct_purchase_to_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_direct_purchase_bottomsheet(){
+    if(this.state != null){
+      this.setState({direct_purchase_bottomsheet: !this.state.direct_purchase_bottomsheet});
+    }
+  }
+
+  show_direct_purchase_bottomsheet(item){
+    if(this.direct_purchase_page.current != null){
+      this.direct_purchase_page.current.set_object(item)
+    }
+
+    this.open_direct_purchase_bottomsheet()
+  }
+
+  add_direct_purchase_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+  render_clear_purchase_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_clear_purchase_bottomsheet.bind(this)} open={this.state.clear_purchase_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ClearPurchasePage ref={this.clear_purchase_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} generate_signature={this.generate_signature.bind(this)} confirm_signature={this.confirm_signature.bind(this)} add_clearing_purchase_action_to_stack={this.add_clearing_purchase_action_to_stack.bind(this)} start_scan={this.start_scan.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_clear_purchase_bottomsheet(){
+    if(this.state != null){
+      this.setState({clear_purchase_bottomsheet: !this.state.clear_purchase_bottomsheet});
+    }
+  }
+
+  show_clear_purchase_bottomsheet(item, client_type, storefront){
+    if(this.clear_purchase_page.current != null){
+      this.clear_purchase_page.current.set_object(item, client_type, storefront)
+    }
+
+    this.open_clear_purchase_bottomsheet()
+  }
+
+
+  generate_signature = async (data) => {
+    const web3 = new Web3(this.state.web3);
+    var address = this.state.account.address
+    web3.eth.accounts.wallet.add(this.state.account.privateKey);
+
+    var signature = await web3.eth.sign(data.toString(), address)
+    return signature
+  }
+
+  confirm_signature = async (signature, data, address) => {
+    const web3 = new Web3(this.state.web3);
+    try{
+      var original_address = await web3.eth.accounts.recover(data.toString(), signature)
+      if(original_address.toString() != address.toString()){
+        return false
+      }
+      return true
+    }catch(e){
+      console.log(e)
+      return false
+    }
+    
+  }
+
+
+  add_clearing_purchase_action_to_stack(state_obj){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'clear-purchase'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type: 'clear-purchase', entered_indexing_tags:['clear', 'finalize', 'purchase'], items_to_clear:[]}
+      tx.items_to_clear.push(state_obj)
+      stack.push(tx)
+    }else{
+      stack[pos].items_to_clear.push(state_obj)
+    }
+    this.setState({stack_items: stack})
+  }
+
+
+
+
+
+
+
+
+
+
+  render_scan_code_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_scan_code_bottomsheet.bind(this)} open={this.state.scan_code_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: 450, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ScanQrPage ref={this.scan_code_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} finish_scan={this.finish_scan.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_scan_code_bottomsheet(){
+    if(this.state != null){
+      this.setState({scan_code_bottomsheet: !this.state.scan_code_bottomsheet});
+    }
+  }
+
+  show_scan_code_bottomsheet(option){
+    if(this.scan_code_page.current != null){
+      this.scan_code_page.current.set_page(option)
+    }
+    this.open_scan_code_bottomsheet()
+  }
+
+
+  start_scan(page){
+    this.show_scan_code_bottomsheet(page)
+  }
+
+  finish_scan(data, page){
+    this.open_scan_code_bottomsheet()
+    if(page == 'clear_purchase_page'){
+      if(this.clear_purchase_page.current != null){
+        this.clear_purchase_page.current.set_scan_data(data)
+      }
+    }
+    else if(page == 'send_receive_ether_page'){
+      if(this.send_receive_ether_page.current != null){
+        this.send_receive_ether_page.current.set_scan_data(data)
+      }
+    }
+  }
+
+
+
+
+
+
+
+
 
   render_view_image_bottomsheet(){
       var background_color = 'transparent';
@@ -2145,38 +2526,38 @@ class App extends Component {
             </div>
         </SwipeableBottomSheet>
       )
-    }
+  }
 
-    open_view_image_bottomsheet(){
-        if(this.state != null){
-            this.setState({view_image_bottomsheet: !this.state.view_image_bottomsheet});
-        }
-    }
+  open_view_image_bottomsheet(){
+      if(this.state != null){
+          this.setState({view_image_bottomsheet: !this.state.view_image_bottomsheet});
+      }
+  }
 
-    show_images(images, pos){
-      this.setState({view_images:images, view_images_pos: pos })
+  show_images(images, pos){
+    this.setState({view_images:images, view_images_pos: pos })
+    this.open_view_image_bottomsheet()
+  }
+
+  /* fullscreen image rendered in bottomsheet when image item is tapped */
+  render_view_image(){
+    var images = this.state.view_images == null ? [] : this.state.view_images;
+    var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
+    return(
+      <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px'}}>
+        <SwipeableViews index={pos}>
+          {images.map((item, index) => ( 
+            <img src={item} style={{height:'auto',width:'100%'}} />
+          ))}
+        </SwipeableViews>
+      </div> 
+    );
+  }
+
+  when_view_image_clicked(index, images){
+      this.setState({view_images: images, view_images_pos: index})
       this.open_view_image_bottomsheet()
-    }
-
-    /* fullscreen image rendered in bottomsheet when image item is tapped */
-    render_view_image(){
-      var images = this.state.view_images == null ? [] : this.state.view_images;
-      var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
-      return(
-        <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px'}}>
-          <SwipeableViews index={pos}>
-            {images.map((item, index) => ( 
-              <img src={item} style={{height:'auto',width:'100%'}} />
-            ))}
-          </SwipeableViews>
-        </div> 
-      );
-    }
-
-    when_view_image_clicked(index, images){
-        this.setState({view_images: images, view_images_pos: index})
-        this.open_view_image_bottomsheet()
-    }
+  }
 
 
 
@@ -2401,6 +2782,7 @@ class App extends Component {
     });
 
     this.get_filecoin_wallet(seed);
+    // this.test_generate_signature(account)
     this.get_accounts_data(account, true)
   }
 
@@ -2425,11 +2807,17 @@ class App extends Component {
     const myAddress = await walletProvider.getDefaultAddress();
     console.log(myAddress);
 
-    const balance = await lotusClient.wallet.balance(myAddress);
-    console.log('Wallet balance:', balance);
+    try{
+      const balance = await lotusClient.wallet.balance(myAddress);
+      console.log('Wallet balance:', balance);
+    }catch(e){
+      console.log(e)
+    }
+    
 
     // this.send_filecoin(seed)
     // this.initialize_storage_deal(seed)
+    this.store_data_in_web3('hello world!')
   }
 
   send_filecoin = async (seed) => {
@@ -2493,25 +2881,23 @@ class App extends Component {
     var privateKey = await walletProvider.getSigner().getPrivateKey(myAddress)
     console.log('private key: ---------------',privateKey);
 
-    
-
     const minerAddress = 'f01393827';
-    // const data = Buffer.from('Hello, World!');
-    // const walletKey = WalletKey.fromPrivateKey(Buffer.from(privateKey, 'hex'));
+    const data = 'Hello, Filecoin!';
 
-    // Define storage deal parameters
+    // const userKey = WalletKey.fromPrivateKey(Buffer.from(privateKey, 'hex'));
+
+    const storageDealParams = {
+      Data: data,
+      Wallet: myAddress,
+      Miner: minerAddress, // Replace with the miner's address
+      StartEpoch: -1, // Use -1 to start the deal ASAP
+      EndEpoch: 0,
+    }
+    const signedProposal = await lotusClient.wallet.signMessage(storageDealParams);
+    const dealCid = await lotusClient.client.import()
+    console.log('Storage Deal Proposal CID:', dealCid);
     
-    // const dealInfo = await walletProvider.client.client.startDeal({
-    //   Data: data.toString('base64'),
-    //   Wallet: myAddress,
-    //   Miner: minerAddress,
-    //   StartEpoch: 0, // Use -1 to start the deal ASAP
-    //   EndEpoch: 10000, // Use 0 to make the deal perpetual
-    //   PieceSize: 1000,
-    //   VerifiedDeal: false,
-    //   Client: myAddress
-    // });
-
+    // const dealInfo = await walletProvider.client.startDeal();
     // console.log('Storage Deal CID:', dealInfo.ProposalCid);
 
   }
@@ -3186,6 +3572,59 @@ class App extends Component {
     if(is_syncing){
       this.inc_synch_progress()
     }
+
+
+
+
+
+
+
+
+
+
+
+    /* ---------------------------------------- STOREFRONT DATA ------------------------------------------- */
+    var created_store_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 27/* 27(storefront-item) */ } }, (error, events) => {});
+    var created_stores = []
+    var created_store_mappings ={}
+    for(var i=0; i<created_store_events.length; i++){
+      var id = created_store_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_store_events[i].returnValues.p1.toString() == hash.toString() && id.toString() != '1043'){
+        var data = await this.fetch_objects_data(id, web3);
+        if(data != null){
+          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i]}
+          created_stores.push(obj)
+          created_store_mappings[id] = obj
+        }
+      }
+    }
+    this.setState({created_stores: created_stores, created_store_mappings:created_store_mappings})
+    console.log('store count: '+created_stores.length)
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+    var created_bag_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:25/* 25(storefront_bag_object) */ } }, (error, events) => {});
+    var created_bags = []
+    for(var i=0; i<created_bag_events.length; i++){
+      var id = created_bag_events[i].returnValues.p1
+      var data = await this.fetch_objects_data(id, web3);
+        if(data != null){
+          created_bags.push({'id':id, 'ipfs':data, 'event': created_bag_events[i]})
+        }
+    }
+    this.setState({created_bags: created_bags})
+    console.log('bag count: '+created_bags.length)
+
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
@@ -3193,10 +3632,29 @@ class App extends Component {
   }
 
 
+
+
+  fetch_objects_data = async (id, web3) => {
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    var target_id = id;
+    var events = await E52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: target_id} }, (error, events) => {});
+    // console.log('events for id: ',id ,': ',events)
+    if(events.length == 0) return;
+    var cid = events[events.length - 1].returnValues.p4
+    if(cid == 'e3' || cid == 'e2' || cid == 'e1' || cid == 'e') return;
+
+    const response = await this.fetch_objects_data_from_ipfs(cid)
+    return response
+
+  }
+
+
+
   store_data_in_infura = async (data) => {
-    const projectId = '2RryKWCGNDlwzCa9yTG25TumLK4';
-    const projectSecret = '494188d509a288e4df6da34864f6e141';
-    // const auth = ''
+    const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
+    const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
     const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
     const client = create({
       host: 'ipfs.infura.io',
@@ -3218,23 +3676,6 @@ class App extends Component {
     }
   }
 
-
-  fetch_objects_data = async (id, web3) => {
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-    var target_id = id;
-    var events = await E52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: target_id} }, (error, events) => {});
-    if(events.length == 0) return;
-    var cid = events[events.length - 1].returnValues.p4
-    if(cid == 'e3') return;
-    console.log('loaded events: ',events)
-
-    const response = await this.fetch_objects_data_from_ipfs(cid)
-    return response
-
-  }
-
   fetch_objects_data_from_ipfs = async (cid) => {
     try {
       const response = await fetch(`https://ipfs.io/ipfs/${cid}`);
@@ -3248,6 +3689,43 @@ class App extends Component {
       console.log('Error uploading file: ', error)
     }
   }
+
+
+
+  store_data_in_web3 = async (data) => {
+    const client = new Web3Storage({ token: `${process.env.REACT_APP_WEB3_STORAGE_ACCESS_TOKEN}` })
+
+    var file = this.makeFileObjects(data);
+    const cid = await client.put(file)
+    return cid
+  }
+
+  makeFileObjects(data) {
+    // You can create File objects from a Blob of binary data
+    // see: https://developer.mozilla.org/en-US/docs/Web/API/Blob
+    // Here we're just storing a JSON object, but you can store images,
+    // audio, or whatever you want!
+    const obj = { data: data }
+    const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' })
+
+    const files = [
+      new File([blob], 'bry.json'),
+      new File(['contents-of-file-1'], 'plain-utf8.txt')
+    ]
+    return files
+  }
+
+  fetch_objects_data_from_web3 = async (cid) => {
+    const client = new Web3Storage({ token: `${process.env.REACT_APP_WEB3_STORAGE_ACCESS_TOKEN}` })
+
+    const res = await client.get(cid)
+    const files = await res.files()
+
+    var file = files[0]
+    return JSON.parse(JSON.parse(await file.text()).data);
+  }
+
+
 
 
 
@@ -3454,6 +3932,66 @@ class App extends Component {
     var clone = JSON.parse(JSON.stringify(this.state.job_responses))
     clone[id] = messages
     this.setState({job_responses: clone})
+
+  }
+
+
+  get_direct_purchase_events = async (id) => {
+    const web3 = new Web3(this.state.web3);
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.E35_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
+
+    var direct_purchases = []
+    for(var j=0; j<created_awward_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_awward_data[j].returnValues.p4)
+      direct_purchases.push(ipfs_message)
+    }
+
+
+
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_fulfilment_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
+    console.log('----------------------www----------------------')
+    console.log(created_fulfilment_data)
+    var fulfilments = {}
+    for(var j=0; j<created_fulfilment_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_fulfilment_data[j].returnValues.p4)
+      var signature_data = ipfs_message['signature_data']
+      fulfilments[signature_data] = ipfs_message
+    }
+
+    var clone = JSON.parse(JSON.stringify(this.state.direct_purchases))
+    clone[id] = direct_purchases
+
+    var fulfilment_clone = JSON.parse(JSON.stringify(this.state.direct_purchase_fulfilments))
+    fulfilment_clone[id] = fulfilments
+
+    this.setState({direct_purchases: clone, direct_purchase_fulfilments: fulfilment_clone})
+  }
+
+
+
+  test_generate_signature= async (account) => {
+    const web3 = new Web3(this.state.web3);
+
+    var data = 'hello world'
+    var address = account.address
+    console.log('----------------------www----------------------')
+    console.log('account address: ',address)
+
+    web3.eth.accounts.wallet.add(account.privateKey);
+    var signature = await web3.eth.sign(data, address)
+    
+    console.log('signature: ',signature)
+    var original_address = await web3.eth.accounts.recover(data, signature)
+    console.log('original address: ',original_address)
+
 
   }
 

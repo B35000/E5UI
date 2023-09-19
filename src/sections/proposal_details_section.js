@@ -131,6 +131,8 @@ class ProposalDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p4, 'details':'Author', 'size':'l'})}
+                    <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
@@ -269,7 +271,7 @@ class ProposalDetailsSection extends Component {
             var proposals = []
             var myid = this.props.app_state.user_account_id
             for(var i = 0; i < this.props.app_state.my_proposals.length; i++){
-                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p3
+                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p4/* should be p3 */
                 if(proposal_author.toString() == myid.toString()){
                     proposals.push(this.props.app_state.my_proposals[i])
                 }else{

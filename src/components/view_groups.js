@@ -161,7 +161,7 @@ class ViewGroups extends Component {
 
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                         <div>
-                            <img src={img} style={{height:50 ,width:'auto'}} />
+                            <img src={img} style={{height:50 ,width:'auto', 'border-radius': '50%'}} />
                         </div>
                         <div style={{'margin':'0px 0px 0px 10px'}}>
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
@@ -303,8 +303,8 @@ class ViewGroups extends Component {
             );
         }
         else if(item_id =='9'){/* images-list */
-            var col = Math.round(this.props.width / 65)
-            var rowHeight = 65;
+            var col = Math.round(this.props.width / 45)
+            var rowHeight = 45;
             var items = object_data == null ? [] :object_data['images'];
             var items_pos = object_data == null ? 0 : object_data['pos'];
             return(
@@ -313,7 +313,7 @@ class ViewGroups extends Component {
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div onClick={() => this.when_image_clicked(items, index)}>
-                                    <img src={item} style={{height:65 ,width:65}} />
+                                    <img src={item} style={{height:45 ,width:45, 'border-radius': '50%'}} />
                                 </div> 
                             </ImageListItem>
                         ))}

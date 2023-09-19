@@ -138,6 +138,7 @@ class SpendDetailSection extends Component {
         var selected_item = this.props.selected_spend_item
         var selected_object = this.get_exchange_tokens(5)[selected_item]
         var symbol = selected_object['ipfs'] == null ? 'tokens' : selected_object['ipfs'].entered_symbol_text
+        var author = selected_object['event'] != null ? selected_object['event'].returnValues.p3 :'Unknown'
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -145,6 +146,8 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':''+author, 'details':'Author', 'size':'l'})}
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}

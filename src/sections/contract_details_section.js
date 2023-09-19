@@ -115,6 +115,7 @@ class ContractDetailsSection extends Component {
         }
         var item = this.get_contract_details_data()
         var object = this.get_contract_items()[this.props.selected_contract_item]
+        var author = object['event'] != null ? object['event'].returnValues.p3 :'Unknown'
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -122,6 +123,8 @@ class ContractDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':''+author, 'details':'Author', 'size':'l'})}
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
                     <div style={{height: 10}}/>
 
@@ -376,7 +379,7 @@ class ContractDetailsSection extends Component {
         var object = this.get_contract_items()[this.props.selected_contract_item]
         var my_account = this.props.app_state.user_account_id
 
-        if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
+        if(object['id'] != 2 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(
                 <div>
                     {this.render_detail_item('0')}

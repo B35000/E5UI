@@ -98,6 +98,9 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
 
+                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p3, 'details':'Author', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(object['access_rights_enabled'])})}
 

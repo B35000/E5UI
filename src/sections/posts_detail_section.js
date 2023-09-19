@@ -124,6 +124,9 @@ class PostsDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p5, 'details':'Author', 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -253,7 +256,6 @@ class PostsDetailsSection extends Component {
         )
     }
 
-
     render_top_title(){
         var object = this.get_post_items()[this.props.selected_post_item];
         return(
@@ -266,20 +268,6 @@ class PostsDetailsSection extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
-    }
-
-    scrollToBottom = () => {
-        // if (this.messagesEnd.current){
-        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        // }
-    }
-
-    componentDidMount() {
-        // this.scrollToBottom();
-    }
-
-    componentDidUpdate() {
-    //  this.scrollToBottom();
     }
 
 
@@ -489,7 +477,6 @@ class PostsDetailsSection extends Component {
         }
         this.last_all_click_time = Date.now();
     }
-
 
     render_stack_message_item(item){
         if(item.type == 'message'){

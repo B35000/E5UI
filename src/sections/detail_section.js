@@ -20,6 +20,8 @@ import EthersDetailsSection from './ethers_details_section'
 import EndDetailsSection from './end_detail_section'
 import SpendDetailSection from './spend_details_section'
 import MailDetailsSection from './mail_details_section'
+import StorefrontDetailsSection from './storefront_details_section'
+import BagDetailsSection from './bag_details_section'
 
 var bigInt = require("big-integer");
 
@@ -101,6 +103,16 @@ class PostDetailSection extends Component {
             else if(selected_tag == 'channels' ){
                 return(
                     <ChannelDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_channel_item={this.props.selected_channel_item} viewed_channels={this.props.viewed_channels} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} open_moderator_ui={this.props.open_moderator_ui.bind(this)} />
+                )
+            }
+            else if(selected_tag == 'storefront'){
+                return(
+                    <StorefrontDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_storefront_item={this.props.selected_storefront_item} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} viewed_stores={this.props.viewed_stores} open_add_to_bag={this.props.open_add_to_bag.bind(this)} open_fulfil_bag_request={this.props.open_fulfil_bag_request.bind(this)} open_direct_purchase={this.props.open_direct_purchase.bind(this)} open_clear_purchase={this.props.open_clear_purchase.bind(this)} />
+                )
+            }
+            else if(selected_tag == 'bags'){
+                return(
+                    <BagDetailsSection app_state={this.props.app_state} width={this.props.width} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_bag_item={this.props.selected_bag_item} explore_page_tags_object={this.props.explore_page_tags_object} show_images={this.props.show_images.bind(this)} notify={this.props.notify.bind(this)} viewed_bags={this.props.viewed_bags} open_fulfil_bag_request={this.props.open_fulfil_bag_request.bind(this)} view_bag_application_contract={this.props.view_bag_application_contract.bind(this)}/>
                 )
             }
         }

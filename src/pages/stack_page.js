@@ -60,7 +60,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','light','dark'], [1]
+                ['xor','',0], ['e','light','dark'], [1]
             ],
         };
         
@@ -72,7 +72,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','right','left'], [1]
+                ['xor','',0], ['e','right','left'], [1]
             ],
         };
         
@@ -84,7 +84,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','a','i','o','u','?','$','%','#','!'], [1]
+                ['xor','',0], ['e','a','i','o','u','?','$','%','#','!'], [1]
             ],
         };
     }
@@ -95,7 +95,7 @@ class StackPage extends Component {
 
     render(){
         return(
-            <div style={{'margin':'10px 0px 0px 10px'}}>
+            <div style={{'margin':'10px 10px 0px 10px'}}>
                 <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme}/>
                 
                 <div style={{'margin':'0px 0px 0px 0px'}}>
@@ -242,7 +242,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 10px 0px 0px'}}>
+                <div style={{'padding': '0px 0px 0px 0px'}}>
                     {this.render_stack_gas_part()}
                     {this.render_detail_item('0')}
                     {this.render_stack_run_settings_part()}
@@ -377,8 +377,8 @@ class StackPage extends Component {
         else if(t.type == 'contract'){
             return 964043 + (60_000 * t.price_data.length)
         }
-        else if(t.type == 'storefront'){
-            return 91315 + (61_315 * t.store_items.length)
+        else if(t.type == 'storefront-item'){
+            return 261200
         }
         else if(t.type == 'subscription'){
             return 630605 + (60_000 * t.price_data.length)
@@ -446,8 +446,29 @@ class StackPage extends Component {
         else if(t.type == 'access-rights-settings'){
             return 170897
         }
-        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages'|| t.type == 'job-response' || t.type == 'accept-job-application' || t.type == 'job-messages' || t.type == 'proposal-messages'){
-            return 344622
+        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages' || t.type == 'job-messages' || t.type == 'proposal-messages'){
+            return 279695 +(18000 * t.messages_to_deliver.length)
+        }
+        else if(t.type == 'job-response'){
+            return 279695
+        }
+        else if(t.type == 'accept-job-application'){
+            return 279695
+        }
+        else if(t.type == 'storefront-bag'){
+            return 300622
+        }
+        else if(t.type == 'bag-response'){
+            return 279695
+        }
+        else if(t.type == 'accept-bag-application'){
+            return 279695
+        }
+        else if(t.type == 'direct-purchase'){
+            return 279695
+        }
+        else if(t.type == 'clear-purchase'){
+            return 279695
         }
 
     }
@@ -716,14 +737,11 @@ class StackPage extends Component {
                         ints.push(add_moderator_accounts)
                     }
                 }
-                else if(txs[i].type == 'storefront'){
-                    var storefront_data = this.format_storefront_object(txs[i], ints)
-                    for(var i=0; i<storefront_data.objs; i++){
-                        ints.push(storefront_data.objs[i])
-                    }
-                    ints.push(storefront_data.metadata_action)
-                    strs.push([storefront_data.metadata_action_strings])
+                else if(txs[i].type == 'storefront-item'){
+                    var storefront_data = this.format_storefront_object(txs[i])
+                    strs.push([])
                     adds.push([])
+                    ints.push(storefront_data)
                 }
                 else if(txs[i].type == 'buy-sell'){
                     var buy_sell_obj = this.format_buy_sell_object(txs[i])
@@ -879,7 +897,7 @@ class StackPage extends Component {
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
-                }  
+                }
                 else if(txs[i].type == 'job-response'){
                     var message_obj = await this.format_job_application_object(txs[i])
                     
@@ -908,6 +926,64 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
+                else if(txs[i].type == 'storefront-bag'){
+                    var storefront_bag_obj = this.format_storefront_bag_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(storefront_bag_obj)
+
+                    var bag_variants = []
+                    txs[i].items_to_deliver.forEach(item => {
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count})
+                    });
+
+                    var final_bag_object = {'bag_orders':bag_variants, 'timestamp':Date.now()}
+                    var metadata_action = [ /* set metadata */
+                        [20000, 1, 0],
+                        [], [],/* target objects */
+                        []/* contexts */, 
+                        []/* int_data */
+                    ]
+                    var metadata_strings = [ [] ]
+                    metadata_action[1].push(i)
+                    metadata_action[2].push(35)
+                    metadata_action[3].push(0)
+                    metadata_action[4].push(0)
+                    var ipfs_obj = await this.get_object_ipfs_index(final_bag_object);
+                    metadata_strings[0].push(ipfs_obj.toString())
+
+                    ints.push(metadata_action)
+                    strs.push(metadata_strings)
+                    adds.push([])
+                }
+                else if(txs[i].type == 'bag-response'){
+                    var message_obj = await this.format_bag_application_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)    
+                }
+                else if(txs[i].type == 'accept-bag-application'){
+                    var message_obj = await this.format_accept_bag_application_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                }
+                else if(txs[i].type == 'direct-purchase'){
+                    var message_obj = await this.format_direct_purchase_object(txs[i])
+                    
+                    strs.push(message_obj.str)
+                    adds.push([])
+                    ints.push(message_obj.int)
+                }
+                else if(txs[i].type == 'clear-purchase'){
+                    var clear_obj = await this.format_clear_purchase_object(txs[i])
+                    
+                    strs.push(clear_obj.str)
+                    adds.push([])
+                    ints.push(clear_obj.int)    
+                }
             }
             
         }
@@ -925,7 +1001,7 @@ class StackPage extends Component {
 
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i])){
-                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront'|| txs[i].type == 'proposal'){
+                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront-item'|| txs[i].type == 'proposal'){
                     metadata_action[1].push(i)
                     metadata_action[2].push(35)
                     metadata_action[3].push(0)
@@ -953,7 +1029,7 @@ class StackPage extends Component {
 
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i])){
-                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront' || txs[i].type == 'proposal'){
+                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront-item' || txs[i].type == 'proposal'){
                     var tx_tags = txs[i].entered_indexing_tags
                     index_data_in_tags[1].push(i)
                     index_data_in_tags[2].push(35)
@@ -1268,27 +1344,11 @@ class StackPage extends Component {
         return obj
     }
 
-    format_storefront_object(t, ints){
-        var objs = []
-        var metadata_action_strings = []
-        var obj = [/* storefront object */ [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 28, 0] ]
-        objs.push(obj)
-        var storefront_stack_id = ints.length
-        var metadata_action = [ /* set metadata */
-            [20000, 1, 0],
-            [], [],/* target objects */
-            []/* contexts */, 
-            []/* int_data */
+    format_storefront_object(t){
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 27, 0]
         ]
-        for(var i=0; i<t.store_items; i++){
-            objs.push([/* storefront item object */ [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 27, 0] ])
-            metadata_action[1].push(storefront_stack_id)
-            metadata_action[2].push(35)
-            metadata_action[3].push(storefront_stack_id+i+1)
-            metadata_action[4].push(0)
-            metadata_action_strings.push('')
-        }
-        return {objs: objs, metadata_action: metadata_action, metadata_action_strings: metadata_action_strings}
+        return obj
     }
 
     format_buy_sell_object(t){
@@ -1982,7 +2042,7 @@ class StackPage extends Component {
         var context = 36
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id}
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option}
 
         var string_data = await this.get_object_ipfs_index(application_obj);
 
@@ -2082,6 +2142,156 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
+    format_storefront_bag_object = (t) => {
+        var obj = [/* custom object */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 25, 0]
+        ]
+        return obj
+    }
+
+    format_bag_application_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var target_id = t.bag_item['id']
+        var context = 36
+        var int_data = Date.now()
+
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option}
+
+        var string_data = await this.get_object_ipfs_index(application_obj);
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_accept_bag_application_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var target_id = t.application_item['job_id']
+        var context = 37
+        var int_data = t.application_item['id']
+
+        var application_obj = {'accepted':true}
+
+        var string_data = await this.get_object_ipfs_index(application_obj);
+
+        obj[1].push(target_id)
+        obj[2].push(23)
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+
+
+        return {int: obj, str: string_obj}
+    }
+
+
+    format_direct_purchase_object = async (t) => {
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [t.storefront_item['ipfs'].target_receiver], [23],/* target receivers */
+            [t.storefront_item['id']],/* awward contexts */
+            
+            [], [],/* exchange ids for first target receiver */
+            [],/* amounts for first target receiver */
+            [],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        for(var i=0; i<t.selected_variant['price_data'].length; i++){
+            var exchange = t.selected_variant['price_data'][i]['id']
+            var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
+            
+            obj[4].push(exchange)
+            obj[5].push(23)
+            obj[6].push(amount)
+            obj[7].push(0)
+        }
+
+        for(var i=0; i < t.storefront_item['ipfs'].shipping_price_data.length; i++){
+            var shipping_fee_exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+            var shipping_fee_amount = t.storefront_item['ipfs'].shipping_price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+            
+            obj[4].push(shipping_fee_exchange)
+            obj[5].push(23)
+            obj[6].push(shipping_fee_amount)
+            obj[7].push(0)
+        }
+
+        var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id, 'signature_data':Date.now(), 'sender_address':this.props.app_state.account.address}
+        var string_data = await this.get_object_ipfs_index(purchase_object);
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    get_amounts_to_be_paid(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
+    }
+
+    format_clear_purchase_object = async (t) =>{
+        var obj = [ /* set data */
+            [20000, 13, 0],
+            [], [],/* target objects */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        for(var i=0; i<t.items_to_clear.length; i++){
+            var target_id = t.items_to_clear[i].order_storefront['id']
+            var context = 38
+            var int_data = 0
+
+            var string_object = {
+                'variant_id':t.items_to_clear[i].order_data['variant_id'], 
+                'purchase_unit_count':t.items_to_clear[i].order_data['purchase_unit_count'], 
+                'sender_address':t.items_to_clear[i].order_data['sender_address'], 
+                'sender_account':t.items_to_clear[i].order_data['sender_account'],
+                'signature_data':t.items_to_clear[i].order_data['signature_data'],
+                'signature': t.items_to_clear[i].received_signature
+            }
+            var string_data = await this.get_object_ipfs_index(string_object);
+
+            obj[1].push(target_id)
+            obj[2].push(23)
+            obj[3].push(context)
+            obj[4].push(int_data)
+
+            string_obj[0].push(string_data)
+        }
+
+        return {int: obj, str: string_obj}
+    }
+
+
+
+
+
 
 
 
@@ -2150,7 +2360,6 @@ class StackPage extends Component {
 
         this.props.when_device_theme_changed(selected_item)
     }
-
 
     when_details_orientation_changed(tag_group){
         

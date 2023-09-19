@@ -18,6 +18,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 35) {
+    return str.substr(0, 20) + '...' + str.substr(str.length-10, str.length);
+  }
+  return str;
+}
+
 class ViewTransactionPage extends Component {
     
     state = {
@@ -122,7 +129,7 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application'){
+        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application' && item.type != 'storefront-bag' && item.type != 'bag-response' && item.type != 'accept-bag-application' && item.type != 'clear-purchase'){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':'Make some changes to the transaction', 'title':'Edit'})}
@@ -186,8 +193,8 @@ class ViewTransactionPage extends Component {
         else if(t.type == 'contract'){
             return 964043 + (60_000 * t.price_data.length)
         }
-        else if(t.type == 'storefront'){
-            return 91315 + (61_315 * t.store_items.length)
+        else if(t.type == 'storefront-item'){
+            return 261200 
         }
         else if(t.type == 'subscription'){
             return 630605 + (60_000 * t.price_data.length)
@@ -264,6 +271,21 @@ class ViewTransactionPage extends Component {
         else if(t.type == 'accept-job-application'){
             return 279695
         }
+        else if(t.type == 'storefront-bag'){
+            return 300622
+        }
+        else if(t.type == 'bag-response'){
+            return 279695
+        }
+        else if(t.type == 'accept-bag-application'){
+            return 279695
+        }
+        else if(t.type == 'direct-purchase'){
+            return 279695
+        }
+        else if(t.type == 'clear-purchase'){
+            return 279695
+        }
 
     }
 
@@ -320,7 +342,7 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
-            else if(tx.type == 'storefront'){
+            else if(tx.type == 'storefront-item'){
                 return(
                     <div>
                         {this.render_storefront_post_data()}
@@ -509,6 +531,41 @@ class ViewTransactionPage extends Component {
                         {this.render_mail_message_data('Proposal Messages')}
                     </div>
                 )    
+            }
+            else if(tx.type == 'storefront-bag'){
+                return(
+                    <div>
+                        {this.render_storefront_bag_data()}
+                    </div>
+                )    
+            }
+            else if(tx.type == 'bag-response'){
+                return(
+                    <div>
+                        {this.render_bag_response_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'accept-bag-application'){
+                return(
+                    <div>
+                        {this.render_accept_bag_application_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'direct-purchase'){
+                return(
+                    <div>
+                        {this.render_direct_purchase_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'clear-purchase'){
+                return(
+                    <div>
+                        {this.render_clear_purchase_data()}
+                    </div>
+                )
             }
         }
     }
@@ -1477,22 +1534,27 @@ class ViewTransactionPage extends Component {
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
 
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['id'])}
+            <div style={{padding:'0px 0px 10px 0px'}}>
+                <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                    <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', item['id'])}
 
-                    {this.render_detail_item('0')}
-                    {this.render_item_data(items)}
+                        {this.render_detail_item('0')}
+                        {this.render_item_data(items)}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'title':''+this.props.app_state.stack_items[this.state.transaction_index].store_items.length+' store item(s)', 'details':'have been included'})}
-
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
                 </div>
+
+                {this.render_detail_item('3', {'title':'Item Variants', 'details':'The items variant details are shown below', 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_set_storefront_variant_list_part()}
+                {this.render_detail_item('0')}
             </div>
+            
         )
     }
 
@@ -1507,6 +1569,72 @@ class ViewTransactionPage extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
         }
+    }
+
+    render_set_storefront_variant_list_part(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var object = this.format_storefront_post();
+        var items = object['ipfs'].variants
+
+        if(items.length == 0){
+            items = [0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
+                                <div style={{height:110, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:50 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 0px 5px','border-radius': '13px' }} onClick={()=> this.remove_variant(item)}>
+                                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
+                                    <div style={{height:3}}/>
+                                    <div style={{padding:'0px 0px 0px 10px'}}>
+                                        {this.render_detail_item('9', item['image_data']['data'])}
+                                    </div>
+                                    <div style={{height:5}}/>
+                                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                                    <div style={{height:15}}/>
+                                    {this.render_variant_price_data(item)}
+
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    render_variant_price_data(variant){
+        var items = variant['price_data']
+        return(
+            <div>
+                {items.reverse().map((item, index) => (
+                    <li style={{'padding': '5px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', { 'style':'s', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                    </li>
+                ))}
+            </div>
+        )
     }
 
 
@@ -3125,7 +3253,6 @@ class ViewTransactionPage extends Component {
         )
     }
 
-
     render_sent_received_messages(){
         var middle = this.props.height-200;
         var size = this.props.size;
@@ -3362,11 +3489,284 @@ class ViewTransactionPage extends Component {
     }
 
 
+
+
+
+
+    render_storefront_bag_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':''+transaction_item.items_to_deliver.length+' item(s)', 'details':'in your bag.', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_all_items()}
+                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '2px 20px 20px 20px'}}/>
+            </div>
+        )
+    }
+
+    render_all_items(){
+        var middle = this.props.height-100;
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items_to_deliver = transaction_item.items_to_deliver
+
+        return (
+            <div style={{overflow: 'auto', maxHeight: middle}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {items_to_deliver.map((item, index) => (
+                        <li style={{'padding': '2px 0px 2px 0px'}}>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <div>Delete</div>,
+                                    action: () => this.props.delete_bag_item(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_picked_variants_for_each(item)}</div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    }
+
+
+    render_picked_variants_for_each(item){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var selected_variant = item.selected_variant   
+        var storefront_item = item.storefront_item
+        var composition_type = storefront_item['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront_item['ipfs'].composition_type, 'e') 
+        var items = selected_variant['price_data']
+        return(
+            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                
+                {this.render_detail_item('3', {'title':storefront_item['ipfs'].entered_title_text+'; '+selected_variant['variant_description'], 'details':this.format_account_balance_figure(item.purchase_unit_count)+' units in '+composition_type, 'size':'s'})} 
+                <div style={{height:10}}/>
+                
+                {items.map((units, index) => (
+                    <li style={{'padding': '2px 0px 2px 0px'}}>
+                        {this.render_detail_item('2', { 'style':'s', 'title':'Exchange ID: '+units['id'], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[units['id']], })}
+                    </li>
+                ))}
+
+                <div style={{'margin':'0px 10px 0px 10px'}} onClick={()=> this.props.when_edit_bag_item_tapped(item)}>
+                    {this.render_detail_item('5', {'text':'Edit', 'action':''},)}
+                </div>
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
+
+    get_amounts_to_be_paid(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
+    }
+
     
 
 
 
 
+
+    render_bag_response_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Selected Contract', 'details':'The contract you picked for the fulfilment action', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_contract_item(transaction_item.picked_contract)}
+                {this.render_detail_item('0')}
+                
+                {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':'The expiry time you picked for the fulfilment action', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(transaction_item.application_expiry_time * 1000)), 'size':'l'})}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.get_selected_item(transaction_item.pre_post_paid_option, 'e'), 'details':'The payment option you prefer', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youre youll be charging for the bag fulfilment', 'size':'l'})}
+                {this.render_set_prices_list_part()}
+            </div>
+        )
+    }
+
+
+    render_accept_bag_application_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var item = transaction_item.application_item
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('0')}
+                
+            </div>  
+        )
+    }
+
+
+
+
+
+
+    render_direct_purchase_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var storefront_object = transaction_item.storefront_item
+        var composition_type = storefront_object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront_object['ipfs'].composition_type, 'e')
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Shipping Details', 'details':transaction_item.fulfilment_location, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                {this.render_selected_variant(transaction_item.selected_variant)}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Units ordered in '+composition_type, 'subtitle':this.format_power_figure(transaction_item.purchase_unit_count), 'barwidth':this.calculate_bar_width(transaction_item.purchase_unit_count), 'number':this.format_account_balance_figure(transaction_item.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
+                </div>
+
+                <div style={{height: 10}}/>
+                {this.render_set_storefront_prices_list_part()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+    render_selected_variant(item){
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 0px 5px','border-radius': '13px' }}>
+                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
+                    <div style={{height:3}}/>
+                    <div style={{padding:'0px 0px 0px 10px'}}>
+                        {this.render_detail_item('9', item['image_data']['data'])}
+                    </div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                    <div style={{height:15}}/>
+                    {this.render_variant_price_data(item)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_set_storefront_prices_list_part(){
+        var middle = this.props.height-200;
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        if(transaction_item.selected_variant != null){
+            var items = transaction_item.selected_variant['price_data']
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    {this.render_detail_item('3', {'title':'Purchase Amounts', 'details':'This is the final amount for the price of the item your buying', 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+
+
+    render_clear_purchase_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'size':'l', 'title':''+transaction_item.items_to_clear.length, 'details':'collected fulfilment signatures' })}
+                <div style={{height:10}}/>
+
+                {this.render_all_clear_action_items()}
+            </div>
+        )
+    }
+
+    render_all_clear_action_items(){
+        var middle = this.props.height-100;
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.items_to_clear
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    {this.render_detail_item('3', {'title':'Collected Signatures', 'details':'Below are the collected signatures from your direct purchases', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '3px 0px 3px 0px'}}>
+                                <SwipeableList>
+                                        <SwipeableListItem
+                                            swipeLeft={{
+                                            content: <div>Delete</div>,
+                                            action: () => this.delete_collected_signature(item)
+                                            }}>
+                                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_fulfilment_item(item)}</div>
+                                        </SwipeableListItem>
+                                    </SwipeableList>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+    }
+
+    render_fulfilment_item(item){
+        var variant_description = this.get_variant_from_id(item.order_data['variant_id'], item)==null?'':this.get_variant_from_id(item.order_data['variant_id'], item)['variant_description']
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item.order_data['variant_id'], 'details':variant_description})}
+                <div style={{height:5}}/>
+                {this.render_detail_item('3', {'size':'s', 'title':'Received Signature', 'details':start_and_end(item.received_signature) })}
+                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+            </div>
+        )
+    }
+
+    get_variant_from_id(variant_id, state){
+        var object = state.order_storefront
+        for(var i=0; i<object['ipfs'].variants.length; i++){
+            if(object['ipfs'].variants[i]['variant_id'] == variant_id){
+                return object['ipfs'].variants[i]
+            }
+        }
+    }
+
+    delete_collected_signature(item){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        this.props.delete_collected_signature(item, transaction_item)
+    }
 
 
 

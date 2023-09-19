@@ -40,10 +40,10 @@ class NewStorefrontItemPage extends Component {
         id: makeid(8), type:'storefront-item',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
-        entered_tag_text: '', entered_title_text:'', entered_text:'',
+        entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0
+        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object()
     };
 
     get_new_job_page_tags_object(){
@@ -52,7 +52,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images', 'item-price'], [0]
+                ['or','',0], ['e', 'configuration','text', 'images', 'variants'], [0]
             ],
         };
     }
@@ -81,17 +81,44 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','direct', 'via-contract'], [1]
+                ['xor','',0], ['e','enabled', 'disabled'], [1]
             ],
         };
     }
+
+
+    get_visibility_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','invisible', 'masked', 'unmasked'], [1]
+            ],
+        };
+    }
+
+
+    get_composition_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', 'items','grams','kilos','ounces','pounds', 'centimeters','meters','inches','feet', 'mililiters','liters','gallons'], [1]
+            ]
+        };
+    }
+
+
+    
 
 
 
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
@@ -129,6 +156,13 @@ class NewStorefrontItemPage extends Component {
                 </div>
             )    
         }
+        if(selected_item == 'configuration'){
+            return(
+                <div>
+                    {this.render_subscription_configuration_part()}
+                </div>
+            )    
+        }
         else if(selected_item == 'text'){
             return(
                 <div>
@@ -143,12 +177,12 @@ class NewStorefrontItemPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'item-price'){
+        else if(selected_item == 'variants'){
             return(
                 <div>
-                    {this.render_enter_item_price_part()}
+                    {this.render_variants_picker_part()}
                 </div>
-            ) 
+            )
         }
     }
 
@@ -159,6 +193,151 @@ class NewStorefrontItemPage extends Component {
     }
 
 
+
+    render_subscription_configuration_part(){
+        var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Unit Denomination', 'details':'Specify the denomination of the item from the tag picker below', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <Tags page_tags_object={this.state.composition_type} tag_size={'l'} when_tags_updated={this.when_composition_type_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Set denomination: '+selected_composition})}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Target Recipient', 'details':'Set the account thats set to receive the purchase payments for your new item', 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Enter Account ID'} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Fulfilment Location', 'details':'Set location of the pick up station for your item when its ordered using a bag and contractors', 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput height={70} placeholder={'Location Details...'} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Direct Purchase Option', 'details':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients', 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+                
+                {/* {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Sales Visibility', 'details':'If set to masked, all your direct purchase sales will be invisible to outsiders', 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/> */}
+
+            
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Direct Purchase Shipping Fee', 'details':'The shipping fee you charge for shipping your item when directly purchased by your clients', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
+                {this.load_token_suggestions('shipping_exchange_id')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.shipping_price_amount), 'barwidth':this.calculate_bar_width(this.state.shipping_price_amount), 'number':this.format_account_balance_figure(this.state.shipping_price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_price_set()}>
+                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                </div>
+
+                {this.render_shipping_set_prices_list_part()}
+            </div>
+        )
+    }
+
+
+    when_shipping_exchange_id_input_field_changed(exchange_id){
+        this.setState({shipping_exchange_id: exchange_id})
+    }
+
+    when_shipping_price_amount(amount){
+        this.setState({shipping_price_amount: amount})
+    }
+
+    when_visibility_tags_object_updated(tag_obj){
+        this.setState({visibility_tags_object: tag_obj})
+    }
+
+
+    when_add_shipping_price_set(){
+        var exchange_id = this.state.shipping_exchange_id.trim()
+        var amount = this.state.shipping_price_amount
+        if(isNaN(exchange_id) || exchange_id == ''){
+            this.props.notify('please put a valid exchange id', 600)
+        }
+        else if(amount == 0){
+            this.props.notify('please put a valid amount', 600)
+        }
+        else{
+            var price_data_clone = this.state.shipping_price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({shipping_price_data: price_data_clone, shipping_price_amount:0, shipping_exchange_id:''});
+            this.props.notify('added shipping price!', 400)
+        }
+    }
+
+    render_shipping_set_prices_list_part(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.shipping_price_data
+
+        if(items.length == 0){
+            items = [0, 1]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+
+
+
+
+
+
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -166,7 +345,6 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
-                    
                     {this.render_new_job_object()}
                 </div>
             )
@@ -206,14 +384,6 @@ class NewStorefrontItemPage extends Component {
                     </div>
                 </div>
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
-                {this.render_detail_item('0')}
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Units', 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':'units', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
-
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -229,13 +399,27 @@ class NewStorefrontItemPage extends Component {
         this.setState({entered_tag_text: text})
     }
 
-    when_purchase_option_tags_object(tag_obj){
+    when_purchase_option_tags_object_updated(tag_obj){
         this.setState({purchase_option_tags_object: tag_obj})
     }
 
     when_available_unit_count(number){
         this.setState({available_unit_count: number})
     }
+
+    when_composition_type_updated(tag_obj){
+        this.setState({composition_type: tag_obj})
+    }
+
+    when_target_receiver_input_field_changed(text){
+        this.setState({target_receiver: text})
+    }
+
+    when_fulfilment_location_input_field_changed(text){
+        this.setState({fulfilment_location:text})
+    }
+
+
 
     add_indexing_tag_for_new_job(){
         var typed_word = this.state.entered_tag_text.trim();
@@ -495,7 +679,7 @@ class NewStorefrontItemPage extends Component {
                 reader.readAsDataURL(e.target.files[i]);
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been stage.',500);
+            this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 
@@ -536,7 +720,6 @@ class NewStorefrontItemPage extends Component {
     }
 
     render_image_part(){
-        var size = this.props.size
         var col = Math.round(this.props.app_state.width / 100)
         var rowHeight = 100;
 
@@ -591,30 +774,19 @@ class NewStorefrontItemPage extends Component {
 
 
 
+
+
     render_enter_item_price_part(){
         var size = this.props.size
         var height = this.props.height-150
 
         if(size == 's'){
             return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
+                <div style={{}}>
                     {this.render_set_token_and_amount_part()}
                     <div style={{height: 20}}/>
                     {this.render_set_prices_list_part()}
                 </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_set_token_and_amount_part()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_set_prices_list_part()}
-                    </div>
-                </div>
-                
             )
         }
     }
@@ -623,13 +795,17 @@ class NewStorefrontItemPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Add an exchange by its id, then the desired price and click add', 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
-                <div style={{height: 20}}/>
+
+                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 20px 20px'}}/>
+
+                {this.render_detail_item('3', {'title':'Price per unit', 'details':'Specify the price for one unit of your new items variant', 'size':'l'})}
+                <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
@@ -664,13 +840,13 @@ class NewStorefrontItemPage extends Component {
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
-            this.setState({price_data: price_data_clone});
+            this.setState({price_data: price_data_clone, price_amount:0, exchange_id:''});
             this.props.notify('added price!', 400)
         }
     }
 
     render_set_prices_list_part(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -678,12 +854,12 @@ class NewStorefrontItemPage extends Component {
         var items = this.state.price_data
 
         if(items.length == 0){
-            items = [0,3,0]
+            items = [0, 1]
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={Letter} style={{height:30 ,width:'auto'}} />
@@ -722,20 +898,270 @@ class NewStorefrontItemPage extends Component {
     }
 
 
+
+
+
+    render_variants_picker_part(){
+        var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Variant Title', 'details':'Set a basic description of the variant of the item your selling like a color or size option', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Variant Title'} when_text_input_field_changed={this.when_variant_description_input_field_changed.bind(this)} text={this.state.variant_description} theme={this.props.theme}/>
+                
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Variant Images', 'details':'You can set some images for your variant(for visual context)', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_variant_image_picker_ui()}
+                <div style={{height:10}}/>
+                {this.render_variant_images()}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Number of Units in '+selected_composition, 'details':'You can specify the number of units of the variant that are available for sale', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Units', 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':'units', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+                {this.render_enter_item_price_part()}
+
+                {this.render_detail_item('0')}
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_variant_tapped()}>
+                    {this.render_detail_item('5', {'text':'Add Variant', 'action':''})}
+                </div>
+
+
+                {this.render_variants()}
+
+            </div>
+        )
+    }
+
+    render_variant_image_picker_ui(){
+        return(
+            <div>
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_variant_gif_picked.bind(this)} multiple/>
+                    </div>
+
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_variant_gif_picked.bind(this)} multiple/>
+                    </div>
+                </div>
+                
+            </div>
+        )
+    }
+
+    when_variant_description_input_field_changed(text){
+        this.setState({variant_description: text})
+    }
+
+
+    when_image_variant_gif_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    const clonedArray = this.state.variant_images == null ? [] : this.state.variant_images.slice();
+                    clonedArray.push(ev.target.result);
+                    this.setState({variant_images: clonedArray});
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+        }
+    }
+
+
+    render_variant_images(){
+        var col = Math.round(this.props.app_state.width / 100)
+        var rowHeight = 100;
+
+        if(this.state.variant_images.length == 0){
+            var items = ['1','1','1']
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            var items = this.state.variant_images
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div onClick={() => this.when_variant_image_clicked(index)}>
+                                    <img src={item} style={{height:100 ,width:100}} />
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+
+    when_variant_image_clicked(index){
+        var cloned_array = this.state.variant_images.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({variant_images: cloned_array})
+    }
+
+
+    when_add_variant_tapped(){
+        var images_to_add = this.state.variant_images
+        var id = Math.round(new Date().getTime()/1000);
+        
+        var image_data = {'data':{'images':images_to_add}, 'type':'9', 'id':id}
+        var variant_description = this.state.variant_description.trim()
+        var price_data = this.state.price_data
+        var available_unit_count = this.state.available_unit_count
+
+        if(variant_description == ''){
+            this.props.notify('that variant description isnt valid', 800)
+        }
+        else if(price_data.length == 0){
+            this.props.notify('set a price for your variant first', 900)
+        }
+        else if(available_unit_count == 0){
+            this.props.notify('You need to specify how many units are available first', 900)
+        }else{
+            var variant = {'variant_id':makeid(8),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
+
+            var clone = this.state.variants.slice()
+            clone.push(variant)
+            this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0})
+            this.props.notify('added the variant to the item', 600)
+        }
+    }
+
+
+    render_variants(){
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = this.state.variants
+
+        if(items.length == 0){
+            items = [0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
+                                <div style={{height:110, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:50 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 0px 5px','border-radius': '13px' }} onClick={()=> this.remove_variant(item)}>
+                                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
+                                    <div style={{height:3}}/>
+                                    <div style={{padding:'0px 0px 0px 10px'}}>
+                                        {this.render_detail_item('9', item['image_data']['data'])}
+                                    </div>
+                                    <div style={{height:5}}/>
+                                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                                    <div style={{height:15}}/>
+                                    {this.render_variant_price_data(item)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    render_variant_price_data(variant){
+        var items = variant['price_data']
+        return(
+            <div>
+                {items.reverse().map((item, index) => (
+                    <li style={{'padding': '5px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', { 'style':'s', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                    </li>
+                ))}
+            </div>
+        )
+    }
+
+
+    remove_variant(item){
+        var cloned_array = this.state.variants.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({variants: cloned_array})
+        this.props.notify('variant removed!',600)
+    }
+
+
+
+
+
+
+
+
     load_token_suggestions(target_type){
         var items = this.get_suggested_tokens()
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         )
     }
 
@@ -744,19 +1170,29 @@ class NewStorefrontItemPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        // var stack_items = this.props.app_state.stack_items;
-        // for(var i=0; i<stack_items.length; i++){
-        //     if(stack_items[i].type == 'token'){
-        //         items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
-        //     }
-        // }
 
         return items;
     }
 
     when_price_suggestion_clicked(item, pos, target_type){
-        this.setState({exchange_id: item['id']})
+        if(target_type=='exchange_id'){
+            this.setState({exchange_id: item['id']})
+        }
+        else if(target_type == 'shipping_exchange_id'){
+            this.setState({shipping_exchange_id: item['id']})
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -764,9 +1200,13 @@ class NewStorefrontItemPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
             </div>
         )
+
+    }
+
+    show_images(){
 
     }
 
@@ -871,8 +1311,10 @@ class NewStorefrontItemPage extends Component {
 
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
-        var title = this.state.entered_title_text
-        var price_amounts = this.state.price_data
+        var title = this.state.entered_title_text.trim()
+        var variants = this.state.variants
+        var target_receiver = this.state.target_receiver.trim()
+        var fulfilment_location = this.state.fulfilment_location.trim()
 
         if(index_tags.length == 0){
             this.props.notify('add some tags first!', 700)
@@ -880,23 +1322,30 @@ class NewStorefrontItemPage extends Component {
         else if(title == ''){
             this.props.notify('add a title for your Item', 700)
         }
-        else if(price_amounts.length == 0){
-            this.props.notify('you should add a price for your new item', 700)
+        else if(variants.length == 0){
+            this.props.notify('you should set some variants for your item', 700)
+        }
+        else if(isNaN(target_receiver) || target_receiver==''){
+            this.props.notify('set a valid receiver target', 700)
+        }
+        else if(fulfilment_location==''){
+            this.props.notify('set a valid fulfilment location for your storefront items', 900)
         }
         else{
             
             var data = this.state;
-            this.props.add_data_to_new_store_item(data)
+            this.props.when_add_new_object_to_stack(data)
 
             this.setState({
                 id: makeid(8), type:'storefront-item',
                 get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
                 get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
-                entered_tag_text: '', entered_title_text:'', entered_text:'',
+                entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
                 entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
                 entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-                purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0
+                purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:''
             })
+            this.props.notify('Transaction added to Stack', 600)
 
         }
     }

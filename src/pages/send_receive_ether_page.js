@@ -4,7 +4,7 @@ import ViewGroups from './../components/view_groups'
 import QRCode from "react-qr-code";
 import NumberPicker from './../components/number_picker';
 import TextInput from './../components/text_input';
-import Html5QrcodePlugin from './../externals/Html5QrcodePlugin'
+import Html5QrcodePlugin from '../externals/Html5QrcodePlugin'
 import Dialog from "@mui/material/Dialog";
 import Letter from './../assets/letter.png';
 
@@ -166,12 +166,14 @@ class SendReceiveEtherPage extends Component {
                 <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
                 <div style={{height: 10}} theme={this.props.theme}/>
 
-                <Html5QrcodePlugin 
+                
+                {/* <Html5QrcodePlugin 
                     fps={10}
                     qrbox={250}
                     disableFlip={false}
-                    qrCodeSuccessCallback={this.onNewScanResult}/>
-
+                    qrCodeSuccessCallback={this.onNewScanResult}/> */}
+                
+                {this.render_qr_code_scanner()}
                 {this.render_detail_item('0')}
 
 
@@ -213,6 +215,26 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    render_qr_code_scanner(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'s', 'title':'Open Scanner', 'details':'Scan for an address using a built in scanner'})}
+                <div style={{height:10}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.start_scan()}>
+                    {this.render_detail_item('5',{'text':'Scan', 'action':''})}
+                </div>
+            </div>
+        )
+    }
+    
+    start_scan(){
+        this.props.start_scan('send_receive_ether_page')
+    }
+
+     set_scan_data(data){
+        this.setState({recipient_address:data})
     }
 
     render_dialog_ui(){
