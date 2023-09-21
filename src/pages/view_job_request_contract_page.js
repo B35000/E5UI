@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
-import Letter from './../assets/letter.png'; 
-
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -27,11 +25,11 @@ function makeid(length) {
     return result;
 }
 
-class ViewApplicationContractPage extends Component {
+class ViewJobRequestContractPage extends Component {
     
     state = {
-        selected: 0, application_item:{}, type:'accept-job-application', id:makeid(8),
-        entered_indexing_tags:['accept', 'job', 'application'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
+        selected: 0, contract_data:{}, type:'view-job-request-contract', id:makeid(8),
+        entered_indexing_tags:['view', 'contract', 'contractor', 'response'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
     };
 
     get_view_application_contract_title_tags_object(){
@@ -40,7 +38,7 @@ class ViewApplicationContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','applications-contract'], [1]
+                ['xor','',0], ['e','view-contract'], [1]
             ],
         };
     }
@@ -66,91 +64,73 @@ class ViewApplicationContractPage extends Component {
 
 
     render_everything(){
-        if(this.state.application_item['contract'] != null){
-            var item = this.state.application_item
+        if(this.state.contract_data['data'] != null){
+            var item = this.state.contract_data
             return(
                 <div>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'The contract they applied with is shown below.'})}
+                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'The contractors contract is shown below.'})}
                     {this.render_contracts_data()}
-
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
-                
-                    {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
-
-                    {this.render_detail_item('0')}
-                    {this.render_application_price_amounts(item)}
-                    
-
-                    {this.render_accept_enter_button(item)}
-
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
+                    {this.show_entered_contract_data()}
+                    <div style={{height:10}}/>
+                    {this.render_enter_contract_button()}
+                    <div style={{height:20}}/>
                 </div>
             )
         }
         
     }
 
-    render_accept_enter_button(item){
-        if(this.props.app_state.user_account_id != item['applicant_id']){
+    show_entered_contract_data(){
+        var object = this.state.contract_data
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if(expiry_time_in_seconds != 0 && time_to_expiry > 0){
             return(
                 <div>
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the job application and enter their contract(This action cant be undone)', 'size':'s'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
                     <div style={{height:10}}/>
 
-                    <div onClick={()=> this.accept_job_application()}>
-                        {this.render_detail_item('5', {'text':'Accept and Enter', 'action':''},)}
-                    </div>
+                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                </div>
+            )
+        }
+        else if(expiry_time_in_seconds != 0 && time_to_expiry < 0){
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':'Your time in the contract has exipred', 'textsize':'13px', 'font':'Sans-serif'})}
+                </div>
+            )
+        }
+        else{
+            return(
+                <div>
+                    {this.render_detail_item('4', {'text':'Youre not part of the contract', 'textsize':'13px', 'font':'Sans-serif'})}
                 </div>
             )
         }
     }
 
-    render_application_price_amounts(object){
-        var items = object['price_data']
-        var middle = this.props.height-200;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        if(items.length == 0){
-            items = [0,1]
-            return(
+
+    render_enter_contract_button(){
+        return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {items.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                    {this.render_detail_item('3', {'title':'Enter Contract', 'details':'Enter the contract sent from the contractor', 'size':'s'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=> this.enter_contract()}>
+                        {this.render_detail_item('5', {'text':'Enter Contract', 'action':''},)}
                     </div>
                 </div>
             )
-        }
-        return(
-            <div style={{overflow: 'auto', maxHeight: 600}}>
-                {this.render_detail_item('3', {'title':'Applicants Requested Pay', 'details':'Below is the applicants requested pay in their respective token denominations.', 'size':'s'})}
-                <div style={{height:10}}/>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '0px'}}>
-                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        )
     }
+
+
+    enter_contract(){
+        this.props.add_job_request_action_to_stack(this.state)
+    }
+
 
     render_contracts_data(){
         var background_color = this.props.theme['card_background_color']
@@ -160,7 +140,7 @@ class ViewApplicationContractPage extends Component {
             he = this.props.height-190;
         }
         var item = this.get_contract_details_data()
-        var object = this.state.application_item['contract']
+        var object = this.state.contract_data
 
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
@@ -219,7 +199,7 @@ class ViewApplicationContractPage extends Component {
     }
 
     get_contract_details_data(){
-        var object = this.state.application_item['contract']
+        var object = this.state.contract_data
         var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
@@ -285,29 +265,27 @@ class ViewApplicationContractPage extends Component {
         )
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
     set_object(item){
-        if(this.state.application_item['contract'] != item['contract']){
+        if(this.state.contract_data['id'] != item['id']){
             this.setState({
-                selected: 0, application_item:{}, type:'accept-job-application', id:makeid(8),
-                entered_indexing_tags:['accept', 'job', 'application'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
+                selected: 0, contract_data:{}, type:'view-job-request-contract', id:makeid(8),
+                entered_indexing_tags:['view', 'contract', 'contractor', 'response'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }
-        this.setState({application_item:item})
+        this.setState({contract_data:item})
     }
-
-
-    accept_job_application(){
-        var item = this.state.application_item
-        if(item['application_expiry_time'] > (Date.now()/1000)){
-            this.props.add_job_acceptance_action_to_stack(this.state)
-        }else{
-            this.props.notify('the application has already expired', 600)
-        }
-    }
-
-
-
-
 
 
 
@@ -438,4 +416,4 @@ class ViewApplicationContractPage extends Component {
 
 
 
-export default ViewApplicationContractPage;
+export default ViewJobRequestContractPage;

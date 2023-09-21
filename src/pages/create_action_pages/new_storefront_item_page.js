@@ -43,7 +43,7 @@ class NewStorefrontItemPage extends Component {
         entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object()
+        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:''
     };
 
     get_new_job_page_tags_object(){
@@ -234,6 +234,22 @@ class NewStorefrontItemPage extends Component {
                 <Tags page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Fulfilment Accounts', 'details':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Account ID'} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
+
+                <div style={{height:10}}/>
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
+                    {this.render_detail_item('5', {'text':'Add Account', 'action':''})}
+                </div>
+                <div style={{height:10}}/>
+                {this.render_fulfilment_accounts()}
+
+
+
+
             
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Direct Purchase Shipping Fee', 'details':'The shipping fee you charge for shipping your item when directly purchased by your clients', 'size':'l'})}
@@ -251,7 +267,6 @@ class NewStorefrontItemPage extends Component {
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_price_set()}>
                     {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
                 </div>
-
                 {this.render_shipping_set_prices_list_part()}
             </div>
         )
@@ -268,6 +283,10 @@ class NewStorefrontItemPage extends Component {
 
     when_visibility_tags_object_updated(tag_obj){
         this.setState({visibility_tags_object: tag_obj})
+    }
+
+    when_fulfilment_account_input_field_changed(text){
+        this.setState({fulfilment_account: text})
     }
 
 
@@ -318,7 +337,7 @@ class NewStorefrontItemPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_shipping_amount_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
                                 </div>
@@ -329,6 +348,57 @@ class NewStorefrontItemPage extends Component {
             )
         }
         
+    }
+
+    when_shipping_amount_clicked(item){
+        var cloned_array = this.state.shipping_price_data.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({shipping_price_data: cloned_array})
+    }
+
+
+
+    when_add_shipping_account_set(){
+        var account = this.state.fulfilment_account
+        if(isNaN(account) || account == '' || parseInt(account) < 1000){
+            this.props.notify('please put a valid account id', 600)
+        }else{
+            var clone = this.state.fulfilment_accounts.slice()
+            clone.push(account)
+            this.setState({fulfilment_accounts: clone, fulfilment_account:''})
+            this.props.notify('added account', 400)
+        }
+    }
+
+
+    render_fulfilment_accounts(){
+        var items = this.state.fulfilment_accounts
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item)}>
+                            {this.render_detail_item('3', {'title':item, 'details':'Account', 'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+
+    when_fulfilment_account_clicked(item){
+        var cloned_array = this.state.fulfilment_accounts.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({fulfilment_accounts: cloned_array})
     }
 
 
@@ -795,17 +865,14 @@ class NewStorefrontItemPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Add an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Price per unit', 'details':'Specify the price for one unit of your new items variant', 'size':'l'})}
+                <div style={{height:10}}/>
 
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
-
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 20px 20px'}}/>
-
-                {this.render_detail_item('3', {'title':'Price per unit', 'details':'Specify the price for one unit of your new items variant', 'size':'l'})}
-                <div style={{height:10}}/>
+ 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
@@ -924,7 +991,7 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Units', 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of '+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':'units', })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -1331,6 +1398,9 @@ class NewStorefrontItemPage extends Component {
         else if(fulfilment_location==''){
             this.props.notify('set a valid fulfilment location for your storefront items', 900)
         }
+        else if(this.state.fulfilment_accounts.length == 0){
+            this.props.notify('you should set some fulfilment accounts for your item', 700)
+        }
         else{
             
             var data = this.state;
@@ -1343,7 +1413,7 @@ class NewStorefrontItemPage extends Component {
                 entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
                 entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
                 entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-                purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:''
+                purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:''
             })
             this.props.notify('Transaction added to Stack', 600)
 

@@ -75,6 +75,10 @@ class ViewBagApplicationContractPage extends Component {
 
                     {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'details':'Estimated Delivery Time', 'title':''+this.get_time_diff(item['estimated_delivery_time']), 'size':'l'})}
+                    <div style={{height:10}}/>
+                    
                 
                     {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
 
@@ -82,12 +86,7 @@ class ViewBagApplicationContractPage extends Component {
                     {this.render_application_price_amounts(item)}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the bag fulfilment application and enter their contract(This action cant be undone)', 'size':'s'})}
-                    <div style={{height:10}}/>
-
-                    <div onClick={()=> this.accept_job_application()}>
-                        {this.render_detail_item('5', {'text':'Accept and Enter', 'action':''},)}
-                    </div>
+                    {this.render_accept_job_application_button()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -95,6 +94,21 @@ class ViewBagApplicationContractPage extends Component {
             )
         }
         
+    }
+
+    render_accept_job_application_button(){
+        if(!this.state.application_item['is_response_accepted']){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the bag fulfilment application and enter their contract(This action cant be undone)', 'size':'s'})}
+                    <div style={{height:10}}/>
+
+                    <div onClick={()=> this.accept_job_application()}>
+                        {this.render_detail_item('5', {'text':'Accept and Enter', 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_application_price_amounts(object){

@@ -306,6 +306,7 @@ class RespondToJobPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':'Prepaid or Postpaid', 'details':'Set the payment option you prefer for the application', 'size':'l'})}
                 <div style={{height: 10}}/>
+                
                 <Tags page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 

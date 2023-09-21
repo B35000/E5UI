@@ -5,12 +5,17 @@ import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 
 import Letter from './../assets/letter.png';
+import E5EmptyIcon from './../assets/e5empty_icon.png';
+import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 var bigInt = require("big-integer");
 
@@ -35,24 +40,24 @@ function makeid(length) {
     return result;
 }
 
-class FulfilBagPage extends Component {
+class SendJobRequestPage extends Component {
     
     state = {
-        selected: 0, bag_item:{'id':0} ,  type:'bag-response', id:makeid(8),
-        entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(), estimated_delivery_time:0
+        selected: 0, contractor_item:{'id':0},  type:'job-request', id:makeid(8),
+        entered_indexing_tags:['send', 'job', 'request'], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
+        entered_title_text:'', entered_image_objects:[]
     };
 
-    get_respond_to_bag_title_tags_object(){
-         return{
+    get_send_job_request_title_tags_object(){
+        return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','contract', 'expiry-time', 'amount'], [1]
+                ['or','',0], ['e', 'expiry-time', 'amount'], [0]
             ],
         };
     }
-
 
     get_pre_post_paid_option_tags_object(){
         return{
@@ -70,7 +75,7 @@ class FulfilBagPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.respond_to_bag_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_bag_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags page_tags_object={this.state.send_job_request_title_tags_object} tag_size={'l'} when_tags_updated={this.when_send_job_request_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
@@ -81,28 +86,27 @@ class FulfilBagPage extends Component {
                 </div>
 
                 {this.render_everything()}
-
             </div>
         )
     }
 
-    when_respond_to_bag_title_tags_object_updated(tag_obj){
-        this.setState({respond_to_bag_title_tags_object: tag_obj})
+    when_send_job_request_title_tags_object_updated(tag_obj){
+        this.setState({send_job_request_title_tags_object: tag_obj})
     }
 
-    set_bag(item){
-        if(this.state.bag_item['id'] != item['id']){
-            this.setState({selected: 0 ,  type:'bag-response', id:makeid(8),
-            entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
-        }
-        this.setState({bag_item: item})
-    }
 
 
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.respond_to_bag_title_tags_object, this.state.respond_to_bag_title_tags_object['i'].active)
+        var selected_item = this.get_selected_item(this.state.send_job_request_title_tags_object, this.state.send_job_request_title_tags_object['i'].active)
 
-        if(selected_item == 'contract'){
+        if(selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_title_details_part()}
+                </div>
+            )
+        }
+        else if(selected_item == 'contract'){
             return(
                 <div>
                     {this.render_select_contract_parts()}
@@ -125,11 +129,121 @@ class FulfilBagPage extends Component {
         }
     }
 
-    get_selected_item(object, option){
-        var selected_item = object[option][2][0]
-        var picked_item = object[option][1][selected_item];
-        return picked_item
+
+
+    render_title_details_part(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Set some details for your new job request. It should be task specific'})}
+                <div style={{height:10}}/>
+                <TextInput height={70} placeholder={'Enter Details...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image and tap to remove.'})}
+                {this.render_create_image_ui_buttons_part()}
+                {this.render_image_part()}
+
+            </div>
+        )
     }
+
+
+    when_title_text_input_field_changed(text){
+        this.setState({entered_title_text: text})
+    }
+
+
+    render_create_image_ui_buttons_part(){
+        return(
+        <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+            </div>
+
+            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
+            </div>
+
+        </div>
+      )
+    }
+
+    /* called when images have been picked from picker */
+    when_image_gif_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
+                    clonedArray.push(ev.target.result);
+                    this.setState({entered_image_objects: clonedArray});
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            this.props.notify('Your selected '+e.target.files.length+image+' been added.',500);
+        }
+    }
+
+
+
+    render_image_part(){
+        var col = Math.round(this.props.app_state.width / 100)
+        var rowHeight = 100;
+
+        if(this.state.entered_image_objects.length == 0){
+            var items = ['1','1','1']
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            var items = this.state.entered_image_objects
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div onClick={() => this.when_image_clicked(index)}>
+                                    <img src={item} style={{height:100 ,width:100}} />
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+    when_image_clicked(index){
+        var cloned_array = this.state.entered_image_objects.slice()
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({entered_image_objects: cloned_array})
+    }
+
+
+
+
+
+
 
 
 
@@ -275,10 +389,12 @@ class FulfilBagPage extends Component {
 
 
 
+
+
     render_application_expiry_time(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your fulfilment application'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your job request'})}
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -308,29 +424,16 @@ class FulfilBagPage extends Component {
 
 
 
-
     render_application_prices(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Prepaid or Postpaid', 'details':'Set the payment option you prefer for the application', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Prepaid or Postpaid', 'details':'Set the payment option you prefer for the job request', 'size':'l'})}
                 <div style={{height: 10}}/>
+                
                 <Tags page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
-
-
-                {this.render_detail_item('3', {'title':'Estimated Delivery time', 'details':'set the estimated amount of time youll take to deliver the items in the bag', 'size':'l'})}
-                <div style={{height:20}}/>
-                    
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.estimated_delivery_time), 'details':'Estimated Delivery time', 'size':'l'})}
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_estimated_delivery_time_updated.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-
-
-
-
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Requested Pay', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
@@ -353,20 +456,16 @@ class FulfilBagPage extends Component {
         )
     }
 
+    when_pre_post_paid_option_tags_object_updated(tag_obj){
+        this.setState({pre_post_paid_option: tag_obj})
+    }
+
     when_exchange_id_input_field_changed(text){
         this.setState({exchange_id: text})
     }
 
     when_price_amount(amount){
         this.setState({price_amount: amount})
-    }
-
-    when_pre_post_paid_option_tags_object_updated(tag_obj){
-        this.setState({pre_post_paid_option:tag_obj})
-    }
-
-    when_estimated_delivery_time_updated(amount){
-        this.setState({estimated_delivery_time: amount})
     }
 
     when_add_price_set(){
@@ -440,6 +539,8 @@ class FulfilBagPage extends Component {
 
 
 
+
+
     load_token_suggestions(target_type){
         var items = this.get_suggested_tokens()
         var background_color = this.props.theme['card_background_color']
@@ -466,28 +567,39 @@ class FulfilBagPage extends Component {
         return items;
     }
 
-
-
     when_price_suggestion_clicked(item, pos, target_type){
         this.setState({exchange_id: item['id']})
     }
 
+    set_object(contractor_item){
+        if(this.state.contractor_item['id'] != contractor_item['id']){
+            this.setState({
+                selected: 0,  type:'job-request', id:makeid(8),
+                entered_indexing_tags:['send', 'job', 'request'], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
+                entered_title_text:'', entered_image_objects:[]
+            })
+        }
+        this.setState({contractor_item: contractor_item})
+    }
 
     finish_creating_response(){
         var selected_contract = this.state.picked_contract
         var selected_time = this.state.application_expiry_time
+        var entered_title_text = this.state.entered_title_text.trim()
 
-        if(selected_contract == null){
-            this.props.notify('you need to pick a contract first', 600)
-        }
-        else if(selected_time-Date.now()/1000 < 900){
+        if(selected_time-Date.now()/1000 < 900){
             this.props.notify('you cant set an expiry time thats less than fifteen minutes from now', 600)
         }
+        else if(entered_title_text == ''){
+            this.props.notify('you need to set a description for the job request')
+        }
         else{
-            this.props.add_respond_to_bag_to_stack(this.state)
-            this.setState({selected: 0,  type:'bag-response', id:makeid(8),
-            entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
-
+            this.props.add_send_job_request_to_stack(this.state)
+            this.setState({
+                selected: 0, type:'job-request', id:makeid(8),
+                entered_indexing_tags:['send', 'job', 'request'], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
+                entered_title_text:'', entered_image_objects:[]
+            })
             this.props.notify('transaction added to stack', 600)
         }
     }
@@ -496,6 +608,21 @@ class FulfilBagPage extends Component {
 
 
 
+
+
+
+
+
+
+
+
+
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
 
 
     /* renders the specific element in the post or detail object */
@@ -614,9 +741,10 @@ class FulfilBagPage extends Component {
         return ((proportion/10**18) * 100)+'%';
     }
 
+
 }
 
 
 
 
-export default FulfilBagPage;
+export default SendJobRequestPage;

@@ -59,6 +59,11 @@ class PostListSection extends Component {
                 <div>{this.render_mail_list_group()}</div>
                 )
             }
+            else if(selected_tag == 'contractors'){
+                return(
+                <div>{this.render_contractor_list_group()}</div>
+                )
+            }
             
         }
         else if(selected_page == 'e'){
@@ -762,6 +767,123 @@ class PostListSection extends Component {
 
 
 
+    render_contractor_list_group(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-123;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_contractor_items()
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            var card_shadow_color = this.props.theme['card_shadow_color']
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_contractor_object(item, index)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
+
+    get_contractor_items(){
+        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        if(this.props.work_page_tags_object['i'].active != 'contractors'){
+            return this.props.app_state.created_contractors
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_contractors
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_contractors = []
+            for(var i=0; i<this.props.viewed_contractors.length; i++){
+                my_viewed_contractors.push(this.props.app_state.created_contractors[this.props.viewed_contractors[i]])
+            }
+            return my_viewed_contractors
+        }
+        else {
+            var my_contractors = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_contractors.length; i++){
+                var post_author = this.props.app_state.created_contractors[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_contractors.push(this.props.app_state.created_contractors[i])
+                }
+            }
+            return my_contractors
+        }
+    }
+
+    render_contractor_object(object, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_contractor_item(object)
+        return(
+            <div onClick={() => this.when_contractor_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    
+                </div>         
+            </div>
+        )
+    }
+
+    format_contractor_item(object){
+        var tags = object['ipfs'] == null ? ['Contractor'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p7
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    when_contractor_item_clicked(index, object){
+        this.props.when_contractor_post_item_clicked(index, object['id'])
+    }
+
+
+
+
+
+
     render_E5s_list_group(){
         var middle = this.props.height-123;
         var size = this.props.size;
@@ -1272,8 +1394,8 @@ class PostListSection extends Component {
         return(
             <div onClick={() => this.when_bag_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
+                    {/* {this.render_detail_item('1', item['tags'])} */}
+                    {/* <div style={{height: 10}}/> */}
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>

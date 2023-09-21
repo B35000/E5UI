@@ -7,6 +7,9 @@ import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -129,7 +132,7 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application' && item.type != 'storefront-bag' && item.type != 'bag-response' && item.type != 'accept-bag-application' && item.type != 'clear-purchase'){
+        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application' && item.type != 'storefront-bag' && item.type != 'bag-response' && item.type != 'accept-bag-application' && item.type != 'clear-purchase' && item.type != 'job-request-messages'){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':'Make some changes to the transaction', 'title':'Edit'})}
@@ -184,7 +187,7 @@ class ViewTransactionPage extends Component {
     }
 
     get_estimated_gas(t){
-        if(t.type == 'channel' || t.type == 'job' || t.type == 'post'){
+        if(t.type == 'channel' || t.type == 'job' || t.type == 'post' || t.type == 'contractor'){
             return 344622
         }
         else if(t.type == 'mail'){
@@ -262,7 +265,7 @@ class ViewTransactionPage extends Component {
         else if(t.type == 'access-rights-settings'){
             return 170897
         }
-        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages' || t.type == 'job-messages' || t.type == 'proposal-messages'){
+        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages' || t.type == 'job-messages' || t.type == 'proposal-messages' || t.type == 'bag-messages' || t.type == 'storefront-messages' || t.type == 'job-request-messages'){
             return 279695 +(18000 * t.messages_to_deliver.length)
         }
         else if(t.type == 'job-response'){
@@ -284,6 +287,12 @@ class ViewTransactionPage extends Component {
             return 279695
         }
         else if(t.type == 'clear-purchase'){
+            return 279695
+        }
+        else if(t.type == 'job-request'){
+            return 279695
+        }
+        else if(t.type == 'accept-job-request'){
             return 279695
         }
 
@@ -564,6 +573,49 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_clear_purchase_data()}
+                    </div>
+                )
+            }
+
+             else if(tx.type == 'bag-messages'){
+                return(
+                    <div>
+                        {this.render_mail_message_data('Bag Messages')}
+                    </div>
+                )
+            }
+            else if(tx.type == 'storefront-messages'){
+                return(
+                    <div>
+                        {this.render_mail_message_data('Storefront Messages')}
+                    </div>
+                )
+            }
+            else if(tx.type == 'contractor'){
+                return(
+                    <div>
+                        {this.render_contractor_post_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'job-request'){
+                return(
+                    <div>
+                        {this.render_job_request_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'accept-job-request'){
+                return(
+                    <div>
+                        {this.render_accept_job_request_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'job-request-messages'){
+                return(
+                    <div>
+                        {this.render_mail_message_data('Job Request Messages')}
                     </div>
                 )
             }
@@ -1470,6 +1522,8 @@ class ViewTransactionPage extends Component {
             </div>
         )
     }
+
+
 
 
 
@@ -3588,6 +3642,9 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':'The expiry time you picked for the fulfilment action', 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(transaction_item.application_expiry_time * 1000)), 'size':'l'})}
+                
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.estimated_delivery_time), 'details':'Estimated Delivery time', 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
@@ -3677,6 +3734,7 @@ class ViewTransactionPage extends Component {
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         if(transaction_item.selected_variant != null){
             var items = transaction_item.selected_variant['price_data']
+            var shipping_items = transaction_item.storefront_item['ipfs'].shipping_price_data
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':'Purchase Amounts', 'details':'This is the final amount for the price of the item your buying', 'size':'l'})}
@@ -3687,6 +3745,18 @@ class ViewTransactionPage extends Component {
                             <li style={{'padding': '5px 0px 5px 0px'}}>
                                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(item['amount'], transaction_item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':'Shipping Fee', 'details':'The charged shipping fee for buying the items', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {shipping_items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
                                 </div>
                             </li>
                         ))}
@@ -3769,6 +3839,191 @@ class ViewTransactionPage extends Component {
     }
 
 
+
+
+
+
+
+
+    render_contractor_post_data(){
+        var background_color = this.props.theme['card_background_color']
+        var object = this.format_contractor_post();
+        var item = this.get_contractor_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    {this.render_detail_item('0')}
+                    {this.render_item_data(items)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    format_contractor_post(){
+        return{'ipfs':this.props.app_state.stack_items[this.state.transaction_index]}
+    }
+
+    get_contractor_details_data(object){
+        var tags = object['ipfs'] == null ? ['Contractor'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+        }
+    }
+
+
+
+
+
+
+
+    render_job_request_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+                
+                {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':'The expiry time you picked for the application action', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(transaction_item.application_expiry_time * 1000)), 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':'Set Description', 'details':transaction_item.entered_title_text, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_image_part()}
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youll be charging for the job', 'size':'l'})}
+                {this.render_set_prices_list_part()}
+            </div>
+        )
+    }
+
+    render_image_part(){
+        var col = Math.round(this.props.app_state.width / 100)
+        var rowHeight = 100;
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.entered_image_objects
+
+        if(items.length == 0){
+            var items = ['1','1','1']
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                    </div>
+                                    
+                                </div>
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }else{
+            var background_color = this.props.theme['card_background_color']
+            return(
+                <div>
+                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                        {items.map((item, index) => (
+                            <ImageListItem key={item.img}>
+                                <div>
+                                    <img src={item} style={{height:100 ,width:100}} />
+                                </div> 
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+    render_accept_job_request_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Selected Contract', 'details':'The contract you picked for the job.', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_contract_item(transaction_item.picked_contract)}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':'Set Description', 'details':transaction_item.request_item['title_description'], 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youll be receiving for the job', 'size':'l'})}
+                {this.render_job_request_set_prices_list_part(transaction_item.request_item)}
+            </div>
+        )
+    }
+
+
+    render_job_request_set_prices_list_part(item){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = item['price_data']
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
 
 
 

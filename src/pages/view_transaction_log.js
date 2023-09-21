@@ -40,8 +40,6 @@ class ViewTransactionLogPage extends Component {
         if(item != null){
             return(
                 <div>
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
                     
                     {this.render_detail_item('3',{'title':''+item.returnValues.p3, 'details':'Transaction ID ','size':'l'})}
                     <div style={{height: 10}}/>

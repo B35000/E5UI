@@ -10,8 +10,14 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
+var bigInt = require("big-integer");
+
+function bgN(number, power) {
+  return bigInt((number+"e"+power)).toString();
+}
 
 function number_with_commas(x) {
+    if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -27,18 +33,18 @@ function makeid(length) {
     return result;
 }
 
-class NewPostPage extends Component {
+class NewContractorPage extends Component {
     
-     state = {
-        id: makeid(8), type:'post',
-        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
-        get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
+    state = {
+        id: makeid(8), type:'contractor',
+        get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(),
+        get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[],
     };
 
-    get_new_job_page_tags_object(){
+    get_new_contractor_page_tags_object(){
         return{
             'i':{
                 active:'e', 
@@ -49,7 +55,7 @@ class NewPostPage extends Component {
         };
     }
 
-    get_new_job_text_tags_object(){
+    get_new_contractor_text_tags_object(){
         return{
             'i':{
                 active:'e', 
@@ -66,44 +72,35 @@ class NewPostPage extends Component {
         };
     }
 
-
-
-
-
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags page_tags_object={this.state.get_new_contractor_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
                             {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
                         </div>
-                        
                     </div>
                 </div>
-                
                 
                 <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
-                
             </div>
         )
     }
 
-    when_new_job_page_tags_updated(tag_group){
-        this.setState({get_new_job_page_tags_object: tag_group})
+    when_new_contractor_page_tags_updated(tag_group){
+        this.setState({get_new_contractor_page_tags_object: tag_group})
     }
 
-    
 
-
-    render_everything(){
-        var selected_item = this.get_selected_item(this.state.get_new_job_page_tags_object, this.state.get_new_job_page_tags_object['i'].active)
+       render_everything(){
+        var selected_item = this.get_selected_item(this.state.get_new_contractor_page_tags_object, this.state.get_new_contractor_page_tags_object['i'].active)
 
         if(selected_item == 'e'){
             return(
@@ -124,11 +121,11 @@ class NewPostPage extends Component {
                 <div>
                     {this.render_enter_image_part()}
                 </div>
-            ) 
+            )
         }
     }
 
-     get_selected_item(object, option){
+    get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
@@ -136,43 +133,26 @@ class NewPostPage extends Component {
 
 
     render_enter_tags_part(){
-        var size = this.props.size
-
-        if(size == 's'){
-            return(
-                <div>
-                    {this.render_title_tags_part()}
-                    
-                    {this.render_new_job_object()}
-                    {this.render_detail_item('0')}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_title_tags_part()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_new_job_object()}
-                        {this.render_detail_item('0')}
-                    </div>
-                </div>
+        return(
+            <div>
+                {this.render_title_tags_part()}
                 
-            )
-        }
+                {this.render_new_job_object()}
+                {this.render_detail_item('0')}
+            </div>
+        )
     }
+
 
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set a title for your new post'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set a title for your new contractor post. It should be task specific'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set tags for indexing your new Post'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set tags for indexing your new contractor post'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
@@ -231,11 +211,7 @@ class NewPostPage extends Component {
         this.props.notify('tag removed', 200)
     }
 
-   
 
-
-
-    
     render_new_job_object(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -260,10 +236,6 @@ class NewPostPage extends Component {
             </div>
         );
     }
-
-
-
-
 
 
 
@@ -302,7 +274,7 @@ class NewPostPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                <Tags page_tags_object={this.state.get_new_contractor_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
@@ -316,8 +288,8 @@ class NewPostPage extends Component {
         this.setState({entered_text: text})
     }
 
-    when_new_job_font_style_updated(tag_group){
-        this.setState({get_new_job_text_tags_object: tag_group})
+    when_new_contractor_font_style_updated(tag_group){
+        this.setState({get_new_contractor_text_tags_object: tag_group})
     }
 
     get_edited_text_object(){
@@ -550,17 +522,6 @@ class NewPostPage extends Component {
 
 
 
-    /* renders the specific element in the post or detail object */
-    render_detail_item(item_id, object_data){
-        return(
-            <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
-            </div>
-        )
-
-    }
-
-
 
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
@@ -577,18 +538,29 @@ class NewPostPage extends Component {
             
             this.props.when_add_new_object_to_stack(this.state)
 
-            this.setState({ id: makeid(8), type:'post', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            this.setState({ id: makeid(8), type:'contractor', get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+
             this.props.notify('transaction added to stack', 700);
         }
     }
 
 
-    set_fileds_for_edit_action(obj){
-        this.setState({entered_indexing_tags: obj['tags'], entered_title_text: obj['title'], entered_text_objects: obj['texts'], entered_image_objects: obj['images']})
-    }
 
-    set_action(action){
-        this.setState({action: action})
+
+
+
+
+
+
+
+    /* renders the specific element in the post or detail object */
+    render_detail_item(item_id, object_data){
+        return(
+            <div>
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
+            </div>
+        )
+
     }
 
 
@@ -597,4 +569,4 @@ class NewPostPage extends Component {
 
 
 
-export default NewPostPage;
+export default NewContractorPage;

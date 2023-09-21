@@ -40,10 +40,7 @@ class ClearPurchasePage extends Component {
     state = {
         selected: 0, id: makeid(8), order_data:{'variant_id':''}, order_storefront:{ipfs:{variants:[]}}, client_type: 'order_owner', clear_purchase_title_tags_object: this.get_verify_signature_title_tags_object(), received_signature: '', signature_data:''
     };
-
-    
-
-    
+ 
 
     get_verify_signature_title_tags_object(){
          return{
@@ -141,7 +138,6 @@ class ClearPurchasePage extends Component {
 
     render_generate_signature_part(){
         var item = this.state.order_data
-        // this.generate_signature_from_signature_data(item['signature_data'])
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
         return(
             <div>
@@ -163,14 +159,14 @@ class ClearPurchasePage extends Component {
                     viewBox={`0 0 100 100`}
                 />
                 <div style={{height:5}}/>
-                <p style={{'margin':'5% 0% 0% 47%', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
+                <p style={{'margin':'5% 0% 0% 44%', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
                 <div style={{height:5}}/>
                 {this.render_detail_item('3', {'size':'s', 'title':'Signature', 'details':start_and_end(this.state.signature_data) })}
                 
                 <div style={{'padding': '5px'}} onClick={()=>this.copy_to_clipboard(this.state.signature_data)}>
                     {this.render_detail_item('5',{'text':'Copy to Clipboard', 'action':''})}
                 </div>
-
+                <div style={{height:10}}/>
             </div>
         )
     }
@@ -263,7 +259,6 @@ class ClearPurchasePage extends Component {
 
         if(client_type == 'storefront_owner'){
             this.setState({clear_purchase_title_tags_object: this.get_verify_signature_title_tags_object()})
-            this.generate_signature_from_signature_data(item['signature_data'])
         }else{
             this.setState({clear_purchase_title_tags_object: this.get_generate_signature_title_tag_object()})
             this.generate_signature_from_signature_data(item['signature_data'])

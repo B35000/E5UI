@@ -30,6 +30,7 @@ import NewStorefrontPage from './pages/create_action_pages/new_storefront_page'
 import NewStorefrontItemPage from './pages/create_action_pages/new_storefront_item_page';
 import NewProposalPage from './pages/create_action_pages/new_proposal_page';
 import NewMailPage from './pages/create_action_pages/new_mail_page';
+import NewContractorPage from './pages/create_action_pages/new_contractor_page';
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -64,6 +65,9 @@ import ViewBagApplicationContractPage from './pages/view_bag_application_contrac
 import DirectPurchasetPage from './pages/direct_purchase_page'
 import ClearPurchasePage from './pages/clear_purchase_page'
 import ScanQrPage from './pages/scan_qr_page'
+import SendJobRequestPage from './pages/send_job_request'
+import ViewJobRequestPage from './pages/view_job_request'
+import ViewJobRequestContractPage from './pages/view_job_request_contract_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -122,7 +126,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
@@ -133,13 +137,13 @@ class App extends Component {
     created_subscriptions:[], all_subscriptions:[], 
     created_contracts:[], all_contracts:[], 
     created_tokens:[], all_tokens:[],
-    created_jobs:[], created_stores:[], created_bags:[],
+    created_jobs:[], created_stores:[], created_bags:[], created_contractors:[],
     mint_dump_actions:[{},],
 
     web3:'http://127.0.0.1:8545/', e5_address:'0x19cEcCd6942ad38562Ee10bAfd44776ceB67e923',
-    sync_steps:31, qr_code_scanning_page:'clear_purchaase',
+    sync_steps:32, qr_code_scanning_page:'clear_purchaase',
 
-    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}
+    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}
   };
 
 
@@ -185,6 +189,10 @@ class App extends Component {
     this.direct_purchase_page = React.createRef();
     this.clear_purchase_page = React.createRef();
     this.scan_code_page = React.createRef();
+    this.new_contractor_page = React.createRef()
+    this.send_job_request_page = React.createRef();
+    this.view_job_request_page = React.createRef();
+    this.view_job_request_contract_page = React.createRef();
   }
 
   componentDidMount() {
@@ -332,6 +340,9 @@ class App extends Component {
         {this.render_direct_purchase_bottomsheet()}
         {this.render_clear_purchase_bottomsheet()}
         {this.render_scan_code_bottomsheet()}
+        {this.render_send_job_request_bottomsheet()}
+        {this.render_view_job_request_bottomsheet()}
+        {this.render_view_job_request_contract_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -368,9 +379,9 @@ class App extends Component {
       show_moderator_bottomsheet={this.show_moderator_bottomsheet.bind(this)}
       show_images={this.show_images.bind(this)} show_respond_to_job_bottomsheet={this.show_respond_to_job_bottomsheet.bind(this)}
 
-      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)}
+      add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
 
-      get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)}
+      get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} add_bag_message_to_stack_object={this.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.add_storefront_message_to_stack_object.bind(this)} get_contractor_applications={this.get_contractor_applications.bind(this)} open_view_job_request_ui={this.open_view_job_request_ui.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)}
       />
     )
   }
@@ -462,6 +473,46 @@ class App extends Component {
     }
     if(pos == -1){
       var tx = {selected: 0, id: makeid(8), type:'proposal-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+  }
+
+
+  add_bag_message_to_stack_object(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'bag-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'bag-messages', entered_indexing_tags:['send', 'bag','comment'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+  }
+
+
+  add_storefront_message_to_stack_object(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'storefront-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'storefront-messages', entered_indexing_tags:['send', 'storefront','message','review'], messages_to_deliver:[]}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -739,6 +790,11 @@ class App extends Component {
         <NewMailPage ref={this.new_mail_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)}/>
       );
     }
+    else if(target == '9'){
+      return(
+        <NewContractorPage ref={this.new_contractor_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+      );
+    }
     
   }
 
@@ -766,21 +822,21 @@ class App extends Component {
   }
 
 
-    when_add_new_object_to_stack(state_obj){
-      var stack_clone = this.state.stack_items.slice()
-      var edit_id = -1
-      for(var i=0; i<stack_clone.length; i++){
-        if(stack_clone[i].id == state_obj.id){
-          edit_id = i
-        }
+  when_add_new_object_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
       }
-      if(edit_id != -1){
-        stack_clone[edit_id] = state_obj
-      }else{
-        stack_clone.push(state_obj)
-      }
-      this.setState({stack_items: stack_clone})
     }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+  }
 
 
 
@@ -2069,6 +2125,19 @@ class App extends Component {
         this.direct_purchase_page.current?.setState(tx)
       } 
     }
+    else if(tx.type == 'contractor'){
+      this.open_new_object('9')
+        if(this.new_contractor_page.current){
+          this.new_contractor_page.current?.setState(tx)
+        }
+      
+    }
+    else if(tx.type == 'job-request'){
+        this.open_send_job_request_bottomsheet()
+        if(this.send_job_request_page.current){
+          this.send_job_request_page.current?.setState(tx)
+        }   
+    }
 
         
   }
@@ -2313,10 +2382,8 @@ class App extends Component {
     if(this.view_bag_application_contract_page.current != null){
       this.view_bag_application_contract_page.current.set_object(item)
     }
-
     this.open_view_bag_application_contract_bottomsheet()
   }
-
 
   add_bag_acceptance_action_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
@@ -2463,6 +2530,179 @@ class App extends Component {
 
 
 
+  render_send_job_request_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_job_request_bottomsheet.bind(this)} open={this.state.send_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_send_job_request_bottomsheet(){
+    if(this.state != null){
+      this.setState({send_job_request_bottomsheet: !this.state.send_job_request_bottomsheet});
+    }
+  }
+
+  open_send_job_request_ui(item){
+    if(this.send_job_request_page.current != null){
+      this.send_job_request_page.current.set_object(item)
+    }
+
+    this.open_send_job_request_bottomsheet()
+  }
+
+  add_send_job_request_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+
+  render_view_job_request_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_job_request_bottomsheet(){
+    if(this.state != null){
+      this.setState({view_job_request_bottomsheet: !this.state.view_job_request_bottomsheet});
+    }
+  }
+
+  open_view_job_request_ui(item, object){
+    if(this.view_job_request_page.current != null){
+      this.view_job_request_page.current.set_object(item, object)
+    }
+
+    this.open_view_job_request_bottomsheet()
+  }
+
+
+  add_response_action_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+  }
+
+  add_job_request_message_to_stack_object(message){
+    var stack = this.state.stack_items.slice()
+    var pos = -1
+    for(var i=0; i<stack.length; i++){
+      if(stack[i].type == 'job-request-messages'){
+        pos = i
+        break;
+      }
+    }
+    if(pos == -1){
+      var tx = {selected: 0, id: makeid(8), type:'job-request-messages', entered_indexing_tags:['send','job','request','messages'], messages_to_deliver:[]}
+      tx.messages_to_deliver.push(message)
+      stack.push(tx)
+    }else{
+      stack[pos].messages_to_deliver.push(message)
+    }
+    this.setState({stack_items: stack})
+  }
+
+
+
+
+
+
+
+
+
+
+
+  render_view_job_request_contract_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_contract_bottomsheet.bind(this)} open={this.state.view_job_request_contract_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <ViewJobRequestContractPage ref={this.view_job_request_contract_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_job_request_action_to_stack={this.add_job_request_action_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_job_request_contract_bottomsheet(){
+    if(this.state != null){
+      this.setState({view_job_request_contract_bottomsheet: !this.state.view_job_request_contract_bottomsheet});
+    }
+  }
+
+  show_view_job_request_contract_bottomsheet(item){
+    if(this.view_job_request_contract_page.current != null){
+      this.view_job_request_contract_page.current.set_object(item)
+    }
+    this.open_view_job_request_contract_bottomsheet()
+  }
+
+  add_job_request_action_to_stack(state_obj){
+    this.show_enter_contract_bottomsheet(state_obj.contract_data)
+    this.open_view_job_request_contract_bottomsheet()
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   render_scan_code_bottomsheet(){
@@ -2489,7 +2729,6 @@ class App extends Component {
     }
     this.open_scan_code_bottomsheet()
   }
-
 
   start_scan(page){
     this.show_scan_code_bottomsheet(page)
@@ -3213,8 +3452,7 @@ class App extends Component {
     var my_proposal_ids = []
     for(var i=0; i<contracts_ive_entered.length; i++){
       var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */:contracts_ive_entered[i]} }, (error, events) => {});
-      console.log('---------------------------eee------------------------')
-      console.log(contracts_proposals)
+
 
       for(var i=0; i<contracts_proposals.length; i++){
         my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p2)) //<--------issue! should be p4
@@ -3393,7 +3631,7 @@ class App extends Component {
         created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i]})
       }
     }
-    this.setState({created_posts: created_posts})
+    this.setState({created_posts: created_posts.reverse()})
     console.log('post count: '+created_posts.length)
 
 
@@ -3453,7 +3691,7 @@ class App extends Component {
 
       }
     }
-    this.setState({created_channels: created_channel})
+    this.setState({created_channels: created_channel.reverse()})
     console.log('channel count: '+created_channel.length)
 
 
@@ -3486,28 +3724,28 @@ class App extends Component {
       }
     }
 
-    var my_created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* target_id */: account, p3/* context */:36 } }, (error, events) => {});
-    var my_applications = []
-    var my_contract_applications = {}
-    for(var i=0; i<my_created_job_respnse_data.length; i++){
-      var ipfs_data = await this.fetch_objects_data_from_ipfs(my_created_job_respnse_data[i].returnValues.p4)
-      my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i]})
+    // var my_created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* target_id */: account, p3/* context */:36 } }, (error, events) => {});
+    // var my_applications = []
+    // var my_contract_applications = {}
+    // for(var i=0; i<my_created_job_respnse_data.length; i++){
+    //   var ipfs_data = await this.fetch_objects_data_from_ipfs(my_created_job_respnse_data[i].returnValues.p4)
+    //   my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i]})
 
-      var picked_contract_id = ipfs_data['picked_contract_id']
-      var application_expiry_time = ipfs_data['application_expiry_time']
+    //   var picked_contract_id = ipfs_data['picked_contract_id']
+    //   var application_expiry_time = ipfs_data['application_expiry_time']
 
-      if(my_contract_applications[picked_contract_id] != null){
-        if(my_contract_applications[picked_contract_id] < application_expiry_time){
-          my_contract_applications[picked_contract_id] = application_expiry_time
-        }
-      }else{
-        my_contract_applications[picked_contract_id] = application_expiry_time
-      }
-    }
+    //   if(my_contract_applications[picked_contract_id] != null){
+    //     if(my_contract_applications[picked_contract_id] < application_expiry_time){
+    //       my_contract_applications[picked_contract_id] = application_expiry_time
+    //     }
+    //   }else{
+    //     my_contract_applications[picked_contract_id] = application_expiry_time
+    //   }
+    // }
 
-    this.setState({created_jobs: created_job, my_applications:my_applications, my_contract_applications:my_contract_applications})
+    this.setState({created_jobs: created_job.reverse(), /* my_applications:my_applications, my_contract_applications:my_contract_applications */})
     console.log('job count: '+created_job.length)
-    console.log('job applications count: '+my_applications.length)
+    // console.log('job applications count: '+my_applications.length)
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -3541,7 +3779,7 @@ class App extends Component {
       var ipfs_obj = await this.get_ipfs_object(ipfs)
       mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1})
     }
-    this.setState({created_mail: {'created_mail':created_mail, 'mail_activity':mail_activity}})
+    this.setState({created_mail: {'created_mail':created_mail.reverse(), 'mail_activity':mail_activity}})
     console.log('created mail count: '+created_mail.length)
 
     if(is_syncing){
@@ -3566,7 +3804,7 @@ class App extends Component {
       var ipfs_obj = await this.get_ipfs_object(ipfs)
       mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1})
     }
-    this.setState({received_mail: {'received_mail':received_mail, 'mail_activity':mail_activity}})
+    this.setState({received_mail: {'received_mail':received_mail.reverse(), 'mail_activity':mail_activity}})
     console.log('received mail count: '+created_mail.length)
 
     if(is_syncing){
@@ -3599,7 +3837,7 @@ class App extends Component {
         }
       }
     }
-    this.setState({created_stores: created_stores, created_store_mappings:created_store_mappings})
+    this.setState({created_stores: created_stores.reverse(), created_store_mappings:created_store_mappings})
     console.log('store count: '+created_stores.length)
 
     if(is_syncing){
@@ -3617,9 +3855,55 @@ class App extends Component {
           created_bags.push({'id':id, 'ipfs':data, 'event': created_bag_events[i]})
         }
     }
-    this.setState({created_bags: created_bags})
+    this.setState({created_bags: created_bags.reverse()})
     console.log('bag count: '+created_bags.length)
 
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
+
+
+
+
+
+    /* ---------------------------------------- CONTRACTOR DATA ------------------------------------------- */
+    var created_contractor_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 26/* 17(contractor_object) */ } }, (error, events) => {});
+    var created_contractor = []
+    for(var i=0; i<created_contractor_events.length; i++){
+      var id = created_contractor_events[i].returnValues.p2
+      var hash = web3.utils.keccak256('en')
+      if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()){
+        var contractor_data = await this.fetch_objects_data(id, web3);
+        created_contractor.push({'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i]})
+      }
+    }
+
+    // var my_created_contractor_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* target_id */: account, p3/* context */:36 } }, (error, events) => {});
+    // var my_contractor_applications_array = []
+    // var my_contractor_applications = {}
+    // for(var i=0; i<my_created_contractor_respnse_data.length; i++){
+    //   var ipfs_data = await this.fetch_objects_data_from_ipfs(my_created_contractor_respnse_data[i].returnValues.p4)
+    //   my_contractor_applications_array.push({'ipfs':ipfs_data, 'event':my_created_contractor_respnse_data[i]})
+
+    //   var picked_contract_id = ipfs_data['picked_contract_id']
+    //   var application_expiry_time = ipfs_data['application_expiry_time']
+
+    //   if(my_contractor_applications[picked_contract_id] != null){
+    //     if(my_contractor_applications[picked_contract_id] < application_expiry_time){
+    //       my_contractor_applications[picked_contract_id] = application_expiry_time
+    //     }
+    //   }else{
+    //     my_contractor_applications[picked_contract_id] = application_expiry_time
+    //   }
+    // }
+
+    this.setState({created_contractors: created_contractor.reverse(),})
+    console.log('contractor count: '+created_contractor.length)
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -3881,7 +4165,7 @@ class App extends Component {
     const E52_address = this.state.E35_addresses[1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
+    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:35 } }, (error, events) => {});
     var messages = []
     for(var j=0; j<created_channel_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs(created_channel_data[j].returnValues.p4)
@@ -3977,23 +4261,85 @@ class App extends Component {
 
 
 
-  test_generate_signature= async (account) => {
+  get_contractor_applications = async (id) =>{
     const web3 = new Web3(this.state.web3);
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var data = 'hello world'
-    var address = account.address
-    console.log('----------------------www----------------------')
-    console.log('account address: ',address)
+    var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:38 } }, (error, events) => {});
 
-    web3.eth.accounts.wallet.add(account.privateKey);
-    var signature = await web3.eth.sign(data, address)
-    
-    console.log('signature: ',signature)
-    var original_address = await web3.eth.accounts.recover(data, signature)
-    console.log('original address: ',original_address)
+    var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:39 } }, (error, events) => {});
 
+    var messages = []
+    for(var j=0; j<created_job_respnse_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_job_respnse_data[j].returnValues.p4)
+      ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
+      ipfs_message['contractor_post_id'] = id;
+
+
+      var filtered_events = []
+      for(var i=0; i<application_responses.length; i++){
+        if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
+          filtered_events.push(application_responses[i])
+        }
+      }
+      if(filtered_events.length > 0){
+        var last_response = filtered_events[filtered_events.length -1]
+        var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs(last_response.returnValues.p4)
+        ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+        ipfs_message['contract'] = this.state.created_contract_mapping[last_response_ipfs_obj['contract_id']]
+      }else{
+        ipfs_message['is_response_accepted'] = false
+      }
+
+      messages.push(ipfs_message)
+    }
+
+    var clone = JSON.parse(JSON.stringify(this.state.job_responses))
+    clone[id] = messages
+    this.setState({job_responses: clone})
 
   }
+
+
+  load_job_request_messages = async (contractor_id, request_id) =>{
+    const web3 = new Web3(this.state.web3);
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.E35_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: contractor_id, p3/* context */:request_id } }, (error, events) => {});
+    var messages = []
+    for(var j=0; j<created_channel_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_channel_data[j].returnValues.p4)
+      messages.push(ipfs_message)
+    }
+    
+    var clone = JSON.parse(JSON.stringify(this.state.object_messages))
+    clone[request_id] = messages
+    this.setState({object_messages: clone})
+  }
+
+
+
+  // test_generate_signature= async (account) => {
+  //   const web3 = new Web3(this.state.web3);
+
+  //   var data = 'hello world'
+  //   var address = account.address
+  //   console.log('----------------------www----------------------')
+  //   console.log('account address: ',address)
+
+  //   web3.eth.accounts.wallet.add(account.privateKey);
+  //   var signature = await web3.eth.sign(data, address)
+    
+  //   console.log('signature: ',signature)
+  //   var original_address = await web3.eth.accounts.recover(data, signature)
+  //   console.log('original address: ',original_address)
+
+
+  // }
 
 }
 

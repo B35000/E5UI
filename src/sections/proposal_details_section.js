@@ -638,12 +638,14 @@ class ProposalDetailsSection extends Component {
                 </div>
 
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
-                    {this.render_image_picker()}
+                    <div style={{'margin':'15px 0px 0px 0px'}}>
+                        {this.render_image_picker()}
+                    </div>
                     <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
-                        <TextInput height={30} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        <TextInput height={50} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '20px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
@@ -767,10 +769,23 @@ class ProposalDetailsSection extends Component {
             if(clone['tree'][object['id']] == null) {
                 clone['tree'][object['id']] = []
             }
+            // if(!this.includes_function(clone['tree'][object['id']], item)){
+            // }
             clone['tree'][object['id']].push(item)
         }
         this.setState({focused_message: clone})
     }
+
+    // includes_function(array, item){
+    //     var return_value = false;
+    //     array.forEach(element => {
+    //         if(element['id'] == item['id']){
+    //             console.log('found clone: '+item['id'])
+    //             return_value = true
+    //         }
+    //     });
+    //     return return_value
+    // }
 
     unfocus_message(){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
@@ -808,11 +823,11 @@ class ProposalDetailsSection extends Component {
         if(item == focused_message){
             return(
                 <div>
-                    {/* <SwipeableList>
+                    <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
                             content: <div>Focus</div>,
-                            action: () => this.focus_message(item)
+                            action: () => console.log()
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
@@ -820,17 +835,17 @@ class ProposalDetailsSection extends Component {
                             }}>
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
                         </SwipeableListItem>
-                    </SwipeableList> */}
-                    <div onClick={(e) => this.when_message_clicked(e, item)}>
+                    </SwipeableList>
+                    {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
                         {this.render_stack_message_item(item)}
-                    </div>
+                    </div> */}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                 </div>
             )
         }else{
             return(
                 <div>
-                    {/* <SwipeableList>
+                    <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
                             content: <div>Focus</div>,
@@ -842,17 +857,17 @@ class ProposalDetailsSection extends Component {
                             }}>
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
                         </SwipeableListItem>
-                    </SwipeableList> */}
+                    </SwipeableList>
 
-                    <div onClick={(e) => this.when_message_clicked(e, item)}>
+                    {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
                         {this.render_stack_message_item(item)}
-                    </div>
+                    </div> */}
                 </div>
             )
         }
     }
 
-    when_message_clicked = (event, item) => {
+    when_message_clicked = (event, item, focused_message) => {
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
@@ -862,7 +877,9 @@ class ProposalDetailsSection extends Component {
             this.all_timeout = setTimeout(function() {
                 clearTimeout(this.all_timeout);
                 // single tap
-                me.focus_message(item)
+                if(focused_message == null){
+                    me.focus_message(item)
+                }
             }, 200);
         }
         this.last_all_click_time = Date.now();
