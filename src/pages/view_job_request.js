@@ -153,49 +153,57 @@ class ViewJobRequestPage extends Component {
         if(is_application_accepted){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'s'})}
                     <div style={{height:5}}/>
                     
-                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'s'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'s'})}
                     <div style={{height:5}}/>
 
                     {this.render_image_part(item['entered_images'])}
 
-                    {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'s'})}
                     <div style={{height:5}}/>
-                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The requested pay for the job', 'size':'l'})}
+                    <div onClick={()=>this.open_contract(item['contract'])}>
+                        {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
+                    </div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The requested pay for the job', 'size':'s'})}
                     {this.render_set_prices_list_part(item)}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'s'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'s'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'s'})}
                     <div style={{height:5}}/>
                     {this.render_image_part(item['entered_images'])}
 
                     <div style={{height:5}}/>
-                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The amounts youll be receiving for the job', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The amounts youll be receiving for the job', 'size':'s'})}
                     {this.render_set_prices_list_part(item)}
                 </div>
             )
         }
         
+    }
+
+    open_contract(contract){
+        this.props.open_view_contract_ui(contract)
     }
 
     render_image_part(items){
@@ -297,6 +305,9 @@ class ViewJobRequestPage extends Component {
 
         if(request_item['is_response_accepted']){
             this.setState({accept_job_request_title_tags_object: this.get_accepted_job_request_title_tags_object()})
+        }
+        if (this.messagesEnd.current){
+            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
         }
     }
 
@@ -522,8 +533,8 @@ class ViewJobRequestPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages().reverse()
-        var stacked_items = this.get_stacked_items().reverse()
+        var items = this.get_convo_messages()
+        var stacked_items = this.get_stacked_items()
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -820,12 +831,12 @@ class ViewJobRequestPage extends Component {
                 }
             }
         }
-        return stacked_items.reverse()
+        return stacked_items
     }
 
     get_focused_message_replies(){
         var focused_message = this.get_focused_message()
-        var all_messages = this.get_stacked_items().concat(this.get_convo_messages())
+        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
@@ -836,7 +847,7 @@ class ViewJobRequestPage extends Component {
     }
 
     get_message_replies(item){
-        var all_messages = this.get_stacked_items().concat(this.get_convo_messages())
+        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && item['message_id'] != null &&  all_messages[i]['focused_message_id'] == item['message_id']){
@@ -905,9 +916,9 @@ class ViewJobRequestPage extends Component {
             this.setState({entered_text:''})
             this.props.notify('message added to stack', 600)
             
-            // if (this.messagesEnd.current){
-            //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-            // }
+            if (this.messagesEnd.current){
+                this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+            }
         }
     }
 
@@ -927,9 +938,9 @@ class ViewJobRequestPage extends Component {
         this.setState({entered_text:''})
         this.props.notify('message added to stack', 600)
 
-        // if (this.messagesEnd.current){
-        //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-        // }
+        if (this.messagesEnd.current){
+            this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        }
     }
 
 

@@ -228,7 +228,7 @@ class PostsDetailsSection extends Component {
 
 
     render_post_responses(){
-        var he = this.props.height-90
+        var he = this.props.height-110
         var size = this.props.screensize
 
         return(
@@ -279,8 +279,8 @@ class PostsDetailsSection extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages().reverse()
-        var stacked_items = this.get_stacked_items().reverse()
+        var items = this.get_convo_messages()
+        var stacked_items = this.get_stacked_items()
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -357,7 +357,7 @@ class PostsDetailsSection extends Component {
         }else{
             return(
                 <div>
-                    {items.reverse().map((item, index) => (
+                    {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
                                 {this.render_message_as_focused_if_so(item)}
@@ -577,18 +577,18 @@ class PostsDetailsSection extends Component {
 
     get_focused_message_replies(){
         var focused_message = this.get_focused_message()
-        var all_messages = this.get_stacked_items().concat(this.get_convo_messages())
+        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
                 replies.push(all_messages[i])
             }
         }
-        return replies.reverse()
+        return replies
     }
 
     get_message_replies(item){
-        var all_messages = this.get_stacked_items().concat(this.get_convo_messages())
+        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && item['message_id'] != null &&  all_messages[i]['focused_message_id'] == item['message_id']){

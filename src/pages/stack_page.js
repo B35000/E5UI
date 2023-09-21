@@ -48,7 +48,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','stack','settings', 'wallet','history'], [0]
+                ['or','',0], ['e','stack 📥','settings ⚙️', 'wallet 👛','history 📜'], [0]
             ],
         };
         
@@ -98,7 +98,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px'}}>
                 <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme}/>
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -121,28 +121,28 @@ class StackPage extends Component {
                 </div>
             )    
         }else 
-        if(selected_item == 'stack'){
+        if(selected_item == 'stack 📥'){
             return(
                 <div>
                     {this.render_stack_transactions_part()}
                 </div>
             )    
         }
-        if(selected_item == 'history'){
+        if(selected_item == 'history 📜'){
             return(
                 <div>
                     {this.render_run_history_items()}
                 </div>
             )    
         }
-        else if(selected_item == 'settings'){
+        else if(selected_item == 'settings ⚙️'){
             return(
                 <div>
                     {this.render_settings_section()}
                 </div>
             ) 
         }
-        else if(selected_item == 'wallet'){
+        else if(selected_item == 'wallet 👛'){
             return(
                 <div>
                     {this.render_wallet_settings_section()}
@@ -2607,6 +2607,7 @@ class StackPage extends Component {
     render_wallet_settings_part(){
         return(
             <div>
+                
                 {this.render_detail_item('3',{'title':'Wallet Seed', 'details':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove', 'size':'l'})}
                 <div style={{height: 10}}/>
                 
@@ -2707,8 +2708,9 @@ class StackPage extends Component {
     render_set_wallet_data(){
         return(
             <div>
-                
-                {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>
+                    {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                </div>
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
@@ -2720,6 +2722,12 @@ class StackPage extends Component {
                 
             </div>
         )
+    }
+
+
+    copy_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify('copied address to clipboard', 600)
     }
 
     get_account_address(){

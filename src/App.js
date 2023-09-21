@@ -313,7 +313,6 @@ class App extends Component {
         {this.render_view_image_bottomsheet()}
         {this.render_mint_token_bottomsheet()}
         {this.render_transfer_token_bottomsheet()}
-        {this.render_enter_contract_bottomsheet()}
         {this.render_extend_contract_bottomsheet()}
         {this.render_exit_contract_bottomsheet()}
         {this.render_new_proposal_bottomsheet()}
@@ -342,6 +341,7 @@ class App extends Component {
         {this.render_scan_code_bottomsheet()}
         {this.render_send_job_request_bottomsheet()}
         {this.render_view_job_request_bottomsheet()}
+        {this.render_enter_contract_bottomsheet()}
         {this.render_view_job_request_contract_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
@@ -2586,7 +2586,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_job_request_bottomsheet.bind(this)} open={this.state.view_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)}/>
+            <ViewJobRequestPage ref={this.view_job_request_page} app_state={this.state} size={size} width={this.state.width} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} add_response_action_to_stack={this.add_response_action_to_stack.bind(this)} add_job_request_message_to_stack_object={this.add_job_request_message_to_stack_object.bind(this)} load_job_request_messages={this.load_job_request_messages.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )

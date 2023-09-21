@@ -345,10 +345,10 @@ class ContractorDetailsSection extends Component {
 
                         {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'s'})}
                     </div>
-                    <div style={{height:5}}/>
-                    <div onClick={()=>this.open_contract(item['contract'])}>
+                    {/* <div style={{height:5}}/> */}
+                    {/* <div onClick={()=>this.open_contract(item['contract'])}>
                         {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
-                    </div>
+                    </div> */}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
