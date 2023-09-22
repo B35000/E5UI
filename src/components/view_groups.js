@@ -303,6 +303,7 @@ class ViewGroups extends Component {
             );
         }
         else if(item_id =='9'){/* images-list */
+            /* {this.render_detail_item('9', {'images':[], 'pos':0})}*/
             var col = Math.round(this.props.width / 45)
             var rowHeight = 45;
             var items = object_data == null ? [] :object_data['images'];

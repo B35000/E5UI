@@ -125,6 +125,11 @@ class PostListSection extends Component {
 
 
 
+
+
+
+
+
     render_jobs_list_group(){
        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
@@ -1089,11 +1094,29 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
+                    <div style={{padding:'0px 0px 0px 0px'}}>
+                        {this.render_images(object)}
+                    </div>
                     <div style={{'padding': '20px 0px 0px 0px'}}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
                 </div>         
+            </div>
+        )
+    }
+
+    render_images(object){
+        var items = this.get_bag_images(object)
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                            <img src={item} style={{height:45 ,width:45, 'border-radius': '50%'}} />
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
@@ -1106,7 +1129,34 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
+        }
+    }
+
+    get_bag_images(object){
+        var images = []
+
+        for(var i=0; i<object['ipfs']['bag_orders'].length; i++){
+            var variant_id = object['ipfs']['bag_orders'][i]['storefront_variant_id']
+            var bag_storefront_id = object['ipfs']['bag_orders'][i]['storefront_item_id']
+            var storefront = this.props.app_state.created_store_mappings[bag_storefront_id]
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, variant_id)
+
+            var variant_images = variant_in_store['image_data']['data']
+            if(variant_images['images'].length != 0){
+                images.push(variant_images['images'][0])
+            }
+        }
+
+        return images
+
+    }
+
+    get_variant_object_from_storefront(storefront, id){
+        for(var i=0; i<storefront['ipfs'].variants.length; i++){
+            if(storefront['ipfs'].variants[i]['variant_id'] == id){
+                return storefront['ipfs'].variants[i]
+            }
         }
     }
 
@@ -1375,9 +1425,13 @@ class PostListSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme}/>
+                <ViewGroups item_id={item_id} object_data={object_data} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)}/>
             </div>
         )
+
+    }
+
+    show_images(){
 
     }
 

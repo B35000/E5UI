@@ -107,13 +107,16 @@ class NewMintActionPage extends Component {
 
                 </div>
 
+                <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Amount set to submit/receive for the buy/sell action', 'title':'Fees for Action'})}
+                {this.render_fees_for_action_title()}
 
                 <div style={{height:10}}/>
                 {this.render_buy_token_uis(this.state.token_item['data'][3], this.calculate_token_prices(this.state.token_item['data'][4]), this.state.token_item['data'][5])}
 
-                <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                {this.render_detail_item('0')}
+                {this.set_price_data()}
 
                 {/* <div style={{'padding': '5px'}} onClick={()=>  this.add_transaction()}>
                     {this.render_detail_item('5', {'text':'Add Transaction To Stack', 'action':''})}
@@ -121,6 +124,102 @@ class NewMintActionPage extends Component {
 
             </div>
         )
+    }
+
+    set_price_data(){
+        if(this.state.token_item['id'] != 0){
+            var selected_object = this.state.token_item
+            var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+            if(action == 'dump-sell'){
+                var input_amount = this.state.amount
+                var input_reserve_ratio = selected_object['data'][2][0]
+                var output_reserve_ratio = selected_object['data'][2][1]
+                var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
+                var buy_tokens = selected_object['data'][3]
+                var buy_amounts = selected_object['data'][4]
+                var buy_depths = selected_object['data'][5]
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling one unit of the token', 'title':'Token Price'})}
+                        <div style={{height:10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                            <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                                {buy_tokens.map((item, index) => (
+                                    <li style={{'padding': '1px'}}>
+                                        {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.props.app_state.token_directory[item]})}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )
+            }else{
+                var input_amount = this.state.amount
+                var input_reserve_ratio = selected_object['data'][2][1]
+                var output_reserve_ratio = selected_object['data'][2][0]
+                var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
+                var buy_tokens = selected_object['data'][3]
+                var buy_amounts = selected_object['data'][4]
+                var buy_depths = selected_object['data'][5]
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when using one unit of the input reserve ratio Y', 'title':'Token Price'})}
+                        <div style={{height:10}}/>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+this.state.token_item['id'], 'subtitle':'depth:'+selected_object['data'][2][7], 'barwidth':this.calculate_bar_width(price), 'number':''+this.format_account_balance_figure(price), 'relativepower':this.props.app_state.token_directory[this.state.token_item['id']]})}
+                        </div>
+                    </div>
+                    
+                )
+            }
+        }
+    }
+
+    calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio){
+        var selected_object = this.state.token_item
+        var token_type = selected_object['data'][0][3]
+        if(input_reserve_ratio == 0 || output_reserve_ratio == 0 || input_amount == 0){
+            return 0
+        }
+        if(token_type == 3){
+            var price = (bigInt(input_amount).times(bigInt(output_reserve_ratio))).divide(bigInt(input_reserve_ratio).plus(input_amount))
+            if(price == 0){
+                price = (input_amount * output_reserve_ratio) / (input_reserve_ratio + input_amount)
+            }
+            return price
+        }else{
+            var price = (bigInt(input_amount).times(bigInt(output_reserve_ratio))).divide(bigInt(input_reserve_ratio))
+            if(price == 0){
+                price = (input_amount * output_reserve_ratio) / (input_reserve_ratio)
+            }
+            return price
+        }
+    }
+
+    calculate_price_from_sell_action(amount, price){
+        if(amount >10**18 || price >10**18){
+            return bigInt(amount).times(bigInt(price))
+        }else{
+            return amount*price
+        }
+    }
+
+
+    render_fees_for_action_title(){
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        if(action == 'mint-buy'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Amount set to submit for the buy action', 'title':'Fees for Action'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Amount set to receive for the sell action', 'title':'Fees for Action'})}
+                </div>
+            )
+        }
     }
 
     calculate_token_prices(buy_amounts){
@@ -366,11 +465,24 @@ class NewMintActionPage extends Component {
         var stack_action = 1
         if(action == 'mint-buy') stack_action = 0
 
+        var selected_object = this.state.token_item
+        var input_amount = amount
+        var input_reserve_ratio = selected_object['data'][2][0]
+        var output_reserve_ratio = selected_object['data'][2][1]
+        if(action == 'mint-buy'){
+            input_reserve_ratio = selected_object['data'][2][1]
+            output_reserve_ratio = selected_object['data'][2][0]
+        }
+        var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
+
         if(isNaN(recipient) || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else if(amount == 0){
             this.props.notify('please put a valid amount', 600)
+        }
+        else if(price < 0){
+            this.props.notify('that amount is too low', 600)
         }
         else{
             if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){

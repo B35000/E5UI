@@ -175,6 +175,10 @@ class SpendDetailSection extends Component {
                     </div>
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('0')}
+                    {this.render_price_of_token()}
                     {this.render_detail_item('0')}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -211,8 +215,8 @@ class SpendDetailSection extends Component {
                     {this.render_last_swap_transaction_count()}
                     {this.render_last_entered_contracts_count()}
 
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Mint or Dump the token at a specified account', 'title':'Mint/Dump'})}
+
+                    {this.render_detail_item('3', {'size':'l', 'details':'Mint or Dump the token for a specified account', 'title':'Mint/Dump'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_mint_burn_spend_token_ui()}>
                         {this.render_detail_item('5', item['mint_burn_button'])}
@@ -224,7 +228,7 @@ class SpendDetailSection extends Component {
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
                     </div>
 
                     <div style={{height:10}}/>
@@ -247,6 +251,62 @@ class SpendDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_price_of_token(){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+
+        var input_amount = 1
+        var input_reserve_ratio = selected_object['data'][2][0]
+        var output_reserve_ratio = selected_object['data'][2][1]
+        var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
+        var buy_tokens = selected_object['data'][3]
+        var buy_amounts = selected_object['data'][4]
+        var buy_depths = selected_object['data'][5]
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling one unit of the token', 'title':'Token Price'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {buy_tokens.map((item, index) => (
+                            <li style={{'padding': '1px'}}>
+                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.props.app_state.token_directory[item]})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio){
+        var selected_item = this.props.selected_spend_item
+        var selected_object = this.get_exchange_tokens(5)[selected_item]
+        var token_type = selected_object['data'][0][3]
+        if(token_type == 3){
+            var price = (bigInt(input_amount).times(bigInt(output_reserve_ratio))).divide(bigInt(input_reserve_ratio).plus(input_amount))
+            if(price == 0){
+                price = (input_amount * output_reserve_ratio) / (input_reserve_ratio + input_amount)
+            }
+            return price
+        }else{
+            var price = (bigInt(input_amount).times(bigInt(output_reserve_ratio))).divide(bigInt(input_reserve_ratio))
+            if(price == 0){
+                price = (input_amount * output_reserve_ratio) / (input_reserve_ratio)
+            }
+            return price
+        }
+    }
+
+    calculate_price_from_sell_action(amount, price){
+        if(amount >10**18 || price >10**18){
+            return bigInt(amount).times(bigInt(price))
+        }else{
+            return amount*price
+        }
     }
 
     get_access_rights_status(value){

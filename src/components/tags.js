@@ -6,6 +6,11 @@ class tags extends Component {
         selected: 0,
     };
 
+    constructor(props) {
+        super(props)
+        this.myRef = React.createRef()   // Create a ref object 
+    }
+
     /* returns an emoji used in displaying the tag item */
     tag_item_emoji_modifier(item){
       var items = {'sort':'🧮', 'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'info':'🌐', 'metadata':'📄', 'engagement':'💍', 'signatures':'‚✍', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕','my':'🙋','add-new-text':'📝','create-new-job':'🎑','add-new-tag':'🔖','set-tags':'📌', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷'}
@@ -13,6 +18,10 @@ class tags extends Component {
       if(items[item] != null) return items[item];
       else return null;
     }
+
+    // componentDidUpdate(){
+    //     this.myRef.current?.scrollTo(0, this.myRef.current?.pageXOffset);
+    // }
 
     render(){
         var page_data = this.props.page_tags_object;
@@ -38,15 +47,17 @@ class tags extends Component {
                 }
                 
             }
-        }//
+        }//'overflow-y': 'hidden'
         return(
-            <ul style={{'height':40,'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow':'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px', '-ms-overflow-style': 'none','overflow-y': 'hidden'}}>
+            <ul ref={this.myRef} style={{'height':40,'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow':'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px', '-ms-overflow-style': 'none', }}>
                 {active_tags.map((item, index) => (
                     <li style={{'display': 'inline-block', 'padding': '5px', '-ms-overflow-style': 'none', 'scrollbar-width': 'none', height:45}}>
                         {this.render_tag_button(index,selected,item,tag_size)}
                     </li>
                 ))}
             </ul>
+
+            
         );
     }
 

@@ -117,12 +117,14 @@ class BagDetailsSection extends Component {
         return(
             <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
-                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['sender_account'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
@@ -167,7 +169,7 @@ class BagDetailsSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'sender_account':{'title':''+object['event'].returnValues.p3, 'details':'Sender Account', 'size':'l'},
             'id':{'title':'Bag ID: '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -179,14 +181,23 @@ class BagDetailsSection extends Component {
         var items_to_deliver = object['ipfs']['bag_orders']
         return (
             <div style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items_to_deliver.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                                {this.render_variant_details(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                {/* <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items_to_deliver.map((item, index) => (
                         <li style={{'padding': '2px 0px 2px 0px'}}>
                             {this.render_variant_details(item)}
                             <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '2px 20px 10px 20px'}}/>
                         </li>
                     ))}
-                </ul>
+                </ul> */}
             </div>
         );
     }
