@@ -205,33 +205,7 @@ class ChannelDetailsSection extends Component {
     }
 
     get_channel_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'channels'){
-            return this.props.app_state.created_channels 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_channels
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_channels = []
-            for(var i=0; i<this.props.viewed_channels.length; i++){
-                my_viewed_channels.push(this.props.app_state.created_channels[this.props.viewed_channels[i]])
-            }
-            return my_viewed_channels
-        }
-        else {
-            var my_channels = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_channels.length; i++){
-                var channel_author = this.props.app_state.created_channels[i]['event'].returnValues.p5
-                if(channel_author.toString() == myid.toString()){
-                    my_channels.push(this.props.app_state.created_channels[i])
-                }
-            }
-            return my_channels
-        }
+        return this.props.get_channel_items()
     }
 
     get_channel_details_data(object){
@@ -576,7 +550,6 @@ class ChannelDetailsSection extends Component {
 
     get_convo_messages(){
         var object = this.get_channel_items()[this.props.selected_channel_item];
-        // return object['messages']
         return this.props.app_state.object_messages[object['id']]
     }
 

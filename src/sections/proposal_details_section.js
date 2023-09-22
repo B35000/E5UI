@@ -251,35 +251,7 @@ class ProposalDetailsSection extends Component {
     }
 
     get_proposal_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'proposals'){
-            return this.props.app_state.my_proposals 
-        }
-
-        if(selected_option_name == 'my-proposals'){
-            return this.props.app_state.my_proposals
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_proposals = []
-            for(var i=0; i<this.props.viewed_proposals.length; i++){
-                my_viewed_proposals.push(this.props.app_state.my_proposals[this.props.viewed_proposals[i]])
-            }
-            return my_viewed_proposals
-        }
-        else {
-            var proposals = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.my_proposals.length; i++){
-                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p4/* should be p3 */
-                if(proposal_author.toString() == myid.toString()){
-                    proposals.push(this.props.app_state.my_proposals[i])
-                }else{
-                    console.log('sender not proposal author: author->'+proposal_author+', sender id->'+myid)
-                }
-            }
-            return proposals
-        }
+        return this.props.get_proposal_items()
     }
 
     get_proposal_details_data(){

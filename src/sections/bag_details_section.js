@@ -157,33 +157,7 @@ class BagDetailsSection extends Component {
     }
 
     get_bag_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'bags'){
-            return this.props.app_state.created_stores 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_bags
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_bags = []
-            for(var i=0; i<this.props.viewed_bags.length; i++){
-                my_viewed_bags.push(this.props.app_state.created_bags[this.props.viewed_bags[i]])
-            }
-            return my_viewed_bags
-        }
-        else {
-            var my_bags = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_bags.length; i++){
-                var post_author = this.props.app_state.created_bags[i]['event'].returnValues.p3
-                if(post_author.toString() == myid.toString()){
-                    my_bags.push(this.props.app_state.created_bags[i])
-                }
-            }
-            return my_bags
-        }
+        return this.props.get_bag_items()
     }
 
 

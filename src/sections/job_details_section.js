@@ -312,33 +312,7 @@ class JobDetailsSection extends Component {
     }
 
     get_job_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'jobs'){
-            return this.props.app_state.created_jobs 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_jobs
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_jobs = []
-            for(var i=0; i<this.props.viewed_jobs.length; i++){
-                my_viewed_jobs.push(this.props.app_state.created_jobs[this.props.viewed_jobs[i]])
-            }
-            return my_viewed_jobs
-        }
-        else {
-            var my_jobs = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_jobs.length; i++){
-                var post_author = this.props.app_state.created_jobs[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_jobs.push(this.props.app_state.created_jobs[i])
-                }
-            }
-            return my_jobs
-        }
+        return this.props.get_job_items()
     }
 
 

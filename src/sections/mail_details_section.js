@@ -181,64 +181,9 @@ class MailDetailsSection extends Component {
 
 
     get_mail_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'mail'){
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
-
-        if(selected_option_name == 'all'){
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
-                var convo_id = this.props.app_state.created_mail['created_mail'][i]
-                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
-        else if(selected_option_name == 'received'){
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
-        else {
-            //sent
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
-                var convo_id = this.props.app_state.created_mail['created_mail'][i]
-                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
+        return this.props.get_mail_items()
     }
 
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
-    }
 
 
     get_mail_details_data(object){
@@ -359,7 +304,7 @@ class MailDetailsSection extends Component {
             return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(stacked_items.concat(items))}
+                        {this.render_messages(items.concat(stacked_items))}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>

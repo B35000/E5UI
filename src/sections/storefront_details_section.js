@@ -250,33 +250,7 @@ class StorefrontDetailsSection extends Component {
     }
 
     get_storefront_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'storefront'){
-            return this.props.app_state.created_stores 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_stores
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_stores = []
-            for(var i=0; i<this.props.viewed_stores.length; i++){
-                my_viewed_stores.push(this.props.app_state.created_stores[this.props.viewed_stores[i]])
-            }
-            return my_viewed_stores
-        }
-        else {
-            var my_stores = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_stores.length; i++){
-                var post_author = this.props.app_state.created_stores[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_stores.push(this.props.app_state.created_stores[i])
-                }
-            }
-            return my_stores
-        }
+       return this.props.get_storefront_items()
     }
 
     render_item_data(items){

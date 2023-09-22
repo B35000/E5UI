@@ -97,7 +97,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
-
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':''+object['event'].returnValues.p3, 'details':'Author', 'size':'l'})}
                     <div style={{height: 10}}/>
 
@@ -128,8 +128,6 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('3', item['time_unit'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['subscription_beneficiary'])}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['payment_amount'])}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['entry_fees'])}
@@ -138,6 +136,9 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', item['payment_amount'])}
+                    <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':'Pay Subscription', 'details':'Pay for the subscription for your account', 'size':'l'})}
                     <div style={{height:10}}/>
@@ -197,7 +198,7 @@ class SubscriptionDetailsSection extends Component {
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
 
-        if(subscription_config[2] == 1/* cancellable */){
+        if(subscription_config[2] == 1/* cancellable */ && object['payment'] != 0){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -322,42 +323,14 @@ class SubscriptionDetailsSection extends Component {
     }
 
     get_subscription_items(){
-        // var items = this.props.app_state.created_subscriptions
-        // return items.reverse()
-
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'subscriptions'){
-            return this.props.app_state.created_subscriptions
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_subscriptions
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_subscriptions = []
-            for(var i=0; i<this.props.viewed_subscriptions.length; i++){
-                my_viewed_subscriptions.push(this.props.app_state.created_subscriptions[this.props.viewed_subscriptions[i]])
-            }
-            return my_viewed_subscriptions
-        }
-        else if(selected_option_name == 'paid'){
-            return this.props.app_state.created_subscriptions
-        }
-        else {
-            var my_subscriptions = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_subscriptions.length; i++){
-                var post_author = this.props.app_state.created_subscriptions[i]['event'] == null ? 0 : this.props.app_state.created_subscriptions[i]['event'].returnValues.p3
-                if(post_author.toString() == myid.toString()){
-                    my_subscriptions.push(this.props.app_state.created_subscriptions[i])
-                }else{
-                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
-                }
-            }
-            return my_subscriptions
-        }
+        return this.props.get_subscription_items()
     }
+
+
+
+
+
+
 
     render_subscription_logs(){
 

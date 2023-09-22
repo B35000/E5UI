@@ -6,6 +6,11 @@ import WalletIconImg from './../assets/wallet_icon.png';
 import StackIconImg from './../assets/stack_icon.png';
 import Letter from './../assets/letter.png'; 
 import AddLetter from './../assets/add_icon.png';
+import EndImg from './../assets/end_token_icon.png';
+import SpendImg from './../assets/spend_token_icon.png';
+import End35 from './../assets/end35.png';
+import E35EndImg from './../assets/e35_end_token.png';
+import E35SpendImg from './../assets/e35_spend_token.png';
 
 import SwipeableBottomSheet from 'react-swipeable-bottom-sheet';
 
@@ -445,6 +450,408 @@ class home_page extends Component {
     }
 
 
+
+
+
+
+
+
+    get_contract_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'contracts'){
+            return this.props.app_state.created_contracts
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_contracts
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_contracts = []
+            for(var i=0; i<this.state.viewed_contracts.length; i++){
+                my_viewed_contracts.push(this.props.app_state.created_contracts[this.state.viewed_contracts[i]])
+            }
+            return my_viewed_contracts
+        }
+        else if(selected_option_name == 'entered'){
+            var my_entered_contracts = []
+            for(var i=0; i<this.props.app_state.created_contracts.length; i++){
+                var object = this.props.app_state.created_contracts[i]
+                var expiry_time_in_seconds = object['entry_expiry']
+                if(expiry_time_in_seconds != 0){
+                    my_entered_contracts.push(object)
+                }
+            }
+            return my_entered_contracts
+        }
+        else {
+            var my_contracts = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
+                var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_contracts.push(this.props.app_state.created_contracts[i])
+                }
+            }
+            return my_contracts
+        }
+    }
+
+    get_bag_items(){
+        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
+        if(this.state.explore_page_tags_object['i'].active != 'bags'){
+            return this.props.app_state.created_stores 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_bags
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_bags = []
+            for(var i=0; i<this.state.viewed_bags.length; i++){
+                my_viewed_bags.push(this.props.app_state.created_bags[this.state.viewed_bags[i]])
+            }
+            return my_viewed_bags
+        }
+        else {
+            var my_bags = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_bags.length; i++){
+                var post_author = this.props.app_state.created_bags[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_bags.push(this.props.app_state.created_bags[i])
+                }
+            }
+            return my_bags
+        }
+    }
+
+    get_channel_items(){
+        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
+        if(this.state.explore_page_tags_object['i'].active != 'channels'){
+            return this.props.app_state.created_channels 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_channels
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_channels = []
+            for(var i=0; i<this.state.viewed_channels.length; i++){
+                my_viewed_channels.push(this.props.app_state.created_channels[this.state.viewed_channels[i]])
+            }
+            return my_viewed_channels
+        }
+        else {
+            var my_channels = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_channels.length; i++){
+                var channel_author = this.props.app_state.created_channels[i]['event'].returnValues.p5
+                if(channel_author.toString() == myid.toString()){
+                    my_channels.push(this.props.app_state.created_channels[i])
+                }
+            }
+            return my_channels
+        }
+    }
+
+    get_contractor_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'contractors'){
+            return this.props.app_state.created_contractors
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_contractors
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_contractors = []
+            for(var i=0; i<this.state.viewed_contractors.length; i++){
+                my_viewed_contractors.push(this.props.app_state.created_contractors[this.state.viewed_contractors[i]])
+            }
+            return my_viewed_contractors
+        }
+        else {
+            var my_contractors = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_contractors.length; i++){
+                var post_author = this.props.app_state.created_contractors[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_contractors.push(this.props.app_state.created_contractors[i])
+                }
+            }
+            return my_contractors
+        }
+    }
+
+    get_exchange_tokens(exchange_type){
+        var token_exchanges = []
+        var exchanges_from_sync = this.props.app_state.created_tokens
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
+            
+            var img = type  == 3 ? EndImg: SpendImg
+            if(exchanges_from_sync[i]['id'] == 3) img = E35EndImg
+            else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
+            
+            if(type == exchange_type){
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'] })
+            }
+        }
+
+        var sorted_token_exchange_data = []
+        var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < token_exchanges.length; i++) {
+            var author_account = token_exchanges[i]['event'] == null ? '':token_exchanges[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(token_exchanges[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < token_exchanges.length; i++) {
+            if(!sorted_token_exchange_data.includes(token_exchanges[i]) && token_exchanges['balance'] != 0){
+                sorted_token_exchange_data.push(token_exchanges[i])
+            }
+        }
+        for (let i = 0; i < token_exchanges.length; i++) {
+            if(!sorted_token_exchange_data.includes(token_exchanges[i])){
+                sorted_token_exchange_data.push(token_exchanges[i])
+            }
+        }
+
+        return sorted_token_exchange_data
+    }
+
+    get_job_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'jobs'){
+            return this.props.app_state.created_jobs 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_jobs
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_jobs = []
+            for(var i=0; i<this.state.viewed_jobs.length; i++){
+                my_viewed_jobs.push(this.props.app_state.created_jobs[this.state.viewed_jobs[i]])
+            }
+            return my_viewed_jobs
+        }
+        else {
+            var my_jobs = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_jobs.length; i++){
+                var post_author = this.props.app_state.created_jobs[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_jobs.push(this.props.app_state.created_jobs[i])
+                }
+            }
+            return my_jobs
+        }
+    }
+
+    get_mail_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'mail'){
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
+                var convo_id = this.props.app_state.received_mail['received_mail'][i]
+                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+
+        if(selected_option_name == 'all'){
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
+                var convo_id = this.props.app_state.created_mail['created_mail'][i]
+                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
+                var convo_id = this.props.app_state.received_mail['received_mail'][i]
+                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+        else if(selected_option_name == 'received'){
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
+                var convo_id = this.props.app_state.received_mail['received_mail'][i]
+                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+        else {
+            //sent
+            var all_mail = []
+            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
+                var convo_id = this.props.app_state.created_mail['created_mail'][i]
+                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
+                all_mail.push(context_object)
+            }
+            return this.sortByAttributeDescending(all_mail, 'time')
+        }
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_post_items(){
+        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
+        if(this.state.explore_page_tags_object['i'].active != 'posts'){
+            return this.props.app_state.created_posts 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_posts
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_posts = []
+            for(var i=0; i<this.state.viewed_posts.length; i++){
+                my_viewed_posts.push(this.props.app_state.created_posts[this.state.viewed_posts[i]])
+            }
+            return my_viewed_posts
+        }
+        else {
+            var my_posts = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_posts.length; i++){
+                var post_author = this.props.app_state.created_posts[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_posts.push(this.props.app_state.created_posts[i])
+                }
+            }
+            return my_posts
+        }
+    }
+
+    get_proposal_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'proposals'){
+            return this.props.app_state.my_proposals 
+        }
+
+        if(selected_option_name == 'my-proposals'){
+            return this.props.app_state.my_proposals
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_proposals = []
+            for(var i=0; i<this.state.viewed_proposals.length; i++){
+                my_viewed_proposals.push(this.props.app_state.my_proposals[this.state.viewed_proposals[i]])
+            }
+            return my_viewed_proposals
+        }
+        else {
+            var proposals = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.my_proposals.length; i++){
+                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p4/* should be p3 */
+                if(proposal_author.toString() == myid.toString()){
+                    proposals.push(this.props.app_state.my_proposals[i])
+                }else{
+                    console.log('sender not proposal author: author->'+proposal_author+', sender id->'+myid)
+                }
+            }
+            return proposals
+        }
+    }
+
+    get_storefront_items(){
+        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
+        if(this.state.explore_page_tags_object['i'].active != 'storefront'){
+            return this.props.app_state.created_stores 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_stores
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_stores = []
+            for(var i=0; i<this.state.viewed_stores.length; i++){
+                my_viewed_stores.push(this.props.app_state.created_stores[this.state.viewed_stores[i]])
+            }
+            return my_viewed_stores
+        }
+        else {
+            var my_stores = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_stores.length; i++){
+                var post_author = this.props.app_state.created_stores[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_stores.push(this.props.app_state.created_stores[i])
+                }
+            }
+            return my_stores
+        }
+    }
+
+    get_subscription_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'subscriptions'){
+            return this.props.app_state.created_subscriptions
+        }
+
+        if(selected_option_name == 'all'){
+            return this.props.app_state.created_subscriptions
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_subscriptions = []
+            for(var i=0; i<this.state.viewed_subscriptions.length; i++){
+                my_viewed_subscriptions.push(this.props.app_state.created_subscriptions[this.state.viewed_subscriptions[i]])
+            }
+            return my_viewed_subscriptions
+        }
+        else if(selected_option_name == 'paid'){
+            var my_paid_subscriptions = []
+            for(var i=0; i<this.props.app_state.created_subscriptions.length; i++){
+                var object = this.props.app_state.created_subscriptions[i]
+                if(object['payment'] != 0){
+                    my_paid_subscriptions.push(object)
+                }
+            }
+            return my_paid_subscriptions
+        }
+        else {
+            var my_subscriptions = []
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < this.props.app_state.created_subscriptions.length; i++){
+                var post_author = this.props.app_state.created_subscriptions[i]['event'] == null ? 0 : this.props.app_state.created_subscriptions[i]['event'].returnValues.p3
+                if(post_author.toString() == myid.toString()){
+                    my_subscriptions.push(this.props.app_state.created_subscriptions[i])
+                }
+            }
+            return my_subscriptions
+        }
+    }
+
+
+
+
+
+
     
     
 
@@ -458,6 +865,8 @@ class home_page extends Component {
             open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} 
             
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors}
+
+            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)}
             />
         )
     }
@@ -554,7 +963,6 @@ class home_page extends Component {
         }
     }
 
-
     when_channel_item_clicked(index, id){
         this.setState({selected_channel_item: index})
 
@@ -572,7 +980,6 @@ class home_page extends Component {
         }
     }
 
-
     when_proposal_item_clicked(index, id){
         this.setState({selected_proposal_item: index})
 
@@ -589,7 +996,6 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
     }
-
 
     when_mail_item_clicked(index){
         this.setState({selected_mail_item: index})
@@ -617,7 +1023,6 @@ class home_page extends Component {
         }
     }
 
-
     when_bag_post_item_clicked(index, id){
         this.setState({selected_bag_item: index})
 
@@ -635,8 +1040,6 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
     }
-
-
 
     when_contractor_post_item_clicked(index, id){
         this.setState({selected_contractor_item: index})
@@ -661,7 +1064,7 @@ class home_page extends Component {
 
     render_post_detail_object(size){
         return(
-            <div style={{}}>
+            <div>
                 <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} 
 
                 selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item}
@@ -678,6 +1081,9 @@ class home_page extends Component {
                 add_mail_to_stack_object={this.props.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.props.add_channel_message_to_stack_object.bind(this)} add_post_reply_to_stack={this.props.add_post_reply_to_stack.bind(this)} open_respond_to_job_ui={this.open_respond_to_job_ui.bind(this)} view_application_contract={this.view_application_contract.bind(this)} add_job_message_to_stack_object={this.props.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.props.add_proposal_message_to_stack_object.bind(this)} open_add_to_bag={this.props.open_add_to_bag.bind(this)} open_fulfil_bag_request={this.props.open_fulfil_bag_request.bind(this)} view_bag_application_contract={this.view_bag_application_contract.bind(this)} open_direct_purchase={this.open_direct_purchase.bind(this)} open_send_job_request_ui={this.props.open_send_job_request_ui.bind(this)}
 
                 open_clear_purchase={this.props.open_clear_purchase.bind(this)} add_bag_message_to_stack_object={this.props.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.props.add_storefront_message_to_stack_object.bind(this)} open_view_job_request_ui={this.props.open_view_job_request_ui} open_view_contract_ui={this.props.open_view_contract_ui.bind(this)}
+
+                get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)}
+                get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)}
                 />
             </div>
         )

@@ -507,38 +507,7 @@ class ContractDetailsSection extends Component {
 
 
     get_contract_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'contracts'){
-            return this.props.app_state.created_contracts
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_contracts
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_contracts = []
-            for(var i=0; i<this.props.viewed_contracts.length; i++){
-                my_viewed_contracts.push(this.props.app_state.created_contracts[this.props.viewed_contracts[i]])
-            }
-            return my_viewed_contracts
-        }
-        else if(selected_option_name == 'received'){
-            return this.props.app_state.created_contracts
-        }
-        else {
-            var my_contracts = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
-                var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
-                if(post_author.toString() == myid.toString()){
-                    my_contracts.push(this.props.app_state.created_contracts[i])
-                }else{
-                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
-                }
-            }
-            return my_contracts
-        }
+        return this.props.get_contract_items()
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){

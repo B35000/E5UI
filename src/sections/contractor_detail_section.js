@@ -202,33 +202,7 @@ class ContractorDetailsSection extends Component {
     }
 
     get_contractor_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'contractors'){
-            return this.props.app_state.created_contractors
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_contractors
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_contractors = []
-            for(var i=0; i<this.props.viewed_contractors.length; i++){
-                my_viewed_contractors.push(this.props.app_state.created_contractors[this.props.viewed_contractors[i]])
-            }
-            return my_viewed_contractors
-        }
-        else {
-            var my_contractors = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_contractors.length; i++){
-                var post_author = this.props.app_state.created_contractors[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_contractors.push(this.props.app_state.created_contractors[i])
-                }
-            }
-            return my_contractors
-        }
+        return this.props.get_contractor_items()
     }
 
 

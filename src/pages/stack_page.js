@@ -2632,7 +2632,8 @@ class StackPage extends Component {
 
                 {this.render_detail_item('3',{'title':'Wallet Thyme', 'details':'Set the preferred thyme for your wallet', 'size':'l'})}
                 <Tags page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
-
+                <div style={{height: 10}}/>
+                
                 {this.render_detail_item('5',{'text':'Set Wallet','action':'when_set_wallet_button_tapped'})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}

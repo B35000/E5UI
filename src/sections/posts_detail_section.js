@@ -180,33 +180,7 @@ class PostsDetailsSection extends Component {
     }
 
     get_post_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'posts'){
-            return this.props.app_state.created_posts 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_posts
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_posts = []
-            for(var i=0; i<this.props.viewed_posts.length; i++){
-                my_viewed_posts.push(this.props.app_state.created_posts[this.props.viewed_posts[i]])
-            }
-            return my_viewed_posts
-        }
-        else {
-            var my_posts = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_posts.length; i++){
-                var post_author = this.props.app_state.created_posts[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_posts.push(this.props.app_state.created_posts[i])
-                }
-            }
-            return my_posts
-        }
+        return this.props.get_post_items()
     }
 
     get_post_details_data(object){

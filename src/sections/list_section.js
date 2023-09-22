@@ -170,33 +170,7 @@ class PostListSection extends Component {
     }
 
     get_job_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'jobs'){
-            return this.props.app_state.created_jobs 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_jobs
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_jobs = []
-            for(var i=0; i<this.props.viewed_jobs.length; i++){
-                my_viewed_jobs.push(this.props.app_state.created_jobs[this.props.viewed_jobs[i]])
-            }
-            return my_viewed_jobs
-        }
-        else {
-            var my_jobs = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_jobs.length; i++){
-                var post_author = this.props.app_state.created_jobs[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_jobs.push(this.props.app_state.created_jobs[i])
-                }
-            }
-            return my_jobs
-        }
+        return this.props.get_job_items()
     }
 
     render_job_object(object, index){
@@ -285,38 +259,7 @@ class PostListSection extends Component {
     }
 
     get_contract_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'contracts'){
-            return this.props.app_state.created_contracts
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_contracts
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_contracts = []
-            for(var i=0; i<this.props.viewed_contracts.length; i++){
-                my_viewed_contracts.push(this.props.app_state.created_contracts[this.props.viewed_contracts[i]])
-            }
-            return my_viewed_contracts
-        }
-        else if(selected_option_name == 'received'){
-            return this.props.app_state.created_contracts
-        }
-        else {
-            var my_contracts = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
-                var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
-                if(post_author.toString() == myid.toString()){
-                    my_contracts.push(this.props.app_state.created_contracts[i])
-                }else{
-                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
-                }
-            }
-            return my_contracts
-        }
+        return this.props.get_contract_items()
     }
 
     render_contract_item(object, index){
@@ -426,35 +369,7 @@ class PostListSection extends Component {
     }
 
     get_my_proposals(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'proposals'){
-            return this.props.app_state.my_proposals 
-        }
-
-        if(selected_option_name == 'my-proposals'){
-            return this.props.app_state.my_proposals
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_proposals = []
-            for(var i=0; i<this.props.viewed_proposals.length; i++){
-                my_viewed_proposals.push(this.props.app_state.my_proposals[this.props.viewed_proposals[i]])
-            }
-            return my_viewed_proposals
-        }
-        else {
-            var proposals = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.my_proposals.length; i++){
-                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p4/* should be p3 */
-                if(proposal_author.toString() == myid.toString()){
-                    proposals.push(this.props.app_state.my_proposals[i])
-                }else{
-                    console.log('sender not proposal author: author->'+proposal_author+', sender id->'+myid)
-                }
-            }
-            return proposals
-        }
+        return this.props.get_proposal_items()
     }
 
     format_proposal_item(object){
@@ -524,41 +439,7 @@ class PostListSection extends Component {
     }
 
     get_subscription_items(){
-        // var items = this.props.app_state.created_subscriptions
-        // return items.reverse()
-
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'subscriptions'){
-            return this.props.app_state.created_subscriptions
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_subscriptions
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_subscriptions = []
-            for(var i=0; i<this.props.viewed_subscriptions.length; i++){
-                my_viewed_subscriptions.push(this.props.app_state.created_subscriptions[this.props.viewed_subscriptions[i]])
-            }
-            return my_viewed_subscriptions
-        }
-        else if(selected_option_name == 'paid'){
-            return this.props.app_state.created_subscriptions
-        }
-        else {
-            var my_subscriptions = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_subscriptions.length; i++){
-                var post_author = this.props.app_state.created_subscriptions[i]['event'] == null ? 0 : this.props.app_state.created_subscriptions[i]['event'].returnValues.p3
-                if(post_author.toString() == myid.toString()){
-                    my_subscriptions.push(this.props.app_state.created_subscriptions[i])
-                }else{
-                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
-                }
-            }
-            return my_subscriptions
-        }
+        return this.props.get_subscription_items()
     }
 
     render_subscription_object(object, index){
@@ -647,64 +528,7 @@ class PostListSection extends Component {
     }
 
     get_mail_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'mail'){
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
-
-        if(selected_option_name == 'all'){
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
-                var convo_id = this.props.app_state.created_mail['created_mail'][i]
-                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
-        else if(selected_option_name == 'received'){
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
-        else {
-            //sent
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
-                var convo_id = this.props.app_state.created_mail['created_mail'][i]
-                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
-    }
-
-
-    sortByAttributeDescending(array, attribute) {
-      return array.sort((a, b) => {
-          if (a[attribute] < b[attribute]) {
-          return 1;
-          }
-          if (a[attribute] > b[attribute]) {
-          return -1;
-          }
-          return 0;
-      });
+        return this.props.get_mail_items()
     }
 
     render_mail_object_or_null(object, index){
@@ -813,33 +637,7 @@ class PostListSection extends Component {
 
 
     get_contractor_items(){
-        var selected_option_name = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
-
-        if(this.props.work_page_tags_object['i'].active != 'contractors'){
-            return this.props.app_state.created_contractors
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_contractors
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_contractors = []
-            for(var i=0; i<this.props.viewed_contractors.length; i++){
-                my_viewed_contractors.push(this.props.app_state.created_contractors[this.props.viewed_contractors[i]])
-            }
-            return my_viewed_contractors
-        }
-        else {
-            var my_contractors = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_contractors.length; i++){
-                var post_author = this.props.app_state.created_contractors[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_contractors.push(this.props.app_state.created_contractors[i])
-                }
-            }
-            return my_contractors
-        }
+        return this.props.get_contractor_items()
     }
 
     render_contractor_object(object, index){
@@ -1005,37 +803,7 @@ class PostListSection extends Component {
     }
 
     get_post_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'posts'){
-            return this.props.app_state.created_posts 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_posts
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_posts = []
-            for(var i=0; i<this.props.viewed_posts.length; i++){
-                my_viewed_posts.push(this.props.app_state.created_posts[this.props.viewed_posts[i]])
-            }
-            return my_viewed_posts
-        }
-        else {
-            var my_posts = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_posts.length; i++){
-                var post_author = this.props.app_state.created_posts[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_posts.push(this.props.app_state.created_posts[i])
-                }else{
-                    console.log('sender not post author: author->'+post_author+', sender id->'+myid)
-                }
-            }
-            return my_posts
-        }
-
-        
+        return this.props.get_post_items()
     }
 
     render_post_object(object, index){
@@ -1145,33 +913,7 @@ class PostListSection extends Component {
     }
 
     get_channel_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'channels'){
-            return this.props.app_state.created_channels 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_channels
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_channels = []
-            for(var i=0; i<this.props.viewed_channels.length; i++){
-                my_viewed_channels.push(this.props.app_state.created_channels[this.props.viewed_channels[i]])
-            }
-            return my_viewed_channels
-        }
-        else {
-            var my_channels = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_channels.length; i++){
-                var channel_author = this.props.app_state.created_channels[i]['event'].returnValues.p5
-                if(channel_author.toString() == myid.toString()){
-                    my_channels.push(this.props.app_state.created_channels[i])
-                }
-            }
-            return my_channels
-        }
+        return this.props.get_channel_items()
     }
 
     format_channel_item(object){
@@ -1240,33 +982,7 @@ class PostListSection extends Component {
     }
 
     get_storefront_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'storefront'){
-            return this.props.app_state.created_stores 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_stores
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_stores = []
-            for(var i=0; i<this.props.viewed_stores.length; i++){
-                my_viewed_stores.push(this.props.app_state.created_stores[this.props.viewed_stores[i]])
-            }
-            return my_viewed_stores
-        }
-        else {
-            var my_stores = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_stores.length; i++){
-                var post_author = this.props.app_state.created_stores[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_stores.push(this.props.app_state.created_stores[i])
-                }
-            }
-            return my_stores
-        }
+        return this.props.get_storefront_items()
     }
 
     render_storefront_object(object, index){
@@ -1358,33 +1074,7 @@ class PostListSection extends Component {
     }
 
     get_bag_items(){
-        var selected_option_name = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
-
-        if(this.props.explore_page_tags_object['i'].active != 'bags'){
-            return this.props.app_state.created_stores 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_bags
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_bags = []
-            for(var i=0; i<this.props.viewed_bags.length; i++){
-                my_viewed_bags.push(this.props.app_state.created_bags[this.props.viewed_bags[i]])
-            }
-            return my_viewed_bags
-        }
-        else {
-            var my_bags = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_bags.length; i++){
-                var post_author = this.props.app_state.created_bags[i]['event'].returnValues.p3
-                if(post_author.toString() == myid.toString()){
-                    my_bags.push(this.props.app_state.created_bags[i])
-                }
-            }
-            return my_bags
-        }
+        return this.props.get_bag_items()
     }
 
     render_bag_object(object, index){
@@ -1555,35 +1245,7 @@ class PostListSection extends Component {
     }
 
     get_exchange_tokens(exchange_type){
-        var token_exchanges = []
-        var exchanges_from_sync = this.props.app_state.created_tokens
-        for (let i = 0; i < exchanges_from_sync.length; i++) {
-            var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
-
-            var img = type  == 3 ? EndImg: SpendImg
-            if(exchanges_from_sync[i]['id'] == 3) img = E35EndImg
-            else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
-
-            if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E35', 'img':img, 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'], 'balance':exchanges_from_sync[i]['balance'], 'exchanges_balances':exchanges_from_sync[i]['exchanges_balances']})
-            }
-        }
-        var sorted_token_exchange_data = []
-        var myid = this.props.app_state.user_account_id
-        for (let i = 0; i < token_exchanges.length; i++) {
-            var author_account = token_exchanges[i]['event'] == null ? '':token_exchanges[i]['event'].returnValues.p3.toString() 
-            if(author_account == myid.toString()){
-                sorted_token_exchange_data.push(token_exchanges[i])
-            }
-        }
-        sorted_token_exchange_data.reverse()
-        for (let i = 0; i < token_exchanges.length; i++) {
-            if(!sorted_token_exchange_data.includes(token_exchanges[i])){
-                sorted_token_exchange_data.push(token_exchanges[i])
-            }
-        }
-
-        return sorted_token_exchange_data
+        return this.props.get_exchange_tokens(exchange_type)
     }
 
     render_ends_object(object_array, index, token_id, img, item){
