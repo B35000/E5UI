@@ -481,7 +481,7 @@ class NewMintActionPage extends Component {
         else if(amount == 0){
             this.props.notify('please put a valid amount', 600)
         }
-        else if(price < 0){
+        else if(price < 1){
             this.props.notify('that amount is too low', 600)
         }
         else{

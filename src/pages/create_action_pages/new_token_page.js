@@ -48,7 +48,7 @@ class NewTokenPage extends Component {
     state = {
         id: makeid(8), type:'token',
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
-        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:EndImg,
+        entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:null,
 
         new_token_type_tags_object: this.get_new_token_type_tags_object(),
         token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0,   

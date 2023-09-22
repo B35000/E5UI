@@ -19,9 +19,9 @@ class tags extends Component {
       else return null;
     }
 
-    // componentDidUpdate(){
-    //     this.myRef.current?.scrollTo(0, this.myRef.current?.pageXOffset);
-    // }
+    componentDidUpdate(){
+        this.myRef.current?.scrollTo({top: 0, behavior: "smooth" });
+    }
 
     render(){
         var page_data = this.props.page_tags_object;
@@ -47,9 +47,9 @@ class tags extends Component {
                 }
                 
             }
-        }//'overflow-y': 'hidden'
+        }//
         return(
-            <ul ref={this.myRef} style={{'height':40,'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow':'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px', '-ms-overflow-style': 'none', }}>
+            <ul ref={this.myRef} style={{'height':40,'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow':'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px', '-ms-overflow-style': 'none', 'overflow-y': 'hidden'}}>
                 {active_tags.map((item, index) => (
                     <li style={{'display': 'inline-block', 'padding': '5px', '-ms-overflow-style': 'none', 'scrollbar-width': 'none', height:45}}>
                         {this.render_tag_button(index,selected,item,tag_size)}

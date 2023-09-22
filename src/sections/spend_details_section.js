@@ -523,6 +523,9 @@ class SpendDetailSection extends Component {
         var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
+        if(symbol == null){
+            symbol = SpendImg
+        }
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         
         return{
