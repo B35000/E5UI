@@ -113,7 +113,9 @@ class E5DetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['label'])}
+                    <div style={{height:10}}/>
                     {this.render_detail_item('1', item['tags'])}
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
                     <div style={{height:10}}/>
 
@@ -207,11 +209,46 @@ class E5DetailsSection extends Component {
                         {this.render_detail_item('2', {'style':'l','title':'End Balance of Burn Account', 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account), 'relativepower':'tokens'})}
                     </div>
 
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':'E5 Ether balance', 'subtitle':this.format_power_figure(this.props.app_state.E5_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance), 'relativepower':'tokens'})}
+                    </div>
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.basic_transaction_data[0], 'details':'Last Transaction Block', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.get_time_difference(this.props.app_state.basic_transaction_data[1]), 'details':'Last Transaction timestamp', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.basic_transaction_data[2], 'details':'Number of entered contracts', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.basic_transaction_data[3], 'details':'Number of E5 runs', 'size':'l'})}
+
+
+                    {this.render_detail_item('0')}
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', {'style':'l','title':'Withdraw balance', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance), 'relativepower':'tokens'})}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Withdraw your Ether to a specified address', 'title':'Withdraw Ether'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_withdraw_ether_ui()}>
+                        {this.render_detail_item('5', {'text':'Withdraw', 'action':''})}
+                    </div>
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+
+    open_withdraw_ether_ui(){
+        this.props.show_withdraw_ether_bottomsheet()
     }
 
     get_e5_data(){

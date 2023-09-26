@@ -296,6 +296,7 @@ class NewStorefrontPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -322,6 +323,9 @@ class NewStorefrontPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(typed_word.length > this.props.app_state.tag_size){
+            this.props.notify('That tag is too long', 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)

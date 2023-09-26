@@ -62,8 +62,11 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','configuration', 'authorities', 'entry-fees'], [0]
+                ['or','',0], ['e','configuration', 'e.authorities', 'entry-fees'], [0]
             ],
+            'authorities':[
+              ['xor','e',1], ['authorities','moderators', 'interactible'], [1],[1]
+          ],
         };
     }
 
@@ -153,7 +156,7 @@ class NewContractPage extends Component {
     render(){
         return(
             <div>
-                <div style={{'padding':'10px 20px 0px 10px'}}>
+                <div style={{'padding':'10px 10px 0px 10px'}}>
                     <div className="row">
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                             <Tags page_tags_object={this.state.new_contract_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_tags_object.bind(this)} theme={this.props.theme}/>
@@ -167,7 +170,7 @@ class NewContractPage extends Component {
                     </div>
                     
                     
-                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                    <div style={{'margin':'5px 0px 0px 0px'}}>
                         {this.render_everything()}   
                     </div>
                     
@@ -202,7 +205,7 @@ class NewContractPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'authorities'){
+        else if(selected_item == 'moderators' || selected_item == 'interactible'){
             return(
                 <div>
                     {this.render_authorities_part()}
@@ -255,7 +258,7 @@ class NewContractPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 15px 0px 10px'}}>
+            <div style={{'padding':'0px 10px 0px 10px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Contract'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -272,6 +275,7 @@ class NewContractPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -295,6 +299,9 @@ class NewContractPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(typed_word.length > this.props.app_state.tag_size){
+            this.props.notify('That tag is too long', 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
@@ -460,16 +467,22 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':'Contract Type', 'details':'Set the type of contract, either private or public', 'size':'l'})}
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.new_contract_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_type_tags_object.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Note: if set to private, you will be giving new accounts access to the contract after its created', 'textsize':'10px', 'font':'Sans-serif'})}
                 </div>
             )
         }
         else if(page == 1){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Vote Bounty Split Proportion', 'details':'the mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Vote Bounty Split Proportion(Optional)', 'details':'the mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.', 'size':'l'})}
                     <div style={{height:20}}/>
 
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_vote_bounty_split_proportion), 'details':'Vote Bounty Split Proportion', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 3% - 5%', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
@@ -483,6 +496,9 @@ class NewContractPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':'Maximum Extend Enter Contract Limit', 'size':'l'})}
 
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 5 hrs', 'textsize':'10px', 'font':'Sans-serif'})}
+
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_extend_enter_contract_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
@@ -490,12 +506,15 @@ class NewContractPage extends Component {
         else if(page == 3){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum End Bounty Amount', 'details':'The imimum amount of end that can be used as bounty for creating a proposal for your new contract.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Minimum End Bounty Amount (Optional)', 'details':'The imimum amount of end that can be used as bounty for creating a proposal for your new contract.', 'size':'l'})}
                     <div style={{height:20}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 500 END', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -509,6 +528,9 @@ class NewContractPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.default_proposal_expiry_duration_limit), 'details':'Proposal Expiry Duration Limit', 'size':'l'})}
 
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 1hr - 3Hrs', 'textsize':'10px', 'font':'Sans-serif'})}
+
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_proposal_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
@@ -520,6 +542,9 @@ class NewContractPage extends Component {
                     <div style={{height:20}}/>
                     
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_enter_contract_duration), 'details':'Maximum Enter Contract Duration', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 4wks', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_enter_contract_duration.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -533,16 +558,22 @@ class NewContractPage extends Component {
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
 
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: yes', 'textsize':'10px', 'font':'Sans-serif'})}
+
                 </div>
             )
         }
         else if(page == 7){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Modify Expiry Duration Limit', 'details':'the period of time before the expiry of a proposal, during which the proposal cannot be modified', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Proposal Modify Expiry Duration Limit', 'details':'The period of time before the expiry of a proposal, during which the proposal cannot be modified', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.proposal_modify_expiry_duration_limit), 'details':'Proposal Modify Expiry Duration Limit', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 3 Hrs', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -556,6 +587,9 @@ class NewContractPage extends Component {
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
 
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: modifiable', 'textsize':'10px', 'font':'Sans-serif'})}
+
                 </div>
             )
         }
@@ -566,6 +600,9 @@ class NewContractPage extends Component {
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: enabled', 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -578,6 +615,9 @@ class NewContractPage extends Component {
                     
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.maximum_proposal_expiry_submit_expiry_time_difference), 'details':'Maximum Proposal Expiry Submit Expiry time difference', 'size':'l'})}
 
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: at least 2wks', 'textsize':'10px', 'font':'Sans-serif'})}
+
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_proposal_expiry_submit_expiry_time_difference.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
@@ -589,6 +629,9 @@ class NewContractPage extends Component {
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: absolute', 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -600,6 +643,9 @@ class NewContractPage extends Component {
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: enabled', 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -607,12 +653,15 @@ class NewContractPage extends Component {
         else if(page == 13){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum Spend Bounty Amount', 'details':'the minimum amount of spend that can be used as bounty for new proposals targeting your new contract.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Minimum Spend Bounty Amount (Optional)', 'details':'the minimum amount of spend that can be used as bounty for new proposals targeting your new contract.', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 500 SPEND', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -648,7 +697,7 @@ class NewContractPage extends Component {
 
     render_authorities_part(){
         var size = this.props.size
-        var height = this.props.height-150
+        var height = this.props.height-120
 
         if(size == 's'){
             return(
@@ -676,7 +725,7 @@ class NewContractPage extends Component {
     render_moderator_interactible_ui(){
         return(
             <div>
-                <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/>
+                {/* <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/> */}
 
                 {this.render_moderator_or_interactible_setting()}
             </div>
@@ -688,7 +737,7 @@ class NewContractPage extends Component {
     }
 
     render_moderator_or_interactible_setting(){
-        var selected_item = this.get_selected_item(this.state.new_token_interactible_moderator_tags_object, this.state.new_token_interactible_moderator_tags_object['i'].active)
+        var selected_item = this.get_selected_item(this.state.new_contract_tags_object, 'authorities')
 
         if(selected_item == 'moderators' || selected_item == 'e'){
             return(
@@ -710,7 +759,6 @@ class NewContractPage extends Component {
     render_moderator_settings(){
         return(
             <div>
-                <div style={{height:20}}/>
                 {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -759,10 +807,10 @@ class NewContractPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -797,7 +845,6 @@ class NewContractPage extends Component {
     render_interactible_settings(){
         return(
             <div>
-                <div style={{height:20}}/>
                 {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -805,7 +852,7 @@ class NewContractPage extends Component {
 
                 {this.load_account_suggestions('interactible_id')}
 
-                <div style={{height:20}}/>
+                <div style={{height:5}}/>
 
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
                     <CssBaseline />
@@ -837,8 +884,11 @@ class NewContractPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id)){
+        if(isNaN(interactible_id) || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
+        }
+        if(this.state.interactible_timestamp == 0){
+            this.props.notify('please put a valid date and time', 600)
         }
         else{
             var interactibles_clone = this.state.interactibles.slice()
@@ -862,10 +912,10 @@ class NewContractPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -902,7 +952,7 @@ class NewContractPage extends Component {
 
     render_prices_part(){
         var size = this.props.size
-        var height = this.props.height-150
+        var height = this.props.height-120
 
         if(size == 's'){
             return(
@@ -963,7 +1013,7 @@ class NewContractPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id)){
+        if(isNaN(exchange_id) || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){

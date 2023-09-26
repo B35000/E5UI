@@ -9,6 +9,8 @@ import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
+import SwipeableViews from 'react-swipeable-views';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -182,22 +184,21 @@ class BagDetailsSection extends Component {
         return (
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {/* <SwipeableViews index={0}>
                         {items_to_deliver.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                            <div style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
                                 {this.render_variant_details(item)}
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </SwipeableViews> */}
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items_to_deliver.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                                    {this.render_variant_details(item)}
+                                </li>
+                            ))}
+                        </ul>
                 </div>
-                {/* <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items_to_deliver.map((item, index) => (
-                        <li style={{'padding': '2px 0px 2px 0px'}}>
-                            {this.render_variant_details(item)}
-                            <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '2px 20px 10px 20px'}}/>
-                        </li>
-                    ))}
-                </ul> */}
             </div>
         );
     }

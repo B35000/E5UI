@@ -197,8 +197,10 @@ class SubscriptionDetailsSection extends Component {
     render_cancel_button(){
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
+        var minimum_cancellable_balance_amount = subscription_config[4/* minimum_cancellable_balance_amount */]
+        var time_unit = subscription_config[5/* time_unit */]
 
-        if(subscription_config[2] == 1/* cancellable */ && object['payment'] != 0){
+        if(subscription_config[2] == 1/* cancellable */ && object['payment'] > bigInt(minimum_cancellable_balance_amount).multiply(bigInt(time_unit))){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -274,7 +276,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
         return(
-            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>

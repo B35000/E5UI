@@ -1126,7 +1126,8 @@ class StackPage extends Component {
         if(txs.length > 0){
             if(account_balance < (run_gas_limit * run_gas_price)){
                 this.setState({invalid_ether_amount_dialog_box: true})
-            }else{   
+            }
+            else{   
                 this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei)
             }
         }else{
@@ -1422,6 +1423,11 @@ class StackPage extends Component {
       }
       
       obj[6].push(this.get_action(t))
+
+      if(t.upper_bound != 0 && t.lower_bound != 0){
+        obj[7].push(t.lower_bound.toString().toLocaleString('fullwide', {useGrouping:false}))
+        obj[8].push(t.upper_bound.toString().toLocaleString('fullwide', {useGrouping:false}))
+      }
 
       return obj
     }
@@ -2090,7 +2096,7 @@ class StackPage extends Component {
         var context = 36
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option}
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application'}
 
         var string_data = await this.get_object_ipfs_index(application_obj);
 
@@ -2211,7 +2217,7 @@ class StackPage extends Component {
         var context = 36
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time}
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
 
         var string_data = await this.get_object_ipfs_index(application_obj);
 
@@ -2455,7 +2461,6 @@ class StackPage extends Component {
 
         return {int: obj, str: string_obj}
     }
-
 
     format_job_request_comment_object = async (t) =>{
         var obj = [ /* set data */

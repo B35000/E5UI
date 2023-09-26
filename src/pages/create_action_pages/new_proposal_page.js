@@ -56,7 +56,7 @@ class NewProposalPage extends Component {
         page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
         proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
         
-        modify_target_id:'', 
+        modify_target_id:'', modify_target_data:null,
         
         spend_target_input_text:'', spend_token_input_text:'', 
         spend_amount:0, spend_actions:[], 
@@ -294,6 +294,7 @@ class NewProposalPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':''})}
                     </div>
                 </div>
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -317,6 +318,9 @@ class NewProposalPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(typed_word.length > this.props.app_state.tag_size){
+            this.props.notify('That tag is too long', 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
@@ -489,8 +493,16 @@ class NewProposalPage extends Component {
     }
 
 
-    when_modify_target_text_input_field_changed(text){
+    when_modify_target_text_input_field_changed = async (text) =>{
         this.setState({modify_target_id: text})
+        this.fetch_modify_target_data(text)
+    }
+
+    fetch_modify_target_data = async (text) =>{
+        if(text.trim() != '' && !isNaN(text)){
+            var modify_target_data = await this.props.load_modify_item_data(text)
+            this.setState({modify_target_data: modify_target_data})
+        }
     }
 
 
@@ -586,6 +598,7 @@ class NewProposalPage extends Component {
     when_suggestion_clicked(item, pos, type){
         if(type == 'modify_target'){
             this.setState({modify_target_id: item['id']})
+            this.fetch_modify_target_data(item['id'])
         }
         else if(type == 'spend_target'){
             this.setState({spend_target_input_text: item['id']})
@@ -842,13 +855,17 @@ class NewProposalPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':'units', })}
                     </div>
+                    <div style={{height:10}}/>
+                    {this.render_current_items(properties, selected_item)}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
-                </div>
+                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                    </div>
+
+                    
                 </div>
             )
         }
@@ -857,12 +874,16 @@ class NewProposalPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.reconfig_proportion), 'details':selected_item, 'size':'l'})}
 
+                    <div style={{height:10}}/>
+                    {this.render_current_items(properties, selected_item)}
+
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proportion_changed.bind(this)} power_limit={properties['powerlimit']} theme={this.props.theme} />
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
-                </div>
+                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                    </div>
+                    
                 </div>
             )
         }
@@ -871,11 +892,15 @@ class NewProposalPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.reconfig_duration), 'details':selected_item, 'size':'l'})}
 
+                    <div style={{height:10}}/>
+                    {this.render_current_items(properties, selected_item)}
+
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
-                </div>
+                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                    </div>
+                    
                 </div>
             )
         }
@@ -883,10 +908,12 @@ class NewProposalPage extends Component {
             return(
                 <div>
                     {this.load_tags_ui()}
-                    <div style={{height:20}}/>
+                    <div style={{height:10}}/>
+                    {this.render_current_items(properties, selected_item)}
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
-                </div>
+                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                    </div>
+                    
                 </div>
             )
         }
@@ -897,12 +924,66 @@ class NewProposalPage extends Component {
 
                     {this.load_account_suggestions('reconfig_target_id')}
 
+                    <div style={{height:10}}/>
+                    {this.render_current_items(properties, selected_item)}
+
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                    {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
-                </div>
+                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                    </div>
+
+                    
                 </div>
             )
+        }
+    }
+
+    render_current_items(properties, selected_item){
+        if(this.state.modify_target_data != null){
+            var selected_option = this.state.reconfig_items_tags_object['i'].active
+            var o = {'contract':30/* 30(contract_obj_id) */, 'subscription':33/* 33(subscription_object) */, 'exchange':31/* 31(token_exchange) */}
+            var modify_target_type = this.state.modify_target_data['type']
+            if((modify_target_type == o[selected_option]) || (this.state.modify_target_id == '2' && selected_option == 'contract')){
+                var ui = properties['picker']
+                var current_value = this.state.modify_target_data['data'][properties['position'][0]][properties['position'][1]]
+                if(ui == 'number'){
+                    return(
+                        <div>
+                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':'units', })}
+                            </div>
+                        </div>
+                    )
+                }
+                else if(ui == 'proportion'){
+                    return(
+                        <div>
+                            {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':'Current '+selected_item, 'size':'l'})}
+                        </div>
+                    )
+                }
+                else if(ui == 'time'){
+                    return(
+                        <div>
+                            {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':'Current Value', 'size':'l'})}
+                        </div>
+                    )
+                }
+                else if(ui == 'tag'){
+                    return(
+                        <div>
+                            {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':'Current Value', 'size':'l'})}
+                        </div>
+                    )
+                }
+                else if(ui == 'id'){
+                    return(
+                        <div>
+                            {this.render_detail_item('3', {'title':current_value, 'details':'Current Value', 'size':'l'})}
+                        </div>
+                    )
+                }
+            }
         }
     }
 
@@ -1108,7 +1189,7 @@ class NewProposalPage extends Component {
         }
         else if(ui == 'id'){
             var number = this.state.reconfig_target_id.trim()
-            if(isNaN(number)){
+            if(isNaN(number) || number == ''){
                 this.props.notify('please put a valid account id', 600)
             }
             else{
@@ -1589,7 +1670,7 @@ class NewProposalPage extends Component {
 
             page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
             proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
-            modify_target_id:'', spend_target_input_text:'', spend_token_input_text:'', 
+            modify_target_id:'', modify_target_data:null, spend_target_input_text:'', spend_token_input_text:'', 
             spend_amount:0, spend_actions:[], 
             
             reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',

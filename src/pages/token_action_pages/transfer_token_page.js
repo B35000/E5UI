@@ -358,6 +358,13 @@ class template extends Component {
             })
         }
         this.setState({token_item: item})
+
+        var stack_items = this.props.app_state.stack_items
+        for(var i=0; i<stack_items.length; i++){
+            if(stack_items[i].type == 'transfer' && stack_items[i].token_item['id'] == item['id']){
+                this.setState({debit_balance: this.state.debit_balance + stack_items[i].debit_balance})
+            }
+        }
     }
 
 

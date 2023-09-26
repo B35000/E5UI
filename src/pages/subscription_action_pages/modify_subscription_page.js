@@ -54,7 +54,7 @@ class ModifySubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','Minimum Buy Amount','Target Authority', 'Target Beneficiary', 'Maximum Buy Amount', 'Minimum Cancellable Balance Amount'], [1]
+                ['xor','',0], ['e','Minimum Buy Amount','Target Authority', 'Target Beneficiary', 'Maximum Buy Amount', 'Minimum Cancellable Amount'], [1]
             ],
         };
     }
@@ -94,6 +94,7 @@ class ModifySubscriptionPage extends Component {
                 {this.render_detail_item('0')}
 
                 <Tags page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
 
                 {this.load_reconfig_item_selectors()}
                 <div style={{height:20}}/>
@@ -131,6 +132,9 @@ class ModifySubscriptionPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':'units', })}
                     </div>
 
+                    <div style={{height:10}}/>
+                    {this.render_current_items(properties, selected_item)}
+
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
 
                     <div style={{height:20}}/>
@@ -146,6 +150,9 @@ class ModifySubscriptionPage extends Component {
                     <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}
+
+                    <div style={{height:10}}/>
+                    {this.render_current_items(properties, selected_item)}
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
@@ -164,13 +171,55 @@ class ModifySubscriptionPage extends Component {
         this.setState({reconfig_target_id: text})
     }
 
+    render_current_items(properties, selected_item){
+        var ui = properties['picker']
+        var current_value = this.state.subscription_item['data'][properties['position'][0]][properties['position'][1]]
+        if(ui == 'number'){
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+                </div>
+            )
+        }
+        else if(ui == 'proportion'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':'Current '+selected_item, 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'time'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':'Current Value', 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'tag'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':'Current Value', 'size':'l'})}
+                </div>
+            )
+        }
+        else if(ui == 'id'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':current_value, 'details':'Current Value', 'size':'l'})}
+                </div>
+            )
+        } 
+    }
+
     get_target_configuration(property){
         var obj = {
             'Target Authority':{'position':[1,0], 'picker':'id', 'powerlimit':63},
             'Target Beneficiary':{'position':[1,6], 'picker':'id', 'powerlimit':63},
             'Minimum Buy Amount':{'position':[1,1], 'picker':'number', 'powerlimit':63},
             'Maximum Buy Amount':{'position':[1,3], 'picker':'number', 'powerlimit':63}, 
-            'Minimum Cancellable Balance Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63},
+            'Minimum Cancellable Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63},
         }
 
         return obj[property]
@@ -192,7 +241,7 @@ class ModifySubscriptionPage extends Component {
         }
         else if(ui == 'id'){
             var number = this.state.reconfig_target_id.trim()
-            if(isNaN(number)){
+            if(isNaN(number) || number == ''){
                 this.props.notify('please put a valid account id', 600)
             }
             else{

@@ -5,6 +5,7 @@ import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 
 import Letter from './../assets/letter.png';
+import SwipeableViews from 'react-swipeable-views';
 
 var bigInt = require("big-integer");
 
@@ -154,13 +155,21 @@ class AddToBagPage extends Component {
         var items = this.state.storefront_item['ipfs'].variants
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                {/* <SwipeableViews index={0}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={()=> this.when_variant_item_clicked(item)} >
+                        <div style={{'margin': '5px 5px 5px 5px'}} onClick={()=> this.when_variant_item_clicked(item)} >
                             {this.render_variant_item_if_selected(item)}
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </SwipeableViews> */}
+
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={()=> this.when_variant_item_clicked(item)} >
+                                {this.render_variant_item_if_selected(item)}
+                            </li>
+                        ))}
+                    </ul>
             </div>
         )
     }

@@ -447,6 +447,7 @@ class PostListSection extends Component {
         return this.props.get_subscription_items()
     }
 
+
     render_subscription_object(object, index){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -476,7 +477,7 @@ class PostListSection extends Component {
         var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
-        var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
@@ -798,7 +799,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_post_object(item, index)}
+                                {this.render_post_object_if_locked(item, index)}
                             </li>
                         ))}
                     </ul>
@@ -809,6 +810,38 @@ class PostListSection extends Component {
 
     get_post_items(){
         return this.props.get_post_items()
+    }
+
+
+    render_post_object_if_locked(item, index){
+        var required_subscriptions = item['ipfs'].selected_subscriptions
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions)){
+            return this.render_post_object(item, index)
+        }
+        else{
+            return(
+                <div>
+                    <div style={{height:180, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 0px 0px'}}>
+                            <img src={Letter} style={{height:70 ,width:'auto'}} />
+                            <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}>locked</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    check_if_sender_has_paid_subscriptions(required_subscriptions){
+        var has_sender_paid_all_subs = true
+        required_subscriptions.forEach(subscription_id => {
+            var subscription_item = this.props.app_state.created_subscription_object_mapping[subscription_id]
+            if(subscription_item['payment'] == 0){
+                has_sender_paid_all_subs = false
+            }
+        });
+
+        return has_sender_paid_all_subs
     }
 
     render_post_object(object, index){
@@ -1322,11 +1355,16 @@ class PostListSection extends Component {
     }
 
     get_exchanges_data(object_array, token_id, img, item){
-        var type = object_array[0][3/* <3>token_type */] == 3 ? 'end': 'spend'
+        var type = object_array[0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
         var supply = object_array[2][2/* <2>token_exchange_liquidity/total_supply */]
         var active_tags = item['ipfs'] == null ? [''+token_id, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
-        var name = item['ipfs'] == null ? 'Token Id: '+token_id : item['ipfs'].entered_title_text
-        var symbol = item['ipfs'] == null ? 'Token Type: '+type : item['ipfs'].entered_symbol_text
+        var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
+        if(token_id == 3){
+            name = 'E25'
+        } else if(token_id == 5){
+            name = '325'
+        }
+        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         var balance = item['balance']
         return{

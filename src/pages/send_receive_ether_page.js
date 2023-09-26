@@ -34,7 +34,7 @@ class SendReceiveEtherPage extends Component {
         send_receive_ether_page_tags_object: this.get_send_receive_ether_page_tags_object(),
         picked_wei_amount: 0,
         picked_wei_gas_price: 0,
-        recipient_address:'0x00000000000000000000',
+        recipient_address:'',
         confirmation_dialog_box: false
     };
 
@@ -599,7 +599,7 @@ class SendReceiveEtherPage extends Component {
 
 
     when_text_input_field_changed(text){
-        var final_text = text == '' ? '0x' : text
+        var final_text = text == '' ? '' : text
         this.setState({recipient_address: final_text})
     }
 
@@ -623,8 +623,8 @@ class SendReceiveEtherPage extends Component {
 
     isValidAddress = (adr) => {
         try {
-        const web3 = new Web3()
-        web3.utils.toChecksumAddress(adr)
+            const web3 = new Web3()
+            web3.utils.toChecksumAddress(adr)
         return true
         } catch (e) {
         return false

@@ -119,7 +119,9 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
-                    {this.render_detail_item('2', item['number_label_large'])}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['number_label_large'])}
+                    </div>
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', item['chain_id'])}
@@ -148,10 +150,10 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('3', item['base_fee_per_gas'])}
                     {this.render_detail_item('0')}
                     
+                    {this.render_detail_item('3', {'title':'Send/Receive Ether', 'details':'Send or receive ether from a specified account.', 'size':'l'})}
                     <div style={{height:10}}/>
-
-                    <div onClick={()=>this.props.open_send_receive_ether_bottomsheet()}>
-                        {this.render_detail_item('5', {'text':'Send Receive Ether', 'action': ''})}
+                    <div onClick={()=>this.open_send_receive_ether_bottomsheet()}>
+                        {this.render_detail_item('5', {'text':'Send/Receive', 'action': ''})}
                     </div>
                     <div style={{height:10}}/>
 
@@ -164,7 +166,11 @@ class EthersDetailsSection extends Component {
 
 
     open_send_receive_ether_bottomsheet(){
-        this.props.open_send_receive_ether_bottomsheet()
+        if(this.props.app_state.user_account_id == 1){
+            this.props.notify('You need to set your wallet first', 800)
+        }else{
+            this.props.open_send_receive_ether_bottomsheet()
+        }
     }
 
     when_navigate_view_ethers_list_detail_tags_object_updated(tag_group){

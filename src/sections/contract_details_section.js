@@ -170,7 +170,7 @@ class ContractDetailsSection extends Component {
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
                     {this.render_detail_item('0')}
 
-                    {this.show_enter_contract_button()}
+                    {this.show_normal_contract_buttons()}
 
                     {this.show_send_proposal_button()}
 
@@ -195,20 +195,12 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    show_enter_contract_button(){
+    show_normal_contract_buttons(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
         if(object['id'] != 2){
             return(
                 <div>
-                    {this.show_entered_contract_data()}
-                    <div style={{height:10}}/>
-
-                    {this.render_detail_item('3', {'size':'l', 'details':'Enter a contract to participate in its consensus', 'title':'Enter Contract'})}
-                    <div style={{height:10}}/>
-
-                    <div onClick={()=>this.open_enter_contract_ui()}>
-                        {this.render_detail_item('5', {'text':'Enter', 'action':''},)}
-                    </div>
+                    {this.show_enter_contract_button()}
                     
                     <div style={{height:10}}/>
 
@@ -221,6 +213,22 @@ class ContractDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    show_enter_contract_button(){
+        return(
+            <div>
+                {this.show_entered_contract_data()}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'size':'l', 'details':'Enter a contract to participate in its consensus', 'title':'Enter Contract'})}
+                <div style={{height:10}}/>
+
+                <div onClick={()=>this.open_enter_contract_ui()}>
+                    {this.render_detail_item('5', {'text':'Enter', 'action':''},)}
+                </div>
+            </div>
+        )
     }
 
     show_extend_stay_in_contract_button(){
@@ -254,7 +262,7 @@ class ContractDetailsSection extends Component {
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if(expiry_time_in_seconds != 0 && time_to_expiry > 0){
+        if((expiry_time_in_seconds != 0 && time_to_expiry > 0) || object['id'] == 2){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -307,7 +315,7 @@ class ContractDetailsSection extends Component {
         }else if(expiry_time_in_seconds != 0 && time_to_expiry < 0){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':'Your time in the contract has exipred, you can either extend your stay or exit then enter again.', 'textsize':'13px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':'Your time in the contract has exipred, you have to enter it again.', 'textsize':'13px', 'font':'Sans-serif'})}
                 </div>
             )
         }

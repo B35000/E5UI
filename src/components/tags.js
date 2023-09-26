@@ -49,15 +49,15 @@ class tags extends Component {
             }
         }//
         return(
-            <ul ref={this.myRef} style={{'height':40,'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow':'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px', '-ms-overflow-style': 'none', 'overflow-y': 'hidden'}}>
-                {active_tags.map((item, index) => (
-                    <li style={{'display': 'inline-block', 'padding': '5px', '-ms-overflow-style': 'none', 'scrollbar-width': 'none', height:45}}>
-                        {this.render_tag_button(index,selected,item,tag_size)}
-                    </li>
-                ))}
-            </ul>
-
-            
+            <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': '8px', height:'40px'}}>
+                    <ul ref={this.myRef} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden'}}>
+                      {active_tags.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
+                              {this.render_tag_button(index,selected,item,tag_size)}
+                          </li>
+                      ))}
+                  </ul>
+            </div>
         );
     }
 

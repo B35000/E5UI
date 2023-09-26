@@ -108,7 +108,7 @@ class NewSubscriptionPage extends Component {
     render(){
         return(
             <div>
-                <div style={{'padding':'10px 20px 0px 10px'}}>
+                <div style={{'padding':'10px 10px 0px 10px'}}>
                     <div className="row">
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                             <Tags page_tags_object={this.state.new_subscription_tags_object} tag_size={'l'} when_tags_updated={this.when_new_subscription_tags_object.bind(this)} theme={this.props.theme}/>
@@ -210,7 +210,7 @@ class NewSubscriptionPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 15px 0px 10px'}}>
+            <div style={{'padding':'0px 10px 0px 10px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Subscription'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -227,6 +227,7 @@ class NewSubscriptionPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -250,6 +251,9 @@ class NewSubscriptionPage extends Component {
         }
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
+        }
+        else if(typed_word.length > this.props.app_state.tag_size){
+            this.props.notify('That tag is too long', 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
@@ -454,12 +458,15 @@ class NewSubscriptionPage extends Component {
         if(page == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum Buy Amount', 'details':'Minimum amount that can be paid for your new subscription.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Minimum Buy Amount', 'details':'Minimum amount of time units that can be paid for your new subscription.', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -472,6 +479,9 @@ class NewSubscriptionPage extends Component {
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: false', 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -483,6 +493,9 @@ class NewSubscriptionPage extends Component {
                     <div style={{height:20}}/>
                     
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.time_unit), 'details':'Time Unit', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 1 min', 'textsize':'10px', 'font':'Sans-serif'})}
 
                    <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
                 </div>
@@ -498,6 +511,7 @@ class NewSubscriptionPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':this.format_power_figure(this.state.maximum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.maximum_buy_amount), 'number':this.format_account_balance_figure(this.state.maximum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
                     </div>
 
+
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
@@ -505,12 +519,15 @@ class NewSubscriptionPage extends Component {
         else if(page == 4){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum Cancellable Balance Amount', 'details':'the minimum amount of time units that can be left when cancelling your new subscriptions payments', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Minimum Cancellable Amount(For Cancellable Subscriptions)', 'details':'the minimum amount of time units that can be left when cancelling your new subscriptions payments', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Cancellable Balance Amount', 'subtitle':this.format_power_figure(this.state.minimum_cancellable_balance_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_cancellable_balance_amount), 'number':this.format_account_balance_figure(this.state.minimum_cancellable_balance_amount), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Cancellable Amount', 'subtitle':this.format_power_figure(this.state.minimum_cancellable_balance_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_cancellable_balance_amount), 'number':this.format_account_balance_figure(this.state.minimum_cancellable_balance_amount), 'barcolor':'', 'relativepower':'units', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -676,7 +693,7 @@ class NewSubscriptionPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id)){
+        if(isNaN(moderator_id) || moderator_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -779,7 +796,7 @@ class NewSubscriptionPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id)){
+        if(isNaN(interactible_id) || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{

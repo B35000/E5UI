@@ -98,7 +98,7 @@ class PostDetailSection extends Component {
             var selected_tag = this.props.explore_page_tags_object['i'].active
             if(selected_tag == 'E5s' || selected_tag == 'e'){
                 return(
-                    <E5DetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object}/>
+                    <E5DetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)}/>
                 )
             }
             else if(selected_tag == 'posts' ){
@@ -128,7 +128,7 @@ class PostDetailSection extends Component {
             var selected_option_name = this.props.wallet_page_tags_object['e'][1][selected_item];
             if(selected_option_name == 'ethers ⚗️' || selected_option_name == 'e'){
                 return(
-                    <EthersDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_ether_item={this.props.selected_ether_item} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)}/>
+                    <EthersDetailsSection app_state={this.props.app_state} height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_ether_item={this.props.selected_ether_item} notify={this.props.notify.bind(this)} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)}/>
                 )
             }
             else if(selected_option_name == 'ends ☝️' ){

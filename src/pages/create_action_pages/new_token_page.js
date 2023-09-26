@@ -179,7 +179,7 @@ class NewTokenPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
@@ -301,7 +301,7 @@ class NewTokenPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 15px 0px 10px'}}>
+            <div style={{'padding':'0px 10px 0px 10px'}}>
 
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Token'})}
                 <div style={{height:10}}/>
@@ -324,6 +324,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
@@ -360,6 +361,9 @@ class NewTokenPage extends Component {
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
         }
+        else if(typed_word.length > this.props.app_state.tag_size){
+            this.props.notify('That tag is too long', 400)
+        }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
         }
@@ -388,26 +392,29 @@ class NewTokenPage extends Component {
 
     /* renders the buttons for pick images, set images and clear images */
     render_create_image_ui_buttons_part(){
-      return(
-        <div style={{'display': 'flex','flex-direction': 'row','margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
-            <div style={{'padding': '5px', width:45, 'height':45}}>
-                <img src={this.state.token_image} style={{height:50 ,width:50}} />
+        var token_type = this.get_selected_item(this.state.new_token_type_tags_object, 'e')
+        var default_image = token_type == 'capped' ? EndImg: SpendImg
+        var image = this.state.token_image == null ? default_image : this.state.token_image
+        return(
+            <div style={{'display': 'flex','flex-direction': 'row','margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
+                <div style={{'padding': '5px', width:45, 'height':45}}>
+                    <img src={image} style={{height:50 ,width:50}} />
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px', 'margin':'0px 0px 0px 10px'}}>
+                    <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)}/>
+                </div>
+
+                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 0px'}}>
+                    <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                    <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)}/>
+                </div>
+
+                
+
             </div>
-
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px', 'margin':'0px 0px 0px 10px'}}>
-                <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)}/>
-            </div>
-
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 0px'}}>
-                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
-                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)}/>
-            </div>
-
-            
-
-        </div>
-      )
+        )
     }
 
 
@@ -616,6 +623,8 @@ class NewTokenPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 100,000,000e2', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -642,6 +651,9 @@ class NewTokenPage extends Component {
 
                     <div style={{height:20}}/>
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 3.5%', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
                 </div>
@@ -757,6 +769,9 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Token Supply', 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
 
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 100,000,000e2', 'textsize':'10px', 'font':'Sans-serif'})}
+
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
@@ -808,6 +823,9 @@ class NewTokenPage extends Component {
                     <div style={{height:20}}/>
 
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.trust_fee_proportion), 'details':'Trust Fee', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 3.5%', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
                     
@@ -892,6 +910,9 @@ class NewTokenPage extends Component {
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.new_token_unlocked_liquidity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_liquidity_tags_object.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: unlocked', 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -903,6 +924,9 @@ class NewTokenPage extends Component {
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.new_token_unlocked_supply_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_unlocked_supply_tags_object.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: locked', 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -915,18 +939,23 @@ class NewTokenPage extends Component {
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.new_token_fully_custom_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_fully_custom_tags_object.bind(this)} theme={this.props.theme}/>
                     
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: fully-custom', 'textsize':'10px', 'font':'Sans-serif'})}
                 </div>
             )
         }
         else if(page == 14){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Block Limit', 'details':'the maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Block Limit(For Uncapped Spend Tokens)', 'details':'the maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.', 'size':'l'})}
                     <div style={{height:20}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Block Limit', 'subtitle':this.format_power_figure(this.state.block_limit), 'barwidth':this.calculate_bar_width(this.state.block_limit), 'number':this.format_account_balance_figure(this.state.block_limit), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                     
@@ -936,22 +965,28 @@ class NewTokenPage extends Component {
         else if(page == 15){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Halving type (for Uncapped Tokens)', 'details':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Halving type (for Uncapped Spend Tokens)', 'details':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.', 'size':'l'})}
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: Spread', 'textsize':'10px', 'font':'Sans-serif'})}
                 </div>
             )
         }
         else if(page == 16){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Maturity Limit', 'details':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is less than its default set value.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Maturity Limit(For Uncapped Spend Tokens)', 'details':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is less than its default set value.', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Maturity Limit', 'subtitle':this.format_power_figure(this.state.maturity_limit), 'barwidth':this.calculate_bar_width(this.state.maturity_limit), 'number':this.format_account_balance_figure(this.state.maturity_limit), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit * 100), 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maturity_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -960,10 +995,13 @@ class NewTokenPage extends Component {
         else if(page == 17){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Internal Block Halving Proportion', 'details':'proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Internal Block Halving(For Uncapped Spend Tokens)', 'details':'proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.internal_block_halfing_proportion), 'details':'Internal Block Halving Proportion', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 40% - 51%', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
@@ -972,10 +1010,13 @@ class NewTokenPage extends Component {
         else if(page == 18){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Block Limit Reduction Proportion', 'details':'proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Block Limit Reduction(For Uncapped Spend Tokens)', 'details':'proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.block_limit_reduction_proportion), 'details':'Block Limit Reduction Proportion', 'size':'l'})}
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 65% - 91%', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
@@ -984,12 +1025,15 @@ class NewTokenPage extends Component {
         else if(page == 19){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Block Reset Limit', 'details':'the maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Block Reset Limit(For Uncapped Spend Tokens)', 'details':'the maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Block Reset Limit', 'subtitle':this.format_power_figure(this.state.block_reset_limit), 'barwidth':this.calculate_bar_width(this.state.block_reset_limit), 'number':this.format_account_balance_figure(this.state.block_reset_limit), 'barcolor':'', 'relativepower':'blocks', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 4', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_block_reset_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -999,22 +1043,28 @@ class NewTokenPage extends Component {
             return(
                 <div>
                     
-                    {this.render_detail_item('3', {'title':'Block Limit Sensitivity (for Uncapped Tokens)', 'details':'The sensitivity of your new exchange to increasing demand', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Block Limit Sensitivity (for Uncapped Spend Tokens)', 'details':'The sensitivity of your new exchange to increasing demand', 'size':'l'})}
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: 3', 'textsize':'10px', 'font':'Sans-serif'})}
                 </div>
             )
         }
         else if(page == 21){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Exchange Ratio X', 'details':'The buy output exchange ratio X for your new token (formula being: x * y = k)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Exchange Ratio X', 'details':'The buy output exchange ratio X for your new token (formula used: xy = k)', 'size':'l'})}
                     <div style={{height:20}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio X', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_x), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_x), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_x), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_x.bind(this)} theme={this.props.theme} power_limit={63}/>
                     
@@ -1030,6 +1080,8 @@ class NewTokenPage extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_y), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_y), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_y), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
+
+                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -1234,7 +1286,7 @@ class NewTokenPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id)){
+        if(isNaN(moderator_id) || moderator_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -1337,7 +1389,7 @@ class NewTokenPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id)){
+        if(isNaN(interactible_id) || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -1501,7 +1553,7 @@ class NewTokenPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id)){
+        if(isNaN(exchange_id) || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
