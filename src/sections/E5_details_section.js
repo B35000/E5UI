@@ -102,14 +102,14 @@ class E5DetailsSection extends Component {
 
     render_e5_main_details_section(){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-70
+        var he = this.props.height-60
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
         var item = this.get_e5_details_data()
         return(
-            <div style={{ width:'99%', 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['label'])}

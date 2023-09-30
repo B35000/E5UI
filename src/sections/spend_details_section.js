@@ -246,6 +246,8 @@ class SpendDetailSection extends Component {
 
                     {this.render_moderator_button()}
 
+                    {this.render_basic_edit_object_button()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -499,6 +501,31 @@ class SpendDetailSection extends Component {
             )
         }
     }
+
+
+    render_basic_edit_object_button(){
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        var my_account = this.props.app_state.user_account_id
+        if(object['id'] != 5 && (object['event'].returnValues.p3 == my_account)){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Edit Token Post', 'details':'Change the basic details for your Token Post', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_basic_edit_token_ui()}>
+                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_basic_edit_token_ui(){
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        this.props.open_edit_object('8', object)
+    }
+
 
     get_spend_data(){
         var selected_item = this.props.selected_spend_item

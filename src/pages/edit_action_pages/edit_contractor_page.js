@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ViewGroups from '../../components/view_groups'
+import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import Letter from '../../assets/letter.png';
@@ -16,6 +16,11 @@ function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
 }
 
+function number_with_commas(x) {
+    if(x == null) x = '';
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -28,24 +33,18 @@ function makeid(length) {
     return result;
 }
 
-function number_with_commas(x) {
-    if(x == null) x = '';
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-class NewMailPage extends Component {
+class NewContractorPage extends Component {
     
     state = {
-        selected: 0,
-        id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'],
-        get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* i copypasted these! sue me  */
-        get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
-        entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'',
+        id: makeid(8), type:'edit-contractor',
+        get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(),
+        get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(),
+        entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[], recipients:[]
+        entered_objects:[],
     };
 
-    get_new_job_page_tags_object(){
+    get_new_contractor_page_tags_object(){
         return{
             'i':{
                 active:'e', 
@@ -56,7 +55,7 @@ class NewMailPage extends Component {
         };
     }
 
-    get_new_job_text_tags_object(){
+    get_new_contractor_text_tags_object(){
         return{
             'i':{
                 active:'e', 
@@ -79,32 +78,29 @@ class NewMailPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags page_tags_object={this.state.get_new_contractor_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
                             {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
                         </div>
-                        
                     </div>
                 </div>
-                
                 
                 <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
-                
             </div>
         )
     }
 
-    when_new_job_page_tags_updated(tag_group){
-        this.setState({get_new_job_page_tags_object: tag_group})
+    when_new_contractor_page_tags_updated(tag_group){
+        this.setState({get_new_contractor_page_tags_object: tag_group})
     }
 
 
-    render_everything(){
-        var selected_item = this.get_selected_item(this.state.get_new_job_page_tags_object, this.state.get_new_job_page_tags_object['i'].active)
+       render_everything(){
+        var selected_item = this.get_selected_item(this.state.get_new_contractor_page_tags_object, this.state.get_new_contractor_page_tags_object['i'].active)
 
         if(selected_item == 'e'){
             return(
@@ -125,18 +121,11 @@ class NewMailPage extends Component {
                 <div>
                     {this.render_enter_image_part()}
                 </div>
-            ) 
-        }
-        else if(selected_item == 'recipients'){
-            return(
-                <div>
-                    {this.render_recipients_part()}
-                </div>
             )
         }
     }
 
-     get_selected_item(object, option){
+    get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
@@ -144,47 +133,26 @@ class NewMailPage extends Component {
 
 
     render_enter_tags_part(){
-        var size = this.props.size
-
-        if(size == 's'){
-            return(
-                <div>
-                    {this.render_title_tags_part()}
-                    {this.render_new_job_object()}
-                </div>
-            )
-        }
-        else if(size == 'm'){
-            return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_title_tags_part()}
-                    </div>
-                    <div className="col-6">
-                        {this.render_new_job_object()}
-                    </div>
-                </div>
+        return(
+            <div>
+                {this.render_title_tags_part()}
                 
-            )
-        }
+                {this.render_new_job_object()}
+                {this.render_detail_item('0')}
+            </div>
+        )
     }
+
 
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new mail'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set a title for your new contractor post. It should be task specific'})}
                 <div style={{height:10}}/>
-                <TextInput height={60} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set the recipient for your message'})}
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_target_recipient_input_field_changed.bind(this)} text={this.state.target_recipient} theme={this.props.theme}/>
-                {this.load_account_suggestions()}
-                <div style={{height:10}}/>
-
-                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 20px 20px'}}/>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Post'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set tags for indexing your new contractor post'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
@@ -196,6 +164,7 @@ class NewMailPage extends Component {
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -247,11 +216,7 @@ class NewMailPage extends Component {
         this.props.notify('tag removed', 200)
     }
 
-   
 
-
-
-    
     render_new_job_object(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
@@ -276,7 +241,6 @@ class NewMailPage extends Component {
             </div>
         );
     }
-
 
 
 
@@ -315,7 +279,7 @@ class NewMailPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                <Tags page_tags_object={this.state.get_new_contractor_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
@@ -329,8 +293,8 @@ class NewMailPage extends Component {
         this.setState({entered_text: text})
     }
 
-    when_new_job_font_style_updated(tag_group){
-        this.setState({get_new_job_text_tags_object: tag_group})
+    when_new_contractor_font_style_updated(tag_group){
+        this.setState({get_new_contractor_text_tags_object: tag_group})
     }
 
     get_edited_text_object(){
@@ -409,6 +373,7 @@ class NewMailPage extends Component {
 
     render_enter_image_part(){
         var size = this.props.size
+
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove and click add images to add them to the object.'})}
@@ -465,7 +430,6 @@ class NewMailPage extends Component {
                     const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
                     clonedArray.push(ev.target.result);
                     this.setState({entered_image_objects: clonedArray});
-                    
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
             }
@@ -564,144 +528,30 @@ class NewMailPage extends Component {
 
 
 
+    finish_creating_object(){
+        var index_tags = this.state.entered_indexing_tags
+        var title = this.state.entered_title_text
+        var texts = this.state.entered_text_objects
+        var images = this.state.entered_image_objects
 
-
-    render_recipients_part(){
-        return(
-            <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set some recipients for your new mail'})}
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_target_recipient_input_field_changed.bind(this)} text={this.state.target_recipient} theme={this.props.theme}/>
-                <div style={{height:10}}/>
-
-                <div style={{'padding': '5px'}} onClick={()=>this.add_recipient_account()}>
-                    {this.render_detail_item('5', {'text':'Add Account', 'action':''})}
-                </div>
-                <div style={{height:10}}/>
-
-                {this.render_recipients_transactions()}
-            </div>
-        )
-    }
-
-    when_target_recipient_input_field_changed(text){
-        this.setState({target_recipient: text})
-    }
-
-    add_recipient_account(){
-        var clone = this.state.recipients.slice()
-        var recipient = this.state.target_recipient
-
-        if(isNaN(recipient) || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+        if(index_tags.length < 3){
+            this.props.notify('add at least 3 tags first!', 700)
         }
-        else if(clone.includes(recipient)){
-            this.props.notify('you cant include the same recipient twice', 600)
-        }
-        else{
-            clone.push(recipient)
-            this.setState({recipients: clone, target_recipient:''})
-            this.props.notify('recipent account added!', 600)
-        }
-    }
-
-
-
-    render_recipients_transactions(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
-        var items = this.state.recipients
-
-        if(items.length == 0){
-            items = [0, 1]
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
+        else if(title == ''){
+            this.props.notify('add a title for your post', 700)
         }else{
-            return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Recipient ID: '+item, 'details':'Account', 'size':'s'})}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
+            
+            this.props.when_add_new_object_to_stack(this.state)
+
+            this.setState({ id: makeid(8), type:'contractor', get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+
+            this.props.notify('transaction added to stack', 700);
         }
     }
 
 
-    when_item_clicked(item){
-        var cloned_array = this.state.recipients.slice()
-        const index = cloned_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
-        }
-        this.setState({recipients: cloned_array})
-        this.props.notify('account removed!', 600)
-    }
 
 
-
-
-    load_account_suggestions(){
-        var items = this.get_suggested_accounts()
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
-        return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
-        )
-    }
-
-    get_suggested_accounts(){
-        return[
-            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-        ].concat(this.get_account_suggestions())
-    }
-
-    get_account_suggestions(){
-        var contacts = this.props.app_state.contacts
-        var return_array = []
-        contacts.forEach(contact => {
-            if(contact['id'].toString().includes(this.state.target_recipient)){
-                return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
-            }
-        });
-        return return_array
-    }
-
-    get_contact_alias(contact){
-        return (this.props.app_state.alias_bucket[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.props.app_state.alias_bucket[contact['id']])
-    }
-
-    when_suggestion_clicked(item){
-        this.setState({target_recipient: item['id']})
-    }
 
 
 
@@ -712,44 +562,11 @@ class NewMailPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
             </div>
         )
 
     }
-
-    show_images(){
-
-    }
-
-
-
-    finish_creating_object(){
-        var index_tags = this.state.entered_indexing_tags
-        var title = this.state.entered_title_text
-        var recipient = this.state.target_recipient.trim()
-
-        if(index_tags.length < 3){
-            this.props.notify('add at least 3 tags first!', 700)
-        }
-        else if(title == ''){
-            this.props.notify('add a title for your mail', 700)
-        }
-        // else if(recipients.length == 0){
-        //     this.props.notify('set at least one recipient', 700)
-        // }
-        else if(isNaN(recipient) || recipient == ''){
-            this.props.notify('that recipient account is invalid', 700)
-        }
-        else{ 
-            this.props.when_add_new_mail_to_stack(this.state)
-
-            this.setState({ selected: 0, id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'], get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* I copypasted these! sue me */ get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[]})
-            
-            this.props.notify('transaction added to stack', 700);
-        }
-    }
-
 
 
 }
@@ -757,4 +574,4 @@ class NewMailPage extends Component {
 
 
 
-export default NewMailPage;
+export default NewContractorPage;

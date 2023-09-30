@@ -457,11 +457,30 @@ class FulfilBagPage extends Component {
         )
     }
 
-    get_suggested_tokens(){
+   get_suggested_tokens(){
         var items = [
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
+        var exchanges_from_sync = this.props.app_state.created_tokens
+        var sorted_token_exchange_data = []
+        var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+        }
 
         return items;
     }

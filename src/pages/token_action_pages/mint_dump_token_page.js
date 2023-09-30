@@ -351,9 +351,22 @@ class NewMintActionPage extends Component {
     get_suggested_accounts(){
         return[
             {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-            {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-            {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
-        ]
+        ].concat(this.get_account_suggestions())
+    }
+
+    get_account_suggestions(){
+        var contacts = this.props.app_state.contacts
+        var return_array = []
+        contacts.forEach(contact => {
+            if(contact['id'].toString().includes(this.state.recipient_id)){
+                return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+            }
+        });
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        return (this.props.app_state.alias_bucket[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.props.app_state.alias_bucket[contact['id']])
     }
 
     when_suggestion_clicked(item, pos){

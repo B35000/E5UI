@@ -37,7 +37,7 @@ function makeid(length) {
 class NewStorefrontItemPage extends Component {
     
     state = {
-        id: makeid(8), type:'storefront-item',
+        id: makeid(8), type:'edit-storefront-item',
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',

@@ -6,6 +6,8 @@ import NumberPicker from './../components/number_picker';
 
 import Letter from './../assets/letter.png';
 import Dialog from "@mui/material/Dialog";
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
 var bigInt = require("big-integer");
 
@@ -39,7 +41,9 @@ class StackPage extends Component {
         get_orientation_tags_object: this.get_orientation_tags_object(),
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         typed_word:'',added_tags:[],set_salt: 0,
-        run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false
+        run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
+
+        typed_contact_word:'', typed_alias_word:'',
     };
 
     get_stack_page_tags_object(){
@@ -48,7 +52,16 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','stack 📥','settings ⚙️', 'wallet 👛','history 📜'], [0]
+                ['or','',0], ['e','e.stack-data','e.settings-data', 'e.account-data'], [0]
+            ],
+            'stack-data':[
+              ['xor','e',1], ['stack-data','stack 📥','history 📜'], [1],[1]
+            ],
+            'settings-data':[
+              ['xor','e',1], ['settings-data','settings ⚙️','wallet 👛'], [1],[1]
+            ],
+            'account-data':[
+              ['xor','e',1], ['account-data','alias 🏷️','contacts 👤'], [1],[1]
             ],
         };
         
@@ -148,6 +161,20 @@ class StackPage extends Component {
                     {this.render_wallet_settings_section()}
                 </div>
             ) 
+        }
+        else if(selected_item == 'contacts 👤'){
+            return(
+                <div>
+                    {this.render_contacts_section()}
+                </div>
+            )
+        }
+        else if(selected_item == 'alias 🏷️'){
+            return(
+                <div>
+                    {this.render_alias_stuff()}
+                </div>
+            )
         }
     }
 
@@ -320,9 +347,10 @@ class StackPage extends Component {
         this.props.show_hide_stack_item(item)
     }
 
+
     render_stack_gas_part(){
         return(
-            <div>
+            <div>  
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance), 'number':this.format_account_balance_figure(this.props.app_state.account_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
 
@@ -474,6 +502,9 @@ class StackPage extends Component {
             return 279695
         }
         else if(t.type == 'accept-job-request'){
+            return 279695
+        }
+        else if(t.type == 'alias' || t.type == 'unalias' || t.type == 're-alias'){
             return 279695
         }
 
@@ -1031,6 +1062,31 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(message_obj.int)
                 }
+                else if(txs[i].type == 'alias'){
+                    var alias_obj = await this.format_alias_object(txs[i])
+                    
+                    strs.push(alias_obj.str)
+                    adds.push([])
+                    ints.push(alias_obj.int)
+                }
+                else if(txs[i].type == 'unalias'){
+                    var alias_obj = await this.format_unalias_object(txs[i])
+                    
+                    strs.push(alias_obj.str)
+                    adds.push([])
+                    ints.push(alias_obj.int)
+                }
+                else if(txs[i].type == 're-alias'){
+                    var alias_obj = await this.format_realias_object(txs[i])
+                    
+                    strs.push(alias_obj.str)
+                    adds.push([])
+                    ints.push(alias_obj.int)
+
+                    strs.push(alias_obj.str)
+                    adds.push([])
+                    ints.push(alias_obj.int)
+                }
                 
             }
             
@@ -1115,6 +1171,25 @@ class StackPage extends Component {
             strs.push(string_obj)
             adds.push([])
             ints.push(obj)
+        }
+
+        if(this.props.app_state.should_update_contacts_onchain){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [1], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var contacts_clone = this.props.app_state.contacts.slice()
+            var data = {'contacts':contacts_clone, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data);
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
         }
 
 
@@ -2490,6 +2565,75 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
+    format_alias_object = async (t) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [11], [23],/* 11(alias_obj_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = this.props.app_state.user_account_id
+        var int_data = Date.now()
+
+        var string_data = await this.get_object_ipfs_index(t.alias);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_unalias_object = async (t) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [11], [23],/* 11(alias_obj_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = this.props.app_state.user_account_id
+        var int_data = Date.now()
+
+        var string_data = await this.get_object_ipfs_index(t.alias);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_realias_object = async (t) =>{
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [11], [23],/* 11(alias_obj_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var string_obj = [[]]
+
+        var context = this.props.app_state.user_account_id
+        var int_data = Date.now()
+
+        var string_data = await this.get_object_ipfs_index(t.alias);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
 
 
 
@@ -2669,7 +2813,7 @@ class StackPage extends Component {
         }
         else{
             this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item)
-            this.props.notify('wallet set!', 200)
+            this.props.notify('wallet set! synchronizing...', 200)
         }
         
     }
@@ -2769,7 +2913,294 @@ class StackPage extends Component {
 
 
 
+
+
+
+
+
+
+
+
+
+
+    render_contacts_section(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Add Contact', 'details':'You can add a contact manually using their Contact ID.', 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div className="row">
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Enter Account ID...'} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_cotact_to_list()} >
+                        {this.render_detail_item('5',{'text':'Add','action':''})}
+                    </div>
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_users_contacts()}
+            </div>
+        )
+    }
+
+    when_add_contacts_changed(text){
+        this.setState({typed_contact_word: text})
+    }
+
+    add_cotact_to_list(){
+        var typed_contact = this.state.typed_contact_word
+
+        if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
+            this.notify('That ID is not valid', 800)
+        }
+        else{
+            this.props.add_account_to_contacts(parseInt(typed_contact))
+            this.setState({typed_contact_word:''})
+        }
+    }
+
+    render_users_contacts(){
+        var items = this.props.app_state.contacts;
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeRight={{
+                                    content: <div></div>,
+                                    action: () => console.log()
+                                    }}
+                                    swipeLeft={{
+                                    content: <div>Delete</div>,
+                                    action: () =>this.props.remove_account_from_contacts(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
+                                            {this.render_detail_item('3', {'title':''+item['id'], 'details':''+item['address'], 'size':'s'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_message_clicked = (item) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            me.copy_id_to_clipboard(item['id'])
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.copy_address_to_clipboard(item['address'])
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
+    }
+
+
+    copy_address_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify('copied address to clipboard!', 600)
+    }
+
+    copy_id_to_clipboard(text){
+        navigator.clipboard.writeText(text)
+        this.props.notify('copied id to clipboard!', 600)
+    }
+
+
+
+
+
+
+
+
+
+
+    render_alias_stuff(){
+        return(
+            <div>
+                {/* {this.render_my_account_id()} */}
+                {/* {this.render_detail_item('0')} */}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':'Reserve Alias', 'details':'Reserve an alias for your account ID', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Enter New Alias Name...'} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias_list()} >
+                        {this.render_detail_item('5',{'text':'Reserve','action':''})}
+                    </div>
+                </div>
+
+                <div style={{height:10}}/>
+                {/* {this.render_detail_item('3', {'title':this.state.typed_alias_word, 'details':'Typed Alias', 'size':'l'})} */}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.typed_alias_word.length)})}
+
+                {this.render_detail_item('0')}
+                {this.render_my_account_id()}
+                
+                <div style={{height:10}}/>
+                {this.render_users_aliases()}
+            </div>
+        )
+    }
+
+    when_typed_alias_changed(text){
+        this.setState({typed_alias_word: text})
+    }
+
+    render_my_account_id(){
+        var display = this.props.app_state.user_account_id == 1 ? '0000' : this.props.app_state.user_account_id
+        var alias = (this.props.app_state.alias_bucket[this.props.app_state.user_account_id] == null ? 'Alias Unknown' : this.props.app_state.alias_bucket[this.props.app_state.user_account_id])
+        return(
+            <div>
+                {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':'Sans-serif'})}
+                    <div style={{'padding':'0px 0px 0px 5px'}}>
+                        {this.render_detail_item('10', {'text':'Alias: '+alias, 'textsize':'12px', 'font':'Sans-serif'})} 
+                    </div>
+                </div>
+            </div>
+            
+        )
+    }
+
+
+    reserve_alias_list(){
+        var typed_word = this.state.typed_alias_word.trim()
+        
+        if(typed_word == ''){
+            this.props.notify('type something!', 400)
+        }
+        else if(this.hasWhiteSpace(typed_word)){
+            this.props.notify('enter one word!', 400)
+        }
+        else if(typed_word.length > this.props.app_state.tag_size){
+            this.props.notify('That alias is too long', 400)
+        }
+        else if(typed_word.length < 3){
+            this.props.notify('That alias is too short', 400)
+        }
+        else if(this.props.app_state.user_account_id < 1000){
+            this.props.notify('you need to make at least 1 transaction to reserve an alias', 1200)
+        }
+        else if(this.props.app_state.alias_owners[typed_word] != null){
+            this.props.notify('That alias has already been reserved', 400)
+        }
+        else{
+            this.props.add_alias_transaction_to_stack(this.state.typed_alias_word)
+        }
+    }
+
+
+    render_users_aliases(){
+        var items = this.props.app_state.my_alias_events;
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.reverse().map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeRight={{
+                                    content: <div>Set Alias</div>,
+                                    action: () => this.reset_alias(item)
+                                    }}
+                                    swipeLeft={{
+                                    content: <div>Release</div>,
+                                    action: () =>this.unreserve_alias(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}} onClick={()=> console.log()}>
+                                            {this.render_detail_item('3', {'title':''+item['alias'], 'details':'Reserved '+this.get_time_difference(item['event'].returnValues.p6)+' ago', 'size':'s'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    unreserve_alias(item){
+        this.props.unreserve_alias_transaction_to_stack(item)
+    }
+
+    reset_alias(item){
+        this.props.reset_alias_transaction_to_stack(item)
+    }
+
+
+
     
+
+
+
+
 
 
 

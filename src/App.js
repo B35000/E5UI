@@ -26,11 +26,18 @@ import NewSubscriptionPage from './pages/create_action_pages/new_subscription_pa
 import NewContractPage from './pages/create_action_pages/new_contract_page'
 import NewPostPage from './pages/create_action_pages/new_post_page'
 import NewChannelPage from './pages/create_action_pages/new_channel_page'
-import NewStorefrontPage from './pages/create_action_pages/new_storefront_page'
+// import NewStorefrontPage from './pages/create_action_pages/new_storefront_page'
 import NewStorefrontItemPage from './pages/create_action_pages/new_storefront_item_page';
 import NewProposalPage from './pages/create_action_pages/new_proposal_page';
 import NewMailPage from './pages/create_action_pages/new_mail_page';
 import NewContractorPage from './pages/create_action_pages/new_contractor_page';
+
+import EditJobPage from './pages/edit_action_pages/edit_job_page'
+import EditTokenPage from './pages/edit_action_pages/edit_token_page'
+import EditPostPage from './pages/edit_action_pages/edit_post_page'
+import EditChannelPage from './pages/edit_action_pages/edit_channel_page'
+import EditStorefrontItemPage from './pages/edit_action_pages/edit_storefront_item_page';
+import EditContractorPage from './pages/edit_action_pages/edit_contractor_page';
 
 import EnterContractPage from './pages/contract_action_pages/enter_contract_page';
 import ExtendContractPage from './pages/contract_action_pages/extend_contract_page';
@@ -127,24 +134,24 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
-    new_object_target: '0',
+    new_object_target: '0', edit_object_target:'0',
     created_object_array:[],
     account_balance:0, stack_items:[],
     created_subscriptions:[], all_subscriptions:[], 
     created_contracts:[], all_contracts:[], 
     created_tokens:[], all_tokens:[],
     created_jobs:[], created_stores:[], created_bags:[], created_contractors:[],
-    mint_dump_actions:[{},],
+    mint_dump_actions:[{},], contacts:[], should_update_contacts_onchain: false,
 
     web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
-    sync_steps:32, qr_code_scanning_page:'clear_purchaase', tag_size:13,
+    sync_steps:33, qr_code_scanning_page:'clear_purchaase', tag_size:13,
 
-    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}
+    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp:{},
   };
 
 
@@ -195,6 +202,13 @@ class App extends Component {
     this.view_job_request_page = React.createRef();
     this.view_job_request_contract_page = React.createRef();
     this.withdraw_ether_page = React.createRef();
+
+    this.edit_job_page = React.createRef();
+    this.edit_token_page = React.createRef();
+    this.edit_post_page = React.createRef();
+    this.edit_channel_page = React.createRef();
+    this.edit_storefront_page = React.createRef()
+    this.edit_contractor_page = React.createRef();
   }
 
   componentDidMount() {
@@ -346,6 +360,13 @@ class App extends Component {
         {this.render_enter_contract_bottomsheet()}
         {this.render_view_job_request_contract_bottomsheet()}
         {this.render_withdraw_ether_bottomsheet()}
+
+        {this.render_edit_token_object_bottomsheet()}
+        {this.render_edit_channel_object_bottomsheet()}
+        {this.render_edit_contractor_object_bottomsheet()}
+        {this.render_edit_job_object_bottomsheet()}
+        {this.render_edit_post_object_bottomsheet()}
+        {this.render_edit_storefront_object_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -385,6 +406,8 @@ class App extends Component {
       add_mail_to_stack_object={this.add_mail_to_stack_object.bind(this)} add_channel_message_to_stack_object={this.add_channel_message_to_stack_object.bind(this)} get_objects_messages={this.get_objects_messages.bind(this)} add_post_reply_to_stack={this.add_post_reply_to_stack.bind(this)} get_job_objects_responses={this.get_job_objects_responses.bind(this)} show_view_application_contract_bottomsheet={this.show_view_application_contract_bottomsheet.bind(this)} add_job_message_to_stack_object={this.add_job_message_to_stack_object.bind(this)} add_proposal_message_to_stack_object={this.add_proposal_message_to_stack_object.bind(this)} open_add_to_bag={this.show_add_to_bag_bottomsheet.bind(this)} open_fulfil_bag_request={this.show_fulfil_bag_bottomsheet.bind(this)} show_view_bag_application_contract_bottomsheet={this.show_view_bag_application_contract_bottomsheet.bind(this)} show_direct_purchase_bottomsheet={this.show_direct_purchase_bottomsheet.bind(this)} open_send_job_request_ui={this.open_send_job_request_ui.bind(this)}
 
       get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} add_bag_message_to_stack_object={this.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.add_storefront_message_to_stack_object.bind(this)} get_contractor_applications={this.get_contractor_applications.bind(this)} open_view_job_request_ui={this.open_view_job_request_ui.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_withdraw_ether_bottomsheet={this.show_withdraw_ether_bottomsheet.bind(this)}
+
+      add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
       />
     )
   }
@@ -554,6 +577,11 @@ class App extends Component {
   };
 
 
+
+
+
+
+
   render_send_receive_ether_bottomsheet(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
@@ -576,14 +604,16 @@ class App extends Component {
   }
 
 
+
+
+
   render_stack_bottomsheet(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -629,9 +659,9 @@ class App extends Component {
     
     web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          me.setState({stack_items: []})
+          me.setState({stack_items: [], should_update_contacts_onchain: false})
           me.get_accounts_data(me.state.account)
-          this.prompt_top_notification('run complete!', 600)
+          this.prompt_top_notification('run complete! re-synchronizing...', 600)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
           this.prompt_top_notification('Run failed. Check your stack and try again', 1500)
@@ -685,15 +715,76 @@ class App extends Component {
   }
 
   show_hide_stack_item(item){
-        var clone_array = this.state.hidden.slice()
-        const index = clone_array.indexOf(item);
-        if (index > -1) { // only splice array when item is found
-            clone_array.splice(index, 1); // 2nd parameter means remove one item only
-        }else{
-            clone_array.push(item)
-        }
-        this.setState({hidden: clone_array})
+    var clone_array = this.state.hidden.slice()
+    const index = clone_array.indexOf(item);
+    if (index > -1) { // only splice array when item is found
+        clone_array.splice(index, 1); // 2nd parameter means remove one item only
+    }else{
+        clone_array.push(item)
     }
+    this.setState({hidden: clone_array})
+  }
+
+  remove_account_from_contacts(item){
+    var clone_array = this.state.contacts.slice()
+    const index = clone_array.indexOf(item);
+    if (index > -1) { // only splice array when item is found
+      clone_array.splice(index, 1); // 2nd parameter means remove one item only
+    }
+    this.setState({contacts: clone_array, should_update_contacts_onchain: true})
+    this.prompt_top_notification('Contact Deleted', 700)
+  }
+
+  add_alias_transaction_to_stack(id){
+    var stack_clone = this.state.stack_items.slice()
+    var existing_alias_transaction = false
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].type == 'alias'){
+        this.prompt_top_notification('You cant do that more than once.', 1000)
+        existing_alias_transaction = true
+        break;
+      }
+    }
+    if(!existing_alias_transaction){
+      stack_clone.push({id: makeid(8), type:'alias', entered_indexing_tags:['alias', 'reserve', 'identification'], alias:id})
+      this.prompt_top_notification('Transaction added to stack', 1000)
+      this.setState({stack_items: stack_clone})
+    }
+  }
+
+  unreserve_alias_transaction_to_stack(id){
+    var stack_clone = this.state.stack_items.slice()
+    var existing_alias_transaction = false
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].type == 'unalias'){
+        this.prompt_top_notification('You cant do that more than once.', 1000)
+        existing_alias_transaction = true
+        break;
+      }
+    }
+    if(!existing_alias_transaction){
+      stack_clone.push({id: makeid(8), type:'unalias', entered_indexing_tags:['unalias', 'unreserve', 'identification'], alias:id['alias']})
+      this.prompt_top_notification('Unreserve transaction added to stack', 1000)
+      this.setState({stack_items: stack_clone})
+    }
+  }
+
+  reset_alias_transaction_to_stack(id){
+    var stack_clone = this.state.stack_items.slice()
+    var existing_alias_transaction = false
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].type == 're-alias'){
+        this.prompt_top_notification('You cant do that more than once.', 1000)
+        existing_alias_transaction = true
+        break;
+      }
+    }
+    if(!existing_alias_transaction){
+      stack_clone.push({id: makeid(8), type:'re-alias', entered_indexing_tags:['re-alias', 'reserve', 'identification'], alias:id['alias']})
+      this.prompt_top_notification('Reset transaction added to stack', 1000)
+      this.setState({stack_items: stack_clone})
+    }
+  }
 
 
 
@@ -836,6 +927,262 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
+  }
+
+
+
+
+
+
+
+
+
+
+
+  render_edit_token_object_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_token_bottomsheet.bind(this)} open={this.state.edit_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+              <div>
+                <EditTokenPage ref={this.edit_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+              </div>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_edit_token_bottomsheet(){
+    if(this.state != null){
+      this.setState({edit_token_bottomsheet: !this.state.edit_token_bottomsheet});
+    }
+  }
+
+  open_edit_token_object(target, object){
+    this.open_edit_token_bottomsheet()
+    if(this.edit_token_page.current){
+      this.edit_token_page.current?.setState(object['ipfs'])
+    }
+  }
+
+
+
+
+
+
+
+
+  render_edit_channel_object_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_channel_bottomsheet.bind(this)} open={this.state.edit_channel_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+              <div>
+                <EditChannelPage ref={this.edit_channel_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+              </div>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_edit_channel_bottomsheet(){
+    if(this.state != null){
+      this.setState({edit_channel_bottomsheet: !this.state.edit_channel_bottomsheet});
+    }
+  }
+
+  open_edit_channel_object(target, object){
+    this.open_edit_channel_bottomsheet()
+    if(this.edit_channel_page.current){
+      this.edit_channel_page.current?.setState(object['ipfs'])
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_edit_contractor_object_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_contractor_bottomsheet.bind(this)} open={this.state.edit_contractor_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+              <div>
+                <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+              </div>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_edit_contractor_bottomsheet(){
+    if(this.state != null){
+      this.setState({edit_contractor_bottomsheet: !this.state.edit_contractor_bottomsheet});
+    }
+  }
+
+  open_edit_contractor_object(target, object){
+    this.open_edit_contractor_bottomsheet()
+    if(this.edit_contractor_page.current){
+      this.edit_contractor_page.current?.setState(object['ipfs'])
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+  render_edit_job_object_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_job_bottomsheet.bind(this)} open={this.state.edit_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+              <div>
+                <EditJobPage ref={this.edit_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+              </div>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_edit_job_bottomsheet(){
+    if(this.state != null){
+      this.setState({edit_job_bottomsheet: !this.state.edit_job_bottomsheet});
+    }
+  }
+
+  open_edit_job_object(target, object){
+    this.open_edit_job_bottomsheet()
+    if(this.edit_job_page.current){
+      this.edit_job_page.current?.setState(object['ipfs'])
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+  render_edit_post_object_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_post_bottomsheet.bind(this)} open={this.state.edit_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+              <div>
+                <EditPostPage ref={this.edit_post_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+              </div>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_edit_post_bottomsheet(){
+    if(this.state != null){
+      this.setState({edit_post_bottomsheet: !this.state.edit_post_bottomsheet});
+    }
+  }
+
+  open_edit_post_object(target, object){
+    this.open_edit_post_bottomsheet()
+    if(this.edit_post_page.current){
+      this.edit_post_page.current?.setState(object['ipfs'])
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+  render_edit_storefront_object_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_storefront_bottomsheet.bind(this)} open={this.state.edit_storefront_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+              <div>
+                <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+              </div>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_edit_storefront_bottomsheet(){
+    if(this.state != null){
+      this.setState({edit_storefront_bottomsheet: !this.state.edit_storefront_bottomsheet});
+    }
+  }
+
+  open_edit_storefront_object(target, object){
+    this.open_edit_storefront_bottomsheet()
+    if(this.edit_storefront_page.current){
+      this.edit_storefront_page.current?.setState(object['ipfs'])
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  open_edit_object(target, object){
+    if(target == '0'){
+      this.open_edit_job_object(target, object)
+    }
+    else if(target == '8'){
+      this.open_edit_token_object(target, object)
+    }
+    else if(target == '6'){
+      this.open_edit_post_object(target, object)
+    }
+    else if(target == '7'){
+      this.open_edit_channel_object(target, object)
+    }
+    else if(target == '4'){
+      this.open_edit_storefront_object(target, object)
+    }
+    else if(target == '9'){
+      this.open_edit_contractor_object(target, object)
+    }
   }
 
 
@@ -2722,8 +3069,6 @@ class App extends Component {
     this.open_withdraw_ether_bottomsheet()
   }
 
-
-
   withdraw_ether_to_address = async (target_recipient_address) =>{
     this.prompt_top_notification('withdrawing your ether...', 600)
 
@@ -3259,11 +3604,29 @@ class App extends Component {
       });
   }
 
+
+
+
+
+
+
+
+
+  //here
   get_accounts_data = async (address_account, is_syncing) => {
     const web3 = new Web3(this.state.web3);
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.state.e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+
+
+
+
+
+
+
+
 
     /* ---------------------------------------- CONTRACT ADDRESSES -------------------------------------- */
     var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
@@ -3276,6 +3639,9 @@ class App extends Component {
 
 
 
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = contract_addresses[1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     
 
@@ -3302,13 +3668,63 @@ class App extends Component {
     }
 
 
-    const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = contract_addresses[1];
-    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+    
 
 
 
+    /* ---------------------------------------- ALIAS DATA------------------------------------------- */
+    var alias_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: 11 } }, (error, events) => {});
 
+    var my_alias_events = []
+    var alias_bucket = {}
+    var alias_owners = {}
+    var alias_timestamp = {}
+    for(var i=0; i<alias_events.length; i++){
+      var alias_string = await this.fetch_objects_data_from_ipfs(alias_events[i].returnValues.p4)
+      var alias_sender = alias_events[i].returnValues.p2/* owner */
+      var context = alias_events[i].returnValues.p3
+
+      if(alias_owners[alias_string] == null){
+        console.log('setting alias: ',alias_string, ' for account: ',alias_sender)
+        alias_owners[alias_string] = alias_sender
+        alias_bucket[alias_sender] = alias_string 
+        // alias_timestamp[alias_string] = alias_events[i].returnValues.p6
+
+        if(alias_sender == account){
+          //my alias
+          my_alias_events.push({'alias':alias_string, 'event':alias_events[i]})
+        }
+      }
+      else if(alias_owners[alias_string] == alias_sender){
+        //ownership was revoked
+        console.log('revoking alias: ',alias_string, ' for account: ',alias_sender)
+        alias_owners[alias_string] = null
+
+        var pos = -1
+        for(var k=0; k<my_alias_events.length; k++){
+          if(my_alias_events[k]['alias'] == alias_string){
+            pos = k
+            break
+          }
+        }
+        if(pos != -1){
+          my_alias_events.splice(pos, 1)
+        }
+      }
+      
+    }
+
+    console.log('alias bucket:')
+    console.log(alias_bucket)
+    console.log(alias_owners)
+    console.log(my_alias_events)
+
+    this.setState({alias_bucket: alias_bucket, alias_owners: alias_owners, my_alias_events: my_alias_events, alias_timestamp: alias_timestamp})
+
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
 
 
 
@@ -3333,6 +3749,20 @@ class App extends Component {
     var E5_balance = await contractInstance.methods.f147(1).call((error, result) => {});
     this.setState({E5_balance: E5_balance})
     console.log('E5 balance: ',E5_balance)
+
+
+    var contacts_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:1 } }, (error, events) => {});
+
+    if(contacts_data.length > 0){
+      var latest_event = contacts_data[contacts_data.length - 1];
+      var contacts_data = await this.fetch_objects_data_from_ipfs(latest_event.returnValues.p4) 
+      var contacts = contacts_data['contacts']
+      console.log('contacts ----------------------------------------------')
+      console.log(contacts)
+      this.setState({contacts: contacts})
+    }else{
+      this.setState({contacts: []})
+    }
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -4032,6 +4462,7 @@ class App extends Component {
       this.inc_synch_progress()
     }
 
+
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
@@ -4450,7 +4881,6 @@ class App extends Component {
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var modify_id = parseInt(modify_target)
-    console.log(modify_id)
     var modify_id_type = await E52contractInstance.methods.f135(modify_id).call((error, result) => {});
 
     if(modify_id_type == 31/* 31(token_exchange) */){
@@ -4477,6 +4907,37 @@ class App extends Component {
       var contract_data = await G5contractInstance.methods.f77(modify_id, false).call((error, result) => {});
       return {'data': contract_data, 'type':modify_id_type};
     }
+  }
+
+
+  add_account_to_contacts = async (account) => {
+    if(this.check_for_duplicates(account)){
+      this.prompt_top_notification('A matching contact was found', 600)
+      return
+    }
+    this.prompt_top_notification('Adding account ID to Contacts...', 600)
+    const web3 = new Web3(this.state.web3);
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.state.e5_address
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+    var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
+    var contacts_clone = this.state.contacts.slice()
+    contacts_clone.push({'id':account, 'address':account_address})
+
+    this.setState({contacts: contacts_clone, should_update_contacts_onchain: true})
+
+  }
+
+
+  check_for_duplicates(account){
+    var do_duplicates_exist = false
+    this.state.contacts.forEach(contact => {
+      if(contact['id'] == account){
+        do_duplicates_exist = true
+      }
+    });
+    return do_duplicates_exist
   }
 
 

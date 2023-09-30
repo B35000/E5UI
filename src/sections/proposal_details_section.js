@@ -867,7 +867,7 @@ class ProposalDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])} >{this.get_sender_title_text(item)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
@@ -884,7 +884,7 @@ class ProposalDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])} >{this.get_sender_title_text(item)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>

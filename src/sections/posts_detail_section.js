@@ -132,6 +132,8 @@ class PostsDetailsSection extends Component {
                     </div>
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+
+                    {this.render_edit_object_button()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -193,6 +195,32 @@ class PostsDetailsSection extends Component {
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
+    }
+
+
+    render_edit_object_button(){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        var my_account = this.props.app_state.user_account_id
+
+        if(object['event'].returnValues.p5 == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Edit Indexed Post', 'details':'Change the basic details for your Indexed Post', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_basic_edit_object_ui()}>
+                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    open_basic_edit_object_ui(){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        this.props.open_edit_object('0', object)
     }
 
 
@@ -476,7 +504,7 @@ class PostsDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])} >{this.get_sender_title_text(item)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
@@ -493,7 +521,7 @@ class PostsDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])} >{this.get_sender_title_text(item)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>

@@ -1012,17 +1012,30 @@ class NewSubscriptionPage extends Component {
         )
     }
 
-    get_suggested_tokens(){
+   get_suggested_tokens(){
         var items = [
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        // var stack_items = this.props.app_state.stack_items;
-        // for(var i=0; i<stack_items.length; i++){
-        //     if(stack_items[i].type == 'token'){
-        //         items.push({'id':'-'+i, 'label':{'title':'TOKEN', 'details':'Stack Account '+i, 'size':'s'}})
-        //     }
-        // }
+        var exchanges_from_sync = this.props.app_state.created_tokens
+        var sorted_token_exchange_data = []
+        var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+        }
 
         return items;
     }
@@ -1035,7 +1048,7 @@ class NewSubscriptionPage extends Component {
 
 
     load_account_suggestions(target_type){
-        var items = this.get_suggested_accounts()
+        var items = this.get_suggested_accounts(target_type)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -1046,17 +1059,55 @@ class NewSubscriptionPage extends Component {
                               {this.render_detail_item('3', item['label'])}
                           </li>
                       ))}
-                  </ul>
-                </div>
+                    </ul>
+            </div>
         )
     }
 
-    get_suggested_accounts(){
+    get_suggested_accounts(target_type){
         return[
             {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-            {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-            {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
-        ]
+        ].concat(this.get_account_suggestions(target_type))
+    }
+
+    get_account_suggestions(target_type){
+        var contacts = this.props.app_state.contacts
+        var return_array = []
+
+        if(target_type == 'authority_id'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.authority_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'subscription_beneficiary'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.subscription_beneficiary)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'moderator_id'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.moderator_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'interactible_id'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.interactible_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        return (this.props.app_state.alias_bucket[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.props.app_state.alias_bucket[contact['id']])
     }
 
     when_suggestion_clicked(item, pos, target_type){

@@ -13,7 +13,7 @@ class tags extends Component {
 
     /* returns an emoji used in displaying the tag item */
     tag_item_emoji_modifier(item){
-      var items = {'sort':'🧮', 'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'info':'🌐', 'metadata':'📄', 'engagement':'💍', 'signatures':'‚✍', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕','my':'🙋','add-new-text':'📝','create-new-job':'🎑','add-new-tag':'🔖','set-tags':'📌', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷'}
+      var items = {'sort':'🧮', 'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'info':'🌐', 'metadata':'📄', 'engagement':'💍', 'signatures':'‚✍', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕','my':'🙋','add-new-text':'📝','create-new-job':'🎑','add-new-tag':'🔖','set-tags':'📌', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷', 'stack-data':'🧱', 'settings-data':'🛠️', 'account-data':'🔐'}
       
       if(items[item] != null) return items[item];
       else return null;
@@ -50,7 +50,7 @@ class tags extends Component {
         }//
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': '8px', height:'40px'}}>
-                    <ul ref={this.myRef} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden'}}>
+                    <ul ref={this.myRef} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
                       {active_tags.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
                               {this.render_tag_button(index,selected,item,tag_size)}

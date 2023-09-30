@@ -46,7 +46,7 @@ function makeid(length) {
 class NewTokenPage extends Component {
     
     state = {
-        id: makeid(8), type:'token',
+        id: makeid(8), type:'edit-token',
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:null,
 
@@ -76,7 +76,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','basic', 'custom', 'token-authorities', 'token-prices'], [0]
+                ['or','',0], ['e'], [0]
             ],
             'custom':[
               ['xor','e',1], ['custom','basic-configuration', 'secondary-configuration'], [1],

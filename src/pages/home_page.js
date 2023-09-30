@@ -13,6 +13,8 @@ import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
 
 import SwipeableBottomSheet from 'react-swipeable-bottom-sheet';
+import Dialog from "@mui/material/Dialog";
+import ViewGroups from './../components/view_groups'
 
 import Tags from './../components/tags';
 import PostDetailSection from '../sections/detail_section';
@@ -45,7 +47,7 @@ class home_page extends Component {
         selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null, selected_mail_item: null, selected_storefront_item: null, selected_bag_item: null,
         view_post_bottomsheet: false, selected_contractor_item:null,
 
-        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[]
+        viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], confirmation_dialog_box: false, contact_to_add:0
     };
 
 
@@ -166,7 +168,7 @@ class home_page extends Component {
                     </div>
 
                     {this.render_view_object_bottomsheet()}
-                    
+                    {this.render_dialog_ui()}
                 </div>
             );
         }
@@ -259,7 +261,7 @@ class home_page extends Component {
         }
         else if(size == 's'){
           return(
-            <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:'100%'}}>
+            <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:'103%'}}>
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
                       {this.render_navbar_button('s','0px 0px 0px 0px', JobIconImg, 'auto', '38px','5px 0px 0px 0px','????','Work Contracts')}
                   </div>
@@ -391,7 +393,10 @@ class home_page extends Component {
         return data[selected_item];
       }
       else{
-        return '8'
+        var selected_item = this.get_selected_item(this.state.wallet_page_tags_object, this.state.wallet_page_tags_object['i'].active)
+        var data = {'ends ☝️':'8','spends 🫰':'8'};
+        if(data[selected_item] == null) return ''
+        return data[selected_item];
       }
     }
 
@@ -612,7 +617,7 @@ class home_page extends Component {
         }
         sorted_token_exchange_data.reverse()
         for (let i = 0; i < token_exchanges.length; i++) {
-            if(!sorted_token_exchange_data.includes(token_exchanges[i]) && token_exchanges['balance'] != 0){
+            if(!sorted_token_exchange_data.includes(token_exchanges[i]) && token_exchanges[i]['balance'] != 0){
                 sorted_token_exchange_data.push(token_exchanges[i])
             }
         }
@@ -1096,6 +1101,8 @@ class home_page extends Component {
 
                 get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)}
                 get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)}
+
+                add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)}
                 />
             </div>
         )
@@ -1205,6 +1212,74 @@ class home_page extends Component {
     open_direct_purchase(item){
         this.props.show_direct_purchase_bottomsheet(item)
     }
+
+
+
+
+
+    add_id_to_contacts(account_id){
+        if(account_id != this.props.app_state.user_account_id){
+            this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
+        }
+    }
+
+    render_dialog_ui(){
+        return(
+            <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                    <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
+                    {this.render_detail_item('3', {'title':'Add To Contacts Confirmation', 'details':'Confirm that you want to add the account '+this.state.contact_to_add+' to your contacts', 'size':'s'})}
+
+                    <div style={{height: 10}}/>
+                    <div onClick={() => this.when_add_to_contacts_confirmation_received()}>
+                        {this.render_detail_item('5', {'text':'Add to Contacts', 'action':''})}
+                    </div>
+                </div>
+                
+            </Dialog>
+        )
+    }
+
+    cancel_dialog_box(){
+        this.setState({confirmation_dialog_box: false})
+    }
+
+    when_add_to_contacts_confirmation_received(){
+        this.setState({confirmation_dialog_box: false})
+        this.props.add_account_to_contacts(this.state.contact_to_add)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* renders the specific element in the post or detail object */
+    render_detail_item(item_id, object_data){
+        return(
+            <div>
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} />
+            </div>
+        )
+
+    }
+
 
 }
 

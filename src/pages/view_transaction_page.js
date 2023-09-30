@@ -132,7 +132,7 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application' && item.type != 'storefront-bag' && item.type != 'bag-response' && item.type != 'accept-bag-application' && item.type != 'clear-purchase' && item.type != 'job-request-messages'){
+        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application' && item.type != 'storefront-bag' && item.type != 'bag-response' && item.type != 'accept-bag-application' && item.type != 'clear-purchase' && item.type != 'job-request-messages' && item.type != 'alias' && item.type != 'unalias' && item.type != 're-alias'){
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':'Make some changes to the transaction', 'title':'Edit'})}
@@ -174,6 +174,7 @@ class ViewTransactionPage extends Component {
     }
 
     open_delete_action(){
+        this.cancel_dialog_box()
         this.props.delete_transaction(this.props.app_state.stack_items[this.state.transaction_index])
         this.props.notify('item deleted from stack',600)
     }
@@ -293,6 +294,9 @@ class ViewTransactionPage extends Component {
             return 279695
         }
         else if(t.type == 'accept-job-request'){
+            return 279695
+        }
+        else if(t.type == 'alias' || t.type == 'unalias' || t.type == 're-alias'){
             return 279695
         }
 
@@ -616,6 +620,27 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_mail_message_data('Job Request Messages')}
+                    </div>
+                )
+            }
+            else if(tx.type == 'alias'){
+                return(
+                    <div>
+                        {this.render_alias_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'unalias'){
+                return(
+                    <div>
+                        {this.render_unalias_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == 're-alias'){
+                return(
+                    <div>
+                        {this.render_realias_data()}
                     </div>
                 )
             }
@@ -3981,7 +4006,6 @@ class ViewTransactionPage extends Component {
         )
     }
 
-
     render_job_request_set_prices_list_part(item){
         var middle = this.props.height-300;
         var size = this.props.size;
@@ -4023,6 +4047,57 @@ class ViewTransactionPage extends Component {
             )
         }
         
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    render_alias_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':transaction_item.alias, 'details':'New Alias.', 'size':'l'})}
+                <div style={{height:10}}/>
+                
+            </div>
+        )
+    }
+
+
+    render_unalias_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':transaction_item.alias, 'details':'Unreserve Alias.', 'size':'l'})}
+                <div style={{height:10}}/>
+                
+            </div>
+        )
+    }
+
+
+    render_realias_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':transaction_item.alias, 'details':'Reset Alias.', 'size':'l'})}
+                <div style={{height:10}}/>
+                
+            </div>
+        )
     }
 
 

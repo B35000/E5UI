@@ -137,6 +137,9 @@ class ContractorDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
 
+                    {this.render_edit_object_button()}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('3', {'title':'Send Job Request', 'details':'Send a job request to the contractor to do a job for you', 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_job_request_ui()}>
@@ -210,6 +213,35 @@ class ContractorDetailsSection extends Component {
         var object = this.get_contractor_items()[this.props.selected_contractor_item];
         this.props.open_send_job_request_ui(object)
     }
+
+
+    render_edit_object_button(){
+        var object = this.get_contractor_items()[this.props.selected_contractor_item];
+        var my_account = this.props.app_state.user_account_id
+
+        if(object['event'].returnValues.p5 == my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Edit Contractor Post', 'details':'Change the basic details for your Contractor Post', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_edit_contractor_ui()}>
+                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    open_edit_contractor_ui(){
+        var object = this.get_contractor_items()[this.props.selected_contractor_item];
+        this.props.open_edit_object('9', object)
+    }
+
+
+
 
 
 
