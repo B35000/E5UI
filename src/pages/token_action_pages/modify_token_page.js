@@ -388,7 +388,7 @@ class ModifyTokenPage extends Component {
         }
         else if(ui == 'id'){
             var number = this.state.reconfig_target_id.trim()
-            if(isNaN(number) || number == ''){
+            if(isNaN(number) || parseInt(number) < 0 || number == ''){
                 this.props.notify('please put a valid account id', 600)
             }
             else{

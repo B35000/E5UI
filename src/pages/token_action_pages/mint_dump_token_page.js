@@ -290,7 +290,7 @@ class NewMintActionPage extends Component {
         var stack_action = 1
         if(action == 'mint-buy') stack_action = 0
 
-        if(isNaN(recipient) || recipient == ''){
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else if(amount == 0){
@@ -542,7 +542,7 @@ class NewMintActionPage extends Component {
         }
         var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
 
-        if(isNaN(recipient) || recipient == ''){
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else if(amount == 0){

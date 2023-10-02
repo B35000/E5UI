@@ -55,8 +55,11 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images', 'authorities'], [0]
+                ['or','',0], ['e','text', 'images', 'e.authorities'], [0]
             ],
+            'authorities':[
+              ['xor','e',1], ['authorities','moderators', 'interactible'], [1],[1]
+          ],
         };
     }
 
@@ -157,7 +160,7 @@ class NewChannelPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'authorities'){
+        else if(selected_item == 'moderators' || selected_item == 'interactible'){
             return(
                 <div>
                     {this.render_authorities_part()}
@@ -249,6 +252,9 @@ class NewChannelPage extends Component {
         }
         else if(typed_word.length > this.props.app_state.tag_size){
             this.props.notify('That tag is too long', 400)
+        }
+        else if(typed_word.length < 3){
+            this.props.notify('That tag is too short', 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
@@ -624,7 +630,7 @@ class NewChannelPage extends Component {
     render_moderator_interactible_ui(){
         return(
             <div>
-                <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/>
+                {/* <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/> */}
 
                 {this.render_moderator_or_interactible_setting()}
             </div>
@@ -636,9 +642,9 @@ class NewChannelPage extends Component {
     }
 
     render_moderator_or_interactible_setting(){
-        var selected_item = this.get_selected_item(this.state.new_token_interactible_moderator_tags_object, this.state.new_token_interactible_moderator_tags_object['i'].active)
+        var selected_item = this.get_selected_item(this.state.get_new_job_page_tags_object, this.state.get_new_job_page_tags_object['i'].active)
 
-        if(selected_item == 'moderators' || selected_item == 'e'){
+        if(selected_item == 'moderators'){
             return(
                 <div>
                     {this.render_moderator_settings()}
@@ -680,7 +686,7 @@ class NewChannelPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id)){
+        if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -781,7 +787,7 @@ class NewChannelPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id)){
+        if(isNaN(interactible_id) || parseInt(interactible_id) < 0){
             this.props.notify('please put a valid account id', 600)
         }
         else{

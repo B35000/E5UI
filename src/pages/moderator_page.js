@@ -202,7 +202,7 @@ class ModeratorPage extends Component {
         var clone = this.state.all_actions.slice()
         var recipient = this.state.entered_moderator_text.trim()
 
-        if(isNaN(recipient) || recipient == ''){
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }else{
             var action = 'Add moderator'
@@ -294,7 +294,7 @@ class ModeratorPage extends Component {
         var clone = this.state.all_actions.slice()
         var recipient = this.state.entered_interactable_text.trim()
 
-        if(isNaN(recipient) || recipient == ''){
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }else{
             var tx = {'account':recipient, 'time':this.state.interactable_expiry_time, entered_indexing_tags:['access', 'rights','action'], type:'access-rights', id:makeid(8), 'object':this.state.object_item}
@@ -350,7 +350,7 @@ class ModeratorPage extends Component {
         var clone = this.state.all_actions.slice()
         var recipient = this.state.entered_blocked_text.trim()
 
-        if(isNaN(recipient) || recipient == ''){
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }else{
             var tx = {'account':recipient, 'time':this.state.blocked_expiry_time, entered_indexing_tags:['blocked', 'accounts','action'], type:'blocked-access', id:makeid(8), 'object':this.state.object_item}

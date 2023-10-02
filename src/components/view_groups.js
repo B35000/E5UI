@@ -161,7 +161,7 @@ class ViewGroups extends Component {
 
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
                         <div>
-                            <img src={img} style={{height:50 ,width:'auto', 'border-radius': '50%'}} />
+                            <img src={img} style={{height:50 ,width:50, 'border-radius': '50%'}} />
                         </div>
                         <div style={{'margin':'0px 0px 0px 10px'}}>
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
@@ -293,7 +293,7 @@ class ViewGroups extends Component {
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
             return(
                 <div style={{height:230, width:'90%','display': 'flex', 'align-items':'center','justify-content':'center','padding':'0px 0px 0px 50px'}}>
-                    <img src={img} style={{height:'70%' ,width:'auto'}} />
+                    <img src={img} style={{height:'180px' ,width:'180px'}} />
 
                     <div style={{'margin':'0px 0px 0px 20px'}}> 
                         <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{header}</p>

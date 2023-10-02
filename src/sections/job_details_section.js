@@ -25,6 +25,22 @@ class JobDetailsSection extends Component {
         selected: 0, navigate_view_jobs_list_detail_tags_object: this.get_navigate_view_jobs_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}
     };
 
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.props.selected_job_post_item != null){
+            var object = this.get_job_items()[this.props.selected_job_post_item];
+            this.props.get_job_objects_responses(object['id'])
+            this.props.get_objects_messages(object['id'])
+        }
+    }
+
     get_navigate_view_jobs_list_detail_tags(){
         return{
           'i':{
@@ -802,7 +818,8 @@ class JobDetailsSection extends Component {
         if(item['sender'] == this.props.app_state.user_account_id){
             return 'You'
         }else{
-            return item['sender']
+            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            return alias
         }
     }
 

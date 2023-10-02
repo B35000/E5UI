@@ -299,6 +299,9 @@ class ViewTransactionPage extends Component {
         else if(t.type == 'alias' || t.type == 'unalias' || t.type == 're-alias'){
             return 279695
         }
+        else if(t.type == 'edit-channel' || t.type == 'edit-contractor' || t.type == 'edit-job' || t.type == 'edit-post' || t.type == 'edit-storefront' || t.type == 'edit-token'){
+            return 276073
+        }
 
     }
 
@@ -580,8 +583,7 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
-
-             else if(tx.type == 'bag-messages'){
+            else if(tx.type == 'bag-messages'){
                 return(
                     <div>
                         {this.render_mail_message_data('Bag Messages')}
@@ -644,6 +646,56 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == 'edit-channel'){
+                return(
+                    <div>
+                        {this.render_edit_channel()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'edit-contractor'){
+                return(
+                    <div>
+                        {this.render_edit_contractor()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'edit-job'){
+                return(
+                    <div>
+                        {this.render_edit_job()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'edit-post'){
+                return(
+                    <div>
+                        {this.render_edit_post()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'edit-storefront'){
+                return(
+                    <div>
+                        {this.render_edit_storefront()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'edit-token'){
+                return(
+                    <div>
+                        {this.render_edit_token()}
+                    </div>
+                )
+            }
+            else if(tx.type == 'award'){
+                return(
+                    <div>
+                        {this.render_award_data()}
+                    </div>
+                )
+            }
+
         }
     }
 
@@ -1481,7 +1533,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_data(items)}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts they are offering for the job.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts you are offering for the job.', 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_price_amounts()}
 
@@ -4070,7 +4122,6 @@ class ViewTransactionPage extends Component {
         )
     }
 
-
     render_unalias_data(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         return(
@@ -4084,7 +4135,6 @@ class ViewTransactionPage extends Component {
             </div>
         )
     }
-
 
     render_realias_data(){
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
@@ -4100,6 +4150,253 @@ class ViewTransactionPage extends Component {
         )
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+    render_edit_channel(){
+        var background_color = this.props.theme['card_background_color']
+        var object = this.format_channel_post();
+        var item = this.get_channel_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+
+                    {this.render_item_data(items)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_edit_contractor(){
+        var background_color = this.props.theme['card_background_color']
+        var object = this.format_contractor_post();
+        var item = this.get_contractor_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    {this.render_detail_item('0')}
+                    {this.render_item_data(items)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_edit_job(){
+        var background_color = this.props.theme['card_background_color']
+        var object = this.format_job_post();
+        var item = this.get_job_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    {this.render_detail_item('0')}
+                    {this.render_item_data(items)}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts you are offering for the job.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_price_amounts()}
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_edit_post(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_post_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    {this.render_detail_item('0')}
+                    {this.render_item_data(items)}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+    render_edit_storefront(){
+        var background_color = this.props.theme['card_background_color']
+        var object = this.format_storefront_post();
+        var item = this.get_storefront_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{padding:'0px 0px 10px 0px'}}>
+                <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                    <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', item['id'])}
+
+                        {this.render_detail_item('0')}
+                        {this.render_item_data(items)}
+
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('0')}
+                    </div>
+                </div>
+
+                {this.render_detail_item('3', {'title':'Item Variants', 'details':'The items variant details are shown below', 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_set_storefront_variant_list_part()}
+                {this.render_detail_item('0')}
+            </div>
+            
+        )
+    }
+
+    render_edit_token(){
+        var background_color = this.props.theme['card_background_color']
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];     
+        var item = this.get_spend_data();
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    
+                    {this.render_detail_item('7', item['banner-icon'])}
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['unlocked_supply'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['unlocked_liquidity'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['fully_custom'])}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', item['token_type'])}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+
+
+
+
+
+
+
+    render_award_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var award_amount = transaction_item.award_amount
+        var multiplier = transaction_item.multiplier
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', transaction_item.selected_tier_object['label'])}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'x'+multiplier, 'details':'Multiplier', 'size':'l'})}
+                <div style={{height: 10}}/>
+
+
+                {this.render_detail_item('3', {'title':'message:', 'details':''+transaction_item.entered_message_text, 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', {'style':'l', 'title':'Total amount of SPEND', 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'spend', })}
+                </div>
+                <div style={{height: 10}}/>
+                
+                {this.render_detail_item('3', {'title':'Custom Amounts', 'details':'Your included custom amounts for the award action', 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_set_prices_list_part()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+    render_set_prices_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.price_data
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '1px 1px 1px 1px'}} onClick={()=>this.when_amount_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
 
 
 

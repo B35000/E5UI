@@ -974,6 +974,7 @@ class home_page extends Component {
         }
 
         this.props.get_objects_messages(id)
+        this.props.get_post_award_data(id)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -1102,7 +1103,9 @@ class home_page extends Component {
                 get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)}
                 get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)}
 
-                add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)}
+                add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.open_give_awards.bind(this)}
+
+                get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)}
                 />
             </div>
         )
@@ -1211,6 +1214,10 @@ class home_page extends Component {
 
     open_direct_purchase(item){
         this.props.show_direct_purchase_bottomsheet(item)
+    }
+
+    open_give_awards(item){
+        this.props.show_give_award_bottomsheet(item)
     }
 
 

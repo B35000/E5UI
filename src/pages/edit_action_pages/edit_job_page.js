@@ -629,7 +629,7 @@ class NewJobPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -866,9 +866,9 @@ class NewJobPage extends Component {
         else if(title == ''){
             this.props.notify('add a title for your post', 700)
         }else{
-            this.props.when_add_new_object_to_stack(this.state)
+            this.props.when_add_edit_object_to_stack(this.state)
 
-            this.setState({ id: makeid(32), type:'job', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[] })
+            // this.setState({ id: makeid(32), type:'job', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[] })
             this.props.notify('transaction added to stack', 700);
         }
     }

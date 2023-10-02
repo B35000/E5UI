@@ -523,7 +523,8 @@ class MailDetailsSection extends Component {
         if(item['sender'] == this.props.app_state.user_account_id){
             return 'You'
         }else{
-            return item['sender']
+            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            return alias
         }
     }
 

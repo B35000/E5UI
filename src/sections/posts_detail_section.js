@@ -26,13 +26,29 @@ class PostsDetailsSection extends Component {
         selected: 0, navigate_view_post_list_detail_tags_object: this.get_navigate_view_post_list_detail_tags_object_tags(), focused_message:{'tree':{}}
     };
 
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.props.selected_post_item != null){
+            var object = this.get_post_items()[this.props.selected_post_item];
+            this.props.get_objects_messages(object['id'])
+            this.props.get_post_award_data(object['id'])
+        }
+    }
+
     get_navigate_view_post_list_detail_tags_object_tags(){
         return{
           'i':{
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','metadata','responses'],[1]
+              ['xor','',0], ['e','metadata','awards','responses'],[1]
           ],
         }
     }
@@ -102,8 +118,14 @@ class PostsDetailsSection extends Component {
                 <div>
                     {this.render_post_responses()}
                 </div>
+            )  
+        }
+        else if(selected_item == 'awards'){
+            return(
+                <div>
+                    {this.render_post_awards()}
+                </div>
             )
-            
         }
     }
 
@@ -134,6 +156,8 @@ class PostsDetailsSection extends Component {
                     {this.render_item_data(items)}
 
                     {this.render_edit_object_button()}
+
+                    {this.render_award_button()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -220,7 +244,115 @@ class PostsDetailsSection extends Component {
 
     open_basic_edit_object_ui(){
         var object = this.get_post_items()[this.props.selected_post_item];
-        this.props.open_edit_object('0', object)
+        this.props.open_edit_object('6', object)
+    }
+
+    render_award_button(){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        var my_account = this.props.app_state.user_account_id
+
+        if(object['event'].returnValues.p5 != my_account){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Give Award', 'details':`Send a tip to the post's author`, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_award_ui()}>
+                        {this.render_detail_item('5', {'text':'Send Award', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    open_award_ui(){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        this.props.open_award_ui(object)
+    }
+
+
+
+
+
+
+
+    render_post_awards(){
+        var he = this.props.height-47
+        var size = this.props.screensize
+
+        return(
+            <div>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        {this.render_award_top_title()}
+                        <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
+                        {this.render_award_items()}
+                    </div>
+                </div>
+            </div> 
+        )
+    }
+
+    render_award_top_title(){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        return(
+            <div style={{padding:'5px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Awards.', 'size':'l'})} 
+            </div>
+        )
+    }
+
+
+    render_award_items(){
+        var middle = this.props.height-200;
+        var items = this.get_post_awards()
+
+        if(items.length == 0){
+            items = [0,1]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <div>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div>
+                                        {this.render_detail_item('3', {'title':item['selected_tier_object']['label']['title']+' x'+item['multiplier'], 'details':item['entered_message'], 'size':'l'})}
+                                        <div style={{height: 1}}/>
+                                    </div>
+                                </li>
+                            ))}    
+                        </div>
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    get_post_awards(){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        if(this.props.app_state.award_data[object['id']] == null) return []
+        return this.props.app_state.award_data[object['id']]
     }
 
 
@@ -277,10 +409,6 @@ class PostsDetailsSection extends Component {
 
     render_sent_received_messages(){
         var middle = this.props.height-200;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = this.get_convo_messages()
         var stacked_items = this.get_stacked_items()
 
@@ -541,7 +669,8 @@ class PostsDetailsSection extends Component {
         if(item['sender'] == this.props.app_state.user_account_id){
             return 'You'
         }else{
-            return item['sender']
+            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            return alias
         }
     }
 
@@ -554,7 +683,6 @@ class PostsDetailsSection extends Component {
 
     get_convo_messages(){
         var object = this.get_post_items()[this.props.selected_post_item];
-        // return object['messages']
         return this.props.app_state.object_messages[object['id']]
     }
 

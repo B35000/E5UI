@@ -364,6 +364,9 @@ class NewTokenPage extends Component {
         else if(typed_word.length > this.props.app_state.tag_size){
             this.props.notify('That tag is too long', 400)
         }
+        else if(typed_word.length < 3){
+            this.props.notify('That tag is too short', 400)
+        }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
         }
@@ -1324,7 +1327,7 @@ class NewTokenPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id) || moderator_id == ''){
+        if(isNaN(moderator_id) || parseInt(moderator_id) < 0 || moderator_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -1427,7 +1430,7 @@ class NewTokenPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id) || interactible_id == ''){
+        if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -1604,7 +1607,7 @@ class NewTokenPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -1804,6 +1807,9 @@ class NewTokenPage extends Component {
         }
         else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND'){
             this.props.notify('that symbol is invalid', 700)
+        }
+        else if(this.props.app_state.token_directory[symbol] != null){
+            this.props.notify('that symbol is already in use', 700)
         }
         else if(symbol.length > 6){
             this.props.notify('that symbol is too long', 700)

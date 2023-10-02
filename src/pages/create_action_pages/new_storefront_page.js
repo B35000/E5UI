@@ -327,6 +327,9 @@ class NewStorefrontPage extends Component {
         else if(typed_word.length > this.props.app_state.tag_size){
             this.props.notify('That tag is too long', 400)
         }
+        else if(typed_word.length < 3){
+            this.props.notify('That tag is too short', 400)
+        }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
         }

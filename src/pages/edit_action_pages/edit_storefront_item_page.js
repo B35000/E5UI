@@ -293,7 +293,7 @@ class NewStorefrontItemPage extends Component {
     when_add_shipping_price_set(){
         var exchange_id = this.state.shipping_exchange_id.trim()
         var amount = this.state.shipping_price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -363,7 +363,7 @@ class NewStorefrontItemPage extends Component {
 
     when_add_shipping_account_set(){
         var account = this.state.fulfilment_account
-        if(isNaN(account) || account == '' || parseInt(account) < 1000){
+        if(isNaN(account) || parseInt(account) < 0 || account == '' || parseInt(account) < 1000){
             this.props.notify('please put a valid account id', 600)
         }else{
             var clone = this.state.fulfilment_accounts.slice()
@@ -903,7 +903,7 @@ class NewStorefrontItemPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -1416,7 +1416,7 @@ class NewStorefrontItemPage extends Component {
         else if(variants.length == 0){
             this.props.notify('you should set some variants for your item', 700)
         }
-        else if(isNaN(target_receiver) || target_receiver==''){
+        else if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver==''){
             this.props.notify('set a valid receiver target', 700)
         }
         else if(fulfilment_location==''){
@@ -1428,17 +1428,17 @@ class NewStorefrontItemPage extends Component {
         else{
             
             var data = this.state;
-            this.props.when_add_new_object_to_stack(data)
+            this.props.when_add_edit_object_to_stack(data)
 
-            this.setState({
-                id: makeid(8), type:'storefront-item',
-                get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
-                get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
-                entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
-                entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-                entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-                purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:''
-            })
+            // this.setState({
+            //     id: makeid(8), type:'storefront-item',
+            //     get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
+            //     get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
+            //     entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
+            //     entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
+            //     entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
+            //     purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:''
+            // })
             this.props.notify('Transaction added to Stack', 600)
 
         }

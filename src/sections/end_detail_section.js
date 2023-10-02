@@ -481,7 +481,7 @@ class EndDetailSection extends Component {
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var my_account = this.props.app_state.user_account_id
 
-        if(object['event'].returnValues.p3 == my_account){
+        if(object['id'] != 3 && object['event'].returnValues.p3 == my_account){
             return(
                 <div>
                     {this.render_detail_item('0')}

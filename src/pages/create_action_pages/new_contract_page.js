@@ -303,6 +303,9 @@ class NewContractPage extends Component {
         else if(typed_word.length > this.props.app_state.tag_size){
             this.props.notify('That tag is too long', 400)
         }
+        else if(typed_word.length < 3){
+            this.props.notify('That tag is too short', 400)
+        }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
         }
@@ -782,7 +785,7 @@ class NewContractPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id)){
+        if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -884,7 +887,7 @@ class NewContractPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id) || interactible_id == ''){
+        if(isNaN(interactible_id)  || parseInt(interactible_id) < 0 || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         if(this.state.interactible_timestamp == 0){
@@ -1013,7 +1016,7 @@ class NewContractPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){

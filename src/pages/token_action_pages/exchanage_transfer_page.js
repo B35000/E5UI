@@ -141,10 +141,10 @@ class ExchangeTransferPage extends Component {
         var target_receiver = this.state.exchange_transfer_receiver.trim()
         var targeted_token = this.state.token_target.trim()
 
-        if(isNaN(target_receiver) || target_receiver == ''){
+        if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver == ''){
             this.props.notify('please put a valid receiver id', 600)
         }
-        else if(isNaN(targeted_token) || targeted_token == ''){
+        else if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == ''){
             this.props.notify('please put a valid token id', 600)
         }
         else if(target_amount == 0){

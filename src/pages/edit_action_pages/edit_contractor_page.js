@@ -541,9 +541,9 @@ class NewContractorPage extends Component {
             this.props.notify('add a title for your post', 700)
         }else{
             
-            this.props.when_add_new_object_to_stack(this.state)
+            this.props.when_add_edit_object_to_stack(this.state)
 
-            this.setState({ id: makeid(8), type:'contractor', get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            // this.setState({ id: makeid(8), type:'contractor', get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
 
             this.props.notify('transaction added to stack', 700);
         }

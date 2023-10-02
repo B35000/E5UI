@@ -322,6 +322,9 @@ class NewProposalPage extends Component {
         else if(typed_word.length > this.props.app_state.tag_size){
             this.props.notify('That tag is too long', 400)
         }
+        else if(typed_word.length < 3){
+            this.props.notify('That tag is too short', 400)
+        }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
         }
@@ -761,10 +764,10 @@ class NewProposalPage extends Component {
         var spend_token = this.state.spend_token_input_text.trim()
         var amount = this.state.spend_amount;
 
-        if(isNaN(spend_target) || spend_target == ''){
+        if(isNaN(spend_target) || parseInt(spend_target) < 0 || spend_target == ''){
             this.props.notify('please put a valid spend target', 600)
         }
-        else if(isNaN(spend_token) || spend_token == ''){
+        else if(isNaN(spend_token) || parseInt(spend_target) < 0 || spend_token == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -1212,7 +1215,7 @@ class NewProposalPage extends Component {
         }
         else if(ui == 'id'){
             var number = this.state.reconfig_target_id.trim()
-            if(isNaN(number) || number == ''){
+            if(isNaN(number) || parseInt(number) < 0 || number == ''){
                 this.props.notify('please put a valid account id', 600)
             }
             else{
@@ -1447,13 +1450,13 @@ class NewProposalPage extends Component {
         var target_receiver = this.state.exchange_transfer_receiver.trim()
         var targeted_token = this.state.token_target.trim()
 
-        if(isNaN(target_exchange) || target_exchange == ''){
+        if(isNaN(target_exchange)  || parseInt(target_exchange) < 0 || target_exchange == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
-        else if(isNaN(target_receiver) || target_receiver == ''){
+        else if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver == ''){
             this.props.notify('please put a valid receiver id', 600)
         }
-        else if(isNaN(targeted_token) || targeted_token == ''){
+        else if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == ''){
             this.props.notify('please put a valid token id', 600)
         }
         else if(target_amount == 0){
@@ -1570,7 +1573,7 @@ class NewProposalPage extends Component {
         var target_exchange = this.state.bounty_exchange_target.trim()
         var target_amount = this.state.bounty_amount
 
-        if(isNaN(target_exchange) || target_exchange == ''){
+        if(isNaN(target_exchange) || parseInt(target_exchange) < 0 || target_exchange == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(target_amount == 0){

@@ -22,6 +22,21 @@ class ContractorDetailsSection extends Component {
         selected: 0, navigate_view_contractors_list_detail_tags_object: this.get_navigate_view_contracts_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}
     };
 
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.props.selected_contractor_item != null){
+            var object = this.get_contractor_items()[this.props.selected_contractor_item];
+            this.props.get_contractor_applications(object['id'])
+        }
+    }
+
     get_navigate_view_contracts_list_detail_tags(){
         return{
           'i':{

@@ -76,6 +76,7 @@ import SendJobRequestPage from './pages/send_job_request'
 import ViewJobRequestPage from './pages/view_job_request'
 import ViewJobRequestContractPage from './pages/view_job_request_contract_page'
 import WithdrawEtherPage from './pages/withdraw_ether_page'
+import GiveAwardPage from './pages/give_award_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -134,7 +135,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     theme: this.get_theme_data('light'),
@@ -151,7 +152,8 @@ class App extends Component {
     web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
     sync_steps:33, qr_code_scanning_page:'clear_purchaase', tag_size:13,
 
-    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp:{},
+    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp:{}, created_token_object_mapping:{},
+    award_data:{},
   };
 
 
@@ -209,6 +211,8 @@ class App extends Component {
     this.edit_channel_page = React.createRef();
     this.edit_storefront_page = React.createRef()
     this.edit_contractor_page = React.createRef();
+
+    this.give_award_page = React.createRef();
   }
 
   componentDidMount() {
@@ -367,6 +371,7 @@ class App extends Component {
         {this.render_edit_job_object_bottomsheet()}
         {this.render_edit_post_object_bottomsheet()}
         {this.render_edit_storefront_object_bottomsheet()}
+        {this.render_give_award_bottomsheet()}
         <ToastContainer limit={3} containerId="id"/>
       </div>
     );
@@ -408,6 +413,7 @@ class App extends Component {
       get_direct_purchase_events={this.get_direct_purchase_events.bind(this)} open_clear_purchase={this.show_clear_purchase_bottomsheet.bind(this)} add_bag_message_to_stack_object={this.add_bag_message_to_stack_object.bind(this)} add_storefront_message_to_stack_object={this.add_storefront_message_to_stack_object.bind(this)} get_contractor_applications={this.get_contractor_applications.bind(this)} open_view_job_request_ui={this.open_view_job_request_ui.bind(this)} open_view_contract_ui={this.show_view_job_request_contract_bottomsheet.bind(this)} show_withdraw_ether_bottomsheet={this.show_withdraw_ether_bottomsheet.bind(this)}
 
       add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
+      show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)}
       />
     )
   }
@@ -946,7 +952,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_token_bottomsheet.bind(this)} open={this.state.edit_token_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
               <div>
-                <EditTokenPage ref={this.edit_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+                <EditTokenPage ref={this.edit_token_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
               </div>
           </div>
       </SwipeableBottomSheet>
@@ -963,6 +969,8 @@ class App extends Component {
     this.open_edit_token_bottomsheet()
     if(this.edit_token_page.current){
       this.edit_token_page.current?.setState(object['ipfs'])
+      this.edit_token_page.current?.set_edit_data()
+      this.edit_token_page.current?.setState({object_id: object['id']})
     }
   }
 
@@ -980,7 +988,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_channel_bottomsheet.bind(this)} open={this.state.edit_channel_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
               <div>
-                <EditChannelPage ref={this.edit_channel_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+                <EditChannelPage ref={this.edit_channel_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
               </div>
           </div>
       </SwipeableBottomSheet>
@@ -997,6 +1005,8 @@ class App extends Component {
     this.open_edit_channel_bottomsheet()
     if(this.edit_channel_page.current){
       this.edit_channel_page.current?.setState(object['ipfs'])
+      this.edit_channel_page.current?.set_edit_data()
+      this.edit_channel_page.current?.setState({object_id: object['id']})
     }
   }
 
@@ -1019,7 +1029,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_contractor_bottomsheet.bind(this)} open={this.state.edit_contractor_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
               <div>
-                <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+                <EditContractorPage ref={this.edit_contractor_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
               </div>
           </div>
       </SwipeableBottomSheet>
@@ -1036,6 +1046,8 @@ class App extends Component {
     this.open_edit_contractor_bottomsheet()
     if(this.edit_contractor_page.current){
       this.edit_contractor_page.current?.setState(object['ipfs'])
+      this.edit_contractor_page.current?.setState({type:'edit-contractor'})
+      this.edit_contractor_page.current?.setState({object_id: object['id']})
     }
   }
 
@@ -1055,7 +1067,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_job_bottomsheet.bind(this)} open={this.state.edit_job_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
               <div>
-                <EditJobPage ref={this.edit_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+                <EditJobPage ref={this.edit_job_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
               </div>
           </div>
       </SwipeableBottomSheet>
@@ -1072,6 +1084,8 @@ class App extends Component {
     this.open_edit_job_bottomsheet()
     if(this.edit_job_page.current){
       this.edit_job_page.current?.setState(object['ipfs'])
+      this.edit_job_page.current?.setState({type:'edit-job'})
+      this.edit_job_page.current?.setState({object_id: object['id']})
     }
   }
 
@@ -1091,7 +1105,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_post_bottomsheet.bind(this)} open={this.state.edit_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
               <div>
-                <EditPostPage ref={this.edit_post_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+                <EditPostPage ref={this.edit_post_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
               </div>
           </div>
       </SwipeableBottomSheet>
@@ -1108,6 +1122,8 @@ class App extends Component {
     this.open_edit_post_bottomsheet()
     if(this.edit_post_page.current){
       this.edit_post_page.current?.setState(object['ipfs'])
+      this.edit_post_page.current?.setState({type:'edit-post'})
+      this.edit_post_page.current?.setState({object_id: object['id']})
     }
   }
 
@@ -1127,7 +1143,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_edit_storefront_bottomsheet.bind(this)} open={this.state.edit_storefront_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
               <div>
-                <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+                <EditStorefrontItemPage ref={this.edit_storefront_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_edit_object_to_stack={this.when_add_edit_object_to_stack.bind(this)}/>
               </div>
           </div>
       </SwipeableBottomSheet>
@@ -1144,6 +1160,8 @@ class App extends Component {
     this.open_edit_storefront_bottomsheet()
     if(this.edit_storefront_page.current){
       this.edit_storefront_page.current?.setState(object['ipfs'])
+      this.edit_storefront_page.current?.setState({type:'edit-storefront'})
+      this.edit_storefront_page.current?.setState({object_id: object['id']})
     }
   }
 
@@ -1183,6 +1201,23 @@ class App extends Component {
     else if(target == '9'){
       this.open_edit_contractor_object(target, object)
     }
+  }
+
+
+  when_add_edit_object_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
   }
 
 
@@ -2483,7 +2518,43 @@ class App extends Component {
         this.open_send_job_request_bottomsheet()
         if(this.send_job_request_page.current){
           this.send_job_request_page.current?.setState(tx)
-        }   
+        } 
+    }
+    else if(tx.type == 'edit-channel'){
+      this.open_edit_channel_bottomsheet()
+      if(this.edit_channel_page.current){
+        this.edit_channel_page.current?.setState(tx)
+      }
+    }
+    else if(tx.type == 'edit-contractor'){
+      this.open_edit_contractor_bottomsheet()
+      if(this.edit_contractor_page.current){
+        this.edit_contractor_page.current?.setState(tx)
+      }
+    }
+    else if(tx.type == 'edit-job'){
+        this.open_edit_job_bottomsheet()
+        if(this.edit_job_page.current){
+          this.edit_job_page.current?.setState(tx)
+        }
+    }
+    else if(tx.type == 'edit-post'){
+        this.open_edit_post_bottomsheet()
+        if(this.edit_post_page.current){
+          this.edit_post_page.current?.setState(tx)
+        }
+    }
+    else if(tx.type == 'edit-storefront'){
+        this.open_edit_storefront_bottomsheet()
+        if(this.edit_storefront_page.current){
+          this.edit_storefront_page.current?.setState(tx)
+        }
+    }
+    else if(tx.type == 'edit-token'){
+        this.open_edit_token_bottomsheet()
+        if(this.edit_token_page.current){
+          this.edit_token_page.current?.setState(tx)
+        }
     }
 
         
@@ -3101,6 +3172,61 @@ class App extends Component {
     })
 
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_give_award_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_give_award_bottomsheet.bind(this)} open={this.state.give_award_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <GiveAwardPage ref={this.give_award_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_award_transaction_to_stack={this.add_award_transaction_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_give_award_bottomsheet(){
+    if(this.state != null){
+      this.setState({give_award_bottomsheet: !this.state.give_award_bottomsheet});
+    }
+  }
+
+  show_give_award_bottomsheet(item){
+    if(this.give_award_page.current != null){
+      this.give_award_page.current?.set_post(item)
+    }
+    this.open_give_award_bottomsheet()
+  }
+
+
+  add_award_transaction_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+  }
+
 
 
 
@@ -4088,6 +4214,7 @@ class App extends Component {
     var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
     var created_token_object_data = []
+    var created_token_object_mapping = {}
     for(var i=0; i<created_tokens.length; i++){
       var tokens_data = await this.fetch_objects_data(created_tokens[i], web3);
       var event = i>1 ? created_token_events[i-2]: null
@@ -4124,6 +4251,9 @@ class App extends Component {
 
       var my_blocked_time_value = await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {});
 
+
+      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] }
+
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
 
       }
@@ -4131,12 +4261,12 @@ class App extends Component {
 
       }
       else{
-        created_token_object_data.push({'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] })
+        created_token_object_data.push(token_obj)
       }
-
+      created_token_object_mapping[created_tokens[i]] = token_obj
     }
 
-    this.setState({created_tokens: created_token_object_data})
+    this.setState({created_tokens: created_token_object_data, created_token_object_mapping: created_token_object_mapping})
     console.log('token count: '+created_token_object_data.length)
 
     var all_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange_id */ } }, (error, events) => {});
@@ -4156,6 +4286,7 @@ class App extends Component {
       if(token_id == 3) token_name = 'END'
       if(token_id == 5) token_name = 'SPEND'
       token_symbol_directory[token_id] = token_name;
+      token_symbol_directory[token_name] = token_id
     }
     this.setState({token_directory: token_symbol_directory});
 
@@ -4940,6 +5071,27 @@ class App extends Component {
     return do_duplicates_exist
   }
 
+
+
+  get_post_award_data = async (id) => {
+    const web3 = new Web3(this.state.web3);
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.E35_addresses[6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
+
+    var award_events = []
+    for(var j=0; j<created_awward_data.length; j++){
+      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_awward_data[j].returnValues.p4)
+      award_events.push(ipfs_message)
+    }
+
+    var clone = JSON.parse(JSON.stringify(this.state.award_data))
+    clone[id] = award_events
+
+    this.setState({award_data: clone})
+  }
 
 
   // test_generate_signature= async (account) => {

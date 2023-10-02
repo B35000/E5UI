@@ -8,6 +8,7 @@ import Letter from './../assets/letter.png';
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import { Draggable } from "react-drag-reorder";
 
 var bigInt = require("big-integer");
 
@@ -307,12 +308,11 @@ class StackPage extends Component {
                 </div>
             )
         }else{
-            
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                            <li style={{'padding': '2px 2px 2px 2px'}} onClick={()=>console.log()}>
                                 {this.render_stack_item(item, index)}
                             </li>
                         ))}
@@ -396,7 +396,7 @@ class StackPage extends Component {
     }
 
     get_estimated_gas(t){
-        if(t.type == 'channel' || t.type == 'job' || t.type == 'post'){
+        if(t.type == 'channel' || t.type == 'job' || t.type == 'post' || t.type == 'contractor'){
             return 344622
         }
         else if(t.type == 'mail'){
@@ -506,6 +506,9 @@ class StackPage extends Component {
         }
         else if(t.type == 'alias' || t.type == 'unalias' || t.type == 're-alias'){
             return 279695
+        }
+        else if(t.type == 'edit-channel' || t.type == 'edit-contractor' || t.type == 'edit-job' || t.type == 'edit-post' || t.type == 'edit-storefront' || t.type == 'edit-token'){
+            return 276073
         }
 
     }
@@ -1087,6 +1090,18 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
+                else if(txs[i].type == 'edit-channel' || txs[i].type == 'edit-contractor' || txs[i].type == 'edit-job' || txs[i].type == 'edit-post' || txs[i].type == 'edit-storefront' || txs[i].type == 'edit-token'){
+                    var format_edit_object = await this.format_edit_object(txs[i])
+                    strs.push(format_edit_object.metadata_strings)
+                    adds.push([])
+                    ints.push(format_edit_object.metadata_action)
+                }
+                else if(txs[i].type == 'award'){
+                    var format_object = await this.format_award_object(txs[i])
+                    strs.push(format_object.str)
+                    adds.push([])
+                    ints.push(format_object.int)
+                }
                 
             }
             
@@ -1202,7 +1217,7 @@ class StackPage extends Component {
             if(account_balance < (run_gas_limit * run_gas_price)){
                 this.setState({invalid_ether_amount_dialog_box: true})
             }
-            else{   
+            else{
                 this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei)
             }
         }else{
@@ -2369,6 +2384,7 @@ class StackPage extends Component {
         }
 
         var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id, 'signature_data':Date.now(), 'sender_address':this.props.app_state.account.address}
+        
         var string_data = await this.get_object_ipfs_index(purchase_object);
 
         string_obj[0].push(string_data)
@@ -2634,6 +2650,80 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
+    format_edit_object = async (t) => {
+        var metadata_action = [ /* set metadata */
+            [20000, 1, 0],
+            [], [],/* target objects */
+            []/* contexts */, 
+            []/* int_data */
+        ]
+        var metadata_strings = [ [] ]
+
+        metadata_action[1].push(t.object_id)
+        metadata_action[2].push(23)
+        metadata_action[3].push(0)
+        metadata_action[4].push(0)
+        // var object_clone = structuredClone(t)
+        
+        // if(object_clone.type == 'edit-channel'){
+        //     object_clone.type = 'channel'
+
+        // }
+        // else if(object_clone.type == 'edit-contractor'){
+        //     object_clone.type = 'contractor'
+        // }
+        // else if(t.type == 'edit-job'){
+        //     t.type = 'job'
+        // }
+        // else if(object_clone.type == 'edit-post'){
+        //     object_clone.type = 'post'
+        // }
+        // else if(object_clone.type == 'edit-storefront'){
+        //     object_clone.type = 'storefront-item'
+        // }
+        // else if(object_clone.type == 'edit-token'){
+        //     object_clone.type = 'token'
+        // }
+        var ipfs_obj = await this.get_object_ipfs_index(t);
+        metadata_strings[0].push(ipfs_obj.toString())
+
+        return {metadata_action: metadata_action, metadata_strings:metadata_strings}
+    }
+
+    format_award_object = async (t) => {
+        var author = t.post_item['event'].returnValues.p5
+        var post_id = t.post_item['id'];
+        var obj = [/* send awwards */
+            [30000, 7, 0],
+            [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
+            [post_id.toString().toLocaleString('fullwide', {useGrouping:false})],/* awward contexts */
+            
+            [5], [23],/* exchange ids for first target receiver */
+            [t.award_amount.toString().toLocaleString('fullwide', {useGrouping:false})],/* amounts for first target receiver */
+            [0],/* depths for the first targeted receiver*/
+        ]
+        var string_obj = [[]]
+
+        for(var i=0; i<t.price_data.length; i++){
+            var exchange = t.price_data[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
+            var amount = t.price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+
+            obj[4].push(exchange)
+            obj[5].push(23)
+            obj[6].push(amount)
+            obj[7].push(0)
+        }
+
+        var award_object = {'selected_tier_object':t.selected_tier_object, 'post_id':post_id, 'multiplier':t.multiplier, 'custom_amounts':t.price_data, 'entered_message':t.entered_message_text}
+        
+        var string_data = await this.get_object_ipfs_index(award_object);
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    
+
 
 
 
@@ -2813,7 +2903,7 @@ class StackPage extends Component {
         }
         else{
             this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item)
-            this.props.notify('wallet set! synchronizing...', 200)
+            this.props.notify('wallet set!', 200)
         }
         
     }

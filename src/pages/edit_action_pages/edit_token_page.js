@@ -76,11 +76,8 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e'], [0]
+                ['or','',0], ['e', 'edit-token'], [0]
             ],
-            'custom':[
-              ['xor','e',1], ['custom','basic-configuration', 'secondary-configuration'], [1],
-          ],
         };
     }
 
@@ -177,6 +174,11 @@ class NewTokenPage extends Component {
 
 
 
+    set_edit_data(){
+        this.setState({new_token_page_tags_object: this.get_new_token_page_tags_object(), type:'edit-token'})
+    }
+
+
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
@@ -219,7 +221,7 @@ class NewTokenPage extends Component {
         //     selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'custom')
         // }
 
-        if(selected_item == 'e'){
+        if(selected_item == 'e' || selected_item == 'edit-token'){
             return(
                 <div>
                     {this.render_enter_tags_part()}
@@ -1324,7 +1326,7 @@ class NewTokenPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id) || moderator_id == ''){
+        if(isNaN(moderator_id) || parseInt(moderator_id) < 0 || moderator_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -1427,7 +1429,7 @@ class NewTokenPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id) || interactible_id == ''){
+        if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -1604,7 +1606,7 @@ class NewTokenPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -1805,13 +1807,16 @@ class NewTokenPage extends Component {
         else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND'){
             this.props.notify('that symbol is invalid', 700)
         }
+        else if(this.props.app_state.token_directory[symbol] != null){
+            this.props.notify('that symbol is already in use', 700)
+        }
         else if(symbol.length > 6){
             this.props.notify('that symbol is too long', 700)
         }
         else{
-            this.props.when_add_new_object_to_stack(this.state)
+            this.props.when_add_edit_object_to_stack(this.state)
 
-            this.setState({ id: makeid(32), type:'token', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_token_page_tags_object: this.get_new_token_page_tags_object(), new_token_type_tags_object: this.get_new_token_type_tags_object(), token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, default_exchange_amount_sell_limit:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, trust_fee_proportion:bigInt('1e16'), block_limit:0, new_token_unlocked_liquidity_tags_object:this.get_new_token_unlocked_liquidity_tags_object(), new_token_unlocked_supply_tags_object:this.get_new_token_unlocked_supply_tags_object(), new_token_fully_custom_tags_object:this.get_new_token_fully_custom_tags_object(), internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(), default_authority_mint_limit:0, new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(), maturity_limit:0, token_exchange_ratio_x:0, token_exchange_ratio_y:0, exchange_authority:'', trust_fee_target:'', exchange_id:'', price_amount:0, price_data:[], new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[] })
+            // this.setState({ id: makeid(32), type:'token', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_token_page_tags_object: this.get_new_token_page_tags_object(), new_token_type_tags_object: this.get_new_token_type_tags_object(), token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, default_exchange_amount_sell_limit:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, trust_fee_proportion:bigInt('1e16'), block_limit:0, new_token_unlocked_liquidity_tags_object:this.get_new_token_unlocked_liquidity_tags_object(), new_token_unlocked_supply_tags_object:this.get_new_token_unlocked_supply_tags_object(), new_token_fully_custom_tags_object:this.get_new_token_fully_custom_tags_object(), internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(), default_authority_mint_limit:0, new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(), maturity_limit:0, token_exchange_ratio_x:0, token_exchange_ratio_y:0, exchange_authority:'', trust_fee_target:'', exchange_id:'', price_amount:0, price_data:[], new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[] })
 
             this.props.notify('transaction added to stack', 700);
         }

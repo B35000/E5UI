@@ -120,7 +120,7 @@ class ArchiveProposalPage extends Component {
     add_bounty_exchange_item(){
         var exchange = this.state.bounty_exchange_target.trim()
 
-        if(isNaN(exchange) || exchange == ''){
+        if(isNaN(exchange) || parseInt(exchange) < 0 || exchange == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(this.includes_function(exchange)){

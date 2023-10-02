@@ -55,7 +55,7 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images', 'authorities'], [0]
+                ['or','',0], ['e','text', 'images'], [0]
             ],
         };
     }
@@ -100,6 +100,9 @@ class NewChannelPage extends Component {
     }
 
 
+    set_edit_data(){
+        this.setState({type: 'edit-channel', get_new_job_page_tags_object: this.get_new_job_page_tags_object()})
+    }
 
 
 
@@ -207,8 +210,8 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Channel'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
-                {this.render_detail_item('0')}
-                {this.render_subscription_authority_target()}
+                {/* {this.render_detail_item('0')} */}
+                {/* {this.render_subscription_authority_target()} */}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Channel'})}
@@ -680,7 +683,7 @@ class NewChannelPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.state.moderator_id.trim()
-        if(isNaN(moderator_id)){
+        if(isNaN(moderator_id)  || parseInt(moderator_id) < 0){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -781,7 +784,7 @@ class NewChannelPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.state.interactible_id.trim()
-        if(isNaN(interactible_id)){
+        if(isNaN(interactible_id)  || parseInt(interactible_id) < 0){
             this.props.notify('please put a valid account id', 600)
         }
         else{
@@ -879,21 +882,12 @@ class NewChannelPage extends Component {
             this.props.notify('add a title for your channel', 700)
         }else{
             
-            this.props.when_add_new_object_to_stack(this.state)
+            this.props.when_add_edit_object_to_stack(this.state)
 
-            this.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            // this.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
             
             this.props.notify('transaction added to stack', 700);
         }
-    }
-
-
-    set_fileds_for_edit_action(obj){
-        this.setState({entered_indexing_tags: obj['tags'], entered_title_text: obj['title'], entered_text_objects: obj['texts'], entered_image_objects: obj['images']})
-    }
-
-    set_action(action){
-        this.setState({action: action})
     }
 
 

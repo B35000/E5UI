@@ -26,6 +26,21 @@ class ChannelDetailsSection extends Component {
         selected: 0, navigate_view_channel_list_detail_tags: this.get_navigate_view_channel_list_detail_tags(), entered_text:'', focused_message:{'tree':{}}
     };
 
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.props.selected_channel_item != null){
+            var object = this.get_channel_items()[this.props.selected_channel_item];
+            this.props.get_objects_messages(object['id'])
+        }
+    }
+
     get_navigate_view_channel_list_detail_tags(){
         return{
           'i':{
@@ -65,7 +80,7 @@ class ChannelDetailsSection extends Component {
         }
     }
 
-     render_empty_detail_object(){
+    render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         var size = this.props.screensize
@@ -565,7 +580,8 @@ class ChannelDetailsSection extends Component {
         if(item['sender'] == this.props.app_state.user_account_id){
             return 'You'
         }else{
-            return item['sender']
+            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            return alias
         }
     }
 

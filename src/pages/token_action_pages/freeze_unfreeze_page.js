@@ -123,7 +123,7 @@ class FreezeUnfreezePage extends Component {
         var amount = this.state.freeze_unfreeze_amount
         var recipient = this.state.recipient_id.trim()
 
-        if(isNaN(recipient) || recipient == ''){
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else if(amount == 0){

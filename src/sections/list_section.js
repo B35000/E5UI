@@ -1357,7 +1357,7 @@ class PostListSection extends Component {
     get_exchanges_data(object_array, token_id, img, item){
         var type = object_array[0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
         var supply = object_array[2][2/* <2>token_exchange_liquidity/total_supply */]
-        var active_tags = item['ipfs'] == null ? [''+token_id, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
+        var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
         if(token_id == 3){
             name = 'E25'
@@ -1368,7 +1368,7 @@ class PostListSection extends Component {
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         var balance = item['balance']
         return{
-            'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
+            'tags':{'active_tags':[token_id].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',}
         }

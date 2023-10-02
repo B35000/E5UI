@@ -222,6 +222,9 @@ class NewMailPage extends Component {
         else if(typed_word.length > this.props.app_state.tag_size){
             this.props.notify('That tag is too long', 400)
         }
+        else if(typed_word.length < 3){
+            this.props.notify('That tag is too short', 400)
+        }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
         }
@@ -592,7 +595,7 @@ class NewMailPage extends Component {
         var clone = this.state.recipients.slice()
         var recipient = this.state.target_recipient
 
-        if(isNaN(recipient) || recipient == ''){
+        if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }
         else if(clone.includes(recipient)){
@@ -738,7 +741,7 @@ class NewMailPage extends Component {
         // else if(recipients.length == 0){
         //     this.props.notify('set at least one recipient', 700)
         // }
-        else if(isNaN(recipient) || recipient == ''){
+        else if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('that recipient account is invalid', 700)
         }
         else{ 

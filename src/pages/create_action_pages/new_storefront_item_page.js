@@ -293,7 +293,7 @@ class NewStorefrontItemPage extends Component {
     when_add_shipping_price_set(){
         var exchange_id = this.state.shipping_exchange_id.trim()
         var amount = this.state.shipping_price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -504,6 +504,9 @@ class NewStorefrontItemPage extends Component {
         }
         else if(typed_word.length > this.props.app_state.tag_size){
             this.props.notify('That tag is too long', 400)
+        }
+        else if(typed_word.length < 3){
+            this.props.notify('That tag is too short', 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify('you cant enter the same word twice', 400)
@@ -903,7 +906,7 @@ class NewStorefrontItemPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || exchange_id == ''){
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
             this.props.notify('please put a valid exchange id', 600)
         }
         else if(amount == 0){
@@ -1416,7 +1419,7 @@ class NewStorefrontItemPage extends Component {
         else if(variants.length == 0){
             this.props.notify('you should set some variants for your item', 700)
         }
-        else if(isNaN(target_receiver) || target_receiver==''){
+        else if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver==''){
             this.props.notify('set a valid receiver target', 700)
         }
         else if(fulfilment_location==''){
