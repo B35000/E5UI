@@ -284,7 +284,7 @@ class ViewJobRequestContractPage extends Component {
                 entered_indexing_tags:['view', 'contract', 'contractor', 'response'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }
-        this.setState({contract_data:item})
+        this.setState({contract_data:item, e5: item['e5']})
     }
 
 

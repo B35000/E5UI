@@ -93,7 +93,7 @@ class ViewApplicationContractPage extends Component {
     }
 
     render_accept_enter_button(item){
-        if(this.props.app_state.user_account_id != item['applicant_id']){
+        if(this.props.app_state.user_account_id[item['e5']] == item['applicant_id']){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -143,13 +143,50 @@ class ViewApplicationContractPage extends Component {
                     {items.map((item, index) => (
                         <li style={{'padding': '0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                             </div>
                         </li>
                     ))}
                 </ul>
             </div>
         )
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     render_contracts_data(){
@@ -292,7 +329,8 @@ class ViewApplicationContractPage extends Component {
                 entered_indexing_tags:['accept', 'job', 'application'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }
-        this.setState({application_item:item})
+        
+        this.setState({application_item:item, e5: item['e5']})
     }
 
 

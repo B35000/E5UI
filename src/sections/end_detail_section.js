@@ -279,7 +279,7 @@ class EndDetailSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                         {buy_tokens.map((item, index) => (
                             <li style={{'padding': '1px'}}>
-                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.props.app_state.token_directory[item]})}
+                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                             </li>
                         ))}
                     </ul>
@@ -402,7 +402,7 @@ class EndDetailSection extends Component {
     render_auth_modify_button(){
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
@@ -421,7 +421,7 @@ class EndDetailSection extends Component {
     render_exchange_transfer_button(){
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
@@ -442,7 +442,7 @@ class EndDetailSection extends Component {
     render_freeze_unfreeze_tokens_button(){
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
@@ -460,7 +460,7 @@ class EndDetailSection extends Component {
 
     render_moderator_button(){
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(
                 <div>
@@ -479,7 +479,7 @@ class EndDetailSection extends Component {
 
     render_edit_object_button(){
         var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['id'] != 3 && object['event'].returnValues.p3 == my_account){
             return(
@@ -512,17 +512,19 @@ class EndDetailSection extends Component {
         var selected_obj_ratio_config = selected_object['data'][2];
 
         var type = selected_obj_root_config[3] == 3 ? 'Capped' : 'Uncapped'
+        var spend_type = selected_object['data'][0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
         var is_auth_main_contract = selected_obj_config[9] == 2 ? '2 (Main Contract)': selected_obj_config[9]
         var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
 
         if(title == 3){
-            title = 'END'
+            var obj = {'E15':'E15'}
+            title = obj[selected_object['e5']]
         }
 
         var item = selected_object;
         var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
-        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
+        var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
         if(symbol == null){
             symbol = EndImg
         }
@@ -583,13 +585,49 @@ class EndDetailSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.props.app_state.token_directory[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
             </div>
             
         )
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
 

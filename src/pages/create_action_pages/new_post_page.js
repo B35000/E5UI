@@ -30,7 +30,7 @@ function makeid(length) {
 class NewPostPage extends Component {
     
      state = {
-        id: makeid(8), type:'post',
+        id: makeid(8), type:'post', e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
@@ -177,6 +177,9 @@ class NewPostPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set a title for your new post'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set tags for indexing your new Post'})}
@@ -192,6 +195,7 @@ class NewPostPage extends Component {
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
+                {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -258,7 +262,7 @@ class NewPostPage extends Component {
         var items = this.state.entered_objects;
         return ( 
             <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
@@ -340,13 +344,38 @@ class NewPostPage extends Component {
     get_subscription_items(){
         var my_subscriptions = []
         var myid = this.props.app_state.user_account_id
-        for(var i = 0; i < this.props.app_state.created_subscriptions.length; i++){
-            var post_author = this.props.app_state.created_subscriptions[i]['event'] == null ? 0 : this.props.app_state.created_subscriptions[i]['event'].returnValues.p3
+        var created_subs = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+        for(var i = 0; i < created_subs.length; i++){
+            var post_author = created_subs[i]['event'] == null ? 0 : created_subs[i]['event'].returnValues.p3
             if(post_author.toString() == myid.toString()){
-                my_subscriptions.push(this.props.app_state.created_subscriptions[i])
+                my_subscriptions.push(created_subs[i])
             }
         }
         return my_subscriptions
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
     }
 
     render_subscription_object(object, index){
@@ -602,6 +631,7 @@ class NewPostPage extends Component {
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove and click add images to add them to the object.'})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -653,13 +683,15 @@ class NewPostPage extends Component {
                 let reader = new FileReader();
                 reader.onload = function(ev){
                     const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
-                    clonedArray.push(ev.target.result);
-                    this.setState({entered_image_objects: clonedArray});
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        clonedArray.push(ev.target.result);
+                        this.setState({entered_image_objects: clonedArray});
+                    }
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 
@@ -775,7 +807,11 @@ class NewPostPage extends Component {
         }
         else if(title == ''){
             this.props.notify('add a title for your post', 700)
-        }else{
+        }
+        else if(title.length > this.props.app_state.title_size){
+            this.props.notify('that title is too long', 700)
+        }
+        else{
             
             this.props.when_add_new_object_to_stack(this.state)
 

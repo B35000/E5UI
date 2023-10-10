@@ -9,6 +9,7 @@ import End35 from './../assets/end35.png';
 import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
 
+var bigInt = require("big-integer");
 
 function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -212,7 +213,7 @@ class PostListSection extends Component {
     }
 
     when_job_item_clicked(index, object){
-        this.props.when_job_post_item_clicked(index, object['id'])
+        this.props.when_job_post_item_clicked(index, object['id'], object['e5'])
     }
 
 
@@ -390,7 +391,7 @@ class PostListSection extends Component {
     }
 
     when_proposal_item_clicked(index, object){
-        this.props.when_proposal_item_clicked(index, object['id'])
+        this.props.when_proposal_item_clicked(index, object['id'], object['e5'])
     }
 
 
@@ -565,7 +566,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('4', item['id'])}
                     </div>
-                    <div style={{'padding': '10px 0px 0px 0px'}}>
+                    <div style={{'padding': '15px 0px 0px 0px'}}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -680,7 +681,7 @@ class PostListSection extends Component {
     }
 
     when_contractor_item_clicked(index, object){
-        this.props.when_contractor_post_item_clicked(index, object['id'])
+        this.props.when_contractor_post_item_clicked(index, object['id'], object['e5'])
     }
 
 
@@ -715,13 +716,7 @@ class PostListSection extends Component {
     }
 
     get_e5_data(){
-        var data = []
-        var contract_data = this.props.app_state.E15_contract_data
-        var contract_id_data = this.props.app_state.contract_id_data
-        for (let i = 0; i < contract_data.length; i++) {
-            data.push({'data':contract_data[i], 'id':contract_id_data[i]})
-        }
-        return data
+        return this.props.get_e5_data()
     }
 
     render_E5s_object(item_data, index, name){
@@ -747,8 +742,8 @@ class PostListSection extends Component {
     }
 
     get_e5_data_item_object(item_data, name){
-        var obj = {'E35':End35}
-        var add_obj = {'e35':this.props.app_state.E35_addresses[0]}
+        var obj = {'E15':End35}
+        var add_obj = {'e35':this.props.app_state.addresses['E15'][0]}
         return {
                 'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': obj[name]},
                 'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
@@ -764,6 +759,9 @@ class PostListSection extends Component {
 
 
 
+
+
+    
     render_posts_list_group(){
         var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
@@ -835,13 +833,25 @@ class PostListSection extends Component {
     check_if_sender_has_paid_subscriptions(required_subscriptions){
         var has_sender_paid_all_subs = true
         required_subscriptions.forEach(subscription_id => {
-            var subscription_item = this.props.app_state.created_subscription_object_mapping[subscription_id]
+            var subscription_item = this.get_all_sorted_objects_mappings(this.props.app_state.created_subscription_object_mapping)[subscription_id]
             if(subscription_item['payment'] == 0){
                 has_sender_paid_all_subs = false
             }
         });
 
         return has_sender_paid_all_subs
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     render_post_object(object, index){
@@ -878,7 +888,7 @@ class PostListSection extends Component {
     }
 
     when_post_item_clicked(index, object){
-        this.props.when_post_item_clicked(index, object['id'])
+        this.props.when_post_item_clicked(index, object['id'], object['e5'])
     }
 
 
@@ -967,7 +977,7 @@ class PostListSection extends Component {
     }
 
     when_channel_item_clicked(index, object){
-        this.props.when_channel_item_clicked(index, object['id'])
+        this.props.when_channel_item_clicked(index, object['id'], object['e5'])
     }
 
 
@@ -1057,7 +1067,7 @@ class PostListSection extends Component {
     }
 
     when_storefront_item_clicked(index, object){
-        this.props.when_storefront_post_item_clicked(index, object['id'])
+        this.props.when_storefront_post_item_clicked(index, object['id'], object['e5'])
     }
 
 
@@ -1172,7 +1182,7 @@ class PostListSection extends Component {
         for(var i=0; i<object['ipfs']['bag_orders'].length; i++){
             var variant_id = object['ipfs']['bag_orders'][i]['storefront_variant_id']
             var bag_storefront_id = object['ipfs']['bag_orders'][i]['storefront_item_id']
-            var storefront = this.props.app_state.created_store_mappings[bag_storefront_id]
+            var storefront = this.props.app_state.created_store_mappings[object['e5']][bag_storefront_id]
             var variant_in_store = this.get_variant_object_from_storefront(storefront, variant_id)
 
             var variant_images = variant_in_store['image_data']['data']
@@ -1194,7 +1204,7 @@ class PostListSection extends Component {
     }
 
     when_bag_item_clicked(index, object){
-        this.props.when_bag_post_item_clicked(index, object['id'])
+        this.props.when_bag_post_item_clicked(index, object['id'], object['e5'])
     }
 
 
@@ -1254,28 +1264,21 @@ class PostListSection extends Component {
                 'symbol': 'ETHT',
                 'image': EthereumTestnet,
                 'label':{'title':'ETHT', 'details':'Ethereum Testnet', 'size':'l', 'image': EthereumTestnet},
-                'tags':{'active_tags':['Ethereum', 'Ether', 'EVM', 'Chain'], 'index_option':'indexed'},
-                'number_label':this.get_blockchain_data('s'),
-                'number_label_large': this.get_blockchain_data('l'),
+                'tags':{'active_tags':['Ether', 'EVM', 'Chain'], 'index_option':'indexed'},
+                'number_label':this.get_blockchain_data('s', 'E15'),
+                'number_label_large': this.get_blockchain_data('l', 'E15'),
                 'banner-icon':{'header':'ETHT', 'subtitle':'Ethereum Testnet', 'image':EthereumTestnet},
             }
         ]
     }
 
-    get_latest_block_data(){
-        if(this.props.app_state.E15last_blocks.length  ==  0){
-            return null
-        }
-        return this.props.app_state.E15last_blocks[0];
-    }
-
-    get_blockchain_data(size){
+    get_blockchain_data(size, e5){
         return{
             'style':size,
             'title':'Number of Blocks Mined',
-            'subtitle':'e?',
-            'barwidth':this.get_number_width(this.props.app_state.E15number_of_blocks),
-            'number':`${number_with_commas(this.props.app_state.E15number_of_blocks)} blocks`,
+            'subtitle':this.format_power_figure(this.props.app_state.number_of_blocks[e5]),
+            'barwidth':this.get_number_width(this.props.app_state.number_of_blocks[e5]),
+            'number':`${number_with_commas(this.props.app_state.number_of_blocks[e5])} blocks`,
             'barcolor':'#606060',
             'relativepower':'ledger size',
         }
@@ -1319,9 +1322,6 @@ class PostListSection extends Component {
                     <div style={{'padding': '5px'}}>
                         {this.render_empty_object()}
                     </div>
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
                 </ul>
             </div>
         );
@@ -1360,9 +1360,11 @@ class PostListSection extends Component {
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
         if(token_id == 3){
-            name = 'E25'
+            var obj = {'E15':'E15'}
+            name = obj[item['e5']]
         } else if(token_id == 5){
-            name = '325'
+            var obj = {'E15':'315'}
+            name = obj[item['e5']]
         }
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
@@ -1404,9 +1406,6 @@ class PostListSection extends Component {
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </li>
                     ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
                     <div style={{'padding': '5px'}}>
                         {this.render_empty_object()}
                     </div>
@@ -1463,7 +1462,7 @@ class PostListSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)}/>
+                <ViewGroups item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)}/>
             </div>
         )
 
@@ -1513,6 +1512,23 @@ class PostListSection extends Component {
             var s = num > 1 ? 's': '';
             return number_with_commas(num) + ' yr' + s;
         }
+    }
+
+    format_power_figure(amount){
+        var power = 'e72'
+        if(amount < bigInt('1e9')){
+            power = 'e9'
+        }
+        else if(amount < bigInt('1e18')){
+            power = 'e18'
+        }
+        else if(amount < bigInt('1e36')){
+            power = 'e36'
+        }
+        else{
+            power = 'e72'
+        }
+        return power
     }
 
 

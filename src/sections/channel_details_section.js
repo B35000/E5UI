@@ -37,7 +37,7 @@ class ChannelDetailsSection extends Component {
     check_for_new_responses_and_messages() {
         if(this.props.selected_channel_item != null){
             var object = this.get_channel_items()[this.props.selected_channel_item];
-            this.props.get_objects_messages(object['id'])
+            this.props.get_objects_messages(object['id'], object['e5'])
         }
     }
 
@@ -200,7 +200,7 @@ class ChannelDetailsSection extends Component {
 
     render_moderator_button(){
         var object = this.get_channel_items()[this.props.selected_channel_item];
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if((object['moderators'].includes(my_account) || object['event'].returnValues.p5 == my_account)){
             return(
@@ -220,7 +220,7 @@ class ChannelDetailsSection extends Component {
 
     render_edit_object_button(){
         var object = this.get_channel_items()[this.props.selected_channel_item];
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 == my_account){
             return(
@@ -292,14 +292,14 @@ class ChannelDetailsSection extends Component {
                 </div>
 
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
-                    <div style={{'margin':'15px 0px 0px 0px'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
                         {this.render_image_picker()}
                     </div>
                     <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
-                        <TextInput height={50} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '20px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
@@ -577,12 +577,49 @@ class ChannelDetailsSection extends Component {
     }
 
     get_sender_title_text(item){
-        if(item['sender'] == this.props.app_state.user_account_id){
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
-            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
         }
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     format_message(message){
@@ -683,14 +720,14 @@ class ChannelDetailsSection extends Component {
         if(message == ''){
             this.props.notify('type something first', 600)
         }
-        else if(this.props.app_state.user_account_id == 1){
+        else if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
         }
         else if(!this.is_object_interactable()){
             return
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
             this.props.add_channel_message_to_stack_object(tx)
 
@@ -704,7 +741,8 @@ class ChannelDetailsSection extends Component {
     }
 
     add_image_to_stack(image){
-        if(this.props.app_state.user_account_id == 1){
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
             return
         }
@@ -714,9 +752,8 @@ class ChannelDetailsSection extends Component {
         var message = this.state.entered_text.trim()
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
-        var object = this.get_channel_items()[this.props.selected_channel_item];
 
-        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id,'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
         this.props.add_channel_message_to_stack_object(tx)
 
@@ -731,7 +768,7 @@ class ChannelDetailsSection extends Component {
     is_object_interactable(){
         var object = this.get_channel_items()[this.props.selected_channel_item];
         var access_rights_setting =  object['access_rights_enabled']
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(access_rights_setting == true && (object['my_interactible_time_value'] < Date.now()/1000 && !object['moderators'].includes(my_account)) ){
             this.props.notify('You cant do that. The channel is access restricted', 600)

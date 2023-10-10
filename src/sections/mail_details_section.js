@@ -125,7 +125,9 @@ class MailDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('4', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p5, 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p2, 'details':'Author', 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p1, 'details':'Recipient', 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -520,12 +522,25 @@ class MailDetailsSection extends Component {
     }
 
     get_sender_title_text(item){
-        if(item['sender'] == this.props.app_state.user_account_id){
+        var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
-            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
         }
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     format_message(message){
@@ -539,15 +554,75 @@ class MailDetailsSection extends Component {
         var all_messages = []
         var mail = this.get_mail_items()[this.props.selected_mail_item];
         var convo_id = mail['convo_id']
-        if(mail['type'] == 'received'){
-            var messages = this.props.app_state.received_mail['mail_activity'][convo_id]
-            for(var i=0; i<messages.length; i++){
-                if(i!=0){
-                    all_messages.push(messages[i])
+
+        var created_mail = this.get_combined_created_mail('created_mail')
+        var received_mail = this.get_combined_created_mail('received_mail')
+        
+        var created_messages = created_mail['mail_activity'][convo_id]
+        var received_messages = received_mail['mail_activity'][convo_id]
+
+        if(received_messages != null){
+            for(var i=0; i<received_messages.length; i++){
+                if(received_messages[i]['ipfs'].entered_title_text == null){
+                    all_messages.push(received_messages[i])
                 }
             }
         }
+        if(created_messages != null){
+            for(var i=0; i<created_messages.length; i++){
+                if(created_messages[i]['ipfs'].entered_title_text == null){
+                    all_messages.push(created_messages[i])
+                }
+            }
+        }
+
+        all_messages = this.sortByAttributeDescending(all_messages, 'timestamp')
+
+        // if(mail['type'] == 'received'){
+        //     var received_mail = this.get_combined_created_mail('received_mail')
+        //     var messages = received_mail['mail_activity'][convo_id]
+        //     for(var i=0; i<messages.length; i++){
+        //         if(i!=0){
+        //             all_messages.push(messages[i])
+        //         }
+        //     }
+        // }
         return all_messages
+    }
+
+    get_combined_created_mail(created_or_received){
+        var created_mail = []
+        var mail_activity = {}
+        var created_mail_obj = created_or_received == 'created_mail' ? this.props.app_state.created_mail : this.props.app_state.received_mail
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_data = created_mail_obj[e5]
+
+            if(e5_data[created_or_received] != null){
+                created_mail = created_mail.concat(e5_data[created_or_received])
+            }
+
+            var mail_activity_clone = structuredClone(mail_activity)
+            mail_activity = { ...mail_activity_clone, ...e5_data['mail_activity']}
+        }
+
+        if(created_or_received == 'created_mail'){
+            return {'created_mail':created_mail, 'mail_activity':mail_activity}
+        }else{
+            return {'received_mail':created_mail, 'mail_activity':mail_activity}
+        }
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
     }
 
     get_stacked_items(){
@@ -572,14 +647,33 @@ class MailDetailsSection extends Component {
     get_focused_message_replies(){
         var focused_message = this.get_focused_message()
         var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+        var focused_message_message_id = this.get_focused_message_id()
         var replies = []
         for(var i=0; i<all_messages.length; i++){
-            if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
+            if(all_messages[i]['focused_message_id'] != null && focused_message_message_id != null &&  all_messages[i]['focused_message_id'] == focused_message_message_id){
                 replies.push(all_messages[i])
             }
+            // else{
+            //     console.log('----------------------------get_focused_message_replies---------------------------')
+            //     console.log(all_messages[i])
+            //     console.log(focused_message)
+            //     console.log(all_messages[i]['focused_message_id'])
+            //     console.log(focused_message_message_id)
+            // }
         }
+        
         return replies
     }
+
+    get_focused_message_id(){
+        var focused_message = this.get_focused_message()
+        var focused_message_message_id = focused_message['message_id'];
+        if(focused_message_message_id == null && focused_message['ipfs'] != null){
+            focused_message_message_id = focused_message['ipfs']['message_id'];
+        }
+        return focused_message_message_id
+    }
+
 
     get_message_replies(item){
         var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
@@ -632,12 +726,12 @@ class MailDetailsSection extends Component {
         var message = this.state.entered_text.trim()
         var mail = this.get_mail_items()[this.props.selected_mail_item];
         var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message_id() : 0
         if(message == ''){
             this.props.notify('type something first', 600)
         }else{
             var convo_id = mail['convo_id']
-            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+            var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5']}
             this.props.add_mail_to_stack_object(tx)
 
             this.setState({entered_text:''})
@@ -654,9 +748,9 @@ class MailDetailsSection extends Component {
         var mail = this.get_mail_items()[this.props.selected_mail_item];
         var convo_id = mail['convo_id']
         var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message_id() : 0
 
-        var tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id, 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+        var tx = {convo_id: convo_id, type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5']}
         this.props.add_mail_to_stack_object(tx)
 
         this.setState({entered_text:''})

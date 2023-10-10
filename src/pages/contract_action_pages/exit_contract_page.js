@@ -153,7 +153,7 @@ class ExitContractPage extends Component {
                 entered_indexing_tags:['exit', 'contract']
             })
         }
-        this.setState({contract_item: contract})
+        this.setState({contract_item: contract, e5: contract['e5']})
     }
 
 

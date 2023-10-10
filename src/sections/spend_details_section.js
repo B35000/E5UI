@@ -275,7 +275,7 @@ class SpendDetailSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                         {buy_tokens.map((item, index) => (
                             <li style={{'padding': '1px'}}>
-                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.props.app_state.token_directory[item]})}
+                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                             </li>
                         ))}
                     </ul>
@@ -407,7 +407,7 @@ class SpendDetailSection extends Component {
     render_auth_modify_button(){
         var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
@@ -426,7 +426,7 @@ class SpendDetailSection extends Component {
     render_exchange_transfer_button(){
         var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
@@ -448,7 +448,7 @@ class SpendDetailSection extends Component {
     render_freeze_unfreeze_tokens_button(){
         var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
@@ -468,7 +468,7 @@ class SpendDetailSection extends Component {
     render_authmint_tokens_button(){
         var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 5 && contract_config[9/* exchange_authority */] == my_account){
             return(
                 <div>
@@ -486,7 +486,7 @@ class SpendDetailSection extends Component {
 
     render_moderator_button(){
         var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(
                 <div>
@@ -505,7 +505,7 @@ class SpendDetailSection extends Component {
 
     render_basic_edit_object_button(){
         var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 5 && (object['event'].returnValues.p3 == my_account)){
             return(
                 <div>
@@ -538,21 +538,21 @@ class SpendDetailSection extends Component {
         var selected_obj_ratio_config = selected_object['data'][2];
 
         var type = selected_obj_root_config[3] == 3 ? 'Capped' : 'Uncapped'
+        var spend_type = selected_object['data'][0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
         var is_auth_main_contract = selected_obj_config[9] == 2 ? '2 (Main Contract)': selected_obj_config[9]
         var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
         var halfing_type = selected_obj_config[15] == 0 ? 'Fixed' : 'Spread'
 
         if(title == 5){
-            title = 'SPEND'
+            var obj = {'E15':'315'}
+            title = obj[selected_object['e5']]
         }
 
         var item = selected_object;
         var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
-        var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
-        if(symbol == null){
-            symbol = SpendImg
-        }
+        var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
+        
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         
         return{
@@ -620,13 +620,25 @@ class SpendDetailSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.props.app_state.token_directory[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
             </div>
             
         )
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     render_spend_block_history_logs(){

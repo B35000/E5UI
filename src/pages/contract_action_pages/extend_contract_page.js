@@ -144,7 +144,7 @@ class ExtendContractPage extends Component {
                 entered_indexing_tags:['extend', 'contract']
             })
         }
-        this.setState({contract_item: contract})
+        this.setState({contract_item: contract, e5: contract['e5']})
     }
 
 

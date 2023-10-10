@@ -40,7 +40,7 @@ function makeid(length) {
 class NewSubscriptionPage extends Component {
     
     state = {
-        id: makeid(8), type:'subscription',
+        id: makeid(8), type:'subscription', e5:this.props.app_state.selected_e5,
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_subscription_tags_object: this.get_new_subscription_tags_object(),
         authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(),
@@ -52,7 +52,7 @@ class NewSubscriptionPage extends Component {
         
         exchange_id:'', price_amount:0, price_data:[],
 
-        page:0,
+        page:0, 
     };
 
     constructor(props) {
@@ -215,6 +215,10 @@ class NewSubscriptionPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Subscription'})}
                 <div style={{height:10}}/>
@@ -228,6 +232,8 @@ class NewSubscriptionPage extends Component {
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+
+                {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -293,7 +299,7 @@ class NewSubscriptionPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
             <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
@@ -973,7 +979,7 @@ class NewSubscriptionPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
                         ))}
@@ -982,6 +988,18 @@ class NewSubscriptionPage extends Component {
             )
         }
         
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     when_amount_clicked(item){
@@ -1020,10 +1038,12 @@ class NewSubscriptionPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var exchanges_from_sync = this.props.app_state.created_tokens
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         var sorted_token_exchange_data = []
-        var myid = this.props.app_state.user_account_id
+        // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
             var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
             if(author_account == myid.toString()){
                 sorted_token_exchange_data.push(exchanges_from_sync[i])
@@ -1041,6 +1061,30 @@ class NewSubscriptionPage extends Component {
         }
 
         return items;
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
     }
 
     when_price_suggestion_clicked(item, pos, target_type){
@@ -1074,7 +1118,7 @@ class NewSubscriptionPage extends Component {
     }
 
     get_account_suggestions(target_type){
-        var contacts = this.props.app_state.contacts
+        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
         var return_array = []
 
         if(target_type == 'authority_id'){
@@ -1110,7 +1154,7 @@ class NewSubscriptionPage extends Component {
     }
 
     get_contact_alias(contact){
-        return (this.props.app_state.alias_bucket[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.props.app_state.alias_bucket[contact['id']])
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
     }
 
     when_suggestion_clicked(item, pos, target_type){
@@ -1246,7 +1290,11 @@ class NewSubscriptionPage extends Component {
         }
         else if(title == ''){
             this.props.notify('add a name first!', 700)
-        }else{
+        }
+        else if(title.length > this.props.app_state.title_size){
+            this.props.notify('that name is too long', 700)
+        }
+        else{
             this.props.when_add_new_object_to_stack(this.state)
 
             this.setState({ id: makeid(32), type:'subscription', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: this.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })

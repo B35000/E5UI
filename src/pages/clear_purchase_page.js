@@ -255,7 +255,7 @@ class ClearPurchasePage extends Component {
                 selected: 0, id: makeid(8), order_data:{'variant_id':''}, order_storefront:{variants:[]}, client_type: 'order_owner', clear_purchase_title_tags_object: this.get_verify_signature_title_tags_object(), received_signature: '',
             })
         }
-        this.setState({order_data: item, client_type: client_type, order_storefront: order_storefront})
+        this.setState({order_data: item, client_type: client_type, order_storefront: order_storefront, e5: order_storefront['e5']})
 
         if(client_type == 'storefront_owner'){
             this.setState({clear_purchase_title_tags_object: this.get_verify_signature_title_tags_object()})

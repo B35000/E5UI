@@ -218,7 +218,7 @@ class ForceExitPage extends Component {
                 force_exit_target:'', force_exit_accounts:[]
             })
         }
-        this.setState({contract_item: contract_item})
+        this.setState({contract_item: contract_item, e5: contract_item['e5']})
     }
 
     finish(){

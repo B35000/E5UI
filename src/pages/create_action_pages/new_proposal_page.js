@@ -38,7 +38,7 @@ function makeid(length) {
 class NewProposalPage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), type:'proposal', entered_indexing_tags:['new', 'proposal'],
+        selected: 0, id: makeid(8), type:'proposal', entered_indexing_tags:['new', 'proposal'], e5:this.props.app_state.selected_e5,
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
@@ -282,6 +282,10 @@ class NewProposalPage extends Component {
             <div style={{'padding':'0px 15px 0px 10px'}}>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Proposal'})}
                 <div style={{height:10}}/>
@@ -295,6 +299,8 @@ class NewProposalPage extends Component {
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+
+                {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -355,7 +361,7 @@ class NewProposalPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
             <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
@@ -503,7 +509,7 @@ class NewProposalPage extends Component {
 
     fetch_modify_target_data = async (text) =>{
         if(text.trim() != '' && !isNaN(text)){
-            var modify_target_data = await this.props.load_modify_item_data(text)
+            var modify_target_data = await this.props.load_modify_item_data(text, 'E15')
             this.setState({modify_target_data: modify_target_data})
         }
     }
@@ -596,8 +602,44 @@ class NewProposalPage extends Component {
         
     }
 
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
     get_account_suggestions(type){
-        var contacts = this.props.app_state.contacts
+        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
         var return_array = []
 
         if(type == 'spend_target'){
@@ -618,7 +660,7 @@ class NewProposalPage extends Component {
     }
 
     get_contact_alias(contact){
-        return (this.props.app_state.alias_bucket[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.props.app_state.alias_bucket[contact['id']])
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
     }
 
     when_suggestion_clicked(item, pos, type){
@@ -815,7 +857,7 @@ class NewProposalPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_when_spend_action_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.props.app_state.token_directory[item['spend_token']], 'details':'target: '+item['spend_target']+', token: '+item['spend_token'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['spend_token']], 'details':'target: '+item['spend_target']+', token: '+item['spend_token'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -1504,7 +1546,7 @@ class NewProposalPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_transfer_action_value_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['token']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
                                 </div>
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':'Exchange ID:'+item['exchange'], 'size':'s'})}
@@ -1623,7 +1665,7 @@ class NewProposalPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_bounty_value_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token ID: '+item['exchange'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['exchange']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token ID: '+item['exchange'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
                                 </div>
                             </li>
                         ))}
@@ -1677,7 +1719,11 @@ class NewProposalPage extends Component {
         }
         else if(title == ''){
             this.props.notify('add a title first!', 700)
-        }else{
+        }
+        else if(title.length > this.props.app_state.title_size){
+            this.props.notify('that title is too long', 700)
+        }
+        else{
             this.props.when_add_new_proposal_to_stack(this.state)
 
             this.setState({selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],

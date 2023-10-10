@@ -119,7 +119,9 @@ class EnterContractPage extends Component {
                 entered_indexing_tags:['enter', 'contract']
             })
         }
-        this.setState({contract_item: contract})
+        this.setState({contract_item: contract, e5: contract['e5']})
+        console.log('---------------------------set_contract-------------------------')
+        console.log(contract['e5'])
     }
 
 

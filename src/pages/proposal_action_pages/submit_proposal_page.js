@@ -160,7 +160,7 @@ class SubmitProposalPage extends Component {
                 submit_proposal_title_tags_object: this.get_submit_proposal_title_tags_object()
             })
         }
-        this.setState({proposal_item: proposal})
+        this.setState({proposal_item: proposal, e5: proposal['e5']})
     }
 
 

@@ -64,7 +64,7 @@ class ViewTransactionLogPage extends Component {
                     {this.render_detail_item('3',{'details':item.returnValues.p1, 'title':'Sender Account ID','size':'s'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':'Semder Account Address','size':'s'})}
+                    {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':'Sender Account Address','size':'s'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>

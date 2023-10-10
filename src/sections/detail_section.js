@@ -98,7 +98,7 @@ class PostDetailSection extends Component {
             var selected_tag = this.props.explore_page_tags_object['i'].active
             if(selected_tag == 'E5s' || selected_tag == 'e'){
                 return(
-                    <E5DetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)}/>
+                    <E5DetailsSection app_state={this.props.app_state}  height={this.props.height} theme={this.props.theme} screensize={this.props.screensize} selected_e5_item={this.props.selected_e5_item} explore_page_tags_object={this.props.explore_page_tags_object} show_withdraw_ether_bottomsheet={this.props.show_withdraw_ether_bottomsheet.bind(this)} get_e5_data={this.props.get_e5_data.bind(this)}/>
                 )
             }
             else if(selected_tag == 'posts' ){

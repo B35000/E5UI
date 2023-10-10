@@ -38,9 +38,13 @@ class StackPage extends Component {
     state = {
         selected: 0,
         get_stack_page_tags_object: this.get_stack_page_tags_object(),
+
         get_themes_tags_object: this.get_theme_tags_object(),
         get_orientation_tags_object: this.get_orientation_tags_object(),
+        get_selected_e5_tags_object: this.get_selected_e5_tags_object(),
+
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
+
         typed_word:'',added_tags:[],set_salt: 0,
         run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
 
@@ -87,6 +91,18 @@ class StackPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e','right','left'], [1]
+            ],
+        };
+        
+    }
+
+    get_selected_e5_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','E15'], [1]
             ],
         };
         
@@ -219,7 +235,7 @@ class StackPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.props.app_state.E15_runs
+        var items = this.props.app_state.E5_runs[this.props.app_state.selected_e5]
 
         if(items.length == 0){
             items = [0,3,0]
@@ -352,9 +368,9 @@ class StackPage extends Component {
         return(
             <div>  
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance), 'number':this.format_account_balance_figure(this.props.app_state.account_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance/10**18), 'number':(this.props.app_state.account_balance/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -369,9 +385,9 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price', 'subtitle':this.format_power_figure(this.props.app_state.gas_price), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price), 'number':this.format_account_balance_figure(this.props.app_state.gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price', 'subtitle':this.format_power_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.props.app_state.gas_price/10**9), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price/10**9), 'number':this.format_account_balance_figure(this.props.app_state.gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]/10**9), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price[this.props.app_state.selected_e5]/10**9), 'number':this.format_account_balance_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
                 
 
@@ -523,9 +539,9 @@ class StackPage extends Component {
         var ints = []
         var adds = []
         var wei = 0;
-
+        var delete_pos_array = []
         for(var i=0; i<txs.length; i++){
-            if(!this.props.app_state.hidden.includes(txs[i])){
+            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 if(txs[i].type == 'contract'){
                     var contract_obj = this.format_contract_object(txs[i])
                     strs.push([])
@@ -1103,6 +1119,7 @@ class StackPage extends Component {
                     ints.push(format_object.int)
                 }
                 
+                delete_pos_array.push(i)
             }
             
         }
@@ -1119,7 +1136,7 @@ class StackPage extends Component {
         var metadata_strings = [ [] ]
 
         for(var i=0; i<txs.length; i++){
-            if(!this.props.app_state.hidden.includes(txs[i])){
+            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront-item'|| txs[i].type == 'proposal' || txs[i].type == 'contractor'){
                     metadata_action[1].push(i)
                     metadata_action[2].push(35)
@@ -1171,7 +1188,7 @@ class StackPage extends Component {
 
 
 
-        if(this.props.app_state.E15_runs.length == 0){
+        if(this.props.app_state.E5_runs[this.props.app_state.selected_e5].length == 0){
             //if its the first time running a transaction
             var obj = [ /* set data */
                 [20000, 13, 0],
@@ -1197,7 +1214,7 @@ class StackPage extends Component {
             ]
 
             var string_obj = [[]]
-            var contacts_clone = this.props.app_state.contacts.slice()
+            var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
             var data = {'contacts':contacts_clone, 'time':Date.now()}
             var string_data = await this.get_object_ipfs_index(data);
             string_obj[0].push(string_data)
@@ -1209,16 +1226,16 @@ class StackPage extends Component {
 
 
 
-        var account_balance = this.props.app_state.account_balance
+        var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
-        var run_gas_price = this.props.app_state.gas_price
+        var run_gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
 
         if(txs.length > 0){
             if(account_balance < (run_gas_limit * run_gas_price)){
                 this.setState({invalid_ether_amount_dialog_box: true})
             }
             else{
-                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei)
+                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei, delete_pos_array)
             }
         }else{
             this.props.notify('add some transactions first!',600)
@@ -2060,7 +2077,8 @@ class StackPage extends Component {
         var int_data = Date.now()
 
         obj[1].push(recipient_account)
-        obj[2].push(23)
+        if(recipient_account == 53) obj[2].push(53)
+        else obj[2].push(23)
         obj[3].push(context)
         obj[4].push(int_data)
 
@@ -2074,7 +2092,7 @@ class StackPage extends Component {
         var encrypted_obj = this.props.encrypt_data_object(t, key)
         var recipent_data = {}
         var recipient = recip
-        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient)
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, 'E15')
 
         if(recipients_pub_key_hash != ''){
             var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
@@ -2083,7 +2101,7 @@ class StackPage extends Component {
 
         var uint8array = await this.props.get_account_raw_public_key() 
         var my_encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, uint8array)
-        recipent_data[this.props.app_state.user_account_id] = my_encrypted_key
+        recipent_data[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] = my_encrypted_key
 
         return {'obj':encrypted_obj, 'recipient_data':recipent_data}
     }
@@ -2186,7 +2204,7 @@ class StackPage extends Component {
         var context = 36
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application'}
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application'}
 
         var string_data = await this.get_object_ipfs_index(application_obj);
 
@@ -2307,7 +2325,7 @@ class StackPage extends Component {
         var context = 36
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
 
         var string_data = await this.get_object_ipfs_index(application_obj);
 
@@ -2383,7 +2401,7 @@ class StackPage extends Component {
             obj[7].push(0)
         }
 
-        var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id, 'signature_data':Date.now(), 'sender_address':this.props.app_state.account.address}
+        var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.props.app_state.accounts[this.props.app_state.selected_e5].address}
         
         var string_data = await this.get_object_ipfs_index(purchase_object);
 
@@ -2509,7 +2527,7 @@ class StackPage extends Component {
         var context = 38
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id, 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':int_data}
+        var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':int_data}
 
         var string_data = await this.get_object_ipfs_index(application_obj);
 
@@ -2591,7 +2609,7 @@ class StackPage extends Component {
 
         var string_obj = [[]]
 
-        var context = this.props.app_state.user_account_id
+        var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
         var string_data = await this.get_object_ipfs_index(t.alias);
@@ -2614,7 +2632,7 @@ class StackPage extends Component {
 
         var string_obj = [[]]
 
-        var context = this.props.app_state.user_account_id
+        var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
         var string_data = await this.get_object_ipfs_index(t.alias);
@@ -2637,7 +2655,7 @@ class StackPage extends Component {
 
         var string_obj = [[]]
 
-        var context = this.props.app_state.user_account_id
+        var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
         var string_data = await this.get_object_ipfs_index(t.alias);
@@ -2770,10 +2788,18 @@ class StackPage extends Component {
                     {this.render_detail_item('0')}
 
 
-                    {this.render_detail_item('3',{'title':'Orientation (for larger screens)', 'details':'Set the orientation for viewing a posts details', 'size':'l'})}
+                    {/* {this.render_detail_item('3',{'title':'Orientation (for larger screens)', 'details':'Set the orientation for viewing a posts details', 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')} */}
+
+                    
+                    {this.render_detail_item('3',{'title':'Preferred E5', 'details':'Set the E5 you preferr to use', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_selected_e5_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_e5_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')}
 
@@ -2795,7 +2821,6 @@ class StackPage extends Component {
     }
 
     when_details_orientation_changed(tag_group){
-        
         this.setState({get_orientation_tags_object: tag_group})
         var selected_item = this.get_selected_item(this.state.get_orientation_tags_object, this.state.get_orientation_tags_object['i'].active)
 
@@ -2804,6 +2829,14 @@ class StackPage extends Component {
         }
 
         this.props.when_details_orientation_changed(selected_item)
+    }
+
+    when_get_selected_e5_tags_object_updated(tag_group){
+        this.setState({get_selected_e5_tags_object:tag_group})
+
+        var selected_item = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
+
+        this.props.when_selected_e5_changed(selected_item)
     }
 
 
@@ -2971,8 +3004,8 @@ class StackPage extends Component {
     }
 
     get_account_address(){
-        if(this.props.app_state.account != null){
-            return this.props.app_state.account.address;
+        if(this.props.app_state.accounts[this.props.app_state.selected_e5] != null){
+            return this.props.app_state.accounts[this.props.app_state.selected_e5].address;
         }
     }
 
@@ -2981,8 +3014,8 @@ class StackPage extends Component {
             'style':'s',
             'title':'',
             'subtitle':'',
-            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance),
-            'number':this.format_account_balance_figure(this.props.app_state.account_balance),
+            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
+            'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]),
             'barcolor':'#606060',
             'relativepower':'wei',
         }
@@ -2994,8 +3027,8 @@ class StackPage extends Component {
             'style':'s',
             'title':'',
             'subtitle':'',
-            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance/10**18),
-            'number':this.props.app_state.account_balance/10**18,
+            'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18),
+            'number':this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18,
             'barcolor':'#606060',
             'relativepower':'ether',
         }
@@ -3050,7 +3083,7 @@ class StackPage extends Component {
     }
 
     render_users_contacts(){
-        var items = this.props.app_state.contacts;
+        var items = this.props.app_state.contacts[this.props.app_state.selected_e5];
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
@@ -3176,8 +3209,8 @@ class StackPage extends Component {
     }
 
     render_my_account_id(){
-        var display = this.props.app_state.user_account_id == 1 ? '0000' : this.props.app_state.user_account_id
-        var alias = (this.props.app_state.alias_bucket[this.props.app_state.user_account_id] == null ? 'Alias Unknown' : this.props.app_state.alias_bucket[this.props.app_state.user_account_id])
+        var display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? 'Alias Unknown' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
@@ -3190,6 +3223,18 @@ class StackPage extends Component {
             </div>
             
         )
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
 
@@ -3208,10 +3253,10 @@ class StackPage extends Component {
         else if(typed_word.length < 3){
             this.props.notify('That alias is too short', 400)
         }
-        else if(this.props.app_state.user_account_id < 1000){
+        else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] < 1000){
             this.props.notify('you need to make at least 1 transaction to reserve an alias', 1200)
         }
-        else if(this.props.app_state.alias_owners[typed_word] != null){
+        else if(this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[typed_word] != null){
             this.props.notify('That alias has already been reserved', 400)
         }
         else{
@@ -3221,7 +3266,7 @@ class StackPage extends Component {
 
 
     render_users_aliases(){
-        var items = this.props.app_state.my_alias_events;
+        var items = this.props.app_state.my_alias_events[this.props.app_state.selected_e5];
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){

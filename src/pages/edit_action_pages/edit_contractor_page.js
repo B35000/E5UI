@@ -41,7 +41,7 @@ class NewContractorPage extends Component {
         get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[],
+        entered_objects:[], e5: this.props.app_state.selected_e5
     };
 
     get_new_contractor_page_tags_object(){
@@ -150,6 +150,10 @@ class NewContractorPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set a title for your new contractor post. It should be task specific'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                
+                <div style={{height: 10}}/>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set tags for indexing your new contractor post'})}
@@ -164,6 +168,8 @@ class NewContractorPage extends Component {
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+
+                {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -223,7 +229,7 @@ class NewContractorPage extends Component {
         var items = this.state.entered_objects;
         return ( 
             <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
@@ -377,6 +383,7 @@ class NewContractorPage extends Component {
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove and click add images to add them to the object.'})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -428,13 +435,15 @@ class NewContractorPage extends Component {
                 let reader = new FileReader();
                 reader.onload = function(ev){
                     const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
-                    clonedArray.push(ev.target.result);
-                    this.setState({entered_image_objects: clonedArray});
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        clonedArray.push(ev.target.result);
+                        this.setState({entered_image_objects: clonedArray});
+                    }
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 
@@ -539,7 +548,11 @@ class NewContractorPage extends Component {
         }
         else if(title == ''){
             this.props.notify('add a title for your post', 700)
-        }else{
+        }
+        else if(title.length > this.props.app_state.title_size){
+            this.props.notify('that title is too long', 700)
+        }
+        else{
             
             this.props.when_add_edit_object_to_stack(this.state)
 

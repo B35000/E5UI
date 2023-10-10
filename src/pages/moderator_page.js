@@ -498,7 +498,7 @@ class ModeratorPage extends Component {
                 entered_blocked_text:'', blocked_expiry_time: Date.now()/1000
             })
         }
-        this.setState({object_item: item})
+        this.setState({object_item: item, e5:item['e5']})
     }
 
 

@@ -242,7 +242,7 @@ class ArchiveProposalPage extends Component {
                 bounty_target:'', bounty_exchanges:[]
             })
         }
-        this.setState({object_item: proposal})
+        this.setState({object_item: proposal, e5: proposal['e5']})
     }
 
     finish(){

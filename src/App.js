@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import AlertIcon from './assets/alert_icon.png';
+import AlertIconDark from './assets/alert_icon_dark.png'
+import AddIcon from './assets/add_icon.png'
+import AddIconDark from './assets/add_icon_dark.png'
 
 /* blockchain stuff */
 import { mnemonicToSeedSync } from 'bip39';
 import { Buffer } from 'buffer';
 import { bigInt } from 'big-integer';
+// import Cookies from 'js-cookie';
+import Cookies from 'universal-cookie';
 
 
 /* shared component stuff */
@@ -138,23 +143,43 @@ class App extends Component {
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
+    account:null,
     theme: this.get_theme_data('light'),
     details_orientation: 'right',
     new_object_target: '0', edit_object_target:'0',
-    created_object_array:[],
-    account_balance:0, stack_items:[],
-    created_subscriptions:[], all_subscriptions:[], 
-    created_contracts:[], all_contracts:[], 
-    created_tokens:[], all_tokens:[],
-    created_jobs:[], created_stores:[], created_bags:[], created_contractors:[],
-    mint_dump_actions:[{},], contacts:[], should_update_contacts_onchain: false,
+    account_balance:{}, stack_items:[],
+    created_subscriptions:{}, all_subscriptions:{}, created_subscription_object_mapping:{},
+    my_proposals:{},
+    created_contracts:{}, all_contracts:{}, created_contract_mapping:{},
+    created_tokens:{}, all_tokens:{}, created_token_object_mapping:{},end_balance_of_E5:{},spend_balance_of_E5:{},end_balance_of_burn_account:{},token_directory:{},
+    created_posts:{},created_channels:{},
+    created_jobs:{}, created_job_mappings:{}, my_applications:{},
+    created_mail:{}, received_mail:{},
+    created_stores:{}, created_store_mappings:{}, created_bags:{}, 
+    created_contractors:{},
+    mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false,
 
     web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
-    sync_steps:33, qr_code_scanning_page:'clear_purchaase', tag_size:13,
+    
+    sync_steps:20, qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000,
 
-    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp:{}, created_token_object_mapping:{},
-    award_data:{},
+    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
+    
+    alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp: {},
+    created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
+
+    e5s:this.get_e5s(),
+    selected_e5:'E15',
+    accounts:{},
   };
+
+
+  get_e5s(){
+    return{
+      'data':['E15'],
+      'E15':{web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'}
+    }
+  }
 
 
   constructor(props) {
@@ -217,20 +242,71 @@ class App extends Component {
 
   componentDidMount() {
     console.log("mounted");
+    
+    const cookies = new Cookies();
+    var cookie_theme = (cookies.get('state')).theme;
+    var cookie_stack_items = (cookies.get('state')).stack_items
+
+    // console.log('------------------------eeeee-------------------------')
+    // console.log(cookie_theme)
+    
+    if(cookie_theme != null){
+      this.setState({theme:cookie_theme})
+    }
+
+    if(cookie_stack_items != null){
+      this.setState({stack_items:cookie_stack_items})
+    }
+
     this.load_e5_data();
      
-
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
-    
+
+    this.interval = setInterval(() => this.background_sync(), 27000);
   }
 
   /* called when the component is unmounted or closed */
   componentWillUnmount() {
     console.log("unmounted");
     window.removeEventListener("resize", this.resize.bind(this));
+
+    clearInterval(this.interval);
+
+    const cookies = new Cookies();
+    cookies.set('state', this.get_persistent_data(), { path: '/' });
   }
+
+  get_persistent_data(){
+    return {theme: this.state.theme, stack_items:this.state.stack_items}
+  }
+
+  background_sync(){
+    if(this.state.accounts[this.state.selected_e5] != null){
+      // this.get_accounts_data(this.state.account, false, this.state.web3, this.state.e5_address)
+      this.start_get_accounts_data(false)
+    }
+  }
+
+
+  get_selected_web3_url(){
+    return this.state.e5s[this.state.selected_e5].web3
+  }
+
+  get_selected_E5_contract(){
+    return this.state.e5s[this.state.selected_e5].e5_address
+  }
+
+  get_web3_url_from_e5(e5){
+    return this.state.e5[e5].web3
+  }
+
+
+
+
+
+
 
   /* called when screensize is changed */
   resize() {
@@ -292,7 +368,7 @@ class App extends Component {
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#868686',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light'
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':AlertIcon, 'add_icon':AddIcon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46'
       }
     }
     else if(theme == 'dark'){
@@ -312,7 +388,7 @@ class App extends Component {
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark'
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':AlertIconDark, 'add_icon':AddIconDark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46'
       }
     }
   }
@@ -381,7 +457,7 @@ class App extends Component {
     return(
       <Home_page 
       screensize={this.getScreenSize()} 
-      width={this.state.width} height={this.state.height} app_state={this.state} notify={this.prompt_top_notification.bind(this)}open_send_receive_ether_bottomsheet={this.open_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
+      width={this.state.width} height={this.state.height} app_state={this.state} notify={this.prompt_top_notification.bind(this)} open_send_receive_ether_bottomsheet={this.start_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
       open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
       open_new_object={this.open_new_object.bind(this)} 
       when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_created_job_tapped.bind(this)} fetch_objects_data={this.fetch_objects_data.bind(this)}
@@ -422,13 +498,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'mail-messages'){
+      if(stack[i].type == 'mail-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'mail-messages', entered_indexing_tags:['send', 'mail'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'mail-messages', entered_indexing_tags:['send', 'mail'], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -441,13 +517,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'channel-messages'){
+      if(stack[i].type == 'channel-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'channel-messages', entered_indexing_tags:['send', 'channel','messages'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'channel-messages', entered_indexing_tags:['send', 'channel','messages'], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -460,13 +536,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'post-messages'){
+      if(stack[i].type == 'post-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'post-messages', entered_indexing_tags:['send', 'post','comment'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'post-messages', entered_indexing_tags:['send', 'post','comment'], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -479,13 +555,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'job-messages'){
+      if(stack[i].type == 'job-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'job-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'job-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -498,13 +574,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'proposal-messages'){
+      if(stack[i].type == 'proposal-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'proposal-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'proposal-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -518,13 +594,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'bag-messages'){
+      if(stack[i].type == 'bag-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'bag-messages', entered_indexing_tags:['send', 'bag','comment'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'bag-messages', entered_indexing_tags:['send', 'bag','comment'], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -538,13 +614,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'storefront-messages'){
+      if(stack[i].type == 'storefront-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'storefront-messages', entered_indexing_tags:['send', 'storefront','message','review'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'storefront-messages', entered_indexing_tags:['send', 'storefront','message','review'], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -609,6 +685,13 @@ class App extends Component {
       }
   }
 
+  start_send_receive_ether_bottomsheet(item){
+    if(this.send_receive_ether_page.current != null){
+      this.send_receive_ether_page.current.set_object(item)
+    }
+    this.open_send_receive_ether_bottomsheet()
+  }
+
 
 
 
@@ -619,7 +702,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)}/>
+              <StackPage app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -641,8 +724,12 @@ class App extends Component {
     this.setState({details_orientation: orientation})
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei) => {
-    const web3 = new Web3(this.state.web3);
+  when_selected_e5_changed(e5){
+    this.setState({selected_e5: e5})
+  }
+
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array) => {
+    const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.state.e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
@@ -663,11 +750,13 @@ class App extends Component {
     }
 
     
-    web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
+    web3.eth.accounts.signTransaction(tx, me.state.accounts[this.state.selected_e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          me.setState({stack_items: [], should_update_contacts_onchain: false})
-          me.get_accounts_data(me.state.account)
-          this.prompt_top_notification('run complete! re-synchronizing...', 600)
+          me.setState({should_update_contacts_onchain: false})
+          this.delete_stack_items(delete_pos_array)
+          // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
+          this.start_get_accounts_data(false)
+          this.prompt_top_notification('run complete!', 600)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
           this.prompt_top_notification('Run failed. Check your stack and try again', 1500)
@@ -714,6 +803,15 @@ class App extends Component {
     //   console.log('Transaction failed. Transaction hash:', receipt.transactionHash);
     //   this.prompt_top_notification('run failed. Check your stacks transactions and try again', 1500)
     // }
+  }
+
+  delete_stack_items(delete_pos_array){
+    var stack = this.state.stack_items.slice()
+    delete_pos_array.forEach(element => {
+      stack.splice(element, 1)
+    });
+
+    this.setState({stack_items: stack})
   }
 
   view_transaction(tx, index){
@@ -2693,13 +2791,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice() 
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'storefront-bag'){
+      if(stack[i].type == 'storefront-bag' && stack[i].e5 == state_obj.e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'storefront-bag', entered_indexing_tags:['storefront', 'bag', 'cart'], items_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'storefront-bag', entered_indexing_tags:['storefront', 'bag', 'cart'], items_to_deliver:[], e5: state_obj.e5}
       
       tx.items_to_deliver.push(state_obj)
       stack.push(tx)
@@ -3045,13 +3143,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'job-request-messages'){
+      if(stack[i].type == 'job-request-messages' && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'job-request-messages', entered_indexing_tags:['send','job','request','messages'], messages_to_deliver:[]}
+      var tx = {selected: 0, id: makeid(8), type:'job-request-messages', entered_indexing_tags:['send','job','request','messages'], messages_to_deliver:[], e5: message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -3136,14 +3234,17 @@ class App extends Component {
     }
   }
 
-  show_withdraw_ether_bottomsheet(){
+  show_withdraw_ether_bottomsheet(item){
+    if(this.withdraw_ether_page.current != null){
+      this.withdraw_ether_page.current.set_object(item)
+    }
     this.open_withdraw_ether_bottomsheet()
   }
 
   withdraw_ether_to_address = async (target_recipient_address) =>{
     this.prompt_top_notification('withdrawing your ether...', 600)
 
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.state.e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
@@ -3163,7 +3264,8 @@ class App extends Component {
 
     web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          me.get_accounts_data(me.state.account)
+          // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
+          this.start_get_accounts_data(false)
           this.prompt_top_notification('withdraw complete!', 600)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
@@ -3392,7 +3494,7 @@ class App extends Component {
           <div>
               <div style={{'background-color':this.state.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40}}>
                   <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
-                      <img src={AlertIcon} style={{height:25,width:'auto','scale': '0.9'}} />
+                      <img src={this.state.theme['alert_icon']} style={{height:25,width:'auto','scale': '0.9'}} />
                   </div>
                   <div style={{'padding': '0px 0px 0px 8px', 'margin':'5px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
                       <p style={{'font-size': '13px', 'color':this.state.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1', 'margin':'0px'}}>{message}</p>
@@ -3417,96 +3519,19 @@ class App extends Component {
 
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
-    
 
-    const web3 = new Web3('ws://127.0.0.1:8545/');
-    const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = this.state.e5_address
-    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
-
-
-    var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
-    var contract_addresses = contract_addresses_events[0].returnValues.p5
-
-    await web3.eth.net.getId().then(id =>{
-      this.inc_synch_progress()
-      this.setState({chain_id: id});
-    })
-
-    await web3.eth.net.getPeerCount().then(peers =>{
-      this.setState({ number_of_peers: peers});
-      this.inc_synch_progress()
-    })
-
-    await web3.eth.net.getNetworkType().then(type =>{
-      this.setState({ network_type: type});
-      this.inc_synch_progress()
-    })
-
-    web3.eth.getBlockNumber().then(blockNumber => {
-        var last_blocks = [];
-        var start = blockNumber-100;
-        if(blockNumber < 100){
-          start = 0;
-        }
-        for (let i = start; i <= blockNumber; i++) {
-          web3.eth.getBlock(i).then(block => {
-            last_blocks.push(block);
-          })
-        }
-
-        this.setState({E15last_blocks: last_blocks, E15number_of_blocks: blockNumber});
-        this.inc_synch_progress()
-    });
-
-    const gasPrice = await web3.eth.getGasPrice();
-    this.setState({gas_price: gasPrice})
-
-
-
-    contractInstance.events['e4']({
-      filter: { p1/* sender_account_id */: 1002 }
-    })
-    .on('data', event => {
-      console.log('Event:', event);
+    // contractInstance.events['e4']({
+    //   filter: { p1/* sender_account_id */: 1002 }
+    // })
+    // .on('data', event => {
+    //   console.log('Event:', event);
       
-    })
-    .on('error', error => {
-      console.error('Error-----------:', error);
-    });
+    // })
+    // .on('error', error => {
+    //   console.error('Error-----------:', error);
+    // });
 
-    this.when_wallet_data_updated(['(32)'], 0, '')
-    this.inc_synch_progress()
-
-    
-
-    const G5contractArtifact = require('./contract_abis/G5.json');
-    const G5_address = contract_addresses[3].toString()
-    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
-    var main_contract_ids = [2];
-    G5contractInstance.methods.f78(main_contract_ids, false).call((error, result) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({E15_contract_data: result, contract_id_data:['E35']});
-        this.inc_synch_progress()
-      }
-    });
-
-    const H5contractArtifact = require('./contract_abis/H5.json');
-    const H5_address = contract_addresses[5].toString()
-    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
-    var token_ids = [3, 5];
-    H5contractInstance.methods.f86(token_ids).call((error, result) => {
-      if (error) {
-        console.error(error);
-      } else {
-        this.setState({E15_exchange_data: result, E15_exchange_id_data:token_ids});
-        this.inc_synch_progress()
-        
-      }
-    });
-
+    this.when_wallet_data_updated(['(32)'], 0, '')    
   }
 
   inc_synch_progress(){
@@ -3521,7 +3546,7 @@ class App extends Component {
   }
 
   send_ether_to_target(recipientAddress, amount, gasPrice, state){
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_selected_web3_url());
     const me = this;
     web3.eth.sendTransaction({
     from: state.account.address,
@@ -3556,17 +3581,31 @@ class App extends Component {
   when_wallet_data_updated(added_tags, set_salt, selected_item){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
 
-    const web3 = new Web3(this.state.web3);
-    const account = this.get_account_from_seed(seed);
-    this.setState({account: account});
+    // const account = this.get_account_from_seed(seed, this.state.web3);
+    // this.setState({account: account});
+    // this.get_accounts_data(account, true, this.state.web3, this.state.e5_address)
 
-    // this.get_filecoin_wallet(seed);
-    // this.test_generate_signature(account)
-    this.get_accounts_data(account, true)
+    this.generate_account_for_each_e5(seed)
+    var me = this
+    setTimeout(function() {
+        me.start_get_accounts_data(true)
+    }, (2 * 1000));
+    
   }
 
-  get_account_from_seed(seed){
-    const web3 = new Web3(this.state.web3);
+  generate_account_for_each_e5(seed){
+    var _accounts = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.state.e5s[e5].web3
+      var account = this.get_account_from_seed(seed, web3_url)
+      _accounts[e5] = account
+    }
+    this.setState({accounts: _accounts})
+  }
+
+  get_account_from_seed(seed, web3_url){
+    const web3 = new Web3(web3_url);
     const mnemonic = seed.trim();
     const seedBytes = mnemonicToSeedSync(mnemonic);
     const hdNode = ethers.utils.HDNode.fromSeed(seedBytes);
@@ -3736,18 +3775,78 @@ class App extends Component {
 
 
 
-
+  start_get_accounts_data = async (is_syncing) => {
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var e5 = this.state.e5s['data'][i]
+      var web3_url = this.state.e5s[e5].web3
+      var e5_address = this.state.e5s[e5].e5_address;
+      var account_for_e5 = this.state.accounts[e5]
+      this.get_accounts_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+    }
+  }
 
   //here
-  get_accounts_data = async (address_account, is_syncing) => {
-    const web3 = new Web3(this.state.web3);
+  get_accounts_data = async (_account, is_syncing, web3_url, e5_address, e5) => {
+    const web3 = new Web3(web3_url);
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = this.state.e5_address
+    const contractAddress = e5_address
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+    const address_account = this.state.accounts[e5]
+
+    console.log('-------------------------------fff-------------------------')
+    console.log(this.state.accounts)
+
+
+    if(is_syncing){
+      await web3.eth.net.getId().then(id =>{
+        this.inc_synch_progress()
+        var clone = structuredClone(this.state.chain_id)
+        clone[e5] = id
+        this.setState({chain_id: clone});
+      })
+
+      await web3.eth.net.getPeerCount().then(peers =>{
+        var clone = structuredClone(this.state.number_of_peers)
+        clone[e5] = peers
+        this.setState({ number_of_peers: clone});
+        this.inc_synch_progress()
+      })
+
+      await web3.eth.net.getNetworkType().then(type =>{
+        var clone = structuredClone(this.state.network_type)
+        clone[e5] = type
+        this.setState({ network_type: clone});
+        this.inc_synch_progress()
+      })
+
+      const gasPrice = await web3.eth.getGasPrice();
+      var clone = structuredClone(this.state.gas_price)
+      clone[e5] = gasPrice
+      this.setState({gas_price: clone})
 
 
 
+      await web3.eth.getBlockNumber().then(blockNumber => {
+          var last_blocks = [];
+          var start = blockNumber-100;
+          if(blockNumber < 100){
+            start = 0;
+          }
+          for (let i = start; i <= blockNumber; i++) {
+            web3.eth.getBlock(i).then(block => {
+              last_blocks.push(block);
+            })
+          }
 
+          var last_blocks_clone = structuredClone(this.state.last_blocks)
+          last_blocks_clone[e5] = last_blocks
+
+          var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
+          number_of_blocks_clone[e5] = blockNumber
+          this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
+          this.inc_synch_progress()
+      });
+    }
 
 
 
@@ -3757,12 +3856,14 @@ class App extends Component {
     /* ---------------------------------------- CONTRACT ADDRESSES -------------------------------------- */
     var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
     var contract_addresses = contract_addresses_events[0].returnValues.p5
-    this.setState({E35_addresses: contract_addresses})
+
+    var addresses_clone = structuredClone(this.state.addresses)
+    addresses_clone[e5] = contract_addresses
+    this.setState({addresses: addresses_clone})
 
     if(is_syncing){
       this.inc_synch_progress()
     }
-
 
 
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -3779,15 +3880,20 @@ class App extends Component {
     var accounts = await contractInstance.methods.f167([],[address_account.address], 2).call((error, result) => {});
     console.log('account id----------------',accounts[0])
     var account = accounts[0] == 0 ? 1 : accounts[0]
-    this.setState({user_account_id: account})
+
+    var clone = structuredClone(this.state.user_account_id)
+    clone[e5] = account
+    this.setState({user_account_id: clone})
 
     if(is_syncing){
       this.inc_synch_progress()
     }
 
     var events = await contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* sender_account_id */: account } }, (error, events) => {});
-    this.setState({E15_runs: events});
-    console.log(events[0])
+
+    var clone = structuredClone(this.state.E5_runs)
+    clone[e5] = events
+    this.setState({E5_runs: clone});
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -3840,12 +3946,24 @@ class App extends Component {
       
     }
 
-    console.log('alias bucket:')
-    console.log(alias_bucket)
-    console.log(alias_owners)
-    console.log(my_alias_events)
+    // console.log('alias bucket:')
+    // console.log(alias_bucket)
+    // console.log(alias_owners)
+    // console.log(my_alias_events)
 
-    this.setState({alias_bucket: alias_bucket, alias_owners: alias_owners, my_alias_events: my_alias_events, alias_timestamp: alias_timestamp})
+    var alias_bucket_clone = structuredClone(this.state.alias_bucket)
+    alias_bucket_clone[e5] = alias_bucket
+
+    var alias_owners_clone = structuredClone(this.state.alias_owners)
+    alias_owners_clone[e5] = alias_owners
+
+    var my_alias_events_clone = structuredClone(this.state.my_alias_events)
+    my_alias_events_clone[e5] = my_alias_events
+
+    var alias_timestamp_clone = structuredClone(this.state.alias_timestamp)
+    alias_timestamp_clone[e5] = alias_timestamp
+
+    this.setState({alias_bucket: alias_bucket_clone, alias_owners:alias_owners_clone, my_alias_events:my_alias_events_clone, alias_timestamp:alias_timestamp_clone})
 
 
     if(is_syncing){
@@ -3859,21 +3977,29 @@ class App extends Component {
 
     /* ---------------------------------------- BALANCE DATA -------------------------------------- */
     web3.eth.getBalance(address_account.address).then(balance => {
-      this.setState({account_balance: balance});
+      var clone = structuredClone(this.state.account_balance)
+      clone[e5] = balance
+      this.setState({account_balance: clone});
     }).catch(error => {
       console.error('Error:', error);
     });
 
     var withdraw_balance = await contractInstance.methods.f167([account], [], 1).call((error, result) => {});
-    this.setState({withdraw_balance: withdraw_balance[0]})
+    var clone = structuredClone(this.state.withdraw_balance)
+    clone[e5] = withdraw_balance[0]
+    this.setState({withdraw_balance: clone})
     console.log('withdraw balance: ',withdraw_balance[0])
 
     var basic_transaction_data = await contractInstance.methods.f287([account]).call((error, result) => {});
-    this.setState({basic_transaction_data: basic_transaction_data[0]})
+    var clone = structuredClone(this.state.basic_transaction_data)
+    clone[e5] = basic_transaction_data[0]
+    this.setState({basic_transaction_data: clone})
     console.log('basic transaction data: ',basic_transaction_data[0])
 
     var E5_balance = await contractInstance.methods.f147(1).call((error, result) => {});
-    this.setState({E5_balance: E5_balance})
+    var clone = structuredClone(this.state.E5_balance)
+    clone[e5] = E5_balance
+    this.setState({E5_balance: clone})
     console.log('E5 balance: ',E5_balance)
 
 
@@ -3883,11 +4009,14 @@ class App extends Component {
       var latest_event = contacts_data[contacts_data.length - 1];
       var contacts_data = await this.fetch_objects_data_from_ipfs(latest_event.returnValues.p4) 
       var contacts = contacts_data['contacts']
-      console.log('contacts ----------------------------------------------')
-      console.log(contacts)
-      this.setState({contacts: contacts})
+      
+      var clone = structuredClone(this.state.contacts)
+      clone[e5] = contacts
+      this.setState({contacts: clone})
     }else{
-      this.setState({contacts: []})
+      var clone = structuredClone(this.state.contacts)
+      clone[e5] = []
+      this.setState({contacts: clone})
     }
 
     if(is_syncing){
@@ -3914,7 +4043,7 @@ class App extends Component {
     var created_subscription_object_data = []
     var created_subscription_object_mapping = {}
     for(var i=0; i<created_subscriptions.length; i++){
-      var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3);
+      var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3, e5);
       var my_payment = await F5contractInstance.methods.f229([created_subscriptions[i]], [[account]]).call((error, result) => {});
 
       var paid_accounts = [];
@@ -3973,7 +4102,7 @@ class App extends Component {
       var my_blocked_time_value = await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {});
 
 
-      var subscription_object = {'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0]}
+      var subscription_object = {'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4}
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){}
       else if(my_blocked_time_value[0][0] > Date.now()/1000){}
@@ -3985,12 +4114,22 @@ class App extends Component {
 
       
     }
-    this.setState({created_subscriptions: created_subscription_object_data, created_subscription_object_mapping: created_subscription_object_mapping})
+
+    var created_subscription_object_data_clone = structuredClone(this.state.created_subscriptions)
+    created_subscription_object_data_clone[e5] = created_subscription_object_data
+    
+    var created_subscription_object_mapping_clone = structuredClone(this.state.created_subscription_object_mapping)
+    created_subscription_object_mapping_clone[e5] = created_subscription_object_mapping
+
+    this.setState({created_subscriptions: created_subscription_object_data_clone, created_subscription_object_mapping: created_subscription_object_mapping_clone})
+    
     console.log('subscription count: '+created_subscription_object_data.length)
 
     var all_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
     
-    this.setState({all_subscriptions: all_subscription_events})
+    var clone = structuredClone(this.state.all_subscriptions)
+    clone[e5] = all_subscription_events
+    this.setState({all_subscriptions: clone})
 
 
     if(is_syncing){
@@ -4025,10 +4164,10 @@ class App extends Component {
     var created_contract_object_data = []
     var created_contract_mapping = {}
     for(var i=0; i<created_contracts.length; i++){
-      var contracts_data = await this.fetch_objects_data(created_contracts[i], web3);
+      var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5);
       var event = i>0 ? created_contract_events[i-1]: null
-      var end_balance = await this.get_balance_in_exchange(3, created_contracts[i]);
-      var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i]);
+      var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5);
+      var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5);
 
       var entered_accounts = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i] } }, (error, events) => {});
 
@@ -4066,7 +4205,8 @@ class App extends Component {
 
       var my_blocked_time_value = await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {});
 
-      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactable_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0] }
+      var timestamp = event == null ? 0 : event.returnValues.p4
+      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactable_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0], 'e5':e5, 'timestamp':timestamp }
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
       }
@@ -4079,11 +4219,21 @@ class App extends Component {
       created_contract_mapping[created_contracts[i]] = contract_obj
     }
 
-    this.setState({created_contracts: created_contract_object_data, created_contract_mapping: created_contract_mapping})
+    var created_contract_object_data_clone = structuredClone(this.state.created_contracts)
+    created_contract_object_data_clone[e5] = created_contract_object_data
+
+    var created_contract_mapping_clone = structuredClone(this.state.created_contract_mapping)
+    created_contract_mapping_clone[e5] = created_contract_mapping
+
+    this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone})
     console.log('contract count: '+created_contract_object_data.length)
 
     var all_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
-    this.setState({all_contracts: all_contract_events})
+
+    var all_contracts_clone = structuredClone(this.state.all_contracts)
+    all_contracts_clone[e5] = all_contract_events
+
+    this.setState({all_contracts: all_contracts_clone})
 
 
     if(is_syncing){
@@ -4149,10 +4299,10 @@ class App extends Component {
     var created_proposal_data = await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
     var consensus_data = await G52contractInstance.methods.f266(my_proposal_ids, [], 0).call((error, result) => {});
     for(var i=0; i<my_proposal_ids.length; i++){
-      var proposals_data = await this.fetch_objects_data(my_proposal_ids[i], web3);
+      var proposals_data = await this.fetch_objects_data(my_proposal_ids[i], web3, e5);
       var event = my_proposals_events[i]
-      var end_balance = await this.get_balance_in_exchange(3, my_proposal_ids[i]);
-      var spend_balance = await this.get_balance_in_exchange(5, my_proposal_ids[i]);
+      var end_balance = await this.get_balance_in_exchange(3, my_proposal_ids[i], e5);
+      var spend_balance = await this.get_balance_in_exchange(5, my_proposal_ids[i], e5);
 
       var proposal_modify_target_type = await E52contractInstance.methods.f135(created_proposal_data[i][1][9]).call((error, result) => {});
 
@@ -4166,7 +4316,7 @@ class App extends Component {
         }
       }
 
-      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants }
+      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants, 'e5':e5, 'timestamp':event.returnValues.p5 }
 
       console.log('---------------------------ter------------------------')
       console.log(obj)
@@ -4174,7 +4324,10 @@ class App extends Component {
       created_proposal_object_data.push(obj)
     }
 
-    this.setState({my_proposals: created_proposal_object_data})
+    var my_proposals_clone = structuredClone(this.state.my_proposals)
+    my_proposals_clone[e5] = created_proposal_object_data
+
+    this.setState({my_proposals: my_proposals_clone})
     console.log('contract count: '+created_proposal_object_data.length)
     
     
@@ -4216,7 +4369,7 @@ class App extends Component {
     var created_token_object_data = []
     var created_token_object_mapping = {}
     for(var i=0; i<created_tokens.length; i++){
-      var tokens_data = await this.fetch_objects_data(created_tokens[i], web3);
+      var tokens_data = await this.fetch_objects_data(created_tokens[i], web3, e5);
       var event = i>1 ? created_token_events[i-2]: null
 
       var depth_values = []
@@ -4251,8 +4404,8 @@ class App extends Component {
 
       var my_blocked_time_value = await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {});
 
-
-      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0] }
+      var timestamp = event == null ? 0 : event.returnValues.p4
+      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0],'e5':e5, 'timestamp':timestamp }
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
 
@@ -4266,18 +4419,37 @@ class App extends Component {
       created_token_object_mapping[created_tokens[i]] = token_obj
     }
 
-    this.setState({created_tokens: created_token_object_data, created_token_object_mapping: created_token_object_mapping})
+    var created_tokens_clone = structuredClone(this.state.created_tokens)
+    created_tokens_clone[e5] = created_token_object_data
+
+    var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
+    created_token_object_mapping_clone[e5] = created_token_object_mapping
+
+    this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone})
     console.log('token count: '+created_token_object_data.length)
 
+
+    
     var all_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange_id */ } }, (error, events) => {});
-    this.setState({all_tokens: all_token_events})
 
+    var all_tokens_clone = structuredClone(this.state.all_tokens)
+    all_tokens_clone[e5] = all_token_events
+    this.setState({all_tokens: all_tokens_clone})
 
-    var end_balance_of_E5 = await this.get_balance_in_exchange(3, 2)
-    var spend_balance_of_E5 = await this.get_balance_in_exchange(5, 2)
-    var end_balance_of_burn_account = await this.get_balance_in_exchange(3, 0)
+    var end_balance_of_E5 = await this.get_balance_in_exchange(3, 2, e5)
+    var spend_balance_of_E5 = await this.get_balance_in_exchange(5, 2, e5)
+    var end_balance_of_burn_account = await this.get_balance_in_exchange(3, 0, e5)
 
-    this.setState({end_balance_of_E5:end_balance_of_E5, spend_balance_of_E5:spend_balance_of_E5, end_balance_of_burn_account: end_balance_of_burn_account})
+    var end_balance_of_E5_clone = structuredClone(this.state.end_balance_of_E5)
+    end_balance_of_E5_clone[e5] = end_balance_of_E5
+
+    var spend_balance_of_E5_clone = structuredClone(this.state.spend_balance_of_E5)
+    spend_balance_of_E5_clone[e5] = spend_balance_of_E5
+
+    var end_balance_of_burn_account_clone = structuredClone(this.state.end_balance_of_burn_account)
+    end_balance_of_burn_account_clone[e5] = end_balance_of_burn_account
+
+    this.setState({end_balance_of_E5:end_balance_of_E5_clone, spend_balance_of_E5:spend_balance_of_E5_clone, end_balance_of_burn_account: end_balance_of_burn_account_clone})
 
     var token_symbol_directory = {}
     for(var u=0; u<created_token_object_data.length; u++){
@@ -4288,7 +4460,10 @@ class App extends Component {
       token_symbol_directory[token_id] = token_name;
       token_symbol_directory[token_name] = token_id
     }
-    this.setState({token_directory: token_symbol_directory});
+
+    var token_directory_clone = structuredClone(this.state.token_directory)
+    token_directory_clone[e5] = token_symbol_directory
+    this.setState({token_directory: token_directory_clone});
 
 
     if(is_syncing){
@@ -4308,11 +4483,15 @@ class App extends Component {
       var id = created_post_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
-        var post_data = await this.fetch_objects_data(id, web3);
-        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i]})
+        var post_data = await this.fetch_objects_data(id, web3, e5);
+        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':created_post_events[i].returnValues.p6})
       }
     }
-    this.setState({created_posts: created_posts.reverse()})
+
+    var created_posts_clone = structuredClone(this.state.created_posts)
+    created_posts_clone[e5] = created_posts.reverse()
+
+    this.setState({created_posts: created_posts_clone})
     console.log('post count: '+created_posts.length)
 
 
@@ -4333,7 +4512,7 @@ class App extends Component {
       var id = created_channel_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
-        var channel_data = await this.fetch_objects_data(id, web3);
+        var channel_data = await this.fetch_objects_data(id, web3, e5);
 
 
         var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
@@ -4367,12 +4546,16 @@ class App extends Component {
 
         }
         else{
-          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0] });
+          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0],'e5':e5, 'timestamp':created_channel_events[i].returnValues.p6 });
         }
 
       }
     }
-    this.setState({created_channels: created_channel.reverse()})
+
+    var created_channels_clone = structuredClone(this.state.created_channels)
+    created_channels_clone[e5] = created_channel.reverse()
+
+    this.setState({created_channels: created_channels_clone})
     console.log('channel count: '+created_channel.length)
 
 
@@ -4399,8 +4582,8 @@ class App extends Component {
       var id = created_job_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
-        var job_data = await this.fetch_objects_data(id, web3);
-        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i]}
+        var job_data = await this.fetch_objects_data(id, web3, e5);
+        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6}
         created_job.push(job)
         created_job_mappings[id] = job
       }
@@ -4413,7 +4596,7 @@ class App extends Component {
       var ipfs_data = await this.fetch_objects_data_from_ipfs(my_created_job_respnse_data[i].returnValues.p4)
 
       if(ipfs_data['type'] == 'job_application'){
-        my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i]})
+        my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i], 'e5':e5, 'timestamp':my_created_job_respnse_data[i].returnValues.p6})
       }
 
       // var picked_contract_id = ipfs_data['picked_contract_id']
@@ -4427,7 +4610,17 @@ class App extends Component {
       // }
     }
 
-    this.setState({created_jobs: created_job.reverse(), created_job_mappings:created_job_mappings, my_applications:my_applications, /* my_contract_applications:my_contract_applications */})
+
+    var created_jobs_clone = structuredClone(this.state.created_jobs)
+    created_jobs_clone[e5] = created_job.reverse()
+
+    var created_job_mappings_clone = structuredClone(this.state.created_job_mappings)
+    created_job_mappings_clone[e5] = created_job_mappings
+
+    var my_applications_clone = structuredClone(this.state.my_applications)
+    my_applications_clone[e5] = my_applications
+
+    this.setState({created_jobs: created_jobs_clone, created_job_mappings:created_job_mappings_clone, my_applications:my_applications_clone, /* my_contract_applications:my_contract_applications */})
     console.log('job count: '+created_job.length)
     console.log('job applications count: '+my_applications.length)
 
@@ -4460,11 +4653,16 @@ class App extends Component {
           mail_activity[convo_id] = []
         }
       }
-      var ipfs_obj = await this.get_ipfs_object(ipfs)
-      mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1})
+      var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
+      mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_created_mail_events[i].returnValues.p6})
     }
-    this.setState({created_mail: {'created_mail':created_mail.reverse(), 'mail_activity':mail_activity}})
+
+    var created_mail_clone = structuredClone(this.state.created_mail)
+    created_mail_clone[e5] = {'created_mail':created_mail.reverse(), 'mail_activity':mail_activity}
+
+    this.setState({created_mail: created_mail_clone})
     console.log('created mail count: '+created_mail.length)
+    console.log(created_mail_clone)
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -4485,11 +4683,19 @@ class App extends Component {
           mail_activity[convo_id] = []
         }
       }
-      var ipfs_obj = await this.get_ipfs_object(ipfs)
-      mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1})
+      var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
+      
+      var obj = {'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6}
+      mail_activity[convo_id].push(obj)
+
     }
-    this.setState({received_mail: {'received_mail':received_mail.reverse(), 'mail_activity':mail_activity}})
-    console.log('received mail count: '+created_mail.length)
+
+    var received_mail_clone = structuredClone(this.state.received_mail)
+    received_mail_clone[e5] = {'received_mail':received_mail.reverse(), 'mail_activity':mail_activity}
+
+    this.setState({received_mail: received_mail_clone})
+    console.log('received mail count: '+received_mail.length)
+    console.log(received_mail_clone)
 
     if(is_syncing){
       this.inc_synch_progress()
@@ -4512,16 +4718,23 @@ class App extends Component {
     for(var i=0; i<created_store_events.length; i++){
       var id = created_store_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
-      if(created_store_events[i].returnValues.p1.toString() == hash.toString() && id.toString() != '1043'){
-        var data = await this.fetch_objects_data(id, web3);
+      if(created_store_events[i].returnValues.p1.toString() == hash.toString()){
+        var data = await this.fetch_objects_data(id, web3, e5);
         if(data != null){
-          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i]}
+          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':created_store_events[i].returnValues.p6}
           created_stores.push(obj)
           created_store_mappings[id] = obj
         }
       }
     }
-    this.setState({created_stores: created_stores.reverse(), created_store_mappings:created_store_mappings})
+
+    var created_stores_clone = structuredClone(this.state.created_stores)
+    created_stores_clone[e5] = created_stores.reverse()
+
+    var created_store_mappings_clone = structuredClone(this.state.created_store_mappings)
+    created_store_mappings_clone[e5] = created_store_mappings
+
+    this.setState({created_stores: created_stores_clone, created_store_mappings:created_store_mappings_clone})
     console.log('store count: '+created_stores.length)
 
     if(is_syncing){
@@ -4534,12 +4747,16 @@ class App extends Component {
     var created_bags = []
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
-      var data = await this.fetch_objects_data(id, web3);
+      var data = await this.fetch_objects_data(id, web3, e5);
         if(data != null){
-          created_bags.push({'id':id, 'ipfs':data, 'event': created_bag_events[i]})
+          created_bags.push({'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4})
         }
     }
-    this.setState({created_bags: created_bags.reverse()})
+
+    var created_bags_clone = structuredClone(this.state.created_bags)
+    created_bags_clone[e5] = created_bags.reverse()
+
+    this.setState({created_bags: created_bags_clone})
     console.log('bag count: '+created_bags.length)
 
 
@@ -4562,8 +4779,8 @@ class App extends Component {
       var id = created_contractor_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()){
-        var contractor_data = await this.fetch_objects_data(id, web3);
-        created_contractor.push({'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i]})
+        var contractor_data = await this.fetch_objects_data(id, web3, e5);
+        created_contractor.push({'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6})
       }
     }
 
@@ -4586,7 +4803,10 @@ class App extends Component {
     //   }
     // }
 
-    this.setState({created_contractors: created_contractor.reverse(),})
+    var created_contractors_clone = structuredClone(this.state.created_contractors)
+    created_contractors_clone[e5] = created_contractor.reverse()
+
+    this.setState({created_contractors: created_contractors_clone,})
     console.log('contractor count: '+created_contractor.length)
 
     if(is_syncing){
@@ -4603,9 +4823,9 @@ class App extends Component {
 
 
 
-  fetch_objects_data = async (id, web3) => {
+  fetch_objects_data = async (id, web3, e5) => {
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var target_id = id;
     var events = await E52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: target_id} }, (error, events) => {});
@@ -4698,10 +4918,10 @@ class App extends Component {
 
 
 
-  get_balance_in_exchange = async (exchange_id, account) => {
+  get_balance_in_exchange = async (exchange_id, account, e5) => {
       const web3 = new Web3(this.state.web3);
       const H52contractArtifact = require('./contract_abis/H52.json');
-      const H52_address = this.state.E35_addresses[6];
+      const H52_address = this.state.addresses[e5][6];
       const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
       
       var token_balances = await H52contractInstance.methods.f140e([exchange_id], account, [0]).call((error, result) => {});
@@ -4750,14 +4970,14 @@ class App extends Component {
   //   this.get_accounts_public_key(1002)
   // }
 
-  get_accounts_address = async (account_id) => {
-    const web3 = new Web3(this.state.web3);
-    const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = this.state.e5_address
-    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+  // get_accounts_address = async (account_id) => {
+  //   const web3 = new Web3(this.state.web3);
+  //   const contractArtifact = require('./contract_abis/E5.json');
+  //   const contractAddress = this.state.e5_address
+  //   const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
-    return await contractInstance.methods.f289(account_id).call((error, result) => {});
-  }
+  //   return await contractInstance.methods.f289(account_id).call((error, result) => {});
+  // }
 
 
 
@@ -4766,7 +4986,7 @@ class App extends Component {
 
   get_account_public_key = async () => {
     const web3 = new Web3(this.state.web3);
-    const privateKey = this.state.account.privateKey
+    const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
     const publicKeyA = await ecies.getPublic(private_key_to_use);
@@ -4779,7 +4999,7 @@ class App extends Component {
 
   get_account_raw_public_key = async () => {
     const web3 = new Web3(this.state.web3);
-    const privateKey = this.state.account.privateKey
+    const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
     const publicKeyA = await ecies.getPublic(private_key_to_use);
@@ -4792,10 +5012,10 @@ class App extends Component {
     return ciphertext
   }
 
-  get_accounts_public_key = async (account) => {
+  get_accounts_public_key = async (account, e5) => {
     const web3 = new Web3(this.state.web3);
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:'0'} }, (error, events) => {});
 
@@ -4816,16 +5036,16 @@ class App extends Component {
     return string
   }
 
-  get_ipfs_object = async (encrypted_ipfs_obj) => {
+  fetch_and_decrypt_ipfs_object = async (encrypted_ipfs_obj, e5) => {
     const web3 = new Web3(this.state.web3);
-    const privateKey = this.state.account.privateKey
+    const privateKey = this.state.accounts[e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
 
     if(encrypted_ipfs_obj['recipient_data'] == null){
       return null
     }
-    var encrypted_key = encrypted_ipfs_obj['recipient_data'][this.state.user_account_id]
+    var encrypted_key = encrypted_ipfs_obj['recipient_data'][this.state.user_account_id[e5]]
     var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
   
     var my_key = await ecies.decrypt(private_key_to_use, uint8array)
@@ -4844,10 +5064,10 @@ class App extends Component {
   }
 
 
-  get_objects_messages = async (id) => {
+  get_objects_messages = async (id, e5) => {
     const web3 = new Web3(this.state.web3);
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:35 } }, (error, events) => {});
@@ -4862,10 +5082,10 @@ class App extends Component {
     this.setState({object_messages: clone})
   }
 
-  get_job_objects_responses = async (id) =>{
+  get_job_objects_responses = async (id, e5) =>{
     const web3 = new Web3(this.state.web3);
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:36 } }, (error, events) => {});
@@ -4875,9 +5095,10 @@ class App extends Component {
     var messages = []
     for(var j=0; j<created_job_respnse_data.length; j++){
       var ipfs_message = await this.fetch_objects_data_from_ipfs(created_job_respnse_data[j].returnValues.p4)
-      ipfs_message['contract'] = this.state.created_contract_mapping[ipfs_message['picked_contract_id']]
+      ipfs_message['contract'] = this.state.created_contract_mapping[e5][ipfs_message['picked_contract_id']]
       ipfs_message['id'] = created_job_respnse_data[j].returnValues.p5
       ipfs_message['job_id'] = id;
+      ipfs_message['e5'] = e5
 
 
       var filtered_events = []
@@ -4904,10 +5125,10 @@ class App extends Component {
 
   }
 
-  get_direct_purchase_events = async (id) => {
+  get_direct_purchase_events = async (id, e5) => {
     const web3 = new Web3(this.state.web3);
     const H52contractArtifact = require('./contract_abis/H52.json');
-    const H52_address = this.state.E35_addresses[6];
+    const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
@@ -4921,7 +5142,7 @@ class App extends Component {
 
 
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var created_fulfilment_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
@@ -4943,10 +5164,10 @@ class App extends Component {
     this.setState({direct_purchases: clone, direct_purchase_fulfilments: fulfilment_clone})
   }
 
-  get_contractor_applications = async (id) =>{
+  get_contractor_applications = async (id, E5) =>{
     const web3 = new Web3(this.state.web3);
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[E5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:38 } }, (error, events) => {});
@@ -4958,6 +5179,7 @@ class App extends Component {
       var ipfs_message = await this.fetch_objects_data_from_ipfs(created_job_respnse_data[j].returnValues.p4)
       ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
       ipfs_message['contractor_post_id'] = id;
+      ipfs_message['e5'] = E5
 
 
       var filtered_events = []
@@ -4970,7 +5192,7 @@ class App extends Component {
         var last_response = filtered_events[filtered_events.length -1]
         var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs(last_response.returnValues.p4)
         ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
-        ipfs_message['contract'] = this.state.created_contract_mapping[last_response_ipfs_obj['contract_id']]
+        ipfs_message['contract'] = this.get_all_sorted_objects_mappings(this.state.created_contract_mapping)[last_response_ipfs_obj['contract_id']]
       }else{
         ipfs_message['is_response_accepted'] = false
       }
@@ -4984,11 +5206,23 @@ class App extends Component {
 
   }
 
+  get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.state.e5s['data'].length; i++){
+            var e5 = this.state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
 
-  load_job_request_messages = async (contractor_id, request_id) =>{
+        return all_objects
+  }
+
+
+  load_job_request_messages = async (contractor_id, request_id, e5) =>{
     const web3 = new Web3(this.state.web3);
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: contractor_id, p3/* context */:request_id } }, (error, events) => {});
@@ -5005,10 +5239,10 @@ class App extends Component {
 
 
 
-  load_modify_item_data = async (modify_target) => {
+  load_modify_item_data = async (modify_target, e5) => {
     const web3 = new Web3(this.state.web3);
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.E35_addresses[1];
+    const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var modify_id = parseInt(modify_target)
@@ -5016,7 +5250,7 @@ class App extends Component {
 
     if(modify_id_type == 31/* 31(token_exchange) */){
       const H5contractArtifact = require('./contract_abis/H5.json');
-      const H5_address = this.state.E35_addresses[5];
+      const H5_address = this.state.addresses[5];
       const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
       var exchange_data = await H5contractInstance.methods.f85(modify_id).call((error, result) => {});
@@ -5024,7 +5258,7 @@ class App extends Component {
     }
     else if(modify_id_type == 33/* 33(subscription_object) */){
       const F5contractArtifact = require('./contract_abis/F5.json');
-      const F5_address = this.state.E35_addresses[2];
+      const F5_address = this.state.addresses[2];
       const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
       var subscription_data = await F5contractInstance.methods.f73(modify_id).call((error, result) => {});
@@ -5032,7 +5266,7 @@ class App extends Component {
     }
     else{
       const G5contractArtifact = require('./contract_abis/G5.json');
-      const G5_address = this.state.E35_addresses[3];
+      const G5_address = this.state.addresses[3];
       const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
 
       var contract_data = await G5contractInstance.methods.f77(modify_id, false).call((error, result) => {});
@@ -5073,10 +5307,10 @@ class App extends Component {
 
 
 
-  get_post_award_data = async (id) => {
+  get_post_award_data = async (id, e5) => {
     const web3 = new Web3(this.state.web3);
     const H52contractArtifact = require('./contract_abis/H52.json');
-    const H52_address = this.state.E35_addresses[6];
+    const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
     var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});

@@ -37,8 +37,8 @@ class PostsDetailsSection extends Component {
     check_for_new_responses_and_messages() {
         if(this.props.selected_post_item != null){
             var object = this.get_post_items()[this.props.selected_post_item];
-            this.props.get_objects_messages(object['id'])
-            this.props.get_post_award_data(object['id'])
+            this.props.get_objects_messages(object['id'],  object['e5'])
+            this.props.get_post_award_data(object['id'], object['e5'])
         }
     }
 
@@ -224,7 +224,7 @@ class PostsDetailsSection extends Component {
 
     render_edit_object_button(){
         var object = this.get_post_items()[this.props.selected_post_item];
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 == my_account){
             return(
@@ -249,7 +249,7 @@ class PostsDetailsSection extends Component {
 
     render_award_button(){
         var object = this.get_post_items()[this.props.selected_post_item];
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 != my_account){
             return(
@@ -666,12 +666,25 @@ class PostsDetailsSection extends Component {
     }
 
     get_sender_title_text(item){
-        if(item['sender'] == this.props.app_state.user_account_id){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
-            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
         }
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     format_message(message){
@@ -683,6 +696,7 @@ class PostsDetailsSection extends Component {
 
     get_convo_messages(){
         var object = this.get_post_items()[this.props.selected_post_item];
+        if(this.props.app_state.object_messages[object['id']] == null) return [];
         return this.props.app_state.object_messages[object['id']]
     }
 
@@ -770,11 +784,11 @@ class PostsDetailsSection extends Component {
         if(message == ''){
             this.props.notify('type something first', 600)
         }
-        else if(this.props.app_state.user_account_id == 1){
+        else if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
             this.props.add_post_reply_to_stack(tx)
 
@@ -788,7 +802,8 @@ class PostsDetailsSection extends Component {
     }
 
     add_image_to_stack(image){
-        if(this.props.app_state.user_account_id == 1){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
             return
         }
@@ -796,7 +811,7 @@ class PostsDetailsSection extends Component {
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
         var object = this.get_post_items()[this.props.selected_post_item];
-        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0, 'message_id':message_id, 'focused_message_id':focused_message_id}, 'sender':this.props.app_state.user_account_id,'time':Date.now()/1000}
+        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0, 'message_id':message_id, 'focused_message_id':focused_message_id}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'e5':object['e5']}
 
         this.props.add_post_reply_to_stack(tx)
 

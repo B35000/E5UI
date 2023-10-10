@@ -33,7 +33,7 @@ class ContractorDetailsSection extends Component {
     check_for_new_responses_and_messages() {
         if(this.props.selected_contractor_item != null){
             var object = this.get_contractor_items()[this.props.selected_contractor_item];
-            this.props.get_contractor_applications(object['id'])
+            this.props.get_contractor_applications(object['id'], object['e5'])
         }
     }
 
@@ -232,7 +232,7 @@ class ContractorDetailsSection extends Component {
 
     render_edit_object_button(){
         var object = this.get_contractor_items()[this.props.selected_contractor_item];
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 == my_account){
             return(
@@ -334,13 +334,14 @@ class ContractorDetailsSection extends Component {
 
     get_job_details_responses(){
         var object = this.get_contractor_items()[this.props.selected_contractor_item];
-        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id){
+        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
+            if(this.props.app_state.job_responses[object['id']] == null) return [];
             return this.props.app_state.job_responses[object['id']]
         }else{
             var filtered_responses = []
             var all_responses = this.props.app_state.job_responses[object['id']]
             for(var i=0; i<all_responses.length; i++){
-                if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id){
+                if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
                 }
             }
@@ -390,7 +391,7 @@ class ContractorDetailsSection extends Component {
 
     view_contract(item){
         var object = this.get_contractor_items()[this.props.selected_contractor_item];
-        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id){
+        if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
             this.props.open_view_job_request_ui(item, object)
         }
     }

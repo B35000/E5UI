@@ -20,7 +20,7 @@ class WithdrawEtherPage extends Component {
     
     state = {
         selected: 0, withdraw_ether_page_tags_object: this.get_withdraw_ether_page_tags_object(),
-        recipient_address:'', confirmation_dialog_box: false
+        recipient_address:'', confirmation_dialog_box: false, e5:{'data':[], 'id':this.props.app_state.selected_e5}
     };
 
     get_withdraw_ether_page_tags_object(){
@@ -35,6 +35,7 @@ class WithdrawEtherPage extends Component {
     }
 
     render(){
+        var e5 = this.state.e5
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
@@ -54,9 +55,9 @@ class WithdrawEtherPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance), 'relativepower':'tokens'})}
+                    {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5['id']]), 'relativepower':'tokens'})}
 
-                    {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance/10**18), 'number':(this.props.app_state.withdraw_balance/10**18), 'relativepower':'Ether'})}
+                    {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'number':(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'relativepower':'Ether'})}
                 </div>
 
                 {this.render_detail_item('0')}
@@ -104,18 +105,20 @@ class WithdrawEtherPage extends Component {
     }
 
     get_account_address(){
-        if(this.props.app_state.account != null){
-            return this.props.app_state.account.address;
+        var e5 = this.state.e5
+        if(this.props.app_state.accounts[e5['id']] != null){
+            return this.props.app_state.accounts[e5['id']].address;
         }
     }
 
 
 
     finish(){
+        var e5 = this.state.e5
         if(!this.isValidAddress(this.state.recipient_address)){
             this.props.notify('please set a valid receiver', 500)
         }
-        else if(this.props.app_state.withdraw_balance == 0){
+        else if(this.props.app_state.withdraw_balance[e5['id']] == 0){
             this.props.notify('you cant withdraw 0 ether', 500)
         }
         else{
@@ -126,6 +129,7 @@ class WithdrawEtherPage extends Component {
 
 
     render_dialog_ui(){
+        var e5 = this.state.e5
         return(
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
@@ -133,9 +137,9 @@ class WithdrawEtherPage extends Component {
                     {this.render_detail_item('3', {'title':'Withdraw Ether Confirmation', 'details':'Confirm that you want to withdraw Ether to the set address', 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance), 'relativepower':'tokens'})}
+                        {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5['id']]), 'relativepower':'tokens'})}
 
-                        {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance/10**18), 'number':(this.props.app_state.withdraw_balance/10**18), 'relativepower':'Ether'})}
+                        {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'number':(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'relativepower':'Ether'})}
                     </div>
                     <div style={{height: 10}}/>
 
@@ -159,6 +163,11 @@ class WithdrawEtherPage extends Component {
     when_withdraw_ether_confirmation_received(){
         this.setState({confirmation_dialog_box: false})
         this.props.withdraw_ether_to_address(this.state.recipient_address)
+    }
+
+
+    set_object(item){
+        this.setState({e5: item})
     }
 
 

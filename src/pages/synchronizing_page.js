@@ -66,13 +66,13 @@ class synchronizing_page extends Component {
         return(
             <div>
                 <Row>
-                    <Col><p style={{margin: '25% 0% 0% 0%', width:'70%', color:text_color}}>Peer to Peer Trust</p></Col>
+                    <Col><p style={{margin: '30% 0% 0% 0%', width:'70%', color:text_color}}>P2P Trust</p></Col>
                     <Col>
-                        <img style={{width:'130%', margin:'5% 0% 0% 17%'}} src={p2p_trust} alt="Paris"/>
+                        <img style={{width:'130%', margin:'5% 0% 0% 17%'}} src={p2p_trust}/>
                     </Col>
                 </Row>
                 <Row style={{margin: '25% 0% 0% 0%'}}>
-                    <Col><p style={{margin: '25% 0% 0% 0%', color:text_color}}>Unanimous Consensus</p></Col>
+                    <Col><p style={{margin: '35% 0% 0% -20%', color:text_color}}>Unanimous Consensus</p></Col>
                     <Col>
                         <img style={{width:'130%', margin:'5% 0% 0% 17%'}} src={unanimous_consensus} alt="Paris"/>
                     </Col>

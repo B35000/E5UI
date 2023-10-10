@@ -35,8 +35,13 @@ class SendReceiveEtherPage extends Component {
         picked_wei_amount: 0,
         picked_wei_gas_price: 0,
         recipient_address:'',
-        confirmation_dialog_box: false
+        confirmation_dialog_box: false,
+        ether:{'e5':this.props.app_state.selected_e5}
     };
+
+    set_object(item){
+        this.setState({ether: item})
+    }
 
     get_send_receive_ether_page_tags_object(){
         if(this.props.size == 's'){
@@ -154,6 +159,7 @@ class SendReceiveEtherPage extends Component {
     }
 
     render_send_ether_middle_part(){
+        var e5 = this.state.ether['e5']
         return(
             <div>
                 <div style={{height: 10}}/>
@@ -178,9 +184,9 @@ class SendReceiveEtherPage extends Component {
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance), 'number':this.format_account_balance_figure(this.props.app_state.account_balance), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance/10**18), 'number':this.format_account_balance_figure(this.props.app_state.account_balance/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
                 </div>
                 {this.render_amount_number_picker()}
                 <div style={{height: 10}}/>
@@ -428,8 +434,9 @@ class SendReceiveEtherPage extends Component {
     }
 
     get_account_address(){
-        if(this.props.app_state.account != null){
-            return this.props.app_state.account.address;
+        var e5 = this.state.ether['e5']
+        if(this.props.app_state.accounts[e5] != null){
+            return this.props.app_state.accounts[e5].address;
         }
     }
 
@@ -489,17 +496,19 @@ class SendReceiveEtherPage extends Component {
     }
 
     render_amount_number_picker(){
+        var e5 = this.state.ether['e5']
         return(
             <div>
-                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance)}/>
+                <NumberPicker number_limit={this.props.app_state.account_balance[e5]} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance[e5])}/>
             </div>
         )
     }
 
     render_gas_price_number_picker(){
+        var e5 = this.state.ether['e5']
         return(
             <div>
-                <NumberPicker number_limit={this.props.app_state.account_balance} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance)}/>
+                <NumberPicker number_limit={this.props.app_state.account_balance[e5]} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance[e5])}/>
             </div>
         )
     }
@@ -588,7 +597,8 @@ class SendReceiveEtherPage extends Component {
     }
 
     copy_address_to_clipboard(){
-        navigator.clipboard.writeText(this.props.app_state.account.address)
+        var e5 = this.state.ether['e5']
+        navigator.clipboard.writeText(this.props.app_state.accounts[e5].address)
         this.props.notify('copied to clipboard!', 600)
     }
 

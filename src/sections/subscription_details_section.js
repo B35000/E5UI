@@ -218,7 +218,7 @@ class SubscriptionDetailsSection extends Component {
     render_collect_button(){
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(subscription_config[0] == my_account){
             return(
@@ -238,7 +238,7 @@ class SubscriptionDetailsSection extends Component {
     render_auth_modify_button(){
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(subscription_config[0] == my_account){
             return(
@@ -257,7 +257,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_moderator_button(){
         var object = this.get_subscription_items()[this.props.selected_subscription_item]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(
@@ -280,13 +280,25 @@ class SubscriptionDetailsSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.props.app_state.token_directory[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
             </div>
             
         )
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     get_subscription_details_data(){

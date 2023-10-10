@@ -39,8 +39,8 @@ class BagDetailsSection extends Component {
     check_for_new_responses_and_messages() {
         if(this.props.selected_bag_item != null){
             var object = this.get_bag_items()[this.props.selected_bag_item];
-            this.props.get_job_objects_responses(object['id'])
-            this.props.get_objects_messages(object['id'])
+            this.props.get_job_objects_responses(object['id'], object['e5'])
+            this.props.get_objects_messages(object['id'], object['e5'])
         }
     }
 
@@ -211,7 +211,7 @@ class BagDetailsSection extends Component {
                     </SwipeableViews> */}
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                             {items_to_deliver.map((item, index) => (
-                                <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                                <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none', 'width':'95%'}}>
                                     {this.render_variant_details(item)}
                                 </li>
                             ))}
@@ -223,7 +223,7 @@ class BagDetailsSection extends Component {
 
 
     render_variant_details(item){
-        var storefront = this.props.app_state.created_store_mappings[item['storefront_item_id']]
+        var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
         var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
         var items = variant_in_store['price_data']
         var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
@@ -242,11 +242,47 @@ class BagDetailsSection extends Component {
                 <div style={{height: 10}}/>
                 {items.map((units, index) => (
                     <li style={{'padding': '2px 0px 2px 0px'}}>
-                        {this.render_detail_item('2', { 'style':'s', 'title':'Exchange ID: '+units['id'], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[units['id']], })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'Exchange ID: '+units['id'], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
                     </li>
                 ))}
             </div>
         )
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     get_amounts_to_be_paid(amount, count){
@@ -338,13 +374,13 @@ class BagDetailsSection extends Component {
 
     get_bag_details_responses(){
         var object = this.get_bag_items()[this.props.selected_bag_item];
-        if(object['event'].returnValues.p3 == this.props.app_state.user_account_id){
+        if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
             return this.props.app_state.job_responses[object['id']]
         }else{
             var filtered_responses = []
             var all_responses = this.props.app_state.job_responses[object['id']]
             for(var i=0; i<all_responses.length; i++){
-                if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id){
+                if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
                 }
             }
@@ -387,7 +423,7 @@ class BagDetailsSection extends Component {
 
     view_contract(item){
         var object = this.get_bag_items()[this.props.selected_bag_item];
-        if(object['event'].returnValues.p3 == this.props.app_state.user_account_id){
+        if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
             this.props.view_bag_application_contract(item)
         }
     }
@@ -711,10 +747,11 @@ class BagDetailsSection extends Component {
     }
 
     get_sender_title_text(item){
-        if(item['sender'] == this.props.app_state.user_account_id){
+        var object = this.get_bag_items()[this.props.selected_bag_item];
+        if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
-            var alias = (this.props.app_state.alias_bucket[item['sender']] == null ? item['sender'] : this.props.app_state.alias_bucket[item['sender']])
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
         }
     }
@@ -823,11 +860,11 @@ class BagDetailsSection extends Component {
         if(message == ''){
             this.props.notify('type something first', 600)
         }
-        else if(this.props.app_state.user_account_id == 1){
+        else if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
             this.props.add_bag_message_to_stack_object(tx)
 
@@ -841,15 +878,15 @@ class BagDetailsSection extends Component {
     }
 
     add_image_to_stack(image){
-        if(this.props.app_state.user_account_id == 1){
+        var object = this.get_bag_items()[this.props.selected_bag_item];
+        if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
             return
         }
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
         var message = this.state.entered_text.trim()
-        var object = this.get_bag_items()[this.props.selected_bag_item];
-        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id,'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
         this.props.add_bag_message_to_stack_object(tx)
 

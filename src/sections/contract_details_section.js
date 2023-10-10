@@ -331,7 +331,7 @@ class ContractDetailsSection extends Component {
     render_auth_modify_button(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 2 && object['event'].returnValues.p3 == my_account && contract_config[28/* can_modify_contract_as_moderator */] == 1){
             return(
                 <div>
@@ -350,7 +350,7 @@ class ContractDetailsSection extends Component {
     render_force_exit_button(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
         var contract_config = object['data'][1]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 2 && object['event'].returnValues.p3 == my_account && contract_config[38/* contract_force_exit_enabled */] == 1){
             return(
                 <div>
@@ -368,7 +368,7 @@ class ContractDetailsSection extends Component {
 
     render_archive_button_if_author(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['event'].returnValues.p3 == my_account && object['data'][1][15] < Date.now()/1000){
             return(
                 <div>
@@ -385,7 +385,7 @@ class ContractDetailsSection extends Component {
 
     render_moderator_button(){
         var object = this.get_contract_items()[this.props.selected_contract_item]
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['id'] != 2 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(

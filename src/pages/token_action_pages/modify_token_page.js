@@ -571,7 +571,7 @@ class ModifyTokenPage extends Component {
                 reconfig_values:[],
             })
         }
-        this.setState({token_item: token_item})
+        this.setState({token_item: token_item, e5: token_item['e5']})
     }
 
     finish(){

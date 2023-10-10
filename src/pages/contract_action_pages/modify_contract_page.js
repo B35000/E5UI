@@ -665,7 +665,7 @@ class ModifyContractPage extends Component {
                 reconfig_values:[],
             })
         }
-        this.setState({contract_item: contract_item})
+        this.setState({contract_item: contract_item, e5: contract_item['e5']})
     }
 
     finish(){

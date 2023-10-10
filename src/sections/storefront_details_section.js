@@ -199,7 +199,7 @@ class StorefrontDetailsSection extends Component {
 
     render_edit_object_button(){
         var object = this.get_storefront_items()[this.props.selected_storefront_item];
-        var my_account = this.props.app_state.user_account_id
+        var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['event'].returnValues.p5 == my_account.toString()){
             return(
                 <div>
@@ -264,7 +264,7 @@ class StorefrontDetailsSection extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px 0px 5px 0px'}}>
                                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
                         ))}
@@ -273,6 +273,18 @@ class StorefrontDetailsSection extends Component {
             )
         }
         
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     get_storefront_items(){
@@ -370,7 +382,7 @@ class StorefrontDetailsSection extends Component {
         var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var sender_type = 'storefront_owner'
         var fulfilment_accounts = object['ipfs'].fulfilment_accounts==null?[]:object['ipfs'].fulfilment_accounts
-        if(this.props.app_state.user_account_id != object['event'].returnValues.p5 && !fulfilment_accounts.includes(this.props.app_state.user_account_id)){
+        if(this.props.app_state.user_account_id[object['e5']] != object['event'].returnValues.p5 && !fulfilment_accounts.includes(this.props.app_state.user_account_id[object['e5']])){
             //if user is not owner of storefront and wasnt included in the fulfilment account array
             items = this.filter_for_senders_orders()
             sender_type = 'storefront_client'
@@ -424,7 +436,7 @@ class StorefrontDetailsSection extends Component {
         var purchases = this.props.app_state.direct_purchases[object['id']]
         var filtered_purchases = []
         for(var i=0; i<purchases.length; i++){
-            if(purchases[i]['sender_account'] == this.props.app_state.user_account_id){
+            if(purchases[i]['sender_account'] == this.props.app_state.user_account_id[object['e5']]){
                 filtered_purchases.push(purchases[i])
             }
         }
@@ -879,7 +891,8 @@ class StorefrontDetailsSection extends Component {
     }
 
     get_sender_title_text(item){
-        if(item['sender'] == this.props.app_state.user_account_id){
+        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
             return item['sender']
@@ -989,11 +1002,11 @@ class StorefrontDetailsSection extends Component {
         if(message == ''){
             this.props.notify('type something first', 600)
         }
-        else if(this.props.app_state.user_account_id == 1){
+        else if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
         }
         else{
-            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+            var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
             this.props.add_storefront_message_to_stack_object(tx)
 
@@ -1007,7 +1020,8 @@ class StorefrontDetailsSection extends Component {
     }
 
     add_image_to_stack(image){
-        if(this.props.app_state.user_account_id == 1){
+        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
             return
         }
@@ -1015,7 +1029,7 @@ class StorefrontDetailsSection extends Component {
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
         var message = this.state.entered_text.trim()
         var object = this.get_storefront_items()[this.props.selected_storefront_item]
-        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id,'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id}
+        var tx = {'id':object['id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id[object['e5']],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
 
         this.props.add_storefront_message_to_stack_object(tx)
 

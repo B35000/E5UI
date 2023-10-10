@@ -333,7 +333,7 @@ class VoteProposalPage extends Component {
                 bounty_exchange_target:'', bounty_exchanges:[]
             })
         }
-        this.setState({proposal_item: proposal})
+        this.setState({proposal_item: proposal, e5: proposal['e5']})
     }
 
 

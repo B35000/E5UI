@@ -35,7 +35,7 @@ class GiveAwardPage extends Component {
         selected: 0,type:'award', id:makeid(8),
         post_item: null, give_award_title_tags_object:this.get_give_award_title_tags_object(),
         entered_indexing_tags:['give', 'award', 'reward'], entered_message_text: '', selected_tier:null, selected_tier_object: null, multiplier:1,
-        exchange_id:'', price_amount:0, price_data:[]
+        exchange_id:'', price_amount:0, price_data:[], e5: this.props.app_state.selected_e5
     };
 
     get_give_award_title_tags_object(){
@@ -50,7 +50,7 @@ class GiveAwardPage extends Component {
     }
 
     set_post(item){
-        this.setState({post_item: item})
+        this.setState({post_item: item, e5: item['e5']})
     }
 
     render(){
@@ -247,7 +247,7 @@ class GiveAwardPage extends Component {
     }
 
     get_award_amount(tier){
-        var spend_exchange = this.props.app_state.created_token_object_mapping[5]
+        var spend_exchange = this.props.app_state.created_token_object_mapping[this.state.post_item['e5']][5]
         var min_amount = bigInt(spend_exchange['data'][1][0]).divide(bigInt(10000))
         var obj = {'1':5000, '2':1000, '3':600, '4':300, '5':100, '6':50, '7':10, '8':5, '9':1}
         return bigInt(obj[tier]).multiply(min_amount).multiply(this.state.multiplier)
@@ -377,7 +377,7 @@ class GiveAwardPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
                         ))}
@@ -386,6 +386,43 @@ class GiveAwardPage extends Component {
             )
         }
         
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     when_amount_clicked(item){
@@ -420,10 +457,13 @@ class GiveAwardPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var exchanges_from_sync = this.props.app_state.created_tokens
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         var sorted_token_exchange_data = []
-        var myid = this.props.app_state.user_account_id
+        // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+
             var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
             if(author_account == myid.toString()){
                 sorted_token_exchange_data.push(exchanges_from_sync[i])

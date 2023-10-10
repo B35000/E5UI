@@ -358,7 +358,7 @@ class home_page extends Component {
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
                 
-                <button style={{'text-decoration': 'none', 'border': 'none','background-color': 'transparent' ,'float': 'right', width: 70,'padding': '0px 0px 12px 0px', opacity:1}}>
+                <button style={{'text-decoration': 'none', 'border': 'none','background-color': 'transparent' ,'float': 'right', width: 70,'padding': '2px 0px 12px 0px', opacity:1}}>
                     {this.render_e_plus_button()}
                 </button>
             </div>
@@ -374,7 +374,7 @@ class home_page extends Component {
         alpha = 0.2;
       }
       return(
-        <img onClick={()=> this.when_e_plus_letter_clicked()} src={AddLetter} style={{height:36, width:'auto', opacity:alpha}} />
+        <img onClick={()=> this.when_e_plus_letter_clicked()} src={this.props.theme['add_icon']} style={{height:36, width:'auto', opacity:alpha}} />
       )
     }
 
@@ -459,29 +459,40 @@ class home_page extends Component {
 
 
 
-
+    get_e5_data(){
+        var data = []
+        var contract_data = [this.props.app_state.created_contract_mapping['E15'][2]['data']]
+        var contract_id_data = ['E15']
+        for (let i = 0; i < contract_data.length; i++) {
+            data.push({'data':contract_data[i], 'id':contract_id_data[i]})
+        }
+        return data
+    }
 
     get_contract_items(){
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
         if(this.state.work_page_tags_object['i'].active != 'contracts'){
-            return this.props.app_state.created_contracts
+            return this.get_all_sorted_objects(this.props.app_state.created_contracts)
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_contracts
+            return this.get_all_sorted_objects(this.props.app_state.created_contracts)
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_contracts = []
+            var all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
             for(var i=0; i<this.state.viewed_contracts.length; i++){
-                my_viewed_contracts.push(this.props.app_state.created_contracts[this.state.viewed_contracts[i]])
+                my_viewed_contracts.push(all_contracts[this.state.viewed_contracts[i]])
             }
             return my_viewed_contracts
         }
         else if(selected_option_name == 'entered'){
             var my_entered_contracts = []
-            for(var i=0; i<this.props.app_state.created_contracts.length; i++){
-                var object = this.props.app_state.created_contracts[i]
+            var all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+
+            for(var i=0; i<all_contracts.length; i++){
+                var object = all_contracts[i]
                 var expiry_time_in_seconds = object['entry_expiry']
                 if(expiry_time_in_seconds != 0){
                     my_entered_contracts.push(object)
@@ -491,11 +502,13 @@ class home_page extends Component {
         }
         else {
             var my_contracts = []
+            var all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
             var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
-                var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
+            for(var i = 0; i < all_contracts.length; i++){
+                var post_author = all_contracts[i]['event'] == null ? 0 : all_contracts[i]['event'].returnValues.p3
+
                 if(post_author.toString() == myid.toString()){
-                    my_contracts.push(this.props.app_state.created_contracts[i])
+                    my_contracts.push(all_contracts[i])
                 }
             }
             return my_contracts
@@ -506,26 +519,28 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
         if(this.state.explore_page_tags_object['i'].active != 'bags'){
-            return this.props.app_state.created_stores 
+            return this.get_all_sorted_objects(this.props.app_state.created_stores) 
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_bags
+            return this.get_all_sorted_objects(this.props.app_state.created_bags)
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_bags = []
+            var all_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
             for(var i=0; i<this.state.viewed_bags.length; i++){
-                my_viewed_bags.push(this.props.app_state.created_bags[this.state.viewed_bags[i]])
+                my_viewed_bags.push(all_bags[this.state.viewed_bags[i]])
             }
             return my_viewed_bags
         }
         else {
             var my_bags = []
+            var all_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
             var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_bags.length; i++){
-                var post_author = this.props.app_state.created_bags[i]['event'].returnValues.p3
+            for(var i = 0; i < all_bags.length; i++){
+                var post_author = all_bags[i]['event'].returnValues.p3
                 if(post_author.toString() == myid.toString()){
-                    my_bags.push(this.props.app_state.created_bags[i])
+                    my_bags.push(all_bags[i])
                 }
             }
             return my_bags
@@ -536,26 +551,28 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
         if(this.state.explore_page_tags_object['i'].active != 'channels'){
-            return this.props.app_state.created_channels 
+            return this.get_all_sorted_objects(this.props.app_state.created_channels)
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_channels
+            return this.get_all_sorted_objects(this.props.app_state.created_channels)
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_channels = []
+            var created_channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
             for(var i=0; i<this.state.viewed_channels.length; i++){
-                my_viewed_channels.push(this.props.app_state.created_channels[this.state.viewed_channels[i]])
+                my_viewed_channels.push(created_channels[this.state.viewed_channels[i]])
             }
             return my_viewed_channels
         }
         else {
             var my_channels = []
+            var created_channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
             var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_channels.length; i++){
-                var channel_author = this.props.app_state.created_channels[i]['event'].returnValues.p5
+            for(var i = 0; i < created_channels.length; i++){
+                var channel_author = created_channels[i]['event'].returnValues.p5
                 if(channel_author.toString() == myid.toString()){
-                    my_channels.push(this.props.app_state.created_channels[i])
+                    my_channels.push(created_channels[i])
                 }
             }
             return my_channels
@@ -566,26 +583,28 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
         if(this.state.work_page_tags_object['i'].active != 'contractors'){
-            return this.props.app_state.created_contractors
+            return this.get_all_sorted_objects(this.props.app_state.created_contractors)
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_contractors
+            return this.get_all_sorted_objects(this.props.app_state.created_contractors)
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_contractors = []
+            var all_contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
             for(var i=0; i<this.state.viewed_contractors.length; i++){
-                my_viewed_contractors.push(this.props.app_state.created_contractors[this.state.viewed_contractors[i]])
+                my_viewed_contractors.push(all_contractors[this.state.viewed_contractors[i]])
             }
             return my_viewed_contractors
         }
         else {
             var my_contractors = []
+            var all_contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
             var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_contractors.length; i++){
-                var post_author = this.props.app_state.created_contractors[i]['event'].returnValues.p5
+            for(var i = 0; i < all_contractors.length; i++){
+                var post_author = all_contractors[i]['event'].returnValues.p5
                 if(post_author.toString() == myid.toString()){
-                    my_contractors.push(this.props.app_state.created_contractors[i])
+                    my_contractors.push(all_contractors[i])
                 }
             }
             return my_contractors
@@ -594,16 +613,18 @@ class home_page extends Component {
 
     get_exchange_tokens(exchange_type){
         var token_exchanges = []
-        var exchanges_from_sync = this.props.app_state.created_tokens
+        var exchanges_from_sync = this.get_all_sorted_objects(this.props.app_state.created_tokens)
         for (let i = 0; i < exchanges_from_sync.length; i++) {
             var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
+            var e5 = exchanges_from_sync[i]['e5']
+            var obj = {'E15':{3:E35EndImg, 5:E35SpendImg}}
             
             var img = type  == 3 ? EndImg: SpendImg
-            if(exchanges_from_sync[i]['id'] == 3) img = E35EndImg
-            else if(exchanges_from_sync[i]['id'] == 5) img = E35SpendImg
+            if(exchanges_from_sync[i]['id'] == 3) img = obj[e5][3]
+            else if(exchanges_from_sync[i]['id'] == 5) img = obj[e5][5]
             
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'] })
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'] })
             }
         }
 
@@ -634,25 +655,30 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
         if(this.state.work_page_tags_object['i'].active != 'jobs'){
-            return this.props.app_state.created_jobs 
+            return this.get_all_sorted_objects(this.props.app_state.created_jobs)
         }
 
         if(selected_option_name == 'all'){
-            return this.props.app_state.created_jobs
+            return this.get_all_sorted_objects(this.props.app_state.created_jobs)
         }
         else if(selected_option_name == 'viewed'){
             var my_viewed_jobs = []
+            var all_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
             for(var i=0; i<this.state.viewed_jobs.length; i++){
-                my_viewed_jobs.push(this.props.app_state.created_jobs[this.state.viewed_jobs[i]])
+                my_viewed_jobs.push(all_jobs[this.state.viewed_jobs[i]])
             }
             
             return my_viewed_jobs
         }
         else if(selected_option_name == 'applied'){
             var my_applied_jobs = []
-            for(var i=0; i<this.props.app_state.my_applications.length; i++){
-                var job_id = this.props.app_state.my_applications[i]['event'].returnValues.p1
-                var job_obj = this.props.app_state.created_job_mappings[job_id]
+            var all_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var all_applications = this.get_all_sorted_objects(this.props.app_state.my_applications)
+            var all_job_mappings = this.get_all_sorted_objects_mappings(this.props.app_state.created_job_mappings)
+            
+            for(var i=0; i<all_applications.length; i++){
+                var job_id = all_applications[i]['event'].returnValues.p1
+                var job_obj = all_job_mappings[job_id]
                 if(job_obj != null && !my_applied_jobs.includes(job_obj)){
                     my_applied_jobs.push(job_obj)
                 }
@@ -661,11 +687,12 @@ class home_page extends Component {
         }
         else {
             var my_jobs = []
+            var all_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
             var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_jobs.length; i++){
-                var post_author = this.props.app_state.created_jobs[i]['event'].returnValues.p5
+            for(var i = 0; i < all_jobs.length; i++){
+                var post_author = all_jobs[i]['event'].returnValues.p5
                 if(post_author.toString() == myid.toString()){
-                    my_jobs.push(this.props.app_state.created_jobs[i])
+                    my_jobs.push(all_jobs[i])
                 }
             }
             return my_jobs
@@ -677,33 +704,22 @@ class home_page extends Component {
 
         if(this.state.work_page_tags_object['i'].active != 'mail'){
             var all_mail = []
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+            var received_mail = this.get_combined_created_mail('received_mail')
+            for(var i=0; i<received_mail['received_mail'].length; i++){
+                var convo_id = received_mail['received_mail'][i]
+                var context_object = received_mail['mail_activity'][convo_id][0]
                 all_mail.push(context_object)
             }
             return this.sortByAttributeDescending(all_mail, 'time')
         }
 
-        if(selected_option_name == 'all'){
-            var all_mail = []
-            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
-                var convo_id = this.props.app_state.created_mail['created_mail'][i]
-                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
-            }
-            return this.sortByAttributeDescending(all_mail, 'time')
-        }
         else if(selected_option_name == 'received'){
             var all_mail = []
-            for(var i=0; i<this.props.app_state.received_mail['received_mail'].length; i++){
-                var convo_id = this.props.app_state.received_mail['received_mail'][i]
-                var context_object = this.props.app_state.received_mail['mail_activity'][convo_id][0]
+            var received_mail = this.get_combined_created_mail('received_mail')
+
+            for(var i=0; i<received_mail['received_mail'].length; i++){
+                var convo_id = received_mail['received_mail'][i]
+                var context_object = received_mail['mail_activity'][convo_id][0]
                 all_mail.push(context_object)
             }
             return this.sortByAttributeDescending(all_mail, 'time')
@@ -711,13 +727,195 @@ class home_page extends Component {
         else {
             //sent
             var all_mail = []
-            for(var i=0; i<this.props.app_state.created_mail['created_mail'].length; i++){
-                var convo_id = this.props.app_state.created_mail['created_mail'][i]
-                var context_object = this.props.app_state.created_mail['mail_activity'][convo_id][0]
+            var created_mail = this.get_combined_created_mail('created_mail')
+            for(var i=0; i<created_mail['created_mail'].length; i++){
+                var convo_id = created_mail['created_mail'][i]
+                var context_object = created_mail['mail_activity'][convo_id][0]
                 all_mail.push(context_object)
             }
             return this.sortByAttributeDescending(all_mail, 'time')
         }
+    }
+
+    get_combined_created_mail(created_or_received){
+        var created_mail = []
+        var mail_activity = {}
+        var created_mail_obj = created_or_received == 'created_mail' ? this.props.app_state.created_mail : this.props.app_state.received_mail
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_data = created_mail_obj[e5]
+
+            if(e5_data[created_or_received] != null){
+                created_mail = created_mail.concat(e5_data[created_or_received])
+            }
+
+            var mail_activity_clone = structuredClone(mail_activity)
+            mail_activity = { ...mail_activity_clone, ...e5_data['mail_activity']}
+        }
+
+        if(created_or_received == 'created_mail'){
+            return {'created_mail':created_mail, 'mail_activity':mail_activity}
+        }else{
+            return {'received_mail':created_mail, 'mail_activity':mail_activity}
+        }
+    }
+    
+
+    get_post_items(){
+        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
+        if(this.state.explore_page_tags_object['i'].active != 'posts'){
+            return this.get_all_sorted_objects(this.props.app_state.created_posts) 
+        }
+
+        if(selected_option_name == 'all'){
+            return this.get_all_sorted_objects(this.props.app_state.created_posts)
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_posts = []
+            var all_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            for(var i=0; i<this.state.viewed_posts.length; i++){
+                my_viewed_posts.push(all_posts[this.state.viewed_posts[i]])
+            }
+            return my_viewed_posts
+        }
+        else {
+            var my_posts = []
+            var all_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < all_posts.length; i++){
+                var post_author = all_posts[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_posts.push(all_posts[i])
+                }
+            }
+            return my_posts
+        }
+    }
+
+    get_proposal_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'proposals'){
+            return this.get_all_sorted_objects(this.props.app_state.my_proposals) 
+        }
+
+        if(selected_option_name == 'my-proposals'){
+            return this.get_all_sorted_objects(this.props.app_state.my_proposals)
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_proposals = []
+            var all_proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
+            for(var i=0; i<this.state.viewed_proposals.length; i++){
+                my_viewed_proposals.push(all_proposals[this.state.viewed_proposals[i]])
+            }
+            return my_viewed_proposals
+        }
+        else {
+            var proposals = []
+            var all_proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < all_proposals.length; i++){
+                var proposal_author = all_proposals[i]['event'].returnValues.p4/* should be p3 */
+                if(proposal_author.toString() == myid.toString()){
+                    proposals.push(all_proposals[i])
+                }else{
+                    console.log('sender not proposal author: author->'+proposal_author+', sender id->'+myid)
+                }
+            }
+            return proposals
+        }
+    }
+
+    get_storefront_items(){
+        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
+
+        if(this.state.explore_page_tags_object['i'].active != 'storefront'){
+            return this.get_all_sorted_objects(this.props.app_state.created_stores)
+        }
+
+        if(selected_option_name == 'all'){
+            return this.get_all_sorted_objects(this.props.app_state.created_stores)
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_stores = []
+            var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
+            for(var i=0; i<this.state.viewed_stores.length; i++){
+                my_viewed_stores.push(all_stores[this.state.viewed_stores[i]])
+            }
+            return my_viewed_stores
+        }
+        else {
+            var my_stores = []
+            var myid = this.props.app_state.user_account_id
+            var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
+            
+            for(var i = 0; i < all_stores.length; i++){
+                var post_author = all_stores[i]['event'].returnValues.p5
+                if(post_author.toString() == myid.toString()){
+                    my_stores.push(all_stores[i])
+                }
+            }
+            return my_stores
+        }
+    }
+
+    get_subscription_items(){
+        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
+
+        if(this.state.work_page_tags_object['i'].active != 'subscriptions'){
+            return this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+        }
+
+        if(selected_option_name == 'all'){
+            return this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+        }
+        else if(selected_option_name == 'viewed'){
+            var my_viewed_subscriptions = []
+            var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            for(var i=0; i<this.state.viewed_subscriptions.length; i++){
+                my_viewed_subscriptions.push(all_subscriptions[this.state.viewed_subscriptions[i]])
+            }
+            return my_viewed_subscriptions
+        }
+        else if(selected_option_name == 'paid'){
+            var my_paid_subscriptions = []
+            var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            for(var i=0; i<all_subscriptions.length; i++){
+                var object = all_subscriptions[i]
+                if(object['payment'] != 0){
+                    my_paid_subscriptions.push(object)
+                }
+            }
+            return my_paid_subscriptions
+        }
+        else {
+            var my_subscriptions = []
+            var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            var myid = this.props.app_state.user_account_id
+            for(var i = 0; i < all_subscriptions.length; i++){
+                var post_author = all_subscriptions[i]['event'] == null ? 0 : all_subscriptions[i]['event'].returnValues.p3
+
+                if(post_author.toString() == myid.toString()){
+                    my_subscriptions.push(all_subscriptions[i])
+                }
+            }
+            return my_subscriptions
+        }
+    }
+
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
     }
 
     sortByAttributeDescending(array, attribute) {
@@ -732,136 +930,16 @@ class home_page extends Component {
       });
     }
 
-    get_post_items(){
-        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
-
-        if(this.state.explore_page_tags_object['i'].active != 'posts'){
-            return this.props.app_state.created_posts 
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
         }
 
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_posts
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_posts = []
-            for(var i=0; i<this.state.viewed_posts.length; i++){
-                my_viewed_posts.push(this.props.app_state.created_posts[this.state.viewed_posts[i]])
-            }
-            return my_viewed_posts
-        }
-        else {
-            var my_posts = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_posts.length; i++){
-                var post_author = this.props.app_state.created_posts[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_posts.push(this.props.app_state.created_posts[i])
-                }
-            }
-            return my_posts
-        }
-    }
-
-    get_proposal_items(){
-        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
-
-        if(this.state.work_page_tags_object['i'].active != 'proposals'){
-            return this.props.app_state.my_proposals 
-        }
-
-        if(selected_option_name == 'my-proposals'){
-            return this.props.app_state.my_proposals
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_proposals = []
-            for(var i=0; i<this.state.viewed_proposals.length; i++){
-                my_viewed_proposals.push(this.props.app_state.my_proposals[this.state.viewed_proposals[i]])
-            }
-            return my_viewed_proposals
-        }
-        else {
-            var proposals = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.my_proposals.length; i++){
-                var proposal_author = this.props.app_state.my_proposals[i]['event'].returnValues.p4/* should be p3 */
-                if(proposal_author.toString() == myid.toString()){
-                    proposals.push(this.props.app_state.my_proposals[i])
-                }else{
-                    console.log('sender not proposal author: author->'+proposal_author+', sender id->'+myid)
-                }
-            }
-            return proposals
-        }
-    }
-
-    get_storefront_items(){
-        var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
-
-        if(this.state.explore_page_tags_object['i'].active != 'storefront'){
-            return this.props.app_state.created_stores 
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_stores
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_stores = []
-            for(var i=0; i<this.state.viewed_stores.length; i++){
-                my_viewed_stores.push(this.props.app_state.created_stores[this.state.viewed_stores[i]])
-            }
-            return my_viewed_stores
-        }
-        else {
-            var my_stores = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_stores.length; i++){
-                var post_author = this.props.app_state.created_stores[i]['event'].returnValues.p5
-                if(post_author.toString() == myid.toString()){
-                    my_stores.push(this.props.app_state.created_stores[i])
-                }
-            }
-            return my_stores
-        }
-    }
-
-    get_subscription_items(){
-        var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
-
-        if(this.state.work_page_tags_object['i'].active != 'subscriptions'){
-            return this.props.app_state.created_subscriptions
-        }
-
-        if(selected_option_name == 'all'){
-            return this.props.app_state.created_subscriptions
-        }
-        else if(selected_option_name == 'viewed'){
-            var my_viewed_subscriptions = []
-            for(var i=0; i<this.state.viewed_subscriptions.length; i++){
-                my_viewed_subscriptions.push(this.props.app_state.created_subscriptions[this.state.viewed_subscriptions[i]])
-            }
-            return my_viewed_subscriptions
-        }
-        else if(selected_option_name == 'paid'){
-            var my_paid_subscriptions = []
-            for(var i=0; i<this.props.app_state.created_subscriptions.length; i++){
-                var object = this.props.app_state.created_subscriptions[i]
-                if(object['payment'] != 0){
-                    my_paid_subscriptions.push(object)
-                }
-            }
-            return my_paid_subscriptions
-        }
-        else {
-            var my_subscriptions = []
-            var myid = this.props.app_state.user_account_id
-            for(var i = 0; i < this.props.app_state.created_subscriptions.length; i++){
-                var post_author = this.props.app_state.created_subscriptions[i]['event'] == null ? 0 : this.props.app_state.created_subscriptions[i]['event'].returnValues.p3
-                if(post_author.toString() == myid.toString()){
-                    my_subscriptions.push(this.props.app_state.created_subscriptions[i])
-                }
-            }
-            return my_subscriptions
-        }
+        return all_objects
     }
 
 
@@ -879,11 +957,11 @@ class home_page extends Component {
             <PostListSection size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} 
             when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)}
 
-            open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} 
+            theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} 
             
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors}
 
-            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)}
+            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)}
             />
         )
     }
@@ -916,7 +994,7 @@ class home_page extends Component {
         }
     }
 
-    when_job_post_item_clicked(index, id){
+    when_job_post_item_clicked(index, id, e5){
         this.setState({selected_job_post_item: index})
         var viewed_jobs_clone = this.state.viewed_jobs.slice()
         var pos = viewed_jobs_clone.indexOf(index)
@@ -925,8 +1003,8 @@ class home_page extends Component {
             this.setState({viewed_jobs: viewed_jobs_clone})
         }
 
-        this.props.get_job_objects_responses(id)
-        this.props.get_objects_messages(id)
+        this.props.get_job_objects_responses(id, e5)
+        this.props.get_objects_messages(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -963,7 +1041,7 @@ class home_page extends Component {
         }
     }
 
-    when_post_item_clicked(index, id){
+    when_post_item_clicked(index, id, e5){
         this.setState({selected_post_item: index})
 
         var viewed_posts_clone = this.state.viewed_posts.slice()
@@ -973,15 +1051,15 @@ class home_page extends Component {
             this.setState({viewed_posts: viewed_posts_clone})
         }
 
-        this.props.get_objects_messages(id)
-        this.props.get_post_award_data(id)
+        this.props.get_objects_messages(id, e5)
+        this.props.get_post_award_data(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
-    when_channel_item_clicked(index, id){
+    when_channel_item_clicked(index, id, e5){
         this.setState({selected_channel_item: index})
 
         var viewed_channel_clone = this.state.viewed_channels.slice()
@@ -991,14 +1069,14 @@ class home_page extends Component {
             this.setState({viewed_channels: viewed_channel_clone})
         }
 
-        this.props.get_objects_messages(id)
+        this.props.get_objects_messages(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
-    when_proposal_item_clicked(index, id){
+    when_proposal_item_clicked(index, id, e5){
         this.setState({selected_proposal_item: index})
 
         var viewed_proposals_clone = this.state.viewed_proposals.slice()
@@ -1008,7 +1086,7 @@ class home_page extends Component {
             this.setState({viewed_proposals: viewed_proposals_clone})
         }
 
-        this.props.get_objects_messages(id)
+        this.props.get_objects_messages(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -1023,7 +1101,7 @@ class home_page extends Component {
         }
     }
 
-    when_storefront_post_item_clicked(index, id){
+    when_storefront_post_item_clicked(index, id, e5){
         this.setState({selected_storefront_item: index})
 
         var viewed_storefront_clone = this.state.viewed_stores.slice()
@@ -1033,15 +1111,15 @@ class home_page extends Component {
             this.setState({viewed_stores: viewed_storefront_clone})
         }
 
-        this.props.get_direct_purchase_events(id)
-        this.props.get_objects_messages(id)
+        this.props.get_direct_purchase_events(id, e5)
+        this.props.get_objects_messages(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
-    when_bag_post_item_clicked(index, id){
+    when_bag_post_item_clicked(index, id, e5){
         this.setState({selected_bag_item: index})
 
         var viewed_bag_clone = this.state.viewed_bags.slice()
@@ -1051,15 +1129,15 @@ class home_page extends Component {
             this.setState({viewed_bags: viewed_bag_clone})
         }
 
-        this.props.get_job_objects_responses(id)
-        this.props.get_objects_messages(id)
+        this.props.get_job_objects_responses(id, e5)
+        this.props.get_objects_messages(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
-    when_contractor_post_item_clicked(index, id){
+    when_contractor_post_item_clicked(index, id, e5){
         this.setState({selected_contractor_item: index})
         var viewed_contractors_clone = this.state.viewed_contractors.slice()
         var pos = viewed_contractors_clone.indexOf(index)
@@ -1068,7 +1146,7 @@ class home_page extends Component {
             this.setState({viewed_contractors: viewed_contractors_clone})
         }
 
-        this.props.get_contractor_applications(id)
+        this.props.get_contractor_applications(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -1105,7 +1183,7 @@ class home_page extends Component {
 
                 add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.open_give_awards.bind(this)}
 
-                get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)}
+                get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} get_e5_data={this.get_e5_data.bind(this)}
                 />
             </div>
         )

@@ -386,7 +386,7 @@ class ModifySubscriptionPage extends Component {
                 reconfig_number:0,reconfig_target_id:'', reconfig_values:[]
             })
         }
-        this.setState({subscription_item: subscription_item})
+        this.setState({subscription_item: subscription_item, e5: subscription_item['e5']})
     }
 
 

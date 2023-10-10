@@ -40,7 +40,7 @@ class ViewJobRequestPage extends Component {
     
     state = {
         selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:'accept-job-request', id:makeid(8),
-        entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), contractor_object:null, entered_text:'', focused_message:{'tree':{}}
+        entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), contractor_object:null, entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5
     };
 
     get_accept_job_request_title_tags_object(){
@@ -281,7 +281,7 @@ class ViewJobRequestPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
                         ))}
@@ -292,6 +292,42 @@ class ViewJobRequestPage extends Component {
         
     }
 
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
 
     set_object(request_item, contractor_object){
         if(this.state.request_item['job_request_id'] != request_item['job_request_id']){
@@ -300,14 +336,29 @@ class ViewJobRequestPage extends Component {
                 entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
             })
         }
-        this.setState({request_item: request_item, contractor_object: contractor_object})
-        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'])
+        this.setState({request_item: request_item, contractor_object: contractor_object, e5: request_item['e5']})
+        this.props.load_job_request_messages(contractor_object['id'], request_item['job_request_id'], request_item['e5'])
 
         if(request_item['is_response_accepted']){
             this.setState({accept_job_request_title_tags_object: this.get_accepted_job_request_title_tags_object()})
         }
         if (this.messagesEnd.current){
             this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }
+
+
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if(this.state.request_item['job_request_id'] != 0){
+            this.props.load_job_request_messages(this.state.contractor_object['id'], this.state.request_item['job_request_id'], this.state.request_item['e5'])
         }
     }
 
@@ -378,17 +429,19 @@ class ViewJobRequestPage extends Component {
 
     get_contract_items(){
         var my_contracts = []
-        var myid = this.props.app_state.user_account_id
-        for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
-            var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
+        var myid = this.props.app_state.user_account_id[this.state.e5]
+        var created_contracts = this.props.app_state.created_contracts[this.state.e5]
+        
+        for(var i = 0; i < created_contracts.length; i++){
+            var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
             if(post_author.toString() == myid.toString()){
-                if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
-                    my_contracts.push(this.props.app_state.created_contracts[i])
-                }else{
-                    if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
-                    }
-                    my_contracts.push(this.props.app_state.created_contracts[i])
-                }
+                // if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
+                //     my_contracts.push(this.props.app_state.created_contracts[i])
+                // }else{
+                //     if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
+                //     }
+                // }
+                my_contracts.push(created_contracts[i])
             }
         }
         return my_contracts
@@ -504,7 +557,7 @@ class ViewJobRequestPage extends Component {
                         <TextInput height={50} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '20px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '20px 5px 0px 5px', 'width':110}} onClick={()=>this.add_message_to_stack()}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
@@ -795,10 +848,10 @@ class ViewJobRequestPage extends Component {
     }
 
     get_sender_title_text(item){
-        if(item['sender'] == this.props.app_state.user_account_id){
+        if(item['sender'] == this.props.app_state.user_account_id[this.state.e5]){
             return 'You'
         }else{
-            return item['sender']
+            return item['sender'].toString()
         }
     }
 
@@ -905,11 +958,11 @@ class ViewJobRequestPage extends Component {
         if(message == ''){
             this.props.notify('type something first', 600)
         }
-        else if(this.props.app_state.user_account_id == 1){
+        else if(this.props.app_state.user_account_id[this.state.e5] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
         }
         else{
-            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id, 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id']}
+            var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5}
 
             this.props.add_job_request_message_to_stack_object(tx)
 
@@ -923,7 +976,7 @@ class ViewJobRequestPage extends Component {
     }
 
     add_image_to_stack(image){
-        if(this.props.app_state.user_account_id == 1){
+        if(this.props.app_state.user_account_id[this.state.e5] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
             return
         }
@@ -931,7 +984,7 @@ class ViewJobRequestPage extends Component {
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
         var message = this.state.entered_text.trim()
         var object = this.state.request_item;
-        var tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id,'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id']}
+        var tx = {'id':object['job_request_id'], type:'image', 'message': message, entered_indexing_tags:['send', 'image'], 'image-data':{'images':[image],'pos':0}, 'sender':this.props.app_state.user_account_id[this.state.e5],'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5}
 
         this.props.add_job_request_message_to_stack_object(tx)
 

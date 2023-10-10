@@ -45,7 +45,7 @@ class SendJobRequestPage extends Component {
     state = {
         selected: 0, contractor_item:{'id':0},  type:'job-request', id:makeid(8),
         entered_indexing_tags:['send', 'job', 'request'], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
-        entered_title_text:'', entered_image_objects:[]
+        entered_title_text:'', entered_image_objects:[], e5: this.props.app_state.selected_e5
     };
 
     get_send_job_request_title_tags_object(){
@@ -307,20 +307,59 @@ class SendJobRequestPage extends Component {
 
     get_contract_items(){
         var my_contracts = []
-        var myid = this.props.app_state.user_account_id
-        for(var i = 0; i < this.props.app_state.created_contracts.length; i++){
-            var post_author = this.props.app_state.created_contracts[i]['event'] == null ? 0 : this.props.app_state.created_contracts[i]['event'].returnValues.p3
+        // var myid = this.props.app_state.user_account_id
+        var created_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+        for(var i = 0; i < created_contracts.length; i++){
+            var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
+            var myid = this.props.app_state.user_account_id[created_contracts[i]['e5']]
             if(post_author.toString() == myid.toString()){
-                if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
-                    my_contracts.push(this.props.app_state.created_contracts[i])
-                }else{
-                    if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
-                    }
-                    my_contracts.push(this.props.app_state.created_contracts[i])
-                }
+                // if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
+                //     my_contracts.push(this.props.app_state.created_contracts[i])
+                // }else{
+                //     if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] < Date.now()/1000){
+                //     }
+                // }
+                my_contracts.push(created_contracts[i])
             }
         }
         return my_contracts
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     render_contract_item(object, index){
@@ -517,7 +556,7 @@ class SendJobRequestPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.token_directory[item['id']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
                         ))}
@@ -563,10 +602,12 @@ class SendJobRequestPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var exchanges_from_sync = this.props.app_state.created_tokens
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         var sorted_token_exchange_data = []
-        var myid = this.props.app_state.user_account_id
+        // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
             var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
             if(author_account == myid.toString()){
                 sorted_token_exchange_data.push(exchanges_from_sync[i])
@@ -598,7 +639,7 @@ class SendJobRequestPage extends Component {
                 entered_title_text:'', entered_image_objects:[]
             })
         }
-        this.setState({contractor_item: contractor_item})
+        this.setState({contractor_item: contractor_item, e5: contractor_item['e5']})
     }
 
     finish_creating_response(){
