@@ -377,19 +377,30 @@ class PostsDetailsSection extends Component {
                 </div>
 
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
-                    <div style={{'margin':'15px 0px 0px 0px'}}>
-                        {this.render_image_picker()}
+                    <div style={{'margin':'1px 0px 0px 0px'}}>
+                        {/* {this.render_image_picker()} */}
+                        <div>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet()}>
+                                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
+                            </div>
+                        </div>
                     </div>
                     <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
-                        <TextInput height={50} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '20px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
             </div> 
         )
+    }
+
+    show_add_comment_bottomsheet(){
+        var object = this.get_post_items()[this.props.selected_post_item];
+        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        this.props.show_add_comment_bottomsheet(object, focused_message_id, 'post')
     }
 
     render_top_title(){

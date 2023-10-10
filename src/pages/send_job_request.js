@@ -140,6 +140,7 @@ class SendJobRequestPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image and tap to remove.'})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
 
@@ -177,8 +178,10 @@ class SendJobRequestPage extends Component {
                 let reader = new FileReader();
                 reader.onload = function(ev){
                     const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
-                    clonedArray.push(ev.target.result);
-                    this.setState({entered_image_objects: clonedArray});
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        clonedArray.push(ev.target.result);
+                        this.setState({entered_image_objects: clonedArray});
+                    }
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
             }
