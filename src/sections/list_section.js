@@ -273,7 +273,7 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contract_item(object)
         return(
-            <div onClick={() => this.when_contract_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div onClick={() => this.when_contract_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -300,8 +300,8 @@ class PostListSection extends Component {
         }
     }
 
-    when_contract_item_clicked(index){
-        this.props.when_contract_item_clicked(index)
+    when_contract_item_clicked(index, object){
+        this.props.when_contract_item_clicked(index, object['id'], object['e5'])
     }
 
 

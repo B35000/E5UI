@@ -1380,7 +1380,6 @@ class NewProposalPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
-
                 </div>
             )
         }

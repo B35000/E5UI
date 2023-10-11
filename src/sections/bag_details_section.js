@@ -1013,7 +1013,7 @@ class BagDetailsSection extends Component {
         
     }
 
-     format_power_figure(amount){
+    format_power_figure(amount){
         var power = 'e72'
         if(amount < bigInt('1e9')){
             power = 'e9'

@@ -169,6 +169,8 @@ class App extends Component {
     alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp: {},
     created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
 
+    contract_events:{},
+
     e5s:this.get_e5s(),
     selected_e5:'E15',
     accounts:{},
@@ -266,7 +268,7 @@ class App extends Component {
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
 
-    this.interval = setInterval(() => this.background_sync(), 27000);
+    this.interval = setInterval(() => this.background_sync(), 57000);
   }
 
   /* called when the component is unmounted or closed */
@@ -493,6 +495,8 @@ class App extends Component {
 
       add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
       show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
+
+      get_contract_event_data={this.get_contract_event_data.bind(this)}
       />
     )
   }
@@ -5397,6 +5401,42 @@ class App extends Component {
     clone[id] = award_events
 
     this.setState({award_data: clone})
+  }
+
+  
+
+
+
+  get_contract_event_data = async (id, e5) => {
+    const web3 = new Web3(this.state.web3);
+    const G5contractArtifact = require('./contract_abis/G5.json');
+    const G5_address = this.state.addresses[e5][3];
+    const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
+
+
+    var make_proposal_event_data = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id } }, (error, events) => {});
+
+    var modify_object_event_data = await G5contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_or_proposal_id */: id } }, (error, events) => {});
+
+    // console.log('---------------------------get_contract_event_data-----------------------------------')
+    // console.log(make_proposal_event_data)
+
+    const G52contractArtifact = require('./contract_abis/G52.json');
+    const G52_address = this.state.addresses[e5][4];
+    const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+
+    var enter_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 3} }, (error, events) => {});
+
+    var extend_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 14} }, (error, events) => {});
+
+    var exit_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 11} }, (error, events) => {});
+
+    var force_exit_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 18} }, (error, events) => {});
+
+    var clone = structuredClone(this.state.contract_events)
+    clone[id] = {'modify_object':modify_object_event_data, 'make_proposal':make_proposal_event_data, 'enter_contract':enter_contract_event_data, 'extend_contract':extend_contract_event_data, 'exit_contract':exit_contract_event_data, 'force_exit':force_exit_contract_event_data}
+
+    this.setState({contract_events: clone})
   }
 
 

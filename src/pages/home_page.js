@@ -1011,7 +1011,7 @@ class home_page extends Component {
         }
     }
 
-    when_contract_item_clicked(index){
+    when_contract_item_clicked(index, id, e5){
         this.setState({selected_contract_item: index})
 
         var viewed_contracts_clone = this.state.viewed_contracts.slice()
@@ -1020,6 +1020,8 @@ class home_page extends Component {
             viewed_contracts_clone.push(index)
             this.setState({viewed_contracts: viewed_contracts_clone})
         }
+
+        this.props.get_contract_event_data(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -1184,6 +1186,8 @@ class home_page extends Component {
                 add_id_to_contacts={this.add_id_to_contacts.bind(this)} open_edit_object={this.props.open_edit_object.bind(this)} open_award_ui={this.open_give_awards.bind(this)}
 
                 get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} get_e5_data={this.get_e5_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)}
+
+                get_contract_event_data={this.props.get_contract_event_data.bind(this)}
                 />
             </div>
         )
