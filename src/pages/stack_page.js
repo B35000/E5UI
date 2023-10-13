@@ -573,7 +573,7 @@ class StackPage extends Component {
                             add_interactibles_accounts[1].push(contract_stack_id)
                             add_interactibles_accounts[2].push(35)
                             add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
-                            add_interactibles_accounts[4].push(23)
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(53)
                             add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
                         }
 
@@ -593,7 +593,7 @@ class StackPage extends Component {
                             add_moderator_accounts[1].push(contract_stack_id)
                             add_moderator_accounts[2].push(35)
                             add_moderator_accounts[3].push(txs[i].moderators[j])
-                            add_moderator_accounts[4].push(23)
+                            txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
                         }
 
                         strs.push([])
@@ -633,7 +633,7 @@ class StackPage extends Component {
                             add_interactibles_accounts[1].push(token_stack_id)
                             add_interactibles_accounts[2].push(35)
                             add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
-                            add_interactibles_accounts[4].push(23)
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(53)
                             add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
                         }
 
@@ -653,7 +653,7 @@ class StackPage extends Component {
                             add_moderator_accounts[1].push(token_stack_id)
                             add_moderator_accounts[2].push(35)
                             add_moderator_accounts[3].push(txs[i].moderators[j])
-                            add_moderator_accounts[4].push(23)
+                            txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
                         }
 
                         strs.push([])
@@ -693,7 +693,9 @@ class StackPage extends Component {
                             add_interactibles_accounts[1].push(subscription_stack_id)
                             add_interactibles_accounts[2].push(35)
                             add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
-                            add_interactibles_accounts[4].push(23)
+                            
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(53)
+                            
                             add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
                         }
 
@@ -713,7 +715,7 @@ class StackPage extends Component {
                             add_moderator_accounts[1].push(subscription_stack_id)
                             add_moderator_accounts[2].push(35)
                             add_moderator_accounts[3].push(txs[i].moderators[j])
-                            add_moderator_accounts[4].push(23)
+                            txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
                         }
 
                         strs.push([])

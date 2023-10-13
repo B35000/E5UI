@@ -303,16 +303,16 @@ class NewTokenPage extends Component {
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Token'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Token. No spaces should be used.'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Name...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(10 - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a symbol for your new Token'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a symbol for your new Token. No spaces should be used.'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Symbol...'} when_text_input_field_changed={this.when_symbol_text_input_field_changed.bind(this)} text={this.state.entered_symbol_text} theme={this.props.theme}/>
 
@@ -1168,10 +1168,7 @@ class NewTokenPage extends Component {
                 <TextInput height={30} placeholder={'Set Trust Fee Target ID'} when_text_input_field_changed={this.when_trust_fee_target_input_field_changed.bind(this)} text={this.state.trust_fee_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('trust_fee_target')}
-                <div style={{height: 20}}/>
-
                 {this.render_detail_item('0')}
-
                 
             </div>
         )
@@ -1392,13 +1389,13 @@ class NewTokenPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
                         ))}
                     </ul>
                 </div>
@@ -1495,13 +1492,13 @@ class NewTokenPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
                         ))}
                     </ul>
                 </div>
@@ -1678,10 +1675,10 @@ class NewTokenPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                            <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                        <img src={Letter} style={{ height: 30, width: 'auto' }} />
                                     </div>
                                 </div>
                             </li>
@@ -1838,9 +1835,6 @@ class NewTokenPage extends Component {
         }
         else if(title == ''){
             this.props.notify('add a name first!', 700)
-        }
-        else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that name is too long', 700)
         }
         else if(symbol == ''){
             this.props.notify('add a symbol first!', 700)

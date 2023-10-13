@@ -25,14 +25,32 @@ class SpendDetailSection extends Component {
         selected: 0, navigate_view_spend_list_detail_tags_object: this.get_navigate_view_spend_list_detail_tags(),
     };
 
+    componentDidMount() {
+        this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    check_for_new_responses_and_messages() {
+        if (this.props.selected_spend_item != null) {
+            var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+            this.props.get_exchange_event_data(object['id'], object['e5'])
+        }
+    }
+
     get_navigate_view_spend_list_detail_tags(){
         return{
           'i':{
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','details','transactions'],[0]
+              ['or','',0], ['e','details','e.events'],[0]
           ],
+          'events': [
+                ['xor', 'e', 1], ['events', 'transfers', 'exchange-transfers', 'updated-balances', 'updated-proportion-ratios', 'modify-exchange','freeze-unfreeze'], [1], [1]
+           ],
         }
     }
 
@@ -76,13 +94,48 @@ class SpendDetailSection extends Component {
                     {this.render_spend_main_details_section()}
                 </div>
             )
-        }else if(selected_item == 'transactions'){
+        }
+        else if(selected_item == 'transfers'){
             return(
                 <div>
-                    {this.render_spend_block_history_logs()}
+                    {this.render_transfer_logs()}
                 </div>
             )
-            
+        }
+        else if(selected_item == 'updated-proportion-ratios'){
+            return(
+                <div>
+                    {this.render_updated_proportion_ratio_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'modify-exchange'){
+            return(
+                <div>
+                    {this.render_modify_exchange_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'exchange-transfers'){
+            return(
+                <div>
+                    {this.render_exchange_transfers_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'updated-balances'){
+            return(
+                <div>
+                    {this.render_update_balance_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'freeze-unfreeze'){
+            return(
+                <div>
+                    {this.render_freeze_unfreeze_logs()}
+                </div>
+            )
         }
     }
 
@@ -641,9 +694,794 @@ class SpendDetailSection extends Component {
         return all_objects
     }
 
-    render_spend_block_history_logs(){
 
+
+
+
+
+
+
+
+
+
+
+
+
+    render_transfer_logs(){
+        var he = this.props.height - 45
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Your Transfer Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_contract_transfer_item_logs(object)}
+                </div>
+            </div>
+        )
     }
+
+    get_item_logs(object, event) {
+        if (this.props.app_state.exchange_events[object['id']] == null) {
+            return []
+        }
+        return this.props.app_state.exchange_events[object['id']][event]
+    }
+
+
+    render_contract_transfer_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'transfer')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                                    {this.render_contract_transfer_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_contract_transfer_item_clicked(index){
+        if (this.state.selected_contract_transfer_event_item == index) {
+            this.setState({ selected_contract_transfer_event_item: null })
+        } else {
+            this.setState({ selected_contract_transfer_event_item: index })
+        }
+    }
+
+
+    render_contract_transfer_event_item(item, object, index){
+        var exchange_id = item['event'].returnValues.p1;
+        var number = item['event'].returnValues.p4
+        var depth = item['event'].returnValues.p7
+        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3, object) : 'From: '+this.get_sender_title_text(item['event'].returnValues.p2, object)
+        if (this.state.selected_contract_transfer_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+    get_sender_title_text(sender, object) {
+        if (sender == this.props.app_state.user_account_id[object['e5']]) {
+            return 'You'
+        } else {
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    render_updated_proportion_ratio_logs(){
+        var he = this.props.height - 45
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Mint Limit Proportion Ratio Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_proportion_ratio_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+
+    render_proportion_ratio_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'proportion_ratio')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_proportion_ratio_item_clicked(index)}>
+                                    {this.render_proportion_ratio_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_proportion_ratio_item_clicked(index){
+        if (this.state.selected_proportion_ratio_event_item == index) {
+            this.setState({ selected_proportion_ratio_event_item: null })
+        } else {
+            this.setState({ selected_proportion_ratio_event_item: index })
+        }
+    }
+
+
+    render_proportion_ratio_event_item(item, object, index){
+        var new_active_limit = item.returnValues.p2
+        var tokens_to_receive = item.returnValues.p3
+        if (this.state.selected_proportion_ratio_event_item == index) {
+            return (
+                <div>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Tokens Received', 'subtitle': this.format_power_figure(tokens_to_receive), 'barwidth': this.calculate_bar_width(tokens_to_receive), 'number': this.format_account_balance_figure(tokens_to_receive), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    </div>
+                    <div style={{ height: 2 }} />
+
+                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': 'Updated Active Limit', 'size': 'l' })}
+                    <div style={{ height: 2 }} />
+
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }}/>
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': 'Updated Active Limit', 'size': 'l' })}
+                    <div style={{ height: 2 }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_modify_exchange_logs(){
+        var he = this.props.height - 45
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Modification Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_exchange_modification_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_exchange_modification_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'modify')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_modify_item_clicked(index)}>
+                                    {this.render_modified_exchange_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_modify_item_clicked(index){
+         if (this.state.selected_modify_event_item == index) {
+            this.setState({ selected_modify_event_item: null })
+        } else {
+            this.setState({ selected_modify_event_item: index })
+        }
+    }
+
+    render_modified_exchange_event_item(item, object, index){
+        if (this.state.selected_modify_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Modifier', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': 'Targeted Modify Item', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.get_value_ui(item)}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': 'Targeted Modify Item', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                </div>
+            )
+        }
+    }
+
+    get_target_identifier(item) {
+        var obj = this.get_contract_modify_details()
+
+        var target_array_pos = item.returnValues.p3
+        var target_array_item = item.returnValues.p4
+        var selected_key = ''
+        for (let key in obj) {
+            if (obj[key]['position'][0] == target_array_pos && obj[key]['position'][1] == target_array_item) {
+                selected_key = key
+                break;
+            }
+        }
+
+        return selected_key
+    }
+
+    get_value_ui(item) {
+        var identifier = this.get_target_identifier(item)
+        var type = this.get_contract_modify_details()[identifier]['picker']
+        var number = item.returnValues.p5
+
+        if (type == 'proportion') {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.format_proportion(number), 'details': 'proportion', 'size': 'l' })}
+                </div>
+            )
+        }
+        else if (type == 'time') {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_time_diff(number), 'details': 'duration', 'size': 'l' })}
+                </div>
+            )
+        }
+        else if (type == 'number') {
+            return (
+                <div>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                    </div>
+                </div>
+            )
+        }
+        else if (type == 'tag') {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_tag_selected_item(identifier, number), 'details': 'value: ' + number, 'size': 'l' })}
+                </div>
+            )
+        }
+        else if (type == 'id') {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': number, 'details': 'target ID', 'size': 'l' })}
+                </div>
+            )
+        }
+    }
+
+    get_tag_selected_item(title, number) {
+        var obj = { 'Auto Wait': { 0: 'no', 1: 'yes' }, 'Moderator Modify Privelage': { 1: 'modifiable', 0: 'non-modifiable' }, 'Unlimited Extend Contract Time': { 1: 'enabled', 0: 'disabled' }, 'Bounty Limit Type': { 0: 'relative', 1: 'absolute' }, 'Force Exit Enabled': { 1: 'enabled', 0: 'disabled' }, 'Halving type': { 0: 'fixed', 1: 'spread' }, 'Block Limit Sensitivity': { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' } }
+
+        return obj[title][number]
+    }
+
+    get_contract_modify_details() {
+        var obj = {
+            'Buy Limit':{'position':[1,0], 'picker':'number', 'powerlimit':63},
+            'Trust Fee':{'position':[1,7], 'picker':'proportion', 'powerlimit':9}, 
+            'Sell Limit':{'position':[1,11], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Time Between Swap':{'position':[1,4], 'picker':'time', 'powerlimit':63}, 
+            'Minimum Transactions Between Swap':{'position':[1,2], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Blocks Between Swap':{'position':[1,3], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Entered Contracts Between Swap':{'position':[1,13], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Transactions For First Buy':{'position':[1,17], 'picker':'number', 'powerlimit':63}, 
+            'Minimum Entered Contracts For First Buy':{'position':[1,18], 'picker':'number', 'powerlimit':63}, 
+            'Block Limit':{'position':[1,1], 'picker':'number', 'powerlimit':63}, 
+            'Halving type':{'position':[1,15], 'picker':'tag', 'powerlimit':63}, 
+            'Maturity Limit':{'position':[1,16], 'picker':'number', 'powerlimit':63}, 
+            'Internal Block Halving Proportion':{'position':[1,5], 'picker':'proportion', 'powerlimit':9}, 
+            'Block Limit Reduction Proportion':{'position':[1,6], 'picker':'proportion', 'powerlimit':9}, 
+            'Block Reset Limit':{'position':[1,8], 'picker':'number', 'powerlimit':63}, 
+            'Block Limit Sensitivity':{'position':[1,12], 'picker':'tag', 'powerlimit':63}, 
+            'Exchange Ratio X':{'position':[2,0], 'picker':'number', 'powerlimit':63}, 
+            'Exchange Ratio Y':{'position':[2,1], 'picker':'number', 'powerlimit':63},
+        }
+        return obj
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_exchange_transfers_logs(){
+        var he = this.props.height - 45
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Transfer Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_exchange_transfer_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_exchange_transfer_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'exchange-transfer')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_exchange_transfer_item_clicked(index)}>
+                                    {this.render_exchange_transfer_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_exchange_transfer_item_clicked(index){
+        if (this.state.selected_exchange_transfer_event_item == index) {
+            this.setState({ selected_exchange_transfer_event_item: null })
+        } else {
+            this.setState({ selected_exchange_transfer_event_item: index })
+        }
+    }
+
+
+    render_exchange_transfer_event_item(item, object, index){
+        var exchange_id = item['event'].returnValues.p1;
+        var number = item['event'].returnValues.p4
+        var depth = item['event'].returnValues.p7
+        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3, object) : 'From: '+this.get_sender_title_text(item['event'].returnValues.p2, object)
+        if (this.state.selected_contract_transfer_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_update_balance_logs(){
+        var he = this.props.height - 45
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Update Balance Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_update_balance_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_update_balance_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'update_balance')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_update_balance_item_clicked(index)}>
+                                    {this.render_update_balance_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_update_balance_item_clicked(index){
+        if (this.state.selected_update_balance_event_item == index) {
+            this.setState({ selected_update_balance_event_item: null })
+        } else {
+            this.setState({ selected_update_balance_event_item: index })
+        }
+    }
+
+
+    render_update_balance_event_item(item, object, index){
+        var new_balance = item.returnValues.p3
+        if (this.state.selected_update_balance_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Receiver Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'New Balance ', 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    </div>
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Receiver Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'New Balance ', 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_freeze_unfreeze_logs(){
+        var he = this.props.height - 45
+        var object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Freeze-Unfreeze Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_freeze_unfreeze_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_freeze_unfreeze_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'freeze_unfreeze')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_freeze_unfreeze_item_clicked(index)}>
+                                    {this.render_freeze_unfreeze_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_freeze_unfreeze_item_clicked(index){
+        if (this.state.selected_freeze_unfreeze_event_item == index) {
+            this.setState({ selected_freeze_unfreeze_event_item: null })
+        } else {
+            this.setState({ selected_freeze_unfreeze_event_item: index })
+        }
+    }
+
+
+    render_freeze_unfreeze_event_item(item, object, index){
+        var freeze_unfreeze_obj = {'1':'Action: Freeze','0':'Action: Unfreeze'}
+        var amount = item.returnValues.p5
+        var action = freeze_unfreeze_obj[item.returnValues.p2]
+        var depth = item.returnValues.p6
+        if (this.state.selected_freeze_unfreeze_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': action, 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount, depth: '+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    </div>
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Authority Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': action, 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount, depth: '+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -683,9 +1521,6 @@ class SpendDetailSection extends Component {
         )
 
     }
-
-
-
 
     enabled_disabled(value){
         if(value == 1){

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import Letter from './../assets/letter.png';
+import TextInput from './../components/text_input';
 
 var bigInt = require("big-integer");
 
@@ -19,7 +20,7 @@ function number_with_commas(x) {
 class ContractDetailsSection extends Component {
 
     state = {
-        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(),
+        selected: 0, navigate_view_contract_list_detail_tags_object: this.get_navigate_view_contract_list_detail_tags(), enter_contract_search_text:'', exit_contract_search_text:''
     };
 
     componentDidMount() {
@@ -46,7 +47,7 @@ class ContractDetailsSection extends Component {
                 ['xor', '', 0], ['e', 'details', 'e.events'], [1]
             ],
             'events': [
-                ['xor', 'e', 1], ['events', 'create-proposal', 'modify-contract', 'enter-contract', 'extend-contract-stay', 'exit-contract', 'force-exit-accounts'], [1], [1]
+                ['xor', 'e', 1], ['events', 'transfers', 'create-proposal', 'modify-contract', 'enter-contract', 'extend-contract-stay', 'exit-contract', 'force-exit-accounts'], [1], [1]
             ],
         }
     }
@@ -141,6 +142,14 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.force_exit_accounts_logs()}
+                </div>
+            )
+
+        }
+        else if (selected_item == 'transfers') {
+            return (
+                <div>
+                    {this.render_transfer_logs()}
                 </div>
             )
 
@@ -579,13 +588,25 @@ class ContractDetailsSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
                     {buy_tokens.map((item, index) => (
                         <li style={{ 'padding': '1px' }}>
-                            {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID: ' + item, 'subtitle': 'depth:' + buy_depths[index], 'barwidth': this.calculate_bar_width(buy_amounts[index]), 'number': this.format_account_balance_figure(buy_amounts[index]), 'relativepower': 'tokens' })}
+                            {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID: ' + item, 'subtitle': 'depth:' + buy_depths[index], 'barwidth': this.calculate_bar_width(buy_amounts[index]), 'number': this.format_account_balance_figure(buy_amounts[index]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
                         </li>
                     ))}
                 </ul>
             </div>
 
         )
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
 
@@ -863,7 +884,7 @@ class ContractDetailsSection extends Component {
         else if (type == 'number') {
             return (
                 <div>
-                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
                 </div>
@@ -928,6 +949,10 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Enter Contract Events', 'size': 'l' })}
                     </div>
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput height={20} placeholder={'Search account ID...'} when_text_input_field_changed={this.when_enter_contract_search_text_input_field_changed.bind(this)} text={this.state.enter_contract_search_text} theme={this.props.theme}/>
+                    </div>
+                    
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_entered_contract_item_logs(object)}
                 </div>
@@ -935,10 +960,26 @@ class ContractDetailsSection extends Component {
         )
     }
 
+    when_enter_contract_search_text_input_field_changed(text){
+        this.setState({enter_contract_search_text: text})
+    }
+
+    //inefficient
+    filter_enter_contract_event_logs(logs, typed_id, object){
+        var results = []
+        if(typed_id == '') return logs;
+        logs.forEach(log => {
+            if(log.returnValues.p2.includes(typed_id.trim()) || this.get_sender_title_text(log.returnValues.p2, object).includes(typed_id.trim())){
+                results.push(log)
+            }
+        });
+        return results
+    }
+
 
     render_entered_contract_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'enter_contract')
+        var items = this.filter_enter_contract_event_logs(this.get_item_logs(object, 'enter_contract'), this.state.enter_contract_search_text, object)
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -975,7 +1016,6 @@ class ContractDetailsSection extends Component {
         }
     }
 
-
     when_entered_contract_item_clicked(index) {
         if (this.state.selected_enter_contract_event_item == index) {
             this.setState({ selected_enter_contract_event_item: null })
@@ -983,7 +1023,6 @@ class ContractDetailsSection extends Component {
             this.setState({ selected_enter_contract_event_item: index })
         }
     }
-
 
     render_enter_contract_event_item(item, object, index) {
         if (this.state.selected_enter_contract_event_item == index) {
@@ -1002,7 +1041,7 @@ class ContractDetailsSection extends Component {
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Entering Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Entering Account ID', 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1035,8 +1074,6 @@ class ContractDetailsSection extends Component {
             </div>
         )
     }
-
-
 
     render_extend_contract_item_logs(object) {
         var middle = this.props.height - 120;
@@ -1077,7 +1114,6 @@ class ContractDetailsSection extends Component {
         }
     }
 
-
     when_extend_contract_item_clicked(index) {
         if (this.state.selected_extend_contract_event_item == index) {
             this.setState({ selected_extend_contract_event_item: null })
@@ -1085,8 +1121,6 @@ class ContractDetailsSection extends Component {
             this.setState({ selected_extend_contract_event_item: index })
         }
     }
-
-
 
     render_extend_contract_event_item(item, object, index) {
         if (this.state.selected_extend_contract_event_item == index) {
@@ -1133,6 +1167,9 @@ class ContractDetailsSection extends Component {
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Exit Contract Events', 'size': 'l' })}
                     </div>
+                    <div style={{margin:'5px 10px 0px 10px'}}>
+                        <TextInput height={20} placeholder={'Search account ID...'} when_text_input_field_changed={this.when_exit_contract_search_text_input_field_changed.bind(this)} text={this.state.exit_contract_search_text} theme={this.props.theme}/>
+                    </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_exit_contract_item_logs(object)}
                 </div>
@@ -1140,10 +1177,26 @@ class ContractDetailsSection extends Component {
         )
     }
 
+    when_exit_contract_search_text_input_field_changed(text){
+        this.setState({exit_contract_search_text: text})
+    }
+
+    //inefficient
+    filter_exit_contract_event_logs(logs, typed_id, object){
+        var results = []
+        if(typed_id == '') return logs;
+        logs.forEach(log => {
+            if(log.returnValues.p2.includes(typed_id.trim()) || this.get_sender_title_text(log.returnValues.p2, object).includes(typed_id.trim())){
+                results.push(log)
+            }
+        });
+        return results
+    }
+
 
     render_exit_contract_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'exit_contract')
+        var items = this.filter_exit_contract_event_logs(this.get_item_logs(object, 'exit_contract'), this.state.exit_contract_search_text, object)
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1188,8 +1241,6 @@ class ContractDetailsSection extends Component {
             this.setState({ selected_exit_contract_event_item: index })
         }
     }
-
-
 
     render_exit_contract_event_item(item, object, index) {
         if (this.state.selected_exit_contract_event_item == index) {
@@ -1315,6 +1366,117 @@ class ContractDetailsSection extends Component {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+    render_transfer_logs(){
+        var he = this.props.height - 45
+        var object = this.get_contract_items()[this.props.selected_contract_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Contract Transfer Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_contract_transfer_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_contract_transfer_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'transfer')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                                    {this.render_contract_transfer_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_contract_transfer_item_clicked(index){
+        if (this.state.selected_contract_transfer_event_item == index) {
+            this.setState({ selected_contract_transfer_event_item: null })
+        } else {
+            this.setState({ selected_contract_transfer_event_item: index })
+        }
+    }
+
+
+    render_contract_transfer_event_item(item, object, index){
+        var exchange_id = item['event'].returnValues.p1;
+        var number = item['event'].returnValues.p4
+        var depth = item['event'].returnValues.p7
+        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3, object) : 'From: '+this.get_sender_title_text(item['event'].returnValues.p2, object)
+        if (this.state.selected_contract_transfer_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
 
 
 

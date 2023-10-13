@@ -454,7 +454,7 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
         return(
-            <div onClick={() => this.when_subscription_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div onClick={() => this.when_subscription_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -470,8 +470,8 @@ class PostListSection extends Component {
         )
     }
 
-    when_subscription_item_clicked(index){
-        this.props.when_subscription_item_clicked(index)
+    when_subscription_item_clicked(index, object){
+        this.props.when_subscription_item_clicked(index, object['id'], object['e5'])
     }
 
     format_subscription_item(object){
@@ -1315,7 +1315,7 @@ class PostListSection extends Component {
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li onClick={() => this.when_ends_object_clicked(index)} style={{'padding': '5px'}}>
+                        <li onClick={() => this.when_ends_object_clicked(index, item)} style={{'padding': '5px'}}>
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                         </li>
                     ))}
@@ -1350,8 +1350,8 @@ class PostListSection extends Component {
         );
     }
 
-    when_ends_object_clicked(index){
-        this.props.when_ends_object_clicked(index)
+    when_ends_object_clicked(index, item){
+        this.props.when_ends_object_clicked(index, item['id'], item['e5'])
     }
 
     get_exchanges_data(object_array, token_id, img, item){
@@ -1402,7 +1402,7 @@ class PostListSection extends Component {
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li onClick={() => this.when_spends_object_item_clicked(index)} style={{'padding': '5px'}}>
+                        <li onClick={() => this.when_spends_object_item_clicked(index, item)} style={{'padding': '5px'}}>
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </li>
                     ))}
@@ -1433,9 +1433,8 @@ class PostListSection extends Component {
         );
     }
 
-    when_spends_object_item_clicked(index){
-        console.log('selected: '+index);
-        this.props.when_spends_object_clicked(index)
+    when_spends_object_item_clicked(index, item){
+        this.props.when_spends_object_clicked(index, item['id'], item['e5'])
     }
 
 

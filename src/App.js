@@ -160,7 +160,7 @@ class App extends Component {
     created_contractors:{},
     mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false,
 
-    web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
+    web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042',
     
     sync_steps:20, qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000,
 
@@ -169,10 +169,10 @@ class App extends Component {
     alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp: {},
     created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
 
-    contract_events:{},
+    contract_events:{}, proposal_events:{}, subscription_events:{}, exchange_events:{},
 
     e5s:this.get_e5s(),
-    selected_e5:'E15',
+    selected_e5:'E15', default_e5:'E15',
     accounts:{},
   };
 
@@ -180,7 +180,7 @@ class App extends Component {
   get_e5s(){
     return{
       'data':['E15'],
-      'E15':{web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0'}
+      'E15':{web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042'}
     }
   }
 
@@ -303,7 +303,7 @@ class App extends Component {
   }
 
   get_web3_url_from_e5(e5){
-    return this.state.e5[e5].web3
+    return this.state.e5s[e5].web3
   }
 
 
@@ -496,7 +496,7 @@ class App extends Component {
       add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
       show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
 
-      get_contract_event_data={this.get_contract_event_data.bind(this)}
+      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)}
       />
     )
   }
@@ -814,11 +814,14 @@ class App extends Component {
 
   delete_stack_items(delete_pos_array){
     var stack = this.state.stack_items.slice()
-    delete_pos_array.forEach(element => {
-      stack.splice(element, 1)
-    });
+    var new_stack = []
+    for(var i=0; i<stack.length; i++){
+      if(!delete_pos_array.includes(i)){
+        new_stack.push(stack[i])
+      }
+    }
 
-    this.setState({stack_items: stack})
+    this.setState({stack_items: new_stack})
   }
 
   view_transaction(tx, index){
@@ -3004,15 +3007,15 @@ class App extends Component {
 
   generate_signature = async (data) => {
     const web3 = new Web3(this.state.web3);
-    var address = this.state.account.address
-    web3.eth.accounts.wallet.add(this.state.account.privateKey);
+    var address = this.state.accounts[this.state.default_e5].address
+    web3.eth.accounts.wallet.add(this.state.accounts[this.state.default_e5].privateKey);
 
     var signature = await web3.eth.sign(data.toString(), address)
     return signature
   }
 
   confirm_signature = async (signature, data, address) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(this.state.default_e5));
     try{
       var original_address = await web3.eth.accounts.recover(data.toString(), signature)
       if(original_address.toString() != address.toString()){
@@ -3798,9 +3801,9 @@ class App extends Component {
 
   
 
-
+  //unused
   get_transaction_history = async (account) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_selected_web3_url());
     
     let block = await web3.eth.getBlock('latest');
     this.setState({current_block: block});
@@ -4995,7 +4998,7 @@ class App extends Component {
 
 
   get_balance_in_exchange = async (exchange_id, account, e5) => {
-      const web3 = new Web3(this.state.web3);
+      const web3 = new Web3(this.get_web3_url_from_e5(e5));
       const H52contractArtifact = require('./contract_abis/H52.json');
       const H52_address = this.state.addresses[e5][6];
       const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
@@ -5061,7 +5064,7 @@ class App extends Component {
 
 
   get_account_public_key = async () => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
@@ -5074,7 +5077,7 @@ class App extends Component {
   }
 
   get_account_raw_public_key = async () => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_selected_web3_url());
     const privateKey = this.state.accounts[this.state.selected_e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
@@ -5089,7 +5092,7 @@ class App extends Component {
   }
 
   get_accounts_public_key = async (account, e5) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
@@ -5113,7 +5116,7 @@ class App extends Component {
   }
 
   fetch_and_decrypt_ipfs_object = async (encrypted_ipfs_obj, e5) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const privateKey = this.state.accounts[e5].privateKey
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
@@ -5141,7 +5144,7 @@ class App extends Component {
 
 
   get_objects_messages = async (id, e5) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
@@ -5159,7 +5162,7 @@ class App extends Component {
   }
 
   get_job_objects_responses = async (id, e5) =>{
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
@@ -5202,7 +5205,7 @@ class App extends Component {
   }
 
   get_direct_purchase_events = async (id, e5) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
@@ -5241,7 +5244,7 @@ class App extends Component {
   }
 
   get_contractor_applications = async (id, E5) =>{
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(E5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[E5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
@@ -5296,7 +5299,7 @@ class App extends Component {
 
 
   load_job_request_messages = async (contractor_id, request_id, e5) =>{
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
@@ -5316,7 +5319,7 @@ class App extends Component {
 
 
   load_modify_item_data = async (modify_target, e5) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
@@ -5357,9 +5360,9 @@ class App extends Component {
       return
     }
     this.prompt_top_notification('Adding account ID to Contacts...', 600)
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = this.state.e5_address
+    const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
     var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
@@ -5384,7 +5387,7 @@ class App extends Component {
 
 
   get_post_award_data = async (id, e5) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
@@ -5408,7 +5411,7 @@ class App extends Component {
 
 
   get_contract_event_data = async (id, e5) => {
-    const web3 = new Web3(this.state.web3);
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const G5contractArtifact = require('./contract_abis/G5.json');
     const G5_address = this.state.addresses[e5][3];
     const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
@@ -5433,10 +5436,143 @@ class App extends Component {
 
     var force_exit_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 18} }, (error, events) => {});
 
+
+    var contract_token_event_data = await this.get_token_event_data(id, e5);
+
     var clone = structuredClone(this.state.contract_events)
-    clone[id] = {'modify_object':modify_object_event_data, 'make_proposal':make_proposal_event_data, 'enter_contract':enter_contract_event_data, 'extend_contract':extend_contract_event_data, 'exit_contract':exit_contract_event_data, 'force_exit':force_exit_contract_event_data}
+    clone[id] = {'modify_object':modify_object_event_data.reverse(), 'make_proposal':make_proposal_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'extend_contract':extend_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(), 'force_exit':force_exit_contract_event_data.reverse(), 'transfer':contract_token_event_data}
 
     this.setState({contract_events: clone})
+  }
+
+
+  get_token_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var send_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender */: id} }, (error, events) => {});
+
+    var received_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* receiver */: id} }, (error, events) => {});
+
+    var all_events = [];
+    for(var i=0; i<send_tokens_event_data.length; i++){
+      all_events.push({'event':send_tokens_event_data[i], 'action':'Sent', 'timestamp':send_tokens_event_data[i].returnValues.p5})
+    }
+    for(var i=0; i<received_tokens_event_data.length; i++){
+      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
+    }
+    var sorted_events = this.sortByAttributeDescending(all_events, 'timestamp');
+
+    return sorted_events
+
+  }
+
+
+  get_proposal_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const G52contractArtifact = require('./contract_abis/G52.json');
+    const G52_address = this.state.addresses[e5][4];
+    const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+
+    var record_proposal_vote_event_data = await G52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* consensus_id */: id } }, (error, events) => {});
+
+    var submit_proposal_event_data = await G52contractInstance.getPastEvents('e3', { fromBlock: 0, toBlock: 'latest', filter: { p1/* proposal_id */: id } }, (error, events) => {});
+
+    var archive_proposal_event_data = await G52contractInstance.getPastEvents('e6', { fromBlock: 0, toBlock: 'latest', filter: { p1/* proposal_id */: id } }, (error, events) => {});
+
+    var proposal_token_event_data = await this.get_token_event_data(id, e5);
+
+    var clone = structuredClone(this.state.proposal_events)
+    clone[id] = {'vote':record_proposal_vote_event_data, 'submit':submit_proposal_event_data, 'archive':archive_proposal_event_data, 'transfer':proposal_token_event_data}
+
+    this.setState({proposal_events: clone})
+  }
+
+
+  get_subscription_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const F5contractArtifact = require('./contract_abis/F5.json');
+    const F5_address = this.state.addresses[e5][2];
+    const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+
+    var pay_subscription_event_data = await F5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+
+    var cancel_subscription_event_data = await F5contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+
+    var modify_subscription_event_data = await F5contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+
+    var collect_subscription_event_data = await F5contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+
+    var subscription_token_event_data = await this.get_token_event_data(id, e5);
+
+    // console.log('-------------------------modify_subscription_event_data-------------------------------')
+    // console.log(modify_subscription_event_data)
+
+    var clone = structuredClone(this.state.subscription_events)
+    clone[id] = {'transfer':subscription_token_event_data, 'pay':pay_subscription_event_data.reverse(), 'cancel':cancel_subscription_event_data, 'modify':modify_subscription_event_data, 'collect':collect_subscription_event_data}
+
+    this.setState({subscription_events: clone})
+
+
+  }
+
+
+  get_exchange_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H5contractArtifact = require('./contract_abis/H5.json');
+    const H5_address = this.state.addresses[e5][5];
+    const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
+
+    var update_exchange_ratio_event_data = await H5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+
+    var update_proportion_ratio_event_data = await H5contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+
+    var modify_exchange_event_data = await H5contractInstance.getPastEvents('e3', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+
+    var transfer_event_data = await this.get_accounts_token_event_data(id, this.state.user_account_id[e5], e5) 
+    var exchange_token_event_data = await this.get_token_event_data(id, e5);
+
+
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+
+    var update_balance_event_data = await H52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+
+    var freeze_unfreeze_event_data = await H52contractInstance.getPastEvents('e3', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+
+
+    var clone = structuredClone(this.state.exchange_events)
+    clone[id] = {'transfer':transfer_event_data, 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'proportion_ratio':update_proportion_ratio_event_data.reverse(), 'modify':modify_exchange_event_data.reverse(), 'exchange-transfer': exchange_token_event_data, 'update_balance':update_balance_event_data, 'freeze_unfreeze':freeze_unfreeze_event_data}
+
+    this.setState({exchange_events: clone});
+  }
+
+
+  get_accounts_token_event_data = async (exchange, id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const H52contractArtifact = require('./contract_abis/H52.json');
+    const H52_address = this.state.addresses[e5][6];
+    const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+
+    var send_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */:exchange,  p2/* sender */: id} }, (error, events) => {});
+
+    var received_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */:exchange, p3/* receiver */: id} }, (error, events) => {});
+
+    var all_events = [];
+    for(var i=0; i<send_tokens_event_data.length; i++){
+      all_events.push({'event':send_tokens_event_data[i], 'action':'Sent', 'timestamp':send_tokens_event_data[i].returnValues.p5})
+    }
+    for(var i=0; i<received_tokens_event_data.length; i++){
+      all_events.push({'event':received_tokens_event_data[i], 'action':'Received', 'timestamp':received_tokens_event_data[i].returnValues.p5})
+    }
+    var sorted_events = this.sortByAttributeDescending(all_events, 'timestamp');
+
+    return sorted_events
+
   }
 
 

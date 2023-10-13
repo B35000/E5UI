@@ -38,6 +38,7 @@ class ProposalDetailsSection extends Component {
         if(this.props.selected_proposal_item != null){
             var object = this.get_proposal_items()[this.props.selected_proposal_item]
             this.props.get_objects_messages(object['id'],  object['e5'])
+            this.props.get_proposal_event_data(object['id'], object['e5'])
         }
     }
 
@@ -47,8 +48,11 @@ class ProposalDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','details', 'proposal-actions','activity'],[1]
+              ['xor','',0], ['e','details', 'proposal-actions','activity', 'e.events'],[1]
           ],
+          'events': [
+                ['xor', 'e', 1], ['events', 'transfers', 'votes'], [1], [1]
+            ],
         }
     }
 
@@ -109,6 +113,20 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     {this.render_proposal_message_activity()}
+                </div>
+            )
+        }
+        else if(selected_item == 'transfers'){
+            return(
+                <div>
+                    {this.render_transfer_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'votes'){
+            return(
+                <div>
+                    {this.render_vote_logs()}
                 </div>
             )
         }
@@ -1144,7 +1162,6 @@ class ProposalDetailsSection extends Component {
         return return_val
     }
 
-
     when_focus_chain_item_clicked(item, pos){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
         var object = this.get_proposal_items()[this.props.selected_proposal_item]
@@ -1158,6 +1175,241 @@ class ProposalDetailsSection extends Component {
         
         this.setState({focused_message: clone})
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    //ctrl-c, ctrl-v
+    render_transfer_logs(){
+        var he = this.props.height - 45
+        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Proposal ' + object['id'], 'details': 'Proposal Transfer Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_contract_transfer_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_contract_transfer_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'transfer')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                                    {this.render_contract_transfer_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_item_logs(object, event) {
+        if (this.props.app_state.proposal_events[object['id']] == null) {
+            return []
+        }
+        return this.props.app_state.proposal_events[object['id']][event]
+    }
+
+    when_contract_transfer_item_clicked(index){
+        if (this.state.selected_contract_transfer_event_item == index) {
+            this.setState({ selected_contract_transfer_event_item: null })
+        } else {
+            this.setState({ selected_contract_transfer_event_item: index })
+        }
+    }
+
+    render_contract_transfer_event_item(item, object, index){
+        var exchange_id = item['event'].returnValues.p1;
+        var number = item['event'].returnValues.p4
+        var depth = item['event'].returnValues.p7
+        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3, object) : 'From: '+this.get_sender_title_text(item['event'].returnValues.p2, object)
+        if (this.state.selected_contract_transfer_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    
+    render_vote_logs(){
+        var he = this.props.height - 45
+        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Proposal ' + object['id'], 'details': 'Proposal Vote Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_vote_event_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_vote_event_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_item_logs(object, 'vote')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_proposal_vote_item_clicked(index)}>
+                                    {this.render_proposal_vote_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_proposal_vote_item_clicked(index){
+        if (this.state.selected_proposal_vote_event_item == index) {
+            this.setState({ selected_proposal_vote_event_item: null })
+        } else {
+            this.setState({ selected_proposal_vote_event_item: index })
+        }
+    }
+
+
+    render_proposal_vote_event_item(item, object, index){
+        var obj = {'1':'Yes!', '2':'Wait..', '3':'No.'}
+        var vote = obj[item.returnValues.p4]
+
+        if (this.state.selected_proposal_vote_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': vote , 'details': 'From: '+this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': 'Contract ID', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': vote , 'details': 'From: '+ this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                </div>
+            )
+        }
+    }
+
+
+    get_sender_title_text2(sender, object) {
+        if (sender == this.props.app_state.user_account_id[object['e5']]) {
+            return 'You'
+        } else {
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+
+
 
 
 
