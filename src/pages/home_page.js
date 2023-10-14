@@ -980,6 +980,7 @@ class home_page extends Component {
         }
 
         this.props.get_exchange_event_data(id, e5)
+        this.props.get_moderator_event_data(id, e5)
     }
 
     when_spends_object_clicked(index, id, e5){
@@ -988,6 +989,7 @@ class home_page extends Component {
             this.open_view_object_bottomsheet()
         }
         this.props.get_exchange_event_data(id, e5)
+        this.props.get_moderator_event_data(id, e5)
     }
 
     when_E5_item_clicked(index){
@@ -1025,6 +1027,7 @@ class home_page extends Component {
         }
 
         this.props.get_contract_event_data(id, e5)
+        this.props.get_moderator_event_data(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -1042,6 +1045,7 @@ class home_page extends Component {
         }
 
         this.props.get_subscription_event_data(id, e5)
+        this.props.get_moderator_event_data(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -1077,6 +1081,7 @@ class home_page extends Component {
         }
 
         this.props.get_objects_messages(id, e5)
+        this.props.get_moderator_event_data(id, e5)
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
@@ -1193,7 +1198,7 @@ class home_page extends Component {
 
                 get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} get_e5_data={this.get_e5_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)}
 
-                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)}
+                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)}
                 />
             </div>
         )

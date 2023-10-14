@@ -157,12 +157,32 @@ class StorefrontDetailsSection extends Component {
                     {this.render_direct_purchase_button()}
 
                     {this.render_edit_object_button()}
+
+                    {this.render_detail_item('0')}
+                    {this.render_chatroom_enabled_message(object)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    render_chatroom_enabled_message(object){
+        var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
+        if(setting == 'enabled'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Activity Section Enabled', 'details':'You can leave a product review message in the activity section', 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Activity Section Disabled', 'details':'The activity section has been disabled by the storefront owner', 'size':'l'})}
+                </div>
+            )
+        }
     }
 
     render_add_to_bag_button(){
@@ -617,6 +637,12 @@ class StorefrontDetailsSection extends Component {
     show_add_comment_bottomsheet(){
         var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
+
+        if(setting == 'disabled'){
+            this.props.notify('The activity section has been disabled.', 1200)
+            return;
+        }
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'storefront')
     }
   
@@ -1010,11 +1036,15 @@ class StorefrontDetailsSection extends Component {
         var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
         if(message == ''){
             this.props.notify('type something first', 600)
         }
         else if(this.props.app_state.user_account_id[object['e5']] == 1){
             this.props.notify('you need to make at least 1 transaction to participate', 1200)
+        }
+        else if(setting == 'disabled'){
+            this.props.notify('The activity section has been disabled.', 1200)
         }
         else{
             var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}

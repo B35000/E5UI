@@ -234,10 +234,53 @@ class ProposalDetailsSection extends Component {
                     {this.render_archive_button_if_author()}
 
                     {this.render_detail_item('0')}
+                    {this.render_submitted_proposal_event()}
+                    <div style={{height:10}}/>
+                    {this.render_archived_proposal_event()}
+
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    render_submitted_proposal_event(){
+        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        var events = this.get_item_logs(object, 'submit')
+
+        if(events.length != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Proposal Submitted', 'details':'The proposal has been submitted by its author.', 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Proposal Unsubmitted', 'details':'The proposal has not been submitted by its author', 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    render_archived_proposal_event(){
+        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        var events = this.get_item_logs(object, 'archive')
+
+        if(events.length != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Proposal Archived', 'details':'The proposal has been archived by its author.', 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Proposal Not Archived', 'details':'The proposal has not been archived by its author', 'size':'l'})}
+                </div>
+            )
+        }
     }
 
     open_vote_proposal_ui(){

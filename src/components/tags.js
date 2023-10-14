@@ -13,7 +13,7 @@ class tags extends Component {
 
     /* returns an emoji used in displaying the tag item */
     tag_item_emoji_modifier(item){
-      var items = {'sort':'🧮', 'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'info':'🌐', 'metadata':'📄', 'engagement':'💍', 'signatures':'‚✍', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕','my':'🙋','add-new-text':'📝','create-new-job':'🎑','add-new-tag':'🔖','set-tags':'📌', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷', 'stack-data':'🧱', 'settings-data':'🛠️', 'account-data':'🔐', 'events':'🎊'}
+      var items = {'sort':'🧮', 'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'info':'🌐', 'metadata':'📄', 'engagement':'💍', 'signatures':'‚✍', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕','my':'🙋','add-new-text':'📝','create-new-job':'🎑','add-new-tag':'🔖','set-tags':'📌', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷', 'stack-data':'🧱', 'settings-data':'🛠️', 'account-data':'🔐', 'events':'🎊', 'moderator-events':'🧑‍⚖️'}
       
       if(items[item] != null) return items[item];
       else return null;

@@ -38,6 +38,7 @@ class ChannelDetailsSection extends Component {
         if(this.props.selected_channel_item != null){
             var object = this.get_channel_items()[this.props.selected_channel_item];
             this.props.get_objects_messages(object['id'], object['e5'])
+            this.props.get_moderator_event_data(object['id'], object['e5'])
         }
     }
 
@@ -47,8 +48,11 @@ class ChannelDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','metadata','activity'],[1]
+              ['xor','',0], ['e','metadata','activity', 'e.moderator-events'],[1]
           ],
+          'moderator-events': [
+                ['xor', 'e', 1], ['moderator-events', 'modify-moderators', 'interactable-checkers', 'interactable-accounts', 'block-accounts'], [1], [1]
+            ],
         }
     }
 
@@ -119,6 +123,34 @@ class ChannelDetailsSection extends Component {
             )
             
         }
+        else if(selected_item == 'modify-moderators'){
+            return(
+                <div>
+                    {this.render_modify_moderator_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'interactable-checkers'){
+            return(
+                <div>
+                    {this.render_interactable_checker_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'interactable-accounts'){
+            return(
+                <div>
+                    {this.render_interactable_accounts_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'block-accounts'){
+            return(
+                <div>
+                    {this.render_blocked_accounts_logs()}
+                </div>
+            )
+        }
     }
 
 
@@ -147,6 +179,8 @@ class ChannelDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
 
+                    {this.render_revoke_author_privelages_event()}
+                    <div style={{height: 10}}/>
                     {this.render_moderator_button()}
                     <div style={{height: 10}}/>
                     {this.render_edit_object_button()}
@@ -237,6 +271,7 @@ class ChannelDetailsSection extends Component {
         }
     }
 
+
     open_edit_channel_ui(){
         var object = this.get_channel_items()[this.props.selected_channel_item];
         this.props.open_edit_object('7', object)
@@ -260,6 +295,26 @@ class ChannelDetailsSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+
+    render_revoke_author_privelages_event(){
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        var events = this.get_moderator_item_logs(object, 'revoke_privelages')
+
+        if(events.length != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Disabled', 'details':'Author of Object is not a Moderator by default', 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Enabled', 'details':'Author of Object is a Moderator by default', 'size':'l'})}
+                </div>
+            )
         }
     }
 
@@ -846,6 +901,444 @@ class ChannelDetailsSection extends Component {
 
 
 
+
+
+
+
+
+
+
+
+
+    render_modify_moderator_logs(){
+        var he = this.props.height - 45
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel Modify Moderator Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_modify_moderator_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    get_moderator_item_logs(object, event){
+        if (this.props.app_state.moderator_events[object['id']] == null) {
+            return []
+        }
+        return this.props.app_state.moderator_events[object['id']][event]
+    }
+
+    render_modify_moderator_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_moderator_item_logs(object, 'modify_moderator')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_modify_moderator_item_clicked(index)}>
+                                    {this.render_modify_moderator_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_modify_moderator_item_clicked(index){
+        if (this.state.selected_modify_moderator_event_item == index) {
+            this.setState({ selected_modify_moderator_event_item: null })
+        } else {
+            this.setState({ selected_modify_moderator_event_item: index })
+        }
+    }
+
+    render_modify_moderator_event_item(item, object, index){
+        var authority_val_obj = {'0':'Not Moderator', '1':'Moderator'}
+        var authority_val = authority_val_obj[item.returnValues.p6]
+        if (this.state.selected_modify_moderator_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', {'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+    get_sender_title_text(sender, object) {
+        if (sender == this.props.app_state.user_account_id[object['e5']]) {
+            return 'You'
+        } else {
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_interactable_checker_logs(){
+        var he = this.props.height - 45
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel Access Rights Settings Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_interactable_checker_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_interactable_checker_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_moderator_item_logs(object, 'enable_interactible')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_interactable_checker_item_clicked(index)}>
+                                    {this.render_interactable_checker_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_interactable_checker_item_clicked(index){
+        if (this.state.selected_interactable_checker_event_item == index) {
+            this.setState({ selected_interactable_checker_event_item: null })
+        } else {
+            this.setState({ selected_interactable_checker_event_item: index })
+        }
+    }
+
+    render_interactable_checker_event_item(item, object, index){
+        var interactable_checker_obj = {'0':'Access Rights Disabled(Public)','1':'Access Rights Enabled(Private)'}
+        var interactable_checker = interactable_checker_obj[item.returnValues.p6]
+        if (this.state.selected_interactable_checker_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Access Rights Status', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Acces Rights Status', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_interactable_accounts_logs(){
+        var he = this.props.height - 45
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel  Account Access Settings Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_interactable_accounts_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_interactable_accounts_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_moderator_item_logs(object, 'add_interactible')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_interactable_account_item_clicked(index)}>
+                                    {this.render_interactable_account_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_interactable_account_item_clicked(index){
+        if (this.state.selected_interactable_account_event_item == index) {
+            this.setState({ selected_interactable_account_event_item: null })
+        } else {
+            this.setState({ selected_interactable_account_event_item: index })
+        }
+    }
+
+    render_interactable_account_event_item(item, object, index){
+        if (this.state.selected_interactable_account_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_blocked_accounts_logs(){
+        var he = this.props.height - 45
+        var object = this.get_channel_items()[this.props.selected_channel_item];
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel  Blocked Account Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_blocked_accounts_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+    render_blocked_accounts_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = this.get_moderator_item_logs(object, 'block_account')
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_blocked_account_item_clicked(index)}>
+                                    {this.render_blocked_account_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_blocked_account_item_clicked(index){
+        if (this.state.selected_blocked_account_event_item == index) {
+            this.setState({ selected_blocked_account_event_item: null })
+        } else {
+            this.setState({ selected_blocked_account_event_item: index })
+        }
+    }
+
+    render_blocked_account_event_item(item, object, index){
+        if (this.state.selected_blocked_account_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
@@ -880,6 +1373,14 @@ class ChannelDetailsSection extends Component {
         var now = Math.round(new Date().getTime()/1000);
 
         var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_future_time_difference(time) {
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime() / 1000);
+
+        var diff = number_date - now;
         return this.get_time_diff(diff)
     }
 

@@ -43,7 +43,7 @@ class NewStorefrontItemPage extends Component {
         entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5
+        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object()
     };
 
     get_new_job_page_tags_object(){
@@ -82,6 +82,18 @@ class NewStorefrontItemPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e','enabled', 'disabled'], [1]
+            ],
+        };
+    }
+
+
+    get_chatroom_enabled_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', 'enabled', 'disabled'], [1]
             ],
         };
     }
@@ -234,6 +246,17 @@ class NewStorefrontItemPage extends Component {
                 <Tags page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Product Chatroom', 'details':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section', 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Fulfilment Accounts', 'details':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients', 'size':'l'})}
 
@@ -287,6 +310,10 @@ class NewStorefrontItemPage extends Component {
 
     when_fulfilment_account_input_field_changed(text){
         this.setState({fulfilment_account: text})
+    }
+
+    when_chatroom_enabled_tags_object_updated(tag_obj){
+        this.setState({chatroom_enabled_tags_object: tag_obj})
     }
 
 
@@ -1028,6 +1055,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':'Variant Images', 'details':'You can set some images for your variant(for visual context)', 'size':'l'})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 <div style={{height:10}}/>
                 {this.render_variant_image_picker_ui()}
                 <div style={{height:10}}/>
@@ -1090,13 +1118,15 @@ class NewStorefrontItemPage extends Component {
                 let reader = new FileReader();
                 reader.onload = function(ev){
                     const clonedArray = this.state.variant_images == null ? [] : this.state.variant_images.slice();
-                    clonedArray.push(ev.target.result);
-                    this.setState({variant_images: clonedArray});
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        clonedArray.push(ev.target.result);
+                        this.setState({variant_images: clonedArray});
+                    }
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
         }
     }
 

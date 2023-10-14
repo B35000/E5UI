@@ -109,6 +109,11 @@ class NewMintActionPage extends Component {
 
                 </div>
 
+                <div style={{height:10}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
+                    {this.render_detail_item('5', {'text':'Set Maximum', 'action':''})}
+                </div>
+
                 <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
@@ -129,6 +134,11 @@ class NewMintActionPage extends Component {
 
             </div>
         )
+    }
+
+    set_maximum(){
+        var max = this.get_token_buy_limit()
+        this.setState({amount: max})
     }
 
     set_price_data(){
@@ -578,6 +588,10 @@ class NewMintActionPage extends Component {
         }
         var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
 
+        var can_make_swap_obj = this.check_if_sender_can_make_swap();
+        var can_make_swap = can_make_swap_obj.can_make_swap
+        var reason = can_make_swap_obj.reason
+
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
         }
@@ -593,6 +607,9 @@ class NewMintActionPage extends Component {
             }
             else if(!this.check_if_sender_can_interact_with_exchange()){
                 this.props.notify('you cant interact with the same exchange twice in one run', 1200)
+            }
+            else if(!can_make_swap){
+                this.props.notify(reason, 1500)
             }
             else{
                 this.props.add_buy_sell_transaction_to_stack(this.state)
@@ -610,6 +627,61 @@ class NewMintActionPage extends Component {
             }
         }
         return true
+    }
+
+    check_if_sender_can_make_swap(){
+        var selected_object = this.state.token_item
+        var selected_obj_config = selected_object['data'][1];
+        var e5 = selected_object['e5']
+
+        var minimum_entered_contracts_between_swap = selected_obj_config[13]
+        var minimum_transactions_between_swap = selected_obj_config[2]
+        var minimum_blocks_between_swap = selected_obj_config[3]
+        var minimum_time_between_swap = selected_obj_config[4]
+
+        var last_swap_block = selected_object['account_data'][0]
+        var last_swap_timestamp = selected_object['account_data'][1]
+        var last_swap_transaction_count = selected_object['account_data'][2]
+        var last_entered_contracts_count = selected_object['account_data'][3]
+
+        var timestamp = Date.now()/1000
+        var current_block = this.props.app_state.number_of_blocks[e5];
+        var current_entered_contracts_count = this.props.app_state.basic_transaction_data[e5][2]
+        var current_transaction_count = this.props.app_state.basic_transaction_data[e5][3]
+
+        var can_make_swap = true;
+        var reason = ''
+
+        if(minimum_entered_contracts_between_swap != 0){
+            var diff = current_entered_contracts_count - last_entered_contracts_count
+            if(diff < minimum_entered_contracts_between_swap){
+                can_make_swap = false;
+                reason = 'You havent entered enough contracts'
+            }
+        }
+        if(minimum_transactions_between_swap != 0){
+            var diff = current_transaction_count - last_swap_transaction_count
+            if(diff < minimum_transactions_between_swap){
+                can_make_swap = false;
+                reason = 'You havent made enough runs'
+            }
+        }
+        if(minimum_blocks_between_swap != 0){
+            var diff = current_block - last_swap_block
+            if(diff < minimum_blocks_between_swap){
+                can_make_swap = false
+                reason = 'You havent waited for enough blocks'
+            }
+        }
+        if(minimum_time_between_swap != 0){
+            var diff = timestamp - last_swap_timestamp
+            if(diff < minimum_time_between_swap){
+                can_make_swap = false
+                reason = 'You havent waited enough time'
+            }
+        }
+
+        return {can_make_swap:can_make_swap, reason: reason}
     }
 
 

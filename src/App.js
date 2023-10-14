@@ -169,7 +169,7 @@ class App extends Component {
     alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp: {},
     created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
 
-    contract_events:{}, proposal_events:{}, subscription_events:{}, exchange_events:{},
+    contract_events:{}, proposal_events:{}, subscription_events:{}, exchange_events:{}, moderator_events:{},
 
     e5s:this.get_e5s(),
     selected_e5:'E15', default_e5:'E15',
@@ -496,7 +496,7 @@ class App extends Component {
       add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
       show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
 
-      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)}
+      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)}
       />
     )
   }
@@ -5573,6 +5573,28 @@ class App extends Component {
 
     return sorted_events
 
+  }
+
+  get_moderator_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var modify_moderator_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:4 } }, (error, events) => {});
+
+    var enable_disable_interactible_checkers_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:5 } }, (error, events) => {});
+
+    var add_interactible_account_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:2 } }, (error, events) => {});
+
+    var block_accounts_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:17 } }, (error, events) => {});
+
+    var revoke_author_privelages_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:16 } }, (error, events) => {});
+
+    var clone = structuredClone(this.state.moderator_events)
+    clone[id] = {'modify_moderator':modify_moderator_event_data, 'enable_interactible':enable_disable_interactible_checkers_event_data, 'add_interactible':add_interactible_account_event_data, 'block_account':block_accounts_event_data, 'revoke_privelages':revoke_author_privelages_event_data}
+
+    this.setState({moderator_events: clone});
   }
 
 

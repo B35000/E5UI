@@ -393,6 +393,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == 'exit-contract'){
+                return(
+                    <div>
+                        {this.render_exit_contract_data()}
+                    </div>
+                )
+            }
             else if(tx.type == 'proposal'){
                 return(
                     <div>
@@ -1900,6 +1907,68 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+
+
+    render_exit_contract_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var contract_item = this.format_contract_item_for_exit_contract_action()
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 20}}/>
+
+                <div style={{height:'auto', width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
+                    <div style={{'padding': '5px 0px 5px 5px'}}>
+                        {this.render_detail_item('1', contract_item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', contract_item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', contract_item['age'])}
+                        </div>
+                        
+                    </div>         
+                </div>
+
+                <div style={{height:10}}/>
+                {this.show_entered_contract_data()}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+    format_contract_item_for_exit_contract_action(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var object = item.contract_item
+        var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+        }
+    }
+
+    show_entered_contract_data(){
+        var item = this.props.app_state.stack_items[this.state.transaction_index];
+        var expiry_time_in_seconds = item.contract_item['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        
+        if(expiry_time_in_seconds != 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                </div>
+            )
+        }
     }
 
 
