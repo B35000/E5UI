@@ -27,11 +27,56 @@ function start_and_end(str) {
   return str;
 }
 
+function TreeNode(data) {
+  this.data     = data;
+  this.parent   = null;
+  this.children = [];
+}
+
+TreeNode.comparer = function (a, b) { 
+  return a.data.sort < b.data.sort ? 0 : 1; 
+};
+
+TreeNode.prototype.sortRecursive = function () {
+  this.children.sort(TreeNode.comparer);
+  for (var i=0, l=this.children.length; i<l; i++) {
+    this.children[i].sortRecursive();
+  }
+  return this;
+};
+
+function toTree(data) {
+  var nodeById = {}, i = 0, l = data.length, node;
+
+  nodeById[0] = new TreeNode(); // that's the root node
+
+  for (i=0; i<l; i++) {  // make TreeNode objects for each item
+    nodeById[ data[i].index ] = new TreeNode(data[i]);
+  }
+  for (i=0; i<l; i++) {  // link all TreeNode objects
+    node = nodeById[ data[i].index ];
+    node.parent = nodeById[node.data.parent];
+    node.parent.children.push(node);
+  }
+  return nodeById[0].sortRecursive();
+}
+
 class StorefrontDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}
+        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags()
     };
+
+    get_comment_structure_tags(){
+        return{
+            'i':{
+                active:'e',
+            },
+            'e':[
+                ['xor','',0], ['e','channel-structure', 'comment-structure'], [1]
+            ],
+        };
+    }
 
     get_navigate_storefront_list_detail_tags_object_tags(){
         return{
@@ -606,6 +651,7 @@ class StorefrontDetailsSection extends Component {
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title()}
                         {this.render_focus_list()}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
@@ -632,6 +678,10 @@ class StorefrontDetailsSection extends Component {
                 </div>
             </div> 
         )
+    }
+
+    when_comment_structure_tags_updated(tag_obj){
+        this.setState({comment_structure_tags: tag_obj})
     }
 
     show_add_comment_bottomsheet(){
@@ -662,7 +712,7 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_sent_received_messages(){
-        var middle = this.props.height-200;
+        var middle = this.props.height-250;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -709,7 +759,9 @@ class StorefrontDetailsSection extends Component {
             )
         }
         else{
-            return(
+            var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
+            if(selected_view_option == 'channel-structure'){
+                return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(items)}
@@ -718,6 +770,16 @@ class StorefrontDetailsSection extends Component {
                     </ul>
                 </div>
             )
+            }else{
+                return(
+                    <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {this.render_all_comments()}
+                            <div ref={this.messagesEnd}/>
+                        </ul>
+                    </div>
+                )
+            }
         }
     }
 
@@ -1123,6 +1185,62 @@ class StorefrontDetailsSection extends Component {
         clone['tree'][object['id']] = new_array
         
         this.setState({focused_message: clone})
+    }
+
+
+
+
+
+    render_all_comments(){
+        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
+        return(
+            <div>
+                {sorted_messages_in_tree.children.map((item, index) => (
+                    <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
+                        <div >
+                            {this.render_main_comment(item, 0)}
+                            <div style={{height:3}}/>
+                        </div>
+                    </li>
+                ))}    
+            </div>
+        )
+    }
+
+    render_main_comment(comment, depth){
+        var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
+        return(
+            <div>
+                <div style={{'padding': '1px 0px 0px 0px'}}>
+                    {this.render_message_as_focused_if_so(comment.data.message)}
+                </div>
+
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
+                    <div style={{width:'100%'}}>
+                        <ul style={{ 'padding': padding, 'listStyle':'none'}}>
+                            {comment.children.map((item, index) => (
+                                <li style={{'padding': '4px 0px 0px 0px'}} onClick={()=>console.log()}>
+                                    <div>
+                                        {this.render_main_comment(item, depth+1)}
+                                        <div style={{height:3}}/>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    get_message_replies_in_sorted_object(){
+        var messages = this.get_convo_messages().concat(this.get_stacked_items())
+        var data = []
+        messages.forEach(message => {
+            data.push({ index : message['message_id'], sort : message['time'], parent : message['focused_message_id'], message: message })
+        });
+        var tree = toTree(data);
+        return tree;
     }
 
 

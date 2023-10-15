@@ -78,10 +78,24 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','light','dark'], [1]
+                ['xor','',0], ['e','light','dark'], [this.get_light_dark_option()]
             ],
         };
         
+    }
+
+    get_light_dark_option(){
+        if(this.props.app_state.theme['name'] == 'light'){
+            return 1
+        }
+        else if(this.props.app_state.theme['name'] == 'dark'){
+            return 2
+        }
+        return 1
+    }
+
+    set_light_dark_setting_tag(){
+        this.setState({get_themes_tags_object: this.get_theme_tags_object()})
     }
 
     get_orientation_tags_object(){
