@@ -120,8 +120,7 @@ class EnterContractPage extends Component {
             })
         }
         this.setState({contract_item: contract, e5: contract['e5']})
-        console.log('---------------------------set_contract-------------------------')
-        console.log(contract['e5'])
+      
     }
 
 
@@ -222,8 +221,27 @@ class EnterContractPage extends Component {
 
 
     finish_entering_contract_ui(){
-        this.props.enter_contract(this.state)
-        this.props.notify('transaction added to stack', 700);
+        var picked_time = this.state.interactible_timestamp
+        var now = Date.now()/1000
+        var contracts_limit = this.state.contract_item['data'][1][6]
+        
+        var expiry_time_in_seconds = this.state.contract_item['entry_expiry']
+        var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if(picked_time < now){
+            this.props.notify('you cant pick a time before now', 700);
+        }
+        else if(picked_time - now > contracts_limit){
+            this.props.notify('you cant pick a time beyond the contracts limit', 700);
+        }
+        else if(expiry_time_in_seconds != 0 && time_to_expiry > 0){
+            this.props.notify('youve already entered this contract', 700);
+        }
+        else{
+            this.props.enter_contract(this.state)
+            this.props.notify('transaction added to stack', 700);
+        }
+        
     }
 
 

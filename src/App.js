@@ -17,6 +17,7 @@ import SwipeableBottomSheet from 'react-swipeable-bottom-sheet';
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SwipeableViews from 'react-swipeable-views';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 /* pages stuff */
 import Syncronizing_page from './pages/synchronizing_page';
@@ -88,6 +89,7 @@ import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
 import { create } from 'ipfs-http-client'
 import { Web3Storage } from 'web3.storage'
+import { NFTStorage, Blob } from 'nft.storage'
 
 const Web3 = require('web3');
 const ethers = require("ethers");
@@ -145,8 +147,9 @@ class App extends Component {
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null,
-    theme: this.get_theme_data('light'),
+    theme: this.get_theme_data('light'), storage_option:'infura',
     details_orientation: 'right',
+
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
     created_subscriptions:{}, all_subscriptions:{}, created_subscription_object_mapping:{},
@@ -162,9 +165,9 @@ class App extends Component {
 
     web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042',
     
-    sync_steps:20, qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000,
+    sync_steps:20, qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90,
 
-    token_directory:{}, object_messages:{}, job_responses:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
+    token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
     alias_bucket: {}, alias_owners: {}, my_alias_events: {}, alias_timestamp: {},
     created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
@@ -173,7 +176,7 @@ class App extends Component {
 
     e5s:this.get_e5s(),
     selected_e5:'E15', default_e5:'E15',
-    accounts:{},
+    accounts:{}, 
   };
 
 
@@ -249,25 +252,36 @@ class App extends Component {
     console.log("mounted");
     
     const cookies = new Cookies();
-    var cookie_theme = (cookies.get('state')).theme;
-    var cookie_stack_items = (cookies.get('state')).stack_items
-
-    // console.log('------------------------eeeee-------------------------')
-    // console.log(cookie_theme)
+    const cookie_state = cookies.get('state');
+    var cookie_theme = cookie_state.theme;
+    var cookie_stack_items = cookie_state.stack_items
+    var cookie_storage_option = cookie_state.storage_option
+    var cookie_selected_e5 = cookie_state.selected_e5_item
     
     if(cookie_theme != null){
       this.setState({theme:cookie_theme})
-
-      var me = this;
-      setTimeout(function() {
-          me.stack_page.current?.set_light_dark_setting_tag()
-      }, (1 * 1000));
-
     }
 
     if(cookie_stack_items != null){
       this.setState({stack_items:cookie_stack_items})
     }
+
+    if(cookie_storage_option != null){
+      this.setState({storage_option:cookie_storage_option})
+    }
+
+    if(cookie_selected_e5 != null){
+      // console.log('-------------------------componentDidMount---------------------------------')
+      // console.log(cookie_selected_e5)
+      this.setState({selected_e5: cookie_selected_e5})
+    }
+
+    var me = this;
+      setTimeout(function() {
+          me.stack_page.current?.set_light_dark_setting_tag()
+          me.stack_page.current?.set_storage_option_tag()
+          me.stack_page.current?.set_e5_option_tag()
+      }, (1 * 1000));
 
     this.load_e5_data();
      
@@ -294,8 +308,14 @@ class App extends Component {
   }
 
   get_persistent_data(){
-    return {theme: this.state.theme, stack_items:this.state.stack_items}
+    return {theme: this.state.theme, storage_option: this.state.storage_option, stack_items:this.state.stack_items, selected_e5_item:this.state.selected_e5}
   }
+
+
+
+
+
+
 
   background_sync(){
     if(this.state.accounts[this.state.selected_e5] != null){
@@ -414,61 +434,69 @@ class App extends Component {
 
 
   render(){
-    return (
-      <div className="App">
-        {this.render_page()}
-        {this.render_synchronizing_bottomsheet()}
-        {this.render_send_receive_ether_bottomsheet()}
-        {this.render_stack_bottomsheet()}
-        {this.render_view_transaction_bottomsheet()}
-        {this.render_wiki_bottomsheet()}
-        {this.render_new_object_bottomsheet()}
-        {this.render_view_image_bottomsheet()}
-        {this.render_mint_token_bottomsheet()}
-        {this.render_transfer_token_bottomsheet()}
-        {this.render_extend_contract_bottomsheet()}
-        {this.render_exit_contract_bottomsheet()}
-        {this.render_new_proposal_bottomsheet()}
-        {this.render_vote_proposal_bottomsheet()}
-        {this.render_submit_proposal_bottomsheet()}
-        {this.render_pay_subscription_bottomsheet()}
-        {this.render_cancel_subscription_bottomsheet()}
-        {this.render_collect_subscription_bottomsheet()}
-        {this.render_modify_subscription_bottomsheet()}
-        {this.render_modify_contract_bottomsheet()}
-        {this.render_modify_token_bottomsheet()}
-        {this.render_exchange_transfer_bottomsheet()}
-        {this.render_force_exit_bottomsheet()}
-        {this.render_archive_proposal_bottomsheet()}
-        {this.render_freeze_unfreeze_bottomsheet()}
-        {this.render_authmint_bottomsheet()}
-        {this.render_moderator_bottomsheet()}
-        {this.render_respond_to_job_bottomsheet()}
-        {this.render_view_application_contract_bottomsheet()}
-        {this.render_view_transaction_log_bottomsheet()}
-        {this.render_add_to_bag_bottomsheet()}
-        {this.render_fulfil_bag_bottomsheet()}
-        {this.render_view_bag_application_contract_bottomsheet()}
-        {this.render_direct_purchase_bottomsheet()}
-        {this.render_clear_purchase_bottomsheet()}
-        {this.render_scan_code_bottomsheet()}
-        {this.render_send_job_request_bottomsheet()}
-        {this.render_view_job_request_bottomsheet()}
-        {this.render_enter_contract_bottomsheet()}
-        {this.render_view_job_request_contract_bottomsheet()}
-        {this.render_withdraw_ether_bottomsheet()}
+    if(this.getScreenSize() == 'e'){
+      return(
+        <div>
+          {this.render_page()}
+        </div>
+      )
+    }else{
+      return (
+        <div className="App">
+          {this.render_page()}
+          {this.render_synchronizing_bottomsheet()}
+          {this.render_send_receive_ether_bottomsheet()}
+          {this.render_stack_bottomsheet()}
+          {this.render_view_transaction_bottomsheet()}
+          {this.render_wiki_bottomsheet()}
+          {this.render_new_object_bottomsheet()}
+          {this.render_view_image_bottomsheet()}
+          {this.render_mint_token_bottomsheet()}
+          {this.render_transfer_token_bottomsheet()}
+          {this.render_extend_contract_bottomsheet()}
+          {this.render_exit_contract_bottomsheet()}
+          {this.render_new_proposal_bottomsheet()}
+          {this.render_vote_proposal_bottomsheet()}
+          {this.render_submit_proposal_bottomsheet()}
+          {this.render_pay_subscription_bottomsheet()}
+          {this.render_cancel_subscription_bottomsheet()}
+          {this.render_collect_subscription_bottomsheet()}
+          {this.render_modify_subscription_bottomsheet()}
+          {this.render_modify_contract_bottomsheet()}
+          {this.render_modify_token_bottomsheet()}
+          {this.render_exchange_transfer_bottomsheet()}
+          {this.render_force_exit_bottomsheet()}
+          {this.render_archive_proposal_bottomsheet()}
+          {this.render_freeze_unfreeze_bottomsheet()}
+          {this.render_authmint_bottomsheet()}
+          {this.render_moderator_bottomsheet()}
+          {this.render_respond_to_job_bottomsheet()}
+          {this.render_view_application_contract_bottomsheet()}
+          {this.render_view_transaction_log_bottomsheet()}
+          {this.render_add_to_bag_bottomsheet()}
+          {this.render_fulfil_bag_bottomsheet()}
+          {this.render_view_bag_application_contract_bottomsheet()}
+          {this.render_direct_purchase_bottomsheet()}
+          {this.render_clear_purchase_bottomsheet()}
+          {this.render_scan_code_bottomsheet()}
+          {this.render_send_job_request_bottomsheet()}
+          {this.render_view_job_request_bottomsheet()}
+          {this.render_enter_contract_bottomsheet()}
+          {this.render_view_job_request_contract_bottomsheet()}
+          {this.render_withdraw_ether_bottomsheet()}
 
-        {this.render_edit_token_object_bottomsheet()}
-        {this.render_edit_channel_object_bottomsheet()}
-        {this.render_edit_contractor_object_bottomsheet()}
-        {this.render_edit_job_object_bottomsheet()}
-        {this.render_edit_post_object_bottomsheet()}
-        {this.render_edit_storefront_object_bottomsheet()}
-        {this.render_give_award_bottomsheet()}
-        {this.render_add_comment_bottomsheet()}
-        <ToastContainer limit={3} containerId="id"/>
-      </div>
-    );
+          {this.render_edit_token_object_bottomsheet()}
+          {this.render_edit_channel_object_bottomsheet()}
+          {this.render_edit_contractor_object_bottomsheet()}
+          {this.render_edit_job_object_bottomsheet()}
+          {this.render_edit_post_object_bottomsheet()}
+          {this.render_edit_storefront_object_bottomsheet()}
+          {this.render_give_award_bottomsheet()}
+          {this.render_add_comment_bottomsheet()}
+          <ToastContainer limit={3} containerId="id"/>
+        </div>
+      );
+    }
   }
 
   render_page(){
@@ -659,8 +687,8 @@ class App extends Component {
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'3'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
           <div style={{ height: this.state.height, 'background-color': background_color, 'margin': '0px 0px 0px 0px', 'padding':'10px 10px 0px 10px', 'overflow-y':'auto'}}>
-            <Syncronizing_page sync_progress={this.state.syncronizing_progress} theme={this.state.theme}/>
-          </div>  
+            <Syncronizing_page sync_progress={this.state.syncronizing_progress} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} />
+          </div>
       </SwipeableBottomSheet>
     );
   }
@@ -677,6 +705,14 @@ class App extends Component {
         this.open_syncronizing_page_bottomsheet();
     }
   };
+
+  close_syncronizing_page(){
+    if(this.state.syncronizing_progress >= 100 && this.state.should_keep_synchronizing_bottomsheet_open == false){
+      this.open_syncronizing_page_bottomsheet()
+    }else{
+      // this.prompt_top_notification('Not yet!', 700)
+    }
+  }
 
 
 
@@ -722,7 +758,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)}/>
+              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -751,6 +787,14 @@ class App extends Component {
 
   when_selected_e5_changed(e5){
     this.setState({selected_e5: e5})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_storage_option_changed(option){
+    this.setState({storage_option: option})
     var me = this;
     setTimeout(function() {
         me.set_cookies()
@@ -3535,7 +3579,12 @@ class App extends Component {
       <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px'}}>
         <SwipeableViews index={pos}>
           {images.map((item, index) => ( 
-            <img src={item} style={{height:'auto',width:'100%'}} />
+            <TransformWrapper>
+              <TransformComponent>
+                <img src={item} style={{height:'auto',width:'100%'}} />
+              </TransformComponent>
+            </TransformWrapper>
+            
           ))}
         </SwipeableViews>
       </div> 
@@ -3620,7 +3669,6 @@ class App extends Component {
 
   load_e5_data = async () => {
     this.setState({should_keep_synchronizing_bottomsheet_open: true});
-
     // contractInstance.events['e4']({
     //   filter: { p1/* sender_account_id */: 1002 }
     // })
@@ -3632,7 +3680,14 @@ class App extends Component {
     //   console.error('Error-----------:', error);
     // });
 
-    this.when_wallet_data_updated(['(32)'], 0, '')    
+    // var obj = {name:'hello world'}
+    // var cid = await this.store_data_in_nft_storage(JSON.stringify(obj))
+    // console.log('---------------------load_e5_data-------------------------------')
+    // console.log(cid)
+    // var data = await this.fetch_objects_data_from_nft_storage(cid)
+    // console.log(data)
+    this.when_wallet_data_updated(['(32)'], 0, '')  
+    
   }
 
   inc_synch_progress(){
@@ -4013,7 +4068,7 @@ class App extends Component {
     var alias_owners = {}
     var alias_timestamp = {}
     for(var i=0; i<alias_events.length; i++){
-      var alias_string = await this.fetch_objects_data_from_ipfs(alias_events[i].returnValues.p4)
+      var alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
       var alias_sender = alias_events[i].returnValues.p2/* owner */
       var context = alias_events[i].returnValues.p3
 
@@ -4108,7 +4163,7 @@ class App extends Component {
 
     if(contacts_data.length > 0){
       var latest_event = contacts_data[contacts_data.length - 1];
-      var contacts_data = await this.fetch_objects_data_from_ipfs(latest_event.returnValues.p4) 
+      var contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var contacts = contacts_data['contacts']
       
       var clone = structuredClone(this.state.contacts)
@@ -4144,7 +4199,7 @@ class App extends Component {
     var created_subscription_object_data = []
     var created_subscription_object_mapping = {}
     for(var i=0; i<created_subscriptions.length; i++){
-      var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3, e5);
+      var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses);
       var my_payment = await F5contractInstance.methods.f229([created_subscriptions[i]], [[account]]).call((error, result) => {});
 
       var paid_accounts = [];
@@ -4265,10 +4320,10 @@ class App extends Component {
     var created_contract_object_data = []
     var created_contract_mapping = {}
     for(var i=0; i<created_contracts.length; i++){
-      var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5);
+      var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
       var event = i>0 ? created_contract_events[i-1]: null
-      var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5);
-      var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5);
+      var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
+      var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
 
       var entered_accounts = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i] } }, (error, events) => {});
 
@@ -4400,10 +4455,10 @@ class App extends Component {
     var created_proposal_data = await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
     var consensus_data = await G52contractInstance.methods.f266(my_proposal_ids, [], 0).call((error, result) => {});
     for(var i=0; i<my_proposal_ids.length; i++){
-      var proposals_data = await this.fetch_objects_data(my_proposal_ids[i], web3, e5);
+      var proposals_data = await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses);
       var event = my_proposals_events[i]
-      var end_balance = await this.get_balance_in_exchange(3, my_proposal_ids[i], e5);
-      var spend_balance = await this.get_balance_in_exchange(5, my_proposal_ids[i], e5);
+      var end_balance = await this.get_balance_in_exchange(3, my_proposal_ids[i], e5, contract_addresses);
+      var spend_balance = await this.get_balance_in_exchange(5, my_proposal_ids[i], e5, contract_addresses);
 
       var proposal_modify_target_type = await E52contractInstance.methods.f135(created_proposal_data[i][1][9]).call((error, result) => {});
 
@@ -4470,7 +4525,7 @@ class App extends Component {
     var created_token_object_data = []
     var created_token_object_mapping = {}
     for(var i=0; i<created_tokens.length; i++){
-      var tokens_data = await this.fetch_objects_data(created_tokens[i], web3, e5);
+      var tokens_data = await this.fetch_objects_data(created_tokens[i], web3, e5, contract_addresses);
       var event = i>1 ? created_token_events[i-2]: null
 
       var depth_values = []
@@ -4537,9 +4592,9 @@ class App extends Component {
     all_tokens_clone[e5] = all_token_events
     this.setState({all_tokens: all_tokens_clone})
 
-    var end_balance_of_E5 = await this.get_balance_in_exchange(3, 2, e5)
-    var spend_balance_of_E5 = await this.get_balance_in_exchange(5, 2, e5)
-    var end_balance_of_burn_account = await this.get_balance_in_exchange(3, 0, e5)
+    var end_balance_of_E5 = await this.get_balance_in_exchange(3, 2, e5, contract_addresses)
+    var spend_balance_of_E5 = await this.get_balance_in_exchange(5, 2, e5, contract_addresses)
+    var end_balance_of_burn_account = await this.get_balance_in_exchange(3, 0, e5, contract_addresses)
 
     var end_balance_of_E5_clone = structuredClone(this.state.end_balance_of_E5)
     end_balance_of_E5_clone[e5] = end_balance_of_E5
@@ -4584,7 +4639,7 @@ class App extends Component {
       var id = created_post_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
-        var post_data = await this.fetch_objects_data(id, web3, e5);
+        var post_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':created_post_events[i].returnValues.p6})
       }
     }
@@ -4613,7 +4668,7 @@ class App extends Component {
       var id = created_channel_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
-        var channel_data = await this.fetch_objects_data(id, web3, e5);
+        var channel_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
 
 
         var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
@@ -4683,7 +4738,7 @@ class App extends Component {
       var id = created_job_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
-        var job_data = await this.fetch_objects_data(id, web3, e5);
+        var job_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6}
         created_job.push(job)
         created_job_mappings[id] = job
@@ -4694,7 +4749,7 @@ class App extends Component {
     var my_applications = []
     // var my_contract_applications = {}
     for(var i=0; i<my_created_job_respnse_data.length; i++){
-      var ipfs_data = await this.fetch_objects_data_from_ipfs(my_created_job_respnse_data[i].returnValues.p4)
+      var ipfs_data = await this.fetch_objects_data_from_ipfs_using_option(my_created_job_respnse_data[i].returnValues.p4)
 
       if(ipfs_data['type'] == 'job_application'){
         my_applications.push({'ipfs':ipfs_data, 'event':my_created_job_respnse_data[i], 'e5':e5, 'timestamp':my_created_job_respnse_data[i].returnValues.p6})
@@ -4746,7 +4801,7 @@ class App extends Component {
       var convo_id = my_created_mail_events[i].returnValues.p5
       var cid = my_created_mail_events[i].returnValues.p4
       
-      var ipfs = await this.fetch_objects_data_from_ipfs(cid)
+      var ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
 
       if(!created_mail.includes(convo_id)){
         created_mail.push(convo_id)
@@ -4776,7 +4831,7 @@ class App extends Component {
     for(var i=0; i<my_received_mail_events.length; i++){
       var convo_id = my_received_mail_events[i].returnValues.p5
       var cid = my_received_mail_events[i].returnValues.p4
-      var ipfs = await this.fetch_objects_data_from_ipfs(cid)
+      var ipfs = await this.fetch_objects_data_from_ipfs_using_option(cid)
 
       if(!received_mail.includes(convo_id)){
         received_mail.push(convo_id)
@@ -4820,7 +4875,7 @@ class App extends Component {
       var id = created_store_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_store_events[i].returnValues.p1.toString() == hash.toString()){
-        var data = await this.fetch_objects_data(id, web3, e5);
+        var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         if(data != null){
           var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':created_store_events[i].returnValues.p6}
           created_stores.push(obj)
@@ -4848,7 +4903,7 @@ class App extends Component {
     var created_bags = []
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
-      var data = await this.fetch_objects_data(id, web3, e5);
+      var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         if(data != null){
           created_bags.push({'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4})
         }
@@ -4880,8 +4935,10 @@ class App extends Component {
       var id = created_contractor_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()){
-        var contractor_data = await this.fetch_objects_data(id, web3, e5);
-        created_contractor.push({'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6})
+        var contractor_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        if(contractor_data != null){
+          created_contractor.push({'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6})
+        }
       }
     }
 
@@ -4889,7 +4946,7 @@ class App extends Component {
     // var my_contractor_applications_array = []
     // var my_contractor_applications = {}
     // for(var i=0; i<my_created_contractor_respnse_data.length; i++){
-    //   var ipfs_data = await this.fetch_objects_data_from_ipfs(my_created_contractor_respnse_data[i].returnValues.p4)
+    //   var ipfs_data = await this.fetch_objects_data_from_ipfs_using_option(my_created_contractor_respnse_data[i].returnValues.p4)
     //   my_contractor_applications_array.push({'ipfs':ipfs_data, 'event':my_created_contractor_respnse_data[i]})
 
     //   var picked_contract_id = ipfs_data['picked_contract_id']
@@ -4924,9 +4981,9 @@ class App extends Component {
 
 
 
-  fetch_objects_data = async (id, web3, e5) => {
+  fetch_objects_data = async (id, web3, e5, addresses) => {
     const E52contractArtifact = require('./contract_abis/E52.json');
-    const E52_address = this.state.addresses[e5][1];
+    const E52_address = addresses[1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var target_id = id;
     var events = await E52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: target_id} }, (error, events) => {});
@@ -4935,9 +4992,51 @@ class App extends Component {
     var cid = events[events.length - 1].returnValues.p4
     if(cid == 'e3' || cid == 'e2' || cid == 'e1' || cid == 'e') return;
 
-    const response = await this.fetch_objects_data_from_ipfs(cid)
+    const response = await this.fetch_objects_data_from_ipfs_using_option(cid)
     return response
 
+  }
+
+
+
+  fetch_objects_data_from_ipfs_using_option = async (ecid) => {
+    if(!ecid.includes('.')){
+      var data = await this.fetch_object_data_from_infura(ecid)
+      return data
+    }
+    var split_cid_array = ecid.split('.');
+    var option = split_cid_array[0]
+    var cid = split_cid_array[1]
+
+    if(option == 'in'){
+      var data = await this.fetch_object_data_from_infura(cid, 0)
+      return data
+    }
+    else if(option == 'we'){
+      var data = await this.fetch_objects_data_from_web3(cid, 0)
+      return data
+    }
+    else if(option == 'nf'){
+      var data = await this.fetch_objects_data_from_nft_storage(cid, 0)
+      return data
+    }
+  }
+
+  store_objects_data_in_ipfs_using_option = async (data) => {
+    var set_storage_option = this.state.storage_option
+
+    if(set_storage_option == 'infura'){
+      var cid = await this.store_data_in_infura(data)
+      return 'in.'+cid;
+    }
+    else if(set_storage_option == 'web3-storage'){
+      var cid = await this.store_data_in_web3(data)
+      return 'we.'+cid;
+    }
+    else if(set_storage_option == 'nft-storage'){
+      var cid = await this.store_data_in_nft_storage(data)
+      return 'nf.'+cid;
+    }
   }
 
 
@@ -4958,17 +5057,36 @@ class App extends Component {
 
     try {
       const added = await client.add(data)
-      console.log('Stored string on IPFS with CID:', added.path.toString());
-
       return added.path.toString()
     } catch (error) {
       console.log('Error uploading file: ', error)
     }
   }
 
-  fetch_objects_data_from_ipfs = async (cid) => {
+  fetch_object_data_from_infura = async (cid, depth) => {
+    await this.wait(this.state.ipfs_delay)
+    var gateways = [
+      `https://ipfs.io/ipfs/${cid}`,
+      `https://gateway.ipfs.io/ipfs/${cid}`,
+      `https://cloudflare-ipfs.com/ipfs/${cid}`,
+      `https://dweb.link/ipfs/${cid}`,
+      // `https://gateway.pinata.cloud/ipfs/${cid}`,
+      `https://nftstorage.link/ipfs/${cid}`,
+      `https://hardbin.com/ipfs/${cid}`,
+      `https://4everland.io/ipfs/${cid}`,
+      `https://cf-ipfs.com/ipfs/${cid}`,
+      `https://ipfs.decentralized-content.com/ipfs/${cid}`,
+      `https://ipfs.eth.aragon.network/ipfs/${cid}`,
+      `https://pz-acyuix.meson.network/ipfs/${cid}`,
+      `https://fleek.ipfs.io/ipfs/${cid}`,
+      `https://ipfs.w3s.link/ipfs/${cid}`,
+    ]
+    
+    await this.wait(this.state.ipfs_delay)
+    var selected_gateway = gateways[Math.round(Math.random() * 12)]
+
     try {
-      const response = await fetch(`https://ipfs.io/ipfs/${cid}`);
+      const response = await fetch(selected_gateway);
       if (!response.ok) {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
       }
@@ -4976,7 +5094,11 @@ class App extends Component {
       return JSON.parse(data);
       // Do something with the retrieved data
     } catch (error) {
-      console.log('Error uploading file: ', error)
+      console.log('Error fetching infura file: ', error)
+
+      if(depth<5){
+        return this.fetch_object_data_from_infura(cid, depth+1)
+      }
     }
   }
 
@@ -5005,24 +5127,132 @@ class App extends Component {
     return files
   }
 
-  fetch_objects_data_from_web3 = async (cid) => {
-    const client = new Web3Storage({ token: `${process.env.REACT_APP_WEB3_STORAGE_ACCESS_TOKEN}` })
+  fetch_objects_data_from_web3 = async (cid, depth) => {
+    // const client = new Web3Storage({ token: `${process.env.REACT_APP_WEB3_STORAGE_ACCESS_TOKEN}` })
 
-    const res = await client.get(cid)
-    const files = await res.files()
+    // try{
+    //   const res = await client.get(cid)
+    //   const files = await res.files()
 
-    var file = files[0]
-    return JSON.parse(JSON.parse(await file.text()).data);
+    //   var file = files[0]
+    //   return JSON.parse(JSON.parse(await file.text()).data);
+    // }catch(e){
+    //   console.log(e)
+    //   return null
+    // }
+
+    var gateways = [
+      `https://ipfs.io/ipfs/${cid}/bry.json`,
+      `https://gateway.ipfs.io/ipfs/${cid}/bry.json`,
+      `https://cloudflare-ipfs.com/ipfs/${cid}/bry.json`,
+      `https://dweb.link/ipfs/${cid}/bry.json`,
+      // `https://gateway.pinata.cloud/ipfs/${cid}/bry.json`,
+      `https://nftstorage.link/ipfs/${cid}/bry.json`,
+      `https://hardbin.com/ipfs/${cid}/bry.json`,
+      `https://4everland.io/ipfs/${cid}/bry.json`,
+      `https://cf-ipfs.com/ipfs/${cid}/bry.json`,
+      `https://ipfs.decentralized-content.com/ipfs/${cid}/bry.json`,
+      `https://ipfs.eth.aragon.network/ipfs/${cid}/bry.json`,
+      `https://pz-acyuix.meson.network/ipfs/${cid}/bry.json`,
+      `https://fleek.ipfs.io/ipfs/${cid}/bry.json`,
+      `https://ipfs.w3s.link/ipfs/${cid}/bry.json`,
+    ]
+    
+    await this.wait(this.state.ipfs_delay)
+    var selected_gateway = gateways[Math.round(Math.random() * 11)]
+    try {
+      const response = await fetch(selected_gateway);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
+      }
+      const data = await response.text();
+      var json = JSON.parse((JSON.parse(data)).data);
+      return json
+      // Do something with the retrieved data
+    } catch (error) {
+      console.log('Error fetching web3.storage file: ', error)
+
+      if(depth<5){
+        return this.fetch_objects_data_from_web3(cid, depth+1)
+      }
+    }
+    
+  }
+
+
+
+
+  store_data_in_nft_storage = async (data) => {
+    const NFT_STORAGE_TOKEN = `${process.env.REACT_APP_NFT_STORAGE_ACCESS_TOKEN}`
+    const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
+
+    const someData = new Blob([data])
+    const cid = await client.storeBlob(someData)
+
+    return cid;
+  }
+
+
+  fetch_objects_data_from_nft_storage = async (cid, depth) => {
+    await this.wait(this.state.ipfs_delay)
+    var gateways = [
+      `https://ipfs.io/ipfs/${cid}`,
+      `https://gateway.ipfs.io/ipfs/${cid}`,
+      `https://cloudflare-ipfs.com/ipfs/${cid}`,
+      `https://dweb.link/ipfs/${cid}`,
+      // `https://gateway.pinata.cloud/ipfs/${cid}`,
+      `https://nftstorage.link/ipfs/${cid}`,
+      `https://hardbin.com/ipfs/${cid}`,
+      `https://4everland.io/ipfs/${cid}`,
+      `https://cf-ipfs.com/ipfs/${cid}`,
+      `https://ipfs.decentralized-content.com/ipfs/${cid}`,
+      `https://ipfs.eth.aragon.network/ipfs/${cid}`,
+      `https://pz-acyuix.meson.network/ipfs/${cid}`,
+      `https://fleek.ipfs.io/ipfs/${cid}`,
+      `https://ipfs.w3s.link/ipfs/${cid}`,
+    ]
+    
+    await this.wait(this.state.ipfs_delay)
+    var selected_gateway = gateways[Math.round(Math.random() * 12)]
+
+    try {
+      const response = await fetch(selected_gateway);
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
+      }
+      const data = await response.text();
+      return JSON.parse(data);
+      // Do something with the retrieved data
+    } catch (error) {
+      console.log('Error fetching nft storage file: ', error)
+
+      if(depth<5){
+        return this.fetch_objects_data_from_nft_storage(cid, depth+1)
+      }
+    }
   }
 
 
 
 
 
-  get_balance_in_exchange = async (exchange_id, account, e5) => {
+  wait = async (t) => {
+    //apparently those gateways dont like it when you spam their apis like i intend to do here, so a delay function to spread out those calls is necessary(if it even works)
+    await this.sleep(t)
+  }
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+
+
+
+
+  get_balance_in_exchange = async (exchange_id, account, e5, addresses) => {
       const web3 = new Web3(this.get_web3_url_from_e5(e5));
       const H52contractArtifact = require('./contract_abis/H52.json');
-      const H52_address = this.state.addresses[e5][6];
+      const H52_address = addresses[6];
       const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
       
       var token_balances = await H52contractInstance.methods.f140e([exchange_id], account, [0]).call((error, result) => {});
@@ -5094,7 +5324,7 @@ class App extends Component {
     var key = (new Uint8Array(publicKeyA)).toString()//oh my god
 
     var object_as_string = JSON.stringify({'key':key})
-    var obj_cid = await this.store_data_in_infura(object_as_string)
+    var obj_cid = await this.store_objects_data_in_ipfs_using_option(object_as_string)
     return obj_cid
   }
 
@@ -5126,7 +5356,7 @@ class App extends Component {
       return ''
     }
 
-    var obj_key = await this.fetch_objects_data_from_ipfs(filtered_events[filtered_events.length-1].returnValues.p4)
+    var obj_key = await this.fetch_objects_data_from_ipfs_using_option(filtered_events[filtered_events.length-1].returnValues.p4)
     var uint8array = Uint8Array.from(obj_key['key'].split(',').map(x=>parseInt(x,10))); 
     return uint8array
   }
@@ -5173,9 +5403,18 @@ class App extends Component {
 
     var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:35 } }, (error, events) => {});
     var messages = []
+    var is_first_time = this.state.object_messages[id] == null ? true: false
     for(var j=0; j<created_channel_data.length; j++){
-      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_channel_data[j].returnValues.p4)
-      messages.push(ipfs_message)
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        messages.push(ipfs_message)
+
+        if(is_first_time){
+          var clone = JSON.parse(JSON.stringify(this.state.object_messages))
+          clone[id] = messages
+          this.setState({object_messages: clone})
+        }
+      }
     }
     
     var clone = JSON.parse(JSON.stringify(this.state.object_messages))
@@ -5194,30 +5433,38 @@ class App extends Component {
     var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:37 } }, (error, events) => {});
 
     var messages = []
+    var is_first_time = this.state.job_responses[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
-      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_job_respnse_data[j].returnValues.p4)
-      ipfs_message['contract'] = this.state.created_contract_mapping[e5][ipfs_message['picked_contract_id']]
-      ipfs_message['id'] = created_job_respnse_data[j].returnValues.p5
-      ipfs_message['job_id'] = id;
-      ipfs_message['e5'] = e5
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        ipfs_message['contract'] = this.state.created_contract_mapping[e5][ipfs_message['picked_contract_id']]
+        ipfs_message['id'] = created_job_respnse_data[j].returnValues.p5
+        ipfs_message['job_id'] = id;
+        ipfs_message['e5'] = e5
 
 
-      var filtered_events = []
-      for(var i=0; i<application_responses.length; i++){
-        if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
-          filtered_events.push(application_responses[i])
+        var filtered_events = []
+        for(var i=0; i<application_responses.length; i++){
+          if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
+            filtered_events.push(application_responses[i])
+          }
+        }
+        if(filtered_events.length > 0){
+          var last_response = filtered_events[filtered_events.length -1]
+          var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs_using_option(last_response.returnValues.p4)
+          // console.log(last_response_ipfs_obj)
+          ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+        }else{
+          ipfs_message['is_response_accepted'] = false
+        }
+
+        messages.push(ipfs_message)
+        if(is_first_time){
+          var clone = JSON.parse(JSON.stringify(this.state.job_responses))
+          clone[id] = messages
+          this.setState({job_responses: clone})
         }
       }
-      if(filtered_events.length > 0){
-        var last_response = filtered_events[filtered_events.length -1]
-        var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs(last_response.returnValues.p4)
-        console.log(last_response_ipfs_obj)
-        ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
-      }else{
-        ipfs_message['is_response_accepted'] = false
-      }
-
-      messages.push(ipfs_message)
     }
 
     var clone = JSON.parse(JSON.stringify(this.state.job_responses))
@@ -5235,11 +5482,23 @@ class App extends Component {
     var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
 
     var direct_purchases = []
+    var is_first_time_for_direct_purchases = this.state.direct_purchases[id] == null ? true: false
     for(var j=0; j<created_awward_data.length; j++){
-      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_awward_data[j].returnValues.p4)
-      direct_purchases.push(ipfs_message)
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_awward_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        direct_purchases.push(ipfs_message)
+      }
+
+      if(is_first_time_for_direct_purchases){
+        var clone = JSON.parse(JSON.stringify(this.state.direct_purchases))
+        clone[id] = direct_purchases
+        this.setState({direct_purchases: clone})
+      }
     }
 
+    var clone = JSON.parse(JSON.stringify(this.state.direct_purchases))
+    clone[id] = direct_purchases
+    this.setState({direct_purchases: clone})
 
 
     const E52contractArtifact = require('./contract_abis/E52.json');
@@ -5247,22 +5506,26 @@ class App extends Component {
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
     var created_fulfilment_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
-    console.log('----------------------www----------------------')
-    console.log(created_fulfilment_data)
+    
     var fulfilments = {}
+    var is_first_time_for_fulfilments = this.state.direct_purchase_fulfilments[id] == null ? true: false
     for(var j=0; j<created_fulfilment_data.length; j++){
-      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_fulfilment_data[j].returnValues.p4)
-      var signature_data = ipfs_message['signature_data']
-      fulfilments[signature_data] = ipfs_message
-    }
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_fulfilment_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        var signature_data = ipfs_message['signature_data']
+        fulfilments[signature_data] = ipfs_message
+      }
 
-    var clone = JSON.parse(JSON.stringify(this.state.direct_purchases))
-    clone[id] = direct_purchases
+      if(is_first_time_for_fulfilments){
+        var fulfilment_clone = JSON.parse(JSON.stringify(this.state.direct_purchase_fulfilments))
+        fulfilment_clone[id] = fulfilments
+        this.setState({direct_purchase_fulfilments: fulfilment_clone})
+      }
+    }
 
     var fulfilment_clone = JSON.parse(JSON.stringify(this.state.direct_purchase_fulfilments))
     fulfilment_clone[id] = fulfilments
-
-    this.setState({direct_purchases: clone, direct_purchase_fulfilments: fulfilment_clone})
+    this.setState({direct_purchase_fulfilments: fulfilment_clone})
   }
 
   get_contractor_applications = async (id, E5) =>{
@@ -5276,34 +5539,42 @@ class App extends Component {
     var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:39 } }, (error, events) => {});
 
     var messages = []
+    var is_first_time = this.state.contractor_applications[id] == null ? true: false
     for(var j=0; j<created_job_respnse_data.length; j++){
-      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_job_respnse_data[j].returnValues.p4)
-      ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
-      ipfs_message['contractor_post_id'] = id;
-      ipfs_message['e5'] = E5
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_job_respnse_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        ipfs_message['request_id'] = created_job_respnse_data[j].returnValues.p5
+        ipfs_message['contractor_post_id'] = id;
+        ipfs_message['e5'] = E5
 
 
-      var filtered_events = []
-      for(var i=0; i<application_responses.length; i++){
-        if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
-          filtered_events.push(application_responses[i])
+        var filtered_events = []
+        for(var i=0; i<application_responses.length; i++){
+          if(application_responses[i].returnValues.p5 == created_job_respnse_data[j].returnValues.p5){
+            filtered_events.push(application_responses[i])
+          }
         }
-      }
-      if(filtered_events.length > 0){
-        var last_response = filtered_events[filtered_events.length -1]
-        var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs(last_response.returnValues.p4)
-        ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
-        ipfs_message['contract'] = this.get_all_sorted_objects_mappings(this.state.created_contract_mapping)[last_response_ipfs_obj['contract_id']]
-      }else{
-        ipfs_message['is_response_accepted'] = false
-      }
+        if(filtered_events.length > 0){
+          var last_response = filtered_events[filtered_events.length -1]
+          var last_response_ipfs_obj = await this.fetch_objects_data_from_ipfs_using_option(last_response.returnValues.p4)
+          ipfs_message['is_response_accepted'] = last_response_ipfs_obj['accepted'];
+          ipfs_message['contract'] = this.get_all_sorted_objects_mappings(this.state.created_contract_mapping)[last_response_ipfs_obj['contract_id']]
+        }else{
+          ipfs_message['is_response_accepted'] = false
+        }
 
-      messages.push(ipfs_message)
+        messages.push(ipfs_message)
+      }
+      if(is_first_time){
+        var clone = JSON.parse(JSON.stringify(this.state.contractor_applications))
+        clone[id] = messages
+        this.setState({contractor_applications: clone})
+      }
     }
 
-    var clone = JSON.parse(JSON.stringify(this.state.job_responses))
+    var clone = JSON.parse(JSON.stringify(this.state.contractor_applications))
     clone[id] = messages
-    this.setState({job_responses: clone})
+    this.setState({contractor_applications: clone})
 
   }
 
@@ -5328,9 +5599,18 @@ class App extends Component {
 
     var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: contractor_id, p3/* context */:request_id } }, (error, events) => {});
     var messages = []
+    var is_first_time = this.state.object_messages[request_id] == null ? true: false
     for(var j=0; j<created_channel_data.length; j++){
-      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_channel_data[j].returnValues.p4)
-      messages.push(ipfs_message)
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        messages.push(ipfs_message)
+      }
+
+      if(is_first_time){
+        var clone = JSON.parse(JSON.stringify(this.state.object_messages))
+        clone[request_id] = messages
+        this.setState({object_messages: clone})
+      }
     }
     
     var clone = JSON.parse(JSON.stringify(this.state.object_messages))
@@ -5417,14 +5697,22 @@ class App extends Component {
     var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
 
     var award_events = []
+    var is_first_time = this.state.award_data[id] == null ? true: false
     for(var j=0; j<created_awward_data.length; j++){
-      var ipfs_message = await this.fetch_objects_data_from_ipfs(created_awward_data[j].returnValues.p4)
-      award_events.push(ipfs_message)
+      var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_awward_data[j].returnValues.p4)
+      if(ipfs_message != null){
+        award_events.push(ipfs_message)
+      }
+
+      if(is_first_time){
+        var clone = JSON.parse(JSON.stringify(this.state.award_data))
+        clone[id] = award_events
+        this.setState({award_data: clone})
+      }
     }
 
     var clone = JSON.parse(JSON.stringify(this.state.award_data))
     clone[id] = award_events
-
     this.setState({award_data: clone})
   }
 

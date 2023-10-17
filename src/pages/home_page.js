@@ -175,7 +175,7 @@ class home_page extends Component {
         else{
             return(
                 <div style={{height: this.props.height, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                    <img src={Letter} style={{height:'auto',width:'35%'}} />
+                    <img src={Letter} style={{height:'auto',width:'23%'}} />
                 </div>
             );
         }
@@ -419,7 +419,7 @@ class home_page extends Component {
         return picked_item
     }
 
-     /* called when the eplus letter is clicked on the main page */
+    /* called when the eplus letter is clicked on the main page */
     when_e_plus_letter_clicked(){
       var button_target = this.get_e_plus_button_mapping();
       if(button_target != ''){
@@ -483,7 +483,7 @@ class home_page extends Component {
             var my_viewed_contracts = []
             var all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
             for(var i=0; i<this.state.viewed_contracts.length; i++){
-                my_viewed_contracts.push(all_contracts[this.state.viewed_contracts[i]])
+                my_viewed_contracts.push(this.get_item_in_array(this.state.viewed_contracts[i], all_contracts))
             }
             return my_viewed_contracts
         }
@@ -529,7 +529,7 @@ class home_page extends Component {
             var my_viewed_bags = []
             var all_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
             for(var i=0; i<this.state.viewed_bags.length; i++){
-                my_viewed_bags.push(all_bags[this.state.viewed_bags[i]])
+                my_viewed_bags.push(this.get_item_in_array(this.state.viewed_bags[i], all_bags))
             }
             return my_viewed_bags
         }
@@ -561,7 +561,7 @@ class home_page extends Component {
             var my_viewed_channels = []
             var created_channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
             for(var i=0; i<this.state.viewed_channels.length; i++){
-                my_viewed_channels.push(created_channels[this.state.viewed_channels[i]])
+                my_viewed_channels.push(this.get_item_in_array(this.state.viewed_channels[i], created_channels))
             }
             return my_viewed_channels
         }
@@ -593,7 +593,7 @@ class home_page extends Component {
             var my_viewed_contractors = []
             var all_contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
             for(var i=0; i<this.state.viewed_contractors.length; i++){
-                my_viewed_contractors.push(all_contractors[this.state.viewed_contractors[i]])
+                my_viewed_contractors.push(this.get_item_in_array(this.state.viewed_contractors[i], all_contractors))
             }
             return my_viewed_contractors
         }
@@ -665,7 +665,7 @@ class home_page extends Component {
             var my_viewed_jobs = []
             var all_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
             for(var i=0; i<this.state.viewed_jobs.length; i++){
-                my_viewed_jobs.push(all_jobs[this.state.viewed_jobs[i]])
+                my_viewed_jobs.push(this.get_item_in_array(this.state.viewed_jobs[i], all_jobs))
             }
             
             return my_viewed_jobs
@@ -775,7 +775,7 @@ class home_page extends Component {
             var my_viewed_posts = []
             var all_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
             for(var i=0; i<this.state.viewed_posts.length; i++){
-                my_viewed_posts.push(all_posts[this.state.viewed_posts[i]])
+                my_viewed_posts.push(this.get_item_in_array(this.state.viewed_posts[i], all_posts))
             }
             return my_viewed_posts
         }
@@ -807,7 +807,7 @@ class home_page extends Component {
             var my_viewed_proposals = []
             var all_proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
             for(var i=0; i<this.state.viewed_proposals.length; i++){
-                my_viewed_proposals.push(all_proposals[this.state.viewed_proposals[i]])
+                my_viewed_proposals.push(this.get_item_in_array(this.state.viewed_proposals[i], all_proposals))
             }
             return my_viewed_proposals
         }
@@ -841,7 +841,7 @@ class home_page extends Component {
             var my_viewed_stores = []
             var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
             for(var i=0; i<this.state.viewed_stores.length; i++){
-                my_viewed_stores.push(all_stores[this.state.viewed_stores[i]])
+                my_viewed_stores.push(this.get_item_in_array(this.state.viewed_stores[i], all_stores))
             }
             return my_viewed_stores
         }
@@ -874,7 +874,7 @@ class home_page extends Component {
             var my_viewed_subscriptions = []
             var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
             for(var i=0; i<this.state.viewed_subscriptions.length; i++){
-                my_viewed_subscriptions.push(all_subscriptions[this.state.viewed_subscriptions[i]])
+                my_viewed_subscriptions.push(this.get_item_in_array(this.state.viewed_subscriptions[i], all_subscriptions))
             }
             return my_viewed_subscriptions
         }
@@ -943,6 +943,12 @@ class home_page extends Component {
     }
 
 
+    get_item_in_array(id, object_array){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
+
 
 
 
@@ -1002,9 +1008,9 @@ class home_page extends Component {
     when_job_post_item_clicked(index, id, e5){
         this.setState({selected_job_post_item: index})
         var viewed_jobs_clone = this.state.viewed_jobs.slice()
-        var pos = viewed_jobs_clone.indexOf(index)
+        var pos = viewed_jobs_clone.indexOf(id)
         if(pos == -1){
-            viewed_jobs_clone.push(index)
+            viewed_jobs_clone.push(id)
             this.setState({viewed_jobs: viewed_jobs_clone})
         }
 
@@ -1020,9 +1026,9 @@ class home_page extends Component {
         this.setState({selected_contract_item: index})
 
         var viewed_contracts_clone = this.state.viewed_contracts.slice()
-        var pos = viewed_contracts_clone.indexOf(index)
+        var pos = viewed_contracts_clone.indexOf(id)
         if(pos == -1){
-            viewed_contracts_clone.push(index)
+            viewed_contracts_clone.push(id)
             this.setState({viewed_contracts: viewed_contracts_clone})
         }
 
@@ -1038,9 +1044,9 @@ class home_page extends Component {
         this.setState({selected_subscription_item: index})
 
         var viewed_subscriptions_clone = this.state.viewed_subscriptions.slice()
-        var pos = viewed_subscriptions_clone.indexOf(index)
+        var pos = viewed_subscriptions_clone.indexOf(id)
         if(pos == -1){
-            viewed_subscriptions_clone.push(index)
+            viewed_subscriptions_clone.push(id)
             this.setState({viewed_subscriptions: viewed_subscriptions_clone})
         }
 
@@ -1056,9 +1062,9 @@ class home_page extends Component {
         this.setState({selected_post_item: index})
 
         var viewed_posts_clone = this.state.viewed_posts.slice()
-        var pos = viewed_posts_clone.indexOf(index)
+        var pos = viewed_posts_clone.indexOf(id)
         if(pos == -1){
-            viewed_posts_clone.push(index)
+            viewed_posts_clone.push(id)
             this.setState({viewed_posts: viewed_posts_clone})
         }
 
@@ -1074,9 +1080,9 @@ class home_page extends Component {
         this.setState({selected_channel_item: index})
 
         var viewed_channel_clone = this.state.viewed_channels.slice()
-        var pos = viewed_channel_clone.indexOf(index)
+        var pos = viewed_channel_clone.indexOf(id)
         if(pos == -1){
-            viewed_channel_clone.push(index)
+            viewed_channel_clone.push(id)
             this.setState({viewed_channels: viewed_channel_clone})
         }
 
@@ -1092,9 +1098,9 @@ class home_page extends Component {
         this.setState({selected_proposal_item: index})
 
         var viewed_proposals_clone = this.state.viewed_proposals.slice()
-        var pos = viewed_proposals_clone.indexOf(index)
+        var pos = viewed_proposals_clone.indexOf(id)
         if(pos == -1){
-            viewed_proposals_clone.push(index)
+            viewed_proposals_clone.push(id)
             this.setState({viewed_proposals: viewed_proposals_clone})
         }
 
@@ -1118,9 +1124,9 @@ class home_page extends Component {
         this.setState({selected_storefront_item: index})
 
         var viewed_storefront_clone = this.state.viewed_stores.slice()
-        var pos = viewed_storefront_clone.indexOf(index)
+        var pos = viewed_storefront_clone.indexOf(id)
         if(pos == -1){
-            viewed_storefront_clone.push(index)
+            viewed_storefront_clone.push(id)
             this.setState({viewed_stores: viewed_storefront_clone})
         }
 
@@ -1136,9 +1142,9 @@ class home_page extends Component {
         this.setState({selected_bag_item: index})
 
         var viewed_bag_clone = this.state.viewed_bags.slice()
-        var pos = viewed_bag_clone.indexOf(index)
+        var pos = viewed_bag_clone.indexOf(id)
         if(pos == -1){
-            viewed_bag_clone.push(index)
+            viewed_bag_clone.push(id)
             this.setState({viewed_bags: viewed_bag_clone})
         }
 
@@ -1153,9 +1159,9 @@ class home_page extends Component {
     when_contractor_post_item_clicked(index, id, e5){
         this.setState({selected_contractor_item: index})
         var viewed_contractors_clone = this.state.viewed_contractors.slice()
-        var pos = viewed_contractors_clone.indexOf(index)
+        var pos = viewed_contractors_clone.indexOf(id)
         if(pos == -1){
-            viewed_contractors_clone.push(index)
+            viewed_contractors_clone.push(id)
             this.setState({viewed_contractors: viewed_contractors_clone})
         }
 
@@ -1317,8 +1323,8 @@ class home_page extends Component {
 
 
 
-    add_id_to_contacts(account_id){
-        if(account_id != this.props.app_state.user_account_id){
+    add_id_to_contacts(account_id, item){
+        if(account_id != this.props.app_state.user_account_id[item['e5']]){
             this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
         }
     }
@@ -1326,7 +1332,7 @@ class home_page extends Component {
     render_dialog_ui(){
         return(
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
-                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
                     {this.render_detail_item('3', {'title':'Add To Contacts Confirmation', 'details':'Confirm that you want to add the account '+this.state.contact_to_add+' to your contacts', 'size':'s'})}
 

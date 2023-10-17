@@ -639,6 +639,9 @@ class NewMintActionPage extends Component {
         var minimum_blocks_between_swap = selected_obj_config[3]
         var minimum_time_between_swap = selected_obj_config[4]
 
+        var minimum_transactions_for_first_buy = selected_obj_config[17]
+        var minimum_entered_contracts_for_first_buy = selected_obj_config[18]
+
         var last_swap_block = selected_object['account_data'][0]
         var last_swap_timestamp = selected_object['account_data'][1]
         var last_swap_transaction_count = selected_object['account_data'][2]
@@ -656,30 +659,43 @@ class NewMintActionPage extends Component {
             var diff = current_entered_contracts_count - last_entered_contracts_count
             if(diff < minimum_entered_contracts_between_swap){
                 can_make_swap = false;
-                reason = 'You havent entered enough contracts'
+                reason = 'You need to enter '+(minimum_entered_contracts_between_swap-diff)+' more contracts first'
             }
         }
         if(minimum_transactions_between_swap != 0){
             var diff = current_transaction_count - last_swap_transaction_count
             if(diff < minimum_transactions_between_swap){
                 can_make_swap = false;
-                reason = 'You havent made enough runs'
+                reason = 'You need to make '+(minimum_transactions_between_swap-diff)+' more runs first'
             }
         }
         if(minimum_blocks_between_swap != 0){
             var diff = current_block - last_swap_block
             if(diff < minimum_blocks_between_swap){
                 can_make_swap = false
-                reason = 'You havent waited for enough blocks'
+                reason = 'You need to wait '+(minimum_blocks_between_swap-diff)+' more blocks'
             }
         }
         if(minimum_time_between_swap != 0){
             var diff = timestamp - last_swap_timestamp
             if(diff < minimum_time_between_swap){
                 can_make_swap = false
-                reason = 'You havent waited enough time'
+                reason = 'You need to wait about '+(this.get_time_diff(minimum_time_between_swap-diff))+' first'
             }
         }
+        if(minimum_transactions_for_first_buy != 0){
+            if(current_transaction_count < minimum_transactions_for_first_buy){
+                can_make_swap = false
+                reason = 'You need to make '+(minimum_transactions_for_first_buy-current_transaction_count)+' more runs first'
+            }
+        }
+        if(minimum_entered_contracts_for_first_buy != 0){
+            if(current_entered_contracts_count<minimum_entered_contracts_for_first_buy){
+                can_make_swap = false
+                reason = 'You need to enter '+(minimum_entered_contracts_for_first_buy-current_entered_contracts_count)+' more contracts first'
+            }
+        }
+
 
         return {can_make_swap:can_make_swap, reason: reason}
     }

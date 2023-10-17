@@ -1899,10 +1899,10 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':'Enter Contract Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
+                {this.render_detail_item('3', {'size':'l', 'details':'Extend Stay In Contract Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'New Exipry Time'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                {this.render_detail_item('3', {'size':'l', 'title':''+(this.get_time_diff(time_to_expiry)), 'details':'Time remaining'})}
 
                 {this.render_detail_item('0')}
             </div>

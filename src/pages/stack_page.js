@@ -42,6 +42,7 @@ class StackPage extends Component {
         get_themes_tags_object: this.get_theme_tags_object(),
         get_orientation_tags_object: this.get_orientation_tags_object(),
         get_selected_e5_tags_object: this.get_selected_e5_tags_object(),
+        get_selected_storage_tags_object: this.get_selected_storage_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
 
@@ -110,17 +111,65 @@ class StackPage extends Component {
         
     }
 
+
+
+
     get_selected_e5_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','E15'], [1]
+                ['xor','',0], ['e','E15'], [this.get_selected_e5_option()]
             ],
         };
         
     }
+
+    get_selected_e5_option(){
+        if(this.props.app_state.selected_e5 == 'E15'){
+            return 1
+        }
+        return 1
+    }
+
+    set_e5_option_tag(){
+        this.setState({get_selected_e5_tags_object: this.get_selected_e5_tags_object(),})
+    }
+
+
+
+
+    get_selected_storage_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', 'infura', 'web3-storage', 'nft-storage'], [this.get_selected_storage_option()]
+            ],
+        };
+    }
+
+    get_selected_storage_option(){
+        if(this.props.app_state.storage_option == 'infura'){
+            return 1
+        }
+        else if(this.props.app_state.storage_option == 'web3-storage'){
+            return 2
+        }
+        else if(this.props.app_state.storage_option == 'nft-storage'){
+            return 3
+        }
+        return 1;
+    }
+
+    set_storage_option_tag(){
+        this.setState({get_selected_storage_tags_object: this.get_selected_storage_tags_object(),})
+    }
+
+
+
 
     get_wallet_thyme_tags_object(){
         return{
@@ -1261,7 +1310,7 @@ class StackPage extends Component {
 
     get_object_ipfs_index(tx){
         var object_as_string = JSON.stringify(tx)
-        var obj_cid = this.props.store_data_in_infura(object_as_string)
+        var obj_cid = this.props.store_objects_data_in_ipfs_using_option(object_as_string)
         return obj_cid
     }
 
@@ -2819,6 +2868,15 @@ class StackPage extends Component {
 
                     {this.render_detail_item('0')}
 
+
+
+                    {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you preferr to use', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
                 </div>
             </div>
         )
@@ -2853,6 +2911,14 @@ class StackPage extends Component {
         var selected_item = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
 
         this.props.when_selected_e5_changed(selected_item)
+    }
+
+    when_get_selected_storage_tags_object_updated(tag_group){
+        this.setState({get_selected_storage_tags_object: tag_group})
+        
+        var selected_item = this.get_selected_item(this.state.get_selected_storage_tags_object, 'e')
+
+        this.props.when_storage_option_changed(selected_item)
     }
 
 

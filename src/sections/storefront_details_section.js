@@ -64,7 +64,7 @@ function toTree(data) {
 class StorefrontDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags()
+        selected: 0, navigate_view_storefront_list_detail_tags_object: this.get_navigate_storefront_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
     };
 
     get_comment_structure_tags(){
@@ -645,7 +645,7 @@ class StorefrontDetailsSection extends Component {
 
 
     render_storefront_message_activity(){
-        var he = this.props.height-110
+        var he = this.props.height-100
         var size = this.props.screensize
         return(
             <div>
@@ -956,7 +956,7 @@ class StorefrontDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
@@ -974,7 +974,7 @@ class StorefrontDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
@@ -1208,18 +1208,26 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_main_comment(comment, depth){
-        var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
         return(
             <div>
-                <div style={{'padding': '1px 0px 0px 0px'}}>
+                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message)}>
                     {this.render_message_as_focused_if_so(comment.data.message)}
                 </div>
 
+                {this.render_message_children(comment, depth)}
+            </div>
+        )
+    }
+
+    render_message_children(comment, depth){
+        var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
+        if(!this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
+            return(
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
                     <div style={{width:'100%'}}>
                         <ul style={{ 'padding': padding, 'listStyle':'none'}}>
                             {comment.children.map((item, index) => (
-                                <li style={{'padding': '4px 0px 0px 0px'}} onClick={()=>console.log()}>
+                                <li style={{'padding': '4px 0px 0px 0px'}}>
                                     <div>
                                         {this.render_main_comment(item, depth+1)}
                                         <div style={{height:3}}/>
@@ -1229,8 +1237,23 @@ class StorefrontDetailsSection extends Component {
                         </ul>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
+    }
+
+    when_message_item_clicked(message){
+        var clone = this.state.hidden_message_children_array.slice();
+        
+        if(clone.includes(message['message_id'])){
+            var index = clone.indexOf(message['message_id']);
+            if(index > -1){
+                clone.splice(index, 1);
+            }
+        }else{
+            clone.push(message['message_id'])
+        }
+
+        this.setState({hidden_message_children_array:clone})
     }
 
     get_message_replies_in_sorted_object(){

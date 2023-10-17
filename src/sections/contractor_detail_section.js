@@ -335,11 +335,11 @@ class ContractorDetailsSection extends Component {
     get_job_details_responses(){
         var object = this.get_contractor_items()[this.props.selected_contractor_item];
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
-            if(this.props.app_state.job_responses[object['id']] == null) return [];
-            return this.props.app_state.job_responses[object['id']]
+            if(this.props.app_state.contractor_applications[object['id']] == null) return [];
+            return this.props.app_state.contractor_applications[object['id']]
         }else{
             var filtered_responses = []
-            var all_responses = this.props.app_state.job_responses[object['id']]
+            var all_responses = this.props.app_state.contractor_applications[object['id']]
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
@@ -350,7 +350,7 @@ class ContractorDetailsSection extends Component {
     }
 
 
-     render_job_response_item(item){
+    render_job_response_item(item){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var is_application_accepted = item['is_response_accepted'];

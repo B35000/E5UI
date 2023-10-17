@@ -74,7 +74,7 @@ class ViewJobRequestPage extends Component {
     
     state = {
         selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:'accept-job-request', id:makeid(8),
-        entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), contractor_object:null, entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags()
+        entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), contractor_object:null, entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
     };
 
     get_comment_structure_tags(){
@@ -587,7 +587,7 @@ class ViewJobRequestPage extends Component {
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
-                        <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
+                        {/* <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/> */}
                         {/* {this.render_top_title()} */}
                         {this.render_focus_list()}
                         {/* <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/> */}
@@ -1134,18 +1134,26 @@ class ViewJobRequestPage extends Component {
     }
 
     render_main_comment(comment, depth){
-        var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
         return(
             <div>
-                <div style={{'padding': '1px 0px 0px 0px'}}>
+                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message)}>
                     {this.render_message_as_focused_if_so(comment.data.message)}
                 </div>
 
+                {this.render_message_children(comment, depth)}
+            </div>
+        )
+    }
+
+    render_message_children(comment, depth){
+        var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
+        if(!this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
+            return(
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
                     <div style={{width:'100%'}}>
                         <ul style={{ 'padding': padding, 'listStyle':'none'}}>
                             {comment.children.map((item, index) => (
-                                <li style={{'padding': '4px 0px 0px 0px'}} onClick={()=>console.log()}>
+                                <li style={{'padding': '4px 0px 0px 0px'}}>
                                     <div>
                                         {this.render_main_comment(item, depth+1)}
                                         <div style={{height:3}}/>
@@ -1155,8 +1163,23 @@ class ViewJobRequestPage extends Component {
                         </ul>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
+    }
+
+    when_message_item_clicked(message){
+        var clone = this.state.hidden_message_children_array.slice();
+        
+        if(clone.includes(message['message_id'])){
+            var index = clone.indexOf(message['message_id']);
+            if(index > -1){
+                clone.splice(index, 1);
+            }
+        }else{
+            clone.push(message['message_id'])
+        }
+
+        this.setState({hidden_message_children_array:clone})
     }
 
     get_message_replies_in_sorted_object(){

@@ -57,7 +57,7 @@ class ExtendContractPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
@@ -90,8 +90,6 @@ class ExtendContractPage extends Component {
         return(
             <div>
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'})}
-                <div style={{height:10}}/>
 
                 {this.show_entered_contract_data()}
 
@@ -107,6 +105,13 @@ class ExtendContractPage extends Component {
                     </LocalizationProvider>
                 </ThemeProvider>
                 <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[2]), 'details':'Max Extend Enter Contract Duration', 'size':'l'})}
+                <div style={{height:10}}/>
+
             </div>
         )
     }
@@ -245,9 +250,20 @@ class ExtendContractPage extends Component {
 
 
     finish_extending_contract_ui(){
-        if(this.state.contract_item['entry_expiry'] > this.state.interactible_timestamp){
+        var picked_time = this.state.interactible_timestamp
+        var limit = this.state.contract_item['data'][1][2];
+
+        if(this.state.contract_item['entry_expiry'] > picked_time){
             this.props.notify('You cant set a time before the current expiry time', 1500);
-        }else{
+        }
+        else if(picked_time - this.state.contract_item['entry_expiry'] >limit){
+            this.props.notify('You cant set a time beyond the extend limit', 1500);
+        }
+        else if(this.state.contract_item['data'][1][29] == 0 && this.state.contract_item['entry_expiry'] - Date.now()/1000 > limit){
+            var waiting_time = (this.state.contract_item['entry_expiry'] - Date.now()/1000) - limit
+            this.props.notify('You have to wait '+(this.get_time_diff(waiting_time))+' to extend your stay.', 1500);
+        }
+        else{
             this.props.extend_contract(this.state)
             this.props.notify('transaction added to stack', 700);
         }

@@ -185,7 +185,7 @@ class PostListSection extends Component {
         var item = this.format_job_item(object)
         return(
             <div onClick={() => this.when_job_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -274,7 +274,7 @@ class PostListSection extends Component {
         var item = this.format_contract_item(object)
         return(
             <div onClick={() => this.when_contract_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -359,7 +359,7 @@ class PostListSection extends Component {
         var item = this.format_proposal_item(object)
         return(
             <div onClick={() => this.when_proposal_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -455,7 +455,7 @@ class PostListSection extends Component {
         var item = this.format_subscription_item(object)
         return(
             <div onClick={() => this.when_subscription_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -560,7 +560,7 @@ class PostListSection extends Component {
         var item = this.format_mail_item(object)
         return(
             <div onClick={() => this.when_mail_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 0px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -653,7 +653,7 @@ class PostListSection extends Component {
         var item = this.format_contractor_item(object)
         return(
             <div onClick={() => this.when_contractor_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -725,7 +725,7 @@ class PostListSection extends Component {
         var item = this.get_e5_data_item_object(item_data, name)
         return ( 
             <div onClick={() => this.when_E5_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 10px 0px 10px'}}>
@@ -860,7 +860,7 @@ class PostListSection extends Component {
         var item = this.format_post_item(object)
         return(
             <div onClick={() => this.when_post_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -945,7 +945,7 @@ class PostListSection extends Component {
         var item = this.format_channel_item(object)
         return(
             <div onClick={() => this.when_channel_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -1039,7 +1039,7 @@ class PostListSection extends Component {
         var item = this.format_storefront_item(object)
         return(
             <div onClick={() => this.when_storefront_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -1131,7 +1131,7 @@ class PostListSection extends Component {
         var item = this.format_bag_item(object)
         return(
             <div onClick={() => this.when_bag_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {/* {this.render_detail_item('1', item['tags'])} */}
                     {/* <div style={{height: 10}}/> */}
                     <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -1244,7 +1244,7 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
             <div onClick={() => this.when_ether_object_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 10px 0px 10px'}}>
@@ -1337,7 +1337,7 @@ class PostListSection extends Component {
         var item = this.get_exchanges_data(object_array, token_id, img, item)
         return ( 
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 10px 0px 10px'}}>
@@ -1420,7 +1420,7 @@ class PostListSection extends Component {
         var item = this.get_exchanges_data(object_array, token_id, img, object)
         return ( 
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
+                <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 10px 0px 10px'}}>
@@ -1445,9 +1445,9 @@ class PostListSection extends Component {
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:150, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                     </div>
                     

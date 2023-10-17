@@ -93,7 +93,7 @@ class ViewApplicationContractPage extends Component {
     }
 
     render_accept_enter_button(item){
-        if(this.props.app_state.user_account_id[item['e5']] == item['applicant_id']){
+        if(this.props.app_state.user_account_id[item['e5']] != item['applicant_id'] && !item['is_response_accepted']){
             return(
                 <div>
                     {this.render_detail_item('0')}
