@@ -100,7 +100,7 @@ class ArchiveProposalPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Target Exchange ID...'} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
                 <div style={{height:10}}/>
-                {this.load_account_suggestions('bounty_exchange_target')}
+                {this.load_token_suggestions('bounty_exchange_target')}
 
                 <div style={{height:10}}/>
                 <div onClick={()=>this.add_bounty_exchange_item()}>
@@ -199,8 +199,8 @@ class ArchiveProposalPage extends Component {
 
 
 
-    load_account_suggestions(type){
-        var items = this.get_suggested_accounts(type)
+    load_token_suggestions(type){
+        var items = this.get_suggested_exchange_accounts(type)
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -216,13 +216,36 @@ class ArchiveProposalPage extends Component {
         )
     }
 
-    get_suggested_accounts(type){
-        if(type == 'bounty_exchange_target'){
-            return[
-                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
-                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
-            ]
+    get_suggested_exchange_accounts(type){
+        var items = [
+            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+        ];
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.object_item['e5']]
+        var sorted_token_exchange_data = []
+        if(exchanges_from_sync == null){
+            exchanges_from_sync = [];
+        } 
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
         }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+        }
+
+        return items;
         
     }
 

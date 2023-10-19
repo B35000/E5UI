@@ -72,7 +72,7 @@ class SendReceiveEtherPage extends Component {
         if(selected_item == 'send' || selected_item == 'e'){
             return(
                 <div>
-                    <div style={{'margin':'20px 0px 0px 20px'}}>
+                    <div style={{'margin':'20px 0px 0px 10px'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_send_ether_ui()}
                     </div> 
@@ -92,7 +92,7 @@ class SendReceiveEtherPage extends Component {
         else{
             return(
                 <div>
-                    <div style={{'margin':'20px 0px 0px 20px'}}>
+                    <div style={{'margin':'20px 0px 0px 10px'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_receive_ether_ui()}
                     </div>
@@ -127,7 +127,7 @@ class SendReceiveEtherPage extends Component {
 
     render_send_ether_ui(){
         return(
-            <div style={{'padding':'10px 30px 0px 0px', width:'100%'}}>
+            <div style={{'padding':'10px 10px 0px 0px', width:'100%'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Send Ether using the address shown below', 'color':'dark-grey'})}
                 {this.render_medium_screen_ui()}
                 {this.render_dialog_ui()}
@@ -563,21 +563,22 @@ class SendReceiveEtherPage extends Component {
 
     render_scan_qr_code_ui(){
         return(
-            <div style={{'padding':'10px 30px 0px 0px'}}>
+            <div style={{'padding':'10px 10px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Receive Ether using the address shown below', 'color':'dark-grey'})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                <div style={{height: 10}}/>
                 {this.render_detail_item('5',{'text':'Copy to Clipboard', 'action':'copy_to_clipboard'})}
                 <div style={{height: this.props.height, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'30px 0px 0px 0px'}}>
                     <QRCode
-                        size={100}
+                        size={150}
                         style={{ height: "auto", maxWidth: "100%", width: "50%" }}
                         value={this.get_account_address()}
                         viewBox={`0 0 100 100`}
                     />
                     
                 </div>
-                <p style={{'margin':'5% 0% 0% 47%', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
+                <p style={{'margin':'5% 0% 0% 0%', 'text-align': 'center', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
                 
             </div>
         )

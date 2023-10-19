@@ -735,7 +735,7 @@ class PostListSection extends Component {
                     <div style={{'margin':'0px 10px 0px 10px'}}>
                         {this.render_detail_item('10', item['address'])}
                     </div>
-                    
+                    <div style={{height: 10}}/>
                 </div>         
             </div>
         );
@@ -1445,7 +1445,7 @@ class PostListSection extends Component {
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:150, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>

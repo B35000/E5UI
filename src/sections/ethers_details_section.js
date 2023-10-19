@@ -162,7 +162,7 @@ class EthersDetailsSection extends Component {
 
 
     open_send_receive_ether_bottomsheet(){
-        if(this.props.app_state.user_account_id['E15'] == 1){
+        if(!this.props.app_state.has_wallet_been_set){
             this.props.notify('You need to set your wallet first', 800)
         }else{
             var item = this.get_ethers_data()[this.props.selected_ether_item];
@@ -197,7 +197,7 @@ class EthersDetailsSection extends Component {
                 'lowest_gas_consumed':{'title':number_with_commas(this.get_lowest_gas_figure('E15')), 'details':'Lowest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
 
                 'transaction_count_chart_data_label':{'title':'Transactions Processed', 'details':'Amount of transactions processed in the last 100 blocks', 'size' :'l'},
-                'transaction_count_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points('E15')},
+                'transaction_count_chart_data':{'interval':0, 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points('E15')},
                 
 
                 'gas_limit':{'title':number_with_commas(this.get_latest_block_data('E15').gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},

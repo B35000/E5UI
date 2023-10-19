@@ -144,7 +144,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','private', 'public'], [1]
+                ['xor','',0], ['e','private', 'public'], [2]
             ],
         };
     }
@@ -431,14 +431,14 @@ class NewContractPage extends Component {
 
                 <div style={{height:20}}/>
                 <div className="row">
-                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                         {this.show_previous_button()}
                     </div>
                     <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                         {this.show_next_button()}
                     </div>
                 </div>
-                
+                <div style={{height:20}}/>
             </div>
         )
     }
@@ -466,6 +466,7 @@ class NewContractPage extends Component {
     }
 
 
+
     render_contract_section_parts(){
         var page = this.state.page
 
@@ -477,7 +478,7 @@ class NewContractPage extends Component {
                     <Tags page_tags_object={this.state.new_contract_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_type_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Note: if set to private, you will be giving new accounts access to the contract after its created', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'Note: if set to private, you will be giving new accounts access to the contract manually after its created', 'textsize':'10px', 'font':'Sans-serif'})}
                 </div>
             )
         }
@@ -567,7 +568,7 @@ class NewContractPage extends Component {
                     <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: yes', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'Recommended: no', 'textsize':'10px', 'font':'Sans-serif'})}
 
                 </div>
             )
@@ -695,9 +696,12 @@ class NewContractPage extends Component {
     }
 
     reset_the_number_picker(){
-        if(this.number_picker_ref.current != null){
-            this.number_picker_ref.current.reset_number_picker()
-        }
+        var me = this;
+        setTimeout(function() {
+            if(me.number_picker_ref.current != null){
+                me.number_picker_ref.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
     }
 
 
@@ -989,7 +993,7 @@ class NewContractPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired amount. The first exchange must be the End or Spend exchange', 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
@@ -1026,6 +1030,9 @@ class NewContractPage extends Component {
         }
         else if(amount == 0){
             this.props.notify('please put a valid amount', 600)
+        }
+        else if(this.state.price_data.length == 0 && (exchange_id != '3' || exchange_id != '5')){
+            this.props.notify('the first exchange must be the End or Spend exchange', 1100)
         }
         else{
             var price_data_clone = this.state.price_data.slice()

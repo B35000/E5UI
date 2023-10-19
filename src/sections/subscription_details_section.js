@@ -17,7 +17,7 @@ function number_with_commas(x) {
 class SubscriptionDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_subscriptions_list_detail_tags_object: this.get_navigate_view_subscriptions_list_detail_tags(), subscription_payment_search_text: '', subscription_cancellation_search_text:''
+        selected: 0, navigate_view_subscriptions_list_detail_tags_object: this.get_navigate_view_subscriptions_list_detail_tags(), subscription_payment_search_text: '', subscription_cancellation_search_text:'', typed_search_id:'', searched_account:'0'
     };
 
     componentDidMount() {
@@ -42,7 +42,7 @@ class SubscriptionDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','details','e.events', 'e.moderator-events'],[1]
+              ['xor','',0], ['e','details','search', 'e.events', 'e.moderator-events'],[1]
           ],
           'events': [
                 ['xor', 'e', 1], ['events', 'transfers', 'payments', 'cancellations', 'collections','modifications'], [1], [1]
@@ -157,6 +157,14 @@ class SubscriptionDetailsSection extends Component {
             return(
                 <div>
                     {this.render_blocked_accounts_logs()}
+                </div>
+            )
+        }
+
+        else if(selected_item == 'search'){
+            return(
+                <div>
+                    {this.render_search_ui()}
                 </div>
             )
         }
@@ -1538,6 +1546,193 @@ class SubscriptionDetailsSection extends Component {
 
 
 
+
+
+
+
+
+    render_search_ui(){
+       var he = this.props.height - 45
+        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Subscription ' + object['id'], 'details': 'Search Subscription Payment', 'size': 'l' })}
+                    </div>
+                    <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
+                        <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput height={25} placeholder={'Enter ID...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search(object)}>
+                            {this.render_detail_item('5',{'text':'Search','action':''})}
+                        </div>
+                    </div>
+                    {this.render_search_results_if_any(object)}
+                </div>
+            </div>
+        ) 
+    }
+
+    when_text_input_field_changed(text){
+        this.setState({typed_search_id: text})
+    }
+
+
+    perform_search(object){
+        var typed_account = this.state.typed_search_id.trim()
+
+        if(typed_account == ''){
+            this.props.notify('type something!', 800)
+        }
+        else if(isNaN(typed_account)){
+            this.props.notify('that ID is not valid', 800)
+        }
+        else if(parseInt(typed_account) < 1001){
+            this.props.notify('that ID is not valid', 800)
+        }else{
+            this.props.notify('searching...', 500)
+            this.setState({searched_account: typed_account})
+            this.props.get_accounts_payment_information(object['id'], object['e5'], typed_account)
+        }
+        
+    }
+
+
+    render_search_results_if_any(object){
+        var result = this.props.app_state.subscription_search_result[object['id']+this.state.searched_account]
+
+        if(result == null || result['events'].length == 0){
+            var items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            var first_payment_time = result['events'][0].returnValues.p5
+            var first_payment_block = result['events'][0].returnValues.p4
+            var latest_payment_time = result['events'][result['events'].length-1].returnValues.p5
+            var latest_payment_block = result['events'][result['events'].length-1].returnValues.p4
+            var time_unit = object['data'][1][5] == 0 ? 60*53 : object['data'][1][5]
+            var remaining_time_units = Math.floor(result['payment'] / time_unit)
+            return(
+                <div style={{ margin: '5px 10px 5px 10px' }}>
+                    {this.render_detail_item('3', {'title':this.get_time_diff(result['payment']), 'details':'Remaining Subscription Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Remaining Time Units (As of Now)', 'subtitle': this.format_power_figure(remaining_time_units), 'barwidth': this.calculate_bar_width(remaining_time_units), 'number': this.format_account_balance_figure(remaining_time_units), 'barcolor': '', 'relativepower': 'time-units', })}
+                    </div>
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':''+(new Date(latest_payment_time*1000))+', '+(this.get_time_difference(latest_payment_time))+' ago', 'details':'Latest Payment Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':(latest_payment_block), 'details':'Latest Payment Block', 'size':'s'})}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':''+(new Date(first_payment_time*1000))+', '+(this.get_time_difference(first_payment_time))+' ago', 'details':'First Payment Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':(first_payment_block), 'details':'First Payment Block', 'size':'s'})}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Time Units Paid For', 'details':'Chart containing the amount in time units that have been accumulated.', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('6', {'dataPoints':this.get_search_result_data_points(result['events']), 'interval':this.get_interval_figure(result['events'])})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Time Units', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Highest Time Units Paid For ', 'subtitle': this.format_power_figure(this.get_interval_figure(result['events'])), 'barwidth': this.calculate_bar_width(this.get_interval_figure(result['events'])), 'number': this.format_account_balance_figure(this.get_interval_figure(result['events'])), 'barcolor': '', 'relativepower': 'time-units', })}
+                    </div>
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Lowest Time Units Paid For ', 'subtitle': this.format_power_figure(this.get_lowest_figure(result['events'])), 'barwidth': this.calculate_bar_width(this.get_lowest_figure(result['events'])), 'number': this.format_account_balance_figure(this.get_lowest_figure(result['events'])), 'barcolor': '', 'relativepower': 'time-units', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+
+    get_search_result_data_points(events){
+        var data = []
+        for(var i=0; i<events.length; i++){
+            if(i==0){
+                data.push(bigInt(events[i].returnValues.p3))
+            }else{
+                data.push(data[data.length-1]+bigInt(events[i].returnValues.p3))
+            }
+
+            if(i==events.length-1){
+                var diff = Date.now()/1000 - events[i].returnValues.p5
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }
+            else{
+                var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }
+            
+        }
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+
+    get_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(event.returnValues.p3)
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+    get_lowest_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(event.returnValues.p3)
+        });
+        var largest = Math.min.apply(Math, data);
+        return largest
+    }
 
 
 

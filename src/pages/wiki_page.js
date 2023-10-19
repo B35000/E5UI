@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
+import SettingsDataImage from './../assets/settings_data_image.png';
+import WalletDataImage from './../assets/wallet_data_image.png';
+import SendEtherDataImage from './../assets/send_ether_data_image.png';
+
 class WikiPage extends Component {
     
     state = {
@@ -22,12 +26,31 @@ class WikiPage extends Component {
 
     render(){
         return(
-            <div style={{'margin':'10px 0px 0px 10px'}}>
-                <Tags page_tags_object={this.state.get_wiki_page_tags_object} tag_size={'l'} when_tags_updated={this.when_wiki_tags_updated.bind(this)} theme={this.props.theme}/>
+            <div style={{'margin':'10px 10px 0px 10px'}}>
+                {/* <Tags page_tags_object={this.state.get_wiki_page_tags_object} tag_size={'l'} when_tags_updated={this.when_wiki_tags_updated.bind(this)} theme={this.props.theme}/>
                 
                 <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
-                </div>
+                </div> */}
+
+                {this.render_detail_item('3', {'title':'One more step', 'details':'You need to set your wallet and fill it with some ether', 'size':'l'})}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('4', {'text':'The wallet section is in the settings-data...', 'textsize':'12px', 'font':'Sans-serif'})}
+                <div style={{height: 20}}/>
+                <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
+                <div style={{height: 30}}/>
+
+                {this.render_detail_item('4', {'text':'Under the Wallet tag...', 'textsize':'12px', 'font':'Sans-serif'})}
+                <div style={{height: 20}}/>
+                <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
+                <div style={{height: 30}}/>
+
+
+                {this.render_detail_item('4', {'text':'Then afterwards fill it with the E5s ether of your choice', 'textsize':'12px', 'font':'Sans-serif'})}
+                <div style={{height: 20}}/>
+                <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SendEtherDataImage} alt="E5"/>
+                <div style={{height: 20}}/>
                 
             </div>
         )

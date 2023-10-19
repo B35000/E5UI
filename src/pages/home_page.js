@@ -1204,7 +1204,7 @@ class home_page extends Component {
 
                 get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} get_e5_data={this.get_e5_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)}
 
-                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)}
+                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)}
                 />
             </div>
         )

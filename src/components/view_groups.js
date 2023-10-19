@@ -164,8 +164,8 @@ class ViewGroups extends Component {
                             <img src={img} style={{height:50 ,width:50, 'border-radius': '50%'}} />
                         </div>
                         <div style={{'margin':'0px 0px 0px 10px'}}>
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line' }}>{details}</p>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                         </div>
                     </div>
                 </div>
@@ -175,8 +175,8 @@ class ViewGroups extends Component {
                     <div style={{'display': 'flex','flex-direction': 'row','padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}}>{title}</p> 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{details}</p>
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>
@@ -198,7 +198,7 @@ class ViewGroups extends Component {
 
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => console.log('text-tapped')}>
+                    <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
                       <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 5px 5px 10px','border-radius': '8px' }}>
                           <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_text_if_empty_or_null(text)}</p>
                       </div>
@@ -228,6 +228,7 @@ class ViewGroups extends Component {
             var default_chart_color = this.props.theme['chart_color'];
             var background_color = this.props.theme['chart_background_color'];
             var dataPoints = object_data != null ? object_data['dataPoints']: this.generateDataPoints(23);
+            var interval = (object_data != null) ? object_data['interval'] : 0
             const options = {
               theme: "light1", // "light1", "dark1", "dark2"
               animationEnabled: true,
@@ -248,7 +249,7 @@ class ViewGroups extends Component {
               },
               axisY:{
                   labelFontSize: 10,
-                  interval: 30,//size of space between labels
+                  interval: interval,//size of space between labels
                   tickLength: 0,
                   gridThickness: 0.3,
                   gridColor: "#767676",
@@ -272,8 +273,8 @@ class ViewGroups extends Component {
             }
 
             return(
-                <div style={{'margin':'10px 0px 0px 5px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:430, 'border-radius': border_radius}}>
-                    <div style={{'padding':'0px 0px 10px 5px', height:420}}>
+                <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:430, 'border-radius': border_radius}}>
+                    <div style={{'padding':'0px 0px 10px 0px', height:420}}>
                         <div style={{'margin': '10px 0px 0px 0px'}}>
                           <div style={{ height: 300, width: '100%' ,'position': 'relative'}}>
                               <div style={{ height: 30, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
@@ -337,7 +338,7 @@ class ViewGroups extends Component {
 
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => console.log('text-tapped')}>
+                    <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
                       <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none'}}>{this.format_text_if_empty_or_null(text)}</p>
                     </div>
                 </div>
@@ -345,6 +346,10 @@ class ViewGroups extends Component {
             );
         }
 
+    }
+
+    copy_id_to_clipboard(text){
+        navigator.clipboard.writeText(text)
     }
 
 

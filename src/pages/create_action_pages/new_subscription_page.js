@@ -477,7 +477,7 @@ class NewSubscriptionPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -506,7 +506,7 @@ class NewSubscriptionPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 1 min', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                   <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
+                   <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
                 </div>
             )
         }
@@ -521,7 +521,7 @@ class NewSubscriptionPage extends Component {
                     </div>
 
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -538,7 +538,7 @@ class NewSubscriptionPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -561,9 +561,12 @@ class NewSubscriptionPage extends Component {
     }
 
     reset_the_number_picker(){
-        if(this.number_picker_ref.current != null){
-            this.number_picker_ref.current.reset_number_picker()
-        }
+        var me = this;
+        setTimeout(function() {
+            if(me.number_picker_ref.current != null){
+                me.number_picker_ref.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
     }
 
 

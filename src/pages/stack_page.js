@@ -360,8 +360,6 @@ class StackPage extends Component {
     }
 
     render_stack_transactions_part(){
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
         var middle = this.props.height-130;
         var size = this.props.size;
         if(size == 'm'){
@@ -388,17 +386,42 @@ class StackPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '2px 2px 2px 2px'}} onClick={()=>console.log()}>
-                                {this.render_stack_item(item, index)}
-                            </li>
-                        ))}
-                    </ul>
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 2px 2px 2px'}} onClick={()=>console.log()}>
+                                    {this.render_stack_item(item, index)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
+                
             )
         }
+    }
+
+    lengthInUtf8Bytes(str) {
+        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+        var m = encodeURIComponent(str).match(/%[89ABab]/g);
+        return str.length + (m ? m.length : 0);
+    }
+
+    get_browser_cache_size_limit(){
+        if (localStorage && !localStorage.getItem('size')) {
+            var i = 0;
+            try {
+                // Test up to 10 MB
+                for (i = 250; i <= 10000; i += 250) {
+                    localStorage.setItem('test', new Array((i * 1024) + 1).join('a'));
+                }
+            } catch (e) {
+                localStorage.removeItem('test');
+                localStorage.setItem('size', i - 250);            
+            }
+        }
+        return localStorage.getItem('size')
     }
 
     render_stack_item(item, index){
@@ -428,6 +451,8 @@ class StackPage extends Component {
 
 
     render_stack_gas_part(){
+        var cache_size = this.get_browser_cache_size_limit();
+        var data_size = this.lengthInUtf8Bytes(localStorage.getItem("state"))
         return(
             <div>  
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -439,6 +464,15 @@ class StackPage extends Component {
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Number of Transactions', 'subtitle':this.format_power_figure(this.props.app_state.stack_items.length), 'barwidth':this.calculate_bar_width(this.props.app_state.stack_items.length), 'number':this.format_account_balance_figure(this.props.app_state.stack_items.length), 'barcolor':'', 'relativepower':'units', })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
+                    
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(cache_size*1024), 'number':this.format_account_balance_figure(cache_size*1024), 'barcolor':'#606060', 'relativepower':'bytes', })}
+
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(data_size), 'number':this.format_account_balance_figure(data_size), 'barcolor':'#606060', 'relativepower':'bytes', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -594,6 +628,11 @@ class StackPage extends Component {
 
 
     run_transactions = async () => {
+        if(this.props.app_state.is_running){
+            this.props.notify('e is already running a transaction for you', 1200)
+            return;
+        }
+        this.props.lock_run(true)
         var txs = this.props.app_state.stack_items
         if(txs.length > 0){
             this.props.notify('running your transactions...', 600)
@@ -1296,13 +1335,19 @@ class StackPage extends Component {
         var run_gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
 
         if(txs.length > 0){
-            if(account_balance < (run_gas_limit * run_gas_price)){
+            if(account_balance == 0){
+                this.props.open_wallet_guide_bottomsheet()
+                this.props.lock_run(false)
+            }
+            else if(account_balance < (run_gas_limit * run_gas_price)){
                 this.setState({invalid_ether_amount_dialog_box: true})
+                this.props.lock_run(false)
             }
             else{
                 this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei, delete_pos_array)
             }
         }else{
+            this.props.lock_run(false)
             this.props.notify('add some transactions first!',600)
         }
         
@@ -1319,13 +1364,34 @@ class StackPage extends Component {
     }
 
     render_dialog_ui(){
+        var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
+        var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
+        var run_gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        var required_ether = (run_gas_limit * run_gas_price);
         return(
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.invalid_ether_amount_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
                     
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Issue With Run</h4>
 
-                    {this.render_detail_item('3', {'title':'Invalid Balance', 'details':'You need ether to run your transactions', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Theres an issue with your Balance', 'details':'You need ether to run your transactions', 'size':'s'})}
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
+                        {this.render_detail_item('2', this.get_balance_amount_in_wei())}
+                        {this.render_detail_item('2', this.get_balance_amount_in_ether())}
+                    </div>
+
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Required Balance in Ether and Wei</p>
+                        
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether), 'number':this.format_account_balance_figure(required_ether), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether/10**18), 'number':required_ether/10**18, 'barcolor':'#606060', 'relativepower':'ether', })}
+                    </div>
 
                 </div>
                 
@@ -2843,7 +2909,7 @@ class StackPage extends Component {
         return(
             <div>
                 <div style={{height: 10}}/>
-                <div style={{'padding': '0px 0px 0px 10px'}}>
+                <div style={{'padding': '0px 0px 0px 0px'}}>
 
                     {this.render_detail_item('3',{'title':'App Theme', 'details':'Set the look and feel of E5.', 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -2957,6 +3023,43 @@ class StackPage extends Component {
         }
     }
 
+    render_set_wallet_data(){
+        return(
+            <div>
+                {this.render_wallet_address()}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
+                        {this.render_detail_item('2', this.get_balance_amount_in_wei())}
+                        {this.render_detail_item('2', this.get_balance_amount_in_ether())}
+                </div>
+                
+                
+            </div>
+        )
+    }
+
+    render_wallet_address(){
+        if(this.props.app_state.has_wallet_been_set){
+            return(
+                <div>
+                    <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>
+                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                    </div>
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div>
+                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':'0x0000000000000000000000000000000000000000', 'size':'s'})}
+                    </div>
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
 
     render_wallet_settings_part(){
         return(
@@ -3057,26 +3160,6 @@ class StackPage extends Component {
 
     hasWhiteSpace(s) {
         return s.indexOf(' ') >= 0;
-    }
-
-
-    render_set_wallet_data(){
-        return(
-            <div>
-                <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>
-                    {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
-                </div>
-                <div style={{height: 10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
-                        {this.render_detail_item('2', this.get_balance_amount_in_wei())}
-                        {this.render_detail_item('2', this.get_balance_amount_in_ether())}
-                </div>
-                
-                
-            </div>
-        )
     }
 
 

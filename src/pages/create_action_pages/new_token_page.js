@@ -638,7 +638,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 100,000,000e2', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -652,7 +652,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
                 </div>
             )
         }
@@ -667,7 +667,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 3.5%', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
                 </div>
             )
         }
@@ -681,7 +681,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
                 </div>
             )
         }
@@ -699,6 +699,7 @@ class NewTokenPage extends Component {
         var page = this.state.page
         if(page < 18){
             this.setState({page: this.state.page+1})
+            this.reset_the_number_picker()
         }
     }
 
@@ -706,7 +707,23 @@ class NewTokenPage extends Component {
         var page = this.state.page
         if(page > 0){
             this.setState({page: this.state.page-1})
+            this.reset_the_number_picker()
         }
+    }
+
+    constructor(props) {
+        super(props);
+        this.number_picker_ref = React.createRef();
+    }
+
+
+    reset_the_number_picker(){
+        var me = this;
+        setTimeout(function() {
+            if(me.number_picker_ref.current != null){
+                me.number_picker_ref.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
     }
 
 
@@ -722,14 +739,14 @@ class NewTokenPage extends Component {
 
                 <div style={{height:20}}/>
                 <div className="row">
-                    <div className="col-6" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                         {this.show_custom_previous_button()}
                     </div>
                     <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                         {this.show_custom_next_button()}
                     </div>
                 </div>
-                
+                <div style={{height:20}}/>
             </div>
         )
     }
@@ -784,7 +801,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 100,000,000e2', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_liquidity_total_supply.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -798,7 +815,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_buy_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
                 </div>
             )
         }
@@ -812,7 +829,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_exchange_amount_sell_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
                 </div>
             )
         }
@@ -824,7 +841,7 @@ class NewTokenPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.minimum_time_between_swap), 'details':'Minimum Time Between Swap', 'size':'l'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -839,7 +856,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 3.5%', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_trust_fee_proportion.bind(this)} theme={this.props.theme} power_limit={9}/>
                     
                 </div>
             )
@@ -854,7 +871,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_transactions_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_transactions_between_swap), 'barcolor':'', 'relativepower':'transactions', })}
                     </div>
 
-                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -868,7 +885,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Blocks Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_blocks_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_blocks_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_blocks_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
                     </div>
 
-                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_blocks_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_blocks_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -882,7 +899,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts Between Swap', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_between_swap), 'barcolor':'', 'relativepower':'blocks', })}
                     </div>
 
-                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -896,7 +913,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Transactions For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_transactions_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_transactions_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
                     </div>
 
-                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_transactions_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -910,7 +927,7 @@ class NewTokenPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Entered Contracts For First Buy', 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_for_first_buy), 'barcolor':'', 'relativepower':'blocks', })}
                     </div>
 
-                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_minimum_entered_contracts_for_first_buy.bind(this)} theme={this.props.theme} power_limit={63}/>
                     
                 </div>
             )
@@ -969,7 +986,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                     
                 </div>
             )
@@ -998,9 +1015,9 @@ class NewTokenPage extends Component {
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit * 100), 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(bigInt(this.state.default_exchange_amount_buy_limit).multiply(100)), 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maturity_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maturity_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -1015,7 +1032,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 40% - 51%', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
             )
         }
@@ -1030,7 +1047,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 65% - 91%', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
             )
         }
@@ -1047,7 +1064,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: 4', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_block_reset_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_block_reset_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -1078,7 +1095,7 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_x.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_x.bind(this)} theme={this.props.theme} power_limit={63}/>
                     
                 </div>
             )
@@ -1095,7 +1112,7 @@ class NewTokenPage extends Component {
 
                     {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -1105,6 +1122,7 @@ class NewTokenPage extends Component {
         var page = this.state.custom_page
         if(page < 22){
             this.setState({custom_page: this.state.custom_page+1})
+            this.reset_the_number_picker()
         }
     }
 
@@ -1112,6 +1130,7 @@ class NewTokenPage extends Component {
         var page = this.state.custom_page
         if(page > 0){
             this.setState({custom_page: this.state.custom_page-1})
+            this.reset_the_number_picker()
         }
     }
 
