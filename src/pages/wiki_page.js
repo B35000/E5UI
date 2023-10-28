@@ -5,6 +5,7 @@ import Tags from './../components/tags';
 import SettingsDataImage from './../assets/settings_data_image.png';
 import WalletDataImage from './../assets/wallet_data_image.png';
 import SendEtherDataImage from './../assets/send_ether_data_image.png';
+import OpenStackDataImage from './../assets/open_stack_data_image.png';
 
 class WikiPage extends Component {
     
@@ -24,6 +25,10 @@ class WikiPage extends Component {
         };
     }
 
+    set(option){
+        this.setState({option: option})
+    }
+
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
@@ -33,27 +38,62 @@ class WikiPage extends Component {
                     {this.render_everything()}   
                 </div> */}
 
-                {this.render_detail_item('3', {'title':'One more step', 'details':'You need to set your wallet and fill it with some ether', 'size':'l'})}
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('4', {'text':'The wallet section is in the settings-data...', 'textsize':'12px', 'font':'Sans-serif'})}
-                <div style={{height: 20}}/>
-                <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
-                <div style={{height: 30}}/>
-
-                {this.render_detail_item('4', {'text':'Under the Wallet tag...', 'textsize':'12px', 'font':'Sans-serif'})}
-                <div style={{height: 20}}/>
-                <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
-                <div style={{height: 30}}/>
-
-
-                {this.render_detail_item('4', {'text':'Then afterwards fill it with the E5s ether of your choice', 'textsize':'12px', 'font':'Sans-serif'})}
-                <div style={{height: 20}}/>
-                <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SendEtherDataImage} alt="E5"/>
-                <div style={{height: 20}}/>
+                {this.render_option()}
                 
             </div>
         )
+    }
+
+
+    render_option(){
+        if(this.state.option == 'one'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'One more step', 'details':'You need to set your wallet and fill it with some ether', 'size':'l'})}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('4', {'text':'The wallet section is in the settings-data...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+                    {this.render_detail_item('4', {'text':'Under the Wallet tag...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+
+                    {this.render_detail_item('4', {'text':'Then afterwards fill it with the E5s ether of your choice', 'textsize':'12px', 'font':'Sans-serif'})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SendEtherDataImage} alt="E5"/>
+                    <div style={{height: 20}}/>
+                </div>
+            )
+        }
+        else if(this.state.option == 'action'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Action Required', 'details':'You need to set your wallet first', 'size':'l'})}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('4', {'text':'The wallet section is in the stack page...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={OpenStackDataImage} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+                    {this.render_detail_item('4', {'text':'In the settings-data section...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+                    {this.render_detail_item('4', {'text':'Under the Wallet tag...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    <div style={{height: 20}}/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
+                    <div style={{height: 30}}/>
+
+                </div>
+            )
+        }
     }
 
     when_wiki_tags_updated(tag_group){

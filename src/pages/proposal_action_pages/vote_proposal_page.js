@@ -240,7 +240,7 @@ class VoteProposalPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.bounty_exchanges
+        var items = [].concat(this.state.bounty_exchanges)
 
         if(items.length == 0){
             items = [0, 1]
@@ -286,7 +286,7 @@ class VoteProposalPage extends Component {
 
 
     load_token_suggestions(type){
-        var items = this.get_suggested_exchange_accounts(type)
+        var items = [].concat(this.get_suggested_exchange_accounts(type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(

@@ -148,7 +148,7 @@ class FreezeUnfreezePage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.freeze_unfreeze_actions
+        var items = [].concat(this.state.freeze_unfreeze_actions)
 
         if(items.length == 0){
             items = [0, 1]

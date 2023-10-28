@@ -210,7 +210,7 @@ class ViewJobRequestPage extends Component {
                     {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'s'})}
                     <div style={{height:5}}/>
 
-                    {this.render_image_part(item['entered_images'])}
+                    {this.render_image_part([].concat(item['entered_images']))}
 
                     {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'s'})}
                     <div style={{height:5}}/>
@@ -300,7 +300,7 @@ class ViewJobRequestPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = item['price_data']
+        var items = [].concat(item['price_data'])
 
         if(items.length == 0){
             items = [0,3,0]
@@ -434,7 +434,7 @@ class ViewJobRequestPage extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_contract_items()
+        var items = [].concat(this.get_contract_items())
 
         if(items.length == 0){
             items = ['0','1'];
@@ -647,7 +647,7 @@ class ViewJobRequestPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages()
+        var items = [].concat(this.get_convo_messages())
         var stacked_items = this.get_stacked_items()
 
         if(items.length == 0 && stacked_items.length == 0){
@@ -1072,7 +1072,7 @@ class ViewJobRequestPage extends Component {
 
     render_focus_list(){
         var object = this.state.request_item;
-        var items = this.state.focused_message['tree'][object['job_request_id']]
+        var items = [].concat(this.state.focused_message['tree'][object['job_request_id']])
 
         if(items != null && items.length > 0){
             return(
@@ -1118,7 +1118,7 @@ class ViewJobRequestPage extends Component {
 
 
     render_all_comments(){
-        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
+        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object())
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (

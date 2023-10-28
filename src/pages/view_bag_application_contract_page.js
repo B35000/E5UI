@@ -112,7 +112,7 @@ class ViewBagApplicationContractPage extends Component {
     }
 
     render_application_price_amounts(object){
-        var items = object['price_data']
+        var items = [].concat(object['price_data'])
         var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
@@ -310,10 +310,11 @@ class ViewBagApplicationContractPage extends Component {
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':'tokens'})}
                         </li>
@@ -331,9 +332,6 @@ class ViewBagApplicationContractPage extends Component {
                 entered_indexing_tags:['accept', 'bag', 'fulfilment', 'application'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }
-
-        console.log('--------------------------view_bag_application_contract_page-set_object---------------------------')
-        console.log(item['contract']['e5'])
         this.setState({application_item:item, e5: item['contract']['e5']})
     }
 

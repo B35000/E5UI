@@ -421,7 +421,7 @@ class ModifyTokenPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.reconfig_values
+        var items = [].concat(this.state.reconfig_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -523,7 +523,7 @@ class ModifyTokenPage extends Component {
 
 
     load_account_suggestions(type){
-        var items = this.get_suggested_accounts(type)
+        var items = [].concat(this.get_suggested_accounts(type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(

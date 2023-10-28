@@ -274,7 +274,10 @@ class ClearPurchasePage extends Component {
         var signature_data = item['signature_data']
         
         var valid_signature = await this.props.confirm_signature(scanned_signature, signature_data, client_address)
-        if(!valid_signature){
+        if(scanned_signature == ''){
+            this.props.notify('Please paste a signature to finish here', 800)
+        }
+        else if(!valid_signature){
             this.props.notify('The signature you received is invalid', 800)
         }else{
             this.props.add_clearing_purchase_action_to_stack(this.state)

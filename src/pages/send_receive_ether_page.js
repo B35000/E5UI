@@ -27,6 +27,7 @@ class SendReceiveEtherPage extends Component {
 
         // This binding is necessary to make `this` work in the callback.
         this.onNewScanResult = this.onNewScanResult.bind(this);
+        this.number_picker = React.createRef();
     }
     
     state = {
@@ -41,6 +42,12 @@ class SendReceiveEtherPage extends Component {
 
     set_object(item){
         this.setState({ether: item})
+        var me = this;
+        setTimeout(function() {
+            if(me.number_picker.current != null){
+                me.number_picker.current.reset_number_picker()
+            }
+        }, (1 * 1000));
     }
 
     get_send_receive_ether_page_tags_object(){
@@ -184,11 +191,13 @@ class SendReceiveEtherPage extends Component {
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
                 </div>
-                {this.render_amount_number_picker()}
+
+                <div style={{height: 30}}/>
+                {this.render_detail_item('3', {'title':'Amount to Send', 'details':'Set the amount to send in the number picker below', 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
@@ -196,22 +205,23 @@ class SendReceiveEtherPage extends Component {
                     {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                     {this.render_detail_item('2', this.get_picked_amount_in_ether())}
                 </div>
-                <div style={{height: 10}}/>
+                {this.render_amount_number_picker()}
 
-
+                {/*  */}
 
                 {this.render_detail_item('0')}
-
-                {this.render_gas_price_number_picker()}
+                
+                {/* <div style={{height: 10}}/> */}
+                {this.render_detail_item('3', {'title':'Transaction Gas Price', 'details':'Set the gas price for your transaction below', 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Gas Price in Ether and Wei</p>
-
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Gas Price in Ether and Gwei.</p>
                     {this.render_detail_item('2', this.get_picked_gas_price_in_wei())}
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**9), 'number':this.format_account_balance_figure(this.state.picked_wei_gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
-                    {this.render_detail_item('2', this.get_picked_gas_price_in_ether())}
-                    
+                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**9), 'number':(this.state.picked_wei_gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    {/* {this.render_detail_item('2', this.get_picked_gas_price_in_ether())} */}
                 </div>
+
+                {this.render_gas_price_number_picker()}
 
                 {this.render_detail_item('0')}
                 
@@ -246,12 +256,12 @@ class SendReceiveEtherPage extends Component {
     render_dialog_ui(){
         return(
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
-                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
                     {this.render_detail_item('3', {'title':'Send Ether Confirmation', 'details':'Confirm that you want to send Ether to the targeted recipient', 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
 
                         {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                         {this.render_detail_item('2', this.get_picked_amount_in_ether())}
@@ -276,7 +286,7 @@ class SendReceiveEtherPage extends Component {
         var size = this.props.size;
         var items = []
         if(this.props.transaction_history != null){
-            var items = this.props.transaction_history == null ? [] : this.props.transaction_history
+            var items = this.props.transaction_history == null ? [] : [].concat(this.props.transaction_history)
         }
 
         if(items.length == 0){
@@ -402,7 +412,7 @@ class SendReceiveEtherPage extends Component {
             'title':'',
             'subtitle':'',
             'barwidth':this.calculate_bar_width(this.state.picked_wei_amount/10**18),
-            'number':this.format_account_balance_figure(this.state.picked_wei_amount/10**18),
+            'number':(this.state.picked_wei_amount/10**18),
             'barcolor':'#606060',
             'relativepower':'ether',
         }
@@ -497,18 +507,20 @@ class SendReceiveEtherPage extends Component {
 
     render_amount_number_picker(){
         var e5 = this.state.ether['e5']
+        var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker number_limit={this.props.app_state.account_balance[e5]} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance[e5])}/>
+                <NumberPicker ref={this.number_picker} number_limit={limit} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(limit)}/>
             </div>
         )
     }
 
     render_gas_price_number_picker(){
         var e5 = this.state.ether['e5']
+        var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker number_limit={this.props.app_state.account_balance[e5]} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(this.props.app_state.account_balance[e5])}/>
+                <NumberPicker ref={this.number_picker} number_limit={limit} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(limit)}/>
             </div>
         )
     }
@@ -626,9 +638,9 @@ class SendReceiveEtherPage extends Component {
 
     when_send_ether_confirmation_received = () => {
         this.setState({confirmation_dialog_box: false})
-
+        var e5 = this.state.ether['e5']
         this.props.notify('running transaction...', 600)
-        this.props.send_ether_to_target(this.state.recipient_address, this.state.picked_wei_amount, this.state.picked_wei_gas_price, this.props.app_state);
+        this.props.send_ether_to_target(this.state.recipient_address, this.state.picked_wei_amount, this.state.picked_wei_gas_price, this.props.app_state, e5);
         
     };
 

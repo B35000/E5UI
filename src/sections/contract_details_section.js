@@ -33,7 +33,7 @@ class ContractDetailsSection extends Component {
 
     check_for_new_responses_and_messages() {
         if (this.props.selected_contract_item != null) {
-            var object = this.get_contract_items()[this.props.selected_contract_item]
+            var object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
             this.props.get_contract_event_data(object['id'], object['e5'])
             this.props.get_moderator_event_data(object['id'], object['e5'])
         }
@@ -91,21 +91,27 @@ class ContractDetailsSection extends Component {
         return picked_item
     }
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
 
     render_contract_details_section() {
         var selected_item = this.get_selected_item(this.state.navigate_view_contract_list_detail_tags_object, this.state.navigate_view_contract_list_detail_tags_object['i'].active)
+        var object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
 
         if (selected_item == 'details') {
             return (
                 <div>
-                    {this.render_contracts_main_details_section()}
+                    {this.render_contracts_main_details_section(object)}
                 </div>
             )
         }
         else if (selected_item == 'create-proposal') {
             return (
                 <div>
-                    {this.render_create_proposal_logs()}
+                    {this.render_create_proposal_logs(object)}
                 </div>
             )
 
@@ -113,7 +119,7 @@ class ContractDetailsSection extends Component {
         else if (selected_item == 'modify-contract') {
             return (
                 <div>
-                    {this.render_modify_contract_logs()}
+                    {this.render_modify_contract_logs(object)}
                 </div>
             )
 
@@ -121,7 +127,7 @@ class ContractDetailsSection extends Component {
         else if (selected_item == 'enter-contract') {
             return (
                 <div>
-                    {this.render_enter_contract_logs()}
+                    {this.render_enter_contract_logs(object)}
                 </div>
             )
 
@@ -129,7 +135,7 @@ class ContractDetailsSection extends Component {
         else if (selected_item == 'extend-contract-stay') {
             return (
                 <div>
-                    {this.render_extend_contract_logs()}
+                    {this.render_extend_contract_logs(object)}
                 </div>
             )
 
@@ -137,7 +143,7 @@ class ContractDetailsSection extends Component {
         else if (selected_item == 'exit-contract') {
             return (
                 <div>
-                    {this.render_exit_contract_logs()}
+                    {this.render_exit_contract_logs(object)}
                 </div>
             )
 
@@ -145,7 +151,7 @@ class ContractDetailsSection extends Component {
         else if (selected_item == 'force-exit-accounts') {
             return (
                 <div>
-                    {this.force_exit_accounts_logs()}
+                    {this.force_exit_accounts_logs(object)}
                 </div>
             )
 
@@ -153,7 +159,7 @@ class ContractDetailsSection extends Component {
         else if (selected_item == 'transfers') {
             return (
                 <div>
-                    {this.render_transfer_logs()}
+                    {this.render_transfer_logs(object)}
                 </div>
             )
 
@@ -161,28 +167,28 @@ class ContractDetailsSection extends Component {
         else if(selected_item == 'modify-moderators'){
             return(
                 <div>
-                    {this.render_modify_moderator_logs()}
+                    {this.render_modify_moderator_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'interactable-checkers'){
             return(
                 <div>
-                    {this.render_interactable_checker_logs()}
+                    {this.render_interactable_checker_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'interactable-accounts'){
             return(
                 <div>
-                    {this.render_interactable_accounts_logs()}
+                    {this.render_interactable_accounts_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'block-accounts'){
             return(
                 <div>
-                    {this.render_blocked_accounts_logs()}
+                    {this.render_blocked_accounts_logs(object)}
                 </div>
             )
         }
@@ -206,11 +212,11 @@ class ContractDetailsSection extends Component {
         );
     }
 
-    render_contracts_main_details_section() {
+    render_contracts_main_details_section(object) {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height - 50
-        var item = this.get_contract_details_data()
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        var item = this.get_contract_details_data(object)
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var author = object['event'] != null ? object['event'].returnValues.p3 : 'Unknown'
         return (
             <div style={{ 'background-color': background_color, 'border-radius': '15px', 'margin': '5px 10px 2px 10px', 'padding': '0px 10px 0px 10px', 'max-width': '470px' }}>
@@ -259,27 +265,24 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', item['contract_force_exit_enabled'])}
 
                     <div style={{height: 10}}/>
-                    {this.render_revoke_author_privelages_event()}
+                    {this.render_revoke_author_privelages_event(object)}
                     
 
-                    {this.show_contract_balance(item)}
+                    {this.show_contract_balance(item, object)}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', item['entry_fees'])}
-                    <div style={{ height: 10 }} />
-                    {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
-                    {this.render_detail_item('0')}
+                    {this.render_entry_fees(object, item)}
 
-                    {this.show_normal_contract_buttons()}
+                    {this.show_normal_contract_buttons(object)}
 
-                    {this.show_send_proposal_button()}
+                    {this.show_send_proposal_button(object)}
 
-                    {this.render_auth_modify_button()}
+                    {this.show_send_main_contract_proposal(object)}
 
-                    {this.render_force_exit_button()}
+                    {this.render_auth_modify_button(object)}
 
-                    
-                    {this.render_moderator_button()}
+                    {this.render_force_exit_button(object)}
+
+                    {this.render_moderator_button(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -288,22 +291,38 @@ class ContractDetailsSection extends Component {
         )
     }
 
-    render_revoke_author_privelages_event(){
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    render_entry_fees(object, item){
+        if(object['id'] != 2){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', item['entry_fees'])}
+                    <div style={{ height: 10 }} />
+                    {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4], object)}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    render_revoke_author_privelages_event(object){
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var events = this.get_moderator_item_logs(object, 'revoke_privelages')
 
-        if(events.length != 0){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Disabled', 'details':'Author of Object is not a Moderator by default', 'size':'l'})}
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Enabled', 'details':'Author of Object is a Moderator by default', 'size':'l'})}
-                </div>
-            )
+        if(object['id'] != 2){
+            if(events.length != 0){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':'Author Moderator Privelages Disabled', 'details':'Author of Object is not a Moderator by default', 'size':'l'})}
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':'Author Moderator Privelages Enabled', 'details':'Author of Object is a Moderator by default', 'size':'l'})}
+                    </div>
+                )
+            }
         }
     }
 
@@ -315,44 +334,44 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    show_normal_contract_buttons() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    show_normal_contract_buttons(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         if (object['id'] != 2) {
             return (
                 <div>
-                    {this.show_enter_contract_button()}
+                    {this.show_enter_contract_button(object)}
 
                     <div style={{ height: 10 }} />
 
-                    {this.show_extend_stay_in_contract_button()}
+                    {this.show_extend_stay_in_contract_button(object)}
 
-                    {this.show_exit_contract_action()}
+                    {this.show_exit_contract_action(object)}
 
-                    {this.render_archive_button_if_author()}
+                    {this.render_archive_button_if_author(object)}
 
                 </div>
             )
         }
     }
 
-    show_enter_contract_button() {
+    show_enter_contract_button(object) {
         return (
             <div>
-                {this.show_entered_contract_data()}
+                {this.show_entered_contract_data(object)}
                 <div style={{ height: 10 }} />
 
                 {this.render_detail_item('3', { 'size': 'l', 'details': 'Enter a contract to participate in its consensus', 'title': 'Enter Contract' })}
                 <div style={{ height: 10 }} />
 
-                <div onClick={() => this.open_enter_contract_ui()}>
+                <div onClick={() => this.open_enter_contract_ui(object)}>
                     {this.render_detail_item('5', { 'text': 'Enter', 'action': '' },)}
                 </div>
             </div>
         )
     }
 
-    show_extend_stay_in_contract_button() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    show_extend_stay_in_contract_button(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
         var contract_config = object['data'][1]
@@ -368,7 +387,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'size': 'l', 'details': 'Extend your stay in the contract', 'title': 'Extend Stay' })}
                     <div style={{ height: 10 }} />
 
-                    <div onClick={() => this.open_extend_contract_ui()}>
+                    <div onClick={() => this.open_extend_contract_ui(object)}>
                         {this.render_detail_item('5', { 'text': 'Extend', 'action': '' },)}
                     </div>
 
@@ -377,19 +396,18 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    show_send_proposal_button() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    show_send_proposal_button(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
-        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) || object['id'] == 2) {
+        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2) {
             return (
                 <div>
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', { 'size': 'l', 'details': 'Send a proposal to the contract to perform a specified action', 'title': 'Send Proposal' })}
                     <div style={{ height: 10 }} />
-
-                    <div onClick={() => this.open_new_proposal_ui()}>
+                    <div onClick={() => this.open_new_proposal_ui(object)}>
                         {this.render_detail_item('5', { 'text': 'Send', 'action': '' },)}
                     </div>
                 </div>
@@ -398,8 +416,31 @@ class ContractDetailsSection extends Component {
 
     }
 
-    show_exit_contract_action() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    show_send_main_contract_proposal(object){
+        if(object['id'] == 2){
+            var e5 = object['e5']
+            var entered_contracts_count = this.props.app_state.basic_transaction_data[e5][2]
+            var e5_runs_count = this.props.app_state.basic_transaction_data[e5][3]
+            var minimum_entered_contracts = object['data'][1][14 /* minimum_entered_contracts */]
+            var minimum_transaction_count = object['data'][1][19 /* minimum_transaction_count */]
+
+            if(entered_contracts_count>= minimum_entered_contracts && e5_runs_count>= minimum_transaction_count){
+                return (
+                    <div>
+                        {this.render_detail_item('0')}
+                        {this.render_detail_item('3', { 'size': 'l', 'details': 'Send a proposal to the contract to perform a specified action', 'title': 'Send Proposal' })}
+                        <div style={{ height: 10 }} />
+                        <div onClick={() => this.open_new_proposal_ui(object)}>
+                            {this.render_detail_item('5', { 'text': 'Send', 'action': '' },)}
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+
+    show_exit_contract_action(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
@@ -410,7 +451,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'size': 'l', 'details': 'Exit from the contract and no longer participate in its consensus', 'title': 'Exit Contract' })}
                     <div style={{ height: 10 }} />
 
-                    <div onClick={() => this.open_exit_contract_ui()}>
+                    <div onClick={() => this.open_exit_contract_ui(object)}>
                         {this.render_detail_item('5', { 'text': 'Exit', 'action': '' },)}
                     </div>
                 </div>
@@ -418,8 +459,8 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    show_entered_contract_data() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    show_entered_contract_data(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
@@ -448,8 +489,8 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    render_auth_modify_button() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    render_auth_modify_button(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var contract_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if (object['id'] != 2 && object['event'].returnValues.p3 == my_account && contract_config[28/* can_modify_contract_as_moderator */] == 1) {
@@ -459,7 +500,7 @@ class ContractDetailsSection extends Component {
 
                     {this.render_detail_item('3', { 'title': 'Modify Contract', 'details': 'Modify the configuration of the contract directly.', 'size': 'l' })}
                     <div style={{ height: 10 }} />
-                    <div onClick={() => this.open_modify_contract_ui()}>
+                    <div onClick={() => this.open_modify_contract_ui(object)}>
                         {this.render_detail_item('5', { 'text': 'Modify Contract', 'action': '' })}
                     </div>
                 </div>
@@ -467,8 +508,8 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    render_force_exit_button() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    render_force_exit_button(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var contract_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if (object['id'] != 2 && object['event'].returnValues.p3 == my_account && contract_config[38/* contract_force_exit_enabled */] == 1) {
@@ -478,7 +519,7 @@ class ContractDetailsSection extends Component {
 
                     {this.render_detail_item('3', { 'title': 'Force Exit Accounts', 'details': 'Remove an account from the contract directly.', 'size': 'l' })}
                     <div style={{ height: 10 }} />
-                    <div onClick={() => this.open_force_exit_ui()}>
+                    <div onClick={() => this.open_force_exit_ui(object)}>
                         {this.render_detail_item('5', { 'text': 'Force Exit Accounts', 'action': '' })}
                     </div>
                 </div>
@@ -486,8 +527,8 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    render_archive_button_if_author() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    render_archive_button_if_author(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if (object['event'].returnValues.p3 == my_account && object['data'][1][15] < Date.now() / 1000) {
             return (
@@ -495,7 +536,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', { 'title': 'Archive Contract', 'details': 'Delete the contracts data to free up space in the blockchain', 'size': 'l' })}
                     <div style={{ height: 10 }} />
-                    <div onClick={() => this.open_archive_contract_ui()}>
+                    <div onClick={() => this.open_archive_contract_ui(object)}>
                         {this.render_detail_item('5', { 'text': 'Archive Contract', 'action': '' })}
                     </div>
                 </div>
@@ -503,8 +544,8 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    render_moderator_button() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    render_moderator_button(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if (object['id'] != 2 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)) {
@@ -514,7 +555,7 @@ class ContractDetailsSection extends Component {
 
                     {this.render_detail_item('3', { 'title': 'Perform Moderator Actions', 'details': 'Set an accounts access rights, moderator privelages or block an account', 'size': 'l' })}
                     <div style={{ height: 10 }} />
-                    <div onClick={() => this.open_moderator_ui()}>
+                    <div onClick={() => this.open_moderator_ui(object)}>
                         {this.render_detail_item('5', { 'text': 'Perform Action', 'action': '' })}
                     </div>
                 </div>
@@ -522,48 +563,48 @@ class ContractDetailsSection extends Component {
         }
     }
 
-    open_enter_contract_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_enter_contract_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_enter_contract_ui(object)
     }
 
-    open_extend_contract_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_extend_contract_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_extend_contract_ui(object)
     }
 
-    open_exit_contract_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_exit_contract_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_exit_contract_ui(object)
     }
 
-    open_new_proposal_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_new_proposal_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_new_proposal_ui(object)
     }
 
-    open_modify_contract_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_modify_contract_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_modify_contract_ui(object)
     }
 
-    open_force_exit_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_force_exit_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_force_exit_ui(object)
     }
 
-    open_archive_contract_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_archive_contract_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_archive_proposal_ui(object)
     }
 
-    open_moderator_ui() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    open_moderator_ui(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         this.props.open_moderator_ui(object)
     }
 
-    show_contract_balance(item) {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+    show_contract_balance(item, object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         var expiry_time_in_seconds = object['entry_expiry']
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
@@ -585,9 +626,9 @@ class ContractDetailsSection extends Component {
     }
 
 
-    get_contract_details_data() {
-        var object = this.get_contract_items()[this.props.selected_contract_item]
-        var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
+    get_contract_details_data(object) {
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
+        var tags = object['ipfs'] == null ? [object['e5'], 'Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var contract_config = object['data'][1]
@@ -639,10 +680,11 @@ class ContractDetailsSection extends Component {
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths) {
+        var bt = [].concat(buy_tokens)
         return (
             <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{ 'padding': '1px' }}>
                             {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID: ' + item, 'subtitle': 'depth:' + buy_depths[index], 'barwidth': this.calculate_bar_width(buy_amounts[index]), 'number': this.format_account_balance_figure(buy_amounts[index]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
                         </li>
@@ -675,9 +717,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_create_proposal_logs() {
+    render_create_proposal_logs(object) {
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -694,7 +736,7 @@ class ContractDetailsSection extends Component {
 
     render_created_proposal_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'make_proposal')
+        var items = [].concat(this.get_item_logs(object, 'make_proposal'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -810,9 +852,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_modify_contract_logs() {
+    render_modify_contract_logs(object) {
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -829,7 +871,7 @@ class ContractDetailsSection extends Component {
 
     render_modify_contract_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'modify_object')
+        var items = [].concat(this.get_item_logs(object, 'modify_object'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -996,9 +1038,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_enter_contract_logs() {
+    render_enter_contract_logs(object) {
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1035,7 +1077,7 @@ class ContractDetailsSection extends Component {
 
     render_entered_contract_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.filter_enter_contract_event_logs(this.get_item_logs(object, 'enter_contract'), this.state.enter_contract_search_text, object)
+        var items = [].concat(this.filter_enter_contract_event_logs(this.get_item_logs(object, 'enter_contract'), this.state.enter_contract_search_text, object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1115,9 +1157,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_extend_contract_logs() {
+    render_extend_contract_logs(object) {
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1133,7 +1175,7 @@ class ContractDetailsSection extends Component {
 
     render_extend_contract_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'extend_contract')
+        var items = [].concat(this.get_item_logs(object, 'extend_contract'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1214,9 +1256,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_exit_contract_logs() {
+    render_exit_contract_logs(object) {
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1252,7 +1294,7 @@ class ContractDetailsSection extends Component {
 
     render_exit_contract_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.filter_exit_contract_event_logs(this.get_item_logs(object, 'exit_contract'), this.state.exit_contract_search_text, object)
+        var items = [].concat(this.filter_exit_contract_event_logs(this.get_item_logs(object, 'exit_contract'), this.state.exit_contract_search_text, object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1333,9 +1375,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    force_exit_accounts_logs() {
+    force_exit_accounts_logs(object) {
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1351,7 +1393,7 @@ class ContractDetailsSection extends Component {
 
     render_force_exit_contract_item_logs(object) {
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'force_exit')
+        var items = [].concat(this.get_item_logs(object, 'force_exit'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1432,9 +1474,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_transfer_logs(){
+    render_transfer_logs(object){
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1451,7 +1493,7 @@ class ContractDetailsSection extends Component {
 
     render_contract_transfer_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'transfer')
+        var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1547,9 +1589,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_modify_moderator_logs(){
+    render_modify_moderator_logs(object){
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1573,7 +1615,7 @@ class ContractDetailsSection extends Component {
 
     render_modify_moderator_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'modify_moderator')
+        var items = [].concat(this.get_moderator_item_logs(object, 'modify_moderator'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1663,9 +1705,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_interactable_checker_logs(){
+    render_interactable_checker_logs(object){
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1682,7 +1724,7 @@ class ContractDetailsSection extends Component {
 
     render_interactable_checker_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'enable_interactible')
+        var items = [].concat(this.get_moderator_item_logs(object, 'enable_interactible'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1767,9 +1809,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_interactable_accounts_logs(){
+    render_interactable_accounts_logs(object){
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1786,7 +1828,7 @@ class ContractDetailsSection extends Component {
 
     render_interactable_accounts_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'add_interactible')
+        var items = [].concat(this.get_moderator_item_logs(object, 'add_interactible'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1879,9 +1921,9 @@ class ContractDetailsSection extends Component {
 
 
 
-    render_blocked_accounts_logs(){
+    render_blocked_accounts_logs(object){
         var he = this.props.height - 45
-        var object = this.get_contract_items()[this.props.selected_contract_item]
+        // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1897,7 +1939,7 @@ class ContractDetailsSection extends Component {
 
     render_blocked_accounts_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'block_account')
+        var items = [].concat(this.get_moderator_item_logs(object, 'block_account'))
         if (items.length == 0) {
             items = [0, 1]
             return (

@@ -811,7 +811,7 @@ class NewContractPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.moderators
+        var items = [].concat(this.state.moderators)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -916,7 +916,7 @@ class NewContractPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.interactibles
+        var items = [].concat(this.state.interactibles)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -990,12 +990,53 @@ class NewContractPage extends Component {
         }
     }
 
+    calculate_minimum_end_amount(){
+        var amount = 0
+        if(this.props.app_state.created_contract_mapping[this.state.e5] != null){
+            var main_contract_data = this.props.app_state.created_contract_mapping[this.state.e5][2]['data']
+            var default_end_minimum_contract_amount = main_contract_data[1][3/* <3>default_end_minimum_contract_amount */]
+            var gas_price = parseInt(this.props.app_state.gas_price[this.state.e5])
+            if(gas_price == null){
+                return default_end_minimum_contract_amount
+            }
+            var gas_anchor_price = parseInt(main_contract_data[1][23/* <23>gas_anchor_price */])
+            var a = (gas_price * default_end_minimum_contract_amount)/gas_anchor_price
+            if(a < 1) a = 1;
+            amount = a
+        }
+        return parseInt(amount)
+    }
+
+    calculate_minimum_spend_amount(){
+        var amount = 0
+        if(this.props.app_state.created_contract_mapping[this.state.e5] != null){
+            var main_contract_data = this.props.app_state.created_contract_mapping[this.state.e5][2]['data']
+            var default_spend_minimum_contract_amount = main_contract_data[1][9/* <9>default_spend_minimum_contract_amount */]
+            var rp = this.props.app_state.created_token_object_mapping[this.state.e5] == null ? bigInt('1e18') : bigInt(this.props.app_state.created_token_object_mapping[this.state.e5][5] == null ? bigInt('1e18') : this.props.app_state.created_token_object_mapping[this.state.e5][5]['data'][2][6])
+            amount = bigInt(rp).multiply(bigInt(default_spend_minimum_contract_amount)).divide(bigInt('1e18'))
+        }
+        return amount
+    }
+
     render_set_token_and_amount_part(){
+        var minimum_end_amount = this.calculate_minimum_end_amount()
+        var minimum_spend_amount = this.calculate_minimum_spend_amount()
         return(
             <div>
                 {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired amount. The first exchange must be the End or Spend exchange', 'size':'l'})}
-
+                
                 <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Default Minimum End Contract Amount', 'subtitle':this.format_power_figure(minimum_end_amount), 'barwidth':this.calculate_bar_width(minimum_end_amount), 'number':this.format_account_balance_figure(minimum_end_amount), 'barcolor':'', 'relativepower':'END', })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Default Minimum Spend Contract Amount', 'subtitle':this.format_power_figure(minimum_spend_amount), 'barwidth':this.calculate_bar_width(minimum_spend_amount), 'number':this.format_account_balance_figure(minimum_spend_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                </div>
+
+                {this.render_detail_item('0')}
+
                 <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
@@ -1031,8 +1072,11 @@ class NewContractPage extends Component {
         else if(amount == 0){
             this.props.notify('please put a valid amount', 600)
         }
-        else if(this.state.price_data.length == 0 && (exchange_id != '3' || exchange_id != '5')){
+        else if(this.state.price_data.length == 0 && (exchange_id != '3' && exchange_id != '5')){
             this.props.notify('the first exchange must be the End or Spend exchange', 1100)
+        }
+        else if(!this.check_if_amount_exceeds_minimum(amount, exchange_id)){
+
         }
         else{
             var price_data_clone = this.state.price_data.slice()
@@ -1042,13 +1086,32 @@ class NewContractPage extends Component {
         }
     }
 
+    check_if_amount_exceeds_minimum(amount, exchange){
+        var minimum_end_amount = this.calculate_minimum_end_amount()
+        var minimum_spend_amount = this.calculate_minimum_spend_amount()
+
+        if(exchange == '3'){
+            if(amount < minimum_end_amount){
+                this.props.notify('That End amount is less than the minimum required by the main contract', 3500)
+                return false
+            }
+        }
+        if(exchange == '5'){
+            if(amount < minimum_spend_amount){
+                this.props.notify('That Spend amount is less than the minimum required by the main contract', 3500)
+                return false
+            }
+        }
+        return true
+    }
+
     render_set_prices_list_part(){
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -1112,7 +1175,7 @@ class NewContractPage extends Component {
 
 
     load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
+        var items = [].concat(this.get_suggested_tokens())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -1134,6 +1197,7 @@ class NewContractPage extends Component {
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
+        if(exchanges_from_sync == null) exchanges_from_sync = [];
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
@@ -1190,7 +1254,7 @@ class NewContractPage extends Component {
 
 
     load_account_suggestions(target_type){
-        var items = this.get_suggested_accounts(target_type)
+        var items = [].concat(this.get_suggested_accounts(target_type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(

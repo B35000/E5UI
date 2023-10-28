@@ -50,7 +50,16 @@ class NewContractorPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images'], [0]
+                ['or','',0], ['e','e.text', 'images', 'rates'], [0]
+            ],
+            'text':[
+                ['or','',0], ['text','e.font', 'e.size'], [0]
+            ],
+            'font':[
+                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+            ],
+            'size':[
+                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
             ],
         };
     }
@@ -70,6 +79,10 @@ class NewContractorPage extends Component {
                 ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
             ],
         };
+    }
+
+    set(){
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object()})
     }
 
     render(){
@@ -109,7 +122,7 @@ class NewContractorPage extends Component {
                 </div>
             )    
         }
-        else if(selected_item == 'text'){
+        else if(this.is_text_selected_item(selected_item)){
             return(
                 <div>
                     {this.render_enter_text_part()}
@@ -123,6 +136,14 @@ class NewContractorPage extends Component {
                 </div>
             )
         }
+    }
+
+    is_text_selected_item(selected_item){
+        var obj = ['text','font','size','Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
+        if(obj.includes(selected_item)){
+            return true
+        }
+        return false
     }
 
     get_selected_item(object, option){
@@ -226,7 +247,7 @@ class NewContractorPage extends Component {
     render_new_job_object(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var items = this.state.entered_objects;
+        var items = [].concat(this.state.entered_objects);
         return ( 
             <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
                 <div style={{'padding': '5px 0px 5px 0px'}}>
@@ -285,8 +306,8 @@ class NewContractorPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_new_contractor_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_font_style_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                {/* <Tags page_tags_object={this.state.get_new_contractor_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_font_style_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/> */}
 
                 <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -304,8 +325,8 @@ class NewContractorPage extends Component {
     }
 
     get_edited_text_object(){
-        var font = this.get_selected_item(this.state.get_new_job_text_tags_object, 'font')
-        var size = this.get_selected_item(this.state.get_new_job_text_tags_object, 'size')
+        var font = this.get_selected_item(this.state.get_new_contractor_page_tags_object, 'font')
+        var size = this.get_selected_item(this.state.get_new_contractor_page_tags_object, 'size')
         return{
             'font':font, 'textsize':size,'text':this.state.entered_text
         }
@@ -334,7 +355,7 @@ class NewContractorPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.entered_text_objects
+        var items = [].concat(this.state.entered_text_objects)
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -407,7 +428,7 @@ class NewContractorPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div>
 
-            <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
+            <div style={{'padding': '5px', width:'80%'}} onClick={()=>this.add_images_to_object()}>
                 {this.render_detail_item('5', {'text':'Add Images', 'action':'-'})}
             </div>
 
@@ -448,7 +469,7 @@ class NewContractorPage extends Component {
     }
 
     render_all_images_part(){
-        var items = this.get_image_objects()
+        var items = [].concat(this.get_image_objects())
 
         return(
             <div>
@@ -508,7 +529,7 @@ class NewContractorPage extends Component {
                 </div>
             )
         }else{
-            var items = this.state.entered_image_objects
+            var items = [].concat(this.state.entered_image_objects)
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>

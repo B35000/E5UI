@@ -140,39 +140,45 @@ class StorefrontDetailsSection extends Component {
         this.setState({navigate_view_storefront_list_detail_tags_object: tag_obj})
     }
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
     render_storefront_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, this.state.navigate_view_storefront_list_detail_tags_object['i'].active)
+        var object = this.get_item_in_array(this.get_storefront_items(),this.props.selected_storefront_item);
 
         if(selected_item == 'metadata'){
             return(
                 <div>
-                    {this.render_storefront_main_details_section()}
+                    {this.render_storefront_main_details_section(object)}
                 </div>
             )
         }else if(selected_item == 'activity'){
             return(
                 <div>
-                    {this.render_storefront_message_activity()}
+                    {this.render_storefront_message_activity(object)}
                 </div>
             ) 
         }
         else if(selected_item == 'all' || selected_item == 'unfulfilled' || selected_item == 'fulfilled'){
             return(
                 <div>
-                    {this.render_direct_purchases()}
+                    {this.render_direct_purchases(object)}
                 </div>
             )
         }
     }
 
-    render_storefront_main_details_section(){
+    render_storefront_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var object = this.get_storefront_items()[this.props.selected_storefront_item];
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item];
         var item = this.get_storefront_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
@@ -198,10 +204,10 @@ class StorefrontDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':variants.length+' variants', 'details':'To choose from.', 'size':'l'})}                   
 
-                    {this.render_add_to_bag_button()}
-                    {this.render_direct_purchase_button()}
+                    {this.render_add_to_bag_button(object)}
+                    {this.render_direct_purchase_button(object)}
 
-                    {this.render_edit_object_button()}
+                    {this.render_edit_object_button(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_chatroom_enabled_message(object)}
@@ -230,21 +236,21 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
-    render_add_to_bag_button(){
+    render_add_to_bag_button(object){
         return(
             <div>
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'size':'l', 'details':'Add the item to your shopping bag', 'title':'Add to Bag'})}
                 <div style={{height:10}}/>
-                <div onClick={()=> this.open_add_to_bag()}>
+                <div onClick={()=> this.open_add_to_bag(object)}>
                     {this.render_detail_item('5', {'text':'Add to Bag', 'action':''},)}
                 </div>
             </div>
         )
     }
 
-    render_direct_purchase_button(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item];
+    render_direct_purchase_button(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item];
         var direct_purchase_option = object['ipfs'].purchase_option_tags_object == null ? 'disabled' : this.get_selected_item(object['ipfs'].purchase_option_tags_object, 'e')
 
         if(direct_purchase_option == 'enabled'){
@@ -253,7 +259,7 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'size':'l', 'details':'Purchase the item directly from the seller', 'title':'Direct Purchase'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=> this.open_direct_purchase()}>
+                    <div onClick={()=> this.open_direct_purchase(object)}>
                         {this.render_detail_item('5', {'text':'Purchase', 'action':''},)}
                     </div>
                 </div>
@@ -262,8 +268,8 @@ class StorefrontDetailsSection extends Component {
         
     }
 
-    render_edit_object_button(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item];
+    render_edit_object_button(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['event'].returnValues.p5 == my_account.toString()){
             return(
@@ -272,7 +278,7 @@ class StorefrontDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Edit Storefront Post', 'details':'Change the basic details for your Storefront Post', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_basic_edit_object_ui()}>
+                    <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':'Edit Item', 'action':''})}
                     </div>
                 </div>
@@ -281,29 +287,29 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    open_basic_edit_object_ui(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item];
+    open_basic_edit_object_ui(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item];
         this.props.open_edit_object('4', object)
     }
 
-    open_add_to_bag(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    open_add_to_bag(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         this.props.open_add_to_bag(object)
     }
 
-    open_direct_purchase(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    open_direct_purchase(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         this.props.open_direct_purchase(object)
     }
 
-    render_set_storefront_prices_list_part(){
+    render_set_storefront_prices_list_part(object){
         var middle = this.props.height-500;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var object = this.get_storefront_items()[this.props.selected_storefront_item];
-        var items = object['ipfs'].price_data
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item];
+        var items = [].concat(object['ipfs'].price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -396,7 +402,7 @@ class StorefrontDetailsSection extends Component {
     }
 
     get_storefront_details_data(object){
-        var tags = object['ipfs'] == null ? ['Store'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Store'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Store ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -412,23 +418,23 @@ class StorefrontDetailsSection extends Component {
 
 
 
-    render_direct_purchases(){
+    render_direct_purchases(object){
         var he = this.props.height-45
 
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
-                    {this.render_purchases_top_title()}
+                    {this.render_purchases_top_title(object)}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                    {this.render_purchases()}
+                    {this.render_purchases(object)}
                 </div>
             </div>
         )
     }
 
 
-    render_purchases_top_title(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    render_purchases_top_title(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Direct Purchases', 'size':'l'})} 
@@ -437,19 +443,19 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    render_purchases(){
+    render_purchases(object){
         var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_purchases()
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        var items = [].concat(this.get_purchases(object))
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var sender_type = 'storefront_owner'
         var fulfilment_accounts = object['ipfs'].fulfilment_accounts==null?[]:object['ipfs'].fulfilment_accounts
         if(this.props.app_state.user_account_id[object['e5']] != object['event'].returnValues.p5 && !fulfilment_accounts.includes(this.props.app_state.user_account_id[object['e5']])){
             //if user is not owner of storefront and wasnt included in the fulfilment account array
-            items = this.filter_for_senders_orders()
+            items = [].concat(this.filter_for_senders_orders(object))
             sender_type = 'storefront_client'
         }
         // sender_type = 'storefront_owner'
@@ -480,7 +486,7 @@ class StorefrontDetailsSection extends Component {
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
                                 <div key={index}>
-                                    {this.render_full_or_compressed_object(item, sender_type, index)}
+                                    {this.render_full_or_compressed_object(item, sender_type, index, object)}
                                 </div>
                             </li> 
                         ))}
@@ -491,13 +497,13 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    get_purchases(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
-        return this.filter_using_bottom_tags(this.props.app_state.direct_purchases[object['id']])
+    get_purchases(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        return this.filter_using_bottom_tags(this.props.app_state.direct_purchases[object['id']], object)
     }
 
-    filter_for_senders_orders(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    filter_for_senders_orders(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var purchases = this.props.app_state.direct_purchases[object['id']]
         var filtered_purchases = []
         for(var i=0; i<purchases.length; i++){
@@ -505,13 +511,13 @@ class StorefrontDetailsSection extends Component {
                 filtered_purchases.push(purchases[i])
             }
         }
-        return this.filter_using_bottom_tags(filtered_purchases)
+        return this.filter_using_bottom_tags(filtered_purchases, object)
     }
 
 
-    filter_using_bottom_tags(filtered_purchases){
+    filter_using_bottom_tags(filtered_purchases, object){
         var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, 'direct-purchases')
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
 
         if(selected_item == 'all'){
             return filtered_purchases
@@ -542,17 +548,17 @@ class StorefrontDetailsSection extends Component {
 
 
 
-    render_full_or_compressed_object(item, sender_type, index){
+    render_full_or_compressed_object(item, sender_type, index, object){
         if(this.state.selected_purchase_item == index){
-            return this.render_visible_purchase_item(item, sender_type, index)
+            return this.render_visible_purchase_item(item, sender_type, index, object)
         }else{
-            return this.render_compressed_purchase_item(item, sender_type, index)
+            return this.render_compressed_purchase_item(item, sender_type, index, object)
         }
     }
 
 
-    render_compressed_purchase_item(item, sender_type, index){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    render_compressed_purchase_item(item, sender_type, index, object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
         if(signature != null){
             return(
@@ -578,18 +584,18 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    render_visible_purchase_item(item, sender_type, index){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    render_visible_purchase_item(item, sender_type, index, object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         return(
             <div>
                 <div onClick={()=> this.when_item_clicked(index)}>
                     {this.render_detail_item('3', {'size':'s', 'title':'Shipping Details', 'details':item['shipping_detail']})}
                     <div style={{height:3}}/>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'])['variant_description'] })}
+                    {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
                     <div style={{height:3}}/>
                     {this.render_detail_item('3', {'size':'s', 'title':'Quantity: '+this.format_account_balance_figure(item['purchase_unit_count']), 'details':'Sender Account ID: '+item['sender_account'] })}
                     <div style={{height:3}}/>
-                    {this.render_fulfilment_signature_if_any(item)}
+                    {this.render_fulfilment_signature_if_any(item, object)}
                     <div style={{height:5}}/>
                 </div>
                 
@@ -602,8 +608,8 @@ class StorefrontDetailsSection extends Component {
         
     }
 
-    get_variant_from_id(variant_id){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    get_variant_from_id(variant_id, object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
 
         for(var i=0; i<object['ipfs'].variants.length; i++){
             if(object['ipfs'].variants[i]['variant_id'] == variant_id){
@@ -617,8 +623,8 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    render_fulfilment_signature_if_any(item){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    render_fulfilment_signature_if_any(item, object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
         if(signature != null){
             return(
@@ -644,7 +650,7 @@ class StorefrontDetailsSection extends Component {
 
 
 
-    render_storefront_message_activity(){
+    render_storefront_message_activity(object){
         var he = this.props.height-100
         var size = this.props.screensize
         return(
@@ -652,10 +658,10 @@ class StorefrontDetailsSection extends Component {
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
-                        {this.render_top_title()}
-                        {this.render_focus_list()}
+                        {this.render_top_title(object)}
+                        {this.render_focus_list(object)}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                        {this.render_sent_received_messages()}
+                        {this.render_sent_received_messages(object)}
                     </div>
                 </div>
 
@@ -663,7 +669,7 @@ class StorefrontDetailsSection extends Component {
                     <div style={{'margin':'1px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet()}>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet(object)}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
@@ -672,7 +678,7 @@ class StorefrontDetailsSection extends Component {
                         <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
@@ -684,9 +690,9 @@ class StorefrontDetailsSection extends Component {
         this.setState({comment_structure_tags: tag_obj})
     }
 
-    show_add_comment_bottomsheet(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+    show_add_comment_bottomsheet(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
 
         if(setting == 'disabled'){
@@ -697,8 +703,8 @@ class StorefrontDetailsSection extends Component {
     }
   
 
-    render_top_title(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    render_top_title(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':'In '+object['id'], 'details':object['ipfs'].entered_title_text, 'size':'l'})} 
@@ -711,14 +717,14 @@ class StorefrontDetailsSection extends Component {
         this.messagesEnd = React.createRef();
     }
 
-    render_sent_received_messages(){
+    render_sent_received_messages(object){
         var middle = this.props.height-250;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages()
-        var stacked_items = this.get_stacked_items()
+        var items = [].concat(this.get_convo_messages(object))
+        var stacked_items = [].concat(this.get_stacked_items(object))
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -740,17 +746,17 @@ class StorefrontDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message() != null){
-            var focused_message_replies = this.get_focused_message_replies()
+        else if(this.get_focused_message(object) != null){
+            var focused_message_replies = this.get_focused_message_replies(object)
             return(
                 <div>
                     <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message())}
+                        {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
                     </div>
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
                         <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
                             <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies)}
+                                {this.render_messages(focused_message_replies, object)}
                                 <div ref={this.messagesEnd}/>
                             </ul>
                         </div>
@@ -764,8 +770,8 @@ class StorefrontDetailsSection extends Component {
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items)}
-                        {this.render_messages(stacked_items)}
+                        {this.render_messages(items, object)}
+                        {this.render_messages(stacked_items, object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -774,7 +780,7 @@ class StorefrontDetailsSection extends Component {
                 return(
                     <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {this.render_all_comments()}
+                            {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>
                         </ul>
                     </div>
@@ -783,9 +789,9 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
-    render_messages(items){
+    render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message() != null){
+        if(items.length == 0 && this.get_focused_message(object) != null){
             var items = [0,1]
             return(
                 <div>
@@ -810,7 +816,7 @@ class StorefrontDetailsSection extends Component {
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
-                                {this.render_message_as_focused_if_so(item)}
+                                {this.render_message_as_focused_if_so(item, object)}
                                 <div style={{height:3}}/>
                             </div>
                         </li>
@@ -821,9 +827,9 @@ class StorefrontDetailsSection extends Component {
         
     }
 
-    focus_message(item){
+    focus_message(item, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
 
         if(this.state.focused_message[object['id']] != item){
             clone[object['id']] = item
@@ -848,11 +854,11 @@ class StorefrontDetailsSection extends Component {
     //     return return_value
     // }
 
-    unfocus_message(){
+    unfocus_message(object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         if(clone['tree'][object['id']] != null){
-            var index = this.get_index_of_item()
+            var index = this.get_index_of_item(object)
             if(index != -1){
                 clone['tree'][object['id']].splice(index, 1)
             }
@@ -863,8 +869,8 @@ class StorefrontDetailsSection extends Component {
         this.setState({focused_message: clone})
     }
 
-    get_index_of_item(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    get_index_of_item(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var focused_item = this.state.focused_message[object['id']]
         var focused_items = this.state.focused_message['tree'][object['id']]
         var pos = -1
@@ -878,8 +884,8 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    render_message_as_focused_if_so(item){
-        var focused_message = this.get_focused_message()
+    render_message_as_focused_if_so(item, object){
+        var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
             return(
@@ -892,9 +898,9 @@ class StorefrontDetailsSection extends Component {
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
                     {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
@@ -910,13 +916,13 @@ class StorefrontDetailsSection extends Component {
                         <SwipeableListItem
                             swipeLeft={{
                             content: <div>Focus</div>,
-                            action: () => this.focus_message(item)
+                            action: () => this.focus_message(item, object)
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
 
@@ -949,22 +955,22 @@ class StorefrontDetailsSection extends Component {
 
 
 
-    render_stack_message_item(item){
+    render_stack_message_item(item, object){
         if(item.type == 'message'){
             return(
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                     
                 </div>
             )
@@ -974,23 +980,23 @@ class StorefrontDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
                     {this.render_detail_item('9',item['image-data'])}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }
     }
 
-    get_sender_title_text(item){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    get_sender_title_text(item, object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
@@ -1005,14 +1011,14 @@ class StorefrontDetailsSection extends Component {
         return message
     }
 
-    get_convo_messages(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    get_convo_messages(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var messages = this.props.app_state.object_messages[object['id']]==null?[]:this.props.app_state.object_messages[object['id']]
         return messages
     }
 
-    get_stacked_items(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    get_stacked_items(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var convo_id = object['id']
 
         var stack = this.props.app_state.stack_items
@@ -1030,9 +1036,9 @@ class StorefrontDetailsSection extends Component {
         return stacked_items
     }
 
-    get_focused_message_replies(){
-        var focused_message = this.get_focused_message()
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_focused_message_replies(object){
+        var focused_message = this.get_focused_message(object)
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
@@ -1042,8 +1048,8 @@ class StorefrontDetailsSection extends Component {
         return replies
     }
 
-    get_message_replies(item){
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_message_replies(item, object){
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && item['message_id'] != null &&  all_messages[i]['focused_message_id'] == item['message_id']){
@@ -1053,8 +1059,8 @@ class StorefrontDetailsSection extends Component {
         return replies
     }
 
-    get_focused_message(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    get_focused_message(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         return this.state.focused_message[object['id']]
     }
 
@@ -1093,11 +1099,11 @@ class StorefrontDetailsSection extends Component {
         this.setState({entered_text: text})
     }
 
-    add_message_to_stack(){
+    add_message_to_stack(object){
         var message = this.state.entered_text.trim()
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
         if(message == ''){
             this.props.notify('type something first', 600)
@@ -1144,8 +1150,8 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    render_focus_list(){
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+    render_focus_list(object){
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var items = this.state.focused_message['tree'][object['id']]
 
         if(items != null && items.length > 0){
@@ -1153,8 +1159,8 @@ class StorefrontDetailsSection extends Component {
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item), 'details':this.shorten_message_item(this.format_message(item['message'])), 'size':'s'})}
+                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index, object)}>
+                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item, object), 'details':this.shorten_message_item(this.format_message(item['message'], object), object), 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -1173,9 +1179,9 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    when_focus_chain_item_clicked(item, pos){
+    when_focus_chain_item_clicked(item, pos, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
 
         var new_array = []
         for(var i=0; i<=pos; i++){
@@ -1191,14 +1197,14 @@ class StorefrontDetailsSection extends Component {
 
 
 
-    render_all_comments(){
-        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
+    render_all_comments(object){
+        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object(object))
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
                         <div >
-                            {this.render_main_comment(item, 0)}
+                            {this.render_main_comment(item, 0, object)}
                             <div style={{height:3}}/>
                         </div>
                     </li>
@@ -1207,21 +1213,21 @@ class StorefrontDetailsSection extends Component {
         )
     }
 
-    render_main_comment(comment, depth){
+    render_main_comment(comment, depth, object){
         return(
             <div>
-                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message)}>
-                    {this.render_message_as_focused_if_so(comment.data.message)}
+                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message, object)}>
+                    {this.render_message_as_focused_if_so(comment.data.message, object)}
                 </div>
 
-                {this.render_message_children(comment, depth)}
+                {this.render_message_children(comment, depth, object)}
             </div>
         )
     }
 
-    render_message_children(comment, depth){
+    render_message_children(comment, depth, object){
         var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
-        if(!this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
+        if(this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
             return(
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
                     <div style={{width:'100%'}}>
@@ -1229,7 +1235,7 @@ class StorefrontDetailsSection extends Component {
                             {comment.children.map((item, index) => (
                                 <li style={{'padding': '4px 0px 0px 0px'}}>
                                     <div>
-                                        {this.render_main_comment(item, depth+1)}
+                                        {this.render_main_comment(item, depth+1, object)}
                                         <div style={{height:3}}/>
                                     </div>
                                 </li>
@@ -1256,8 +1262,8 @@ class StorefrontDetailsSection extends Component {
         this.setState({hidden_message_children_array:clone})
     }
 
-    get_message_replies_in_sorted_object(){
-        var messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_message_replies_in_sorted_object(object){
+        var messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var data = []
         messages.forEach(message => {
             data.push({ index : message['message_id'], sort : message['time'], parent : message['focused_message_id'], message: message })

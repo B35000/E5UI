@@ -216,7 +216,7 @@ class SendJobRequestPage extends Component {
                 </div>
             )
         }else{
-            var items = this.state.entered_image_objects
+            var items = [].concat(this.state.entered_image_objects)
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>
@@ -270,7 +270,7 @@ class SendJobRequestPage extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_contract_items()
+        var items = [].concat(this.get_contract_items())
 
         if(items.length == 0){
             items = ['0','1'];
@@ -533,7 +533,7 @@ class SendJobRequestPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -584,19 +584,19 @@ class SendJobRequestPage extends Component {
 
 
     load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
+        var items = [].concat(this.get_suggested_tokens())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         )
     }
 

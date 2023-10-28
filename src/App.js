@@ -57,6 +57,7 @@ import ModifyTokenPage from './pages/token_action_pages/modify_token_page';
 import ExchangeTransferPage from './pages/token_action_pages/exchanage_transfer_page';
 import FreezeUnfreezePage from './pages/token_action_pages/freeze_unfreeze_page';
 import AuthMintPage from './pages/token_action_pages/authmint_page';
+import DepthMintPage from './pages/token_action_pages/depthmint_page'
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -143,7 +144,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null,
@@ -165,7 +166,7 @@ class App extends Component {
 
     web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042',
     
-    sync_steps:8, qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90,
+    sync_steps:(13), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -173,7 +174,7 @@ class App extends Component {
     created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
 
     contract_events:{}, proposal_events:{}, subscription_events:{}, exchange_events:{}, moderator_events:{},
-    subscription_search_result:{},
+    subscription_search_result:{}, all_data:{}, gateway_traffic_cache:{},
 
     e5s:this.get_e5s(),
     selected_e5:'E15', default_e5:'E15',
@@ -183,8 +184,9 @@ class App extends Component {
 
   get_e5s(){
     return{
-      'data':['E15'],
-      'E15':{web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042'}
+      'data':['E15', 'E25'],
+      'E15':{web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042', first_block:5},
+      'E25':{web3:'http://127.0.0.1:8545/', e5_address:'0x82e01223d51Eb87e16A03E24687EDF0F294da6f1', first_block:218}
     }
   }
 
@@ -192,6 +194,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.send_receive_ether_page = React.createRef();
+    this.wiki_page = React.createRef();
     this.new_contract_page = React.createRef();
     this.new_token_page = React.createRef();
     this.new_subscription_page = React.createRef();
@@ -247,6 +250,7 @@ class App extends Component {
     this.give_award_page = React.createRef();
     this.add_comment_page = React.createRef();
     this.stack_page = React.createRef();
+    this.depthmint_page = React.createRef();
   }
 
   componentDidMount() {
@@ -264,6 +268,8 @@ class App extends Component {
       var cookie_stack_items = cookie_state.stack_items
       var cookie_storage_option = cookie_state.storage_option
       var cookie_selected_e5 = cookie_state.selected_e5_item
+      var cookie_contacts = cookie_state.contacts
+      var cookie_should_update_contacts_onchain = cookie_state.should_update_contacts_onchain
       
       if(cookie_theme != null){
         this.setState({theme:cookie_theme})
@@ -278,7 +284,17 @@ class App extends Component {
       }
 
       if(cookie_selected_e5 != null){
+        // console.log('--------------------componentDidMount-----------------------')
+        // console.log(cookie_selected_e5)
         this.setState({selected_e5: cookie_selected_e5})
+      }
+
+      if(cookie_contacts != null){
+        // this.setState({contacts: cookie_contacts})
+      }
+
+      if(cookie_should_update_contacts_onchain != null){
+        // this.setState({should_update_contacts_onchain: cookie_should_update_contacts_onchain})
       }
     }
     
@@ -318,7 +334,7 @@ class App extends Component {
   }
 
   get_persistent_data(){
-    return {theme: this.state.theme, storage_option: this.state.storage_option, stack_items:this.state.stack_items, selected_e5_item:this.state.selected_e5}
+    return {theme: this.state.theme, storage_option: this.state.storage_option, stack_items:this.state.stack_items, selected_e5_item:this.state.selected_e5, contacts:this.state.contacts, should_update_contacts_onchain: this.state.should_update_contacts_onchain}
   }
 
 
@@ -345,6 +361,10 @@ class App extends Component {
 
   get_web3_url_from_e5(e5){
     return this.state.e5s[e5].web3
+  }
+
+  get_first_block(e5){
+    return this.state.e5s[e5].first_block
   }
 
 
@@ -503,6 +523,7 @@ class App extends Component {
           {this.render_edit_storefront_object_bottomsheet()}
           {this.render_give_award_bottomsheet()}
           {this.render_add_comment_bottomsheet()}
+          {this.render_depthmint_bottomsheet()}
           <ToastContainer limit={3} containerId="id"/>
         </div>
       );
@@ -547,7 +568,7 @@ class App extends Component {
       add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
       show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
 
-      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)}
+      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)}
       />
     )
   }
@@ -813,6 +834,8 @@ class App extends Component {
     this.setState({selected_e5: e5})
     var me = this;
     setTimeout(function() {
+        console.log('------------------when_selected_e5_changed---------------------')
+        console.log(me.state.selected_e5)
         me.set_cookies()
     }, (1 * 1000));
   }
@@ -832,7 +855,7 @@ class App extends Component {
   run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array) => {
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = this.state.e5_address
+    const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
 
@@ -859,7 +882,8 @@ class App extends Component {
           this.prompt_top_notification('run complete!', 600)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
-          this.prompt_top_notification('Run failed. Check your stack and try again', 1500)
+          me.setState({is_running: false})
+          this.prompt_top_notification('Run failed. Check your stack then try again', 1500)
         });
     })
 
@@ -934,13 +958,27 @@ class App extends Component {
   }
 
   remove_account_from_contacts(item){
-    var clone_array = this.state.contacts.slice()
-    const index = clone_array.indexOf(item);
+    var clone = structuredClone(this.state.contacts)
+    // var clone_array = this.state.contacts.slice()
+    const index = this.index_of(clone[this.state.selected_e5], item);
     if (index > -1) { // only splice array when item is found
-      clone_array.splice(index, 1); // 2nd parameter means remove one item only
+      clone[this.state.selected_e5].splice(index, 1); // 2nd parameter means remove one item only
     }
-    this.setState({contacts: clone_array, should_update_contacts_onchain: true})
+    // console.log('------------------remove_account_from_contacts----------------------')
+    // console.log(clone)
+    this.setState({contacts: clone, should_update_contacts_onchain: true})
     this.prompt_top_notification('Contact Deleted', 700)
+  }
+
+  index_of(array, item){
+    var index = -1
+    for(var i=0; i<array.length; i++){
+      if(array[i]['address'] == item['address']){
+        index = i
+        break;
+      }
+    }
+    return index
   }
 
   add_alias_transaction_to_stack(id){
@@ -954,7 +992,7 @@ class App extends Component {
       }
     }
     if(!existing_alias_transaction){
-      stack_clone.push({id: makeid(8), type:'alias', entered_indexing_tags:['alias', 'reserve', 'identification'], alias:id})
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'alias', entered_indexing_tags:['alias', 'reserve', 'identification'], alias:id})
       this.prompt_top_notification('Transaction added to stack', 1000)
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
@@ -972,7 +1010,7 @@ class App extends Component {
       }
     }
     if(!existing_alias_transaction){
-      stack_clone.push({id: makeid(8), type:'unalias', entered_indexing_tags:['unalias', 'unreserve', 'identification'], alias:id['alias']})
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'unalias', entered_indexing_tags:['unalias', 'unreserve', 'identification'], alias:id['alias']})
       this.prompt_top_notification('Unreserve transaction added to stack', 1000)
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
@@ -990,7 +1028,7 @@ class App extends Component {
       }
     }
     if(!existing_alias_transaction){
-      stack_clone.push({id: makeid(8), type:'re-alias', entered_indexing_tags:['re-alias', 'reserve', 'identification'], alias:id['alias']})
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'re-alias', entered_indexing_tags:['re-alias', 'reserve', 'identification'], alias:id['alias']})
       this.prompt_top_notification('Reset transaction added to stack', 1000)
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
@@ -1006,7 +1044,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_wiki_bottomsheet.bind(this)} open={this.state.wiki_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>   
-              <WikiPage app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} />
+              <WikiPage ref={this.wiki_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -1020,7 +1058,10 @@ class App extends Component {
   }
 
 
-  open_wallet_guide_bottomsheet(){
+  open_wallet_guide_bottomsheet(option){
+    if(this.wiki_page.current != null){
+      this.wiki_page.current?.set(option)
+    }
     this.open_wiki_bottomsheet()
   }
 
@@ -1259,6 +1300,7 @@ class App extends Component {
       this.edit_contractor_page.current?.setState(object['ipfs'])
       this.edit_contractor_page.current?.setState({type:'edit-contractor'})
       this.edit_contractor_page.current?.setState({object_id: object['id']})
+      this.edit_contractor_page.current?.set()
     }
   }
 
@@ -1297,6 +1339,7 @@ class App extends Component {
       this.edit_job_page.current?.setState(object['ipfs'])
       this.edit_job_page.current?.setState({type:'edit-job'})
       this.edit_job_page.current?.setState({object_id: object['id']})
+      this.edit_job_page.current?.set()
     }
   }
 
@@ -1335,6 +1378,7 @@ class App extends Component {
       this.edit_post_page.current?.setState(object['ipfs'])
       this.edit_post_page.current?.setState({type:'edit-post'})
       this.edit_post_page.current?.setState({object_id: object['id']})
+      this.edit_post_page.current?.set()
     }
   }
 
@@ -1373,6 +1417,7 @@ class App extends Component {
       this.edit_storefront_page.current?.setState(object['ipfs'])
       this.edit_storefront_page.current?.setState({type:'edit-storefront'})
       this.edit_storefront_page.current?.setState({object_id: object['id']})
+      this.edit_storefront_page.current?.set()
     }
   }
 
@@ -2386,6 +2431,10 @@ class App extends Component {
 
 
 
+
+
+
+
   render_moderator_bottomsheet(){
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
@@ -2791,7 +2840,12 @@ class App extends Component {
           this.edit_token_page.current?.setState(tx)
         }
     }
-
+    else if(tx.type == 'depthmint'){
+        this.open_depthmint_bottomsheet()
+        if(this.depthmint_page.current){
+          this.depthmint_page.current?.setState(tx)
+        }
+    }
         
   }
 
@@ -3389,7 +3443,7 @@ class App extends Component {
     this.open_withdraw_ether_bottomsheet()
   }
 
-  withdraw_ether_to_address = async (target_recipient_address) =>{
+  withdraw_ether_to_address = async (target_recipient_address, e5) =>{
     this.prompt_top_notification('withdrawing your ether...', 600)
 
     const web3 = new Web3(this.get_selected_web3_url());
@@ -3409,8 +3463,7 @@ class App extends Component {
         data: encoded,
         // gasPrice: 100_000_008
     }
-
-    web3.eth.accounts.signTransaction(tx, me.state.account.privateKey).then(signed => {
+    web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
           this.start_get_accounts_data(false)
@@ -3553,6 +3606,52 @@ class App extends Component {
 
 
 
+
+
+
+
+  render_depthmint_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_depthmint_bottomsheet.bind(this)} open={this.state.depthmint_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <DepthMintPage ref={this.depthmint_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_depthmint_to_stack={this.add_depthmint_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_depthmint_bottomsheet(){
+    if(this.state != null){
+        this.setState({depthmint_bottomsheet: !this.state.depthmint_bottomsheet});
+      }
+  }
+
+  show_depthmint_bottomsheet(token_item){
+    if(this.depthmint_page.current != null){
+      this.depthmint_page.current.set_token(token_item)
+    }
+
+    this.open_depthmint_bottomsheet()
+  }
+
+  add_depthmint_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
 
 
 
@@ -3760,7 +3859,7 @@ class App extends Component {
     // var data = await this.fetch_objects_data_from_nft_storage(cid)
     // console.log(data)
     this.get_browser_cache_size_limit()
-    this.when_wallet_data_updated(['(32)'], 0, '')  
+    this.when_wallet_data_updated(['(32)'], 0, '', true)  
     
   }
 
@@ -3775,40 +3874,33 @@ class App extends Component {
 
   }
 
-  send_ether_to_target(recipientAddress, amount, gasPrice, state){
+  send_ether_to_target(recipientAddress, amount, gasPrice, state, e5){
     const web3 = new Web3(this.get_selected_web3_url());
     const me = this;
-    web3.eth.sendTransaction({
-    from: state.account.address,
-    to: recipientAddress,
-    value: amount.toString(),
-    gasPrice: gasPrice.toString() // Adjust gas price as needed
-  }).on('transactionHash', function (hash) {
-      console.log('Transaction sent:', hash);
 
-      web3.eth.getTransaction(hash).then(tx => {
-          var transactions = state.account_transaction_history.slice();
-          transactions.push(tx)
-          me.setState({account_transaction_history: transactions})
-          
-          setTimeout(function() {
-            me.prompt_top_notification('transaction completed!', 1200)
-          }, (3 * 1000));
-      })
-      
-      web3.eth.getBalance(state.account.address).then(balance => {
-        me.setState({account_balance: balance});
-      }).catch(error => {
-        console.error('Error:', error);
-      });
+    web3.eth.accounts.wallet.add(state.accounts[e5].privateKey);
+
+    web3.eth.sendTransaction({
+      from: state.accounts[e5].address,
+      to: recipientAddress,
+      value: amount.toString(),
+      gas: 50000,
+      gasPrice: gasPrice.toString() // Adjust gas price as needed
+    }).on('transactionHash', function (hash) {
+      me.prompt_top_notification('send complete!', 600)
     })
     .on('error', function (error) {
       console.error('Failed to send transaction:', error);
+      if(error == 'Error: Invalid JSON RPC response: {}'){
+        me.prompt_top_notification('send complete!', 600)
+      }else{
+        me.prompt_top_notification('send failed, '+error, 6000)
+      }
     });
   }
 
 
-  when_wallet_data_updated(added_tags, set_salt, selected_item){
+  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
 
     // const account = this.get_account_from_seed(seed, this.state.web3);
@@ -3818,8 +3910,8 @@ class App extends Component {
     this.generate_account_for_each_e5(seed)
     var me = this
     setTimeout(function() {
-        me.start_get_accounts_data(true)
-    }, (2 * 1000));
+        me.start_get_accounts_data(is_synching)
+    }, (1 * 1000));
 
     if(selected_item != ''){
       this.setState({has_wallet_been_set: true})
@@ -4044,6 +4136,14 @@ class App extends Component {
     // console.log('-------------------------------fff-------------------------')
     // console.log(this.state.accounts)
 
+     web3.eth.getBalance(address_account.address).then(balance => {
+      var clone = structuredClone(this.state.account_balance)
+      clone[e5] = parseInt(balance)
+      this.setState({account_balance: clone});
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+
 
     if(is_syncing){
       await web3.eth.net.getId().then(id =>{
@@ -4067,10 +4167,12 @@ class App extends Component {
         this.inc_synch_progress()
       })
 
-      const gasPrice = await web3.eth.getGasPrice();
+      var gasPrice = await web3.eth.getGasPrice();
       var clone = structuredClone(this.state.gas_price)
       clone[e5] = gasPrice
       this.setState({gas_price: clone})
+      console.log('-----------------get_accounts_data------------------------')
+      console.log(e5,' gas price: ',gasPrice)
 
 
 
@@ -4102,7 +4204,7 @@ class App extends Component {
 
 
     /* ---------------------------------------- CONTRACT ADDRESSES -------------------------------------- */
-    var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: 0, toBlock: 'latest' }, (error, events) => {});
+    var contract_addresses_events = await contractInstance.getPastEvents('e7', { fromBlock: this.get_first_block(e5), toBlock: 'latest' }, (error, events) => {});
     var contract_addresses = contract_addresses_events[0].returnValues.p5
 
     var addresses_clone = structuredClone(this.state.addresses)
@@ -4137,7 +4239,9 @@ class App extends Component {
       this.inc_synch_progress()
     }
 
-    var events = await contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* sender_account_id */: account } }, (error, events) => {});
+    var events = await contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* sender_account_id */: account } }, (error, events) => {});
+
+    events = events.reverse()
 
     var clone = structuredClone(this.state.E5_runs)
     clone[e5] = events
@@ -4163,13 +4267,6 @@ class App extends Component {
 
 
     /* ---------------------------------------- BALANCE DATA -------------------------------------- */
-    web3.eth.getBalance(address_account.address).then(balance => {
-      var clone = structuredClone(this.state.account_balance)
-      clone[e5] = balance
-      this.setState({account_balance: clone});
-    }).catch(error => {
-      console.error('Error:', error);
-    });
 
     var withdraw_balance = await contractInstance.methods.f167([account], [], 1).call((error, result) => {});
     var clone = structuredClone(this.state.withdraw_balance)
@@ -4205,19 +4302,36 @@ class App extends Component {
     this.setState({end_balance_of_E5:end_balance_of_E5_clone, spend_balance_of_E5:spend_balance_of_E5_clone, end_balance_of_burn_account: end_balance_of_burn_account_clone})
 
 
-    var contacts_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:1 } }, (error, events) => {});
+
+
+
+
+    
+    var contacts_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:1 } }, (error, events) => {});
 
     if(contacts_data.length > 0){
       var latest_event = contacts_data[contacts_data.length - 1];
       var contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
       var contacts = contacts_data['contacts']
+
+      console.log('loaded contacts: ',contacts.length)
+      console.log(contacts)
       
       var clone = structuredClone(this.state.contacts)
-      clone[e5] = contacts
+      var existing_contacts = clone[e5]
+      if(existing_contacts == null){
+        existing_contacts = []
+      }
+      clone[e5] = this.combine_contacts(existing_contacts, contacts)
       this.setState({contacts: clone})
     }else{
+      console.log('loaded no contacts')
       var clone = structuredClone(this.state.contacts)
-      clone[e5] = []
+      var existing_contacts = clone[e5]
+      if(existing_contacts == null){
+        existing_contacts = []
+      }
+      clone[e5] = this.combine_contacts(existing_contacts, [])
       this.setState({contacts: clone})
     }
 
@@ -4335,6 +4449,7 @@ class App extends Component {
     //   this.inc_synch_progress()
     // }
 
+    this.load_run_data(contractInstance, E52contractInstance, e5, web3)
 
     /* ---------------------------------------- ------------------------------------------- */
     /* ---------------------------------------- ------------------------------------------- */
@@ -4342,8 +4457,31 @@ class App extends Component {
     /* ---------------------------------------- ------------------------------------------- */
   }
 
+  combine_contacts(existing_contacts, updated_contact_list){
+    var new_contact_list = structuredClone(existing_contacts)
+
+    updated_contact_list.forEach(contact => {
+      if(!this.check_if_includes(new_contact_list, contact)){
+        new_contact_list.push(contact)
+      }
+    });
+
+    return new_contact_list
+  }
+
+  check_if_includes(array, item){
+    var includes = array.find(e => e['id'] === item['id'])
+    // for(var i=0; i<array.length; i++){
+    //   if(array[i]['id'] == item['id']){
+    //     includes = true
+    //     break;
+    //   }
+    // }
+    return includes != null
+  }
+
   get_alias_data = async (E52contractInstance, e5, account) => {
-    var alias_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: 11 } }, (error, events) => {});
+    var alias_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: 11 } }, (error, events) => {});
 
     var my_alias_events = []
     var alias_bucket = {}
@@ -4370,7 +4508,7 @@ class App extends Component {
         //ownership was revoked
         console.log('revoking alias: ',alias_string, ' for account: ',alias_sender)
         alias_owners[alias_string] = null
-
+        alias_bucket[alias_sender] = null
         var pos = -1
         for(var k=0; k<my_alias_events.length; k++){
           if(my_alias_events[k]['alias'] == alias_string){
@@ -4417,7 +4555,7 @@ class App extends Component {
   }
 
   get_subscription_data = async (contractInstance, F5contractInstance, account, web3, e5, contract_addresses, E52contractInstance) => {
-    var created_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
+    var created_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
     var created_subscriptions = []
     for(var i=0; i<created_subscription_events.length; i++){
       var id = created_subscription_events[i].returnValues.p1
@@ -4436,7 +4574,7 @@ class App extends Component {
 
       if(created_subscription_events[i].returnValues.p3 == account){
         //if the sender is the authority of the subscription
-        var all_subscription_payment_events = await F5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */:created_subscriptions[i] } }, (error, events) => {});
+        var all_subscription_payment_events = await F5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* subscription_id */:created_subscriptions[i] } }, (error, events) => {});
         
         for(var j=0; j<all_subscription_payment_events.length; j++){
           var account_in_focus = all_subscription_payment_events[j].returnValues.p2
@@ -4462,7 +4600,7 @@ class App extends Component {
         }
       }
 
-      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */:created_subscriptions[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
       var old_moderators = []
 
       for(var e=0; e<moderator_data.length; e++){
@@ -4518,7 +4656,7 @@ class App extends Component {
     
     console.log('subscription count: '+created_subscription_object_data.length)
 
-    // var all_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
+    // var all_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
     
     // var clone = structuredClone(this.state.all_subscriptions)
     // clone[e5] = all_subscription_events
@@ -4526,7 +4664,7 @@ class App extends Component {
   }
 
   get_contract_data = async (contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance) => {
-    var created_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
+    var created_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
     var created_contracts = [2]
     var accounts_for_expiry_time = [[account]]
     for(var i=0; i<created_contract_events.length; i++){
@@ -4546,7 +4684,7 @@ class App extends Component {
       var end_balance = await this.get_balance_in_exchange(3, created_contracts[i], e5, contract_addresses);
       var spend_balance = await this.get_balance_in_exchange(5, created_contracts[i], e5, contract_addresses);
 
-      var entered_accounts = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i] } }, (error, events) => {});
+      var entered_accounts = await G52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i] } }, (error, events) => {});
 
       var contract_entered_accounts = []
       for(var e=0; e<entered_accounts.length; e++){
@@ -4558,7 +4696,7 @@ class App extends Component {
       }
 
 
-      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */:created_contracts[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
       var old_moderators = []
 
       for(var e=0; e<moderator_data.length; e++){
@@ -4613,9 +4751,9 @@ class App extends Component {
     created_contract_mapping_clone[e5] = created_contract_mapping
 
     this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone})
-    console.log('contract count: '+created_contract_object_data.length)
+    console.log('contract count for : ',e5, ' : ',created_contract_object_data.length)
 
-    // var all_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
+    // var all_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
 
     // var all_contracts_clone = structuredClone(this.state.all_contracts)
     // all_contracts_clone[e5] = all_contract_events
@@ -4624,14 +4762,14 @@ class App extends Component {
   }
 
   get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account) => {
-    var contracts_ive_entered_events = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */} }, (error, events) => {});
+    var contracts_ive_entered_events = await G52contractInstance.getPastEvents('e2', { fromBlock:this.get_first_block(e5), toBlock: 'latest', filter: { p2/* sender_acc */:account, p3/* action */:3 /* <3>enter_contract */} }, (error, events) => {});
     var contracts_ive_entered = []
     for(var i=0; i<contracts_ive_entered_events.length; i++){
       var contract = contracts_ive_entered_events[i].returnValues.p1
       contracts_ive_entered.push(contract)
     }
 
-    var contracts_ive_exited_events = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc */:account, p3/* action */:11 /* <11>exit_contract */} }, (error, events) => {});
+    var contracts_ive_exited_events = await G52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* sender_acc */:account, p3/* action */:11 /* <11>exit_contract */} }, (error, events) => {});
     for(var i=0; i<contracts_ive_exited_events.length; i++){
       var contract = contracts_ive_exited_events[i].returnValues.p1
       const index = contracts_ive_entered.indexOf(contract);
@@ -4640,7 +4778,7 @@ class App extends Component {
       }
     }
 
-    var all_force_exit_events = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* action */:18 /* <18>contract_force_exit_accounts */} }, (error, events) => {});
+    var all_force_exit_events = await G52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* action */:18 /* <18>contract_force_exit_accounts */} }, (error, events) => {});
     for(var i=0; i<all_force_exit_events.length; i++){
       if(all_force_exit_events[i].returnValues.p5 == account.toString()){
         var force_exit_contract_id = all_force_exit_events[i].returnValues.p1
@@ -4654,7 +4792,7 @@ class App extends Component {
     var my_proposals_events = []
     var my_proposal_ids = []
     for(var i=0; i<contracts_ive_entered.length; i++){
-      var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */:contracts_ive_entered[i]} }, (error, events) => {});
+      var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_id */:contracts_ive_entered[i]} }, (error, events) => {});
 
 
       for(var i=0; i<contracts_proposals.length; i++){
@@ -4665,7 +4803,7 @@ class App extends Component {
 
     }
 
-    var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */:2} }, (error, events) => {});
+    var contracts_proposals = await G5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_id */:2} }, (error, events) => {});
 
     for(var i=0; i<contracts_proposals.length; i++){
       my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p2))//<--------issue! should be p4
@@ -4686,7 +4824,7 @@ class App extends Component {
 
       var senders_vote_in_proposal = await G52contractInstance.methods.f237([my_proposal_ids[i]], [[account]]).call((error, result) => {});
 
-      var proposal_voters = await G52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* consensus_id */:my_proposal_ids[i]} }, (error, events) => {});
+      var proposal_voters = await G52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* consensus_id */:my_proposal_ids[i]} }, (error, events) => {});
       var archive_participants = []
       for(var o=0; o<proposal_voters.length; o++){
         if(!archive_participants.includes(proposal_voters[o].returnValues.p3)){
@@ -4713,7 +4851,7 @@ class App extends Component {
   }
 
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account) => {
-    var created_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange */ } }, (error, events) => {});
+    var created_token_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange */ } }, (error, events) => {});
     var created_tokens = [3, 5]
     var created_token_depths = [0,0]
     var exchange_accounts = [account, account]
@@ -4726,6 +4864,10 @@ class App extends Component {
 
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
     var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
+
+    // console.log('-------------------------get_token_data-------------------------')
+    // console.log(e5)
+    // console.log(token_balances)
 
     var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
@@ -4742,9 +4884,7 @@ class App extends Component {
       }
       var exchanges_balances = await H52contractInstance.methods.f140e(created_token_data[i][3], created_tokens[i], depth_values).call((error, result) => {});
 
-
-
-      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+      var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
       var old_moderators = []
 
       for(var e=0; e<moderator_data.length; e++){
@@ -4768,8 +4908,14 @@ class App extends Component {
 
       var my_blocked_time_value = await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {});
 
+
+
+      var update_exchange_ratio_event_data = await H5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: created_tokens[i] } }, (error, events) => {});
+
+      var update_proportion_ratio_event_data = await H5contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: created_tokens[i] } }, (error, events) => {});
+
       var timestamp = event == null ? 0 : event.returnValues.p4
-      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0],'e5':e5, 'timestamp':timestamp }
+      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data }
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
 
@@ -4804,7 +4950,7 @@ class App extends Component {
 
 
     
-    // var all_token_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange_id */ } }, (error, events) => {});
+    // var all_token_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange_id */ } }, (error, events) => {});
 
     // var all_tokens_clone = structuredClone(this.state.all_tokens)
     // all_tokens_clone[e5] = all_token_events
@@ -4826,7 +4972,7 @@ class App extends Component {
   }
 
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses) => {
-    var created_post_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 18/* 18(post object) */ } }, (error, events) => {});
+    var created_post_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 18/* 18(post object) */ } }, (error, events) => {});
     created_post_events = created_post_events.reverse()
     var created_posts = []
     var is_first_time = this.state.created_posts[e5] == null
@@ -4853,7 +4999,7 @@ class App extends Component {
   }
 
   get_channel_data = async (E52contractInstance, web3, e5, contract_addresses, account) => {
-    var created_channel_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 36/* 36(type_channel_target) */ } }, (error, events) => {});
+    var created_channel_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 36/* 36(type_channel_target) */ } }, (error, events) => {});
     created_channel_events = created_channel_events.reverse()
 
     var created_channel = []
@@ -4864,7 +5010,7 @@ class App extends Component {
       if(created_channel_events[i].returnValues.p1.toString() == hash.toString()){
         var channel_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
 
-        var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
+        var moderator_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */:id, p2/* action_type */:4/* <4>modify_moderator_accounts */} }, (error, events) => {});
         var old_moderators = []
 
         for(var e=0; e<moderator_data.length; e++){
@@ -4914,7 +5060,7 @@ class App extends Component {
   }
 
   get_job_data = async (E52contractInstance, web3, e5, contract_addresses, account) => {
-    var created_job_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 17/* 17(job_object) */ } }, (error, events) => {});
+    var created_job_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 17/* 17(job_object) */ } }, (error, events) => {});
     created_job_events = created_job_events.reverse()
     var created_job = []
     var created_job_mappings = {}
@@ -4940,7 +5086,7 @@ class App extends Component {
       }
     }
 
-    var my_created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* target_id */: account, p3/* context */:36 } }, (error, events) => {});
+    var my_created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* target_id */: account, p3/* context */:36 } }, (error, events) => {});
     var my_applications = []
     // var my_contract_applications = {}
     for(var i=0; i<my_created_job_respnse_data.length; i++){
@@ -4984,8 +5130,8 @@ class App extends Component {
   }
 
   get_sent_mail_data = async (E52contractInstance, e5, account) => {
-    var my_created_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender_acc_id */: account, p3/* context */:30 } }, (error, events) => {});
-    my_created_mail_events = my_created_mail_events.reverse()
+    var my_created_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* sender_acc_id */: account, p3/* context */:30 } }, (error, events) => {});
+    my_created_mail_events = my_created_mail_events
 
     var created_mail = []
     var mail_activity = {}
@@ -5003,7 +5149,7 @@ class App extends Component {
         }
       }
       var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
-      mail_activity[convo_id].push({'convo_id':convo_id, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_created_mail_events[i].returnValues.p6})
+      mail_activity[convo_id].push({'convo_id':convo_id,'id':cid, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_created_mail_events[i].returnValues.p6})
       
       if(is_first_time){
         var created_mail_clone = structuredClone(this.state.created_mail)
@@ -5020,8 +5166,8 @@ class App extends Component {
   }
 
   get_received_mail_data = async (E52contractInstance, e5, account) => {
-    var my_received_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:30 } }, (error, events) => {});
-    my_received_mail_events = my_received_mail_events.reverse()
+    var my_received_mail_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:30 } }, (error, events) => {});
+    my_received_mail_events = my_received_mail_events
 
     var received_mail = []
     var mail_activity = {}
@@ -5039,7 +5185,7 @@ class App extends Component {
       }
       var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
       
-      var obj = {'convo_id':convo_id, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6}
+      var obj = {'convo_id':convo_id,'id':cid, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6}
       mail_activity[convo_id].push(obj)
 
       if(is_first_time){
@@ -5058,7 +5204,7 @@ class App extends Component {
   }
 
   get_storefront_data = async (E52contractInstance, web3, e5, contract_addresses) => {
-    var created_store_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 27/* 27(storefront-item) */ } }, (error, events) => {});
+    var created_store_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 27/* 27(storefront-item) */ } }, (error, events) => {});
     created_store_events = created_store_events.reverse()
     var created_stores = []
     var created_store_mappings = {}
@@ -5097,7 +5243,7 @@ class App extends Component {
   }
 
   get_bag_data = async (contractInstance, web3, e5, contract_addresses) => {
-    var created_bag_events = await contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* object_type */:25/* 25(storefront_bag_object) */ } }, (error, events) => {});
+    var created_bag_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:25/* 25(storefront_bag_object) */ } }, (error, events) => {});
     created_bag_events = created_bag_events.reverse();
     var created_bags = []
     var is_first_time = this.state.created_bags[e5] == null
@@ -5122,7 +5268,7 @@ class App extends Component {
   }
 
   get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3) => {
-    var created_contractor_events = await E52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p3/* item_type */: 26/* 17(contractor_object) */ } }, (error, events) => {});
+    var created_contractor_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 26/* 26(contractor_object) */ } }, (error, events) => {});
     created_contractor_events = created_contractor_events.reverse()
     var created_contractor = []
     var is_first_time = this.state.created_contractors[e5] == null
@@ -5150,6 +5296,42 @@ class App extends Component {
     console.log('contractor count: '+created_contractor.length)
   }
 
+  load_run_data = async (contractInstance, E52contractInstance, e5) => {
+    var created_subscription_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:33/* subscription_object */ } }, (error, events) => {});
+
+    var created_contract_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:30/* contract_obj_id */ } }, (error, events) => {});
+
+    var created_proposals_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:32/* 32(consensus_request) */ } }, (error, events) => {});
+
+    var created_token_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:31/* token_exchange */ } }, (error, events) => {});
+
+    var created_post_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 18/* 18(post object) */ } }, (error, events) => {});
+
+    var created_channel_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 36/* 36(type_channel_target) */ } }, (error, events) => {});
+
+    var created_job_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 17/* 17(job_object) */ } }, (error, events) => {});
+
+    var created_store_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 27/* 27(storefront-item) */ } }, (error, events) => {});
+
+    var created_bag_events = await contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* object_type */:25/* 25(storefront_bag_object) */ } }, (error, events) => {});
+
+    var created_contractor_events = await E52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* item_type */: 26/* 26(contractor_object) */ } }, (error, events) => {});
+
+    var data_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest' }, (error, events) => {});
+
+    var metadata_events = await E52contractInstance.getPastEvents('e5', { fromBlock: this.get_first_block(e5), toBlock: 'latest' }, (error, events) => {});
+
+    var withdraw_events = await contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest' }, (error, events) => {});
+
+    var transaction_events = await contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest' }, (error, events) => {});
+
+    var obj = {'subscription':created_subscription_events, 'contract':created_contract_events, 'proposal':created_proposals_events, 'exchange':created_token_events, 'post':created_post_events, 'channel':created_channel_events, 'job':created_job_events, 'store':created_store_events, 'bag':created_bag_events, 'contractor':created_contractor_events, 'data':data_events, 'metadata':metadata_events, 'withdraw':withdraw_events, 'transaction':transaction_events}
+
+    var all_data_clone = structuredClone(this.state.all_data)
+    all_data_clone[e5] = obj
+    this.setState({all_data: all_data_clone})
+  }
+
 
 
 
@@ -5158,7 +5340,7 @@ class App extends Component {
     const E52_address = addresses[1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var target_id = id;
-    var events = await E52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: target_id} }, (error, events) => {});
+    var events = await E52contractInstance.getPastEvents('e5', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */: target_id} }, (error, events) => {});
     // console.log('events for id: ',id ,': ',events)
     if(events.length == 0) return;
     var cid = events[events.length - 1].returnValues.p4
@@ -5181,15 +5363,27 @@ class App extends Component {
     var cid = split_cid_array[1]
 
     if(option == 'in'){
-      var data = await this.fetch_object_data_from_infura(cid, 0)
+      var data = this.fetch_from_storage(cid)
+      if(data == null){
+        data = await this.fetch_object_data_from_infura(cid, 0)
+        this.store_in_local_storage(cid, data)
+      }
       return data
     }
     else if(option == 'we'){
-      var data = await this.fetch_objects_data_from_web3(cid, 0)
+      var data = this.fetch_from_storage(cid)
+      if(data == null){
+        data = await this.fetch_objects_data_from_web3(cid, 0)
+        this.store_in_local_storage(cid, data)
+      }
       return data
     }
     else if(option == 'nf'){
-      var data = await this.fetch_objects_data_from_nft_storage(cid, 0)
+      var data = this.fetch_from_storage(cid)
+      if(data == null){
+        data = await this.fetch_objects_data_from_nft_storage(cid, 0)
+        this.store_in_local_storage(cid, data)
+      }
       return data
     }
   }
@@ -5258,6 +5452,7 @@ class App extends Component {
     var selected_gateway = gateways[Math.round(Math.random() * 12)]
 
     try {
+      
       const response = await fetch(selected_gateway);
       if (!response.ok) {
         throw new Error(`Failed to retrieve data from IPFS. Status: ${response}`);
@@ -5406,7 +5601,19 @@ class App extends Component {
 
 
 
+  fetch_from_storage(cid){
+    if(this.gateway_traffic_cache == null){
+      this.gateway_traffic_cache = {}
+    }
+    return this.gateway_traffic_cache[cid] 
+  }
 
+  store_in_local_storage(cid, data){
+    if(this.gateway_traffic_cache == null){
+      this.gateway_traffic_cache = {}
+    }
+    this.gateway_traffic_cache[cid] = data
+  }
 
   wait = async (t) => {
     //apparently those gateways dont like it when you spam their apis like i intend to do here, so a delay function to spread out those calls is necessary(if it even works)
@@ -5520,14 +5727,13 @@ class App extends Component {
     const E52contractArtifact = require('./contract_abis/E52.json');
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
-    var events = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:'0'} }, (error, events) => {});
+    var events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:'0'} }, (error, events) => {});
 
     var filtered_events = events;
 
     if(filtered_events.length == 0){
       return ''
     }
-
     var obj_key = await this.fetch_objects_data_from_ipfs_using_option(filtered_events[filtered_events.length-1].returnValues.p4)
     var uint8array = Uint8Array.from(obj_key['key'].split(',').map(x=>parseInt(x,10))); 
     return uint8array
@@ -5548,14 +5754,14 @@ class App extends Component {
     if(encrypted_ipfs_obj['recipient_data'] == null){
       return null
     }
-    var encrypted_key = encrypted_ipfs_obj['recipient_data'][this.state.user_account_id[e5]]
-    var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
-  
-    var my_key = await ecies.decrypt(private_key_to_use, uint8array)
-    var encrypted_object = encrypted_ipfs_obj['obj']
-    
 
     try{
+      var encrypted_key = encrypted_ipfs_obj['recipient_data'][this.state.user_account_id[e5]]
+      var uint8array = Uint8Array.from(encrypted_key.split(',').map(x=>parseInt(x,10)));
+    
+      var my_key = await ecies.decrypt(private_key_to_use, uint8array)
+      var encrypted_object = encrypted_ipfs_obj['obj']
+    
       var bytes  = CryptoJS.AES.decrypt(encrypted_object, my_key.toString());
       var originalText = bytes.toString(CryptoJS.enc.Utf8);
       return JSON.parse(originalText);
@@ -5573,7 +5779,7 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:35 } }, (error, events) => {});
+    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:35 } }, (error, events) => {});
     var messages = []
     var is_first_time = this.state.object_messages[id] == null ? true: false
     for(var j=0; j<created_channel_data.length; j++){
@@ -5600,9 +5806,9 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:36 } }, (error, events) => {});
+    var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:36 } }, (error, events) => {});
 
-    var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:37 } }, (error, events) => {});
+    var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:37 } }, (error, events) => {});
 
     var messages = []
     var is_first_time = this.state.job_responses[id] == null ? true: false
@@ -5651,7 +5857,7 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
+    var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
 
     var direct_purchases = []
     var is_first_time_for_direct_purchases = this.state.direct_purchases[id] == null ? true: false
@@ -5677,7 +5883,7 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_fulfilment_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
+    var created_fulfilment_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
     
     var fulfilments = {}
     var is_first_time_for_fulfilments = this.state.direct_purchase_fulfilments[id] == null ? true: false
@@ -5706,9 +5912,9 @@ class App extends Component {
     const E52_address = this.state.addresses[E5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:38 } }, (error, events) => {});
+    var created_job_respnse_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(E5), toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:38 } }, (error, events) => {});
 
-    var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:39 } }, (error, events) => {});
+    var application_responses = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(E5), toBlock: 'latest', filter: { p1/* target_id */: id, p3/* context */:39 } }, (error, events) => {});
 
     var messages = []
     var is_first_time = this.state.contractor_applications[id] == null ? true: false
@@ -5769,7 +5975,7 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_id */: contractor_id, p3/* context */:request_id } }, (error, events) => {});
+    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: contractor_id, p3/* context */:request_id } }, (error, events) => {});
     var messages = []
     var is_first_time = this.state.object_messages[request_id] == null ? true: false
     for(var j=0; j<created_channel_data.length; j++){
@@ -5803,7 +6009,7 @@ class App extends Component {
 
     if(modify_id_type == 31/* 31(token_exchange) */){
       const H5contractArtifact = require('./contract_abis/H5.json');
-      const H5_address = this.state.addresses[5];
+      const H5_address = this.state.addresses[e5][5];
       const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
       var exchange_data = await H5contractInstance.methods.f85(modify_id).call((error, result) => {});
@@ -5811,7 +6017,7 @@ class App extends Component {
     }
     else if(modify_id_type == 33/* 33(subscription_object) */){
       const F5contractArtifact = require('./contract_abis/F5.json');
-      const F5_address = this.state.addresses[2];
+      const F5_address = this.state.addresses[e5][2];
       const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
       var subscription_data = await F5contractInstance.methods.f73(modify_id).call((error, result) => {});
@@ -5819,7 +6025,7 @@ class App extends Component {
     }
     else{
       const G5contractArtifact = require('./contract_abis/G5.json');
-      const G5_address = this.state.addresses[3];
+      const G5_address = this.state.addresses[e5][3];
       const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
 
       var contract_data = await G5contractInstance.methods.f77(modify_id, false).call((error, result) => {});
@@ -5840,17 +6046,21 @@ class App extends Component {
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
     var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
-    var contacts_clone = this.state.contacts.slice()
-    contacts_clone.push({'id':account, 'address':account_address})
+    var contacts_object_clone = structuredClone(this.state.contacts)
+    contacts_object_clone[this.state.selected_e5].push({'id':account.toString(), 'address':account_address.toString()})
 
-    this.setState({contacts: contacts_clone, should_update_contacts_onchain: true})
+    this.setState({contacts: contacts_object_clone, should_update_contacts_onchain: true})
 
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
   }
 
 
   check_for_duplicates(account){
     var do_duplicates_exist = false
-    this.state.contacts.forEach(contact => {
+    this.state.contacts[this.state.selected_e5].forEach(contact => {
       if(contact['id'] == account){
         do_duplicates_exist = true
       }
@@ -5864,7 +6074,7 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
+    var created_awward_data = await H52contractInstance.getPastEvents('e5', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* awward_context */: id } }, (error, events) => {});
 
     var award_events = []
     var is_first_time = this.state.award_data[id] == null ? true: false
@@ -5900,9 +6110,9 @@ class App extends Component {
     const G5contractInstance = new web3.eth.Contract(G5contractArtifact.abi, G5_address);
 
 
-    var make_proposal_event_data = await G5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id } }, (error, events) => {});
+    var make_proposal_event_data = await G5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_id */: id } }, (error, events) => {});
 
-    var modify_object_event_data = await G5contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_or_proposal_id */: id } }, (error, events) => {});
+    var modify_object_event_data = await G5contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_or_proposal_id */: id } }, (error, events) => {});
 
     // console.log('---------------------------get_contract_event_data-----------------------------------')
     // console.log(make_proposal_event_data)
@@ -5911,13 +6121,13 @@ class App extends Component {
     const G52_address = this.state.addresses[e5][4];
     const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
-    var enter_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 3} }, (error, events) => {});
+    var enter_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 3} }, (error, events) => {});
 
-    var extend_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 14} }, (error, events) => {});
+    var extend_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 14} }, (error, events) => {});
 
-    var exit_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 11} }, (error, events) => {});
+    var exit_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 11} }, (error, events) => {});
 
-    var force_exit_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 18} }, (error, events) => {});
+    var force_exit_contract_event_data = await G52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* contract_id */: id , p3/* action */: 18} }, (error, events) => {});
 
 
     var contract_token_event_data = await this.get_token_event_data(id, e5);
@@ -5935,9 +6145,9 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var send_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* sender */: id} }, (error, events) => {});
+    var send_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* sender */: id} }, (error, events) => {});
 
-    var received_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p3/* receiver */: id} }, (error, events) => {});
+    var received_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p3/* receiver */: id} }, (error, events) => {});
 
     var all_events = [];
     for(var i=0; i<send_tokens_event_data.length; i++){
@@ -5959,11 +6169,11 @@ class App extends Component {
     const G52_address = this.state.addresses[e5][4];
     const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
-    var record_proposal_vote_event_data = await G52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p2/* consensus_id */: id } }, (error, events) => {});
+    var record_proposal_vote_event_data = await G52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p2/* consensus_id */: id } }, (error, events) => {});
 
-    var submit_proposal_event_data = await G52contractInstance.getPastEvents('e3', { fromBlock: 0, toBlock: 'latest', filter: { p1/* proposal_id */: id } }, (error, events) => {});
+    var submit_proposal_event_data = await G52contractInstance.getPastEvents('e3', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* proposal_id */: id } }, (error, events) => {});
 
-    var archive_proposal_event_data = await G52contractInstance.getPastEvents('e6', { fromBlock: 0, toBlock: 'latest', filter: { p1/* proposal_id */: id } }, (error, events) => {});
+    var archive_proposal_event_data = await G52contractInstance.getPastEvents('e6', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* proposal_id */: id } }, (error, events) => {});
 
     var proposal_token_event_data = await this.get_token_event_data(id, e5);
 
@@ -5980,13 +6190,13 @@ class App extends Component {
     const F5_address = this.state.addresses[e5][2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
-    var pay_subscription_event_data = await F5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+    var pay_subscription_event_data = await F5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
 
-    var cancel_subscription_event_data = await F5contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+    var cancel_subscription_event_data = await F5contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
 
-    var modify_subscription_event_data = await F5contractInstance.getPastEvents('e5', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+    var modify_subscription_event_data = await F5contractInstance.getPastEvents('e5', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
 
-    var collect_subscription_event_data = await F5contractInstance.getPastEvents('e4', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
+    var collect_subscription_event_data = await F5contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* subscription_id */: id } }, (error, events) => {});
 
     var subscription_token_event_data = await this.get_token_event_data(id, e5);
 
@@ -6008,11 +6218,11 @@ class App extends Component {
     const H5_address = this.state.addresses[e5][5];
     const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
-    var update_exchange_ratio_event_data = await H5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+    var update_exchange_ratio_event_data = await H5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
 
-    var update_proportion_ratio_event_data = await H5contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+    var update_proportion_ratio_event_data = await H5contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
 
-    var modify_exchange_event_data = await H5contractInstance.getPastEvents('e3', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+    var modify_exchange_event_data = await H5contractInstance.getPastEvents('e3', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
 
     var transfer_event_data = await this.get_accounts_token_event_data(id, this.state.user_account_id[e5], e5) 
     var exchange_token_event_data = await this.get_token_event_data(id, e5);
@@ -6023,13 +6233,15 @@ class App extends Component {
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
 
-    var update_balance_event_data = await H52contractInstance.getPastEvents('e2', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+    var update_balance_event_data = await H52contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
 
-    var freeze_unfreeze_event_data = await H52contractInstance.getPastEvents('e3', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+    var freeze_unfreeze_event_data = await H52contractInstance.getPastEvents('e3', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: id } }, (error, events) => {});
+
+    var depth_mint_event_data = await H52contractInstance.getPastEvents('e6', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: id, p2/* action */:2 } }, (error, events) => {});
 
 
     var clone = structuredClone(this.state.exchange_events)
-    clone[id] = {'transfer':transfer_event_data, 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'proportion_ratio':update_proportion_ratio_event_data.reverse(), 'modify':modify_exchange_event_data.reverse(), 'exchange-transfer': exchange_token_event_data, 'update_balance':update_balance_event_data, 'freeze_unfreeze':freeze_unfreeze_event_data}
+    clone[id] = {'transfer':transfer_event_data, 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'proportion_ratio':update_proportion_ratio_event_data.reverse(), 'modify':modify_exchange_event_data.reverse(), 'exchange-transfer': exchange_token_event_data, 'update_balance':update_balance_event_data, 'freeze_unfreeze':freeze_unfreeze_event_data, 'depth_mint':depth_mint_event_data}
 
     this.setState({exchange_events: clone});
   }
@@ -6041,9 +6253,9 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var send_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */:exchange,  p2/* sender */: id} }, (error, events) => {});
+    var send_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */:exchange,  p2/* sender */: id} }, (error, events) => {});
 
-    var received_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* exchange */:exchange, p3/* receiver */: id} }, (error, events) => {});
+    var received_tokens_event_data = await H52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */:exchange, p3/* receiver */: id} }, (error, events) => {});
 
     var all_events = [];
     for(var i=0; i<send_tokens_event_data.length; i++){
@@ -6064,15 +6276,15 @@ class App extends Component {
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
-    var modify_moderator_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:4 } }, (error, events) => {});
+    var modify_moderator_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:4 } }, (error, events) => {});
 
-    var enable_disable_interactible_checkers_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:5 } }, (error, events) => {});
+    var enable_disable_interactible_checkers_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:5 } }, (error, events) => {});
 
-    var add_interactible_account_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:2 } }, (error, events) => {});
+    var add_interactible_account_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:2 } }, (error, events) => {});
 
-    var block_accounts_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:17 } }, (error, events) => {});
+    var block_accounts_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:17 } }, (error, events) => {});
 
-    var revoke_author_privelages_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:16 } }, (error, events) => {});
+    var revoke_author_privelages_event_data = await E52contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_obj_id */: id, p2/* action_type */:16 } }, (error, events) => {});
 
     var clone = structuredClone(this.state.moderator_events)
     clone[id] = {'modify_moderator':modify_moderator_event_data, 'enable_interactible':enable_disable_interactible_checkers_event_data, 'add_interactible':add_interactible_account_event_data, 'block_account':block_accounts_event_data, 'revoke_privelages':revoke_author_privelages_event_data}
@@ -6091,7 +6303,7 @@ class App extends Component {
     const F5_address = this.state.addresses[e5][2];
     const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
-    var pay_subscription_event_data = await F5contractInstance.getPastEvents('e1', { fromBlock: 0, toBlock: 'latest', filter: { p1/* subscription_id */: id, p2/* sender_account_id */:account } }, (error, events) => {});
+    var pay_subscription_event_data = await F5contractInstance.getPastEvents('e1', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* subscription_id */: id, p2/* sender_account_id */:account } }, (error, events) => {});
 
     var their_payment = await F5contractInstance.methods.f229([id], [[account]]).call((error, result) => {});
 

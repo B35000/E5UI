@@ -213,7 +213,7 @@ class GiveAwardPage extends Component {
 
 
     load_award_tiers(){
-        var items = this.get_award_tiers()
+        var items = [].concat(this.get_award_tiers())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -351,7 +351,7 @@ class GiveAwardPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -436,7 +436,7 @@ class GiveAwardPage extends Component {
 
 
     load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
+        var items = [].concat(this.get_suggested_tokens())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(

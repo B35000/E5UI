@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
+
 import End35 from './../assets/end35.png';
+import End25 from './../assets/E25.png';
 import Letter from './../assets/letter.png'; 
 
 var bigInt = require("big-integer");
@@ -51,7 +53,7 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     {this.render_e5_details_section()}
-                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
                         <Tags page_tags_object={this.state.navigate_view_e5_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_e5_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
@@ -59,7 +61,7 @@ class E5DetailsSection extends Component {
         }
     }
 
-     render_empty_detail_object(){
+    render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         var size = this.props.screensize
@@ -81,34 +83,40 @@ class E5DetailsSection extends Component {
         this.setState({navigate_view_e5_list_detail_tags_object: tag_group})
     }
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
     render_e5_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_e5_list_detail_tags_object, this.state.navigate_view_e5_list_detail_tags_object['i'].active)
+        var obj = this.get_item_in_array(this.get_e5_data(), this.props.selected_e5_item)
 
         if(selected_item == 'details' || selected_item == 'e'){
             return(
                 <div>
-                    {this.render_e5_main_details_section()}
+                    {this.render_e5_main_details_section(obj)}
                 </div>
             )
         }else if(selected_item == 'transactions'){
             return(
                 <div>
-                    {this.render_e5_block_history_logs()}
+                    {this.render_e5_block_history_logs(obj)}
                 </div>
             )
             
         }
     }
 
-    render_e5_main_details_section(){
+    render_e5_main_details_section(obj){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-60
+        var he = this.props.height-55
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var item = this.get_e5_details_data()
-        var obj = this.get_e5_data()[this.props.selected_e5_item]
+        var item = this.get_e5_details_data(obj)
+        // var obj = this.get_e5_data()[this.props.selected_e5_item]
         var e5 = obj['id']
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
@@ -119,14 +127,13 @@ class E5DetailsSection extends Component {
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
-                    <div style={{height:10}}/>
+                   <div style={{height:10}}/>
+                    {this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
 
+                    <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['default_end_minimum_contract_amount'])}
                     </div>
-
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
 
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -239,9 +246,13 @@ class E5DetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':'Withdraw your Ether to a specified address', 'title':'Withdraw Ether'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_withdraw_ether_ui()}>
+                    <div onClick={()=>this.open_withdraw_ether_ui(obj)}>
                         {this.render_detail_item('5', {'text':'Withdraw', 'action':''})}
                     </div>
+
+                    {this.render_detail_item('0')}
+
+                    {this.load_E5_charts(obj)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -251,8 +262,8 @@ class E5DetailsSection extends Component {
     }
 
 
-    open_withdraw_ether_ui(){
-        var obj = this.get_e5_data()[this.props.selected_e5_item]
+    open_withdraw_ether_ui(obj){
+        // var obj = this.get_e5_data()[this.props.selected_e5_item]
         this.props.show_withdraw_ether_bottomsheet(obj)
     }
 
@@ -260,13 +271,13 @@ class E5DetailsSection extends Component {
         return this.props.get_e5_data()
     }
 
-    get_e5_details_data(){
-        var obj = this.get_e5_data()[this.props.selected_e5_item]
-        var img_obj = {'E15':End35}
+    get_e5_details_data(obj){
+        // var obj = this.get_e5_data()[this.props.selected_e5_item]
+        var img_obj = {'E15':End35, 'E25':End25}
         var contract_config = obj['data'][1]
         return{
             'label':{'header':obj['id'], 'subtitle':'Main Contract', 'size':'l', 'image': img_obj[obj['id']]},
-            'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
+            'tags':{'active_tags':[obj['id'],'E5', 'Main', 'Contract'], 'index_option':'indexed'},
             
             'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':'Vote Bounty Split Proportion', 'size':'l'},
             
@@ -309,9 +320,762 @@ class E5DetailsSection extends Component {
         }
     }
 
-    render_e5_block_history_logs(){
-
+    
+    
+    
+    
+    
+    load_E5_charts(obj){
+        var e5_chart_data = this.props.app_state.all_data[obj['id']]
+        if(e5_chart_data != null){
+           return(
+               <div>
+                    {this.show_subscription_transaction_count_chart(e5_chart_data)}
+                    {this.show_contract_transaction_count_chart(e5_chart_data)}
+                    {this.show_proposal_transaction_count_chart(e5_chart_data)}
+                    {this.show_exchange_transaction_count_chart(e5_chart_data)}
+                    {this.show_post_transaction_count_chart(e5_chart_data)}
+                    {this.show_channel_transaction_count_chart(e5_chart_data)}
+                    {this.show_job_transaction_count_chart(e5_chart_data)}
+                    {this.show_stores_transaction_count_chart(e5_chart_data)}
+                    {this.show_bag_transaction_count_chart(e5_chart_data)}
+                    {this.show_contractor_transaction_count_chart(e5_chart_data)}
+                    {this.show_data_transaction_count_chart(e5_chart_data)}
+                    {this.show_metadata_transaction_count_chart(e5_chart_data)}
+                    {this.show_withdraw_amount_data_chart(e5_chart_data)}
+                    {this.show_deposit_amount_data_chart(e5_chart_data)}
+                    {this.show_transaction_transaction_count_chart(e5_chart_data)}
+               </div>
+           ) 
+        }
     }
+
+
+    show_subscription_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['subscription']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Subscriptions Created', 'details':`Chart containing the total number of subscriptions made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Subscriptions Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Subscriptions', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'subscriptions', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p4
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p4 - events[i].returnValues.p4
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+
+    show_contract_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['contract']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Contracts Created', 'details':`Chart containing the total number of contracts made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Contracts Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Contracts', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'contracts', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_proposal_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['proposal']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Proposals Created', 'details':`Chart containing the total number of proposals made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Proposals Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Proposals', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'proposals', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_exchange_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['exchange']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Exchanges Created', 'details':`Chart containing the total number of exchanges made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Exchanges Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Exchanges', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'exchanges', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+
+
+
+    show_post_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['post']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Indexed Posts Created', 'details':`Chart containing the total number of indexed posts made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Posts Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Posts', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'posts', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_post_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p6 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_post_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+
+
+    show_channel_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['channel']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Indexed Channels Created', 'details':`Chart containing the total number of indexed channels made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Channels Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Channels', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'channels', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+    
+    show_job_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['job']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Indexed Jobs Created', 'details':`Chart containing the total number of indexed jobs made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Jobs Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Jobs', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'jobs', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_stores_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['store']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Indexed Storefront Items Created', 'details':`Chart containing the total number of indexed storefront items made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Storefront Items Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Storefront Items', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'items', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_bag_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['bag']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Bags Created', 'details':`Chart containing the total number of bags made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Bags Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Bags', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'bags', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_contractor_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['contractor']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Indexed Contractors Created', 'details':`Chart containing the total number of indexed contractors made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Contractor Posts', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Contractor Posts', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'contractors', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_data_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['data']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Data Throughput', 'details':`Chart containing the data throughput over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Data Events', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Data Events', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'events', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+
+
+
+    show_metadata_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['metadata']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Metadata Throughput', 'details':`Chart containing the total number of metadata events made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_metadata_transaction_count_data_points(events), 'interval':this.get_metadata_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Metadata Events', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Metadata Events', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'events', })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_metadata_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_metadata_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+
+
+
+    show_withdraw_amount_data_chart(e5_chart_data){
+        var events = e5_chart_data['withdraw']
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Withdrawn Ether', 'details':`The total amount of ether thats been withdrawn from the E5 over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_withdraw_amount_data_points(events), 'interval':110, 'hide_label': true})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Withdrawn Ether', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_withdraw_amount_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    data.push(bigInt(events[i].returnValues.p5))
+                }else{
+                    data.push(bigInt(data[data.length-1]).add(bigInt(events[i].returnValues.p5)))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p6 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        var largest_number = this.get_withdraw_amount_interval_figure(events)
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            // yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_withdraw_amount_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p5))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+
+
+
+
+
+
+
+    show_deposit_amount_data_chart(e5_chart_data){
+        var events = e5_chart_data['transaction']
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Deposited Ether', 'details':`The total amount of ether thats been deposited into the E5 over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(events), 'interval':110, 'hide_label': true})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Deposited Ether', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_deposit_amount_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    data.push(bigInt(events[i].returnValues.p6))
+                }else{
+                    data.push(bigInt(data[data.length-1]).add(bigInt(events[i].returnValues.p6)))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        var largest_number = this.get_deposit_amount_interval_figure(events)
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            // yVal = data[factor * xVal]
+            // yVal = data[i]
+
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return dps
+    }
+
+    get_deposit_amount_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p6))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+
+    
+
+
+
+
+    show_transaction_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['transaction']
+        var amount = events.length
+        if(events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Transaction Runs', 'details':`Chart containing the total number of E5 runs made over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_transaction_count_data_points(events), 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Runs Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Runs', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'runs', })}
+                    </div>
+                    {/* {this.render_detail_item('0')} */}
+                </div>
+            )
+        }
+    }
+
+    get_transaction_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transaction_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     get_selected_item(object, option){

@@ -30,7 +30,7 @@ class SubscriptionDetailsSection extends Component {
 
     check_for_new_responses_and_messages() {
         if (this.props.selected_subscription_item != null) {
-            var object = this.get_subscription_items()[this.props.selected_subscription_item]
+            var object = this.get_item_in_array(this.get_subscription_items(),this.props.selected_subscription_item)
             this.props.get_subscription_event_data(object['id'], object['e5'])
             this.props.get_moderator_event_data(object['id'], object['e5'])
         }
@@ -86,48 +86,55 @@ class SubscriptionDetailsSection extends Component {
         this.setState({navigate_view_subscriptions_list_detail_tags_object: tag_obj})
     }
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
     render_subscription_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_subscriptions_list_detail_tags_object, this.state.navigate_view_subscriptions_list_detail_tags_object['i'].active)
+
+        var object = this.get_item_in_array(this.get_subscription_items(),this.props.selected_subscription_item)
 
         if(selected_item == 'details'){
             return(
                 <div>
-                    {this.render_subscription_main_details_section()}
+                    {this.render_subscription_main_details_section(object)}
                 </div>
             )
         }
         else if(selected_item == 'transfers'){
             return(
                 <div>
-                    {this.render_transfer_logs()}
+                    {this.render_transfer_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'payments'){
             return(
                 <div>
-                    {this.render_subscription_payment_logs()}
+                    {this.render_subscription_payment_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'cancellations'){
             return(
                 <div>
-                    {this.render_subscription_cancellations()}
+                    {this.render_subscription_cancellations(object)}
                 </div>
             )
         }
         else if(selected_item == 'collections'){
             return(
                 <div>
-                    {this.render_subscription_collections()}
+                    {this.render_subscription_collections(object)}
                 </div>
             )
         }
         else if(selected_item == 'modifications'){
             return(
                 <div>
-                    {this.render_modification_events()}
+                    {this.render_modification_events(object)}
                 </div>
             )
         }
@@ -135,28 +142,28 @@ class SubscriptionDetailsSection extends Component {
         else if(selected_item == 'modify-moderators'){
             return(
                 <div>
-                    {this.render_modify_moderator_logs()}
+                    {this.render_modify_moderator_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'interactable-checkers'){
             return(
                 <div>
-                    {this.render_interactable_checker_logs()}
+                    {this.render_interactable_checker_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'interactable-accounts'){
             return(
                 <div>
-                    {this.render_interactable_accounts_logs()}
+                    {this.render_interactable_accounts_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'block-accounts'){
             return(
                 <div>
-                    {this.render_blocked_accounts_logs()}
+                    {this.render_blocked_accounts_logs(object)}
                 </div>
             )
         }
@@ -164,21 +171,21 @@ class SubscriptionDetailsSection extends Component {
         else if(selected_item == 'search'){
             return(
                 <div>
-                    {this.render_search_ui()}
+                    {this.render_search_ui(object)}
                 </div>
             )
         }
     }
 
-    render_subscription_main_details_section(){
+    render_subscription_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var item = this.get_subscription_details_data()
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        var item = this.get_subscription_details_data(object)
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -223,7 +230,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
                     <div style={{height: 10}}/>
                     
-                    {this.render_revoke_author_privelages_event()}
+                    {this.render_revoke_author_privelages_event(object)}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('0')}
@@ -233,17 +240,17 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Pay Subscription', 'details':'Pay for the subscription for your account', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_pay_subscription_ui()}>
+                    <div onClick={()=>this.open_pay_subscription_ui(object)}>
                         {this.render_detail_item('5', {'text':'Pay Subscription', 'action':''})}
                     </div>
 
-                    {this.render_cancel_button()}
+                    {this.render_cancel_button(object)}
 
-                    {this.render_collect_button()}
+                    {this.render_collect_button(object)}
 
-                    {this.render_auth_modify_button()}
+                    {this.render_auth_modify_button(object)}
 
-                    {this.render_moderator_button()}
+                    {this.render_moderator_button(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -252,8 +259,8 @@ class SubscriptionDetailsSection extends Component {
         )
     }
 
-    render_revoke_author_privelages_event(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    render_revoke_author_privelages_event(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var events = this.get_moderator_item_logs(object, 'revoke_privelages')
 
         if(events.length != 0){
@@ -279,33 +286,33 @@ class SubscriptionDetailsSection extends Component {
         }
     }
 
-    open_pay_subscription_ui(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    open_pay_subscription_ui(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_pay_subscription_ui(object)
     }
 
-    open_cancel_subscription_ui(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    open_cancel_subscription_ui(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_cancel_subscription_ui(object)
     }
 
-    open_collect_subscription_ui(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    open_collect_subscription_ui(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_collect_subscription_ui(object)
     }
     
-    open_modify_subscription_ui(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    open_modify_subscription_ui(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_modify_subscription_ui(object)
     }
 
-    open_moderator_ui(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    open_moderator_ui(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         this.props.open_moderator_ui(object)
     }
 
-    render_cancel_button(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    render_cancel_button(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
         var minimum_cancellable_balance_amount = subscription_config[4/* minimum_cancellable_balance_amount */]
         var time_unit = subscription_config[5/* time_unit */]
@@ -317,7 +324,7 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Cancel Subscription', 'details':'Cancel your subscription payment and receive your tokens back', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_cancel_subscription_ui()}>
+                    <div onClick={()=>this.open_cancel_subscription_ui(object)}>
                         {this.render_detail_item('5', {'text':'Cancel Subscription', 'action':''})}
                     </div>
                 </div>
@@ -325,8 +332,8 @@ class SubscriptionDetailsSection extends Component {
         }
     }
 
-    render_collect_button(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    render_collect_button(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
@@ -337,7 +344,7 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Collect Subscription', 'details':'Collect the subscription payments from the subscription account', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_collect_subscription_ui()}>
+                    <div onClick={()=>this.open_collect_subscription_ui(object)}>
                         {this.render_detail_item('5', {'text':'Collect Subscription', 'action':''})}
                     </div>
                 </div>
@@ -345,8 +352,8 @@ class SubscriptionDetailsSection extends Component {
         }
     }
 
-    render_auth_modify_button(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    render_auth_modify_button(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var subscription_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
@@ -357,7 +364,7 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Modify Subscription', 'details':'Modify the configuration of the subscription.', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_modify_subscription_ui()}>
+                    <div onClick={()=>this.open_modify_subscription_ui(object)}>
                         {this.render_detail_item('5', {'text':'Modify Subscription', 'action':''})}
                     </div>
                 </div>
@@ -365,8 +372,8 @@ class SubscriptionDetailsSection extends Component {
         }
     }
 
-    render_moderator_button(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+    render_moderator_button(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['id'] != 5 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
@@ -376,7 +383,7 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_moderator_ui()}>
+                    <div onClick={()=>this.open_moderator_ui(object)}>
                         {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
                     </div>
                 </div>
@@ -385,10 +392,11 @@ class SubscriptionDetailsSection extends Component {
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
                         </li>
@@ -411,9 +419,9 @@ class SubscriptionDetailsSection extends Component {
         return all_objects
     }
 
-    get_subscription_details_data(){
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
-        var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
+    get_subscription_details_data(object){
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        var tags = object['ipfs'] == null ? ['Subscription'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var subscription_config = object['data'][1]
@@ -463,9 +471,9 @@ class SubscriptionDetailsSection extends Component {
 
 
     //ctrl-c, ctrl-v
-    render_transfer_logs(){
+    render_transfer_logs(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -481,7 +489,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_contract_transfer_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'transfer')
+        var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -581,9 +589,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_subscription_payment_logs(){
+    render_subscription_payment_logs(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -618,7 +626,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_pay_subscription_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.filter_subscription_payment_event_logs(this.get_item_logs(object, 'pay'), this.state.subscription_payment_search_text, object)
+        var items = [].concat(this.filter_subscription_payment_event_logs(this.get_item_logs(object, 'pay'), this.state.subscription_payment_search_text, object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -714,9 +722,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_subscription_cancellations(){
+    render_subscription_cancellations(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -751,7 +759,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_cancel_subscription_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.filter_subscription_cancellation_event_logs(this.get_item_logs(object, 'cancel'), this.state.subscription_cancellation_search_text, object)
+        var items = [].concat(this.filter_subscription_cancellation_event_logs(this.get_item_logs(object, 'cancel'), this.state.subscription_cancellation_search_text, object))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -839,9 +847,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_subscription_collections(){
+    render_subscription_collections(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -857,7 +865,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_collect_subscription_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'collect')
+        var items = [].concat(this.get_item_logs(object, 'collect'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -950,9 +958,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_modification_events(){
+    render_modification_events(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -969,7 +977,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_modify_subscription_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'modify')
+        var items = [].concat(this.get_item_logs(object, 'modify'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1132,9 +1140,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_modify_moderator_logs(){
+    render_modify_moderator_logs(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1157,7 +1165,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_modify_moderator_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'modify_moderator')
+        var items = [].concat(this.get_moderator_item_logs(object, 'modify_moderator'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1245,9 +1253,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_interactable_checker_logs(){
+    render_interactable_checker_logs(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1263,7 +1271,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_interactable_checker_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'enable_interactible')
+        var items = [].concat(this.get_moderator_item_logs(object, 'enable_interactible'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1344,9 +1352,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_interactable_accounts_logs(){
+    render_interactable_accounts_logs(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1362,7 +1370,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_interactable_accounts_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'add_interactible')
+        var items = [].concat(this.get_moderator_item_logs(object, 'add_interactible'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1446,9 +1454,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_blocked_accounts_logs(){
+    render_blocked_accounts_logs(object){
         var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1464,7 +1472,7 @@ class SubscriptionDetailsSection extends Component {
 
     render_blocked_accounts_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'block_account')
+        var items = [].concat(this.get_moderator_item_logs(object, 'block_account'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1551,9 +1559,9 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    render_search_ui(){
+    render_search_ui(object){
        var he = this.props.height - 45
-        var object = this.get_subscription_items()[this.props.selected_subscription_item]
+        // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1644,13 +1652,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':''+(new Date(first_payment_time*1000))+', '+(this.get_time_difference(first_payment_time))+' ago', 'details':'First Payment Time', 'size':'s'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':(first_payment_block), 'details':'First Payment Block', 'size':'s'})}
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Time Units Paid For', 'details':'Chart containing the amount in time units that have been accumulated.', 'size':'s'})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('6', {'dataPoints':this.get_search_result_data_points(result['events']), 'interval':this.get_interval_figure(result['events'])})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Time Units', 'details':'X-Axis: Time', 'size':'s'})}
-                    <div style={{height: 10}}/>
+                    {this.render_chart_data_if_size_works(result)}
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':'Highest Time Units Paid For ', 'subtitle': this.format_power_figure(this.get_interval_figure(result['events'])), 'barwidth': this.calculate_bar_width(this.get_interval_figure(result['events'])), 'number': this.format_account_balance_figure(this.get_interval_figure(result['events'])), 'barcolor': '', 'relativepower': 'time-units', })}
@@ -1666,43 +1668,63 @@ class SubscriptionDetailsSection extends Component {
         }
     }
 
+    render_chart_data_if_size_works(result){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Time Units Paid For', 'details':'Chart containing the amount in time units that have been accumulated.', 'size':'s'})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('6', {'dataPoints':this.get_search_result_data_points(result['events']), 'interval':110, 'hide_label':true})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':'Y-Axis: Time Units', 'details':'X-Axis: Time', 'size':'s'})}
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
 
     get_search_result_data_points(events){
         var data = []
-        for(var i=0; i<events.length; i++){
-            if(i==0){
-                data.push(bigInt(events[i].returnValues.p3))
-            }else{
-                data.push(data[data.length-1]+bigInt(events[i].returnValues.p3))
-            }
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    // data.push(parseInt(events[i].returnValues.p3))
+                    data.push(bigInt(events[i].returnValues.p3))
+                }else{
+                    // data.push(data[data.length-1]+bigInt(events[i].returnValues.p3))
+                    data.push(bigInt(data[data.length-1]).add(bigInt(events[i].returnValues.p3)))
+                }
 
-            if(i==events.length-1){
-                var diff = Date.now()/1000 - events[i].returnValues.p5
-                for(var t=0; t<diff; t+=60){
-                    data.push(data[data.length-1])      
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
                 }
+                else{
+                    var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                } 
             }
-            else{
-                var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
-                for(var t=0; t<diff; t+=60){
-                    data.push(data[data.length-1])      
-                }
-            }
-            
+        }catch(e){
+
         }
-
 
         var xVal = 1, yVal = 0;
         var dps = [];
         var noOfDps = 100;
         var factor = Math.round(data.length/noOfDps) +1;
         // var noOfDps = data.length
+        var largest_number = this.get_interval_figure(events)
         for(var i = 0; i < noOfDps; i++) {
-            yVal = data[factor * xVal]
+            yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            // yVal = data[factor * xVal]
             // yVal = data[i]
-            if(yVal != null){
+            if(yVal != null && data[factor * xVal] != null){
                 if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
-                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
                 }
@@ -1719,7 +1741,7 @@ class SubscriptionDetailsSection extends Component {
     get_interval_figure(events){
         var data = []
         events.forEach(event => {
-            data.push(event.returnValues.p3)
+            data.push(bigInt(event.returnValues.p3))
         });
         var largest = Math.max.apply(Math, data);
         return largest
@@ -1728,7 +1750,7 @@ class SubscriptionDetailsSection extends Component {
     get_lowest_figure(events){
         var data = []
         events.forEach(event => {
-            data.push(event.returnValues.p3)
+            data.push(bigInt(event.returnValues.p3))
         });
         var largest = Math.min.apply(Math, data);
         return largest

@@ -81,7 +81,7 @@ class ProposalDetailsSection extends Component {
 
     check_for_new_responses_and_messages() {
         if(this.props.selected_proposal_item != null){
-            var object = this.get_proposal_items()[this.props.selected_proposal_item]
+            var object = this.get_item_in_array(this.get_proposal_items(), this.props.selected_proposal_item)
             this.props.get_objects_messages(object['id'],  object['e5'])
             this.props.get_proposal_event_data(object['id'], object['e5'])
         }
@@ -137,41 +137,48 @@ class ProposalDetailsSection extends Component {
     }
 
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
+
     render_proposal_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_proposal_list_detail_tags_object, this.state.navigate_view_proposal_list_detail_tags_object['i'].active)
+        var object = this.get_item_in_array(this.get_proposal_items(), this.props.selected_proposal_item)
 
         if(selected_item == 'details'){
             return(
                 <div>
-                    {this.render_proposal_main_details_section()}
+                    {this.render_proposal_main_details_section(object)}
                 </div>
             )
         }
         else if(selected_item == 'proposal-actions'){
             return(
                 <div>
-                    {this.render_proposal_actions()}
+                    {this.render_proposal_actions(object)}
                 </div>
             )
         }
         else if(selected_item == 'activity'){
             return(
                 <div>
-                    {this.render_proposal_message_activity()}
+                    {this.render_proposal_message_activity(object)}
                 </div>
             )
         }
         else if(selected_item == 'transfers'){
             return(
                 <div>
-                    {this.render_transfer_logs()}
+                    {this.render_transfer_logs(object)}
                 </div>
             )
         }
         else if(selected_item == 'votes'){
             return(
                 <div>
-                    {this.render_vote_logs()}
+                    {this.render_vote_logs(object)}
                 </div>
             )
         }
@@ -195,15 +202,15 @@ class ProposalDetailsSection extends Component {
         );
     }
 
-    render_proposal_main_details_section(){
+    render_proposal_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var item = this.get_proposal_details_data()
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        var item = this.get_proposal_details_data(object)
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
@@ -237,7 +244,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['target_contract_authority'])}
 
-                    {this.render_modify_target_if_any(item)}
+                    {this.render_modify_target_if_any(item, object)}
 
                     {this.render_detail_item('0')}
 
@@ -262,26 +269,16 @@ class ProposalDetailsSection extends Component {
                     {this.render_detail_item('3', item['vote_no'])}
 
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Vote in Proposal', 'details':'Cast a vote in this proposal and collect some bounty', 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div onClick={()=>this.open_vote_proposal_ui()}>
-                        {this.render_detail_item('5', {'text':'Vote Proposal', 'action':''})}
-                    </div>
+                    {this.render_vote_proposal_button(object)}
+
+                    {this.render_sumbit_proposal_button(object)}
+
+                    {this.render_archive_button_if_author(object)}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Submit Proposal', 'details':'Submit the proposal to perform its actions', 'size':'l'})}
+                    {this.render_submitted_proposal_event(object)}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_sumbit_proposal_ui()}>
-                        {this.render_detail_item('5', {'text':'Submit Proposal', 'action':''})}
-                    </div>
-
-                    {this.render_archive_button_if_author()}
-
-                    {this.render_detail_item('0')}
-                    {this.render_submitted_proposal_event()}
-                    <div style={{height:10}}/>
-                    {this.render_archived_proposal_event()}
+                    {this.render_archived_proposal_event(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -290,8 +287,59 @@ class ProposalDetailsSection extends Component {
         )
     }
 
-    render_submitted_proposal_event(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+
+    render_vote_proposal_button(object){
+        var now = Date.now()/1000
+        var proposal_exipry_time = object['data'][1][1/* <1>proposal_expiry_time */]
+
+        if(object['data'][1][5/* <5>target_contract_authority */] == 2){
+            var e5 = object['e5']
+            var entered_contracts_count = this.props.app_state.basic_transaction_data[e5][2]
+            var e5_runs_count = this.props.app_state.basic_transaction_data[e5][3]
+            var minimum_entered_contracts = object['data'][1][14 /* minimum_entered_contracts */]
+            var minimum_transaction_count = object['data'][1][19 /* minimum_transaction_count */]
+
+            if(entered_contracts_count< minimum_entered_contracts || e5_runs_count< minimum_transaction_count){
+                return;
+            }
+        }
+
+        if(now < proposal_exipry_time){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Vote in Proposal', 'details':'Cast a vote in this proposal and collect some bounty', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_vote_proposal_ui(object)}>
+                        {this.render_detail_item('5', {'text':'Vote Proposal', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    render_sumbit_proposal_button(object){
+        var now = Date.now()/1000
+        var proposal_exipry_time = object['data'][1][1/* <1>proposal_expiry_time */]
+        var proposal_sumbit_expiry_time = object['data'][1][3/* <3>consensus_submit_expiry_time */]
+
+        if(now > proposal_exipry_time && now < proposal_sumbit_expiry_time){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Submit Proposal', 'details':'Submit the proposal to perform its actions', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_sumbit_proposal_ui(object)}>
+                        {this.render_detail_item('5', {'text':'Submit Proposal', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_submitted_proposal_event(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var events = this.get_item_logs(object, 'submit')
 
         if(events.length != 0){
@@ -309,8 +357,8 @@ class ProposalDetailsSection extends Component {
         }
     }
 
-    render_archived_proposal_event(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    render_archived_proposal_event(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var events = this.get_item_logs(object, 'archive')
 
         if(events.length != 0){
@@ -328,20 +376,20 @@ class ProposalDetailsSection extends Component {
         }
     }
 
-    open_vote_proposal_ui(){
-        this.props.open_vote_proposal_ui(this.get_proposal_items()[this.props.selected_proposal_item])
+    open_vote_proposal_ui(object){
+        this.props.open_vote_proposal_ui(object)
     }
 
-    open_sumbit_proposal_ui(){
-        this.props.open_sumbit_proposal_ui(this.get_proposal_items()[this.props.selected_proposal_item])
+    open_sumbit_proposal_ui(object){
+        this.props.open_sumbit_proposal_ui(object)
     }
 
-    open_archive_proposal_ui(){
-        this.props.open_archive_proposal_ui(this.get_proposal_items()[this.props.selected_proposal_item])
+    open_archive_proposal_ui(object){
+        this.props.open_archive_proposal_ui(object)
     }
 
-    render_archive_button_if_author(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    render_archive_button_if_author(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['event'].returnValues.p4/* supposed to be p3 */ == my_account && object['data'][1][3] < Date.now()/1000){
             return(
@@ -349,7 +397,7 @@ class ProposalDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':'Archive Proposal', 'details':'Delete the proposals data to free up space in the blockchain', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_archive_proposal_ui()}>
+                    <div onClick={()=>this.open_archive_proposal_ui(object)}>
                         {this.render_detail_item('5', {'text':'Archive Proposal', 'action':''})}
                     </div>
                 </div>
@@ -357,8 +405,8 @@ class ProposalDetailsSection extends Component {
         }
     }
 
-    render_modify_target_if_any(item){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    render_modify_target_if_any(item, object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var proposal_config = object['data'][1]
 
         if(proposal_config[0] == 1){
@@ -375,9 +423,9 @@ class ProposalDetailsSection extends Component {
         return this.props.get_proposal_items()
     }
 
-    get_proposal_details_data(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
-        var tags = object['ipfs'] == null ? ['Proposal'] : object['ipfs'].entered_indexing_tags
+    get_proposal_details_data(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        var tags = object['ipfs'] == null ? ['Proposal'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p6
         var time = object['event'] == null ? 0 : object['event'].returnValues.p5
@@ -387,7 +435,6 @@ class ProposalDetailsSection extends Component {
         var consensus_type = consensus_obj[proposal_config[0]]
 
         
-
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
@@ -436,22 +483,22 @@ class ProposalDetailsSection extends Component {
 
 
 
-    render_proposal_actions(){
+    render_proposal_actions(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var items = this.get_proposal_action_data()
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        var items = this.get_proposal_action_data(object)
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var proposal_action = object['data'][1][0]
 
         if(proposal_action == 0){
            return(
                 <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
-                        {this.render_spend_actions(items)}
+                        {this.render_spend_actions(items, object)}
                     </div>
                 </div> 
             )
@@ -460,7 +507,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
-                        {this.load_reconfig_items(items)}
+                        {this.load_reconfig_items(items, object)}
                     </div>
                 </div> 
             )
@@ -469,7 +516,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
-                        {this.load_transfer_actions(items)}
+                        {this.load_transfer_actions(items, object)}
                     </div>
                 </div> 
             )
@@ -478,8 +525,8 @@ class ProposalDetailsSection extends Component {
         
     }
 
-    get_proposal_action_data(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    get_proposal_action_data(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var proposal_action = object['data'][1][0]
 
         if(proposal_action == 0){
@@ -498,8 +545,8 @@ class ProposalDetailsSection extends Component {
 
 
 
-    render_spend_actions(items){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    render_spend_actions(items, object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
@@ -530,7 +577,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_when_spend_action_clicked(item)}>
+                            <li style={{'padding': '5px'}}>
                                 {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['spend_token']], 'details':'target: '+item['spend_target']+', token ID: '+item['spend_token'], 'size':'l'})}
                             </li>
                         ))}
@@ -590,8 +637,8 @@ class ProposalDetailsSection extends Component {
 
 
 
-    load_reconfig_items(items){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    load_reconfig_items(items,object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
@@ -622,7 +669,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
+                            <li style={{'padding': '5px'}}>
                                 {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
@@ -691,8 +738,8 @@ class ProposalDetailsSection extends Component {
 
 
 
-    load_transfer_actions(items){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    load_transfer_actions(items, object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
@@ -754,7 +801,7 @@ class ProposalDetailsSection extends Component {
     }
 
 
-    render_proposal_message_activity(){
+    render_proposal_message_activity(object){
         var he = this.props.height-100
         var size = this.props.screensize
         
@@ -763,10 +810,10 @@ class ProposalDetailsSection extends Component {
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
-                        {this.render_top_title()}
-                        {this.render_focus_list()}
+                        {this.render_top_title(object)}
+                        {this.render_focus_list(object)}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                        {this.render_sent_received_messages()}
+                        {this.render_sent_received_messages(object)}
                     </div>
                 </div>
 
@@ -774,7 +821,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{'margin':'1px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet()}>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet(object)}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
@@ -783,7 +830,7 @@ class ProposalDetailsSection extends Component {
                         <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
@@ -795,14 +842,14 @@ class ProposalDetailsSection extends Component {
         this.setState({comment_structure_tags: tag_obj})
     }
 
-    show_add_comment_bottomsheet(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    show_add_comment_bottomsheet(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'proposal')
     }
 
-    render_top_title(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    render_top_title(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':'In '+object['id'], 'details':object['ipfs'].entered_title_text, 'size':'l'})} 
@@ -810,14 +857,14 @@ class ProposalDetailsSection extends Component {
         )
     }
 
-    render_sent_received_messages(){
+    render_sent_received_messages(object){
         var middle = this.props.height-250;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages()
-        var stacked_items = this.get_stacked_items()
+        var items = [].concat(this.get_convo_messages(object))
+        var stacked_items = [].concat(this.get_stacked_items(object))
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -839,17 +886,17 @@ class ProposalDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message() != null){
-            var focused_message_replies = this.get_focused_message_replies()
+        else if(this.get_focused_message(object) != null){
+            var focused_message_replies = this.get_focused_message_replies(object)
             return(
                 <div>
                     <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message())}
+                        {this.render_message_as_focused_if_so(this.get_focused_message(object),object)}
                     </div>
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
                         <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
                             <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies)}
+                                {this.render_messages(focused_message_replies, object)}
                                 <div ref={this.messagesEnd}/>
                             </ul>
                         </div>
@@ -863,8 +910,8 @@ class ProposalDetailsSection extends Component {
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items)}
-                        {this.render_messages(stacked_items)}
+                        {this.render_messages(items, object)}
+                        {this.render_messages(stacked_items, object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -873,7 +920,7 @@ class ProposalDetailsSection extends Component {
                 return(
                     <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {this.render_all_comments()}
+                            {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>
                         </ul>
                     </div>
@@ -882,9 +929,9 @@ class ProposalDetailsSection extends Component {
         }
     }
 
-    render_messages(items){
+    render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message() != null){
+        if(items.length == 0 && this.get_focused_message(object) != null){
             var items = [0,1]
             return(
                 <div>
@@ -909,7 +956,7 @@ class ProposalDetailsSection extends Component {
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
-                                {this.render_message_as_focused_if_so(item)}
+                                {this.render_message_as_focused_if_so(item, object)}
                                 <div style={{height:3}}/>
                             </div>
                         </li>
@@ -920,9 +967,9 @@ class ProposalDetailsSection extends Component {
         
     }
 
-    focus_message(item){
+    focus_message(item, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
 
         if(this.state.focused_message[object['id']] != item){
             clone[object['id']] = item
@@ -947,11 +994,11 @@ class ProposalDetailsSection extends Component {
     //     return return_value
     // }
 
-    unfocus_message(){
+    unfocus_message(object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         if(clone['tree'][object['id']] != null){
-            var index = this.get_index_of_item()
+            var index = this.get_index_of_item(object)
             if(index != -1){
                 clone['tree'][object['id']].splice(index, 1)
             }
@@ -962,8 +1009,8 @@ class ProposalDetailsSection extends Component {
         this.setState({focused_message: clone})
     }
 
-    get_index_of_item(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    get_index_of_item(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var focused_item = this.state.focused_message[object['id']]
         var focused_items = this.state.focused_message['tree'][object['id']]
         var pos = -1
@@ -977,8 +1024,8 @@ class ProposalDetailsSection extends Component {
     }
 
 
-    render_message_as_focused_if_so(item){
-        var focused_message = this.get_focused_message()
+    render_message_as_focused_if_so(item, object){
+        var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
             return(
@@ -991,9 +1038,9 @@ class ProposalDetailsSection extends Component {
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
                     {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
@@ -1009,13 +1056,13 @@ class ProposalDetailsSection extends Component {
                         <SwipeableListItem
                             swipeLeft={{
                             content: <div>Focus</div>,
-                            action: () => this.focus_message(item)
+                            action: () => this.focus_message(item, object)
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
 
@@ -1045,22 +1092,22 @@ class ProposalDetailsSection extends Component {
         this.last_all_click_time = Date.now();
     }
 
-    render_stack_message_item(item){
+    render_stack_message_item(item, object){
         if(item.type == 'message'){
             return(
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }else{
@@ -1069,24 +1116,24 @@ class ProposalDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
                     {this.render_detail_item('9',item['image-data'])}
 
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }
     }
 
-    get_sender_title_text(item){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    get_sender_title_text(item, object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
@@ -1102,8 +1149,8 @@ class ProposalDetailsSection extends Component {
         return message
     }
 
-    get_convo_messages(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    get_convo_messages(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var convo_messages = this.props.app_state.object_messages[object['id']]
         if(convo_messages == null){
             return []
@@ -1111,8 +1158,8 @@ class ProposalDetailsSection extends Component {
         return convo_messages
     }
 
-    get_stacked_items(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    get_stacked_items(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var convo_id = object['id']
 
         var stack = this.props.app_state.stack_items
@@ -1130,9 +1177,9 @@ class ProposalDetailsSection extends Component {
         return stacked_items
     }
 
-    get_focused_message_replies(){
-        var focused_message = this.get_focused_message()
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_focused_message_replies(object){
+        var focused_message = this.get_focused_message(object)
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
@@ -1142,8 +1189,8 @@ class ProposalDetailsSection extends Component {
         return replies
     }
 
-    get_message_replies(item){
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_message_replies(item, object){
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && item['message_id'] != null &&  all_messages[i]['focused_message_id'] == item['message_id']){
@@ -1153,8 +1200,8 @@ class ProposalDetailsSection extends Component {
         return replies
     }
 
-    get_focused_message(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+    get_focused_message(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         return this.state.focused_message[object['id']]
     }
 
@@ -1189,11 +1236,11 @@ class ProposalDetailsSection extends Component {
         this.setState({entered_text: text})
     }
 
-    add_message_to_stack(){
+    add_message_to_stack(object){
         var message = this.state.entered_text.trim()
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         if(message == ''){
             this.props.notify('type something first', 600)
         }
@@ -1239,17 +1286,17 @@ class ProposalDetailsSection extends Component {
 
 
 
-    render_focus_list(){
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
-        var items = this.state.focused_message['tree'][object['id']]
+    render_focus_list(object){
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        var items = [].concat(this.state.focused_message['tree'][object['id']])
 
         if(items != null && items.length > 0){
             return(
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item), 'details':this.shorten_message_item(this.format_message(item['message'])), 'size':'s'})}
+                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index, object)}>
+                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item,object), 'details':this.shorten_message_item(this.format_message(item['message'], object), object), 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -1267,9 +1314,9 @@ class ProposalDetailsSection extends Component {
         return return_val
     }
 
-    when_focus_chain_item_clicked(item, pos){
+    when_focus_chain_item_clicked(item, pos, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
 
         var new_array = []
         for(var i=0; i<=pos; i++){
@@ -1286,14 +1333,14 @@ class ProposalDetailsSection extends Component {
 
 
 
-    render_all_comments(){
-        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
+    render_all_comments(object){
+        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object(object))
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
                         <div >
-                            {this.render_main_comment(item, 0)}
+                            {this.render_main_comment(item, 0, object)}
                             <div style={{height:3}}/>
                         </div>
                     </li>
@@ -1302,21 +1349,21 @@ class ProposalDetailsSection extends Component {
         )
     }
 
-    render_main_comment(comment, depth){
+    render_main_comment(comment, depth, object){
         return(
             <div>
-                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message)}>
-                    {this.render_message_as_focused_if_so(comment.data.message)}
+                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message, object)}>
+                    {this.render_message_as_focused_if_so(comment.data.message, object)}
                 </div>
 
-                {this.render_message_children(comment, depth)}
+                {this.render_message_children(comment, depth, object)}
             </div>
         )
     }
 
-    render_message_children(comment, depth){
+    render_message_children(comment, depth, object){
         var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
-        if(!this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
+        if(this.state.hidden_message_children_array.includes(comment.data.message['message_id'], object)){
             return(
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
                     <div style={{width:'100%'}}>
@@ -1324,7 +1371,7 @@ class ProposalDetailsSection extends Component {
                             {comment.children.map((item, index) => (
                                 <li style={{'padding': '4px 0px 0px 0px'}}>
                                     <div>
-                                        {this.render_main_comment(item, depth+1)}
+                                        {this.render_main_comment(item, depth+1, object)}
                                         <div style={{height:3}}/>
                                     </div>
                                 </li>
@@ -1351,8 +1398,8 @@ class ProposalDetailsSection extends Component {
         this.setState({hidden_message_children_array:clone})
     }
 
-    get_message_replies_in_sorted_object(){
-        var messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_message_replies_in_sorted_object(object){
+        var messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var data = []
         messages.forEach(message => {
             data.push({ index : message['message_id'], sort : message['time'], parent : message['focused_message_id'], message: message })
@@ -1373,9 +1420,9 @@ class ProposalDetailsSection extends Component {
 
 
     //ctrl-c, ctrl-v
-    render_transfer_logs(){
+    render_transfer_logs(object){
         var he = this.props.height - 45
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1391,7 +1438,7 @@ class ProposalDetailsSection extends Component {
 
     render_contract_transfer_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'transfer')
+        var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1490,9 +1537,9 @@ class ProposalDetailsSection extends Component {
 
 
     
-    render_vote_logs(){
+    render_vote_logs(object){
         var he = this.props.height - 45
-        var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1509,7 +1556,7 @@ class ProposalDetailsSection extends Component {
 
     render_vote_event_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'vote')
+        var items = [].concat(this.get_item_logs(object, 'vote'))
         if (items.length == 0) {
             items = [0, 1]
             return (

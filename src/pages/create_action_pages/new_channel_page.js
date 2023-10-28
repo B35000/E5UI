@@ -39,7 +39,7 @@ class NewChannelPage extends Component {
     state = {
         id: makeid(8), type:'channel', e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
-        get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
+        // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[],
@@ -55,11 +55,20 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','text', 'images', 'e.authorities'], [0]
+                ['or','',0], ['e','e.text', 'images', 'e.authorities'], [0]
             ],
             'authorities':[
               ['xor','e',1], ['authorities','moderators', 'interactible'], [1],[1]
-          ],
+            ],
+            'text':[
+                ['or','',0], ['text','e.font', 'e.size'], [0]
+            ],
+            'font':[
+                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+            ],
+            'size':[
+                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
+            ],
         };
     }
 
@@ -146,7 +155,7 @@ class NewChannelPage extends Component {
                 </div>
             )    
         }
-        else if(selected_item == 'text'){
+        else if(this.is_text_selected_item(selected_item)){
             return(
                 <div>
                     {this.render_enter_text_part()}
@@ -169,7 +178,15 @@ class NewChannelPage extends Component {
         }
     }
 
-     get_selected_item(object, option){
+    is_text_selected_item(selected_item){
+        var obj = ['text','font','size','Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
+        if(obj.includes(selected_item)){
+            return true
+        }
+        return false
+    }
+
+    get_selected_item(object, option){
         var selected_item = object[option][2][0]
         var picked_item = object[option][1][selected_item];
         return picked_item
@@ -295,7 +312,7 @@ class NewChannelPage extends Component {
     render_new_job_object(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var items = this.state.entered_objects;
+        var items = [].concat(this.state.entered_objects);
         return ( 
             <div onClick={() => console.log()} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 10px 10px'}}>
                 <div style={{'padding': '5px 0px 5px 0px'}}>
@@ -356,8 +373,8 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/> */}
 
                 <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -375,8 +392,8 @@ class NewChannelPage extends Component {
     }
 
     get_edited_text_object(){
-        var font = this.get_selected_item(this.state.get_new_job_text_tags_object, 'font')
-        var size = this.get_selected_item(this.state.get_new_job_text_tags_object, 'size')
+        var font = this.get_selected_item(this.state.get_new_job_page_tags_object, 'font')
+        var size = this.get_selected_item(this.state.get_new_job_page_tags_object, 'size')
         return{
             'font':font, 'textsize':size,'text':this.state.entered_text
         }
@@ -405,11 +422,11 @@ class NewChannelPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.entered_text_objects
+        var items = [].concat(this.state.entered_text_objects)
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.reverse().map((item, index) => (
+                    {items.map((item, index) => (
                         <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>
                             {this.render_detail_item('4',item)}
                         </li>
@@ -478,7 +495,7 @@ class NewChannelPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div>
 
-            <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
+            <div style={{'padding': '5px', width:'80%'}} onClick={()=>this.add_images_to_object()}>
                 {this.render_detail_item('5', {'text':'Add Images', 'action':'-'})}
             </div>
 
@@ -579,7 +596,7 @@ class NewChannelPage extends Component {
                 </div>
             )
         }else{
-            var items = this.state.entered_image_objects
+            var items = [].concat(this.state.entered_image_objects);
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>
@@ -678,6 +695,7 @@ class NewChannelPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
 
+                {this.load_account_suggestions('moderator_id')}
 
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
@@ -712,7 +730,7 @@ class NewChannelPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.moderators
+        var items = [].concat(this.state.moderators)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -764,6 +782,8 @@ class NewChannelPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Interactible ID'} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
 
+                {this.load_account_suggestions('interactible_id')}
+
                 <div style={{height:20}}/>
 
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -813,7 +833,7 @@ class NewChannelPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.interactibles
+        var items = [].concat(this.state.interactibles)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -858,6 +878,100 @@ class NewChannelPage extends Component {
 
 
 
+    load_account_suggestions(target_type){
+        var items = [].concat(this.get_suggested_accounts(target_type))
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_accounts(target_type){
+        return[
+            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+        ].concat(this.get_account_suggestions(target_type))
+    }
+
+    get_account_suggestions(target_type){
+        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var return_array = []
+
+        if(target_type == 'moderator_id'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.moderator_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'interactible_id'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.interactible_id)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+    when_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'moderator_id'){
+            this.setState({moderator_id: item['id']})
+        }
+        else if(target_type == 'interactible_id'){
+            this.setState({interactible_id: item['id']})
+        }
+
+    }
 
     
 

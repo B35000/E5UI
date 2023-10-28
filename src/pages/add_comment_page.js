@@ -115,7 +115,7 @@ class AddCommentPage extends Component {
                 </div>
             )
         }else{
-            var items = this.state.entered_image_objects
+            var items = [].concat(this.state.entered_image_objects)
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>

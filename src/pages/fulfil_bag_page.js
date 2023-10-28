@@ -154,7 +154,7 @@ class FulfilBagPage extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_contract_items()
+        var items = [].concat(this.get_contract_items())
 
         if(items.length == 0){
             items = ['0','1'];
@@ -198,7 +198,14 @@ class FulfilBagPage extends Component {
         var created_cons = this.get_all_sorted_objects(this.props.app_state.created_contracts)
         for(var i = 0; i < created_cons.length; i++){
             var post_author = created_cons[i]['event'] == null ? 0 : created_cons[i]['event'].returnValues.p3
+            // console.log('----------------------get_contract_items------------------------------')
+            // console.log(this.props.app_state.user_account_id)
+            // console.log(created_cons[i]['e5'])
+
             var myid = this.props.app_state.user_account_id[created_cons[i]['e5']]
+            if(myid == null){
+                myid = 1
+            }
             if(post_author.toString() == myid.toString()){
                 // if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
                 //     my_contracts.push(this.props.app_state.created_contracts[i])
@@ -433,7 +440,7 @@ class FulfilBagPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -482,7 +489,7 @@ class FulfilBagPage extends Component {
 
 
     load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
+        var items = [].concat(this.get_suggested_tokens())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(

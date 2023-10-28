@@ -16,6 +16,13 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 30) {
+    return str.substr(0, 20) + '...' + str.substr(str.length-10, str.length);
+  }
+  return str;
+}
+
 class WithdrawEtherPage extends Component {
     
     state = {
@@ -132,7 +139,7 @@ class WithdrawEtherPage extends Component {
         var e5 = this.state.e5
         return(
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
-                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
                     {this.render_detail_item('3', {'title':'Withdraw Ether Confirmation', 'details':'Confirm that you want to withdraw Ether to the set address', 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -143,7 +150,7 @@ class WithdrawEtherPage extends Component {
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':'Target Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Target Wallet Address', 'details':start_and_end(this.state.recipient_address), 'size':'s'})}
                     <div style={{height: 10}}/>
 
                     <div style={{height: 10}}/>
@@ -162,7 +169,8 @@ class WithdrawEtherPage extends Component {
 
     when_withdraw_ether_confirmation_received(){
         this.setState({confirmation_dialog_box: false})
-        this.props.withdraw_ether_to_address(this.state.recipient_address)
+        var e5 = this.state.e5['id']
+        this.props.withdraw_ether_to_address(this.state.recipient_address, e5)
     }
 
 

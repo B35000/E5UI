@@ -20,15 +20,15 @@ class synchronizing_page extends Component {
     }
 
     render_synchronizing_page(){
-        var text_color = this.props.theme['primary_text_color']
         return(
             <div style={{}}>
-                <p style={{margin:'15% 0% 3% 35%', color: text_color}}>{this.get_sync_text()}</p>
-                <div style={{width:'60%', margin:'0% 0% 0% 20%'}}>
+                <p style={{margin:'15% 0% 3% 0%', 'text-align': 'center', color: this.props.theme['primary_text_color']}}>{this.get_sync_text()}</p>
+                <div style={{width:'60%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_synch_bar()}
                 </div>
-                <img style={{width:'60%', margin:'5% 0% 0% 20%'}} src={syncrhonizing_image} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
-                <div style={{width:'60%', margin:'20% 0% 0% 15%'}}>
+                <img style={{width:'60%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={syncrhonizing_image} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
+                
+                <div style={{width:'60%', 'margin-top':'20px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_bottom_text()}
                 </div>
             </div>

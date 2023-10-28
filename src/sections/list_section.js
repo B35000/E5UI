@@ -6,8 +6,8 @@ import ViewGroups from './../components/view_groups';
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import End35 from './../assets/end35.png';
-import E35EndImg from './../assets/e35_end_token.png';
-import E35SpendImg from './../assets/e35_spend_token.png';
+import End25 from './../assets/E25.png';
+
 
 var bigInt = require("big-integer");
 
@@ -201,7 +201,7 @@ class PostListSection extends Component {
     }
 
     format_job_item(object){
-        var tags = object['ipfs'] == null ? ['Job'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Job'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -290,7 +290,7 @@ class PostListSection extends Component {
     }
 
     format_contract_item(object){
-        var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? [object['e5'], 'Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         return {
@@ -379,7 +379,7 @@ class PostListSection extends Component {
     }
 
     format_proposal_item(object){
-        var tags = object['ipfs'] == null ? ['Proposal'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Proposal'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p6
         var time = object['event'] == null ? 0 : object['event'].returnValues.p5
@@ -475,7 +475,7 @@ class PostListSection extends Component {
     }
 
     format_subscription_item(object){
-        var tags = object['ipfs'] == null ? ['Subscription'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Subscription'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
@@ -559,7 +559,7 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_mail_item(object)
         return(
-            <div onClick={() => this.when_mail_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div onClick={() => this.when_mail_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -575,13 +575,13 @@ class PostListSection extends Component {
         )
     }
 
-    when_mail_item_clicked(item){
-        this.props.when_mail_item_clicked(item)
+    when_mail_item_clicked(item, object){
+        this.props.when_mail_item_clicked(item, object['id'])
     }
 
     format_mail_item(object){
         var tags_to_use = [object['type']];
-        var tags = object['ipfs'] == null ? ['Mail'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Mail'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var final_tags = tags_to_use.concat(tags)
         var title = object['ipfs'] == null ? 'Mail ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
@@ -669,7 +669,7 @@ class PostListSection extends Component {
     }
 
     format_contractor_item(object){
-        var tags = object['ipfs'] == null ? ['Contractor'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Contractor'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -724,7 +724,7 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.get_e5_data_item_object(item_data, name)
         return ( 
-            <div onClick={() => this.when_E5_item_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div onClick={() => this.when_E5_item_clicked(index, name)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -742,17 +742,20 @@ class PostListSection extends Component {
     }
 
     get_e5_data_item_object(item_data, name){
-        var obj = {'E15':End35}
-        var add_obj = {'e35':this.props.app_state.addresses['E15'][0]}
+        var obj = {'E15':End35, 'E25':End25}
+        var add_obj = {
+            'E15':this.props.app_state.addresses['E15'][0],
+            'E25':this.props.app_state.addresses['E25'][0]
+        }
         return {
                 'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': obj[name]},
                 'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
-                'address':{'font':'Sans-serif', 'text':add_obj['e35'], 'textsize':'12px'}
+                'address':{'font':'Sans-serif', 'text':add_obj[name], 'textsize':'12px'}
             }
     }
 
-    when_E5_item_clicked(index){
-        this.props.when_E5_item_clicked(index)
+    when_E5_item_clicked(index, name){
+        this.props.when_E5_item_clicked(index, name)
     }
 
 
@@ -876,7 +879,7 @@ class PostListSection extends Component {
     }
 
     format_post_item(object){
-        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Post'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -965,7 +968,7 @@ class PostListSection extends Component {
     }
 
     format_channel_item(object){
-        var tags = object['ipfs'] == null ? ['Post'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Post'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -1055,7 +1058,7 @@ class PostListSection extends Component {
     }
 
     format_storefront_item(object){
-        var tags = object['ipfs'] == null ? ['Storefront'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Storefront'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -1243,7 +1246,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
-            <div onClick={() => this.when_ether_object_clicked(index)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div onClick={() => this.when_ether_object_clicked(index, item)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1260,6 +1263,7 @@ class PostListSection extends Component {
     get_ethers_data(){
         return [
             {
+                'id':'ETHT',
                 'name': 'Ethereum Testnet',
                 'symbol': 'ETHT',
                 'image': EthereumTestnet,
@@ -1273,12 +1277,16 @@ class PostListSection extends Component {
     }
 
     get_blockchain_data(size, e5){
+        var number_of_blocks = this.props.app_state.number_of_blocks[e5]
+        if(number_of_blocks == null){
+            number_of_blocks = 0
+        }
         return{
             'style':size,
             'title':'Number of Blocks Mined',
-            'subtitle':this.format_power_figure(this.props.app_state.number_of_blocks[e5]),
-            'barwidth':this.get_number_width(this.props.app_state.number_of_blocks[e5]),
-            'number':`${number_with_commas(this.props.app_state.number_of_blocks[e5])} blocks`,
+            'subtitle':this.format_power_figure(number_of_blocks),
+            'barwidth':this.get_number_width(number_of_blocks),
+            'number':`${number_with_commas(number_of_blocks)} blocks`,
             'barcolor':'#606060',
             'relativepower':'ledger size',
         }
@@ -1294,8 +1302,8 @@ class PostListSection extends Component {
 
     
 
-    when_ether_object_clicked(index){
-        this.props.when_ether_object_clicked(index)
+    when_ether_object_clicked(index, item){
+        this.props.when_ether_object_clicked(index, item['id'])
     }
 
 
@@ -1360,17 +1368,17 @@ class PostListSection extends Component {
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
         if(token_id == 3){
-            var obj = {'E15':'E15'}
+            var obj = {'E15':'E15', 'E25':'E25'}
             name = obj[item['e5']]
         } else if(token_id == 5){
-            var obj = {'E15':'315'}
+            var obj = {'E15':'315', 'E25':'325'}
             name = obj[item['e5']]
         }
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         var balance = item['balance']
         return{
-            'tags':{'active_tags':[token_id].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
+            'tags':{'active_tags':[item['e5'], token_id].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
             'label':{'title':name,'details':symbol, 'size':'l', 'image':image},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',}
         }

@@ -9,8 +9,11 @@ import AddLetter from './../assets/add_icon.png';
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import End35 from './../assets/end35.png';
+
 import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
+import E25EndImg from './../assets/E25.png';
+import E25SpendImg from './../assets/325.png';
 
 import SwipeableBottomSheet from 'react-swipeable-bottom-sheet';
 import Dialog from "@mui/material/Dialog";
@@ -65,7 +68,7 @@ class home_page extends Component {
               ['xor','e',1], ['jobs','all','viewed','created','applied'], [1],[1]
           ],
           'contracts':[
-              ['xor','e',1], ['contracts','all','viewed','created','entered'], [1],[1]
+              ['xor','e',1], ['contracts','created','all','viewed','entered'], [1],[1]
           ],
           'contractors':[
               ['xor','e',1], ['contractors','all','viewed','created'], [1],[1]
@@ -461,8 +464,14 @@ class home_page extends Component {
 
     get_e5_data(){
         var data = []
-        var contract_data = [this.props.app_state.created_contract_mapping['E15'][2]['data']]
-        var contract_id_data = ['E15']
+        var contract_data = []
+        if(this.props.app_state.created_contract_mapping['E15'] != null){
+            contract_data.push(this.props.app_state.created_contract_mapping['E15'][2]['data'])
+        }
+        if(this.props.app_state.created_contract_mapping['E25'] != null){
+            contract_data.push(this.props.app_state.created_contract_mapping['E25'][2]['data'])
+        }
+        var contract_id_data = ['E15', 'E25']
         for (let i = 0; i < contract_data.length; i++) {
             data.push({'data':contract_data[i], 'id':contract_id_data[i]})
         }
@@ -503,10 +512,11 @@ class home_page extends Component {
         else {
             var my_contracts = []
             var all_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < all_contracts.length; i++){
                 var post_author = all_contracts[i]['event'] == null ? 0 : all_contracts[i]['event'].returnValues.p3
-
+                var myid = this.props.app_state.user_account_id[all_contracts[i]['e5']]
+                if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
                     my_contracts.push(all_contracts[i])
                 }
@@ -536,9 +546,11 @@ class home_page extends Component {
         else {
             var my_bags = []
             var all_bags = this.get_all_sorted_objects(this.props.app_state.created_bags)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < all_bags.length; i++){
                 var post_author = all_bags[i]['event'].returnValues.p3
+                var myid = this.props.app_state.user_account_id[all_bags[i]['e5']]
+                if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
                     my_bags.push(all_bags[i])
                 }
@@ -568,9 +580,11 @@ class home_page extends Component {
         else {
             var my_channels = []
             var created_channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < created_channels.length; i++){
                 var channel_author = created_channels[i]['event'].returnValues.p5
+                var myid = this.props.app_state.user_account_id[created_channels[i]['e5']]
+                if(myid == null) myid = 1
                 if(channel_author.toString() == myid.toString()){
                     my_channels.push(created_channels[i])
                 }
@@ -600,9 +614,11 @@ class home_page extends Component {
         else {
             var my_contractors = []
             var all_contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < all_contractors.length; i++){
                 var post_author = all_contractors[i]['event'].returnValues.p5
+                var myid = this.props.app_state.user_account_id[all_contractors[i]['e5']]
+                if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
                     my_contractors.push(all_contractors[i])
                 }
@@ -617,20 +633,28 @@ class home_page extends Component {
         for (let i = 0; i < exchanges_from_sync.length; i++) {
             var type = exchanges_from_sync[i]['data'][0][3/* <3>token_type */]
             var e5 = exchanges_from_sync[i]['e5']
-            var obj = {'E15':{3:E35EndImg, 5:E35SpendImg}}
-            
+            var obj = {
+                'E15':{3:E35EndImg, 5:E35SpendImg}, 
+                'E25':{3:E25EndImg, 5:E25SpendImg}
+            }
             var img = type  == 3 ? EndImg: SpendImg
             if(exchanges_from_sync[i]['id'] == 3) img = obj[e5][3]
             else if(exchanges_from_sync[i]['id'] == 5) img = obj[e5][5]
             
+            var exchange_id =  exchanges_from_sync[i]['id'] + exchanges_from_sync[i]['e5']
+
             if(type == exchange_type){
-                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'E5': 'E15', 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'] })
+                token_exchanges.push({'data': exchanges_from_sync[i]['data'], 'id':exchanges_from_sync[i]['id'], 'e5_id':exchange_id, 'E5': exchanges_from_sync[i]['e5'], 'img':img, 'balance':exchanges_from_sync[i]['balance'], 'account_data':exchanges_from_sync[i]['account_data'], 'event':exchanges_from_sync[i]['event'], 'ipfs':exchanges_from_sync[i]['ipfs'],'exchanges_balances':exchanges_from_sync[i]['exchanges_balances'], 'moderators':exchanges_from_sync[i]['moderators'], 'access_rights_enabled':exchanges_from_sync[i]['access_rights_enabled'], 'e5':exchanges_from_sync[i]['e5'], 'exchange_ratio_data':exchanges_from_sync[i]['exchange_ratio_data'], 'proportion_ratio_data':exchanges_from_sync[i]['proportion_ratio_data'] })
             }
         }
 
         var sorted_token_exchange_data = []
-        var myid = this.props.app_state.user_account_id
+        // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < token_exchanges.length; i++) {
+            var myid = this.props.app_state.user_account_id[token_exchanges[i]['e5']]
+            if(myid == null){
+                myid = 1;
+            } 
             var author_account = token_exchanges[i]['event'] == null ? '':token_exchanges[i]['event'].returnValues.p3.toString() 
             if(author_account == myid.toString()){
                 sorted_token_exchange_data.push(token_exchanges[i])
@@ -639,6 +663,11 @@ class home_page extends Component {
         sorted_token_exchange_data.reverse()
         for (let i = 0; i < token_exchanges.length; i++) {
             if(!sorted_token_exchange_data.includes(token_exchanges[i]) && token_exchanges[i]['balance'] != 0){
+                sorted_token_exchange_data.push(token_exchanges[i])
+            }
+        }
+        for (let i = 0; i < token_exchanges.length; i++) {
+            if(!sorted_token_exchange_data.includes(token_exchanges[i]) && (token_exchanges[i]['id'] == 3 || token_exchanges[i]['id'] == 5)){
                 sorted_token_exchange_data.push(token_exchanges[i])
             }
         }
@@ -688,9 +717,11 @@ class home_page extends Component {
         else {
             var my_jobs = []
             var all_jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < all_jobs.length; i++){
                 var post_author = all_jobs[i]['event'].returnValues.p5
+                var myid = this.props.app_state.user_account_id[all_jobs[i]['e5']]
+                if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
                     my_jobs.push(all_jobs[i])
                 }
@@ -708,7 +739,9 @@ class home_page extends Component {
             for(var i=0; i<received_mail['received_mail'].length; i++){
                 var convo_id = received_mail['received_mail'][i]
                 var context_object = received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
+                if(context_object['ipfs'].selected != null){
+                    all_mail.push(context_object)
+                }
             }
             return this.sortByAttributeDescending(all_mail, 'time')
         }
@@ -720,7 +753,9 @@ class home_page extends Component {
             for(var i=0; i<received_mail['received_mail'].length; i++){
                 var convo_id = received_mail['received_mail'][i]
                 var context_object = received_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
+                if(context_object['ipfs'].selected != null){
+                    all_mail.push(context_object)
+                }
             }
             return this.sortByAttributeDescending(all_mail, 'time')
         }
@@ -731,7 +766,9 @@ class home_page extends Component {
             for(var i=0; i<created_mail['created_mail'].length; i++){
                 var convo_id = created_mail['created_mail'][i]
                 var context_object = created_mail['mail_activity'][convo_id][0]
-                all_mail.push(context_object)
+                if(context_object['ipfs'].selected != null){
+                    all_mail.push(context_object)
+                }
             }
             return this.sortByAttributeDescending(all_mail, 'time')
         }
@@ -782,9 +819,11 @@ class home_page extends Component {
         else {
             var my_posts = []
             var all_posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < all_posts.length; i++){
                 var post_author = all_posts[i]['event'].returnValues.p5
+                var myid = this.props.app_state.user_account_id[all_posts[i]['e5']]
+                if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
                     my_posts.push(all_posts[i])
                 }
@@ -814,9 +853,11 @@ class home_page extends Component {
         else {
             var proposals = []
             var all_proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < all_proposals.length; i++){
                 var proposal_author = all_proposals[i]['event'].returnValues.p4/* should be p3 */
+                var myid = this.props.app_state.user_account_id[all_proposals[i]['e5']]
+                if(myid == null) myid = 1
                 if(proposal_author.toString() == myid.toString()){
                     proposals.push(all_proposals[i])
                 }else{
@@ -847,11 +888,13 @@ class home_page extends Component {
         }
         else {
             var my_stores = []
-            var myid = this.props.app_state.user_account_id
+            
             var all_stores = this.get_all_sorted_objects(this.props.app_state.created_stores)
             
             for(var i = 0; i < all_stores.length; i++){
                 var post_author = all_stores[i]['event'].returnValues.p5
+                var myid = this.props.app_state.user_account_id[all_stores[i]['e5']]
+                if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
                     my_stores.push(all_stores[i])
                 }
@@ -892,10 +935,11 @@ class home_page extends Component {
         else {
             var my_subscriptions = []
             var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
-            var myid = this.props.app_state.user_account_id
+            
             for(var i = 0; i < all_subscriptions.length; i++){
                 var post_author = all_subscriptions[i]['event'] == null ? 0 : all_subscriptions[i]['event'].returnValues.p3
-
+                var myid = this.props.app_state.user_account_id[all_subscriptions[i]['e5']]
+                if(myid == null) myid = 1
                 if(post_author.toString() == myid.toString()){
                     my_subscriptions.push(all_subscriptions[i])
                 }
@@ -972,15 +1016,15 @@ class home_page extends Component {
         )
     }
 
-    when_ether_object_clicked(index){
-        this.setState({selected_ether_item: index})
+    when_ether_object_clicked(index, id){
+        this.setState({selected_ether_item: id})
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
     when_ends_object_clicked(index, id, e5){
-        this.setState({selected_end_item: index})
+        this.setState({selected_end_item: id+e5})
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -990,7 +1034,7 @@ class home_page extends Component {
     }
 
     when_spends_object_clicked(index, id, e5){
-        this.setState({selected_spend_item: index})
+        this.setState({selected_spend_item: id+e5})
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -998,15 +1042,15 @@ class home_page extends Component {
         this.props.get_moderator_event_data(id, e5)
     }
 
-    when_E5_item_clicked(index){
-        this.setState({selected_e5_item: index})
+    when_E5_item_clicked(index, id){
+        this.setState({selected_e5_item: id})
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
     when_job_post_item_clicked(index, id, e5){
-        this.setState({selected_job_post_item: index})
+        this.setState({selected_job_post_item: id})
         var viewed_jobs_clone = this.state.viewed_jobs.slice()
         var pos = viewed_jobs_clone.indexOf(id)
         if(pos == -1){
@@ -1023,7 +1067,7 @@ class home_page extends Component {
     }
 
     when_contract_item_clicked(index, id, e5){
-        this.setState({selected_contract_item: index})
+        this.setState({selected_contract_item: id})
 
         var viewed_contracts_clone = this.state.viewed_contracts.slice()
         var pos = viewed_contracts_clone.indexOf(id)
@@ -1041,7 +1085,7 @@ class home_page extends Component {
     }
 
     when_subscription_item_clicked(index, id, e5){
-        this.setState({selected_subscription_item: index})
+        this.setState({selected_subscription_item: id})
 
         var viewed_subscriptions_clone = this.state.viewed_subscriptions.slice()
         var pos = viewed_subscriptions_clone.indexOf(id)
@@ -1059,7 +1103,7 @@ class home_page extends Component {
     }
 
     when_post_item_clicked(index, id, e5){
-        this.setState({selected_post_item: index})
+        this.setState({selected_post_item: id})
 
         var viewed_posts_clone = this.state.viewed_posts.slice()
         var pos = viewed_posts_clone.indexOf(id)
@@ -1077,7 +1121,7 @@ class home_page extends Component {
     }
 
     when_channel_item_clicked(index, id, e5){
-        this.setState({selected_channel_item: index})
+        this.setState({selected_channel_item: id})
 
         var viewed_channel_clone = this.state.viewed_channels.slice()
         var pos = viewed_channel_clone.indexOf(id)
@@ -1095,7 +1139,7 @@ class home_page extends Component {
     }
 
     when_proposal_item_clicked(index, id, e5){
-        this.setState({selected_proposal_item: index})
+        this.setState({selected_proposal_item: id})
 
         var viewed_proposals_clone = this.state.viewed_proposals.slice()
         var pos = viewed_proposals_clone.indexOf(id)
@@ -1112,16 +1156,17 @@ class home_page extends Component {
         }
     }
 
-    when_mail_item_clicked(index){
-        this.setState({selected_mail_item: index})
-
+    when_mail_item_clicked(index, id){
+        this.setState({selected_mail_item: id})
+        console.log('----------------when_mail_item_clicked-----------------------')
+        console.log(id)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
     when_storefront_post_item_clicked(index, id, e5){
-        this.setState({selected_storefront_item: index})
+        this.setState({selected_storefront_item: id})
 
         var viewed_storefront_clone = this.state.viewed_stores.slice()
         var pos = viewed_storefront_clone.indexOf(id)
@@ -1139,7 +1184,7 @@ class home_page extends Component {
     }
 
     when_bag_post_item_clicked(index, id, e5){
-        this.setState({selected_bag_item: index})
+        this.setState({selected_bag_item: id})
 
         var viewed_bag_clone = this.state.viewed_bags.slice()
         var pos = viewed_bag_clone.indexOf(id)
@@ -1157,7 +1202,7 @@ class home_page extends Component {
     }
 
     when_contractor_post_item_clicked(index, id, e5){
-        this.setState({selected_contractor_item: index})
+        this.setState({selected_contractor_item: id})
         var viewed_contractors_clone = this.state.viewed_contractors.slice()
         var pos = viewed_contractors_clone.indexOf(id)
         if(pos == -1){
@@ -1204,7 +1249,7 @@ class home_page extends Component {
 
                 get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} get_e5_data={this.get_e5_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)}
 
-                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)}
+                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.props.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)}
                 />
             </div>
         )
@@ -1324,9 +1369,9 @@ class home_page extends Component {
 
 
     add_id_to_contacts(account_id, item){
-        if(account_id != this.props.app_state.user_account_id[item['e5']]){
-            this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
-        }
+        // if(account_id != this.props.app_state.user_account_id[item['e5']]){
+        //     this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
+        // }
     }
 
     render_dialog_ui(){

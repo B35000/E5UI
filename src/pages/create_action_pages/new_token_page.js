@@ -334,7 +334,7 @@ class NewTokenPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set an image for your new Token'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set an image for your new Token. Black picks gif, grey picks image.'})}
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part()}
@@ -629,7 +629,7 @@ class NewTokenPage extends Component {
         else if(page == 1){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Token Supply', 'details':'The supply of a capped token available for buying (for capped tokens)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Token Supply(For Capped Tokens)', 'details':'The supply of a capped token available for buying (for capped tokens)', 'size':'l'})}
                     <div style={{height:20}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -1212,7 +1212,7 @@ class NewTokenPage extends Component {
 
 
     load_account_suggestions(target_type){
-        var items = this.get_suggested_accounts(target_type)
+        var items = [].concat(this.get_suggested_accounts(target_type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -1387,7 +1387,7 @@ class NewTokenPage extends Component {
     }
 
     when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id.trim()
+        var moderator_id = this.state.moderator_id.toString().trim()
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0 || moderator_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
@@ -1405,7 +1405,7 @@ class NewTokenPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.moderators
+        var items = [].concat(this.state.moderators)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -1490,7 +1490,7 @@ class NewTokenPage extends Component {
     }
 
     when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id.trim()
+        var interactible_id = this.state.interactible_id.toString().trim()
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
@@ -1508,7 +1508,7 @@ class NewTokenPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.interactibles
+        var items = [].concat(this.state.interactibles)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -1609,7 +1609,7 @@ class NewTokenPage extends Component {
     }
 
     load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
+        var items = [].concat(this.get_suggested_tokens())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -1691,7 +1691,7 @@ class NewTokenPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]

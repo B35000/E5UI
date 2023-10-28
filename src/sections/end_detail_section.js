@@ -22,8 +22,19 @@ function number_with_commas(x) {
 class EndDetailSection extends Component {
     
     state = {
-        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(),
+        selected: 0, navigate_view_end_list_detail_tags_object: this.get_navigate_view_end_list_detail_tags(), y_aggregate_chart_tags_object: this.y_aggregate_chart_tags_object()
     };
+
+    y_aggregate_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', 'all-time'], [4]
+            ],
+        };
+    }
 
 
     componentDidMount() {
@@ -36,7 +47,7 @@ class EndDetailSection extends Component {
 
     check_for_new_responses_and_messages() {
         if (this.props.selected_end_item != null) {
-            var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+            var object = this.get_item_in_array(this.get_exchange_tokens(3), this.props.selected_end_item)
             this.props.get_exchange_event_data(object['id'], object['e5'])
             this.props.get_moderator_event_data(object['id'], object['e5'])
         }
@@ -52,7 +63,7 @@ class EndDetailSection extends Component {
               ['or','',0], ['e','details','e.events', 'e.moderator-events'],[0]
           ],
             'events': [
-                ['xor', 'e', 1], ['events', 'transfers', 'exchange-transfers', 'updated-balances', 'updated-exchange-ratios', 'modify-exchange' ,'freeze-unfreeze'], [1], [1]
+                ['xor', 'e', 1], ['events', 'transfers', 'exchange-transfers', 'updated-balances', 'updated-exchange-ratios', 'modify-exchange' ,'freeze-unfreeze', 'depth-mints'], [1], [1]
             ],
             'moderator-events': [
                 ['xor', 'e', 1], ['moderator-events', 'modify-moderators', 'interactable-checkers', 'interactable-accounts', 'block-accounts'], [1], [1]
@@ -108,55 +119,61 @@ class EndDetailSection extends Component {
         this.setState({navigate_view_end_list_detail_tags_object: tag_group})
     }
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['e5_id'] === id);
+        return object
+    }
+
     render_end_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_end_list_detail_tags_object, this.state.navigate_view_end_list_detail_tags_object['i'].active)
-
+        var selected_object = this.get_item_in_array(this.get_exchange_tokens(3), this.props.selected_end_item)
+        
         if(selected_item == 'details' || selected_item == 'e'){
             return(
                 <div>
-                    {this.render_end_main_details_section()}
+                    {this.render_end_main_details_section(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'updated-exchange-ratios'){
             return(
                 <div>
-                    {this.render_updated_exchange_ratio_logs()}
+                    {this.render_updated_exchange_ratio_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'transfers'){
             return(
                 <div>
-                    {this.render_transfer_logs()}
+                    {this.render_transfer_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'modify-exchange'){
             return(
                 <div>
-                    {this.render_modify_exchange_logs()}
+                    {this.render_modify_exchange_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'exchange-transfers'){
             return(
                 <div>
-                    {this.render_exchange_transfers_logs()}
+                    {this.render_exchange_transfers_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'updated-balances'){
             return(
                 <div>
-                    {this.render_update_balance_logs()}
+                    {this.render_update_balance_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'freeze-unfreeze'){
             return(
                 <div>
-                    {this.render_freeze_unfreeze_logs()}
+                    {this.render_freeze_unfreeze_logs(selected_object)}
                 </div>
             )
         }
@@ -164,28 +181,36 @@ class EndDetailSection extends Component {
         else if(selected_item == 'modify-moderators'){
             return(
                 <div>
-                    {this.render_modify_moderator_logs()}
+                    {this.render_modify_moderator_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'interactable-checkers'){
             return(
                 <div>
-                    {this.render_interactable_checker_logs()}
+                    {this.render_interactable_checker_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'interactable-accounts'){
             return(
                 <div>
-                    {this.render_interactable_accounts_logs()}
+                    {this.render_interactable_accounts_logs(selected_object)}
                 </div>
             )
         }
         else if(selected_item == 'block-accounts'){
             return(
                 <div>
-                    {this.render_blocked_accounts_logs()}
+                    {this.render_blocked_accounts_logs(selected_object)}
+                </div>
+            )
+        }
+
+        else if(selected_item == 'depth-mints'){
+            return(
+                <div>
+                    {this.render_depth_mint_logs(selected_object)}
                 </div>
             )
         }
@@ -195,17 +220,17 @@ class EndDetailSection extends Component {
         return this.props.get_exchange_tokens(exchange_type)
     }
 
-    render_end_main_details_section(){
+    render_end_main_details_section(selected_object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-60
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var item = this.get_end_data();
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
-        var symbol = selected_object['ipfs'] == null ? 'tokens' : selected_object['ipfs'].entered_symbol_text
+        var item = this.get_end_data(selected_object);
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
+        var symbol = selected_object['ipfs'] == null ? this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_object['id']] : selected_object['ipfs'].entered_symbol_text
         var author = selected_object['event'] != null ? selected_object['event'].returnValues.p3 :'Unknown'
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
@@ -247,7 +272,7 @@ class EndDetailSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
-                    
+                    {/* {this.show_exchange_liquidity_chart(item, selected_object, symbol)} */}
 
                     {this.render_detail_item('0')}
                     
@@ -274,7 +299,7 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', item['trust_fee_target'])}
                     <div style={{height:10}}/>
 
-                    {this.render_revoke_author_privelages_event()}
+                    {this.render_revoke_author_privelages_event(selected_object)}
 
                     {this.render_detail_item('0')}
 
@@ -290,20 +315,24 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('3', item['combined_exchange_ratio'])}
 
-                    {this.render_detail_item('0')}
-                    {this.render_price_of_token()}
-
+                    {this.show_y_aggregate_chart(selected_object, symbol)}
 
                     {this.render_detail_item('0')}
+                    {this.render_price_of_token(selected_object)}
 
-                    {this.render_last_swap_block()}
-                    {this.render_last_swap_timestamp()}
-                    {this.render_last_swap_transaction_count()}
-                    {this.render_last_entered_contracts_count()}
+                    {this.show_transaction_count_chart(selected_object, symbol)}
+                    {this.render_detail_item('0')}
+
+                    {this.render_token_liquidity_balance(selected_object, symbol)}
+
+                    {this.render_last_swap_block(selected_object)}
+                    {this.render_last_swap_timestamp(selected_object)}
+                    {this.render_last_swap_transaction_count(selected_object)}
+                    {this.render_last_entered_contracts_count(selected_object)}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':'Buy or Sell the token for a specified account', 'title':'Buy/Sell'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_mint_burn_token_ui()}>
+                    <div onClick={()=>this.open_mint_burn_token_ui(selected_object)}>
                         {this.render_detail_item('5', item['mint_burn_button'])}
                     </div>
                     {this.render_detail_item('0')}
@@ -318,26 +347,49 @@ class EndDetailSection extends Component {
                     <div style={{height:10}}/>
 
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_end_transfer_ui()}>
+                    <div onClick={()=>this.open_end_transfer_ui(selected_object)}>
                         {this.render_detail_item('5', {'text':'Transfer', 'action':''},)}
                     </div>
 
-                    {this.render_auth_modify_button()}
+                    {this.render_auth_modify_button(selected_object)}
 
-                    {this.render_exchange_transfer_button()}
+                    {this.render_exchange_transfer_button(selected_object)}
 
-                    {this.render_freeze_unfreeze_tokens_button()}
+                    {this.render_freeze_unfreeze_tokens_button(selected_object)}
 
 
-                    {this.render_moderator_button()}
+                    {this.render_moderator_button(selected_object)}
 
-                    {this.render_edit_object_button()}
+                    {this.render_edit_object_button(selected_object)}
+
+                    {this.render_depth_tokens_button(selected_object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+
+    render_token_liquidity_balance(selected_object, symbol){
+        var buy_exchanges_count = selected_object['data'][3].length
+        var is_type_end = false
+
+        if(buy_exchanges_count == 1 && selected_object['data'][3][0] == 0){
+            is_type_end = true
+        }
+        if(selected_object['id'] != 3 && !is_type_end){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'The exchanges balance for each of the tokens used to buy '+symbol, 'title':'Buy Token Liquidity'})}
+                    <div style={{height:10}}/>
+                    {this.render_buy_token_uis(selected_object)}
+
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
     }
 
     get_access_rights_status(value){
@@ -348,12 +400,12 @@ class EndDetailSection extends Component {
         }
     }
 
-    render_revoke_author_privelages_event(){
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+    render_revoke_author_privelages_event(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var events = this.get_moderator_item_logs(object, 'revoke_privelages')
 
         if(object['id'] == 3) return;
-
+        
         if(events.length != 0){
             return(
                 <div>
@@ -370,17 +422,17 @@ class EndDetailSection extends Component {
     }
 
 
-    render_price_of_token(){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
+    render_price_of_token(selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
 
         var input_amount = 1
         var input_reserve_ratio = selected_object['data'][2][0]
         var output_reserve_ratio = selected_object['data'][2][1]
-        var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
-        var buy_tokens = selected_object['data'][3]
-        var buy_amounts = selected_object['data'][4]
-        var buy_depths = selected_object['data'][5]
+        var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, selected_object)
+        var buy_tokens = [].concat(selected_object['data'][3])
+        var buy_amounts = [].concat(selected_object['data'][4])
+        var buy_depths = [].concat(selected_object['data'][5])
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling one unit of the token', 'title':'Token Price'})}
@@ -399,9 +451,9 @@ class EndDetailSection extends Component {
         )
     }
 
-    calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
+    calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
         var token_type = selected_object['data'][0][3]
         if(token_type == 3){
             var price = (bigInt(input_amount).times(bigInt(output_reserve_ratio))).divide(bigInt(input_reserve_ratio).plus(input_amount))
@@ -426,34 +478,34 @@ class EndDetailSection extends Component {
         }
     }
 
-    open_mint_burn_token_ui(){
-        this.props.open_mint_burn_token_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    open_mint_burn_token_ui(selected_object){
+        this.props.open_mint_burn_token_ui(selected_object)
     }
 
-    open_end_transfer_ui(){
-        this.props.open_transfer_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    open_end_transfer_ui(selected_object){
+        this.props.open_transfer_ui(selected_object)
     }
 
-    open_modify_token_ui(){
-        this.props.open_modify_token_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    open_modify_token_ui(selected_object){
+        this.props.open_modify_token_ui(selected_object)
     }
 
-    open_exchange_transfers_ui(){
-        this.props.open_exchange_transfers_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    open_exchange_transfers_ui(selected_object){
+        this.props.open_exchange_transfers_ui(selected_object)
     }
 
-    open_freeze_unfreeze_ui(){
-        this.props.open_freeze_unfreeze_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    open_freeze_unfreeze_ui(selected_object){
+        this.props.open_freeze_unfreeze_ui(selected_object)
     }
 
-    open_moderator_ui(){
-        this.props.open_moderator_ui(this.get_exchange_tokens(3)[this.props.selected_end_item])
+    open_moderator_ui(selected_object){
+        this.props.open_moderator_ui(selected_object)
     }
 
 
-    render_last_swap_block(){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
+    render_last_swap_block(selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
 
         if(selected_object['account_data'][0] != 0){
             return(
@@ -465,23 +517,23 @@ class EndDetailSection extends Component {
         }
     }
 
-    render_last_swap_timestamp(){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
+    render_last_swap_timestamp(selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
 
         if(selected_object['account_data'][1] != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Timestamp', 'title': this.get_time_difference(selected_object['account_data'][1]) })}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Age', 'title': this.get_time_difference(selected_object['account_data'][1]) })}
                     <div style={{height:10}}/>
                 </div>
             )
         }
     }
 
-    render_last_swap_transaction_count(){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
+    render_last_swap_transaction_count(selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
 
         if(selected_object['account_data'][2] != 0){
             return(
@@ -493,9 +545,9 @@ class EndDetailSection extends Component {
         }
     }
 
-    render_last_entered_contracts_count(){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
+    render_last_entered_contracts_count(selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
 
         if(selected_object['account_data'][3] !=0){
             return(
@@ -510,8 +562,8 @@ class EndDetailSection extends Component {
 
 
 
-    render_auth_modify_button(){
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+    render_auth_modify_button(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var contract_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
@@ -521,7 +573,7 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Modify Token', 'details':'Modify the configuration of the exchange directly.', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_modify_token_ui()}>
+                    <div onClick={()=>this.open_modify_token_ui(object)}>
                         {this.render_detail_item('5', {'text':'Modify Exchange', 'action':''})}
                     </div>
                 </div>
@@ -529,8 +581,8 @@ class EndDetailSection extends Component {
         }
     }
 
-    render_exchange_transfer_button(){
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+    render_exchange_transfer_button(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var contract_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
@@ -540,9 +592,9 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Exchange Transfer', 'details':'Transfer tokens from the exchanges account to a specified target.', 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_buy_token_uis()}
+                    {this.render_buy_token_uis(object)}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_exchange_transfers_ui()}>
+                    <div onClick={()=>this.open_exchange_transfers_ui(object)}>
                         {this.render_detail_item('5', {'text':'Run Transfers', 'action':''})}
                     </div>
                 </div>
@@ -550,8 +602,8 @@ class EndDetailSection extends Component {
         }
     }
 
-    render_freeze_unfreeze_tokens_button(){
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+    render_freeze_unfreeze_tokens_button(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var contract_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
@@ -561,7 +613,7 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Freeze/Unfreeze Tokens', 'details':'Freeze or unfreeze a given accounts balance.', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_freeze_unfreeze_ui()}>
+                    <div onClick={()=>this.open_freeze_unfreeze_ui(object)}>
                         {this.render_detail_item('5', {'text':'Freeze/Unfreeze', 'action':''})}
                     </div>
                 </div>
@@ -569,8 +621,8 @@ class EndDetailSection extends Component {
         }
     }
 
-    render_moderator_button(){
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+    render_moderator_button(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
         if(object['id'] != 3 && (object['moderators'].includes(my_account) || object['event'].returnValues.p3 == my_account)){
             return(
@@ -579,7 +631,7 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_moderator_ui()}>
+                    <div onClick={()=>this.open_moderator_ui(object)}>
                         {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
                     </div>
                 </div>
@@ -588,8 +640,8 @@ class EndDetailSection extends Component {
     }
 
 
-    render_edit_object_button(){
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+    render_edit_object_button(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['id'] != 3 && object['event'].returnValues.p3 == my_account){
@@ -599,7 +651,7 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Edit Token Post', 'details':'Change the basic details for your Token Post', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_basic_edit_token_ui()}>
+                    <div onClick={()=>this.open_basic_edit_token_ui(object)}>
                         {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
                     </div>
                 </div>
@@ -607,14 +659,14 @@ class EndDetailSection extends Component {
         }
     }
 
-    open_basic_edit_token_ui(){
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+    open_basic_edit_token_ui(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         this.props.open_edit_object('8', object)
     }
 
-    get_end_data(){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
+    get_end_data(selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
         var title = selected_object['id'];
         var img = selected_object['img']
         
@@ -628,12 +680,12 @@ class EndDetailSection extends Component {
         var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
 
         if(title == 3){
-            var obj = {'E15':'E15'}
+            var obj = {'E15':'E15', 'E25':'E25'}
             title = obj[selected_object['e5']]
         }
 
         var item = selected_object;
-        var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
+        var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : [selected_object['e5']].concat(item['ipfs'].entered_indexing_tags)
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
         if(symbol == null){
@@ -641,8 +693,6 @@ class EndDetailSection extends Component {
         }
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
 
-
-        
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
@@ -685,12 +735,12 @@ class EndDetailSection extends Component {
     }
 
 
-    render_buy_token_uis(){
-        var selected_item = this.props.selected_end_item
-        var selected_object = this.get_exchange_tokens(3)[selected_item]
-        var buy_tokens = selected_object['data'][3]
-        var buy_amounts = selected_object['exchanges_balances']
-        var buy_depths = selected_object['data'][5]
+    render_buy_token_uis(selected_object){
+        // var selected_item = this.props.selected_end_item
+        // var selected_object = this.get_exchange_tokens(3)[selected_item]
+        var buy_tokens = [].concat(selected_object['data'][3])
+        var buy_amounts = [].concat(selected_object['exchanges_balances'])
+        var buy_depths = [].concat(selected_object['data'][5])
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
@@ -742,14 +792,376 @@ class EndDetailSection extends Component {
     }
 
 
+    render_depth_tokens_button(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        var contract_config = object['data'][1]
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account && object['data'][0][0/* <0>unlocked_supply */] == 1){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Depth-Mint Tokens', 'details':'Mint your token from outside its exchange.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_depth_mint_ui(object)}>
+                        {this.render_detail_item('5', {'text':'Depth-Mint', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_depth_mint_ui(selected_object){
+        this.props.show_depthmint_bottomsheet(selected_object)
+    }
+
+
+
+
+    
+
+
+    show_y_aggregate_chart(selected_object, symbol){
+        var exchange_ratio_events = selected_object['exchange_ratio_data']
+        if(exchange_ratio_events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Aggregate', 'details':`Chart containing the y-aggregate of ${symbol} over time.`, 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object), 'interval':this.get_exchange_ratio_interval_figure(exchange_ratio_events)})}
+                    <div style={{height: 10}}/>
+                    <Tags page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Y-aggregate', 'details':'X-Axis: Time', 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_y_aggregate_chart_tags_object_updated(tag_obj){
+        this.setState({y_aggregate_chart_tags_object: tag_obj})
+    }
+
+    get_exchange_ratio_data_points(event_data, selected_object){
+        var events = this.filter_exchange_ratio_events(event_data);
+        var data = []
+        for(var i=0; i<events.length; i++){
+            var input_amount = 1
+            var input_reserve_ratio = events[i].returnValues.p5/* exchange_ratio_x */
+            var output_reserve_ratio = events[i].returnValues.p6/* exchange_ratio_y */
+            var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, selected_object)
+            if(price < 1){
+                data.push(Math.round(price * 100000) / 100000)
+            }else{
+                data.push(parseInt(price))
+            }
+
+            if(i==events.length-1){
+                var diff = Date.now()/1000 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }
+            else{
+                var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                for(var t=0; t<diff; t+=60){
+                    data.push(data[data.length-1])      
+                }
+            }
+            
+        }
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            var indicator = yVal > 1000 ? this.format_account_balance_figure(yVal) : yVal
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel:""+indicator});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            } 
+        }
+
+        return dps
+    }
+
+    get_exchange_ratio_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(Math.round(event.returnValues.p2/10**18) * 100)
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+    get_lowest_exchange_ratio_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(Math.round(event.returnValues.p2/10**18) *100)
+        });
+        var largest = Math.min.apply(Math, data);
+        return largest
+    }
+
+    filter_exchange_ratio_events(events){
+        var selected_item = this.get_selected_item(this.state.y_aggregate_chart_tags_object, 'e')
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == 'all-time'){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now()/1000 - filter_value
+        events.forEach(event => {
+            if(event.returnValues.p9 > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        if(data.length == 0 && events.length != 0){
+            data.push(events[events.length-1])
+        }
+
+        return data
+    }
 
 
 
 
 
-    render_updated_exchange_ratio_logs(){
+
+
+    show_transaction_count_chart(selected_object, symbol){
+        var exchange_ratio_events = selected_object['exchange_ratio_data']
+        var amount = exchange_ratio_events.length;
+
+        if(exchange_ratio_events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Total Transactions', 'details':`Chart containing the total number of buy/sell transactions over time.`, 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(exchange_ratio_events), 'interval':this.get_transaction_count_interval_figure(exchange_ratio_events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Total Transactions', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Transactions', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'transactions', })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p9
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+    get_lowest_transaction_count_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p3))
+        });
+        var largest = Math.min.apply(Math, data);
+        return largest
+    }
+
+
+
+
+
+
+
+
+
+
+    show_exchange_liquidity_chart(item, selected_object, symbol){
+        // var selected_object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
+        var total_supply = selected_object['data'][2][2]
+        var exchange_ratio_events = selected_object['exchange_ratio_data']
+        var amount = total_supply
+        if(exchange_ratio_events.length != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Exchange Liquidity', 'details':`Chart containing the total supply of ${symbol} in the exchange over time.`, 'size':'l'})}
+                    {this.render_detail_item('6', {'dataPoints':this.get_exchange_liquidity_data_points(exchange_ratio_events), 'interval':110})}
+                    <div style={{height: 10}}/>
+                    {/* <Tags page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <div style={{height: 10}}/> */}
+                    {this.render_detail_item('3', {'title':'Y-Axis: Exchange Liquidity', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Exchange Liquidity', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'transactions', })}
+                    </div>
+                </div>
+            )  
+        }       
+    }
+
+    get_exchange_liquidity_data_points(events){
+        // var events = this.filter_proportion_ratio_events(event_data);
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                data.push(bigInt(events[i].returnValues.p4))
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p9
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        var largest_number = this.get_exchange_liquidity_interval_figure(events)
+        for(var i = 0; i < noOfDps; i++) {
+            if(data[factor * xVal] != null){
+                yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+                // yVal = data[factor * xVal]
+                // yVal = data[i]
+                if(yVal != null && data[factor * xVal] != null){
+                    if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                        dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                    }else{
+                        dps.push({x: xVal, y: yVal});//
+                    }
+                    xVal++;
+                }
+            }
+        }
+
+
+        return dps
+    }
+
+    get_exchange_liquidity_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p4))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+    get_exchange_liquidity_supply_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p4))
+        });
+        var largest = Math.min.apply(Math, data);
+        return largest
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    render_updated_exchange_ratio_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -774,7 +1186,7 @@ class EndDetailSection extends Component {
 
     render_updated_exchange_ratio_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'exchange_ratio')
+        var items = [].concat(this.get_item_logs(object, 'exchange_ratio'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -907,9 +1319,9 @@ class EndDetailSection extends Component {
 
 
     //ctrl-c, ctrl-v
-    render_transfer_logs(){
+    render_transfer_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -926,7 +1338,7 @@ class EndDetailSection extends Component {
 
     render_contract_transfer_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'transfer')
+        var items = [].concat(this.get_item_logs(object, 'transfer'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1022,9 +1434,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_modify_exchange_logs(){
+    render_modify_exchange_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1040,7 +1452,7 @@ class EndDetailSection extends Component {
 
     render_exchange_modification_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'modify')
+        var items = [].concat(this.get_item_logs(object, 'modify'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1213,9 +1625,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_exchange_transfers_logs(){
+    render_exchange_transfers_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1232,7 +1644,7 @@ class EndDetailSection extends Component {
 
     render_exchange_transfer_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'exchange-transfer')
+        var items = [].concat(this.get_item_logs(object, 'exchange-transfer'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1327,9 +1739,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_update_balance_logs(){
+    render_update_balance_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1346,7 +1758,7 @@ class EndDetailSection extends Component {
 
     render_update_balance_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'update_balance')
+        var items = [].concat(this.get_item_logs(object, 'update_balance'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1439,9 +1851,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_freeze_unfreeze_logs(){
+    render_freeze_unfreeze_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1458,7 +1870,7 @@ class EndDetailSection extends Component {
 
     render_freeze_unfreeze_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_item_logs(object, 'freeze_unfreeze')
+        var items = [].concat(this.get_item_logs(object, 'freeze_unfreeze'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1548,9 +1960,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_modify_moderator_logs(){
+    render_modify_moderator_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1573,7 +1985,7 @@ class EndDetailSection extends Component {
 
     render_modify_moderator_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'modify_moderator')
+        var items = [].concat(this.get_moderator_item_logs(object, 'modify_moderator'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1660,9 +2072,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_interactable_checker_logs(){
+    render_interactable_checker_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1678,7 +2090,7 @@ class EndDetailSection extends Component {
 
     render_interactable_checker_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'enable_interactible')
+        var items = [].concat(this.get_moderator_item_logs(object, 'enable_interactible'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1759,9 +2171,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_interactable_accounts_logs(){
+    render_interactable_accounts_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1777,7 +2189,7 @@ class EndDetailSection extends Component {
 
     render_interactable_accounts_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'add_interactible')
+        var items = [].concat(this.get_moderator_item_logs(object, 'add_interactible'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1861,9 +2273,9 @@ class EndDetailSection extends Component {
 
 
 
-    render_blocked_accounts_logs(){
+    render_blocked_accounts_logs(object){
         var he = this.props.height - 45
-        var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
@@ -1879,7 +2291,7 @@ class EndDetailSection extends Component {
 
     render_blocked_accounts_item_logs(object){
         var middle = this.props.height - 120;
-        var items = this.get_moderator_item_logs(object, 'block_account')
+        var items = [].concat(this.get_moderator_item_logs(object, 'block_account'))
         if (items.length == 0) {
             items = [0, 1]
             return (
@@ -1948,6 +2360,118 @@ class EndDetailSection extends Component {
                     <div style={{ height: 2 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    render_depth_mint_logs(object){
+        var he = this.props.height - 45
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange  Depth-Mint Events', 'size': 'l' })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_depth_mint_event_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_depth_mint_event_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = [].concat(this.get_item_logs(object, 'depth_mint'))
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_depth_mint_item_clicked(index)}>
+                                    {this.render_depth_mint_event_item(item, object, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_depth_mint_item_clicked(index){
+        if (this.state.selected_depth_mint_event_item == index) {
+            this.setState({ selected_depth_mint_event_item: null })
+        } else {
+            this.setState({ selected_depth_mint_event_item: index })
+        }
+    }
+
+    render_depth_mint_event_item(item, object, index){
+        var amount = item.returnValues.p5
+        var depth = item.returnValues.p4
+        if (this.state.selected_depth_mint_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Targeted Receiver', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p6, object), 'details': 'Moderator Sender', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount, depth: '+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    </div>
+                    <div style={{ height: 2 }} />
+
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Targeted Receiver', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount, depth: '+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                    </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )

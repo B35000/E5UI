@@ -82,6 +82,10 @@ class PaySubscriptionPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'s'})}
 
+                {this.render_minimum_buy_amount()}
+
+                {this.render_maximum_buy_amount()}
+
                 <div style={{height:20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -98,6 +102,34 @@ class PaySubscriptionPage extends Component {
         )
     }
 
+    render_minimum_buy_amount(){
+        var subscription_config = this.state.subscription_item['data'][1]
+        if(subscription_config[1] != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${number_with_commas(subscription_config[1])}`, 'barcolor':'', 'relativepower':'time-units', })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_maximum_buy_amount(){
+        var subscription_config = this.state.subscription_item['data'][1]
+        if(subscription_config[3] != 0){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${number_with_commas(subscription_config[3])}`, 'barcolor':'', 'relativepower':'time-units', })}
+                    </div>
+                </div>
+            )
+        }
+    }
+
     get_time_units_time(){
         var subscription_config = this.state.subscription_item['data'][1]
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
@@ -111,10 +143,11 @@ class PaySubscriptionPage extends Component {
 
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
@@ -155,9 +188,18 @@ class PaySubscriptionPage extends Component {
 
     finish(){
         var time_units_picked = this.state.time_units
+        var minimum_amount = this.state.subscription_item['data'][1][1]
+        var maximum_amount = this.state.subscription_item['data'][1][3]
         if(time_units_picked == 0){
             this.props.notify('set a valid time unit amount!', 700)
-        }else{
+        }
+        else if(time_units_picked < minimum_amount){
+            this.props.notify('the amount youve set is less than the minimum requirement', 1200)
+        }
+        else if(time_units_picked > maximum_amount){
+            this.props.notify('the amount youve set exceeds the maximum that you can pay for', 1400)
+        }
+        else{
             this.props.add_pay_subscription_to_stack(this.state)
             this.props.notify('transaction added to stack', 700);
         }

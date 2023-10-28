@@ -125,7 +125,7 @@ class AddToBagPage extends Component {
         var middle = this.props.height-200;
         var size = this.props.size;
         if(this.state.selected_variant != null){
-            var items = this.state.selected_variant['price_data']
+            var items = [].concat(this.state.selected_variant['price_data'])
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':'Purchase Amounts', 'details':'This is the final amount for the price of the items your buying', 'size':'l'})}
@@ -152,7 +152,7 @@ class AddToBagPage extends Component {
 
 
     render_item_variants(){
-        var items = this.state.storefront_item['ipfs'].variants
+        var items = [].concat(this.state.storefront_item['ipfs'].variants)
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
                 {/* <SwipeableViews index={0}>
@@ -225,7 +225,7 @@ class AddToBagPage extends Component {
 
 
     render_variant_price_data(variant){
-        var items = variant['price_data']
+        var items = [].concat(variant['price_data'])
         return(
             <div>
                 {items.reverse().map((item, index) => (

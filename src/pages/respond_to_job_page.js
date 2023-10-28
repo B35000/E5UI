@@ -145,7 +145,7 @@ class RespondToJobPage extends Component {
         if(size == 'l'){
             middle = this.props.height-80;
         }
-        var items = this.get_contract_items()
+        var items = [].concat(this.get_contract_items())
 
         if(items.length == 0){
             items = ['0','1'];
@@ -189,7 +189,14 @@ class RespondToJobPage extends Component {
         var created_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
         for(var i = 0; i < created_contracts.length; i++){
             var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
-            var myid = this.props.app_state.user_account_id[created_contracts[i]['e5']]
+            // console.log('---------------------get_contract_items------------------------')
+            // console.log(this.props.app_state.user_account_id)
+            // console.log(created_contracts[i]['e5'])
+
+            var myid = this.props.app_state.user_account_id[created_contracts[i]['e5']] 
+            if(myid == null){
+                myid = 1
+            }
             if(post_author.toString() == myid.toString()){
                 // if(this.props.app_state.my_contract_applications[this.props.app_state.created_contracts[i]['id']] == null){
                 //     my_contracts.push(this.props.app_state.created_contracts[i])
@@ -408,7 +415,7 @@ class RespondToJobPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -457,19 +464,19 @@ class RespondToJobPage extends Component {
 
 
     load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
+        var items = [].concat(this.get_suggested_tokens())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         )
     }
 

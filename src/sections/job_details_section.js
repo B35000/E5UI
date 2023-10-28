@@ -80,7 +80,7 @@ class JobDetailsSection extends Component {
 
     check_for_new_responses_and_messages() {
         if(this.props.selected_job_post_item != null){
-            var object = this.get_job_items()[this.props.selected_job_post_item];
+            var object = this.get_item_in_array(this.get_job_items(), this.props.selected_job_post_item)
             this.props.get_job_objects_responses(object['id'], object['e5'])
             this.props.get_objects_messages(object['id'],  object['e5'])
         }
@@ -136,12 +136,12 @@ class JobDetailsSection extends Component {
         }
         return(
             <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
+                
+            </div>
         );
     }
 
@@ -151,20 +151,28 @@ class JobDetailsSection extends Component {
         return picked_item
     }
 
+
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
     render_jobs_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_jobs_list_detail_tags_object, this.state.navigate_view_jobs_list_detail_tags_object['i'].active)
+
+        var object = this.get_item_in_array(this.get_job_items(), this.props.selected_job_post_item)
 
         if(selected_item == 'details' || selected_item == 'e'){
             return(
                 <div>
-                    {this.render_job_posts_main_details_section()}
+                    {this.render_job_posts_main_details_section(object)}
                 </div>
             )
         }
         else if(selected_item == 'responses'){
             return(
                 <div>
-                    {this.render_job_post_responses()}
+                    {this.render_job_post_responses(object)}
                 </div>
             )
             
@@ -172,20 +180,20 @@ class JobDetailsSection extends Component {
         else if(selected_item == 'activity'){
             return(
                 <div>
-                    {this.render_job_message_activity()}
+                    {this.render_job_message_activity(object)}
                 </div>
             )
         }
     }
 
-    render_job_posts_main_details_section(){
+    render_job_posts_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
         }
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         var item = this.get_job_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
 
@@ -202,20 +210,20 @@ class JobDetailsSection extends Component {
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
-                    {this.render_item_data(items)}
+                    {this.render_item_data(items, object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts they are offering for the job.', 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_price_amounts()}
+                    {this.render_price_amounts(object)}
 
                     {this.render_detail_item('3', {'title':'Apply for the job', 'details':'Respond to the ad with a contract and apply for the job(This action is irreversible)', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_respond_to_job_ui()}>
+                    <div onClick={()=>this.open_respond_to_job_ui(object)}>
                         {this.render_detail_item('5', {'text':'Apply', 'action':''})}
                     </div>
 
-                    {this.render_edit_object_button()}
+                    {this.render_edit_object_button(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -224,7 +232,7 @@ class JobDetailsSection extends Component {
         )
     }
 
-    render_item_data(items){
+    render_item_data(items, object){
         var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
@@ -263,14 +271,14 @@ class JobDetailsSection extends Component {
         }
     }
 
-    open_respond_to_job_ui(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    open_respond_to_job_ui(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         this.props.open_respond_to_job_ui(object)
     }
 
 
-    render_edit_object_button(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    render_edit_object_button(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(object['event'].returnValues.p5 == my_account){
@@ -280,7 +288,7 @@ class JobDetailsSection extends Component {
 
                     {this.render_detail_item('3', {'title':'Edit Job Post', 'details':'Change the basic details for your Job Post', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_basic_edit_object_ui()}>
+                    <div onClick={()=>this.open_basic_edit_object_ui(object)}>
                         {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
                     </div>
                 </div>
@@ -289,8 +297,8 @@ class JobDetailsSection extends Component {
     }
 
 
-    open_basic_edit_object_ui(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    open_basic_edit_object_ui(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         this.props.open_edit_object('0', object)
     }
 
@@ -299,14 +307,14 @@ class JobDetailsSection extends Component {
 
 
 
-    render_price_amounts(){
+    render_price_amounts(object){
         var middle = this.props.height-500;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var object = this.get_job_items()[this.props.selected_job_post_item];
-        var items = object['ipfs'].price_data
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
+        var items = [].concat(object['ipfs'].price_data)
         if(items.length == 0){
             items = [0, 1, 2]
             return(
@@ -380,7 +388,7 @@ class JobDetailsSection extends Component {
 
 
     get_job_details_data(object){
-        var tags = object['ipfs'] == null ? ['Job'] : object['ipfs'].entered_indexing_tags
+        var tags = object['ipfs'] == null ? ['Job'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -452,22 +460,22 @@ class JobDetailsSection extends Component {
 
 
 
-    render_job_post_responses(){
+    render_job_post_responses(object){
         var he = this.props.height-40
 
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
-                    {this.render_job_post_top_title()}
+                    {this.render_job_post_top_title(object)}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                    {this.render_job_post_sent_received_messages()}
+                    {this.render_job_post_sent_received_messages(object)}
                 </div>
             </div>
         )
     }
 
-    render_job_post_top_title(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    render_job_post_top_title(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Job Responses', 'size':'l'})} 
@@ -475,13 +483,13 @@ class JobDetailsSection extends Component {
         )
     }
 
-    render_job_post_sent_received_messages(){
+    render_job_post_sent_received_messages(object){
         var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_job_details_responses()
+        var items = [].concat(this.get_job_details_responses(object))
 
         if(items.length == 0){
             items = [0,1]
@@ -509,7 +517,7 @@ class JobDetailsSection extends Component {
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
                                 <div key={index}>
-                                    {this.render_job_response_item(item)}
+                                    {this.render_job_response_item(item, object)}
                                 </div>
                             </li> 
                         ))}
@@ -519,12 +527,14 @@ class JobDetailsSection extends Component {
         }
     }
 
-    get_job_details_responses(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    get_job_details_responses(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
+            if(this.props.app_state.job_responses[object['id']] == null) return []
             return this.props.app_state.job_responses[object['id']]
         }else{
             var filtered_responses = []
+            if(this.props.app_state.job_responses[object['id']] == null) return []
             var all_responses = this.props.app_state.job_responses[object['id']]
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
@@ -535,14 +545,14 @@ class JobDetailsSection extends Component {
         }
     }
 
-    render_job_response_item(item){
+    render_job_response_item(item, object){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var is_application_accepted = item['is_response_accepted'];
 
         if(is_application_accepted){
             return(
-                <div onClick={() => this.view_contract(item)}>
+                <div onClick={() => this.view_contract(item, object)}>
                     {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
@@ -556,7 +566,7 @@ class JobDetailsSection extends Component {
             )
         }else{
             return(
-                <div onClick={() => this.view_contract(item)}>
+                <div onClick={() => this.view_contract(item, object)}>
                     {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
@@ -568,8 +578,8 @@ class JobDetailsSection extends Component {
         
     }
 
-    view_contract(item){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    view_contract(item, object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
             this.props.view_application_contract(item)
         }
@@ -584,7 +594,7 @@ class JobDetailsSection extends Component {
 
 
 
-    render_job_message_activity(){
+    render_job_message_activity(object){
         var he = this.props.height-100
         var size = this.props.screensize
         return(
@@ -593,10 +603,10 @@ class JobDetailsSection extends Component {
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
 
-                        {this.render_top_title()}
-                        {this.render_focus_list()}
+                        {this.render_top_title(object)}
+                        {this.render_focus_list(object)}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                        {this.render_sent_received_messages()}
+                        {this.render_sent_received_messages(object)}
                     </div>
                 </div>
 
@@ -604,7 +614,7 @@ class JobDetailsSection extends Component {
                     <div style={{'margin':'0px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet()}>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet(object)}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
@@ -613,7 +623,7 @@ class JobDetailsSection extends Component {
                         <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
@@ -625,15 +635,15 @@ class JobDetailsSection extends Component {
         this.setState({comment_structure_tags: tag_obj})
     }
 
-    show_add_comment_bottomsheet(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+    show_add_comment_bottomsheet(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'job')
     }
   
 
-    render_top_title(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    render_top_title(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         var top_title = object['ipfs'] == null ? '': object['ipfs'].entered_title_text
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
@@ -647,14 +657,14 @@ class JobDetailsSection extends Component {
         this.messagesEnd = React.createRef();
     }
 
-    render_sent_received_messages(){
+    render_sent_received_messages(object){
         var middle = this.props.height-250;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages()
-        var stacked_items = this.get_stacked_items()
+        var items = [].concat(this.get_convo_messages(object))
+        var stacked_items = [].concat(this.get_stacked_items(object))
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -676,17 +686,17 @@ class JobDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message() != null){
-            var focused_message_replies = this.get_focused_message_replies()
+        else if(this.get_focused_message(object) != null){
+            var focused_message_replies = this.get_focused_message_replies(object)
             return(
                 <div>
                     <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message())}
+                        {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
                     </div>
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
                         <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
                             <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies)}
+                                {this.render_messages(focused_message_replies, object)}
                                 <div ref={this.messagesEnd}/>
                             </ul>
                         </div>
@@ -700,8 +710,8 @@ class JobDetailsSection extends Component {
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items)}
-                        {this.render_messages(stacked_items)}
+                        {this.render_messages(items, object)}
+                        {this.render_messages(stacked_items, object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -710,7 +720,7 @@ class JobDetailsSection extends Component {
                 return(
                     <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {this.render_all_comments()}
+                            {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>
                         </ul>
                     </div>
@@ -719,9 +729,9 @@ class JobDetailsSection extends Component {
         }
     }
 
-    render_messages(items){
+    render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message() != null){
+        if(items.length == 0 && this.get_focused_message(object) != null){
             var items = [0,1]
             return(
                 <div>
@@ -746,7 +756,7 @@ class JobDetailsSection extends Component {
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
-                                {this.render_message_as_focused_if_so(item)}
+                                {this.render_message_as_focused_if_so(item, object)}
                                 <div style={{height:3}}/>
                             </div>
                         </li>
@@ -757,9 +767,9 @@ class JobDetailsSection extends Component {
         
     }
 
-    focus_message(item){
+    focus_message(item, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
 
         if(this.state.focused_message[object['id']] != item){
             clone[object['id']] = item
@@ -784,11 +794,11 @@ class JobDetailsSection extends Component {
     //     return return_value
     // }
 
-    unfocus_message(){
+    unfocus_message(object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         if(clone['tree'][object['id']] != null){
-            var index = this.get_index_of_item()
+            var index = this.get_index_of_item(object)
             if(index != -1){
                 clone['tree'][object['id']].splice(index, 1)
             }
@@ -799,8 +809,8 @@ class JobDetailsSection extends Component {
         this.setState({focused_message: clone})
     }
 
-    get_index_of_item(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    get_index_of_item(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         var focused_item = this.state.focused_message[object['id']]
         var focused_items = this.state.focused_message['tree'][object['id']]
         var pos = -1
@@ -814,8 +824,8 @@ class JobDetailsSection extends Component {
     }
 
 
-    render_message_as_focused_if_so(item){
-        var focused_message = this.get_focused_message()
+    render_message_as_focused_if_so(item, object){
+        var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
             return(
@@ -828,9 +838,9 @@ class JobDetailsSection extends Component {
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
                     {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
@@ -846,13 +856,13 @@ class JobDetailsSection extends Component {
                         <SwipeableListItem
                             swipeLeft={{
                             content: <div>Focus</div>,
-                            action: () => this.focus_message(item)
+                            action: () => this.focus_message(item, object)
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
 
@@ -885,22 +895,22 @@ class JobDetailsSection extends Component {
 
 
 
-    render_stack_message_item(item){
+    render_stack_message_item(item, object){
         if(item.type == 'message'){
             return(
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                     
                 </div>
             )
@@ -910,23 +920,23 @@ class JobDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item)} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
                     {this.render_detail_item('9',item['image-data'])}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }
     }
 
-    get_sender_title_text(item){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    get_sender_title_text(item, object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
@@ -942,14 +952,14 @@ class JobDetailsSection extends Component {
         return message
     }
 
-    get_convo_messages(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    get_convo_messages(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         if(this.props.app_state.object_messages[object['id']] == null) return [];
         return this.props.app_state.object_messages[object['id']]
     }
 
-    get_stacked_items(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    get_stacked_items(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         var convo_id = object['id']
 
         var stack = this.props.app_state.stack_items
@@ -967,9 +977,9 @@ class JobDetailsSection extends Component {
         return stacked_items
     }
 
-    get_focused_message_replies(){
-        var focused_message = this.get_focused_message()
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_focused_message_replies(object){
+        var focused_message = this.get_focused_message(object)
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
@@ -979,8 +989,8 @@ class JobDetailsSection extends Component {
         return replies
     }
 
-    get_message_replies(item){
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_message_replies(item, object){
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && item['message_id'] != null &&  all_messages[i]['focused_message_id'] == item['message_id']){
@@ -990,8 +1000,8 @@ class JobDetailsSection extends Component {
         return replies
     }
 
-    get_focused_message(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    get_focused_message(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         return this.state.focused_message[object['id']]
     }
 
@@ -1030,11 +1040,11 @@ class JobDetailsSection extends Component {
         this.setState({entered_text: text})
     }
 
-    add_message_to_stack(){
+    add_message_to_stack(object){
         var message = this.state.entered_text.trim()
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         if(message == ''){
             this.props.notify('type something first', 600)
         }
@@ -1079,8 +1089,8 @@ class JobDetailsSection extends Component {
     }
 
 
-    render_focus_list(){
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+    render_focus_list(object){
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
         var items = this.state.focused_message['tree'][object['id']]
 
         if(items != null && items.length > 0){
@@ -1088,8 +1098,8 @@ class JobDetailsSection extends Component {
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item), 'details':this.shorten_message_item(this.format_message(item['message'])), 'size':'s'})}
+                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index, object)}>
+                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item, object), 'details':this.shorten_message_item(this.format_message(item['message'], object), object), 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -1108,9 +1118,9 @@ class JobDetailsSection extends Component {
     }
 
 
-    when_focus_chain_item_clicked(item, pos){
+    when_focus_chain_item_clicked(item, pos, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_job_items()[this.props.selected_job_post_item];
+        // var object = this.get_job_items()[this.props.selected_job_post_item];
 
         var new_array = []
         for(var i=0; i<=pos; i++){
@@ -1125,14 +1135,14 @@ class JobDetailsSection extends Component {
 
 
 
-    render_all_comments(){
-        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
+    render_all_comments(object){
+        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object(object))
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
                         <div >
-                            {this.render_main_comment(item, 0)}
+                            {this.render_main_comment(item, 0, object)}
                             <div style={{height:3}}/>
                         </div>
                     </li>
@@ -1141,21 +1151,21 @@ class JobDetailsSection extends Component {
         )
     }
 
-    render_main_comment(comment, depth){
+    render_main_comment(comment, depth, object){
         return(
             <div>
-                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message)}>
-                    {this.render_message_as_focused_if_so(comment.data.message)}
+                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message, object)}>
+                    {this.render_message_as_focused_if_so(comment.data.message, object)}
                 </div>
 
-                {this.render_message_children(comment, depth)}
+                {this.render_message_children(comment, depth, object)}
             </div>
         )
     }
 
-    render_message_children(comment, depth){
+    render_message_children(comment, depth, object){
         var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
-        if(!this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
+        if(this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
             return(
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
                     <div style={{width:'100%'}}>
@@ -1163,7 +1173,7 @@ class JobDetailsSection extends Component {
                             {comment.children.map((item, index) => (
                                 <li style={{'padding': '4px 0px 0px 0px'}}>
                                     <div>
-                                        {this.render_main_comment(item, depth+1)}
+                                        {this.render_main_comment(item, depth+1, object)}
                                         <div style={{height:3}}/>
                                     </div>
                                 </li>
@@ -1191,8 +1201,8 @@ class JobDetailsSection extends Component {
         
     }
 
-    get_message_replies_in_sorted_object(){
-        var messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_message_replies_in_sorted_object(object){
+        var messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var data = []
         messages.forEach(message => {
             data.push({ index : message['message_id'], sort : message['time'], parent : message['focused_message_id'], message: message })

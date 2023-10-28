@@ -150,9 +150,9 @@ class NewMintActionPage extends Component {
                 var input_reserve_ratio = selected_object['data'][2][0]
                 var output_reserve_ratio = selected_object['data'][2][1]
                 var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
-                var buy_tokens = selected_object['data'][3]
-                var buy_amounts = selected_object['data'][4]
-                var buy_depths = selected_object['data'][5]
+                var buy_tokens = [].concat(selected_object['data'][3])
+                var buy_amounts = [].concat(selected_object['data'][4])
+                var buy_depths = [].concat(selected_object['data'][5])
                 return(
                     <div>
                         {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling the token', 'title':'Token Price'})}
@@ -247,10 +247,11 @@ class NewMintActionPage extends Component {
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
@@ -342,7 +343,7 @@ class NewMintActionPage extends Component {
 
 
     load_account_suggestions(){
-        var items = this.get_suggested_accounts()
+        var items = [].concat(this.get_suggested_accounts())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -655,35 +656,49 @@ class NewMintActionPage extends Component {
         var can_make_swap = true;
         var reason = ''
 
-        if(minimum_entered_contracts_between_swap != 0){
-            var diff = current_entered_contracts_count - last_entered_contracts_count
-            if(diff < minimum_entered_contracts_between_swap){
-                can_make_swap = false;
-                reason = 'You need to enter '+(minimum_entered_contracts_between_swap-diff)+' more contracts first'
+        if(last_swap_block != 0){
+            if(minimum_entered_contracts_between_swap != 0){
+                var diff = current_entered_contracts_count - last_entered_contracts_count
+                // console.log('-------------------------check_if_sender_can_make_swap-----------------------')
+                // console.log('current_entered_contracts_count: ',current_entered_contracts_count)
+                // console.log('last_entered_contracts_count: ',last_entered_contracts_count)
+                // console.log('diff: ', diff)
+                // console.log('minimum_entered_contracts_between_swap: ', minimum_entered_contracts_between_swap)
+                if(diff < minimum_entered_contracts_between_swap){
+                    can_make_swap = false;
+                    reason = 'You need to enter '+(minimum_entered_contracts_between_swap-diff)+' more contracts first'
+                }
+            }
+            if(minimum_transactions_between_swap != 0){
+                var diff = current_transaction_count - last_swap_transaction_count
+                console.log('------------------------check_if_sender_can_make_swap-------------------------------')
+                console.log('diff: ',diff)
+                console.log('minimum_transactions_between_swap: ', minimum_transactions_between_swap)
+                if(diff < minimum_transactions_between_swap){
+                    can_make_swap = false;
+                    reason = 'You need to make '+(minimum_transactions_between_swap-diff)+' more runs first'
+                }
+            }
+            if(minimum_blocks_between_swap != 0){
+                var diff = current_block - last_swap_block
+                if(diff < minimum_blocks_between_swap){
+                    can_make_swap = false
+                    reason = 'You need to wait '+(minimum_blocks_between_swap-diff)+' more blocks'
+                }
+            }
+            if(minimum_time_between_swap != 0){
+                var diff = timestamp - last_swap_timestamp
+                if(diff < minimum_time_between_swap){
+                    can_make_swap = false
+                    reason = 'You need to wait about '+(this.get_time_diff(minimum_time_between_swap-diff))+' first'
+                }
             }
         }
-        if(minimum_transactions_between_swap != 0){
-            var diff = current_transaction_count - last_swap_transaction_count
-            if(diff < minimum_transactions_between_swap){
-                can_make_swap = false;
-                reason = 'You need to make '+(minimum_transactions_between_swap-diff)+' more runs first'
-            }
-        }
-        if(minimum_blocks_between_swap != 0){
-            var diff = current_block - last_swap_block
-            if(diff < minimum_blocks_between_swap){
-                can_make_swap = false
-                reason = 'You need to wait '+(minimum_blocks_between_swap-diff)+' more blocks'
-            }
-        }
-        if(minimum_time_between_swap != 0){
-            var diff = timestamp - last_swap_timestamp
-            if(diff < minimum_time_between_swap){
-                can_make_swap = false
-                reason = 'You need to wait about '+(this.get_time_diff(minimum_time_between_swap-diff))+' first'
-            }
-        }
+        
         if(minimum_transactions_for_first_buy != 0){
+            console.log('------------------------check_if_sender_can_make_swap-------------------------------')
+            console.log('current_transaction_count: ',current_transaction_count)
+            console.log('minimum_transactions_for_first_buy: ', minimum_transactions_for_first_buy)
             if(current_transaction_count < minimum_transactions_for_first_buy){
                 can_make_swap = false
                 reason = 'You need to make '+(minimum_transactions_for_first_buy-current_transaction_count)+' more runs first'
@@ -695,6 +710,7 @@ class NewMintActionPage extends Component {
                 reason = 'You need to enter '+(minimum_entered_contracts_for_first_buy-current_entered_contracts_count)+' more contracts first'
             }
         }
+        
 
 
         return {can_make_swap:can_make_swap, reason: reason}

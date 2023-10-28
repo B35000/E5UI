@@ -229,6 +229,12 @@ class ViewGroups extends Component {
             var background_color = this.props.theme['chart_background_color'];
             var dataPoints = object_data != null ? object_data['dataPoints']: this.generateDataPoints(23);
             var interval = (object_data != null) ? object_data['interval'] : 0
+            var label_font_size = 10
+            if(object_data != null && object_data['hide_label'] != null){
+                if(object_data['hide_label']){
+                    label_font_size = 0
+                }
+            }
             const options = {
               theme: "light1", // "light1", "dark1", "dark2"
               animationEnabled: true,
@@ -248,7 +254,7 @@ class ViewGroups extends Component {
                   labelFontColor: this.props.theme['primary_text_color'] //#292929 #DEDEDE
               },
               axisY:{
-                  labelFontSize: 10,
+                  labelFontSize: label_font_size,
                   interval: interval,//size of space between labels
                   tickLength: 0,
                   gridThickness: 0.3,
@@ -259,6 +265,7 @@ class ViewGroups extends Component {
               toolTip:{
                   enabled: false   //enable here
               },
+              height:230,
               data: [{
                         type: "splineArea",//area
                         color:default_chart_color,
@@ -268,15 +275,16 @@ class ViewGroups extends Component {
                         indexLabelFontColor: this.props.theme['primary_text_color'],
                         indexLabelFontFamily:"Sans-serif",
                         indexLabelFontWeight:"bold",
+                        
                         dataPoints: dataPoints
               }]
             }
 
             return(
-                <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:430, 'border-radius': border_radius}}>
-                    <div style={{'padding':'0px 0px 10px 0px', height:420}}>
+                <div style={{'margin':'10px 0px 0px 0px','padding': '10px 10px 0px 10px', 'background-color': background_color, height:260, 'border-radius': border_radius}}>
+                    <div style={{'padding':'0px 0px 10px 0px', height:250}}>
                         <div style={{'margin': '10px 0px 0px 0px'}}>
-                          <div style={{ height: 300, width: '100%' ,'position': 'relative'}}>
+                          <div style={{ height: 200, width: '100%' ,'position': 'relative'}}>
                               <div style={{ height: 30, width: '100%', 'background-color': background_color ,'position': 'absolute', 'z-index':'3' ,'margin': '-15px 0px 0px 0px'}}/>
 
                               <CanvasJSChart style={{ width: '100%' , 'z-index':'2' ,'position': 'fixed'}} options = {options}/>
@@ -349,7 +357,7 @@ class ViewGroups extends Component {
     }
 
     copy_id_to_clipboard(text){
-        navigator.clipboard.writeText(text)
+        // navigator.clipboard.writeText(text)
     }
 
 
@@ -425,7 +433,12 @@ class ViewGroups extends Component {
     }
 
     when_image_clicked(items, index){
-        this.props.show_images(items, index)
+        try{
+            this.props.show_images(items, index)
+        }catch(e){
+
+        }
+        
     }
 
 }

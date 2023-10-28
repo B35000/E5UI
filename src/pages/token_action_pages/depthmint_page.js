@@ -29,22 +29,21 @@ function makeid(length) {
     return result;
 }
 
-class AuthMintPage extends Component {
+class DepthMintPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8), type: 'authmint', entered_indexing_tags:['auth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
+        selected: 0,id:makeid(8), type: 'depthmint', entered_indexing_tags:['depth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_depthmint_action_page_tags_object(),
 
         recipient_id:'', amount:0, authmint_actions:[]
     };
 
-
-    get_new_authmint_action_page_tags_object(){
+    get_new_depthmint_action_page_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','authmint'], [1]
+                ['xor','',0], ['e','depthmint'], [1]
             ],
         };
     }
@@ -65,7 +64,7 @@ class AuthMintPage extends Component {
                     </div>
                 </div>
 
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Auth-Mint your token '+this.state.token_item['id']+' for a specified target'})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Depth-Mint your token '+this.state.token_item['id']+' for a specified target'})}
                 <div style={{height:10}}/>
                 {this.render_everything()}
 
@@ -80,7 +79,7 @@ class AuthMintPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the recipient of the authmint action', 'title':'Recipient'})}
+                {this.render_detail_item('3', {'size':'l', 'details':'Set the recipient of the depth-mint action', 'title':'Recipient'})}
 
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Account ID'} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
@@ -88,7 +87,7 @@ class AuthMintPage extends Component {
                 {this.load_account_suggestions()}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the amount to authmint', 'title':'Action Amount.'})}
+                {this.render_detail_item('3', {'size':'l', 'details':'Set the amount to depth-mint', 'title':'Action Amount.'})}
 
                 <div style={{height:10}}/>
 
@@ -117,7 +116,6 @@ class AuthMintPage extends Component {
         this.setState({amount: amount})
     }
 
-
     add_transaction(){
         var clone = this.state.authmint_actions.slice()
         var amount = this.state.amount
@@ -133,10 +131,9 @@ class AuthMintPage extends Component {
             var tx = {'amount':amount, 'recipient':recipient}
             clone.push(tx)
             this.setState({authmint_actions: clone, recipient_id: '', amount:0})
-            this.props.notify('auth-mint action added!', 600)
+            this.props.notify('depth-mint action added!', 600)
         }
     }
-
 
 
 
@@ -191,23 +188,20 @@ class AuthMintPage extends Component {
         this.props.notify('action removed!', 600)
     }
 
-
-
-
     load_account_suggestions(){
         var items = [].concat(this.get_suggested_accounts())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                    {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
-                            {this.render_detail_item('3', item['label'])}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
         )
     }
 
@@ -229,6 +223,7 @@ class AuthMintPage extends Component {
         });
         return return_array;
     }
+
 
     get_contact_alias(contact){
         return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
@@ -275,10 +270,11 @@ class AuthMintPage extends Component {
     }
 
 
+
     set_token(token_item){
         if(this.state.token_item['id'] != token_item['id']){
             this.setState({
-                selected: 0,id:makeid(8), type: 'authmint', entered_indexing_tags:['auth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
+                selected: 0,id:makeid(8), type: 'depthmint', entered_indexing_tags:['depth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_depthmint_action_page_tags_object(),
                 recipient_id:'', amount:0, authmint_actions:[]
             })
         }
@@ -290,11 +286,14 @@ class AuthMintPage extends Component {
         if(this.state.authmint_actions.length == 0){
             this.props.notify('you cant stack no changes', 700)
         }else{
-            this.props.add_authmint_to_stack(this.state)
+            this.props.add_depthmint_to_stack(this.state)
             this.setState({authmint_actions:[]})
             this.props.notify('transaction added to stack', 700);
         }
     }
+
+
+
 
 
 
@@ -415,4 +414,4 @@ class AuthMintPage extends Component {
 
 
 
-export default AuthMintPage;
+export default DepthMintPage;

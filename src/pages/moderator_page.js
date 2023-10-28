@@ -367,7 +367,7 @@ class ModeratorPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.all_actions
+        var items = [].concat(this.state.all_actions)
 
         if(items.length == 0){
             items = [0, 1]
@@ -458,7 +458,7 @@ class ModeratorPage extends Component {
 
 
     load_account_suggestions(){
-        var items = this.get_suggested_accounts()
+        var items = [].concat(this.get_suggested_accounts())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(

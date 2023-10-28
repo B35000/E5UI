@@ -279,7 +279,7 @@ class NewProposalPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 15px 0px 10px'}}>
+            <div style={{'padding':'0px 10px 0px 10px'}}>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
@@ -435,10 +435,13 @@ class NewProposalPage extends Component {
             )
         }
         else if(page == 1){
+            var contract_config = this.state.contract_item['data'][1]
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Exipry Time', 'details':'Set the time after which youre set to submit the new proposal during whichno new votes can be cast.', 'size':'l'})}
-                    <div style={{height:20}}/>
+                    {this.render_detail_item('3', {'title':'Proposal Exipry Time', 'details':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('3', { 'title': this.get_time_diff(contract_config[5]), 'details': 'Proposal Expiry Duration Limit', 'size': 'l'})}
+                    <div style={{height:10}}/>
                     <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
                         <CssBaseline />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -454,8 +457,25 @@ class NewProposalPage extends Component {
         else if(page == 2){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Consensus Submit Expiry Time', 'details':'The time after which you cannot sumbit your new proposal.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Modify Target', 'details':'The target object thats being modified if the consensus type is reconfig', 'size':'l'})}
                     <div style={{height:20}}/>
+
+                    <TextInput height={30} placeholder={'Object ID...'} when_text_input_field_changed={this.when_modify_target_text_input_field_changed.bind(this)} text={this.state.modify_target_id} theme={this.props.theme}/>
+
+                    {this.load_account_suggestions('modify_target')}
+
+                </div>
+            )
+        }
+        else if(page == 3){
+            var contract_config = this.state.contract_item['data'][1]
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Consensus Submit Expiry Time', 'details':'The time after which you cannot sumbit your new proposal.', 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_detail_item('3', {'title': this.get_time_diff(contract_config[36]), 'details': 'Maximum Proposal Expiry Submit Expiry Time Difference', 'size': 'l'})}
+                    <div style={{height:10}}/>
 
                     <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
                         <CssBaseline />
@@ -466,19 +486,6 @@ class NewProposalPage extends Component {
 
                     <div style={{height:20}}/>
                     {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.proposal_submit_expiry_time), 'details':'Time from now', 'size':'l'})}
-                </div>
-            )
-        }
-        else if(page == 3){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Modify Target', 'details':'The target object thats being modified if the consensus type is reconfig', 'size':'l'})}
-                    <div style={{height:20}}/>
-
-                    <TextInput height={30} placeholder={'Object ID...'} when_text_input_field_changed={this.when_modify_target_text_input_field_changed.bind(this)} text={this.state.modify_target_id} theme={this.props.theme}/>
-
-                    {this.load_account_suggestions('modify_target')}
-
                 </div>
             )
         }
@@ -493,7 +500,20 @@ class NewProposalPage extends Component {
     when_new_submit_time_value_set(value){
         const selectedDate = value instanceof Date ? value : new Date(value);
         const timeInSeconds = Math.floor(selectedDate.getTime() / 1000);
-        this.setState({proposal_submit_expiry_time: timeInSeconds})
+        
+        var proposal_submit_expiry_time_difference = this.state.contract_item['data'][1][36]
+        var set_submit_timestamp = timeInSeconds
+        var set_timestamp = this.state.proposal_expiry_time
+        var now_in_sec = Date.now()/1000
+        
+        if(set_submit_timestamp <= now_in_sec){
+            this.props.notify('You cant use a time before now', 1200)
+        }
+        else if(set_submit_timestamp - set_timestamp < proposal_submit_expiry_time_difference){
+            this.props.notify('That submit time is invalid', 1200)
+        }else{
+            this.setState({proposal_submit_expiry_time: timeInSeconds})
+        }
     }
 
 
@@ -514,10 +534,30 @@ class NewProposalPage extends Component {
         }
     }
 
+    check_if_page_details_are_valid(){
+        var is_valid = true
+        if(this.state.page == 1){
+            console.log('---------------------check_if_page_details_are_valid--------------------------')
+            var proposal_expiry_time = this.state.contract_item['data'][1][5]
+            var set_timestamp = this.state.proposal_expiry_time
+            var now_in_sec = Date.now()/1000
+            console.log('set timestamp: ',set_timestamp, ' now in sec: ',now_in_sec, ' proposal expiry time: ',proposal_expiry_time, ' now+proposal_expirytime: ', now_in_sec+proposal_expiry_time)
+            if(set_timestamp < parseInt(now_in_sec)+parseInt(proposal_expiry_time)){
+                this.props.notify('That proposal expiry time is less than the minimum required by the contract', 3500)
+                is_valid = false;
+            }
+            else if(set_timestamp <= now_in_sec){
+                this.props.notify('You cant use a time before now', 1200)
+                is_valid = false;
+            }
+        }
+        return is_valid
+    }
+
 
     enter_next_page(){
         var page = this.state.page
-        if(page < 18){
+        if(page < 18 && this.check_if_page_details_are_valid()){
             this.setState({page: this.state.page+1})
         }
     }
@@ -531,7 +571,7 @@ class NewProposalPage extends Component {
 
 
     load_account_suggestions(type){
-        var items = this.get_suggested_accounts(type)
+        var items = [].concat(this.get_suggested_accounts(type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -831,7 +871,7 @@ class NewProposalPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.spend_actions
+        var items = [].concat(this.state.spend_actions)
 
         if(items.length == 0){
             items = [0, 1]
@@ -903,6 +943,21 @@ class NewProposalPage extends Component {
 
     when_reconfig_items_tags_object_updated(tag_obj){
         this.setState({reconfig_items_tags_object:tag_obj})
+        this.reset_the_number_picker()
+    }
+
+    constructor(props) {
+        super(props);
+        this.number_picker_ref = React.createRef();
+    }
+
+    reset_the_number_picker(){
+        var me = this;
+        setTimeout(function() {
+            if(me.number_picker_ref.current != null){
+                me.number_picker_ref.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
     }
 
 
@@ -926,7 +981,7 @@ class NewProposalPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
@@ -945,7 +1000,7 @@ class NewProposalPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proportion_changed.bind(this)} power_limit={properties['powerlimit']} theme={this.props.theme} />
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proportion_changed.bind(this)} power_limit={properties['powerlimit']} theme={this.props.theme} />
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
@@ -963,7 +1018,7 @@ class NewProposalPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
                         {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
@@ -1316,7 +1371,7 @@ class NewProposalPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.reconfig_values
+        var items = [].concat(this.state.reconfig_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -1519,7 +1574,7 @@ class NewProposalPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.exchange_transfer_values
+        var items = [].concat(this.state.exchange_transfer_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -1576,9 +1631,21 @@ class NewProposalPage extends Component {
 
 
     render_bounty_data_ui(){
+        var minimum_spend_bounty_amount = this.state.contract_item['data'][1][10/* <10>default_minimum_spend_vote_bounty_amount */]
+        var minimum_end_bounty_amount = this.state.contract_item['data'][1][4/* <4>default_minimum_end_vote_bounty_amount */]
         return(
             <div>
                 {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'The first bounty exchange should be the End or Spend Exchange'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(minimum_spend_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_spend_bounty_amount), 'number':this.format_account_balance_figure(minimum_spend_bounty_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(minimum_end_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_end_bounty_amount), 'number':this.format_account_balance_figure(minimum_end_bounty_amount), 'barcolor':'', 'relativepower':'END', })}
+                </div>
                 {this.render_detail_item('0')}
 
                 <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
@@ -1638,7 +1705,7 @@ class NewProposalPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.bounty_values
+        var items = [].concat(this.state.bounty_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -1647,11 +1714,11 @@ class NewProposalPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
                                     </div>
-                                </div>
                             </li>
                         ))}
                     </ul>
@@ -1872,6 +1939,7 @@ class NewProposalPage extends Component {
             return num + ' yr' + s;
         }
     }
+    
 
 
 

@@ -120,7 +120,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','E15'], [this.get_selected_e5_option()]
+                ['xor','',0], ['e','E15', 'E25'], [this.get_selected_e5_option()]
             ],
         };
         
@@ -129,6 +129,9 @@ class StackPage extends Component {
     get_selected_e5_option(){
         if(this.props.app_state.selected_e5 == 'E15'){
             return 1
+        }
+        else if(this.props.app_state.selected_e5 == 'E25'){
+            return 2
         }
         return 1
     }
@@ -298,7 +301,7 @@ class StackPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.props.app_state.E5_runs[this.props.app_state.selected_e5]
+        var items = [].concat(this.props.app_state.E5_runs[this.props.app_state.selected_e5])
 
         if(items.length == 0){
             items = [0,3,0]
@@ -318,13 +321,12 @@ class StackPage extends Component {
                 </div>
             )
         }else{
-            
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div onClick={() => this.props.show_view_transaction_log_bottomsheet(item)} style={{height:'auto', 'background-color': background_color, 'border-radius': '13px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 10px 5px 0px'}}>
+                                <div onClick={() => this.props.show_view_transaction_log_bottomsheet(item)} style={{height:'auto', 'background-color': background_color, 'border-radius': '13px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 5px 0px'}}>
                                     <div style={{'padding': '5px 0px 0px 5px'}}>
                                         {this.render_detail_item('3',{'title':'Transaction ID: '+item.returnValues.p3, 'details':'Age: '+this.get_time_difference(item.returnValues.p8),'size':'s'})}
             
@@ -341,6 +343,17 @@ class StackPage extends Component {
         }
     }
 
+    sortByAttributeDescending(array, attribute) {
+        return array.sort((a, b) => {
+            if (a[attribute] < b[attribute]) {
+            return 1;
+            }
+            if (a[attribute] > b[attribute]) {
+            return -1;
+            }
+            return 0;
+        });
+    }
 
 
 
@@ -365,7 +378,7 @@ class StackPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.props.app_state.stack_items
+        var items = [].concat(this.props.app_state.stack_items)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -432,7 +445,7 @@ class StackPage extends Component {
         return(
             <div onClick={() => this.props.view_transaction(item, index)} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
                 <div style={{'padding': '5px 0px 5px 5px'}}>
-                    {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                    {this.render_detail_item('1',{'active_tags':[item.e5].concat(item.entered_indexing_tags), 'indexed_option':'indexed', 'when_tapped':''})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3',{'details':'Stack ID ', 'title':item.id,'size':'s'})}
@@ -452,7 +465,11 @@ class StackPage extends Component {
 
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
-        var data_size = this.lengthInUtf8Bytes(localStorage.getItem("state"))
+        var data = localStorage.getItem("state") == null ? "":localStorage.getItem("state")
+        var data_size = this.lengthInUtf8Bytes(data)
+        // console.log('-------------------render_stack_gas_part-------------------------')
+        // console.log(this.props.app_state.account_balance)
+        // console.log(this.props.app_state.selected_e5)
         return(
             <div>  
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -468,11 +485,11 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
-                    
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(cache_size*1024), 'number':this.format_account_balance_figure(cache_size*1024), 'barcolor':'#606060', 'relativepower':'bytes', })}
+                    {/* <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
+                     */}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Local Storage Size limit', 'subtitle':this.format_power_figure(cache_size*1024), 'barwidth':this.calculate_bar_width(cache_size*1024), 'number':this.format_account_balance_figure(cache_size*1024), 'barcolor':'#606060', 'relativepower':'bytes', })}
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(data_size), 'number':this.format_account_balance_figure(data_size), 'barcolor':'#606060', 'relativepower':'bytes', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Amount Used', 'subtitle':this.format_power_figure(data_size), 'barwidth':this.calculate_bar_width(data_size), 'number':this.format_account_balance_figure(data_size), 'barcolor':'#606060', 'relativepower':'bytes', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -623,6 +640,9 @@ class StackPage extends Component {
         else if(t.type == 'edit-channel' || t.type == 'edit-contractor' || t.type == 'edit-job' || t.type == 'edit-post' || t.type == 'edit-storefront' || t.type == 'edit-token'){
             return 276073
         }
+        else if(t.type == 'depthmint'){
+            return 623115
+        }
 
     }
 
@@ -642,6 +662,7 @@ class StackPage extends Component {
         var adds = []
         var wei = 0;
         var delete_pos_array = []
+        var pushed_txs = []
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 if(txs[i].type == 'contract'){
@@ -1222,8 +1243,15 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(format_object.int)
                 }
+                else if(txs[i].type == 'depthmint'){
+                    var depthmint_obj = this.format_depthmint_object(txs[i])
+                    strs.push([])
+                    adds.push([])
+                    ints.push(depthmint_obj)
+                }
                 
                 delete_pos_array.push(i)
+                pushed_txs.push(txs[i])
             }
             
         }
@@ -1239,16 +1267,14 @@ class StackPage extends Component {
         ]
         var metadata_strings = [ [] ]
 
-        for(var i=0; i<txs.length; i++){
-            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
-                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront-item'|| txs[i].type == 'proposal' || txs[i].type == 'contractor'){
-                    metadata_action[1].push(i)
-                    metadata_action[2].push(35)
-                    metadata_action[3].push(0)
-                    metadata_action[4].push(0)
-                    var ipfs_obj = await this.get_object_ipfs_index(txs[i]);
-                    metadata_strings[0].push(ipfs_obj.toString())
-                }
+        for(var i=0; i<pushed_txs.length; i++){
+            if(pushed_txs[i].type == 'contract' || pushed_txs[i].type == 'token' || pushed_txs[i].type == 'subscription' || pushed_txs[i].type == 'post' || pushed_txs[i].type == 'job' || pushed_txs[i].type == 'channel' || pushed_txs[i].type == 'storefront-item'|| pushed_txs[i].type == 'proposal' || pushed_txs[i].type == 'contractor'){
+                metadata_action[1].push(i)
+                metadata_action[2].push(35)
+                metadata_action[3].push(0)
+                metadata_action[4].push(0)
+                var ipfs_obj = await this.get_object_ipfs_index(pushed_txs[i]);
+                metadata_strings[0].push(ipfs_obj.toString())
             }
         }
         ints.push(metadata_action)
@@ -1267,21 +1293,19 @@ class StackPage extends Component {
 
         var index_data_strings = [ [], [] ]
 
-        for(var i=0; i<txs.length; i++){
-            if(!this.props.app_state.hidden.includes(txs[i])){
-                if(txs[i].type == 'contract' || txs[i].type == 'token' || txs[i].type == 'subscription' || txs[i].type == 'post' || txs[i].type == 'job' || txs[i].type == 'channel' || txs[i].type == 'storefront-item' || txs[i].type == 'proposal' || txs[i].type == 'contractor'){
-                    var tx_tags = txs[i].entered_indexing_tags
-                    index_data_in_tags[1].push(i)
-                    index_data_in_tags[2].push(35)
-                    index_data_strings[0].push('en')
-                    index_data_strings[1].push('')
-                    // for(var t=0; t<tx_tags.length; t++){
-                    //     index_data_in_tags[1].push(i)
-                    //     index_data_in_tags[2].push(35)
-                    //     index_data_strings[0].push(tx_tags[t])
-                    //     index_data_strings[1].push('')
-                    // }
-                }
+        for(var i=0; i<pushed_txs.length; i++){
+            if(pushed_txs[i].type == 'contract' || pushed_txs[i].type == 'token' || pushed_txs[i].type == 'subscription' || pushed_txs[i].type == 'post' || pushed_txs[i].type == 'job' || pushed_txs[i].type == 'channel' || pushed_txs[i].type == 'storefront-item' || pushed_txs[i].type == 'proposal' || pushed_txs[i].type == 'contractor'){
+                var tx_tags = pushed_txs[i].entered_indexing_tags
+                index_data_in_tags[1].push(i)
+                index_data_in_tags[2].push(35)
+                index_data_strings[0].push('en')
+                index_data_strings[1].push('')
+                // for(var t=0; t<tx_tags.length; t++){
+                //     index_data_in_tags[1].push(i)
+                //     index_data_in_tags[2].push(35)
+                //     index_data_strings[0].push(tx_tags[t])
+                //     index_data_strings[1].push('')
+                // }
             }
         }
 
@@ -1336,7 +1360,7 @@ class StackPage extends Component {
 
         if(txs.length > 0){
             if(account_balance == 0){
-                this.props.open_wallet_guide_bottomsheet()
+                this.props.open_wallet_guide_bottomsheet('one')
                 this.props.lock_run(false)
             }
             else if(account_balance < (run_gas_limit * run_gas_price)){
@@ -1370,7 +1394,7 @@ class StackPage extends Component {
         var required_ether = (run_gas_limit * run_gas_price);
         return(
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.invalid_ether_amount_dialog_box}>
-                <div style={{'padding': '10px', 'background-color':this.props.theme['card_background_color']}}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Issue With Run</h4>
 
@@ -1699,6 +1723,9 @@ class StackPage extends Component {
         obj[5].push(added_txs[i]['amount'])
         obj[6].push(0)
       }
+
+    //   console.log('-------------------------format_transfer_object-------------------')
+    //   console.log(obj)
       
       return obj
     }
@@ -2871,6 +2898,37 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
+    format_depthmint_object(t){
+        var obj = [/* depth_mint\swap up\swap down tokens [2(depth_auth_mint), 1(swap_up), 0(swap_down)] */
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        for(var i=0; i<t.authmint_actions.length; i++){
+            obj[1].push(t.token_item['id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[2].push(23)
+
+            var receiver = t.authmint_actions[i]['recipient']
+            var receiver_type = 23
+            if(receiver == 53){
+                receiver_type = 53
+            }
+            obj[3].push(receiver.toString().toLocaleString('fullwide', {useGrouping:false}))
+            obj[4].push(receiver_type)
+
+            obj[5].push(2)
+            
+            obj[6].push(0)
+            obj[7].push(t.authmint_actions[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+        }
+
+        return obj
+    }
+
     
 
 
@@ -2974,7 +3032,7 @@ class StackPage extends Component {
     when_get_selected_e5_tags_object_updated(tag_group){
         this.setState({get_selected_e5_tags_object:tag_group})
 
-        var selected_item = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
+        var selected_item = this.get_selected_item(this.state.get_selected_e5_tags_object, 'e')
 
         this.props.when_selected_e5_changed(selected_item)
     }
@@ -2997,7 +3055,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 10px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
@@ -3007,7 +3065,7 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 10px 0px 0px'}}>
+                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Set the seed and salt for your preferred wallet', 'color':'dark-grey'})}
                     <div style={{height: 20}}/>
 
@@ -3120,7 +3178,7 @@ class StackPage extends Component {
             this.props.notify('set a salt', 200)
         }
         else{
-            this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item)
+            this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item, false)
             this.props.notify('wallet set!', 200)
         }
         
@@ -3241,6 +3299,9 @@ class StackPage extends Component {
         if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
             this.notify('That ID is not valid', 800)
         }
+        else if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify('please set your wallet first', 1200);
+        }
         else{
             this.props.add_account_to_contacts(parseInt(typed_contact))
             this.setState({typed_contact_word:''})
@@ -3248,7 +3309,7 @@ class StackPage extends Component {
     }
 
     render_users_contacts(){
-        var items = this.props.app_state.contacts[this.props.app_state.selected_e5];
+        var items = [].concat(this.props.app_state.contacts[this.props.app_state.selected_e5]);
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
@@ -3307,13 +3368,14 @@ class StackPage extends Component {
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
-            me.copy_id_to_clipboard(item['id'])
+            // me.copy_id_to_clipboard(item['id'])
+            me.copy_address_to_clipboard(item['address'])
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {
                 clearTimeout(this.all_timeout);
                 // single tap
-                me.copy_address_to_clipboard(item['address'])
+                
             }, 200);
         }
         this.last_all_click_time = Date.now();
@@ -3374,6 +3436,9 @@ class StackPage extends Component {
     }
 
     render_my_account_id(){
+        console.log('--------------------render_my_account_id-----------------------')
+        console.log(this.props.app_state.user_account_id)
+        console.log(this.props.app_state.selected_e5)
         var display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? 'Alias Unknown' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
         return(
@@ -3426,18 +3491,24 @@ class StackPage extends Component {
         }
         else{
             this.props.add_alias_transaction_to_stack(this.state.typed_alias_word)
+            this.setState({typed_alias_word: ''})
         }
     }
 
 
     render_users_aliases(){
-        var items = this.props.app_state.my_alias_events[this.props.app_state.selected_e5];
+        var data = this.props.app_state.my_alias_events[this.props.app_state.selected_e5]
+        if(data == null){
+            data = []
+        }
+        var items = [].concat(data);
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-
+        // console.log('-----------------------render_users_aliases-------------------------------')
+        // console.log(items)
         if(items.length == 0){
             items = [0, 0]
             return(

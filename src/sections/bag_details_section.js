@@ -22,11 +22,56 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function TreeNode(data) {
+  this.data     = data;
+  this.parent   = null;
+  this.children = [];
+}
+
+TreeNode.comparer = function (a, b) { 
+  return a.data.sort < b.data.sort ? 0 : 1; 
+};
+
+TreeNode.prototype.sortRecursive = function () {
+  this.children.sort(TreeNode.comparer);
+  for (var i=0, l=this.children.length; i<l; i++) {
+    this.children[i].sortRecursive();
+  }
+  return this;
+};
+
+function toTree(data) {
+  var nodeById = {}, i = 0, l = data.length, node;
+
+  nodeById[0] = new TreeNode(); // that's the root node
+
+  for (i=0; i<l; i++) {  // make TreeNode objects for each item
+    nodeById[ data[i].index ] = new TreeNode(data[i]);
+  }
+  for (i=0; i<l; i++) {  // link all TreeNode objects
+    node = nodeById[ data[i].index ];
+    node.parent = nodeById[node.data.parent];
+    node.parent.children.push(node);
+  }
+  return nodeById[0].sortRecursive();
+}
+
 class BagDetailsSection extends Component {
     
     state = {
-        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}
+        selected: 0, navigate_view_bag_list_detail_tags_object: this.get_navigate_bag_list_detail_tags_object_tags(), entered_text:'', focused_message:{'tree':{}}, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[],
     };
+
+    get_comment_structure_tags(){
+        return{
+            'i':{
+                active:'e',
+            },
+            'e':[
+                ['xor','',0], ['e','channel-structure', 'comment-structure'], [1]
+            ],
+        };
+    }
 
     componentDidMount() {
         this.interval = setInterval(() => this.check_for_new_responses_and_messages(), 10000);
@@ -38,7 +83,7 @@ class BagDetailsSection extends Component {
 
     check_for_new_responses_and_messages() {
         if(this.props.selected_bag_item != null){
-            var object = this.get_bag_items()[this.props.selected_bag_item];
+            var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
             this.props.get_job_objects_responses(object['id'], object['e5'])
             this.props.get_objects_messages(object['id'], object['e5'])
         }
@@ -100,20 +145,26 @@ class BagDetailsSection extends Component {
         this.setState({navigate_view_bag_list_detail_tags_object: tag_obj})
     }
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
     render_bag_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_bag_list_detail_tags_object, this.state.navigate_view_bag_list_detail_tags_object['i'].active)
-
+        var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
+        
         if(selected_item == 'metadata'){
             return(
                 <div>
-                    {this.render_bag_main_details_section()}
+                    {this.render_bag_main_details_section(object)}
                 </div>
             )
         }
         else if(selected_item == 'responses'){
             return(
                 <div>
-                    {this.render_bag_post_responses()}
+                    {this.render_bag_post_responses(object)}
                 </div>
             )
             
@@ -121,17 +172,17 @@ class BagDetailsSection extends Component {
         else if(selected_item == 'activity'){
             return(
                 <div>
-                    {this.render_bag_message_activity()}
+                    {this.render_bag_message_activity(object)}
                 </div>
             ) 
         }
     }
 
 
-    render_bag_main_details_section(){
+    render_bag_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-45
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         var item = this.get_bag_details_data(object)
         
         return(
@@ -151,7 +202,7 @@ class BagDetailsSection extends Component {
 
                     {this.render_all_variants(object)}
 
-                    {this.render_fulfil_order_button()}
+                    {this.render_fulfil_order_button(object)}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -160,21 +211,21 @@ class BagDetailsSection extends Component {
     }
 
 
-    render_fulfil_order_button(){
+    render_fulfil_order_button(object){
         return(
             <div>
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'size':'l', 'details':'Fulfil the delivery request for the sender account', 'title':'Fulfil Bag'})}
                 <div style={{height:10}}/>
-                <div onClick={()=> this.open_fulfil_bag_request()}>
+                <div onClick={()=> this.open_fulfil_bag_request(object)}>
                     {this.render_detail_item('5', {'text':'Fulfil Bag', 'action':''},)}
                 </div>
             </div>
         )
     }
 
-    open_fulfil_bag_request(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    open_fulfil_bag_request(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         this.props.open_fulfil_bag_request(object)
     }
 
@@ -184,7 +235,7 @@ class BagDetailsSection extends Component {
 
 
     get_bag_details_data(object){
-        var tags = [object['event'].returnValues.p3]
+        var tags = [object['e5']].concat([object['event'].returnValues.p3])
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+' item(s) ordered'
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
@@ -198,7 +249,7 @@ class BagDetailsSection extends Component {
 
     render_all_variants(object){
         var middle = this.props.height-200;
-        var items_to_deliver = object['ipfs']['bag_orders']
+        var items_to_deliver = [].concat(object['ipfs']['bag_orders'])
         return (
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
@@ -222,7 +273,7 @@ class BagDetailsSection extends Component {
     }
 
 
-    render_variant_details(item){
+    render_variant_details(item, object){
         var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
         var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
         var items = variant_in_store['price_data']
@@ -235,7 +286,7 @@ class BagDetailsSection extends Component {
                 <div style={{height: 3}}/>
                 {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':'Variant Description', 'size':'s'})}
                 <div style={{height: 3}}/>
-                {this.render_detail_item('3', {'title':'Fulfilment Location', 'details':storefront['ipfs'].fulfilment_location, 'size':'s'})}
+                {this.render_detail_item('3', {'title':'Pick-up Location', 'details':storefront['ipfs'].fulfilment_location, 'size':'s'})}
                 <div style={{padding:'0px 0px 0px 10px'}}>
                     {this.render_detail_item('9', variant_in_store['image_data']['data'])}
                 </div>
@@ -305,22 +356,21 @@ class BagDetailsSection extends Component {
 
 
 
-    render_bag_post_responses(){
-        var he = this.props.height-40
-
+    render_bag_post_responses(object){
+        var he = this.props.height-50
         return(
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
-                    {this.render_bag_post_top_title()}
+                    {this.render_bag_post_top_title(object)}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                    {this.render_bag_post_sent_received_messages()}
+                    {this.render_bag_post_sent_received_messages(object)}
                 </div>
             </div>
         )
     }
 
-    render_bag_post_top_title(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    render_bag_post_top_title(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Bag Responses', 'size':'l'})} 
@@ -328,13 +378,13 @@ class BagDetailsSection extends Component {
         )
     }
 
-    render_bag_post_sent_received_messages(){
+    render_bag_post_sent_received_messages(object){
         var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_bag_details_responses()
+        var items = [].concat(this.get_bag_details_responses(object))
 
         if(items.length == 0){
             items = [0,1]
@@ -362,7 +412,7 @@ class BagDetailsSection extends Component {
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}}>
                                 <div key={index}>
-                                    {this.render_bag_response_item(item)}
+                                    {this.render_bag_response_item(item, object)}
                                 </div>
                             </li> 
                         ))}
@@ -372,8 +422,8 @@ class BagDetailsSection extends Component {
         }
     }
 
-    get_bag_details_responses(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    get_bag_details_responses(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
             return this.props.app_state.job_responses[object['id']]
         }else{
@@ -388,14 +438,12 @@ class BagDetailsSection extends Component {
         }
     }
 
-    render_bag_response_item(item){
-        var background_color = this.props.theme['card_background_color']
-        var card_shadow_color = this.props.theme['card_shadow_color']
+    render_bag_response_item(item, object){
         var is_application_accepted = item['is_response_accepted'];
 
         if(is_application_accepted){
             return(
-                <div onClick={() => this.view_contract(item)}>
+                <div onClick={() => this.view_contract(item, object)}>
                     {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
@@ -409,7 +457,7 @@ class BagDetailsSection extends Component {
             )
         }else{
             return(
-                <div onClick={() => this.view_contract(item)}>
+                <div onClick={() => this.view_contract(item, object)}>
                     {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
@@ -421,8 +469,8 @@ class BagDetailsSection extends Component {
         
     }
 
-    view_contract(item){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    view_contract(item, object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         if(object['event'].returnValues.p3 == this.props.app_state.user_account_id[object['e5']]){
             this.props.view_bag_application_contract(item)
         }
@@ -436,16 +484,18 @@ class BagDetailsSection extends Component {
 
 
 
-    render_bag_message_activity(){
-        var he = this.props.height-110
+    render_bag_message_activity(object){
+        var he = this.props.height-100
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
-                        {this.render_top_title()}
-                        {this.render_focus_list()}
+                        <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
+
+                        {this.render_top_title(object)}
+                        {this.render_focus_list(object)}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
-                        {this.render_sent_received_messages()}
+                        {this.render_sent_received_messages(object)}
                     </div>
                 </div>
 
@@ -453,7 +503,7 @@ class BagDetailsSection extends Component {
                     <div style={{'margin':'1px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet()}>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet(object)}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
@@ -462,7 +512,7 @@ class BagDetailsSection extends Component {
                         <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
-                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack()}>
+                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
                         {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
                     </div>
                 </div>
@@ -470,15 +520,19 @@ class BagDetailsSection extends Component {
         )
     }
 
-    show_add_comment_bottomsheet(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+    when_comment_structure_tags_updated(tag_obj){
+        this.setState({comment_structure_tags: tag_obj})
+    }
+
+    show_add_comment_bottomsheet(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'bag')
     }
   
 
-    render_top_title(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    render_top_title(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Shopping Bag Acivity', 'size':'l'})} 
@@ -491,14 +545,14 @@ class BagDetailsSection extends Component {
         this.messagesEnd = React.createRef();
     }
 
-    render_sent_received_messages(){
+    render_sent_received_messages(object){
         var middle = this.props.height-200;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.get_convo_messages()
-        var stacked_items = this.get_stacked_items()
+        var items = [].concat(this.get_convo_messages(object))
+        var stacked_items = [].concat(this.get_stacked_items(object))
 
         if(items.length == 0 && stacked_items.length == 0){
             items = [0,1]
@@ -520,17 +574,17 @@ class BagDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message() != null){
-            var focused_message_replies = this.get_focused_message_replies()
+        else if(this.get_focused_message(object) != null){
+            var focused_message_replies = this.get_focused_message_replies(object)
             return(
                 <div>
                     <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message())}
+                        {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
                     </div>
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
                         <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
                             <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies)}
+                                {this.render_messages(focused_message_replies, object)}
                                 <div ref={this.messagesEnd}/>
                             </ul>
                         </div>
@@ -539,21 +593,33 @@ class BagDetailsSection extends Component {
             )
         }
         else{
-            return(
+            var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
+            if(selected_view_option == 'channel-structure'){
+                return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items)}
-                        {this.render_messages(stacked_items)}
+                        {this.render_messages(items, object)}
+                        {this.render_messages(stacked_items, object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
             )
+            }else{
+                return(
+                    <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {this.render_all_comments(object)}
+                            <div ref={this.messagesEnd}/>
+                        </ul>
+                    </div>
+                )
+            }
         }
     }
 
-    render_messages(items){
+    render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message() != null){
+        if(items.length == 0 && this.get_focused_message(object) != null){
             var items = [0,1]
             return(
                 <div>
@@ -578,7 +644,7 @@ class BagDetailsSection extends Component {
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
-                                {this.render_message_as_focused_if_so(item)}
+                                {this.render_message_as_focused_if_so(item, object)}
                                 <div style={{height:3}}/>
                             </div>
                         </li>
@@ -589,9 +655,9 @@ class BagDetailsSection extends Component {
         
     }
 
-    focus_message(item){
+    focus_message(item, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
 
         if(this.state.focused_message[object['id']] != item){
             clone[object['id']] = item
@@ -616,11 +682,11 @@ class BagDetailsSection extends Component {
     //     return return_value
     // }
 
-    unfocus_message(){
+    unfocus_message(object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         if(clone['tree'][object['id']] != null){
-            var index = this.get_index_of_item()
+            var index = this.get_index_of_item(object)
             if(index != -1){
                 clone['tree'][object['id']].splice(index, 1)
             }
@@ -631,8 +697,8 @@ class BagDetailsSection extends Component {
         this.setState({focused_message: clone})
     }
 
-    get_index_of_item(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    get_index_of_item(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         var focused_item = this.state.focused_message[object['id']]
         var focused_items = this.state.focused_message['tree'][object['id']]
         var pos = -1
@@ -646,8 +712,8 @@ class BagDetailsSection extends Component {
     }
 
 
-    render_message_as_focused_if_so(item){
-        var focused_message = this.get_focused_message()
+    render_message_as_focused_if_so(item, object){
+        var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
             return(
@@ -660,9 +726,9 @@ class BagDetailsSection extends Component {
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
                     {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
@@ -678,13 +744,13 @@ class BagDetailsSection extends Component {
                         <SwipeableListItem
                             swipeLeft={{
                             content: <div>Focus</div>,
-                            action: () => this.focus_message(item)
+                            action: () => this.focus_message(item, object)
                             }}
                             swipeRight={{
                             content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
+                            action: () => this.unfocus_message(object)
                             }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
 
@@ -717,22 +783,22 @@ class BagDetailsSection extends Component {
 
 
 
-    render_stack_message_item(item){
+    render_stack_message_item(item, object){
         if(item.type == 'message'){
             return(
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])}>{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)}>{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                     
                 </div>
             )
@@ -742,23 +808,23 @@ class BagDetailsSection extends Component {
                     
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'])} >{this.get_sender_title_text(item)}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                           </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
                     {this.render_detail_item('9',item['image-data'])}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }
     }
 
-    get_sender_title_text(item){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    get_sender_title_text(item, object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
             return 'You'
         }else{
@@ -774,15 +840,15 @@ class BagDetailsSection extends Component {
         return message
     }
 
-    get_convo_messages(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    get_convo_messages(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         // return object['messages']
         var messages = this.props.app_state.object_messages[object['id']]==null?[]:this.props.app_state.object_messages[object['id']]
         return messages
     }
 
-    get_stacked_items(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    get_stacked_items(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         var convo_id = object['id']
 
         var stack = this.props.app_state.stack_items
@@ -800,9 +866,9 @@ class BagDetailsSection extends Component {
         return stacked_items
     }
 
-    get_focused_message_replies(){
-        var focused_message = this.get_focused_message()
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_focused_message_replies(object){
+        var focused_message = this.get_focused_message(object)
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && focused_message['message_id'] != null &&  all_messages[i]['focused_message_id'] == focused_message['message_id']){
@@ -812,8 +878,8 @@ class BagDetailsSection extends Component {
         return replies
     }
 
-    get_message_replies(item){
-        var all_messages = this.get_convo_messages().concat(this.get_stacked_items())
+    get_message_replies(item, object){
+        var all_messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var replies = []
         for(var i=0; i<all_messages.length; i++){
             if(all_messages[i]['focused_message_id'] != null && item['message_id'] != null &&  all_messages[i]['focused_message_id'] == item['message_id']){
@@ -823,8 +889,8 @@ class BagDetailsSection extends Component {
         return replies
     }
 
-    get_focused_message(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    get_focused_message(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         return this.state.focused_message[object['id']]
     }
 
@@ -863,11 +929,11 @@ class BagDetailsSection extends Component {
         this.setState({entered_text: text})
     }
 
-    add_message_to_stack(){
+    add_message_to_stack(object){
         var message = this.state.entered_text.trim()
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         var message_id = Date.now()
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         if(message == ''){
             this.props.notify('type something first', 600)
         }
@@ -910,8 +976,8 @@ class BagDetailsSection extends Component {
     }
 
 
-    render_focus_list(){
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+    render_focus_list(object){
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
         var items = this.state.focused_message['tree'][object['id']]
 
         if(items != null && items.length > 0){
@@ -919,8 +985,8 @@ class BagDetailsSection extends Component {
                 <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                         {items.map((item, index) => (
-                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item), 'details':this.shorten_message_item(this.format_message(item['message'])), 'size':'s'})}
+                            <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_focus_chain_item_clicked(item, index, object)}>
+                                {this.render_detail_item('3', {'title':this.get_sender_title_text(item, object), 'details':this.shorten_message_item(this.format_message(item['message'], object), object), 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -939,9 +1005,9 @@ class BagDetailsSection extends Component {
     }
 
 
-    when_focus_chain_item_clicked(item, pos){
+    when_focus_chain_item_clicked(item, pos, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
-        var object = this.get_bag_items()[this.props.selected_bag_item];
+        // var object = this.get_bag_items()[this.props.selected_bag_item];
 
         var new_array = []
         for(var i=0; i<=pos; i++){
@@ -951,6 +1017,83 @@ class BagDetailsSection extends Component {
         clone['tree'][object['id']] = new_array
         
         this.setState({focused_message: clone})
+    }
+
+
+    render_all_comments(object){
+        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object(object))
+        return(
+            <div>
+                {sorted_messages_in_tree.children.map((item, index) => (
+                    <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
+                        <div >
+                            {this.render_main_comment(item, 0, object)}
+                            <div style={{height:3}}/>
+                        </div>
+                    </li>
+                ))}    
+            </div>
+        )
+    }
+
+    render_main_comment(comment, depth, object){
+        return(
+            <div>
+                <div style={{'padding': '1px 0px 0px 0px'}} onClick={()=> this.when_message_item_clicked(comment.data.message, object)}>
+                    {this.render_message_as_focused_if_so(comment.data.message, object)}
+                </div>
+
+                {this.render_message_children(comment, depth, object)}
+            </div>
+        )
+    }
+
+    render_message_children(comment, depth, object){
+        var padding = depth > 4 ? '0px 0px 0px 5px' : '0px 0px 0px 20px'
+        if(this.state.hidden_message_children_array.includes(comment.data.message['message_id'])){
+            return(
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px'}}>
+                    <div style={{width:'100%'}}>
+                        <ul style={{ 'padding': padding, 'listStyle':'none'}}>
+                            {comment.children.map((item, index) => (
+                                <li style={{'padding': '4px 0px 0px 0px'}}>
+                                    <div>
+                                        {this.render_main_comment(item, depth+1, object)}
+                                        <div style={{height:3}}/>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_message_item_clicked(message){
+        var clone = this.state.hidden_message_children_array.slice();
+        
+        if(clone.includes(message['message_id'])){
+            var index = clone.indexOf(message['message_id']);
+            if(index > -1){
+                clone.splice(index, 1);
+            }
+        }else{
+            clone.push(message['message_id'])
+        }
+
+        this.setState({hidden_message_children_array:clone})
+        
+    }
+
+    get_message_replies_in_sorted_object(object){
+        var messages = this.get_convo_messages(object).concat(this.get_stacked_items(object))
+        var data = []
+        messages.forEach(message => {
+            data.push({ index : message['message_id'], sort : message['time'], parent : message['focused_message_id'], message: message })
+        });
+        var tree = toTree(data);
+        return tree;
     }
 
 

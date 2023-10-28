@@ -604,7 +604,7 @@ class NewSubscriptionPage extends Component {
     render_subscription_authority_target(){
         return(
             <div>
-                 {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the subscription will be restricted to moderators and specified accounts', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the subscription will be restricted to moderators and specified accounts', 'size':'l'})}
 
                 <div style={{height:20}}/>
                 <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
@@ -722,7 +722,7 @@ class NewSubscriptionPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.moderators
+        var items = [].concat(this.state.moderators)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -825,7 +825,7 @@ class NewSubscriptionPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.interactibles
+        var items = [].concat(this.state.interactibles)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -956,7 +956,7 @@ class NewSubscriptionPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.price_data
+        var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -1020,7 +1020,7 @@ class NewSubscriptionPage extends Component {
 
 
     load_token_suggestions(target_type){
-        var items = this.get_suggested_tokens()
+        var items = [].concat(this.get_suggested_tokens())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
@@ -1098,7 +1098,7 @@ class NewSubscriptionPage extends Component {
 
 
     load_account_suggestions(target_type){
-        var items = this.get_suggested_accounts(target_type)
+        var items = [].concat(this.get_suggested_accounts(target_type))
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(

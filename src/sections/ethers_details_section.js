@@ -63,19 +63,25 @@ class EthersDetailsSection extends Component {
         
     }
 
+    get_item_in_array(object_array, id){
+        var object = object_array.find(x => x['id'] === id);
+        return object
+    }
+
     render_ether_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_ethers_list_detail_tags_object, this.state.navigate_view_ethers_list_detail_tags_object['i'].active)
+        var item = this.get_item_in_array(this.get_ethers_data(), this.props.selected_ether_item)
 
         if(selected_item == 'details' || selected_item == 'e'){
             return(
                 <div>
-                    {this.render_ethers_main_details_section()}
+                    {this.render_ethers_main_details_section(item)}
                 </div>
             )
         }else if(selected_item == 'transactions'){
             return(
                 <div>
-                    {this.render_block_history_logs()}
+                    {this.render_block_history_logs(item)}
                 </div>
             )
             
@@ -104,10 +110,10 @@ class EthersDetailsSection extends Component {
 
     
 
-    render_ethers_main_details_section(){
+    render_ethers_main_details_section(item){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-60
-        var item = this.get_ethers_data()[this.props.selected_ether_item];
+        // var item = this.get_ethers_data()[this.props.selected_ether_item];
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -148,7 +154,7 @@ class EthersDetailsSection extends Component {
                     
                     {this.render_detail_item('3', {'title':'Send/Receive Ether', 'details':'Send or receive ether from a specified account.', 'size':'l'})}
                     <div style={{height:10}}/>
-                    <div onClick={()=>this.open_send_receive_ether_bottomsheet()}>
+                    <div onClick={()=>this.open_send_receive_ether_bottomsheet(item)}>
                         {this.render_detail_item('5', {'text':'Send/Receive', 'action': ''})}
                     </div>
                     <div style={{height:10}}/>
@@ -161,11 +167,12 @@ class EthersDetailsSection extends Component {
     }
 
 
-    open_send_receive_ether_bottomsheet(){
+    open_send_receive_ether_bottomsheet(item){
         if(!this.props.app_state.has_wallet_been_set){
-            this.props.notify('You need to set your wallet first', 800)
+            // this.props.notify('You need to set your wallet first', 800)
+            this.props.open_wallet_guide_bottomsheet('action')
         }else{
-            var item = this.get_ethers_data()[this.props.selected_ether_item];
+            // var item = this.get_ethers_data()[this.props.selected_ether_item];
             this.props.open_send_receive_ether_bottomsheet(item)
         }
     }
@@ -177,6 +184,7 @@ class EthersDetailsSection extends Component {
     get_ethers_data(){
         return [
             {
+                'id':'ETHT',
                 'name': 'Ethereum Testnet',
                 'symbol': 'ETHT',
                 'e5':'E15',
@@ -219,13 +227,13 @@ class EthersDetailsSection extends Component {
 
 
 
-    render_block_history_logs(){
+    render_block_history_logs(object){
         var middle = this.props.height-70;
         var size = this.props.screensize;
         if(size == 'm'){
             middle = this.props.height-190;
         }
-        var items = this.props.app_state.last_blocks['E15']
+        var items = [].concat(this.props.app_state.last_blocks[object['e5']])
         return ( 
             <div style={{overflow: 'auto',height: middle, 'margin':'0px 0px 20px 0px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>

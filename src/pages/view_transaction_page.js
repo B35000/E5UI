@@ -302,6 +302,9 @@ class ViewTransactionPage extends Component {
         else if(t.type == 'edit-channel' || t.type == 'edit-contractor' || t.type == 'edit-job' || t.type == 'edit-post' || t.type == 'edit-storefront' || t.type == 'edit-token'){
             return 276073
         }
+        else if(t.type == 'depthmint'){
+            return 623115
+        }
 
     }
 
@@ -702,6 +705,13 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
+            else if(tx.type == 'depthmint'){
+                return(
+                    <div>
+                        {this.render_depthmint_data()}
+                    </div>
+                )
+            }
 
         }
     }
@@ -765,10 +775,11 @@ class ViewTransactionPage extends Component {
     }
 
     render_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':'tokens'})}
                         </li>
@@ -1571,7 +1582,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var object = this.format_job_post();
-        var items = object['ipfs'].price_data
+        var items = [].concat(object['ipfs'].price_data)
         if(items.length == 0){
             items = [0, 1, 2]
             return(
@@ -1716,7 +1727,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var object = this.format_storefront_post();
-        var items = object['ipfs'].variants
+        var items = [].concat(object['ipfs'].variants)
 
         if(items.length == 0){
             items = [0]
@@ -1763,7 +1774,7 @@ class ViewTransactionPage extends Component {
     }
 
     render_variant_price_data(variant){
-        var items = variant['price_data']
+        var items = [].concat(variant['price_data'])
         return(
             <div>
                 {items.reverse().map((item, index) => (
@@ -1856,7 +1867,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var state_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = state_item.stack_items;
+        var items = [].concat(state_item.stack_items);
 
         if(items.length == 0){
             items = [0, 1, 3]
@@ -2534,10 +2545,11 @@ class ViewTransactionPage extends Component {
     }
 
     render_subscription_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px', overflow: 'auto' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
@@ -2617,10 +2629,11 @@ class ViewTransactionPage extends Component {
     }
 
     render_collect_subscription_buy_token_uis(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
          return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
-                    {buy_tokens.map((item, index) => (
+                    {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
@@ -2673,7 +2686,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var reconfig_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = reconfig_item.reconfig_values
+        var items = [].concat(reconfig_item.reconfig_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -2764,7 +2777,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = item.reconfig_values
+        var items = [].concat(item.reconfig_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -2883,7 +2896,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = item.reconfig_values
+        var items = [].concat(item.reconfig_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -3003,7 +3016,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transfer_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transfer_item.exchange_transfer_values
+        var items = [].concat(transfer_item.exchange_transfer_values)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -3070,7 +3083,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.force_exit_accounts
+        var items = [].concat(transaction_item.force_exit_accounts)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -3130,7 +3143,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.bounty_exchanges
+        var items = [].concat(transaction_item.bounty_exchanges)
 
         if(items.length == 0){
             items = [0, 1]
@@ -3193,7 +3206,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.freeze_unfreeze_actions
+        var items = [].concat(transaction_item.freeze_unfreeze_actions)
 
         if(items.length == 0){
             items = [0, 1]
@@ -3255,7 +3268,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.authmint_actions
+        var items = [].concat(transaction_item.authmint_actions)
 
         if(items.length == 0){
             items = [0, 1]
@@ -3278,7 +3291,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.reverse().map((item, index) => (
+                        {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':'Target Recipient ID: '+item['recipient'], 'size':'s'})}
                             </li>
@@ -3314,7 +3327,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.all_actions
+        var items = [].concat(transaction_item.all_actions)
 
         if(items.length == 0){
             items = [0, 1]
@@ -3459,7 +3472,7 @@ class ViewTransactionPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var stacked_items = this.get_stacked_items()
+        var stacked_items = [].concat(this.get_stacked_items())
 
         if(stacked_items.length == 0){
             stacked_items = [0,1]
@@ -3626,7 +3639,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.price_data
+        var items = [].concat(transaction_item.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -3712,7 +3725,7 @@ class ViewTransactionPage extends Component {
     render_all_items(){
         var middle = this.props.height-100;
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items_to_deliver = transaction_item.items_to_deliver
+        var items_to_deliver = [].concat(transaction_item.items_to_deliver)
 
         return (
             <div style={{overflow: 'auto', maxHeight: middle}}>
@@ -3879,8 +3892,8 @@ class ViewTransactionPage extends Component {
         var middle = this.props.height-200;
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         if(transaction_item.selected_variant != null){
-            var items = transaction_item.selected_variant['price_data']
-            var shipping_items = transaction_item.storefront_item['ipfs'].shipping_price_data
+            var items = [].concat(transaction_item.selected_variant['price_data'])
+            var shipping_items = [].concat(transaction_item.storefront_item['ipfs'].shipping_price_data)
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':'Purchase Amounts', 'details':'This is the final amount for the price of the item your buying', 'size':'l'})}
@@ -3933,7 +3946,7 @@ class ViewTransactionPage extends Component {
     render_all_clear_action_items(){
         var middle = this.props.height-100;
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.items_to_clear
+        var items = [].concat(transaction_item.items_to_clear)
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     {this.render_detail_item('3', {'title':'Collected Signatures', 'details':'Below are the collected signatures from your direct purchases', 'size':'l'})}
@@ -4060,7 +4073,7 @@ class ViewTransactionPage extends Component {
         var col = Math.round(this.props.app_state.width / 100)
         var rowHeight = 100;
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.entered_image_objects
+        var items = [].concat(transaction_item.entered_image_objects)
 
         if(items.length == 0){
             var items = ['1','1','1']
@@ -4133,7 +4146,7 @@ class ViewTransactionPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = item['price_data']
+        var items = [].concat(item['price_data'])
 
         if(items.length == 0){
             items = [0,3,0]
@@ -4430,7 +4443,7 @@ class ViewTransactionPage extends Component {
             middle = this.props.height-100;
         }
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
-        var items = transaction_item.price_data
+        var items = [].concat(transaction_item.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -4504,6 +4517,27 @@ class ViewTransactionPage extends Component {
         }
 
         return all_objects
+    }
+
+
+
+
+
+
+
+    render_depthmint_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items = transaction_item.authmint_actions
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Depth-mint Actions', 'details':items.length+' action(s) included', 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_authmint_transactions()}
+            </div>
+        )
     }
 
 

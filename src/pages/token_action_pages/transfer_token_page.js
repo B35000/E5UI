@@ -142,7 +142,9 @@ class template extends Component {
     add_transaction(){
         var clone = this.state.stack_items.slice()
         var amount = this.state.amount
-        var recipient = this.state.recipient_id.trim()
+        console.log('--------------------add_transaction-----------------------')
+        console.log(this.state.recipient_id)
+        var recipient = this.state.recipient_id.toString().trim()
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
@@ -165,7 +167,7 @@ class template extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.stack_items
+        var items = [].concat(this.state.stack_items)
 
         if(items.length == 0){
             items = [0]
@@ -185,7 +187,7 @@ class template extends Component {
                 </div>
             )
         }else{
-            var items = this.state.stack_items
+            var items = [].concat(this.state.stack_items)
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -246,19 +248,19 @@ class template extends Component {
 
 
     load_account_suggestions(){
-        var items = this.get_suggested_accounts()
+        var items = [].concat(this.get_suggested_accounts())
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         )
     }
 
@@ -421,6 +423,7 @@ class template extends Component {
     add_transactions_to_stack(){
         this.props.add_transfer_transactions_to_stack(this.state)
         this.props.notify('transactions added to stack!', 600)
+        this.setState({recipient_id:'', stack_items:[]})
     }
 
 
