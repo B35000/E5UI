@@ -109,7 +109,7 @@ class template extends Component {
 
                 <div style={{height:10}}/>
 
-                <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':'Add Transaction', 'action':''})}
@@ -142,23 +142,44 @@ class template extends Component {
     add_transaction(){
         var clone = this.state.stack_items.slice()
         var amount = this.state.amount
-        console.log('--------------------add_transaction-----------------------')
-        console.log(this.state.recipient_id)
-        var recipient = this.state.recipient_id.toString().trim()
+        var recipient = this.get_typed_alias_id(this.state.recipient_id.toString().trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 1600)
+        }
+        else if(!this.check_if_sender_has_balance()){
+            this.props.notify('you dont have enough tokens to add that transaction', 4200)
         }
         else{
             var tx = {id:makeid(8), type:'transfer', 'amount':''+amount, 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
 
             clone.push(tx)
             this.setState({stack_items: clone, debit_balance: this.state.debit_balance + amount, recipient_id:'', amount:0})
-            this.props.notify('transaction added!', 600)
+            this.props.notify('transaction added!', 1600)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
+    }
+
+    check_if_sender_has_balance(){
+        var picked_amount = this.state.amount
+        var limit = this.get_number_limit()
+
+        if(picked_amount > limit){
+            return false
+        }
+        return true
     }
 
     render_stack_transactions(){
@@ -272,7 +293,8 @@ class template extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.token_item['e5']]
+        if(contacts == null) contacts = [];
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.recipient_id)){

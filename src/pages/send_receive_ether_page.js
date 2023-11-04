@@ -57,7 +57,7 @@ class SendReceiveEtherPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e','send', 'receive', 'logs'], [0]
+                    ['xor','',0], ['e','send', 'receive', 'logs'], [1]
                 ],
             };
         }else{
@@ -66,7 +66,7 @@ class SendReceiveEtherPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['or','',0], ['e','send', 'receive'], [0]
+                    ['xor','',0], ['e','send', 'receive'], [1]
                 ],
             };
         }
@@ -79,7 +79,7 @@ class SendReceiveEtherPage extends Component {
         if(selected_item == 'send' || selected_item == 'e'){
             return(
                 <div>
-                    <div style={{'margin':'20px 0px 0px 10px'}}>
+                    <div style={{'margin':'20px 0px 0px 10px', 'overflow-x':'hidden'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_send_ether_ui()}
                     </div> 
@@ -89,7 +89,7 @@ class SendReceiveEtherPage extends Component {
         else if(selected_item == 'logs'){
             return(
                 <div>
-                    <div style={{'margin':'20px 0px 0px 20px'}}>
+                    <div style={{'margin':'20px 0px 0px 20px', 'overflow-x':'hidden'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_transaction_history()}
                     </div>
@@ -99,7 +99,7 @@ class SendReceiveEtherPage extends Component {
         else{
             return(
                 <div>
-                    <div style={{'margin':'20px 0px 0px 10px'}}>
+                    <div style={{'margin':'20px 0px 0px 10px', 'overflow-x':'hidden'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_receive_ether_ui()}
                     </div>
@@ -167,6 +167,15 @@ class SendReceiveEtherPage extends Component {
 
     render_send_ether_middle_part(){
         var e5 = this.state.ether['e5']
+
+        var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        var gas_transactions = this.state.picked_wei_amount == 0 ? 0 : Math.floor((this.state.picked_wei_amount/gas_price)/2_300_000)
+
+        var balance_gas_transactions = this.props.app_state.account_balance[e5] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[e5]/gas_price)/2_300_000)
+
         return(
             <div>
                 <div style={{height: 10}}/>
@@ -194,20 +203,23 @@ class SendReceiveEtherPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(balance_gas_transactions), 'barwidth':this.calculate_bar_width(balance_gas_transactions), 'number':this.format_account_balance_figure(balance_gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
                 </div>
 
                 <div style={{height: 30}}/>
-                {this.render_detail_item('3', {'title':'Amount to Send', 'details':'Set the amount to send in the number picker below', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Amount to Send', 'details':'Set the amount to send in the number picker below.', 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                     <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
 
                     {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                     {this.render_detail_item('2', this.get_picked_amount_in_ether())}
-                </div>
-                {this.render_amount_number_picker()}
 
-                {/*  */}
+                    {this.render_detail_item('2', { 'style':'s', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                </div>
+                
+                {this.render_amount_number_picker()}
 
                 {this.render_detail_item('0')}
                 
@@ -231,6 +243,20 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    get_gas_price_from_runs(){
+        var e5 = this.state.ether['e5']
+        var last_events = this.props.app_state.all_E5_runs[e5]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
+            }
+            sum = sum/last_check;
+        }
+        return sum
     }
 
     render_qr_code_scanner(){
@@ -510,7 +536,7 @@ class SendReceiveEtherPage extends Component {
         var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker ref={this.number_picker} number_limit={limit} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(limit)}/>
+                <NumberPicker ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23}/>
             </div>
         )
     }
@@ -520,7 +546,7 @@ class SendReceiveEtherPage extends Component {
         var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker ref={this.number_picker} number_limit={limit} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={this.get_balance_power_limit(limit)}/>
+                <NumberPicker ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={23}/>
             </div>
         )
     }
@@ -617,6 +643,17 @@ class SendReceiveEtherPage extends Component {
 
 
     when_send_ether_button_tapped(){
+        var e5 = this.state.ether['e5']
+        var picked_amount = this.state.picked_wei_amount
+        var my_balance = this.props.app_state.account_balance[e5]
+        
+        var gas_price_picked = 35_000 * this.state.picked_wei_gas_price
+        
+        if((picked_amount+gas_price_picked) > my_balance){
+            this.props.notify('Your ether balance is insufficient to fulfil that transaction', 4200)
+            return;
+        }
+
         this.open_confirmation_dialog_box()
     }
 

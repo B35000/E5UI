@@ -647,12 +647,12 @@ class NewPostPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove and click add images to add them to the object.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove.'})}
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
-                {this.render_all_images_part()}
+                {/* {this.render_all_images_part()} */}
                 
             </div>
         )
@@ -672,9 +672,9 @@ class NewPostPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div>
 
-            <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
+            {/* <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
                 {this.render_detail_item('5', {'text':'Add Images', 'action':'-'})}
-            </div>
+            </div> */}
 
         </div>
       )
@@ -829,10 +829,22 @@ class NewPostPage extends Component {
             this.props.notify('that title is too long', 700)
         }
         else{
-            
-            this.props.when_add_new_object_to_stack(this.state)
 
-            this.setState({ id: makeid(8), type:'post', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            // var images_to_add = this.state.entered_image_objects
+            // var id = Math.round(new Date().getTime()/1000);
+            // if(images_to_add.length != 0){
+            //     var cloned_array = this.state.entered_objects.slice()
+            //     cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
+            //     this.setState({entered_objects: cloned_array, entered_image_objects:[]})
+            // }
+            
+            var me = this;
+            setTimeout(function() {
+                me.props.when_add_new_object_to_stack(me.state)
+        
+                me.setState({ id: makeid(8), type:'post', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            }, (1 * 1000));
+            
             this.props.notify('transaction added to stack', 700);
         }
     }

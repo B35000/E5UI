@@ -1383,7 +1383,7 @@ class ViewTransactionPage extends Component {
 
             'maximum_buy_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${number_with_commas(subscription_config[3])}`, 'barcolor':'', 'relativepower':'time-units', },
 
-            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${number_with_commas(subscription_config[4])}`, 'barcolor':'', 'relativepower':'time-units', },
+            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':'Minimum Cancellable Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${number_with_commas(subscription_config[4])}`, 'barcolor':'', 'relativepower':'time-units', },
 
             'time_unit': {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'l'},
 
@@ -1471,6 +1471,8 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+
+                    {this.render_item_images()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -1531,6 +1533,17 @@ class ViewTransactionPage extends Component {
         }
     }
 
+    render_item_images(){
+        var object = this.props.app_state.stack_items[this.state.transaction_index]
+        var images_to_add = object.entered_image_objects
+        if(images_to_add.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
+            </div>
+        )
+    }
+
 
 
 
@@ -1549,6 +1562,8 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+
+                    {this.render_item_images()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts you are offering for the job.', 'size':'l'})}
@@ -1644,6 +1659,8 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
 
+                    {this.render_item_images()}
+
                     {this.load_moderator_accounts()}
                     {this.load_interactable_accounts()}
 
@@ -1692,6 +1709,7 @@ class ViewTransactionPage extends Component {
 
                         {this.render_detail_item('0')}
                         {this.render_item_data(items)}
+                        {this.render_item_images()}
 
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -3423,6 +3441,7 @@ class ViewTransactionPage extends Component {
 
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+                    {this.render_item_images()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4018,6 +4037,7 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+                    {this.render_item_images()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}

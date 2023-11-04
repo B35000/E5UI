@@ -20,8 +20,10 @@ class PostListSection extends Component {
     
     state = {
         selected: 0,
-        viewed_posts:[]
+        viewed_posts:[],
+        scroll_positions:{}
     };
+
 
     render(){
         return(
@@ -31,7 +33,7 @@ class PostListSection extends Component {
         )
     }
 
-     render_post_list_group(){
+    render_post_list_group(){
         var selected_page = this.props.page;
         if(selected_page == '?'){
             var selected_tag = this.props.work_page_tags_object['i'].active
@@ -123,10 +125,120 @@ class PostListSection extends Component {
         return picked_item
     }
 
+    is_object_sender_blocked(object){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(object['author'])){
+            return true
+        }
+        return false
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return all_objects
+    }
+
+
+    constructor(props) {
+        super(props);
+        this.jobs_list = React.createRef();
+        this.contract_list = React.createRef();
+        this.contractor_list = React.createRef();
+        this.proposal_list = React.createRef();
+        this.subscription_list = React.createRef();
+        this.mail_list = React.createRef();
+
+        this.e5_list = React.createRef();
+        this.post_list = React.createRef();
+        this.channel_list = React.createRef();
+        this.storefront_list = React.createRef();
+        this.bag_list = React.createRef();
+
+        this.ether_list = React.createRef();
+        this.end_list = React.createRef();
+        this.spend_list = React.createRef();
+    }
+
+
+    handleScroll = (event, id) => {
+        var pos = event.currentTarget.scrollTop
+        this.props.set_page_scroll(pos)
+    };
+
+    set_jobs_list(pos){
+        this.jobs_list.current?.scrollTo(0, pos);
+    }
+
+    set_contract_list(pos){
+        this.contract_list.current?.scrollTo(0, pos);
+    }
+
+    set_contractor_list(pos){
+        this.contractor_list.current?.scrollTo(0, pos);
+    }
+
+    set_proposal_list(pos){
+        this.proposal_list.current?.scrollTo(0, pos);
+    }
+
+    set_subscription_list(pos){
+        this.subscription_list.current?.scrollTo(0, pos);
+    }
+
+    set_mail_list(pos){
+        this.mail_list.current?.scrollTo(0, pos);
+    }
 
 
 
+    set_e5_list(pos){
+        this.e5_list.current?.scrollTo(0, pos);
+    }
 
+    set_post_list(pos){
+        this.post_list.current?.scrollTo(0, pos);
+    }
+
+    set_channel_list(pos){
+        this.channel_list.current?.scrollTo(0, pos);
+    }
+
+    set_storefront_list(pos){
+        this.storefront_list.current?.scrollTo(0, pos);
+    }
+
+    set_bag_list(pos){
+        this.bag_list.current?.scrollTo(0, pos);
+    }
+
+
+
+    set_ether_list(pos){
+        this.ether_list.current?.scrollTo(0, pos);
+    }
+
+    set_end_list(pos){
+        this.end_list.current?.scrollTo(0, pos);
+    }
+
+    set_spend_list(pos){
+        this.spend_list.current?.scrollTo(0, pos);
+    }
 
 
 
@@ -147,9 +259,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -161,8 +273,8 @@ class PostListSection extends Component {
         }else{
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
-            return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+            return (
+                <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -183,6 +295,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_job_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_job_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -235,9 +354,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -250,7 +369,7 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -272,6 +391,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contract_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_contract_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -293,9 +419,11 @@ class PostListSection extends Component {
         var tags = object['ipfs'] == null ? [object['e5'], 'Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var id_text = ''+object['id']
+        if(object['id'] == 2) id_text = 'Main Contract'
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':id_text, 'details':title, 'size':'l'},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
         }
     }
@@ -327,9 +455,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -340,7 +468,7 @@ class PostListSection extends Component {
             );
         }else{
             return (
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -357,6 +485,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_proposal_item(object)
+        // if(this.is_object_sender_blocked(object)){
+        //     return(
+        //         <div>
+        //             {this.render_empty_object()}
+        //         </div>
+        //     )
+        // }
         return(
             <div onClick={() => this.when_proposal_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -416,9 +551,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -431,7 +566,7 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -453,6 +588,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_subscription_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_subscription_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -506,9 +648,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -520,8 +662,8 @@ class PostListSection extends Component {
         }else{
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
-            return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+            return (
+                <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -558,13 +700,20 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_mail_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_mail_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_detail_item('4', item['id'])}
+                        {this.render_detail_item('3', item['author_title'])}
                     </div>
                     <div style={{'padding': '15px 0px 0px 0px'}}>
                         {this.render_detail_item('2', item['age'])}
@@ -583,13 +732,32 @@ class PostListSection extends Component {
         var tags_to_use = [object['type']];
         var tags = object['ipfs'] == null ? ['Mail'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var final_tags = tags_to_use.concat(tags)
-        var title = object['ipfs'] == null ? 'Mail ID' : object['ipfs'].entered_title_text
+        var details = object['ipfs'] == null ? 'Mail ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1;
+        var sender = object['event'].returnValues.p2
+        var recipient = object['event'].returnValues.p1
+        var title = 'From '+ this.get_sender_title_text(sender, object)
+        if(myid == sender){
+            title = 'To '+ this.get_sender_title_text(recipient, object)
+        }
         return {
             'tags':{'active_tags':final_tags, 'index_option':'indexed'},
-            'id':{'textsize':'14px', 'text':title, 'font':'Sans-serif'},
+            'id':{'textsize':'14px', 'text':details, 'font':'Sans-serif'},
+            'author_title':{'title':title, 'details':details, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+        }
+    }
+
+    get_sender_title_text(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
         }
     }
 
@@ -614,9 +782,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -629,7 +797,7 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -651,6 +819,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contractor_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_contractor_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -697,19 +872,14 @@ class PostListSection extends Component {
         }
         var items = this.get_e5_data()
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div ref={this.e5_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '5px'}}>
                             {this.render_E5s_object(item['data'], index, item['id'])}
                         </li>
                     ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
+                    {this.render_empty_object()}
                 </ul>
             </div>
         );
@@ -781,9 +951,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -796,7 +966,7 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -861,6 +1031,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_post_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_post_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -914,9 +1091,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -929,7 +1106,7 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -946,6 +1123,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_channel_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_channel_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -1019,7 +1203,7 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -1040,6 +1224,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_storefront_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_storefront_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -1096,9 +1287,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -1111,7 +1302,7 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -1132,6 +1323,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_bag_item(object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return(
             <div onClick={() => this.when_bag_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -1224,19 +1422,13 @@ class PostListSection extends Component {
         }
         var items = this.get_ethers_data()
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '5px'}}>
                             {this.render_ethers_object(item, index)}
                         </li>
                     ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
                 </ul>
             </div>
         );
@@ -1320,7 +1512,7 @@ class PostListSection extends Component {
         }
         var items = this.get_exchange_tokens(3)
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li onClick={() => this.when_ends_object_clicked(index, item)} style={{'padding': '5px'}}>
@@ -1343,6 +1535,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.get_exchanges_data(object_array, token_id, img, item)
+        if(this.is_object_sender_blocked(item)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return ( 
             <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -1407,7 +1606,7 @@ class PostListSection extends Component {
         }
         var items = this.get_exchange_tokens(5)
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li onClick={() => this.when_spends_object_item_clicked(index, item)} style={{'padding': '5px'}}>
@@ -1426,6 +1625,13 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.get_exchanges_data(object_array, token_id, img, object)
+        if(this.is_object_sender_blocked(object)){
+            return(
+                <div>
+                    {this.render_empty_object()}
+                </div>
+            )
+        }
         return ( 
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>

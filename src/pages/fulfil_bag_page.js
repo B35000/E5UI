@@ -68,7 +68,7 @@ class FulfilBagPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 10px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.respond_to_bag_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_bag_title_tags_object_updated.bind(this)} theme={this.props.theme}/>

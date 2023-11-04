@@ -105,7 +105,7 @@ class ForceExitPage extends Component {
     }
 
     add_force_exit_item(){
-        var account = this.state.force_exit_target
+        var account = this.get_typed_alias_id(this.state.force_exit_target)
 
         if(!this.state.contract_item['participants'].includes(account)){
             this.props.notify('That account isnt part of the contract', 600)
@@ -118,6 +118,15 @@ class ForceExitPage extends Component {
             force_exit_accounts_clone.push(account)
             this.setState({force_exit_accounts: force_exit_accounts_clone, force_exit_target: ''})
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.contract_item['e5']][alias] == null ? alias : this.props.app_state.alias_owners[this.state.contract_item['e5']][alias])
+
+        return id
     }
 
 
@@ -197,7 +206,7 @@ class ForceExitPage extends Component {
         var accounts = this.state.contract_item['participants']
         var obj = []
         for(var i=0; i<accounts.length; i++){
-            obj.push({'id':''+accounts[i], 'label':{'title':'Account '+accounts[i], 'details':'Account', 'size':'s'}})
+            obj.push({'id':''+accounts[i], 'label':{'title':'Account: '+this.get_typed_alias_id(accounts[i]), 'details':'Account', 'size':'s'}})
         }
         return obj
         

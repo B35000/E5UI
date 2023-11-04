@@ -121,13 +121,13 @@ class FreezeUnfreezePage extends Component {
     add_transaction(){
         var clone = this.state.freeze_unfreeze_actions.slice()
         var amount = this.state.freeze_unfreeze_amount
-        var recipient = this.state.recipient_id.trim()
+        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else{
             var action = this.get_selected_item(this.state.freeze_unfreeze_action_page_tags_object, 'e')
@@ -137,8 +137,18 @@ class FreezeUnfreezePage extends Component {
             var tx = {'amount':amount, 'recipient':recipient, 'action':stack_action, 'action-name':action}
             clone.push(tx)
             this.setState({freeze_unfreeze_actions: clone, recipient_id: '', freeze_unfreeze_amount:0})
-            this.props.notify('action added!', 600)
+            this.props.notify('action added!', 1600)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
     }
 
 

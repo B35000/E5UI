@@ -128,6 +128,7 @@ class EndDetailSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_end_list_detail_tags_object, this.state.navigate_view_end_list_detail_tags_object['i'].active)
         var selected_object = this.get_item_in_array(this.get_exchange_tokens(3), this.props.selected_end_item)
         
+        if(selected_object == null) return;
         if(selected_item == 'details' || selected_item == 'e'){
             return(
                 <div>
@@ -231,7 +232,7 @@ class EndDetailSection extends Component {
         // var selected_item = this.props.selected_end_item
         // var selected_object = this.get_exchange_tokens(3)[selected_item]
         var symbol = selected_object['ipfs'] == null ? this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_object['id']] : selected_object['ipfs'].entered_symbol_text
-        var author = selected_object['event'] != null ? selected_object['event'].returnValues.p3 :'Unknown'
+        var author = selected_object['event'] != null ? this.get_senders_name(selected_object['event'].returnValues.p3, selected_object) :'Unknown'
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -272,7 +273,7 @@ class EndDetailSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
-                    {/* {this.show_exchange_liquidity_chart(item, selected_object, symbol)} */}
+                    {this.show_exchange_liquidity_chart(item, selected_object, symbol)}
 
                     {this.render_detail_item('0')}
                     
@@ -369,6 +370,16 @@ class EndDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
 
@@ -680,17 +691,18 @@ class EndDetailSection extends Component {
         var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
 
         if(title == 3){
-            var obj = {'E15':'E15', 'E25':'E25'}
-            title = obj[selected_object['e5']]
+            // var obj = {'E15':'E15', 'E25':'E25'}
+            // title = obj[selected_object['e5']]
+            title = selected_object['e5']
         }
 
         var item = selected_object;
         var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : [selected_object['e5']].concat(item['ipfs'].entered_indexing_tags)
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
-        if(symbol == null){
-            symbol = EndImg
-        }
+        // if(symbol == null){
+        //     symbol = EndImg
+        // }
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
 
         return{
@@ -1057,7 +1069,7 @@ class EndDetailSection extends Component {
         var total_supply = selected_object['data'][2][2]
         var exchange_ratio_events = selected_object['exchange_ratio_data']
         var amount = total_supply
-        if(exchange_ratio_events.length != 0){
+        if(exchange_ratio_events.length > 72 && selected_object['id'] != 3){
             return(
                 <div>
                     <div style={{height: 10}}/>

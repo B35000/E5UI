@@ -660,18 +660,25 @@ class NewJobPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 1600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 400)
+            this.props.notify('added price!', 1400)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     render_set_prices_list_part(){

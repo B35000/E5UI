@@ -93,8 +93,8 @@ class SubscriptionDetailsSection extends Component {
 
     render_subscription_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_subscriptions_list_detail_tags_object, this.state.navigate_view_subscriptions_list_detail_tags_object['i'].active)
-
         var object = this.get_item_in_array(this.get_subscription_items(),this.props.selected_subscription_item)
+        if(object == null) return;
 
         if(selected_item == 'details'){
             return(
@@ -193,7 +193,7 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p3, 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':'Author', 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{height:10}}/>
@@ -252,11 +252,40 @@ class SubscriptionDetailsSection extends Component {
 
                     {this.render_moderator_button(object)}
 
+                    {this.render_pin_post_button(object)}
+                    
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    render_pin_post_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':'Pin the subscription to your feed', 'title':'Pin Subscription'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_subscription_clicked(object)}>
+                    {this.render_detail_item('5', {'text':'Pin Subscription', 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_subscription_clicked(object){
+        this.props.pin_subscription(object)
     }
 
     render_revoke_author_privelages_event(object){
@@ -1648,7 +1677,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':''+(new Date(latest_payment_time*1000))+', '+(this.get_time_difference(latest_payment_time))+' ago', 'details':'Latest Payment Time', 'size':'s'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':(latest_payment_block), 'details':'Latest Payment Block', 'size':'s'})}
-                    {this.render_detail_item('0')}
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':''+(new Date(first_payment_time*1000))+', '+(this.get_time_difference(first_payment_time))+' ago', 'details':'First Payment Time', 'size':'s'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':(first_payment_block), 'details':'First Payment Block', 'size':'s'})}
@@ -1669,17 +1698,19 @@ class SubscriptionDetailsSection extends Component {
     }
 
     render_chart_data_if_size_works(result){
-        return(
-            <div>
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Time Units Paid For', 'details':'Chart containing the amount in time units that have been accumulated.', 'size':'s'})}
-                <div style={{height: 10}}/>
-                {this.render_detail_item('6', {'dataPoints':this.get_search_result_data_points(result['events']), 'interval':110, 'hide_label':true})}
-                <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':'Y-Axis: Time Units', 'details':'X-Axis: Time', 'size':'s'})}
-                <div style={{height: 10}}/>
-            </div>
-        )
+        if(result['events'].length > 23){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Time Units Paid For', 'details':'Chart containing the amount in time units that have been accumulated.', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('6', {'dataPoints':this.get_search_result_data_points(result['events']), 'interval':110, 'hide_label':true})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Time Units', 'details':'X-Axis: Time', 'size':'s'})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
     }
 
 
@@ -1723,7 +1754,7 @@ class SubscriptionDetailsSection extends Component {
             // yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i%(Math.round(noOfDps/10)) == 0 && i != 0){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//

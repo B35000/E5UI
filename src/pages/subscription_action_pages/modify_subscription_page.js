@@ -148,7 +148,6 @@ class ModifySubscriptionPage extends Component {
             return(
                 <div>
                     <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
-
                     {this.load_account_suggestions('reconfig_target_id')}
 
                     <div style={{height:10}}/>
@@ -240,7 +239,7 @@ class ModifySubscriptionPage extends Component {
             this.props.notify('reconfig action added!', 600)
         }
         else if(ui == 'id'){
-            var number = this.state.reconfig_target_id.trim()
+            var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
                 this.props.notify('please put a valid account id', 600)
             }
@@ -250,6 +249,16 @@ class ModifySubscriptionPage extends Component {
                 this.props.notify('reconfig action added!', 600)
             }
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.subscription_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.subscription_item['e5']][alias])
+
+        return id
     }
 
 
@@ -350,7 +359,21 @@ class ModifySubscriptionPage extends Component {
                 {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
             ]
         }
-        
+    }
+
+    get_account_suggestions(){
+        var contacts = this.props.app_state.contacts[this.state.e5]
+        var return_array = []
+        contacts.forEach(contact => {
+            if(contact['id'].toString().includes(this.state.recipient_id)){
+                return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+            }
+        });
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
     }
 
     when_suggestion_clicked(item, pos, type){

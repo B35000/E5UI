@@ -387,7 +387,7 @@ class ModifyTokenPage extends Component {
             this.props.notify('reconfig action added!', 600)
         }
         else if(ui == 'id'){
-            var number = this.state.reconfig_target_id.trim()
+            var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
                 this.props.notify('please put a valid account id', 600)
             }
@@ -397,6 +397,16 @@ class ModifyTokenPage extends Component {
                 this.props.notify('reconfig action added!', 600)
             }
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
     }
 
     get_tag_value(){

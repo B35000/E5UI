@@ -537,11 +537,9 @@ class NewProposalPage extends Component {
     check_if_page_details_are_valid(){
         var is_valid = true
         if(this.state.page == 1){
-            console.log('---------------------check_if_page_details_are_valid--------------------------')
             var proposal_expiry_time = this.state.contract_item['data'][1][5]
             var set_timestamp = this.state.proposal_expiry_time
             var now_in_sec = Date.now()/1000
-            console.log('set timestamp: ',set_timestamp, ' now in sec: ',now_in_sec, ' proposal expiry time: ',proposal_expiry_time, ' now+proposal_expirytime: ', now_in_sec+proposal_expiry_time)
             if(set_timestamp < parseInt(now_in_sec)+parseInt(proposal_expiry_time)){
                 this.props.notify('That proposal expiry time is less than the minimum required by the contract', 3500)
                 is_valid = false;
@@ -679,7 +677,7 @@ class NewProposalPage extends Component {
     }
 
     get_account_suggestions(type){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.e5]
         var return_array = []
 
         if(type == 'spend_target'){
@@ -847,20 +845,20 @@ class NewProposalPage extends Component {
         var amount = this.state.spend_amount;
 
         if(isNaN(spend_target) || parseInt(spend_target) < 0 || spend_target == ''){
-            this.props.notify('please put a valid spend target', 600)
+            this.props.notify('please put a valid spend target', 2600)
         }
         else if(isNaN(spend_token) || parseInt(spend_target) < 0 || spend_token == ''){
-            this.props.notify('please put a valid exchange id', 600)
+            this.props.notify('please put a valid exchange id', 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else{
             var tx = {'amount': amount, 'spend_token':spend_token, 'spend_target':spend_target}
             var spend_actions_clone = this.state.spend_actions.slice()
             spend_actions_clone.push(tx)
             this.setState({spend_actions: spend_actions_clone, spend_target_input_text:'', spend_token_input_text:'', spend_amount:0})
-            this.props.notify('spend action added to proposal!', 600)
+            this.props.notify('spend action added to proposal!', 1600)
         }
     }
 
@@ -913,7 +911,7 @@ class NewProposalPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({spend_actions: cloned_array})
-        this.props.notify('spend action removed!', 600)
+        this.props.notify('spend action removed!', 1600)
     }
 
 
@@ -1311,7 +1309,7 @@ class NewProposalPage extends Component {
             this.props.notify('reconfig action added!', 600)
         }
         else if(ui == 'id'){
-            var number = this.state.reconfig_target_id.trim()
+            var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
                 this.props.notify('please put a valid account id', 600)
             }
@@ -1539,11 +1537,21 @@ class NewProposalPage extends Component {
         this.setState({token_target: text})
     }
 
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
+    }
+
 
     add_exchange_transfer_item(){
         var target_exchange = this.state.exchange_transfer_target.trim()
         var target_amount = this.state.exchange_transfer_amount
-        var target_receiver = this.state.exchange_transfer_receiver.trim()
+        var target_receiver = this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
         var targeted_token = this.state.token_target.trim()
 
         if(isNaN(target_exchange)  || parseInt(target_exchange) < 0 || target_exchange == ''){
@@ -1633,6 +1641,9 @@ class NewProposalPage extends Component {
     render_bounty_data_ui(){
         var minimum_spend_bounty_amount = this.state.contract_item['data'][1][10/* <10>default_minimum_spend_vote_bounty_amount */]
         var minimum_end_bounty_amount = this.state.contract_item['data'][1][4/* <4>default_minimum_end_vote_bounty_amount */]
+
+        var end_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][3]['balance']
+        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
         return(
             <div>
                 {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'The first bounty exchange should be the End or Spend Exchange'})}
@@ -1646,6 +1657,18 @@ class NewProposalPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(minimum_end_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_end_bounty_amount), 'number':this.format_account_balance_figure(minimum_end_bounty_amount), 'barcolor':'', 'relativepower':'END', })}
                 </div>
+
+                <div style={{height:20}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Spend Balance', 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'End Balance', 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':'END', })}
+                </div>
+
                 {this.render_detail_item('0')}
 
                 <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
@@ -1681,11 +1704,11 @@ class NewProposalPage extends Component {
         var target_exchange = this.state.bounty_exchange_target.trim()
         var target_amount = this.state.bounty_amount
 
-        if(isNaN(target_exchange) || parseInt(target_exchange) < 0 || target_exchange == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(target_exchange) || parseInt(target_exchange) < 0 || target_exchange == '' || !this.does_exchange_exist(target_exchange)){
+            this.props.notify('please put a valid exchange id', 1600)
         }
         else if(target_amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 1600)
         }
         else{
             var bounty_values_clone = this.state.bounty_values.slice()
@@ -1694,8 +1717,15 @@ class NewProposalPage extends Component {
 
             this.setState({bounty_values: bounty_values_clone, bounty_exchange_target:'', bounty_amount:0})
 
-            this.props.notify('bounty value added', 600)
+            this.props.notify('bounty amount added', 1000)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
 
@@ -1773,22 +1803,33 @@ class NewProposalPage extends Component {
 
 
     set_contract(contract){
-        this.setState({contract_item: contract})
+        this.setState({contract_item: contract, e5: contract['e5']})
     }
 
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
+        var is_data_valid = this.check_if_sender_has_put_valid_data_for_proposal()
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify('add some tags first!', 1700)
         }
         else if(title == ''){
-            this.props.notify('add a title first!', 700)
+            this.props.notify('add a title first!', 1700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that title is too long', 700)
+            this.props.notify('that title is too long', 1700)
         }
+        else if(!this.check_if_bounty_is_required()){
+            this.props.notify('You need to specify bounty for your new proposal', 2500)
+        }
+        else if(!this.check_if_sender_has_enough_balance_for_bounties()){
+            this.props.notify('One of your token balances is insufficient for the bounty amounts specified', 4900)
+        }
+        else if(!is_data_valid.is_valid){
+            this.props.notify(is_data_valid.message, 5000)
+        }
+
         else{
             this.props.when_add_new_proposal_to_stack(this.state)
 
@@ -1829,7 +1870,63 @@ class NewProposalPage extends Component {
         })
     }
 
+    check_if_sender_has_enough_balance_for_bounties(){
+        var has_enough = true
+        var bounty_values = this.state.bounty_values
+        for(var i=0; i<bounty_values.length; i++){
+            var bounty_item_exchange = bounty_values[i]['exchange']
+            var bounty_item_amount = bounty_values[i]['amount']
+            var my_balance = this.props.app_state.created_token_object_mapping[this.state.e5][bounty_item_exchange]['balance']
+            if(my_balance < bounty_item_amount){
+                has_enough = false
+            }
+        }
+        return has_enough
+    }
 
+    check_if_sender_has_put_valid_data_for_proposal(){
+        var is_valid = true
+        var message = ''
+        var proposal_submit_expiry_time_difference = this.state.contract_item['data'][1][36]
+        var set_submit_timestamp = this.state.proposal_submit_expiry_time
+        var set_timestamp = this.state.proposal_expiry_time
+        var now_in_sec = Date.now()/1000
+        
+        if(set_submit_timestamp <= now_in_sec){
+            is_valid = false
+            message = 'The proposal submit expiry time youve set cant be before now'
+        }
+        else if(set_submit_timestamp - set_timestamp < proposal_submit_expiry_time_difference){
+            is_valid = false
+            message = 'The proposal submit expiry time youve set is less than time difference required by the contract'
+        }
+
+        var proposal_expiry_time = this.state.contract_item['data'][1][5]
+        var set_timestamp2 = this.state.proposal_expiry_time
+        if(set_timestamp2 < parseInt(now_in_sec)+parseInt(proposal_expiry_time)){
+            is_valid = false;
+            message = 'That proposal expiry time youve set is less than the minimum required by the contract'
+        }
+        else if(set_timestamp2 <= now_in_sec){
+            is_valid = false;
+            message = 'The proposal expiry time youve set cant be before now'
+        }
+
+        return {is_valid: is_valid, message: message}
+    }
+
+
+    check_if_bounty_is_required(){
+        var has_correctly_been_specified = true
+        var minimum_spend_bounty_amount = this.state.contract_item['data'][1][10/* <10>default_minimum_spend_vote_bounty_amount */]
+        var minimum_end_bounty_amount = this.state.contract_item['data'][1][4/* <4>default_minimum_end_vote_bounty_amount */]
+        if(minimum_spend_bounty_amount != 0 || minimum_end_bounty_amount != 0){
+            if(this.state.bounty_values.length == 0){
+                has_correctly_been_specified = false
+            }
+        }
+        return has_correctly_been_specified
+    }
 
 
 

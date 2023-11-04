@@ -412,12 +412,12 @@ class NewContractorPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove and click add images to add them to the object.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap an image to remove.'})}
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
-                {this.render_all_images_part()}
+                {/* {this.render_all_images_part()} */}
                 
             </div>
         )
@@ -437,9 +437,9 @@ class NewContractorPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div>
 
-            <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
+            {/* <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
                 {this.render_detail_item('5', {'text':'Add Images', 'action':'-'})}
-            </div>
+            </div> */}
 
         </div>
       )
@@ -586,7 +586,7 @@ class NewContractorPage extends Component {
 
     render_set_token_and_amount_part(){
         return(
-            <div>
+            <div style={{'overflow-x':'hidden'}}>
                 {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id', 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -621,18 +621,25 @@ class NewContractorPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, exchange_id:'', price_amount:0});
-            this.props.notify('added price!', 400)
+            this.props.notify('added amount!', 1000)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     render_set_prices_list_part(){
@@ -803,9 +810,22 @@ class NewContractorPage extends Component {
         }
         else{
             
-            this.props.when_add_new_object_to_stack(this.state)
+            // var images_to_add = this.state.entered_image_objects
+            // var id = Math.round(new Date().getTime()/1000);
+            // if(images_to_add.length != 0){
+            //     var cloned_array = this.state.entered_objects.slice()
+            //     cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
+            //     this.setState({entered_objects: cloned_array, entered_image_objects:[]})
+            // }
+            
+            var me = this;
+            setTimeout(function() {
+                me.props.when_add_new_object_to_stack(me.state)
+        
+                me.setState({ id: makeid(8), type:'contractor', get_new_contractor_page_tags_object: me.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: me.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            }, (1 * 1000));
 
-            this.setState({ id: makeid(8), type:'contractor', get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            
 
             this.props.notify('transaction added to stack', 700);
         }

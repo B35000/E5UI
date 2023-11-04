@@ -43,13 +43,16 @@ class StackPage extends Component {
         get_orientation_tags_object: this.get_orientation_tags_object(),
         get_selected_e5_tags_object: this.get_selected_e5_tags_object(),
         get_selected_storage_tags_object: this.get_selected_storage_tags_object(),
+        get_refresh_speed_tags_object: this.get_refresh_speed_tags_object(),
+        get_masked_data_tags_object: this.get_masked_data_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
+        gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
 
         typed_word:'',added_tags:[],set_salt: 0,
         run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
 
-        typed_contact_word:'', typed_alias_word:'',
+        typed_contact_word:'', typed_alias_word:'', typed_blocked_account_word:'',
     };
 
     get_stack_page_tags_object(){
@@ -67,11 +70,26 @@ class StackPage extends Component {
               ['xor','e',1], ['settings-data','settings ⚙️','wallet 👛'], [1],[1]
             ],
             'account-data':[
-              ['xor','e',1], ['account-data','alias 🏷️','contacts 👤'], [1],[1]
+              ['xor','e',1], ['account-data','alias 🏷️','contacts 👤', 'blacklisted 🚫'], [1],[1]
             ],
         };
         
     }
+
+    get_gas_history_chart_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', 'all-time'], [4]
+            ],
+        };
+    }
+
+
+
+
 
     get_theme_tags_object(){
         return{
@@ -98,6 +116,10 @@ class StackPage extends Component {
     set_light_dark_setting_tag(){
         this.setState({get_themes_tags_object: this.get_theme_tags_object()})
     }
+
+
+
+
 
     get_orientation_tags_object(){
         return{
@@ -171,6 +193,67 @@ class StackPage extends Component {
         this.setState({get_selected_storage_tags_object: this.get_selected_storage_tags_object(),})
     }
 
+
+
+
+    get_refresh_speed_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','sluggish', 'slow','average', 'fast'], [this.get_selected_refresh_speed_option()]
+            ],
+        };
+    }
+
+    get_selected_refresh_speed_option(){
+        if(this.props.app_state.refresh_speed == 'sluggish'){
+            return 1
+        }
+        else if(this.props.app_state.refresh_speed == 'slow'){
+            return 2
+        }
+        else if(this.props.app_state.refresh_speed == 'average'){
+            return 3
+        }
+        else if(this.props.app_state.refresh_speed == 'fast'){
+            return 4
+        }
+        return 1;
+    }
+
+    set_refresh_speed_tag(){
+        this.setState({get_refresh_speed_tags_object: this.get_refresh_speed_tags_object(),})
+    }
+
+
+
+
+    get_masked_data_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e','hide'], [this.get_selected_masked_data_option()]
+            ],
+        };
+    }
+
+    get_selected_masked_data_option(){
+        if(this.props.app_state.masked_content == 'e'){
+            return 0
+        }
+        else if(this.props.app_state.masked_content == 'hide'){
+            return 1
+        }
+        return 0;
+    }
+
+    set_masked_content_tag(){
+        this.setState({get_masked_data_tags_object: this.get_masked_data_tags_object(),})
+    }
 
 
 
@@ -259,6 +342,13 @@ class StackPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == 'blacklisted 🚫'){
+            return(
+                <div>
+                    {this.render_blacklisted_section()}
+                </div>
+            )
+        }
     }
 
     get_selected_item(object, option){
@@ -280,6 +370,17 @@ class StackPage extends Component {
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+
+
+                {this.render_detail_item('3', {'title':'Transaction Gas Price', 'details':'The gas price for your next run with E5. The default is set to the amount set by the network.', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Transaction Gas Price', 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
 
             </div>
         )
@@ -362,11 +463,15 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px'}}>
+                <div style={{'padding': '0px 0px 0px 0px', 'overflow-x':'hidden'}}>
                     {this.render_stack_gas_part()}
                     {this.render_detail_item('0')}
                     {this.render_stack_run_settings_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_gas_history_chart()}
                     {this.render_dialog_ui()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -462,25 +567,58 @@ class StackPage extends Component {
         this.props.show_hide_stack_item(item)
     }
 
+    get_gas_price_from_transactions(){
+        var last_blocks = this.props.app_state.last_blocks[this.props.app_state.selected_e5]
+        var sum = 0
+        if(last_blocks != null){
+            for(var i=0; i<last_blocks.length; i++){
+                sum += last_blocks[i].baseFeePerGas
+            }
+            sum = sum/last_blocks.length;
+        }
+        return sum
+    }
+
+    get_gas_price_from_runs(){
+        var last_events = this.props.app_state.all_E5_runs[this.props.app_state.selected_e5]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
+            }
+            sum = sum/last_check;
+        }
+        return sum
+    }
 
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
-        var data = localStorage.getItem("state") == null ? "":localStorage.getItem("state")
+        var state_data = localStorage.getItem("state") == null ? "":localStorage.getItem("state")
+        var viewed_data = localStorage.getItem("viewed") == null ? "":localStorage.getItem("viewed")
+        var data = state_data+viewed_data
         var data_size = this.lengthInUtf8Bytes(data)
-        // console.log('-------------------render_stack_gas_part-------------------------')
-        // console.log(this.props.app_state.account_balance)
-        // console.log(this.props.app_state.selected_e5)
+
+        var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        
+        var gas_transactions =this.props.app_state.account_balance[this.props.app_state.selected_e5] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[this.props.app_state.selected_e5]/gas_price)/2_300_000)
+
         return(
             <div>  
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Transactions', 'subtitle':this.format_power_figure(this.props.app_state.stack_items.length), 'barwidth':this.calculate_bar_width(this.props.app_state.stack_items.length), 'number':this.format_account_balance_figure(this.props.app_state.stack_items.length), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Stacked Transactions', 'subtitle':this.format_power_figure(this.props.app_state.stack_items.length), 'barwidth':this.calculate_bar_width(this.props.app_state.stack_items.length), 'number':this.format_account_balance_figure(this.props.app_state.stack_items.length), 'barcolor':'', 'relativepower':'units', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -499,9 +637,9 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price', 'subtitle':this.format_power_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price', 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]/10**9), 'barwidth':this.calculate_bar_width(this.props.app_state.gas_price[this.props.app_state.selected_e5]/10**9), 'number':this.format_account_balance_figure(this.props.app_state.gas_price[this.props.app_state.selected_e5]/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
                 
 
@@ -647,6 +785,106 @@ class StackPage extends Component {
     }
 
 
+
+    render_gas_history_chart(){
+        var events = this.props.app_state.all_E5_runs[this.props.app_state.selected_e5]
+        if(events != null && events.length > 10){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Gas Prices', 'details':`The gas price data recorded on your selected E5 over time.`, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_gas_history_data_points(events), 'interval':this.get_gas_history_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    <Tags page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':'Y-Axis: Gas Prices in Gwei', 'details':'X-Axis: Time', 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_gas_history_chart_tags_object_updated(tag_group){
+        this.setState({gas_history_chart_tags_object: tag_group})
+    }
+
+    get_gas_history_data_points(event_data){
+        var events = this.filter_proportion_ratio_events(event_data)
+        var data = []
+        for(var i=0; i<events.length; i++){
+            data.push(parseInt(events[i].returnValues.p7)/1000_000_000)
+        }
+
+        data = data.reverse();
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        for(var i = 0; i < data.length; i++) {
+            yVal = data[i]
+            if(yVal != null){
+                if(i%(20) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: yVal+" gwei"});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return dps
+    }
+
+    get_gas_history_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(parseInt(event.returnValues.p7)/1000_000_000)
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+    filter_proportion_ratio_events(events){
+        var selected_item = this.get_selected_item(this.state.gas_history_chart_tags_object, this.state.gas_history_chart_tags_object['i'].active)
+
+        var filter_value = 60*60
+        if(selected_item == '1h'){
+            filter_value = 60*60
+        }
+        else if(selected_item == '24h'){
+            filter_value = 60*60*24
+        }
+        else if(selected_item == '7d'){
+            filter_value = 60*60*24*7
+        }
+        else if(selected_item == '30d'){
+            filter_value = 60*60*24*30
+        }
+        else if(selected_item == '6mo'){
+            filter_value = 60*60*24*30*6
+        }
+        else if(selected_item == 'all-time'){
+            filter_value = 10**10
+        }
+        var data = []
+        var cutoff_time = Date.now()/1000 - filter_value
+        events.forEach(event => {
+            if(event.returnValues.p8 > cutoff_time){
+                data.push(event)
+            }
+        });
+
+        return data
+    }
+
+
+
+
+
+
+
+
+
     run_transactions = async () => {
         if(this.props.app_state.is_running){
             this.props.notify('e is already running a transaction for you', 1200)
@@ -696,7 +934,7 @@ class StackPage extends Component {
                             add_interactibles_accounts[1].push(contract_stack_id)
                             add_interactibles_accounts[2].push(35)
                             add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
-                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(53)
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
                             add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
                         }
 
@@ -756,7 +994,7 @@ class StackPage extends Component {
                             add_interactibles_accounts[1].push(token_stack_id)
                             add_interactibles_accounts[2].push(35)
                             add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
-                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(53)
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
                             add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
                         }
 
@@ -817,7 +1055,7 @@ class StackPage extends Component {
                             add_interactibles_accounts[2].push(35)
                             add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
                             
-                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(53)
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
                             
                             add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
                         }
@@ -890,7 +1128,7 @@ class StackPage extends Component {
                             add_interactibles_accounts[1].push(channel_stack_id)
                             add_interactibles_accounts[2].push(35)
                             add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
-                            add_interactibles_accounts[4].push(23)
+                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
                             add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
                         }
 
@@ -910,7 +1148,7 @@ class StackPage extends Component {
                             add_moderator_accounts[1].push(channel_stack_id)
                             add_moderator_accounts[2].push(35)
                             add_moderator_accounts[3].push(txs[i].moderators[j])
-                            add_moderator_accounts[4].push(23)
+                            txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
                         }
 
                         strs.push([])
@@ -1352,13 +1590,32 @@ class StackPage extends Component {
             ints.push(transaction_obj)
         }
 
+        if(this.props.app_state.should_update_blocked_accounts_onchain){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [2], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
+            var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data);
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
 
 
         var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
-        var run_gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
 
-        if(txs.length > 0){
+        if(pushed_txs.length > 0){
             if(account_balance == 0){
                 this.props.open_wallet_guide_bottomsheet('one')
                 this.props.lock_run(false)
@@ -1367,12 +1624,15 @@ class StackPage extends Component {
                 this.setState({invalid_ether_amount_dialog_box: true})
                 this.props.lock_run(false)
             }
+            else if(run_gas_limit < 35000){
+                this.props.notify('That transaction gas limit is too low',2900)
+            }
             else{
-                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei, delete_pos_array)
+                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price)
             }
         }else{
             this.props.lock_run(false)
-            this.props.notify('add some transactions first!',600)
+            this.props.notify('add some transactions first!',1600)
         }
         
     }
@@ -1596,6 +1856,7 @@ class StackPage extends Component {
         var minimum_buy_amount = t.minimum_buy_amount == 0 ? 1 : t.minimum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var cancellable_tags_object = this.get_selected_item(t.cancellable_tags_object, t.cancellable_tags_object['i'].active) == 'true' ? 1 : 0
         var maximum_buy_amount = t.maximum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        if(t.maximum_buy_amount == 0) maximum_buy_amount = (bigInt('1e72')).toString().toLocaleString('fullwide', {useGrouping:false})
         var minimum_cancellable_balance_amount = t.minimum_cancellable_balance_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var time_unit = t.time_unit.toString().toLocaleString('fullwide', {useGrouping:false})
         var subscription_beneficiary = t.subscription_beneficiary == '' ? 53 : parseInt(t.subscription_beneficiary).toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2994,10 +3255,43 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you preferr to use', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+                    {this.render_detail_item('3',{'title':'Clear Browser Cache', 'details':'Delete browser data such as your pins and viewed history.', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
+                        {this.render_detail_item('5', {'text':'Clear Cache', 'action':''},)}
+                    </div>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+                    {this.render_detail_item('3',{'title':'Preferred Refresh Speed', 'details':'Set the background refresh speed for E5. Fast consumes more data.', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':'Hide Masked Content', 'details':'Hide masked content sent from your blocked accounts', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')}
 
@@ -3005,6 +3299,8 @@ class StackPage extends Component {
             </div>
         )
     }
+
+    
 
     when_theme_tags_updated(tag_group){
         this.setState({get_themes_tags_object: tag_group})
@@ -3039,11 +3335,33 @@ class StackPage extends Component {
 
     when_get_selected_storage_tags_object_updated(tag_group){
         this.setState({get_selected_storage_tags_object: tag_group})
-        
         var selected_item = this.get_selected_item(this.state.get_selected_storage_tags_object, 'e')
-
         this.props.when_storage_option_changed(selected_item)
     }
+
+    when_clear_cache_clicked(){
+        this.props.clear_cache()
+        localStorage.setItem("viewed", "");
+        this.props.notify('Cache cleared!', 900)
+    }
+
+    when_get_refresh_speed_tags_object_updated(tag_group){
+        this.setState({get_refresh_speed_tags_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_refresh_speed_tags_object, 'e')
+        this.props.when_refresh_speed_changed(selected_item)
+    }
+
+    when_get_masked_data_tags_object_updated(tag_group){
+        this.setState({get_masked_data_tags_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_masked_data_tags_object, 'e')
+        this.props.when_masked_data_setting_changed(selected_item)
+    }
+
+
+
+
+
+
 
 
 
@@ -3055,7 +3373,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
+                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px','overflow-x':'hidden'}}>
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
@@ -3126,7 +3444,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':'Wallet Seed', 'details':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove', 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <div className="row">
+                <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter word...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>
@@ -3179,7 +3497,7 @@ class StackPage extends Component {
         }
         else{
             this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item, false)
-            this.props.notify('wallet set!', 200)
+            this.props.notify('setting your wallet...', 900)
         }
         
     }
@@ -3275,7 +3593,7 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':'Add Contact', 'details':'You can add a contact manually using their Contact ID.', 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <div className="row">
+                <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Account ID...'} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
                     </div>
@@ -3294,10 +3612,10 @@ class StackPage extends Component {
     }
 
     add_cotact_to_list(){
-        var typed_contact = this.state.typed_contact_word
+        var typed_contact = this.get_typed_alias_id(this.state.typed_contact_word.trim())
 
         if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
-            this.notify('That ID is not valid', 800)
+            this.props.notify('That ID is not valid', 800)
         }
         else if(!this.props.app_state.has_wallet_been_set){
             this.props.notify('please set your wallet first', 1200);
@@ -3309,7 +3627,12 @@ class StackPage extends Component {
     }
 
     render_users_contacts(){
-        var items = [].concat(this.props.app_state.contacts[this.props.app_state.selected_e5]);
+        var items = this.props.app_state.contacts[this.props.app_state.selected_e5];
+        if(items == null){
+            items = []
+        }
+        items = [].concat(items)
+
         var middle = this.props.height-100;
         var size = this.props.size;
         if(size == 'm'){
@@ -3400,6 +3723,119 @@ class StackPage extends Component {
 
 
 
+    render_blacklisted_section(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Add Blocked Account', 'details':'Block an accounts content from being visible in your feed.', 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div className="row" style={{width:'103%'}}>
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Enter Account ID...'} when_text_input_field_changed={this.when_add_blocked_account_changed.bind(this)} text={this.state.typed_blocked_account_word} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_blocked_account_to_list()} >
+                        {this.render_detail_item('5',{'text':'Add','action':''})}
+                    </div>
+                </div>
+                <div style={{height: 10}}/>
+                {this.render_users_blocked_accounts()}
+            </div>
+        )
+    }
+
+    when_add_blocked_account_changed(text){
+        this.setState({typed_blocked_account_word: text})
+    }
+
+    add_blocked_account_to_list(){
+        var typed_contact = this.get_typed_alias_id(this.state.typed_blocked_account_word.trim())
+
+        if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
+            this.props.notify('That ID is not valid', 1800)
+        }
+        else if(!this.props.app_state.has_wallet_been_set){
+            this.props.notify('please set your wallet first', 2200);
+        }
+        else{
+            this.props.add_account_to_blocked_list(parseInt(typed_contact))
+            this.setState({typed_blocked_account_word:''})
+        }
+    }
+
+
+    render_users_blocked_accounts(){
+        var items = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5];
+        if(items == null){
+            items = []
+        }
+        items = [].concat(items)
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeRight={{
+                                    content: <div></div>,
+                                    action: () => console.log()
+                                    }}
+                                    swipeLeft={{
+                                    content: <div>Delete</div>,
+                                    action: () =>this.props.remove_account_from_blocked_accounts(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
+                                            {this.render_detail_item('3', {'title':''+item['id'], 'details':''+item['address'], 'size':'s'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
+    }
+
+
+
+
+
+
 
     render_alias_stuff(){
         return(
@@ -3409,7 +3845,7 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':'Reserve Alias', 'details':'Reserve an alias for your account ID', 'size':'l'})}
                 <div style={{height:10}}/>
-                <div className="row">
+                <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter New Alias Name...'} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
                     </div>
@@ -3436,10 +3872,11 @@ class StackPage extends Component {
     }
 
     render_my_account_id(){
-        console.log('--------------------render_my_account_id-----------------------')
-        console.log(this.props.app_state.user_account_id)
-        console.log(this.props.app_state.selected_e5)
+        // console.log('--------------------render_my_account_id-----------------------')
+        // console.log(this.props.app_state.user_account_id)
+        // console.log(this.props.app_state.selected_e5)
         var display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        
         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? 'Alias Unknown' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
         return(
             <div>
@@ -3477,11 +3914,11 @@ class StackPage extends Component {
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify('enter one word!', 400)
         }
-        else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That alias is too long', 400)
+        else if(typed_word.length > 23){
+            this.props.notify('That alias is too long', 900)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That alias is too short', 400)
+            this.props.notify('That alias is too short', 900)
         }
         else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] < 1000){
             this.props.notify('you need to make at least 1 transaction to reserve an alias', 1200)

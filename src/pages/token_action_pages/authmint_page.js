@@ -121,7 +121,7 @@ class AuthMintPage extends Component {
     add_transaction(){
         var clone = this.state.authmint_actions.slice()
         var amount = this.state.amount
-        var recipient = this.state.recipient_id.trim()
+        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
             this.props.notify('please put a valid account id', 600)
@@ -135,6 +135,16 @@ class AuthMintPage extends Component {
             this.setState({authmint_actions: clone, recipient_id: '', amount:0})
             this.props.notify('auth-mint action added!', 600)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
     }
 
 
@@ -220,7 +230,8 @@ class AuthMintPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.token_item['e5']]
+        if(contacts == null) contacts = [];
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.recipient_id)){

@@ -139,7 +139,7 @@ class NewStorefrontItemPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 10px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
@@ -236,7 +236,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Set denomination: '+selected_composition})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Target Recipient', 'details':'Set the account thats set to receive the purchase payments for your new item', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Target Payment Recipient', 'details':'Set the account thats set to receive the purchase payments for your new item', 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Account ID'} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -338,18 +338,25 @@ class NewStorefrontItemPage extends Component {
     when_add_shipping_price_set(){
         var exchange_id = this.state.shipping_exchange_id.trim()
         var amount = this.state.shipping_price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 1600)
         }
         else{
             var price_data_clone = this.state.shipping_price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({shipping_price_data: price_data_clone, shipping_price_amount:0, shipping_exchange_id:''});
-            this.props.notify('added shipping price!', 400)
+            this.props.notify('added shipping price!', 1400)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     render_shipping_set_prices_list_part(){
@@ -419,15 +426,25 @@ class NewStorefrontItemPage extends Component {
 
 
     when_add_shipping_account_set(){
-        var account = this.state.fulfilment_account
+        var account = this.get_typed_alias_id(this.state.fulfilment_account)
         if(isNaN(account) || account == '' || parseInt(account) < 1000){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }else{
             var clone = this.state.fulfilment_accounts.slice()
             clone.push(account)
             this.setState({fulfilment_accounts: clone, fulfilment_account:''})
-            this.props.notify('added account', 400)
+            this.props.notify('added account', 1400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
 
@@ -760,12 +777,12 @@ class NewStorefrontItemPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove one and click add images to add them to the object.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove.'})}
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
-                {this.render_all_images_part()}
+                {/* {this.render_all_images_part()} */}
                 
             </div>
         )
@@ -785,9 +802,9 @@ class NewStorefrontItemPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div>
 
-            <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
+            {/* <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
                 {this.render_detail_item('5', {'text':'Add Images', 'action':'-'})}
-            </div>
+            </div> */}
 
         </div>
       )
@@ -936,7 +953,7 @@ class NewStorefrontItemPage extends Component {
 
     render_set_token_and_amount_part(){
         return(
-            <div>
+            <div style={{'overflow-x':'hidden'}}>
                 {this.render_detail_item('3', {'title':'Price per unit', 'details':'Specify the price for one unit of your new items variant', 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -970,17 +987,17 @@ class NewStorefrontItemPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 1600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, price_amount:0, exchange_id:''});
-            this.props.notify('added price!', 400)
+            this.props.notify('added price!', 1000)
         }
     }
 
@@ -1043,7 +1060,7 @@ class NewStorefrontItemPage extends Component {
     render_variants_picker_part(){
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
-            <div>
+            <div style={{'overflow-x':'hidden'}}>
                 {this.render_detail_item('3', {'title':'Variant Title', 'details':'Set a basic description of the variant of the item your selling like a color or size option', 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -1504,25 +1521,25 @@ class NewStorefrontItemPage extends Component {
         var fulfilment_location = this.state.fulfilment_location.trim()
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify('add some tags first!', 1700)
         }
         else if(title == ''){
-            this.props.notify('add a title for your Item', 700)
+            this.props.notify('add a title for your Item', 1700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that title is too long', 700)
+            this.props.notify('that title is too long', 1700)
         }
         else if(variants.length == 0){
-            this.props.notify('you should set some variants for your item', 700)
+            this.props.notify('you should set some variants for your item', 1700)
         }
         else if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver==''){
-            this.props.notify('set a valid receiver target', 700)
+            this.props.notify('set a valid receiver target', 1700)
         }
         else if(fulfilment_location==''){
-            this.props.notify('set a valid fulfilment location for your storefront items', 900)
+            this.props.notify('set a valid fulfilment location for your storefront items', 2900)
         }
         else if(this.state.fulfilment_accounts.length == 0){
-            this.props.notify('you should set some fulfilment accounts for your item', 700)
+            this.props.notify('you should set some fulfilment accounts for your item', 2700)
         }
         else{
             

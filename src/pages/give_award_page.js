@@ -55,7 +55,7 @@ class GiveAwardPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 10px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
@@ -175,11 +175,11 @@ class GiveAwardPage extends Component {
 
     render_amounts(){
         var award_amount = this.state.award_amount
+        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
         return(
             <div>
                 {this.render_detail_item('3', {'title':'Award Tiers', 'details':'Pick an award tier you wish to send to the post author', 'size':'l'})}
                 {this.load_award_tiers()}
-
 
                 {this.render_detail_item('0')}
 
@@ -190,6 +190,11 @@ class GiveAwardPage extends Component {
                     {this.render_detail_item('2', {'style':'l', 'title':'Total amount of SPEND', 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'spend', })}
                 </div>
 
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Spend Balance', 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
+                </div>
 
                 {this.render_detail_item('0')}
 
@@ -197,6 +202,8 @@ class GiveAwardPage extends Component {
                 {this.render_detail_item('3', {'title':'Multiplier', 'details':'Multiply the award your sending to the post author', 'size':'l'})}
 
                 <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_multiplier.bind(this)} theme={this.props.theme} power_limit={3}/>
+
+
 
             </div>
         )
@@ -330,18 +337,25 @@ class GiveAwardPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added amount!', 400)
+            this.props.notify('added amount!', 1400)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
 
@@ -494,16 +508,22 @@ class GiveAwardPage extends Component {
         var selected_tier = this.state.selected_tier
         var message = this.state.entered_message_text.trim()
         if(selected_tier == null){
-            this.props.notify('please pick an award tier', 700);
+            this.props.notify('please pick an award tier', 1700);
         }
         else if(message == '') {
-            this.props.notify('You have to leave a message', 700);
+            this.props.notify('You have to leave a message', 1700);
         }
         else if(message.length < 5){
-            this.props.notify('that message is too short', 700);
+            this.props.notify('that message is too short', 1700);
         }
         else if(message.length > 250){
-            this.props.notify('that message is too long', 700);
+            this.props.notify('that message is too long', 1700);
+        }
+        else if(!this.check_if_sender_has_enough_for_award()){
+            this.props.notify('You dont have enough Spend to give that award', 3700);
+        }
+        else if(!this.check_if_sender_has_enough_balance_for_awards()){
+            this.props.notify('One of your token balances is insufficient for the award amounts specified', 4900)
         }
         else{
             this.props.add_award_transaction_to_stack(this.state)
@@ -512,7 +532,30 @@ class GiveAwardPage extends Component {
     }
 
 
+    check_if_sender_has_enough_for_award(){
+        var award_amount = this.state.award_amount
+        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
 
+        if(spend_token_balance < award_amount){
+            return false
+        }
+        return true
+    }
+
+    check_if_sender_has_enough_balance_for_awards(){
+        var has_enough = true
+        var price_data = this.state.price_data
+        for(var i=0; i<price_data.length; i++){
+            var bounty_item_exchange = price_data[i]['id']
+            var bounty_item_amount = price_data[i]['amount']
+            var my_balance = this.props.app_state.created_token_object_mapping[this.state.post_item['e5']][bounty_item_exchange]
+            my_balance = my_balance == null ? 0 : my_balance['balance']
+            if(my_balance < bounty_item_amount){
+                has_enough = false
+            }
+        }
+        return has_enough
+    }
 
 
 

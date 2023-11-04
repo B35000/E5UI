@@ -120,19 +120,26 @@ class ArchiveProposalPage extends Component {
     add_bounty_exchange_item(){
         var exchange = this.state.bounty_exchange_target.trim()
 
-        if(isNaN(exchange) || parseInt(exchange) < 0 || exchange == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange) || parseInt(exchange) < 0 || exchange == '' || !this.does_exchange_exist(exchange)){
+            this.props.notify('please put a valid exchange id', 1600)
         }
         else if(this.includes_function(exchange)){
-            this.props.notify('you cant include the same exchange more than once', 600)
+            this.props.notify('you cant include the same exchange more than once', 3600)
         }
         else{
             var tx = {'exchange': exchange}
             var bounty_exchanges_clone = this.state.bounty_exchanges.slice()
             bounty_exchanges_clone.push(tx)
             this.setState({bounty_exchanges: bounty_exchanges_clone, bounty_exchange_target:''})
-            this.props.notify('bounty exchange added!', 600)
+            this.props.notify('bounty exchange added!', 1600)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.object_item['e5']][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     includes_function(exchange){

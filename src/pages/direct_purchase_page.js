@@ -32,7 +32,7 @@ function makeid(length) {
 class DirectPurchasetPage extends Component {
     
     state = {
-        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:'direct-purchase', entered_indexing_tags:['direct', 'purchase', 'buy'], purchase_unit_count:1, selected_variant:null, fulfilment_location:''
+        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:'direct-purchase', entered_indexing_tags:['direct', 'purchase', 'buy'], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5
     };
 
     get_direct_purchase_tags_object(){
@@ -48,7 +48,7 @@ class DirectPurchasetPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 10px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags page_tags_object={this.state.direct_purchase_tags_object} tag_size={'l'} when_tags_updated={this.when_direct_purchase_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -104,6 +104,8 @@ class DirectPurchasetPage extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_set_storefront_prices_list_part()}
+                    <div style={{height:10}}/>
+                    {this.render_my_balances()}
                     <div style={{height:20}}/>
                 </div>
             )
@@ -138,11 +140,41 @@ class DirectPurchasetPage extends Component {
                     {this.render_detail_item('3', {'title':'Purchase Amounts', 'details':'This is the final amount for the price of the items your buying', 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px 0px 5px 0px'}}>
                                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(item['amount'])), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(item['amount'])), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(item['amount'])), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_my_balances(){
+        if(this.state.selected_variant != null){
+            var items = [].concat(this.state.selected_variant['price_data'])
+            var buy_amount_balances = []
+
+            for(var i=0; i<items.length; i++){
+                var token_id = items[i]['id']
+                var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][token_id]
+                token_balance = token_balance == null ? 0 : token_balance['balance']
+                buy_amount_balances.push(token_balance)
+            }
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Your balances', 'details':'This is how much you have available for the direct purchase', 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(buy_amount_balances[index]), 'barwidth':this.calculate_bar_width(buy_amount_balances[index]), 'number':this.format_account_balance_figure(buy_amount_balances[index]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
                         ))}
@@ -293,15 +325,36 @@ class DirectPurchasetPage extends Component {
             this.props.notify('pick one variant first', 500)
         }
         else if(this.state.purchase_unit_count == 0){
-            this.props.notify('you cant buy zero units')
+            this.props.notify('you cant buy zero units', 1200)
         }
-        else if( this.state.fulfilment_location.trim() == ''){
-            this.props.notify('please specify a shipping adress')
+        else if(this.state.fulfilment_location.trim() == ''){
+            this.props.notify('please specify a shipping adress', 2200)
+        }
+        else if(!this.can_afford_purchase()){
+            this.props.notify('your balance is insufficient to fulfil that direct purchase', 3900)
         }
         else{
             this.props.add_direct_purchase_to_stack(this.state)
+            this.setState({purchase_unit_count:1, selected_variant:null, fulfilment_location:''})
             this.props.notify('Transaction added to Stack', 700)
         }
+    }
+
+
+    can_afford_purchase(){
+        var items = [].concat(this.state.selected_variant['price_data'])
+        var can_afford = true;
+        for(var i=0; i<items.length; i++){
+            var item = items[i]
+            var token_id = item['id']
+            var item_price = this.get_amounts_to_be_paid(item['amount'])
+            var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][token_id]
+            token_balance = token_balance == null ? 0 : token_balance['balance']
+            if(token_balance < item_price){
+                can_afford = false
+            }
+        }
+        return can_afford
     }
 
 

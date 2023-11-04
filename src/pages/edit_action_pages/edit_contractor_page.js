@@ -112,7 +112,7 @@ class NewContractorPage extends Component {
     }
 
 
-       render_everything(){
+    render_everything(){
         var selected_item = this.get_selected_item(this.state.get_new_contractor_page_tags_object, this.state.get_new_contractor_page_tags_object['i'].active)
 
         if(selected_item == 'e'){

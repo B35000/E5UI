@@ -36,7 +36,8 @@ class NewMintActionPage extends Component {
     state = {
         selected: 0, id:makeid(8), type:'buy-sell', entered_indexing_tags:['mint', 'dump', 'token'],
         new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
-        recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, upper_bound:0, lower_bound:0
+        recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, 
+        upper_bound:0, lower_bound:0, e5:this.props.app_state.selected_e5
     };
 
 
@@ -122,7 +123,10 @@ class NewMintActionPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_buy_token_uis(this.state.token_item['data'][3], this.calculate_token_prices(this.state.token_item['data'][4]), this.state.token_item['data'][5])}
 
-                {this.render_detail_item('0')}
+                <div style={{height:20}}/>
+                {this.render_my_balances_if_buy_action()}
+                
+                <div style={{height:20}}/>
                 {this.set_price_data()}
 
                 {this.render_detail_item('0')}
@@ -155,7 +159,7 @@ class NewMintActionPage extends Component {
                 var buy_depths = [].concat(selected_object['data'][5])
                 return(
                     <div>
-                        {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling the token', 'title':'Token Price'})}
+                        {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling the token', 'title':'Receive Amount'})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                             <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
@@ -178,7 +182,7 @@ class NewMintActionPage extends Component {
                 var buy_depths = selected_object['data'][5]
                 return(
                     <div>
-                        {this.render_detail_item('3', {'size':'l', 'details':'The amount youll probably get from the buy action', 'title':'Token Price'})}
+                        {this.render_detail_item('3', {'size':'l', 'details':'The amount youll probably get from the buy action', 'title':'Receive Amount'})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+this.state.token_item['id'], 'subtitle':'depth:'+selected_object['data'][2][7], 'barwidth':this.calculate_bar_width(price), 'number':''+this.format_account_balance_figure(price), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}
@@ -231,7 +235,7 @@ class NewMintActionPage extends Component {
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Amount set to receive for the sell action', 'title':'Fees for Action'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Amount set to receive for the sell action', 'title':'Receive Amount'})}
                 </div>
             )
         }
@@ -250,7 +254,7 @@ class NewMintActionPage extends Component {
         var bt = [].concat(buy_tokens)
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
                             {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
@@ -291,12 +295,39 @@ class NewMintActionPage extends Component {
         this.setState({amount: amount})
     }
 
+    render_my_balances_if_buy_action(){
+        var e5 = this.state.token_item['e5'];
+        var buy_tokens = this.state.token_item['data'][3]
+        var buy_amount_balances = []
+        var buy_depths = this.state.token_item['data'][5]
+
+        for(var i=0; i<buy_tokens.length; i++){
+            var token_id = buy_tokens[i]
+            var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
+            token_balance = token_balance == null ? 0 : token_balance['balance']
+            var my_ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
+            if(token_id == 0) token_balance = my_ether_balance
+            buy_amount_balances.push(token_balance)
+        }
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        if(action == 'mint-buy'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'The amounts you have available for buying the token', 'title':'Your balances'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_buy_token_uis(buy_tokens, buy_amount_balances, buy_depths)}
+                </div>
+            )
+        }
+    }
+
 
 
 
     add_transaction() {
         var amount = this.state.amount
-        var recipient = this.state.recipient_id.trim()
+        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
         var stack_action = 1
         if(action == 'mint-buy') stack_action = 0
@@ -311,20 +342,22 @@ class NewMintActionPage extends Component {
             if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){
                 this.props.notify('you dont have enough tokens for that')
             }
+            
             else{
-                // if(clone.length == 0){
-                //     clone.push({'id':makeid(4), 'data':[]})
-                // }
-                // clone[selected_stack_item]['data'].splice(0, 1)
-                // var tx = {id:makeid(8), type:'buy-sell', 'amount':bigInt(amount), 'recipient':recipient, 'action':stack_action, 'exchange':this.state.token_item, entered_indexing_tags:['buy', 'mint', 'token']}
-                // clone[selected_stack_item]['data'].push(tx)
-                // this.setState({transaction: tx})
                 this.props.notify('transaction added!', 600)
-
-                // this.props.add_buy_sell_transaction_to_stack(tx)
             }
         }
         
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
     }
 
     check_if_sender_has_tokens_for_sell(){
@@ -332,6 +365,27 @@ class NewMintActionPage extends Component {
             return false
         }
         return true
+    }
+
+    check_if_sender_has_tokens_for_buy(){
+        var e5 = this.state.token_item['e5']
+        var buy_tokens = this.state.token_item['data'][3]
+        var required_amounts = this.calculate_token_prices(this.state.token_item['data'][4])
+        var affordable = true;
+
+        for(var i=0; i<buy_tokens.length; i++){
+            var token_id = buy_tokens[i]
+            var token_balance = this.props.app_state.created_token_object_mapping[e5][token_id]
+            token_balance = token_balance == null ? 0 : token_balance['balance']
+            var my_ether_balance = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
+            if(token_id == 0) token_balance = my_ether_balance
+            var required_amount = required_amounts[i]
+
+            if(token_balance < required_amount){
+                affordable = false
+            }
+        }
+        return affordable
     }
 
 
@@ -366,7 +420,8 @@ class NewMintActionPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.token_item['e5']]
+        if(contacts == null) contacts = [];
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.recipient_id)){
@@ -606,6 +661,9 @@ class NewMintActionPage extends Component {
             if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){
                 this.props.notify('you dont have enough tokens for that')
             }
+            else if(!this.check_if_sender_has_tokens_for_buy() && action == 'mint-buy'){
+                this.props.notify('you dont have enough tokens to buy that much')
+            }
             else if(!this.check_if_sender_can_interact_with_exchange()){
                 this.props.notify('you cant interact with the same exchange twice in one run', 1200)
             }
@@ -623,7 +681,7 @@ class NewMintActionPage extends Component {
     check_if_sender_can_interact_with_exchange(){
         var stack_transactions = this.props.app_state.stack_items
         for(var i=0; i<stack_transactions.length; i++){
-            if(stack_transactions[i].type == 'buy-sell' && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id){
+            if(stack_transactions[i].type == 'buy-sell' && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id && stack_transactions[i].e5 == this.state.e5){
                 return false
             }
         }

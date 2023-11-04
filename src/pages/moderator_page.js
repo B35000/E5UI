@@ -200,18 +200,28 @@ class ModeratorPage extends Component {
 
     add_remove_moderator(){
         var clone = this.state.all_actions.slice()
-        var recipient = this.state.entered_moderator_text.trim()
+        var recipient = this.get_typed_alias_id(this.state.entered_moderator_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }else{
             var action = 'Add moderator'
             if(this.state.object_item['moderators'].includes(recipient)) action = 'Remove moderator'
             var tx = {'account':recipient, entered_indexing_tags:['moderator', 'action'], 'action':action, type:'moderator', id:makeid(8), 'object':this.state.object_item}
             clone.push(tx)
             this.setState({all_actions: clone, entered_moderator_text: ''})
-            this.props.notify('action added!', 600)
+            this.props.notify('action added!', 1600)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.object_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.object_item['e5']][alias])
+
+        return id
     }
 
     enable_disable_interactible_checker(){
@@ -220,29 +230,29 @@ class ModeratorPage extends Component {
         
         var value = this.state.object_item['access_rights_enabled']
         if(value == true && setting == 'private'){
-            this.props.notify('the thing is already private', 600)
+            this.props.notify('the thing is already private', 2600)
             return;
         }
         if(value == false && setting == 'public'){
-            this.props.notify('the thing is already public', 600)
+            this.props.notify('the thing is already public', 2600)
             return;
         }
         var tx = {'setting':setting, entered_indexing_tags:['access-rights', 'action'], type:'interactable-checkers', id:makeid(8), 'object':this.state.object_item}
         clone.push(tx)
         this.setState({all_actions: clone})
-        this.props.notify('action added!', 600)
+        this.props.notify('action added!', 1600)
     }
 
 
     revoke_author_mod_privelages_checker(){
         if(this.state.has_added_remove_auth_mod_status_tx){
-            this.props.notify('you cant do that twice', 600)
+            this.props.notify('you cant do that twice', 2600)
         }else{
             var clone = this.state.all_actions.slice()
             var tx = { entered_indexing_tags:['revoke', 'author','moderator','privelages'], type:'author-moderator-privelages', id:makeid(8), 'object':this.state.object_item }
             clone.push(tx)
             this.setState({all_actions: clone, has_added_remove_auth_mod_status_tx: true})
-            this.props.notify('action added!', 600)
+            this.props.notify('action added!', 1600)
         }
     }
 
@@ -292,15 +302,15 @@ class ModeratorPage extends Component {
 
     add_interactable_account(){
         var clone = this.state.all_actions.slice()
-        var recipient = this.state.entered_interactable_text.trim()
+        var recipient = this.get_typed_alias_id(this.state.entered_interactable_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }else{
             var tx = {'account':recipient, 'time':this.state.interactable_expiry_time, entered_indexing_tags:['access', 'rights','action'], type:'access-rights', id:makeid(8), 'object':this.state.object_item}
             clone.push(tx)
             this.setState({all_actions: clone, entered_interactable_text: '', interactable_expiry_time: Date.now()/1000})
-            this.props.notify('action added!', 600)
+            this.props.notify('action added!', 1600)
         }
     }
 
@@ -348,15 +358,15 @@ class ModeratorPage extends Component {
 
     add_blocked_account(){
         var clone = this.state.all_actions.slice()
-        var recipient = this.state.entered_blocked_text.trim()
+        var recipient = this.get_typed_alias_id(this.state.entered_blocked_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }else{
             var tx = {'account':recipient, 'time':this.state.blocked_expiry_time, entered_indexing_tags:['blocked', 'accounts','action'], type:'blocked-access', id:makeid(8), 'object':this.state.object_item}
             clone.push(tx)
             this.setState({all_actions: clone, entered_blocked_text: '', blocked_expiry_time: Date.now()/1000})
-            this.props.notify('action added!', 600)
+            this.props.notify('action added!', 1600)
         }
     }
 

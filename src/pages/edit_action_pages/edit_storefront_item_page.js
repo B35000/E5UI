@@ -339,17 +339,17 @@ class NewStorefrontItemPage extends Component {
     when_add_shipping_price_set(){
         var exchange_id = this.state.shipping_exchange_id.trim()
         var amount = this.state.shipping_price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 1600)
         }
         else{
             var price_data_clone = this.state.shipping_price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({shipping_price_data: price_data_clone, shipping_price_amount:0, shipping_exchange_id:''});
-            this.props.notify('added shipping price!', 400)
+            this.props.notify('added shipping price!', 1400)
         }
     }
 
@@ -408,15 +408,25 @@ class NewStorefrontItemPage extends Component {
 
 
     when_add_shipping_account_set(){
-        var account = this.state.fulfilment_account
+        var account = this.get_typed_alias_id(this.state.fulfilment_account)
         if(isNaN(account) || parseInt(account) < 0 || account == '' || parseInt(account) < 1000){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }else{
             var clone = this.state.fulfilment_accounts.slice()
             clone.push(account)
             this.setState({fulfilment_accounts: clone, fulfilment_account:''})
-            this.props.notify('added account', 400)
+            this.props.notify('added account', 1400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
 
@@ -956,18 +966,25 @@ class NewStorefrontItemPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 1600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, price_amount:0, exchange_id:''});
-            this.props.notify('added price!', 400)
+            this.props.notify('added price!', 1400)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     render_set_prices_list_part(){
@@ -1212,20 +1229,20 @@ class NewStorefrontItemPage extends Component {
         var available_unit_count = this.state.available_unit_count
 
         if(variant_description == ''){
-            this.props.notify('that variant description isnt valid', 800)
+            this.props.notify('that variant description isnt valid', 3800)
         }
         else if(price_data.length == 0){
-            this.props.notify('set a price for your variant first', 900)
+            this.props.notify('set a price for your variant first', 3900)
         }
         else if(available_unit_count == 0){
-            this.props.notify('You need to specify how many units are available first', 900)
+            this.props.notify('You need to specify how many units are available first', 3900)
         }else{
             var variant = {'variant_id':makeid(8),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
 
             var clone = this.state.variants.slice()
             clone.push(variant)
             this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0})
-            this.props.notify('added the variant to the item', 600)
+            this.props.notify('added the variant to the item', 1600)
         }
     }
 

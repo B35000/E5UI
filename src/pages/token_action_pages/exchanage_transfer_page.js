@@ -134,21 +134,31 @@ class ExchangeTransferPage extends Component {
     }
 
 
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.token_item['e5']][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.token_item['e5']][alias])
+
+        return id
+    }
+
 
     add_exchange_transfer_item(){
         var target_exchange = this.state.token_item['id']
         var target_amount = this.state.exchange_transfer_amount
-        var target_receiver = this.state.exchange_transfer_receiver.trim()
+        var target_receiver = this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
         var targeted_token = this.state.token_target.trim()
 
         if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver == ''){
-            this.props.notify('please put a valid receiver id', 600)
+            this.props.notify('please put a valid receiver id', 2600)
         }
-        else if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == ''){
-            this.props.notify('please put a valid token id', 600)
+        else if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == '' || !this.does_exchange_exist(targeted_token)){
+            this.props.notify('please put a valid token id', 2600)
         }
         else if(target_amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else{
             var exchange_transfer_values_clone = this.state.exchange_transfer_values.slice()
@@ -156,8 +166,15 @@ class ExchangeTransferPage extends Component {
             exchange_transfer_values_clone.push(tx)
             this.setState({exchange_transfer_values: exchange_transfer_values_clone, exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_receiver:'', token_target:''})
 
-            this.props.notify('transfer action added', 600)
+            this.props.notify('transfer action added', 1600)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.token_item['e5']][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     load_transfer_actions(){
@@ -293,7 +310,8 @@ class ExchangeTransferPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.token_item['e5']]
+        if(contacts == null) contacts = [];
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.exchange_transfer_receiver)){

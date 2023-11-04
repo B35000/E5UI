@@ -99,19 +99,21 @@ class MailDetailsSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_mail_list_detail_tags_object, this.state.navigate_view_mail_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
 
-        if(selected_item == 'data'){
-            return(
-                <div>
-                    {this.render_mail_main_details_section(object)}
-                </div>
-            )
-        }else if(selected_item == 'activity'){
-            return(
-                <div>
-                    {this.render_mail_responses(object)}
-                </div>
-            )
-            
+        if(object!=null){
+            if(selected_item == 'data'){
+                return(
+                    <div>
+                        {this.render_mail_main_details_section(object)}
+                    </div>
+                )
+            }else if(selected_item == 'activity'){
+                return(
+                    <div>
+                        {this.render_mail_responses(object)}
+                    </div>
+                )
+                
+            }
         }
     }
 
@@ -132,21 +134,32 @@ class MailDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('4', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p2, 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p2, object)), 'details':'Author', 'size':'l'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p1, 'details':'Recipient', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p1,object)), 'details':'Recipient', 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
+                    {this.render_item_images(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     render_item_data(items, object){
@@ -188,6 +201,16 @@ class MailDetailsSection extends Component {
         }
     }
 
+    render_item_images(object){
+        var images_to_add = object['ipfs'].entered_image_objects
+        if(images_to_add.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
+            </div>
+        )
+    }
+
 
     get_mail_items(){
         return this.props.get_mail_items()
@@ -196,9 +219,9 @@ class MailDetailsSection extends Component {
 
 
     get_mail_details_data(object){
-        var tags_to_use = [object['type']];
+        // var tags_to_use = [object['type']];
         var tags = object['ipfs'] == null ? ['Mail'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
-        var final_tags = tags_to_use.concat(tags)
+        var final_tags = [].concat(tags)
         var title = object['ipfs'] == null ? 'Mail ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6

@@ -149,6 +149,8 @@ class StorefrontDetailsSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, this.state.navigate_view_storefront_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_storefront_items(),this.props.selected_storefront_item);
 
+        if(object == null) return;
+        
         if(selected_item == 'metadata'){
             return(
                 <div>
@@ -190,17 +192,31 @@ class StorefrontDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p5, 'details':'Author Seller', 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3', {'title':composition_type, 'details':'Set Denomination', 'size':'l'})}
-                    <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':composition_type, 'details':'Set Denomination', 'size':'l'})}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':'Author Seller', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['ipfs'].target_receiver, object), 'details':'Target Payment Recipient', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':'Fulfilment Accounts', 'details':'The accounts involved with shipping and fulfilling direct purchase orders from clients', 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.render_fulfilment_accounts(object)}
+
+                    {this.render_detail_item('3', {'title':'Fulfilment Location', 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)} 
+                    {this.render_item_images(object)}
 
                     {this.render_detail_item('3', {'title':variants.length+' variants', 'details':'To choose from.', 'size':'l'})}                   
 
@@ -211,12 +227,57 @@ class StorefrontDetailsSection extends Component {
 
                     {this.render_detail_item('0')}
                     {this.render_chatroom_enabled_message(object)}
+                    {this.render_pin_storefront_button(object)}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    render_fulfilment_accounts(object){
+        var items = [].concat(object['ipfs'].fulfilment_accounts)
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':'Account', 'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    render_pin_storefront_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':'Pin the storefront item to your feed', 'title':'Pin Item'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_item_clicked(object)}>
+                    {this.render_detail_item('5', {'text':'Pin Item', 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_item_clicked(object){
+        this.props.pin_item(object)
     }
 
     render_chatroom_enabled_message(object){
@@ -401,6 +462,16 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
+    render_item_images(object){
+        var images_to_add = object['ipfs'].entered_image_objects
+        if(images_to_add.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
+            </div>
+        )
+    }
+
     get_storefront_details_data(object){
         var tags = object['ipfs'] == null ? ['Store'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Store ID' : object['ipfs'].entered_title_text
@@ -449,19 +520,19 @@ class StorefrontDetailsSection extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.get_purchases(object))
+        var items = this.get_purchases(object)
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var sender_type = 'storefront_owner'
         var fulfilment_accounts = object['ipfs'].fulfilment_accounts==null?[]:object['ipfs'].fulfilment_accounts
         if(this.props.app_state.user_account_id[object['e5']] != object['event'].returnValues.p5 && !fulfilment_accounts.includes(this.props.app_state.user_account_id[object['e5']])){
             //if user is not owner of storefront and wasnt included in the fulfilment account array
-            items = [].concat(this.filter_for_senders_orders(object))
+            items = this.filter_for_senders_orders(object)
             sender_type = 'storefront_client'
         }
         // sender_type = 'storefront_owner'
-
+        if(items == null) items = [];
         if(items.length == 0){
-            items = [0,1,2]
+            items = [0,1]
             return(
                 <div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
@@ -504,7 +575,7 @@ class StorefrontDetailsSection extends Component {
 
     filter_for_senders_orders(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
-        var purchases = this.props.app_state.direct_purchases[object['id']]
+        var purchases = this.props.app_state.direct_purchases[object['id']] == null ? [] : this.props.app_state.direct_purchases[object['id']]
         var filtered_purchases = []
         for(var i=0; i<purchases.length; i++){
             if(purchases[i]['sender_account'] == this.props.app_state.user_account_id[object['e5']]){
@@ -556,11 +627,14 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
-
     render_compressed_purchase_item(item, sender_type, index, object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
-        var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
-        if(signature != null){
+        // console.log('-----------------------render_compressed_purchase_item-----------------------------')
+        // console.log(object['id'])
+        // console.log(this.props.app_state.direct_purchase_fulfilments)
+        var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
+        if(signature != null && signature[item['signature_data']] != null){
+            signature = signature[item['signature_data']]
             return(
                 <div onClick={()=> this.when_item_clicked(index)}>
                     {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id']+', Sender Account ID: '+item['sender_account'], 'details':'Fulfilent Signature: '+start_and_end(signature['signature']) })}
@@ -598,14 +672,25 @@ class StorefrontDetailsSection extends Component {
                     {this.render_fulfilment_signature_if_any(item, object)}
                     <div style={{height:5}}/>
                 </div>
+                {this.render_clear_purchase_button(item, object, sender_type)}
                 
-                <div style={{'padding': '1px'}} onClick={() => this.props.open_clear_purchase(item, sender_type, object)}>
-                    {this.render_detail_item('5', {'text':'Clear Purchase', 'action':''})}
-                </div>
                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
             </div>
         )
         
+    }
+
+    render_clear_purchase_button(item, object, sender_type){
+        var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
+        if(signature == null || signature[item['signature_data']] == null){
+            return(
+                <div>
+                    <div style={{'padding': '1px'}} onClick={() => this.props.open_clear_purchase(item, sender_type, object)}>
+                        {this.render_detail_item('5', {'text':'Clear Purchase', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
     }
 
     get_variant_from_id(variant_id, object){
@@ -625,8 +710,9 @@ class StorefrontDetailsSection extends Component {
 
     render_fulfilment_signature_if_any(item, object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
-        var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
-        if(signature != null){
+        var signature = this.props.app_state.direct_purchase_fulfilments[object['id']]
+        if(signature != null && signature[item['signature_data']] != null){
+            signature = signature[item['signature_data']]
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'s', 'title':'Fulfilment Signature: ', 'details':start_and_end(signature['signature']) })}
@@ -956,40 +1042,58 @@ class StorefrontDetailsSection extends Component {
 
 
     render_stack_message_item(item, object){
-        if(item.type == 'message'){
+        if(this.is_sender_in_blocked_accounts(item)){
             return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                          </div>
+                <div>
+                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                        </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
-
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
-                    
                 </div>
             )
-        }else{
-            return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                          </div>
-                    </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
+        }
+        return(
+            <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                
+                <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                </div>
+                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
 
+                {this.render_images_if_any(item)}
+                <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
+                
+            </div>
+        )
+        
+    }
+
+    is_sender_in_blocked_accounts(item){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(item['sender'])){
+            return true
+        }
+        return false
+    }
+
+    render_images_if_any(item){
+        if(item.type == 'image'){
+            return(
+                <div>
                     {this.render_detail_item('9',item['image-data'])}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }
@@ -1014,7 +1118,53 @@ class StorefrontDetailsSection extends Component {
     get_convo_messages(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var messages = this.props.app_state.object_messages[object['id']]==null?[]:this.props.app_state.object_messages[object['id']]
-        return messages
+        return this.filter_messages_for_blocked_accounts(messages)
+    }
+
+    filter_messages_for_blocked_accounts(objects){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+        var filtered_objects = [];
+        objects.forEach(object => {
+            if(!blocked_accounts.includes(object['sender'])){
+                filtered_objects.push(object)
+            }
+        })
+
+        if(this.props.app_state.masked_content == 'hide'){
+            return filtered_objects
+        }
+        return objects;
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
     }
 
     get_stacked_items(object){
@@ -1198,7 +1348,7 @@ class StorefrontDetailsSection extends Component {
 
 
     render_all_comments(object){
-        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object(object))
+        var sorted_messages_in_tree = (this.get_message_replies_in_sorted_object(object))
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (

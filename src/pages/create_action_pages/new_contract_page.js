@@ -506,7 +506,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':'Maximum Extend Enter Contract Limit', 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 5 hrs', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'Recommended: 1 dy', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_extend_enter_contract_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -793,16 +793,26 @@ class NewContractPage extends Component {
     }
 
     when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id.trim()
+        var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 1600)
         }
         else{
             var moderators_clone = this.state.moderators.slice()
             moderators_clone.push(parseInt(moderator_id))
             this.setState({moderators: moderators_clone, moderator_id:''});
-            this.props.notify('added moderator!', 400)
+            this.props.notify('added moderator!', 1400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
     render_added_moderators(){
@@ -895,19 +905,29 @@ class NewContractPage extends Component {
     }
 
     when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id.trim()
+        var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
         if(isNaN(interactible_id)  || parseInt(interactible_id) < 0 || interactible_id == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }
         if(this.state.interactible_timestamp == 0){
-            this.props.notify('please put a valid date and time', 600)
+            this.props.notify('please put a valid date and time', 2600)
         }
         else{
             var interactibles_clone = this.state.interactibles.slice()
             interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
             this.setState({interactibles: interactibles_clone, interactible_id: ''});
-            this.props.notify('added interactible account!', 400)
+            this.props.notify('added interactible account!', 1400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
     render_set_interactible_accounts(){
@@ -995,14 +1015,15 @@ class NewContractPage extends Component {
         if(this.props.app_state.created_contract_mapping[this.state.e5] != null){
             var main_contract_data = this.props.app_state.created_contract_mapping[this.state.e5][2]['data']
             var default_end_minimum_contract_amount = main_contract_data[1][3/* <3>default_end_minimum_contract_amount */]
-            var gas_price = parseInt(this.props.app_state.gas_price[this.state.e5])
-            if(gas_price == null){
-                return default_end_minimum_contract_amount
-            }
-            var gas_anchor_price = parseInt(main_contract_data[1][23/* <23>gas_anchor_price */])
-            var a = (gas_price * default_end_minimum_contract_amount)/gas_anchor_price
-            if(a < 1) a = 1;
-            amount = a
+            return default_end_minimum_contract_amount
+            // var gas_price = parseInt(this.props.app_state.gas_price[this.state.e5])
+            // if(gas_price == null){
+            //     return default_end_minimum_contract_amount
+            // }
+            // var gas_anchor_price = parseInt(main_contract_data[1][23/* <23>gas_anchor_price */])
+            // var a = (gas_price * default_end_minimum_contract_amount)/gas_anchor_price
+            // if(a < 1) a = 1;
+            // amount = a
         }
         return parseInt(amount)
     }
@@ -1066,24 +1087,31 @@ class NewContractPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else if(this.state.price_data.length == 0 && (exchange_id != '3' && exchange_id != '5')){
-            this.props.notify('the first exchange must be the End or Spend exchange', 1100)
+            this.props.notify('the first exchange must be the End or Spend exchange', 4100)
         }
         else if(!this.check_if_amount_exceeds_minimum(amount, exchange_id)){
-
+            return;
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
-            this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 400)
+            this.setState({price_data: price_data_clone, exchange_id:'', amount:0});
+            this.props.notify('added entry fee price!', 1000)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     check_if_amount_exceeds_minimum(amount, exchange){
@@ -1277,7 +1305,7 @@ class NewContractPage extends Component {
     }
 
     get_account_suggestions(target_type){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.e5]
         var return_array = []
 
         if(target_type == 'moderator_id'){
@@ -1430,20 +1458,20 @@ class NewContractPage extends Component {
         var title = this.state.entered_title_text
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify('add some tags first!', 1700)
         }
         else if(title == ''){
-            this.props.notify('add a name first!', 700)
+            this.props.notify('add a name first!', 1700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that name is too long', 700)
+            this.props.notify('that name is too long', 1700)
         }
         else{
             this.props.when_add_new_object_to_stack(this.state)
         
             this.setState({ id: makeid(32), type:'contract', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_contract_tags_object: this.get_new_contract_tags_object(), default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
 
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify('transaction added to stack', 1700);
         }
     }
 

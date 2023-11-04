@@ -100,97 +100,98 @@ class ContractDetailsSection extends Component {
     render_contract_details_section() {
         var selected_item = this.get_selected_item(this.state.navigate_view_contract_list_detail_tags_object, this.state.navigate_view_contract_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_contract_items(), this.props.selected_contract_item)
+        if(object != null){
+            if (selected_item == 'details') {
+                return (
+                    <div>
+                        {this.render_contracts_main_details_section(object)}
+                    </div>
+                )
+            }
+            else if (selected_item == 'create-proposal') {
+                return (
+                    <div>
+                        {this.render_create_proposal_logs(object)}
+                    </div>
+                )
 
-        if (selected_item == 'details') {
-            return (
-                <div>
-                    {this.render_contracts_main_details_section(object)}
-                </div>
-            )
-        }
-        else if (selected_item == 'create-proposal') {
-            return (
-                <div>
-                    {this.render_create_proposal_logs(object)}
-                </div>
-            )
+            }
+            else if (selected_item == 'modify-contract') {
+                return (
+                    <div>
+                        {this.render_modify_contract_logs(object)}
+                    </div>
+                )
 
-        }
-        else if (selected_item == 'modify-contract') {
-            return (
-                <div>
-                    {this.render_modify_contract_logs(object)}
-                </div>
-            )
+            }
+            else if (selected_item == 'enter-contract') {
+                return (
+                    <div>
+                        {this.render_enter_contract_logs(object)}
+                    </div>
+                )
 
-        }
-        else if (selected_item == 'enter-contract') {
-            return (
-                <div>
-                    {this.render_enter_contract_logs(object)}
-                </div>
-            )
+            }
+            else if (selected_item == 'extend-contract-stay') {
+                return (
+                    <div>
+                        {this.render_extend_contract_logs(object)}
+                    </div>
+                )
 
-        }
-        else if (selected_item == 'extend-contract-stay') {
-            return (
-                <div>
-                    {this.render_extend_contract_logs(object)}
-                </div>
-            )
+            }
+            else if (selected_item == 'exit-contract') {
+                return (
+                    <div>
+                        {this.render_exit_contract_logs(object)}
+                    </div>
+                )
 
-        }
-        else if (selected_item == 'exit-contract') {
-            return (
-                <div>
-                    {this.render_exit_contract_logs(object)}
-                </div>
-            )
+            }
+            else if (selected_item == 'force-exit-accounts') {
+                return (
+                    <div>
+                        {this.force_exit_accounts_logs(object)}
+                    </div>
+                )
 
-        }
-        else if (selected_item == 'force-exit-accounts') {
-            return (
-                <div>
-                    {this.force_exit_accounts_logs(object)}
-                </div>
-            )
+            }
+            else if (selected_item == 'transfers') {
+                return (
+                    <div>
+                        {this.render_transfer_logs(object)}
+                    </div>
+                )
 
-        }
-        else if (selected_item == 'transfers') {
-            return (
-                <div>
-                    {this.render_transfer_logs(object)}
-                </div>
-            )
-
-        }
-        else if(selected_item == 'modify-moderators'){
-            return(
-                <div>
-                    {this.render_modify_moderator_logs(object)}
-                </div>
-            )
-        }
-        else if(selected_item == 'interactable-checkers'){
-            return(
-                <div>
-                    {this.render_interactable_checker_logs(object)}
-                </div>
-            )
-        }
-        else if(selected_item == 'interactable-accounts'){
-            return(
-                <div>
-                    {this.render_interactable_accounts_logs(object)}
-                </div>
-            )
-        }
-        else if(selected_item == 'block-accounts'){
-            return(
-                <div>
-                    {this.render_blocked_accounts_logs(object)}
-                </div>
-            )
+            }
+            else if(selected_item == 'modify-moderators'){
+                return(
+                    <div>
+                        {this.render_modify_moderator_logs(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'interactable-checkers'){
+                return(
+                    <div>
+                        {this.render_interactable_checker_logs(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'interactable-accounts'){
+                return(
+                    <div>
+                        {this.render_interactable_accounts_logs(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'block-accounts'){
+                return(
+                    <div>
+                        {this.render_blocked_accounts_logs(object)}
+                    </div>
+                )
+            }
         }
     }
 
@@ -217,7 +218,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 50
         var item = this.get_contract_details_data(object)
         // var object = this.get_contract_items()[this.props.selected_contract_item]
-        var author = object['event'] != null ? object['event'].returnValues.p3 : 'Unknown'
+        var author = object['event'] != null ? this.get_senders_name(object['event'].returnValues.p3, object) : 'Unknown'
         return (
             <div style={{ 'background-color': background_color, 'border-radius': '15px', 'margin': '5px 10px 2px 10px', 'padding': '0px 10px 0px 10px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', width: '100%', height: he, padding: '0px 10px 0px 10px' }}>
@@ -267,6 +268,8 @@ class ContractDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_revoke_author_privelages_event(object)}
                     
+                    {this.render_participants(object)}
+                      
 
                     {this.show_contract_balance(item, object)}
 
@@ -284,11 +287,71 @@ class ContractDetailsSection extends Component {
 
                     {this.render_moderator_button(object)}
 
+                    {this.render_pin_contract_button(object)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    render_participants(object){
+        if(object['id'] != 2){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Participant Accounts', 'details':'The accounts that have entered the contract', 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.render_participant_accounts(object)}
+                </div>
+            )
+        }
+    }
+
+    render_participant_accounts(object){
+        var items = [].concat(object['participants'])
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':'Participant', 'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_pin_contract_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':'Pin the contract to your feed', 'title':'Pin Contract'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_contract_clicked(object)}>
+                    {this.render_detail_item('5', {'text':'Pin Contract', 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_contract_clicked(object){
+        this.props.pin_contract(object)
     }
 
     render_entry_fees(object, item){

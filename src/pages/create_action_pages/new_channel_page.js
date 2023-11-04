@@ -470,12 +470,12 @@ class NewChannelPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove one and click add images to add them to the object. '})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap an image to remove. '})}
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
-                {this.render_all_images_part()}
+                {/* {this.render_all_images_part()} */}
                 
             </div>
         )
@@ -495,9 +495,9 @@ class NewChannelPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div>
 
-            <div style={{'padding': '5px', width:'80%'}} onClick={()=>this.add_images_to_object()}>
+            {/* <div style={{'padding': '5px', width:'80%'}} onClick={()=>this.add_images_to_object()}>
                 {this.render_detail_item('5', {'text':'Add Images', 'action':'-'})}
-            </div>
+            </div> */}
 
         </div>
       )
@@ -712,16 +712,26 @@ class NewChannelPage extends Component {
     }
 
     when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id.trim()
+        var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 1600)
         }
         else{
             var moderators_clone = this.state.moderators.slice()
             moderators_clone.push(parseInt(moderator_id))
             this.setState({moderators: moderators_clone});
-            this.props.notify('added moderator!', 400)
+            this.props.notify('added moderator!', 1400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
     render_added_moderators(){
@@ -815,20 +825,20 @@ class NewChannelPage extends Component {
     }
 
     when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id.trim()
+        var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 1600)
         }
         else{
             var interactibles_clone = this.state.interactibles.slice()
             interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
             this.setState({interactibles: interactibles_clone});
-            this.props.notify('added interactible account!', 400)
+            this.props.notify('added interactible account!', 1400)
         }
     }
 
     render_set_interactible_accounts(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-300;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -902,7 +912,7 @@ class NewChannelPage extends Component {
     }
 
     get_account_suggestions(target_type){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.e5]
         var return_array = []
 
         if(target_type == 'moderator_id'){
@@ -1011,11 +1021,22 @@ class NewChannelPage extends Component {
             this.props.notify('that title is too long', 700)
         }
         else{
-            
-            this.props.when_add_new_object_to_stack(this.state)
 
-            this.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            // var images_to_add = this.state.entered_image_objects
+            // var id = Math.round(new Date().getTime()/1000);
+            // if(images_to_add.length != 0){
+            //     var cloned_array = this.state.entered_objects.slice()
+            //     cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
+            //     this.setState({entered_objects: cloned_array, entered_image_objects:[]})
+            // }
             
+            var me = this;
+            setTimeout(function() {
+                me.props.when_add_new_object_to_stack(me.state)
+        
+                me.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+            }, (1 * 1000));
+
             this.props.notify('transaction added to stack', 700);
         }
     }

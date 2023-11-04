@@ -83,6 +83,7 @@ class ChannelDetailsSection extends Component {
         if(this.props.selected_channel_item != null){
             var object = this.get_item_in_array(this.get_channel_items(), this.props.selected_channel_item);
             this.props.get_objects_messages(object['id'], object['e5'])
+            this.props.get_channel_event_data(object['id'], object['e5'])
             this.props.get_moderator_event_data(object['id'], object['e5'])
         }
     }
@@ -160,47 +161,50 @@ class ChannelDetailsSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_channel_list_detail_tags, this.state.navigate_view_channel_list_detail_tags['i'].active)
         var object = this.get_item_in_array(this.get_channel_items(), this.props.selected_channel_item);
 
-        if(selected_item == 'metadata'){
-            return(
-                <div>
-                    {this.render_channel_main_details_section(object)}
-                </div>
-            )
-        }else if(selected_item == 'activity'){
-            return(
-                <div>
-                    {this.render_channel_activity(object)}
-                </div>
-            )
-            
-        }
-        else if(selected_item == 'modify-moderators'){
-            return(
-                <div>
-                    {this.render_modify_moderator_logs(object)}
-                </div>
-            )
-        }
-        else if(selected_item == 'interactable-checkers'){
-            return(
-                <div>
-                    {this.render_interactable_checker_logs(object)}
-                </div>
-            )
-        }
-        else if(selected_item == 'interactable-accounts'){
-            return(
-                <div>
-                    {this.render_interactable_accounts_logs(object)}
-                </div>
-            )
-        }
-        else if(selected_item == 'block-accounts'){
-            return(
-                <div>
-                    {this.render_blocked_accounts_logs(object)}
-                </div>
-            )
+        if(object != null){
+            if(selected_item == 'metadata'){
+                return(
+                    <div>
+                        {this.render_channel_main_details_section(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'activity'){
+                return(
+                    <div>
+                        {this.render_channel_activity(object)}
+                    </div>
+                )
+                
+            }
+            else if(selected_item == 'modify-moderators'){
+                return(
+                    <div>
+                        {this.render_modify_moderator_logs(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'interactable-checkers'){
+                return(
+                    <div>
+                        {this.render_interactable_checker_logs(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'interactable-accounts'){
+                return(
+                    <div>
+                        {this.render_interactable_accounts_logs(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'block-accounts'){
+                return(
+                    <div>
+                        {this.render_blocked_accounts_logs(object)}
+                    </div>
+                )
+            }
         }
     }
 
@@ -222,26 +226,56 @@ class ChannelDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p5, 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':'Author', 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
+                    {this.render_item_images(object)}
+
+                    {this.show_channel_transaction_count_chart(object)}
 
                     {this.render_revoke_author_privelages_event(object)}
                     <div style={{height: 10}}/>
                     {this.render_moderator_button(object)}
                     <div style={{height: 10}}/>
                     {this.render_edit_object_button(object)}
-                    
+                    {this.render_enter_channel_button(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    render_enter_channel_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':'Pin the channel to your feed', 'title':'Pin Channel'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_channel_clicked(object)}>
+                    {this.render_detail_item('5', {'text':'Pin Channel', 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_channel_clicked(object){
+        this.props.pin_channel(object)
     }
 
     render_item_data(items, object){
@@ -281,6 +315,16 @@ class ChannelDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_item_images(object){
+        var images_to_add = object['ipfs'].entered_image_objects
+        if(images_to_add.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
+            </div>
+        )
     }
 
     render_moderator_button(object){
@@ -368,6 +412,97 @@ class ChannelDetailsSection extends Component {
             )
         }
     }
+
+
+
+
+
+    show_channel_transaction_count_chart(object){
+        var events = this.props.app_state.channel_events[object['id']]
+        if(events != null){
+            events = events['channel_data']
+            if(events.length > 0){
+                var amount = events.length
+                return(
+                    <div>
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':'Channel Traffic', 'details':`Chart containing the total number of messages made over time.`, 'size':'l'})}
+                        
+                        {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                        <div style={{height: 10}}/>
+                        {this.render_detail_item('3', {'title':'Y-Axis: Total Messages Made', 'details':'X-Axis: Time', 'size':'s'})}
+                        <div style={{height: 10}}/>
+                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Channel Messages', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'messages', })}
+                        </div>
+                        {this.render_detail_item('0')}
+                    </div>
+                )
+            }
+        }
+    }
+
+    get_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p4
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p4 - events[i].returnValues.p4
+                    for(var t=0; t<diff; t+=60){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+
 
     
     
@@ -678,40 +813,57 @@ class ChannelDetailsSection extends Component {
 
 
     render_stack_message_item(item, object){
-        if(item.type == 'message'){
+        if(this.is_sender_in_blocked_accounts(item)){
             return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text2(item, object)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                          </div>
+                <div>
+                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                        </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
-
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
-        }else{
+        }
+        return(
+            <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                
+                <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text2(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                </div>
+                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
+
+                {this.render_images_if_any(item)}
+                <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
+            </div>
+        )
+        
+    }
+
+    is_sender_in_blocked_accounts(item){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(item['sender'])){
+            return true
+        }
+        return false
+    }
+
+    render_images_if_any(item){
+        if(item.type == 'image'){
             return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text2(item, object)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                          </div>
-                    </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
-
+                <div>
                     {this.render_detail_item('9',item['image-data'])}
-
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }
@@ -773,7 +925,28 @@ class ChannelDetailsSection extends Component {
     get_convo_messages(object){
         // var object = this.get_channel_items()[this.props.selected_channel_item];
         if(this.props.app_state.object_messages[object['id']] == null) return [];
-        return this.props.app_state.object_messages[object['id']]
+        return this.filter_messages_for_blocked_accounts(this.props.app_state.object_messages[object['id']])
+    }
+
+    filter_messages_for_blocked_accounts(objects){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+        var filtered_objects = [];
+        objects.forEach(object => {
+            if(!blocked_accounts.includes(object['sender'])){
+                filtered_objects.push(object)
+            }
+        })
+
+        if(this.props.app_state.masked_content == 'hide'){
+            return filtered_objects
+        }
+        return objects;
     }
 
     get_stacked_items(object){
@@ -969,7 +1142,7 @@ class ChannelDetailsSection extends Component {
 
 
     render_all_comments(object){
-        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object(object))
+        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object(object)
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (
@@ -1530,6 +1703,19 @@ class ChannelDetailsSection extends Component {
         return this.get_time_diff(diff)
     }
 
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
     get_time_diff(diff){
         if(diff < 60){//less than 1 min
             var num = diff
@@ -1561,6 +1747,44 @@ class ChannelDetailsSection extends Component {
             var s = num > 1 ? 's': '';
             return number_with_commas(num) + ' yr' + s;
         }
+    }
+
+    calculate_bar_width(amount){
+        var figure = ''
+        if(amount == null){
+            amount = 0
+        }
+        if(amount < bigInt('1e9')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
+        }
+        else if(amount < bigInt('1e18')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
+        }
+        else if(amount < bigInt('1e36')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
+        }
+        else{
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
+        }
+
+        return figure+'%'
+    }
+
+    format_power_figure(amount){
+        var power = 'e72'
+        if(amount < bigInt('1e9')){
+            power = 'e9'
+        }
+        else if(amount < bigInt('1e18')){
+            power = 'e18'
+        }
+        else if(amount < bigInt('1e36')){
+            power = 'e36'
+        }
+        else{
+            power = 'e72'
+        }
+        return power
     }
 
 }

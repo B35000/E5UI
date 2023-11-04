@@ -189,7 +189,7 @@ class NewMailPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new mail'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new encrypted mail'})}
                 <div style={{height:10}}/>
                 <TextInput height={60} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
@@ -437,12 +437,12 @@ class NewMailPage extends Component {
         var size = this.props.size
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove and click add images to add them to the object.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove.'})}
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
-                {this.render_all_images_part()}
+                {/* {this.render_all_images_part()} */}
                 
             </div>
         )
@@ -462,9 +462,9 @@ class NewMailPage extends Component {
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
             </div>
 
-            <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
+            {/* <div style={{'padding': '5px', width:205}} onClick={()=>this.add_images_to_object()}>
                 {this.render_detail_item('5', {'text':'Add Images', 'action':'-'})}
-            </div>
+            </div> */}
 
         </div>
       )
@@ -713,7 +713,7 @@ class NewMailPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.e5]
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.target_recipient)){
@@ -809,10 +809,21 @@ class NewMailPage extends Component {
             this.props.notify('that recipient account is invalid', 700)
         }
         else{ 
-            this.props.when_add_new_mail_to_stack(this.state)
-
-            this.setState({ selected: 0, id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'], get_new_job_page_tags_object: this.get_new_job_page_tags_object(),/* I copypasted these! sue me */ get_new_job_text_tags_object: this.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[]})
+            // var images_to_add = this.state.entered_image_objects
+            // var id = Math.round(new Date().getTime()/1000);
+            // if(images_to_add.length != 0){
+            //     var cloned_array = this.state.entered_objects.slice()
+            //     cloned_array.push({'data':{'images':images_to_add}, 'type':'9', 'id':id})
+            //     this.setState({entered_objects: cloned_array, entered_image_objects:[]})
+            // }
             
+            var me = this;
+            setTimeout(function() {
+                me.props.when_add_new_mail_to_stack(me.state)
+        
+                me.setState({ selected: 0, id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),/* I copypasted these! sue me */ get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[]})
+            }, (1 * 1000));
+
             this.props.notify('transaction added to stack', 700);
         }
     }

@@ -147,6 +147,8 @@ class ProposalDetailsSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_proposal_list_detail_tags_object, this.state.navigate_view_proposal_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_proposal_items(), this.props.selected_proposal_item)
 
+        if(object == null) return;
+        
         if(selected_item == 'details'){
             return(
                 <div>
@@ -216,7 +218,7 @@ class ProposalDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+object['event'].returnValues.p4, 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p4, object), 'details':'Author', 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
@@ -280,11 +282,39 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_archived_proposal_event(object)}
 
+                    {this.render_pin_proposal_button(object)}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    render_pin_proposal_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':'Pin the proposal to your feed', 'title':'Pin Proposal'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_proposal_clicked(object)}>
+                    {this.render_detail_item('5', {'text':'Pin Proposal', 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_proposal_clicked(object){
+        this.props.pin_proposal(object)
     }
 
 
@@ -581,8 +611,6 @@ class ProposalDetailsSection extends Component {
                                 {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['spend_token']], 'details':'target: '+item['spend_target']+', token ID: '+item['spend_token'], 'size':'l'})}
                             </li>
                         ))}
-                        {this.render_empty_elements()}
-                        {this.render_empty_elements()}
                     </ul>
                 </div>
             )
@@ -678,8 +706,6 @@ class ProposalDetailsSection extends Component {
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
-                        {this.render_empty_elements()}
-                        {this.render_empty_elements()}
                     </ul>
                 </div>
             )
@@ -779,8 +805,6 @@ class ProposalDetailsSection extends Component {
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
-                        {this.render_empty_elements()}
-                        {this.render_empty_elements()}
                     </ul>
                 </div>
             )
@@ -1093,40 +1117,56 @@ class ProposalDetailsSection extends Component {
     }
 
     render_stack_message_item(item, object){
-        if(item.type == 'message'){
+        if(this.is_sender_in_blocked_accounts(item)){
             return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                          </div>
+                <div>
+                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                        </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
-
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
-        }else{
+        }
+        return(
+            <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                
+                <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                </div>
+                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
+
+                {this.render_images_if_any(item)}
+                <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
+            </div>
+        ) 
+    }
+
+    is_sender_in_blocked_accounts(item){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(item['sender'])){
+            return true
+        }
+        return false
+    }
+
+    render_images_if_any(item){
+        if(item.type == 'image'){
             return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
-                          </div>
-                    </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
-
+                <div>
                     {this.render_detail_item('9',item['image-data'])}
-
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
                 </div>
             )
         }
@@ -1155,7 +1195,28 @@ class ProposalDetailsSection extends Component {
         if(convo_messages == null){
             return []
         }
-        return convo_messages
+        return this.filter_messages_for_blocked_accounts(convo_messages)
+    }
+
+    filter_messages_for_blocked_accounts(objects){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+        var filtered_objects = [];
+        objects.forEach(object => {
+            if(!blocked_accounts.includes(object['sender'])){
+                filtered_objects.push(object)
+            }
+        })
+
+        if(this.props.app_state.masked_content == 'hide'){
+            return filtered_objects
+        }
+        return objects;
     }
 
     get_stacked_items(object){
@@ -1288,7 +1349,7 @@ class ProposalDetailsSection extends Component {
 
     render_focus_list(object){
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
-        var items = [].concat(this.state.focused_message['tree'][object['id']])
+        var items = this.state.focused_message['tree'][object['id']]
 
         if(items != null && items.length > 0){
             return(
@@ -1334,7 +1395,7 @@ class ProposalDetailsSection extends Component {
 
 
     render_all_comments(object){
-        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object(object))
+        var sorted_messages_in_tree = (this.get_message_replies_in_sorted_object(object))
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (

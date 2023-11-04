@@ -86,7 +86,7 @@ class PaySubscriptionPage extends Component {
 
                 {this.render_maximum_buy_amount()}
 
-                <div style={{height:20}}/>
+                <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Time Units', 'subtitle':this.format_power_figure(this.state.time_units), 'barwidth':this.calculate_bar_width(this.state.time_units), 'number':this.format_account_balance_figure(this.state.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
@@ -94,11 +94,58 @@ class PaySubscriptionPage extends Component {
 
                 <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_units_set.bind(this)} theme={this.props.theme} power_limit={27}/>
 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Total Debit Amount', 'details':'The amount youll pay for the subscription payment is shown below', 'size':'l'})}
+                <div style={{height:10}}/>
+
                 {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
+                <div style={{height:10}}/>
+
+                {this.render_my_balances()}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
+        )
+    }
+
+    render_my_balances(){
+        var entry_tokens = this.state.subscription_item['data'][2]
+        var buy_amount_balances = []
+        var entry_amount_depths = this.state.subscription_item['data'][4]
+
+        if(entry_tokens != null && entry_tokens.length != 0){
+            for(var i=0; i<entry_tokens.length; i++){
+                var token_id = entry_tokens[i]
+                var token_balance = this.props.app_state.created_token_object_mapping[this.state.subscription_item['e5']][token_id]
+                token_balance = token_balance == null ? 0 : token_balance['balance']
+                buy_amount_balances.push(token_balance)
+            }
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':'The amounts you have available for paying the subscription', 'title':'Your balances'})}
+                    <div style={{height:10}}/>
+
+                    {this.render_buy_token_uis2(entry_tokens, buy_amount_balances, entry_amount_depths)}
+                </div>
+            )
+        }
+    }
+
+    render_buy_token_uis2(buy_tokens, buy_amounts, buy_depths){
+        var bt = [].concat(buy_tokens)
+        return(
+            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
+                    {bt.map((item, index) => (
+                        <li style={{'padding': '1px'}}>
+                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            
         )
     }
 
@@ -191,13 +238,16 @@ class PaySubscriptionPage extends Component {
         var minimum_amount = this.state.subscription_item['data'][1][1]
         var maximum_amount = this.state.subscription_item['data'][1][3]
         if(time_units_picked == 0){
-            this.props.notify('set a valid time unit amount!', 700)
+            this.props.notify('set a valid time unit amount', 1700)
         }
         else if(time_units_picked < minimum_amount){
-            this.props.notify('the amount youve set is less than the minimum requirement', 1200)
+            this.props.notify('the amount youve set is less than the minimum requirement', 3200)
         }
         else if(time_units_picked > maximum_amount){
-            this.props.notify('the amount youve set exceeds the maximum that you can pay for', 1400)
+            this.props.notify('the amount youve set exceeds the maximum that you can pay for', 3400)
+        }
+        else if(!this.can_sender_pay_for_subscription()){
+            this.props.notify('Your token balance is insufficient for that time unit purchase', 4500)
         }
         else{
             this.props.add_pay_subscription_to_stack(this.state)
@@ -207,6 +257,24 @@ class PaySubscriptionPage extends Component {
 
 
 
+    can_sender_pay_for_subscription(){
+        var can_pay = true;
+        var entry_tokens = this.state.subscription_item['data'][2]
+        var entry_fees = this.state.subscription_item['data'][3]
+
+        for(var i=0; i<entry_tokens.length; i++){
+            var token_id = entry_tokens[i]
+            var token_balance = this.props.app_state.created_token_object_mapping[this.state.subscription_item['e5']][token_id]['balance']
+            var final_amount = this.calculate_final_amount(entry_fees[i])
+
+            if(token_balance < final_amount){
+                can_pay = false
+            }
+        }
+
+        return can_pay;
+            
+    }
 
 
 

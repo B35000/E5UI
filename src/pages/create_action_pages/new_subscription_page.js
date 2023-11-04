@@ -467,23 +467,6 @@ class NewSubscriptionPage extends Component {
         if(page == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum Buy Amount', 'details':'Minimum amount of time units that can be paid for your new subscription.', 'size':'l'})}
-                    <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
-                    </div>
-
-                    <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
-
-                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-                </div>
-            )
-        }
-        else if(page == 1){
-            return(
-                <div>
                     {this.render_detail_item('3', {'title':'Cancellable', 'details':'If set to true, subscription payers can refund their subscription payments', 'size':'l'})}
 
                     <div style={{height:20}}/>
@@ -495,7 +478,7 @@ class NewSubscriptionPage extends Component {
                 </div>
             )
         }
-        else if(page == 2){
+        else if(page == 1){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':'Time Unit', 'details':'the amount of time thats used as a unit when paying for your new subscription', 'size':'l'})}
@@ -507,6 +490,23 @@ class NewSubscriptionPage extends Component {
                     {this.render_detail_item('10', {'text':'Recommended: 1 min', 'textsize':'10px', 'font':'Sans-serif'})}
 
                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
+                </div>
+            )
+        }
+        else if(page == 2){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Minimum Buy Amount', 'details':'Minimum amount of time units that can be paid for your new subscription.', 'size':'l'})}
+                    <div style={{height:20}}/>
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
+                    </div>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -680,7 +680,7 @@ class NewSubscriptionPage extends Component {
 
     render_moderator_settings(){
         return(
-            <div>
+            <div style={{'overflow-x':'hidden'}}>
                 <div style={{height:20}}/>
                 {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
 
@@ -704,7 +704,7 @@ class NewSubscriptionPage extends Component {
     }
 
     when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id.trim()
+        var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
         if(isNaN(moderator_id)  || parseInt(moderator_id) < 0 || moderator_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
@@ -714,6 +714,16 @@ class NewSubscriptionPage extends Component {
             this.setState({moderators: moderators_clone});
             this.props.notify('added moderator!', 400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
     render_added_moderators(){
@@ -767,7 +777,7 @@ class NewSubscriptionPage extends Component {
 
     render_interactible_settings(){
         return(
-            <div>
+            <div style={{'overflow-x':'hidden'}}>
                 <div style={{height:20}}/>
                 {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
 
@@ -807,15 +817,15 @@ class NewSubscriptionPage extends Component {
     }
 
     when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id.trim()
+        var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify('please put a valid account id', 2600)
         }
         else{
             var interactibles_clone = this.state.interactibles.slice()
             interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
             this.setState({interactibles: interactibles_clone});
-            this.props.notify('added interactible account!', 400)
+            this.props.notify('added interactible account!', 1400)
         }
     }
 
@@ -901,7 +911,7 @@ class NewSubscriptionPage extends Component {
 
     render_set_token_and_amount_part(){
         return(
-            <div>
+            <div style={{'overflow-x':'hidden'}}>
                 {this.render_detail_item('3', {'title':'Exchange ID', 'details':'An exchange by its id, then the desired price and click add', 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -936,18 +946,25 @@ class NewSubscriptionPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id==''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id=='' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 400)
+            this.props.notify('added price!', 1400)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     render_set_prices_list_part(){
@@ -1025,14 +1042,14 @@ class NewSubscriptionPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         )
     }
 
@@ -1121,7 +1138,7 @@ class NewSubscriptionPage extends Component {
     }
 
     get_account_suggestions(target_type){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.e5]
         var return_array = []
 
         if(target_type == 'authority_id'){

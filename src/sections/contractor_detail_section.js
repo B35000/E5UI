@@ -111,23 +111,24 @@ class ContractorDetailsSection extends Component {
 
     render_contractors_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_contractors_list_detail_tags_object, this.state.navigate_view_contractors_list_detail_tags_object['i'].active)
-
         var object = this.get_item_in_array(this.get_contractor_items(), this.props.selected_contractor_item);
 
-        if(selected_item == 'details' || selected_item == 'e'){
-            return(
-                <div>
-                    {this.render_contractor_posts_main_details_section(object)}
-                </div>
-            )
-        }
-        else if(selected_item == 'job-requests'){
-            return(
-                <div>
-                    {this.render_contractor_job_responses(object)}
-                </div>
-            )
-            
+        if(object != null){
+            if(selected_item == 'details' || selected_item == 'e'){
+                return(
+                    <div>
+                        {this.render_contractor_posts_main_details_section(object)}
+                    </div>
+                )
+            }
+            else if(selected_item == 'job-requests'){
+                return(
+                    <div>
+                        {this.render_contractor_job_responses(object)}
+                    </div>
+                )
+                
+            }
         }
     }
 
@@ -151,12 +152,15 @@ class ContractorDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
+                    {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': 'Author', 'size': 'l' }, )}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     {this.render_detail_item('0')}
                     {this.render_item_data(items, object)}
+
+                    {this.render_item_images(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':'Fees Per Hour', 'details':'The amounts they charge per hour for their work', 'size':'l'})}
@@ -174,11 +178,23 @@ class ContractorDetailsSection extends Component {
                         {this.render_detail_item('5', {'text':'Send Request', 'action':''})}
                     </div>
 
+                    {this.render_pin_contractor_button(object)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
         )
+    }
+
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     render_item_data(items, object){
@@ -218,6 +234,33 @@ class ContractorDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    render_pin_contractor_button(object){
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'size':'l', 'details':'Pin the contractor to your feed', 'title':'Pin Contractor'})}
+                <div style={{height:10}}/>
+                <div onClick={()=> this.when_pin_contractor_clicked(object)}>
+                    {this.render_detail_item('5', {'text':'Pin Contractor', 'action':''},)}
+                </div>
+            </div>
+        )
+    }
+
+    when_pin_contractor_clicked(object){
+        this.props.pin_contractor(object)
+    }
+
+    render_item_images(object){
+        var images_to_add = object['ipfs'].entered_image_objects
+        if(images_to_add.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
+            </div>
+        )
     }
 
     get_contractor_details_data(object){
@@ -299,7 +342,7 @@ class ContractorDetailsSection extends Component {
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '0px'}}>
+                        <li style={{'padding': '3px 0px 3px 0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                 {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                             </div>

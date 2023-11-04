@@ -275,8 +275,7 @@ class ViewGroups extends Component {
                         indexLabelFontColor: this.props.theme['primary_text_color'],
                         indexLabelFontFamily:"Sans-serif",
                         indexLabelFontWeight:"bold",
-                        
-                        dataPoints: dataPoints
+                        dataPoints: dataPoints,
               }]
             }
 
@@ -318,7 +317,7 @@ class ViewGroups extends Component {
             var items = object_data == null ? [] :object_data['images'];
             var items_pos = object_data == null ? 0 : object_data['pos'];
             return(
-                <div style={{'margin':'5px 0px 0px 0px'}}>
+                <div style={{'margin':'5px 0px 0px 10px'}}>
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
@@ -357,6 +356,20 @@ class ViewGroups extends Component {
     }
 
     copy_id_to_clipboard(text){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            // me.copy_id_to_clipboard(item['id'])
+            navigator.clipboard.writeText(text)
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
         // navigator.clipboard.writeText(text)
     }
 

@@ -202,10 +202,10 @@ class CollectSubscriptionPage extends Component {
     finish(){
         var time_units = this.get_total_subscription_collectible_timeunits()
         if(time_units == 0){
-            this.props.notify('you cant collect no time units', 700)
+            this.props.notify('you cant collect no time units', 2700)
         }else{
             this.props.add_collect_subscription_to_stack(this.state)
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify('transaction added to stack', 1700);
         }
     }
 

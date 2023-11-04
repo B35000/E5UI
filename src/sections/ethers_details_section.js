@@ -54,7 +54,7 @@ class EthersDetailsSection extends Component {
             return(
                 <div>
                     {this.render_ether_details_section()}
-                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
                         <Tags page_tags_object={this.state.navigate_view_ethers_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_ethers_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ class EthersDetailsSection extends Component {
 
     render_ethers_main_details_section(item){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-60
+        var he = this.props.height-55
         // var item = this.get_ethers_data()[this.props.selected_ether_item];
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
@@ -130,7 +130,7 @@ class EthersDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['peer_count'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['network_type'])}
+                    {/* {this.render_detail_item('3', item['network_type'])} */}
                     {this.render_detail_item('0')}
 
                     {/* {this.render_detail_item('3', item['gas_used_chart_data_label'])} */}
@@ -182,6 +182,7 @@ class EthersDetailsSection extends Component {
     }
 
     get_ethers_data(){
+        var peer_count = this.props.app_state.number_of_peers['E15'];
         return [
             {
                 'id':'ETHT',
@@ -195,8 +196,7 @@ class EthersDetailsSection extends Component {
                 'number_label_large': this.get_blockchain_data('l', 'E15'),
                 'banner-icon':{'header':'ETHT', 'subtitle':'Ethereum Testnet', 'image':EthereumTestnet},
                 'chain_id':{'title':this.props.app_state.chain_id['E15'], 'details':'Chain ID', 'size' :'l'},
-                'peer_count':{'title':this.props.app_state.number_of_peers['E15'], 'details':'Number of Peers', 'size' :'l'},
-                'network_type':{'title':this.props.app_state.network_type['E15'], 'details':'Network Type', 'size' :'l'},
+                'peer_count':{'title':''+peer_count, 'details':'Number of Peers', 'size' :'l'},
                 
                 'gas_used_chart_data_label':{'title':'Gas Used', 'details':'Amount of gas used in the last 100 blocks', 'size' :'l'},
                 'gas_used_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_gas_used_data_points('E15')},
@@ -228,7 +228,7 @@ class EthersDetailsSection extends Component {
 
 
     render_block_history_logs(object){
-        var middle = this.props.height-70;
+        var middle = this.props.height-65;
         var size = this.props.screensize;
         if(size == 'm'){
             middle = this.props.height-190;
@@ -242,9 +242,6 @@ class EthersDetailsSection extends Component {
                             {this.render_block_history_log_item(item, index)}
                         </li>
                     ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
                 </ul>
             </div>
         );
@@ -308,13 +305,14 @@ class EthersDetailsSection extends Component {
                 }else{
                     yVal = (highest_gas_figure*0.9999999999999)
                 }
-
-                if(i%50 == 0 && i != 0){
-                    dps.push({x: xVal,y: yVal, indexLabel: ""+number_with_commas(gas_used)});//
-                }else{
-                    dps.push({x: xVal,y: yVal});//
-                }
                 
+                if(yVal != null && yVal != 0){
+                    if(i%3 == 0 && i != 0){
+                        dps.push({x: xVal,y: yVal, indexLabel: ""+number_with_commas(gas_used)});//
+                    }else{
+                        dps.push({x: xVal,y: yVal});//
+                    }
+                }
             }
             
             xVal++;
@@ -344,11 +342,12 @@ class EthersDetailsSection extends Component {
             if(this.props.app_state.last_blocks[e5][i] != null){
                 var transaction_count = this.props.app_state.last_blocks[e5][i].transactions.length;
                 yVal = transaction_count;
-
-                if(i%50 == 0 && i != 0){
-                    dps.push({x: xVal,y: yVal, indexLabel: ""+transaction_count});//
-                }else{
-                    dps.push({x: xVal,y: yVal});//
+                if(yVal != null){
+                    if(i%20 == 0 && i != 0){
+                        dps.push({x: xVal,y: yVal, indexLabel: ""+transaction_count});//
+                    }else{
+                        dps.push({x: xVal,y: yVal});//
+                    }
                 }
                 
             }

@@ -100,7 +100,7 @@ class ViewBagApplicationContractPage extends Component {
         if(!this.state.application_item['is_response_accepted']){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the bag fulfilment application and enter their contract(This action cant be undone)', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the bag fulfilment application and enter their contract(This action cant be undone)', 'size':'l'})}
                     <div style={{height:10}}/>
 
                     <div onClick={()=> this.accept_job_application()}>
@@ -140,9 +140,9 @@ class ViewBagApplicationContractPage extends Component {
         }
         return(
             <div style={{overflow: 'auto', maxHeight: 600}}>
-                {this.render_detail_item('3', {'title':'Applicants Requested Pay', 'details':'Below is the applicants requested pay in their respective token denominations.', 'size':'s'})}
+                {this.render_detail_item('3', {'title':'Applicants Requested Pay', 'details':'Below is the applicants requested pay in their respective token denominations.', 'size':'l'})}
                 <div style={{height:10}}/>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>

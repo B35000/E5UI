@@ -119,7 +119,8 @@ class SpendDetailSection extends Component {
     render_spend_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_spend_list_detail_tags_object, this.state.navigate_view_spend_list_detail_tags_object['i'].active)
         var selected_object = this.get_item_in_array(this.get_exchange_tokens(5), this.props.selected_spend_item)
-
+        if(selected_object == null) return;
+        
         if(selected_item == 'details' || selected_item == 'e'){
             return(
                 <div>
@@ -204,6 +205,16 @@ class SpendDetailSection extends Component {
         return this.props.get_exchange_tokens(exchange_type)
     }
 
+    get_senders_name(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
     render_spend_main_details_section(selected_object){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-70
@@ -215,7 +226,7 @@ class SpendDetailSection extends Component {
         // var selected_object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
         var item = this.get_spend_data(selected_object);
         var symbol = selected_object['ipfs'] == null ? this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_object['id']] : selected_object['ipfs'].entered_symbol_text
-        var author = selected_object['event'] != null ? selected_object['event'].returnValues.p3 :'Unknown'
+        var author = selected_object['event'] != null ? this.get_senders_name(selected_object['event'].returnValues.p3, selected_object) :'Unknown'
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -721,8 +732,9 @@ class SpendDetailSection extends Component {
         var halfing_type = selected_obj_config[15] == 0 ? 'Fixed' : 'Spread'
 
         if(title == 5){
-            var obj = {'E15':'315', 'E25':'325'}
-            title = obj[selected_object['e5']]
+            // var obj = {'E15':'315', 'E25':'325'}
+            // title = obj[selected_object['e5']]
+            title = selected_object['e5'].replace('E', '3')
         }
 
         var item = selected_object;
@@ -940,7 +952,7 @@ class SpendDetailSection extends Component {
         var total_supply = selected_object['data'][2][2]
         var proportion_ratio_events = selected_object['exchange_ratio_data']
         var amount = total_supply
-        if(proportion_ratio_events.length != 0){
+        if(proportion_ratio_events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -994,7 +1006,7 @@ class SpendDetailSection extends Component {
             // yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i%(Math.round(noOfDps/5)) == 0 && i != 0){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//

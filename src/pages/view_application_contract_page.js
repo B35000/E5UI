@@ -340,7 +340,7 @@ class ViewApplicationContractPage extends Component {
         if(item['application_expiry_time'] > (Date.now()/1000)){
             this.props.add_job_acceptance_action_to_stack(this.state)
         }else{
-            this.props.notify('the application has already expired', 600)
+            this.props.notify('the application has already expired', 1900)
         }
     }
 

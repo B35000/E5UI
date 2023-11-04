@@ -881,40 +881,56 @@ class ViewJobRequestPage extends Component {
 
 
     render_stack_message_item(item){
-        if(item.type == 'message'){
+        if(this.is_sender_in_blocked_accounts(item)){
             return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
-                          </div>
+                <div>
+                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                        </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
-
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
-                    
                 </div>
             )
-        }else{
-            return(
-                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                    
-                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                          <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
-                          </div>
-                          <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
-                          </div>
+        }
+        return(
+            <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} > {this.get_sender_title_text(item)}</p>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                    </div>
+                </div>
+                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
 
+                {this.render_images_if_any(item)}
+                <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                
+            </div>
+        )
+    }
+
+    is_sender_in_blocked_accounts(item){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+
+        if(blocked_accounts.includes(item['sender'])){
+            return true
+        }
+        return false
+    }
+
+    render_images_if_any(item){
+        if(item.type == 'image'){
+            return(
+                <div>
                     {this.render_detail_item('9',item['image-data'])}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
                 </div>
             )
         }
@@ -938,7 +954,28 @@ class ViewJobRequestPage extends Component {
     get_convo_messages(){
         var object = this.state.request_item;
         if(this.props.app_state.object_messages[object['job_request_id']] == null) return [];
-        return this.props.app_state.object_messages[object['job_request_id']]
+        return this.filter_messages_for_blocked_accounts(this.props.app_state.object_messages[object['job_request_id']])
+    }
+
+    filter_messages_for_blocked_accounts(objects){
+        var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
+        var blocked_accounts = []
+        blocked_account_obj.forEach(account => {
+            if(!blocked_accounts.includes(account['id'])){
+                blocked_accounts.push(account['id'])
+            }
+        });
+        var filtered_objects = [];
+        objects.forEach(object => {
+            if(!blocked_accounts.includes(object['sender'])){
+                filtered_objects.push(object)
+            }
+        })
+
+        if(this.props.app_state.masked_content == 'hide'){
+            return filtered_objects
+        }
+        return objects;
     }
 
     get_stacked_items(){
@@ -1072,7 +1109,7 @@ class ViewJobRequestPage extends Component {
 
     render_focus_list(){
         var object = this.state.request_item;
-        var items = [].concat(this.state.focused_message['tree'][object['job_request_id']])
+        var items = this.state.focused_message['tree'][object['job_request_id']]
 
         if(items != null && items.length > 0){
             return(
@@ -1118,7 +1155,7 @@ class ViewJobRequestPage extends Component {
 
 
     render_all_comments(){
-        var sorted_messages_in_tree = [].concat(this.get_message_replies_in_sorted_object())
+        var sorted_messages_in_tree = this.get_message_replies_in_sorted_object()
         return(
             <div>
                 {sorted_messages_in_tree.children.map((item, index) => (

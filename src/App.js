@@ -92,14 +92,21 @@ import { create } from 'ipfs-http-client'
 import { Web3Storage } from 'web3.storage'
 import { NFTStorage, Blob } from 'nft.storage'
 
+import { createHelia } from 'helia'
+import { json } from '@helia/json'
+import { strings } from '@helia/strings'
+// import * as IPFS from 'ipfs-core'
+
 const Web3 = require('web3');
-const ethers = require("ethers");
+const { ethers } = require("ethers");
 // const { Wallet } = require('ethers');
-const privateKeyToPublicKey = require('ethereum-private-key-to-public-key')
+// const privateKeyToPublicKey = require('ethereum-private-key-to-public-key')
 const ecies = require('ecies-geth');
 var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
-const { WalletKey } = require('@zondax/filecoin-signing-tools')
+// const { WalletKey } = require('@zondax/filecoin-signing-tools')
+
+// const IPFS = require('ipfs');
 
 var TextDecoder = textEncoding.TextDecoder;
 
@@ -140,7 +147,7 @@ async function balance(addr, client){
 
 class App extends Component {
 
-  state = { 
+  state = {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
@@ -148,8 +155,9 @@ class App extends Component {
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null,
+
     theme: this.get_theme_data('light'), storage_option:'infura',
-    details_orientation: 'right',
+    details_orientation: 'right', refresh_speed:'average', masked_content:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -162,11 +170,11 @@ class App extends Component {
     created_mail:{}, received_mail:{},
     created_stores:{}, created_store_mappings:{}, created_bags:{}, 
     created_contractors:{},
-    mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false,
+    mint_dump_actions:[{},], contacts:{}, should_update_contacts_onchain: false, blocked_accounts:{}, should_update_blocked_accounts_onchain: false,
 
-    web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042',
+    web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
     
-    sync_steps:(13), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90,
+    sync_steps:(10), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -174,7 +182,7 @@ class App extends Component {
     created_token_object_mapping:{}, E5_runs:{}, user_account_id:{}, addresses:{}, last_blocks:{}, number_of_blocks:{}, gas_price:{}, network_type:{}, number_of_peers:{}, chain_id:{}, account_balance:{'E15':0}, withdraw_balance:{'E15':0}, basic_transaction_data:{}, E5_balance:{}, contacts:{},
 
     contract_events:{}, proposal_events:{}, subscription_events:{}, exchange_events:{}, moderator_events:{},
-    subscription_search_result:{}, all_data:{}, gateway_traffic_cache:{},
+    subscription_search_result:{}, all_data:{}, gateway_traffic_cache:{}, channel_events:{}, all_E5_runs:{},
 
     e5s:this.get_e5s(),
     selected_e5:'E15', default_e5:'E15',
@@ -185,14 +193,15 @@ class App extends Component {
   get_e5s(){
     return{
       'data':['E15', 'E25'],
-      'E15':{web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042', first_block:5},
-      'E25':{web3:'http://127.0.0.1:8545/', e5_address:'0x82e01223d51Eb87e16A03E24687EDF0F294da6f1', first_block:218}
+      'E15':{web3:'http://127.0.0.1:8545/', e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0', first_block:20},
+      'E25':{web3:'http://127.0.0.1:8545/', e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042', first_block:42}
     }
   }
 
 
   constructor(props) {
     super(props);
+    this.homepage = React.createRef();
     this.send_receive_ether_page = React.createRef();
     this.wiki_page = React.createRef();
     this.new_contract_page = React.createRef();
@@ -256,9 +265,53 @@ class App extends Component {
   componentDidMount() {
     console.log("mounted");
     
-    // const cookies = new Cookies();
-    // const cookie_state = cookies.get('state');
+    this.load_cookies();
+    this.load_e5_data();
+     
+    /* listens for when the window is resized */
+    window.addEventListener("resize", this.resize.bind(this));
+    this.resize();
 
+    var obj = {'sluggish':600_000, 'slow':300_000, 'average':60_000, 'fast':20_000}
+    this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
+  }
+
+  /* called when the component is unmounted or closed */
+  componentWillUnmount() {
+    console.log("unmounted");
+    window.removeEventListener("resize", this.resize.bind(this));
+
+    clearInterval(this.interval);
+
+    this.set_cookies()
+  }
+
+  reset_background_sync(){
+    clearInterval(this.interval);
+    var obj = {'sluggish':600_000, 'slow':300_000, 'average':60_000, 'fast':20_000}
+    this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
+  }
+
+  set_cookies(){
+    localStorage.setItem("state", JSON.stringify(this.get_persistent_data()));
+  }
+
+  get_persistent_data(){
+    return {
+      theme: this.state.theme, 
+      storage_option: this.state.storage_option, 
+      stack_items:this.state.stack_items, 
+      selected_e5_item:this.state.selected_e5, 
+      contacts:this.state.contacts, 
+      should_update_contacts_onchain: this.state.should_update_contacts_onchain, 
+      refresh_speed:this.state.refresh_speed, 
+      masked_content: this.state.masked_content,
+      blocked_accounts: this.state.blocked_accounts,
+      should_update_blocked_accounts_onchain: this.state.should_update_blocked_accounts_onchain,
+    }
+  }
+
+  load_cookies(){
     var cookie_state = localStorage.getItem("state");
     if(cookie_state != null){
       cookie_state = JSON.parse(cookie_state)
@@ -270,6 +323,10 @@ class App extends Component {
       var cookie_selected_e5 = cookie_state.selected_e5_item
       var cookie_contacts = cookie_state.contacts
       var cookie_should_update_contacts_onchain = cookie_state.should_update_contacts_onchain
+      var cookie_refresh_speed = cookie_state.refresh_speed
+      var cookie_masked_content = cookie_state.masked_content
+      var cookie_blocked_accounts = cookie_state.blocked_accounts
+      var cookie_should_update_blocked_accounts_onchain = cookie_state.should_update_blocked_accounts_onchain
       
       if(cookie_theme != null){
         this.setState({theme:cookie_theme})
@@ -284,57 +341,42 @@ class App extends Component {
       }
 
       if(cookie_selected_e5 != null){
-        // console.log('--------------------componentDidMount-----------------------')
-        // console.log(cookie_selected_e5)
         this.setState({selected_e5: cookie_selected_e5})
       }
 
       if(cookie_contacts != null){
-        // this.setState({contacts: cookie_contacts})
+        this.setState({contacts: cookie_contacts})
       }
 
       if(cookie_should_update_contacts_onchain != null){
-        // this.setState({should_update_contacts_onchain: cookie_should_update_contacts_onchain})
+        this.setState({should_update_contacts_onchain: cookie_should_update_contacts_onchain})
+      }
+
+      if(cookie_masked_content != null){
+        this.setState({masked_content: cookie_masked_content})
+      }
+
+      if(cookie_refresh_speed != null){
+        this.setState({refresh_speed: cookie_refresh_speed})
+      }
+
+      if(cookie_blocked_accounts != null){
+        this.setState({blocked_accounts: cookie_blocked_accounts})
+      }
+
+      if(cookie_should_update_blocked_accounts_onchain != null){
+        this.setState({should_update_blocked_accounts_onchain: cookie_should_update_blocked_accounts_onchain})
       }
     }
-    
-
-
 
     var me = this;
     setTimeout(function() {
         me.stack_page.current?.set_light_dark_setting_tag()
         me.stack_page.current?.set_storage_option_tag()
         me.stack_page.current?.set_e5_option_tag()
+        me.stack_page.current?.set_refresh_speed_tag()
+        me.stack_page.current?.set_masked_content_tag()
     }, (1 * 1000));
-
-    this.load_e5_data();
-     
-    /* listens for when the window is resized */
-    window.addEventListener("resize", this.resize.bind(this));
-    this.resize();
-
-    this.interval = setInterval(() => this.background_sync(), 57000);
-  }
-
-  /* called when the component is unmounted or closed */
-  componentWillUnmount() {
-    console.log("unmounted");
-    window.removeEventListener("resize", this.resize.bind(this));
-
-    clearInterval(this.interval);
-
-    this.set_cookies()
-  }
-
-  set_cookies(){
-    // const cookies = new Cookies();
-    // cookies.set('state', this.get_persistent_data(), { path: '/' });
-    localStorage.setItem("state", JSON.stringify(this.get_persistent_data()));
-  }
-
-  get_persistent_data(){
-    return {theme: this.state.theme, storage_option: this.state.storage_option, stack_items:this.state.stack_items, selected_e5_item:this.state.selected_e5, contacts:this.state.contacts, should_update_contacts_onchain: this.state.should_update_contacts_onchain}
   }
 
 
@@ -532,7 +574,7 @@ class App extends Component {
 
   render_page(){
     return(
-      <Home_page 
+      <Home_page ref={this.homepage}
       screensize={this.getScreenSize()} 
       width={this.state.width} height={this.state.height} app_state={this.state} notify={this.prompt_top_notification.bind(this)} open_send_receive_ether_bottomsheet={this.start_send_receive_ether_bottomsheet.bind(this)} open_stack_bottomsheet={this.open_stack_bottomsheet.bind(this)} theme={this.state.theme} details_orientation={this.state.details_orientation} 
       open_wiki_bottomsheet={this.open_wiki_bottomsheet.bind(this)} 
@@ -568,7 +610,7 @@ class App extends Component {
       add_account_to_contacts={this.add_account_to_contacts.bind(this)} open_edit_object={this.open_edit_object.bind(this)}
       show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
 
-      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)}
+      get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
       />
     )
   }
@@ -803,7 +845,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} />
+              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -834,8 +876,8 @@ class App extends Component {
     this.setState({selected_e5: e5})
     var me = this;
     setTimeout(function() {
-        console.log('------------------when_selected_e5_changed---------------------')
-        console.log(me.state.selected_e5)
+        // console.log('------------------when_selected_e5_changed---------------------')
+        // console.log(me.state.selected_e5)
         me.set_cookies()
     }, (1 * 1000));
   }
@@ -848,11 +890,37 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  clear_cache(){
+    if(this.homepage.current != null){
+      this.homepage.current?.setState({viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[],})
+    }
+  }
+
+  when_refresh_speed_changed(item){
+    this.setState({refresh_speed: item})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+        me.reset_background_sync()
+    }, (1 * 1000));
+  }
+
+  when_masked_data_setting_changed(item){
+    this.setState({masked_content: item})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
+  }
+
+
+
+
   lock_run(value){
     this.setState({is_running: value})
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
@@ -860,8 +928,9 @@ class App extends Component {
     const me = this
 
     var v5/* t_limits */ = [1000000000000, 1000000000000];
-    const gasPrice = await web3.eth.getGasPrice();
-    console.log("gasPrice: "+gasPrice);
+    var network_gp = await web3.eth.getGasPrice()
+    var run_gas_price = run_gas_price == null ? network_gp : run_gas_price
+    console.log("gasPrice: "+run_gas_price);
     const gasLimit = run_gas_limit;
 
     var encoded = contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).encodeABI()
@@ -870,7 +939,8 @@ class App extends Component {
         gas: gasLimit,
         value: wei,
         to: contractAddress,
-        data: encoded
+        data: encoded,
+        gasPrice: run_gas_price.toString()
     }
 
     
@@ -964,10 +1034,13 @@ class App extends Component {
     if (index > -1) { // only splice array when item is found
       clone[this.state.selected_e5].splice(index, 1); // 2nd parameter means remove one item only
     }
-    // console.log('------------------remove_account_from_contacts----------------------')
-    // console.log(clone)
     this.setState({contacts: clone, should_update_contacts_onchain: true})
     this.prompt_top_notification('Contact Deleted', 700)
+
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
   index_of(array, item){
@@ -1034,6 +1107,28 @@ class App extends Component {
       this.set_cookies_after_stack_action(stack_clone)
     }
   }
+
+  remove_account_from_blocked_accounts(item){
+    var clone = structuredClone(this.state.blocked_accounts)
+    const index = this.index_of(clone[this.state.selected_e5], item);
+    if (index > -1) { // only splice array when item is found
+      clone[this.state.selected_e5].splice(index, 1); // 2nd parameter means remove one item only
+    }
+    this.setState({blocked_accounts: clone, should_update_blocked_accounts_onchain: true})
+    this.prompt_top_notification('Blocked account removed', 1700)
+    
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+
+
+
+
+
+
 
 
 
@@ -2569,13 +2664,22 @@ class App extends Component {
 
 
   add_job_acceptance_action_to_stack(state_obj){
-    var stack_clone = this.state.stack_items.slice()      
-    stack_clone.push(state_obj)
-    this.setState({stack_items: stack_clone})
-    this.set_cookies_after_stack_action(stack_clone)
+    var contract = state_obj.application_item['contract']
+    if(contract['access_rights_enabled'] == true && (contract['my_interactable_time_value'] < Date.now()/1000 && !contract['moderators'].includes(this.state.user_account_id[contract['e5']]))){
+      this.prompt_top_notification('The contract owner hasnt granted you access to their contract yet', 4000)
+    }
+    else if(contract['my_blocked_time_value'] > Date.now()/1000){
+      this.prompt_top_notification('Your account was blocked from entering the contract', 4000)
+    }
+    else{
+      var stack_clone = this.state.stack_items.slice()      
+      stack_clone.push(state_obj)
+      this.setState({stack_items: stack_clone})
+      this.set_cookies_after_stack_action(stack_clone)
 
-    this.show_enter_contract_bottomsheet(state_obj.application_item['contract'])
-    this.open_view_application_contract_bottomsheet()
+      this.show_enter_contract_bottomsheet(state_obj.application_item['contract'])
+      this.open_view_application_contract_bottomsheet()
+    }
   }
 
 
@@ -3228,7 +3332,7 @@ class App extends Component {
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type: 'clear-purchase', entered_indexing_tags:['clear', 'finalize', 'purchase'], items_to_clear:[]}
+      var tx = {selected: 0, e5:state_obj.order_storefront['e5'], id: makeid(8), type: 'clear-purchase', entered_indexing_tags:['clear', 'finalize', 'purchase'], items_to_clear:[]}
       tx.items_to_clear.push(state_obj)
       stack.push(tx)
     }else{
@@ -3396,8 +3500,18 @@ class App extends Component {
   }
 
   add_job_request_action_to_stack(state_obj){
-    this.show_enter_contract_bottomsheet(state_obj.contract_data)
-    this.open_view_job_request_contract_bottomsheet()
+    var contract = state_obj.contract_data
+    if(contract['access_rights_enabled'] == true && (contract['my_interactable_time_value'] < Date.now()/1000 && !contract['moderators'].includes(this.state.user_account_id[contract['e5']]))){
+      this.prompt_top_notification('The contract owner hasnt granted you access to their contract yet', 4000)
+    }
+    else if(contract['my_blocked_time_value'] > Date.now()/1000){
+      this.prompt_top_notification('Your account was blocked from entering the contract', 4000)
+    }
+    else{
+      this.show_enter_contract_bottomsheet(state_obj.contract_data)
+      this.open_view_job_request_contract_bottomsheet()
+    }
+    
   }
 
 
@@ -3748,7 +3862,7 @@ class App extends Component {
     var images = this.state.view_images == null ? [] : this.state.view_images;
     var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
     return(
-      <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px'}}>
+      <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px', 'text-align':'center'}}>
         <SwipeableViews index={pos}>
           {images.map((item, index) => ( 
             <TransformWrapper>
@@ -3853,11 +3967,15 @@ class App extends Component {
     // });
 
     // var obj = {name:'hello world'}
-    // var cid = await this.store_data_in_nft_storage(JSON.stringify(obj))
+    // var cid = await this.store_data_in_web3(JSON.stringify(obj))
     // console.log('---------------------load_e5_data-------------------------------')
     // console.log(cid)
     // var data = await this.fetch_objects_data_from_nft_storage(cid)
     // console.log(data)
+    // const node = await IPFS.create()
+    // var data = node.cat(cid)
+    // console.log(data)
+
     this.get_browser_cache_size_limit()
     this.when_wallet_data_updated(['(32)'], 0, '', true)  
     
@@ -3887,11 +4005,14 @@ class App extends Component {
       gas: 50000,
       gasPrice: gasPrice.toString() // Adjust gas price as needed
     }).on('transactionHash', function (hash) {
+      me.start_get_accounts_data(false)
       me.prompt_top_notification('send complete!', 600)
+
     })
     .on('error', function (error) {
       console.error('Failed to send transaction:', error);
       if(error == 'Error: Invalid JSON RPC response: {}'){
+        me.start_get_accounts_data(false)
         me.prompt_top_notification('send complete!', 600)
       }else{
         me.prompt_top_notification('send failed, '+error, 6000)
@@ -4136,13 +4257,22 @@ class App extends Component {
     // console.log('-------------------------------fff-------------------------')
     // console.log(this.state.accounts)
 
-     web3.eth.getBalance(address_account.address).then(balance => {
+    web3.eth.getBalance(address_account.address).then(balance => {
       var clone = structuredClone(this.state.account_balance)
       clone[e5] = parseInt(balance)
       this.setState({account_balance: clone});
     }).catch(error => {
       console.error('Error:', error);
     });
+
+
+    var gasPrice = await web3.eth.getGasPrice();
+    var clone = structuredClone(this.state.gas_price)
+    clone[e5] = parseInt(gasPrice)
+    this.setState({gas_price: clone})
+    console.log('-----------------get_accounts_data------------------------')
+    console.log(e5,' gas price: ',gasPrice)
+
 
 
     if(is_syncing){
@@ -4153,49 +4283,40 @@ class App extends Component {
         this.setState({chain_id: clone});
       })
 
-      await web3.eth.net.getPeerCount().then(peers =>{
-        var clone = structuredClone(this.state.number_of_peers)
-        clone[e5] = peers
-        this.setState({ number_of_peers: clone});
-        this.inc_synch_progress()
-      })
+      var peers = await web3.eth.net.getPeerCount()
+      var clone = structuredClone(this.state.number_of_peers)
+      clone[e5] = parseInt(peers)
+      this.setState({ number_of_peers: clone});
+      console.log('number of peers: ', peers)
+      this.inc_synch_progress()
 
-      await web3.eth.net.getNetworkType().then(type =>{
-        var clone = structuredClone(this.state.network_type)
-        clone[e5] = type
-        this.setState({ network_type: clone});
-        this.inc_synch_progress()
-      })
-
-      var gasPrice = await web3.eth.getGasPrice();
-      var clone = structuredClone(this.state.gas_price)
-      clone[e5] = gasPrice
-      this.setState({gas_price: clone})
-      console.log('-----------------get_accounts_data------------------------')
-      console.log(e5,' gas price: ',gasPrice)
+      // await web3.eth.net.getNetworkType().then(type =>{
+      //   var clone = structuredClone(this.state.network_type)
+      //   clone[e5] = type
+      //   this.setState({ network_type: clone});
+      //   this.inc_synch_progress()
+      // })
 
 
 
-      await web3.eth.getBlockNumber().then(blockNumber => {
-          var last_blocks = [];
-          var start = blockNumber-100;
-          if(blockNumber < 100){
-            start = 0;
-          }
-          for (let i = start; i <= blockNumber; i++) {
-            web3.eth.getBlock(i).then(block => {
-              last_blocks.push(block);
-            })
-          }
+      var blockNumber = await web3.eth.getBlockNumber()
+      var last_blocks = [];
+      var start = parseInt(blockNumber)-100;
+      if(blockNumber < 100){
+        start = 0;
+      }
+      for (let i = start; i <= blockNumber; i++) {
+        var block = await web3.eth.getBlock(i)
+        last_blocks.push(block)
+      }
 
-          var last_blocks_clone = structuredClone(this.state.last_blocks)
-          last_blocks_clone[e5] = last_blocks
+      var last_blocks_clone = structuredClone(this.state.last_blocks)
+      last_blocks_clone[e5] = last_blocks
 
-          var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
-          number_of_blocks_clone[e5] = blockNumber
-          this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
-          this.inc_synch_progress()
-      });
+      var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
+      number_of_blocks_clone[e5] = blockNumber
+      this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
+      this.inc_synch_progress()
     }
 
 
@@ -4247,27 +4368,27 @@ class App extends Component {
     clone[e5] = events
     this.setState({E5_runs: clone});
 
+
+    var events = await contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest' }, (error, events) => {});
+
+    events = events.reverse()
+
+    var clone = structuredClone(this.state.all_E5_runs)
+    clone[e5] = events
+    this.setState({all_E5_runs: clone});
+
     if(is_syncing){
       this.inc_synch_progress()
     }
 
 
-    
 
-
-
-    /* ---------------------------------------- ALIAS DATA------------------------------------------- */
-    this.get_alias_data(E52contractInstance, e5, account);
-    // if(is_syncing){
-    //   this.inc_synch_progress()
-    // }
 
 
 
 
 
     /* ---------------------------------------- BALANCE DATA -------------------------------------- */
-
     var withdraw_balance = await contractInstance.methods.f167([account], [], 1).call((error, result) => {});
     var clone = structuredClone(this.state.withdraw_balance)
     clone[e5] = withdraw_balance[0]
@@ -4285,6 +4406,7 @@ class App extends Component {
     clone[e5] = E5_balance
     this.setState({E5_balance: clone})
     console.log('E5 balance: ',E5_balance)
+
 
     var end_balance_of_E5 = await this.get_balance_in_exchange(3, 2, e5, contract_addresses)
     var spend_balance_of_E5 = await this.get_balance_in_exchange(5, 2, e5, contract_addresses)
@@ -4306,7 +4428,7 @@ class App extends Component {
 
 
 
-    
+    /* ---------------------------------------- CONTACTS DATA------------------------------------------- */
     var contacts_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:1 } }, (error, events) => {});
 
     if(contacts_data.length > 0){
@@ -4323,7 +4445,9 @@ class App extends Component {
         existing_contacts = []
       }
       clone[e5] = this.combine_contacts(existing_contacts, contacts)
-      this.setState({contacts: clone})
+      if(!this.state.should_update_contacts_onchain){
+        this.setState({contacts: clone})
+      }
     }else{
       console.log('loaded no contacts')
       var clone = structuredClone(this.state.contacts)
@@ -4332,12 +4456,75 @@ class App extends Component {
         existing_contacts = []
       }
       clone[e5] = this.combine_contacts(existing_contacts, [])
-      this.setState({contacts: clone})
+      if(!this.state.should_update_contacts_onchain) this.setState({contacts: clone})
     }
 
     if(is_syncing){
       this.inc_synch_progress()
     }
+
+
+
+
+
+
+
+
+    /* ---------------------------------------- BLOCKED ACCOUNTS DATA ------------------------------------------- */
+    var blocked_contacts_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:2 } }, (error, events) => {});
+
+    if(blocked_contacts_data.length > 0){
+      var latest_event = blocked_contacts_data[blocked_contacts_data.length - 1];
+      var blocked_contacts_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var loaded_blocked_accounts = blocked_contacts_data['blocked_accounts']
+
+      console.log('loaded blocked accounts: ',loaded_blocked_accounts.length)
+      console.log(loaded_blocked_accounts)
+      
+      var clone = structuredClone(this.state.blocked_accounts)
+      var existing_blocked_accounts = clone[e5]
+      if(existing_blocked_accounts == null){
+        existing_blocked_accounts = []
+      }
+      clone[e5] = this.combine_contacts(existing_blocked_accounts, loaded_blocked_accounts)
+      if(!this.state.should_update_blocked_accounts_onchain){
+        this.setState({blocked_accounts: clone})
+        console.log('setting blocked accounts from chain')
+      }else{
+        console.log('not setting blocked accounts from chain')
+      }
+    }else{
+      console.log('loaded no blocked accounts')
+      var clone = structuredClone(this.state.blocked_accounts)
+      var existing_blocked_accounts = clone[e5]
+      if(existing_blocked_accounts == null){
+        existing_blocked_accounts = []
+      }
+      clone[e5] = this.combine_contacts(existing_blocked_accounts, [])
+      if(!this.state.should_update_blocked_accounts_onchain){
+        this.setState({blocked_accounts: clone})
+        console.log('setting blocked accounts from chain')
+      }else{
+        console.log('not setting blocked accounts from chain')
+      }
+    }
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
+
+
+
+
+    /* ---------------------------------------- ALIAS DATA------------------------------------------- */
+    this.get_alias_data(E52contractInstance, e5, account);
+    // if(is_syncing){
+    //   this.inc_synch_progress()
+    // }
 
 
 
@@ -4625,7 +4812,7 @@ class App extends Component {
       var my_blocked_time_value = await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {});
 
 
-      var subscription_object = {'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4}
+      var subscription_object = {'id':created_subscriptions[i], 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3}
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){}
       else if(my_blocked_time_value[0][0] > Date.now()/1000){}
@@ -4721,7 +4908,8 @@ class App extends Component {
       var my_blocked_time_value = await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {});
 
       var timestamp = event == null ? 0 : event.returnValues.p4
-      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactable_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0], 'e5':e5, 'timestamp':timestamp }
+      var author = event == null ? 0 : event.returnValues.p3
+      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactable_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0], 'e5':e5, 'timestamp':timestamp, 'author':author }
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
       }
@@ -4832,7 +5020,7 @@ class App extends Component {
         }
       }
 
-      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants, 'e5':e5, 'timestamp':event.returnValues.p5 }
+      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants, 'e5':e5, 'timestamp':event.returnValues.p5, 'author':event.returnValues.p3 }
 
       created_proposal_object_data.push(obj)
 
@@ -4915,7 +5103,8 @@ class App extends Component {
       var update_proportion_ratio_event_data = await H5contractInstance.getPastEvents('e2', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* exchange */: created_tokens[i] } }, (error, events) => {});
 
       var timestamp = event == null ? 0 : event.returnValues.p4
-      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data }
+      var author = event == null ? 0 : event.returnValues.p3
+      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author }
 
       if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
 
@@ -4981,7 +5170,7 @@ class App extends Component {
       var hash = web3.utils.keccak256('en')
       if(created_post_events[i].returnValues.p1.toString() == hash.toString()){
         var post_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
-        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':created_post_events[i].returnValues.p6})
+        created_posts.push({'id':id, 'ipfs':post_data, 'event': created_post_events[i], 'e5':e5, 'timestamp':created_post_events[i].returnValues.p6, 'author':created_post_events[i].returnValues.p5})
       }
 
       if(is_first_time){
@@ -5041,7 +5230,7 @@ class App extends Component {
 
         }
         else{
-          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0],'e5':e5, 'timestamp':created_channel_events[i].returnValues.p6 });
+          created_channel.push({'id':id, 'ipfs':channel_data, 'event': created_channel_events[i], 'messages':[], 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactible_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0],'e5':e5, 'timestamp':created_channel_events[i].returnValues.p6, 'author':created_channel_events[i].returnValues.p5 });
         }
       }
 
@@ -5070,7 +5259,7 @@ class App extends Component {
       var hash = web3.utils.keccak256('en')
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
         var job_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
-        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6}
+        var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6, 'author':created_job_events[i].returnValues.p5 }
         created_job.push(job)
         created_job_mappings[id] = job
       }
@@ -5149,7 +5338,7 @@ class App extends Component {
         }
       }
       var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
-      mail_activity[convo_id].push({'convo_id':convo_id,'id':cid, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_created_mail_events[i].returnValues.p6})
+      mail_activity[convo_id].push({'convo_id':convo_id,'id':cid, 'event':my_created_mail_events[i], 'ipfs':ipfs_obj, 'type':'sent', 'time':my_created_mail_events[i].returnValues.p6, 'convo_with':my_created_mail_events[i].returnValues.p1, 'sender':my_created_mail_events[i].returnValues.p2, 'recipient':my_created_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_created_mail_events[i].returnValues.p6, 'author':my_created_mail_events[i].returnValues.p2})
       
       if(is_first_time){
         var created_mail_clone = structuredClone(this.state.created_mail)
@@ -5185,7 +5374,7 @@ class App extends Component {
       }
       var ipfs_obj = await this.fetch_and_decrypt_ipfs_object(ipfs, e5)
       
-      var obj = {'convo_id':convo_id,'id':cid, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6}
+      var obj = {'convo_id':convo_id,'id':cid, 'event':my_received_mail_events[i], 'ipfs':ipfs_obj, 'type':'received', 'time':my_received_mail_events[i].returnValues.p6, 'convo_with':my_received_mail_events[i].returnValues.p2, 'sender':my_received_mail_events[i].returnValues.p2, 'recipient':my_received_mail_events[i].returnValues.p1, 'e5':e5, 'timestamp':my_received_mail_events[i].returnValues.p6, 'author':my_received_mail_events[i].returnValues.p2}
       mail_activity[convo_id].push(obj)
 
       if(is_first_time){
@@ -5215,7 +5404,7 @@ class App extends Component {
       if(created_store_events[i].returnValues.p1.toString() == hash.toString()){
         var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         if(data != null){
-          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':created_store_events[i].returnValues.p6}
+          var obj = {'id':id, 'ipfs':data, 'event': created_store_events[i], 'e5':e5, 'timestamp':created_store_events[i].returnValues.p6, 'author':created_store_events[i].returnValues.p5 }
           created_stores.push(obj)
           created_store_mappings[id] = obj
         }
@@ -5250,8 +5439,9 @@ class App extends Component {
     for(var i=0; i<created_bag_events.length; i++){
       var id = created_bag_events[i].returnValues.p1
       var data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+
       if(data != null){
-        created_bags.push({'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4})
+        created_bags.push({'id':id, 'ipfs':data, 'event': created_bag_events[i], 'e5':e5, 'timestamp':created_bag_events[i].returnValues.p4, 'author':created_bag_events[i].returnValues.p3})
       }
       if(is_first_time){
         var created_bags_clone = structuredClone(this.state.created_bags)
@@ -5278,7 +5468,7 @@ class App extends Component {
       if(created_contractor_events[i].returnValues.p1.toString() == hash.toString()){
         var contractor_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
         if(contractor_data != null){
-          created_contractor.push({'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6})
+          created_contractor.push({'id':id, 'ipfs':contractor_data, 'event': created_contractor_events[i], 'e5':e5, 'timestamp':created_contractor_events[i].returnValues.p6, 'author':created_contractor_events[i].returnValues.p5})
         }
       }
 
@@ -5751,7 +5941,7 @@ class App extends Component {
     var hash = web3.utils.keccak256(privateKey.toString()).slice(34)
     var private_key_to_use = Buffer.from(hash)
 
-    if(encrypted_ipfs_obj['recipient_data'] == null){
+    if(encrypted_ipfs_obj == null || encrypted_ipfs_obj['recipient_data'] == null){
       return null
     }
 
@@ -6036,10 +6226,10 @@ class App extends Component {
 
   add_account_to_contacts = async (account) => {
     if(this.check_for_duplicates(account)){
-      this.prompt_top_notification('A matching contact was found', 600)
+      this.prompt_top_notification('A matching contact was found', 2600)
       return
     }
-    this.prompt_top_notification('Adding account ID to Contacts...', 600)
+    this.prompt_top_notification('Adding account ID to Contacts...', 1600)
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
@@ -6047,6 +6237,9 @@ class App extends Component {
 
     var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
     var contacts_object_clone = structuredClone(this.state.contacts)
+    if(contacts_object_clone[this.state.selected_e5] == null){
+      contacts_object_clone[this.state.selected_e5] = []
+    }
     contacts_object_clone[this.state.selected_e5].push({'id':account.toString(), 'address':account_address.toString()})
 
     this.setState({contacts: contacts_object_clone, should_update_contacts_onchain: true})
@@ -6060,6 +6253,9 @@ class App extends Component {
 
   check_for_duplicates(account){
     var do_duplicates_exist = false
+    if(this.state.contacts[this.state.selected_e5] == null){
+      return do_duplicates_exist;
+    }
     this.state.contacts[this.state.selected_e5].forEach(contact => {
       if(contact['id'] == account){
         do_duplicates_exist = true
@@ -6067,7 +6263,7 @@ class App extends Component {
     });
     return do_duplicates_exist
   }
-
+ 
   get_post_award_data = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
@@ -6096,6 +6292,45 @@ class App extends Component {
     this.setState({award_data: clone})
   }
 
+
+  add_account_to_blocked_list = async (account) => {
+    if(this.check_for_blocked_duplicates(account)){
+      this.prompt_top_notification('A matching blocked account was found', 2600)
+      return
+    }
+    this.prompt_top_notification('Adding account ID to blocked list...', 1600)
+    const web3 = new Web3(this.get_selected_web3_url());
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_selected_E5_contract()
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+
+    var account_address = await contractInstance.methods.f289(account).call((error, result) => {});
+    var blocked_object_clone = structuredClone(this.state.blocked_accounts)
+    if(blocked_object_clone[this.state.selected_e5] == null){
+      blocked_object_clone[this.state.selected_e5] = []
+    }
+    blocked_object_clone[this.state.selected_e5].push({'id':account.toString(), 'address':account_address.toString()})
+
+    this.setState({blocked_accounts: blocked_object_clone, should_update_blocked_accounts_onchain: true})
+
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  check_for_blocked_duplicates(account){
+    var do_duplicates_exist = false
+    if(this.state.blocked_accounts[this.state.selected_e5] == null){
+      return do_duplicates_exist
+    }
+    this.state.blocked_accounts[this.state.selected_e5].forEach(contact => {
+      if(contact['id'] == account){
+        do_duplicates_exist = true
+      }
+    });
+    return do_duplicates_exist
+  }
   
 
 
@@ -6138,7 +6373,6 @@ class App extends Component {
     this.setState({contract_events: clone})
   }
 
-
   get_token_event_data = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const H52contractArtifact = require('./contract_abis/H52.json');
@@ -6162,7 +6396,6 @@ class App extends Component {
 
   }
 
-
   get_proposal_event_data = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const G52contractArtifact = require('./contract_abis/G52.json');
@@ -6182,7 +6415,6 @@ class App extends Component {
 
     this.setState({proposal_events: clone})
   }
-
 
   get_subscription_event_data = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -6210,7 +6442,6 @@ class App extends Component {
 
 
   }
-
 
   get_exchange_event_data = async (id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -6245,7 +6476,6 @@ class App extends Component {
 
     this.setState({exchange_events: clone});
   }
-
 
   get_accounts_token_event_data = async (exchange, id, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
@@ -6290,6 +6520,23 @@ class App extends Component {
     clone[id] = {'modify_moderator':modify_moderator_event_data, 'enable_interactible':enable_disable_interactible_checkers_event_data, 'add_interactible':add_interactible_account_event_data, 'block_account':block_accounts_event_data, 'revoke_privelages':revoke_author_privelages_event_data}
 
     this.setState({moderator_events: clone});
+  }
+
+
+
+
+  get_channel_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_channel_data = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: id } }, (error, events) => {});
+
+    var clone = structuredClone(this.state.channel_events)
+    clone[id] = {'channel_data':created_channel_data}
+
+    this.setState({channel_events: clone});
   }
 
 

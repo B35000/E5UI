@@ -1235,7 +1235,7 @@ class NewTokenPage extends Component {
     }
 
     get_account_suggestions(target_type){
-        var contacts = this.get_all_sorted_objects(this.props.app_state.contacts)
+        var contacts = this.props.app_state.contacts[this.state.e5]
         var return_array = []
 
         if(target_type == 'exchange_authority'){
@@ -1371,8 +1371,6 @@ class NewTokenPage extends Component {
                 <TextInput height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('moderator_id')}
-
-                <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
                     {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
                 </div>
@@ -1387,7 +1385,7 @@ class NewTokenPage extends Component {
     }
 
     when_add_moderator_button_tapped(){
-        var moderator_id = this.state.moderator_id.toString().trim()
+        var moderator_id = this.get_typed_alias_id(this.state.moderator_id.toString().trim())
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0 || moderator_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
@@ -1397,6 +1395,16 @@ class NewTokenPage extends Component {
             this.setState({moderators: moderators_clone});
             this.props.notify('added moderator!', 400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
     render_added_moderators(){
@@ -1414,12 +1422,12 @@ class NewTokenPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
-                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
-                                        </div>
+                                <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                        <img src={Letter} style={{ height: 30, width: 'auto' }} />
                                     </div>
-                                </li>
+                                </div>
+                            </li>
                         ))}
                     </ul>
                 </div>
@@ -1490,7 +1498,7 @@ class NewTokenPage extends Component {
     }
 
     when_add_interactible_button_tapped(){
-        var interactible_id = this.state.interactible_id.toString().trim()
+        var interactible_id = this.get_typed_alias_id(this.state.interactible_id.toString().trim())
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
             this.props.notify('please put a valid account id', 600)
         }
@@ -1500,6 +1508,16 @@ class NewTokenPage extends Component {
             this.setState({interactibles: interactibles_clone});
             this.props.notify('added interactible account!', 400)
         }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+
+        return id
     }
 
     render_set_interactible_accounts(){
@@ -1671,18 +1689,25 @@ class NewTokenPage extends Component {
     when_add_price_set(){
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
-        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify('please put a valid amount', 2600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 400)
+            this.props.notify('added price!', 1400)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
     }
 
     render_set_prices_list_part(){
@@ -1855,28 +1880,28 @@ class NewTokenPage extends Component {
         var symbol = this.state.entered_symbol_text;
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify('add some tags first!', 1700)
         }
         else if(title == ''){
-            this.props.notify('add a name first!', 700)
+            this.props.notify('add a name first!', 1700)
         }
         else if(symbol == ''){
-            this.props.notify('add a symbol first!', 700)
+            this.props.notify('add a symbol first!', 1700)
         }
         else if(title.length > 10){
-            this.props.notify('that name is too long', 700)
+            this.props.notify('that name is too long', 1700)
         }
         else if(title.includes(' ') || title == 'END' || title == 'SPEND'){
-            this.props.notify('that name is invalid', 700)
+            this.props.notify('that name is invalid', 1700)
         }
         else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND'){
-            this.props.notify('that symbol is invalid', 700)
+            this.props.notify('that symbol is invalid', 1700)
         }
         else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null){
-            this.props.notify('that symbol is already in use', 700)
+            this.props.notify('that symbol is already in use', 1700)
         }
         else if(symbol.length > 6){
-            this.props.notify('that symbol is too long', 700)
+            this.props.notify('that symbol is too long', 1700)
         }
         else{
             this.props.when_add_new_object_to_stack(this.state)
