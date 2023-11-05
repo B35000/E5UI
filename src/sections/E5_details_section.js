@@ -29,7 +29,7 @@ class E5DetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','details','transactions'],[0]
+              ['or','',0], ['e','details'],[0]
           ],
         }
     }
@@ -101,7 +101,7 @@ class E5DetailsSection extends Component {
         }else if(selected_item == 'transactions'){
             return(
                 <div>
-                    {this.render_e5_block_history_logs(obj)}
+                    
                 </div>
             )
             

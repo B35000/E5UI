@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
+import NumberPicker from '../../components/number_picker';
+
 import Letter from '../../assets/letter.png';
 import E5EmptyIcon from '../../assets/e5empty_icon.png';
 import E5EmptyIcon3 from '../../assets/e5empty_icon3.png';
@@ -41,7 +43,7 @@ class NewContractorPage extends Component {
         get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[], e5: this.props.app_state.selected_e5
+        entered_objects:[], e5: this.props.app_state.selected_e5, exchange_id:'', price_amount:0, price_data:[]
     };
 
     get_new_contractor_page_tags_object(){
@@ -82,7 +84,7 @@ class NewContractorPage extends Component {
     }
 
     set(){
-        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object()})
+        // this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object()})
     }
 
     render(){
@@ -101,7 +103,7 @@ class NewContractorPage extends Component {
                 </div>
                 
                 <div style={{'margin':'0px 0px 0px 0px'}}>
-                    {this.render_everything()}   
+                    {this.render_everything()}
                 </div>
             </div>
         )
@@ -133,6 +135,13 @@ class NewContractorPage extends Component {
             return(
                 <div>
                     {this.render_enter_image_part()}
+                </div>
+            )
+        }
+        else if(selected_item == 'rates'){
+            return(
+                <div>
+                    {this.render_rates_part()}
                 </div>
             )
         }
@@ -558,6 +567,231 @@ class NewContractorPage extends Component {
 
 
 
+
+
+
+
+    render_rates_part(){
+        var height = this.props.height-150
+        return(
+            <div style={{overflow: 'auto', maxHeight: height}}>
+                {this.render_set_token_and_amount_part()}
+                <div style={{height: 20}}/>
+                {this.render_set_prices_list_part()}
+            </div>
+        )
+    }
+
+
+    render_set_token_and_amount_part(){
+        return(
+            <div style={{'overflow-x':'hidden'}}>
+                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id', 'size':'l'})}
+
+                <div style={{height:10}}/>
+                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+
+                {this.load_token_suggestions('exchange_id')}
+
+                {this.render_detail_item('3', {'title':'Fee per Hour', 'details':'Set your desired fee per hour', 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Fee per Hour', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
+                    {this.render_detail_item('5', {'text':'Add Fee', 'action':''})}
+                </div>
+            </div>
+        )
+    }
+
+    when_exchange_id_input_field_changed(text){
+        this.setState({exchange_id: text})
+    }
+
+    when_price_amount(amount){
+        this.setState({price_amount: amount})
+    }
+
+    when_add_price_set(){
+        var exchange_id = this.state.exchange_id.trim()
+        var amount = this.state.price_amount
+        if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
+            this.props.notify('please put a valid exchange id', 2600)
+        }
+        else if(amount == 0){
+            this.props.notify('please put a valid amount', 2600)
+        }
+        else{
+            var price_data_clone = this.state.price_data.slice()
+            price_data_clone.push({'id':exchange_id, 'amount':amount})
+            this.setState({price_data: price_data_clone, exchange_id:'', price_amount:0});
+            this.props.notify('added amount!', 1000)
+        }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
+    }
+
+    render_set_prices_list_part(){
+        var middle = this.props.height-300;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.price_data)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.reverse().map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+    when_amount_clicked(item){
+        var cloned_array = this.state.price_data.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        this.setState({price_data: cloned_array})
+    }
+
+
+    load_token_suggestions(target_type){
+        var items = [].concat(this.get_suggested_tokens())
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_tokens(){
+        var items = [
+            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+        ];
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
+        var sorted_token_exchange_data = []
+        // var myid = this.props.app_state.user_account_id
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            var exchange_e5 = exchanges_from_sync[i]['e5']
+            var myid = this.props.app_state.user_account_id[exchange_e5]
+            var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
+            if(author_account == myid.toString()){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+        sorted_token_exchange_data.reverse()
+        for (let i = 0; i < exchanges_from_sync.length; i++) {
+            if(!sorted_token_exchange_data.includes(exchanges_from_sync[i]) && exchanges_from_sync[i]['balance'] != 0 && exchanges_from_sync[i]['event'] != null){
+                sorted_token_exchange_data.push(exchanges_from_sync[i])
+            }
+        }
+
+        for (let i = 0; i < sorted_token_exchange_data.length; i++) {
+            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+        }
+
+        return items;
+    }
+
+    when_price_suggestion_clicked(item, pos, target_type){
+        this.setState({exchange_id: item['id']})
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
@@ -600,6 +834,104 @@ class NewContractorPage extends Component {
             </div>
         )
 
+    }
+
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
+    calculate_bar_width(amount){
+        var figure = ''
+        if(amount == null){
+            amount = 0
+        }
+        if(amount < bigInt('1e9')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
+        }
+        else if(amount < bigInt('1e18')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
+        }
+        else if(amount < bigInt('1e36')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
+        }
+        else{
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
+        }
+
+        return figure+'%'
+    }
+
+    format_power_figure(amount){
+        var power = 'e72'
+        if(amount < bigInt('1e9')){
+            power = 'e9'
+        }
+        else if(amount < bigInt('1e18')){
+            power = 'e18'
+        }
+        else if(amount < bigInt('1e36')){
+            power = 'e36'
+        }
+        else{
+            power = 'e72'
+        }
+        return power
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ ' sec'
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + ' min' 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + ' hr' + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + ' dy' + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + ' wk' + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + ' yr' + s;
+        }
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
     }
 
 

@@ -328,9 +328,11 @@ class home_page extends Component {
         var overlay_shadow_color = this.props.theme['send_receive_ether_overlay_shadow'];
         var size = this.props.screensize;
         return(
-        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
-            <div style={{ height: this.props.height, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px', 'border-width': '1px', 'box-shadow': '0px 0px 2px 1px #CECDCD','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                {this.render_post_detail_object(size)}
+        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
+            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 10px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                <div style={{}}>
+                    {this.render_post_detail_object(size)}
+                </div>
             </div>
         </SwipeableBottomSheet>
         )
@@ -411,7 +413,7 @@ class home_page extends Component {
             var me = this;
             setTimeout(function() {
                 me.update_scroll_position()
-            }, (1 * 50));
+            }, (1 * 10));
         }
     }
 
@@ -570,13 +572,12 @@ class home_page extends Component {
         var me = this;
         setTimeout(function() {
             me.update_scroll_position()
-        }, (1 * 50));
+        }, (1 * 10));
     }
 
     
     set_page_scroll(pos){
         if(this.page_scroll_data == null) this.page_scroll_data = {}
-        console.log('setting pos: ', pos)
         if(this.state.page == '?'){
             var selected_item = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
             var id = this.state.work_page_tags_object['i'].active + selected_item
@@ -611,7 +612,6 @@ class home_page extends Component {
                 this.page_scroll_data[id] = pos
             }
         }
-        console.log(this.page_scroll_data)
     }
 
     update_scroll_position(){
@@ -626,7 +626,6 @@ class home_page extends Component {
            
             var selected_tag = this.state.work_page_tags_object['i'].active
             if(selected_tag == 'e' || selected_tag == 'jobs'){
-                console.log('updating scroll pos: ',scroll_pos)
                 if(this.list_section.current != null){
                     this.list_section.current?.set_jobs_list(scroll_pos)
                 }

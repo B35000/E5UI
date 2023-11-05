@@ -181,8 +181,6 @@ class GiveAwardPage extends Component {
                 {this.render_detail_item('3', {'title':'Award Tiers', 'details':'Pick an award tier you wish to send to the post author', 'size':'l'})}
                 {this.load_award_tiers()}
 
-                {this.render_detail_item('0')}
-
                 {this.render_detail_item('3', {'title':'Total Amount', 'details':'The total amount of SPEND youll be including in the award', 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -193,7 +191,7 @@ class GiveAwardPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Spend Balance', 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Spend Balance', 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
 
                 {this.render_detail_item('0')}

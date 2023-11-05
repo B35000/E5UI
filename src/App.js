@@ -3865,12 +3865,12 @@ class App extends Component {
       <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px', 'text-align':'center'}}>
         <SwipeableViews index={pos}>
           {images.map((item, index) => ( 
-            <TransformWrapper>
-              <TransformComponent>
-                <img src={item} style={{height:'auto',width:'100%'}} />
-              </TransformComponent>
-            </TransformWrapper>
-            
+            // <TransformWrapper>
+            //   <TransformComponent>
+            //     <img src={item} style={{height:'auto',width:'100%'}} />
+            //   </TransformComponent>
+            // </TransformWrapper>
+            <img src={item} style={{height:'auto',width:'100%'}} />
           ))}
         </SwipeableViews>
       </div> 
@@ -6229,6 +6229,13 @@ class App extends Component {
       this.prompt_top_notification('A matching contact was found', 2600)
       return
     }
+
+    var me = this.state.user_account_id[this.state.selected_e5]
+    if(account == me){
+      this.prompt_top_notification('You cant add yourself!', 2600)
+      return
+    }
+
     this.prompt_top_notification('Adding account ID to Contacts...', 1600)
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
@@ -6296,6 +6303,11 @@ class App extends Component {
   add_account_to_blocked_list = async (account) => {
     if(this.check_for_blocked_duplicates(account)){
       this.prompt_top_notification('A matching blocked account was found', 2600)
+      return
+    }
+    var me = this.state.user_account_id[this.state.selected_e5]
+    if(account == me){
+      this.prompt_top_notification('You cant block yourself!', 2600)
       return
     }
     this.prompt_top_notification('Adding account ID to blocked list...', 1600)

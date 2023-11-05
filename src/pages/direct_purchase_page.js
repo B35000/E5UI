@@ -100,7 +100,7 @@ class DirectPurchasetPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':'Amount in '+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
                     </div>
 
-                    <NumberPicker number_limit={this.get_variant_supply()} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/>
                     <div style={{height:10}}/>
 
                     {this.render_set_storefront_prices_list_part()}
@@ -325,7 +325,10 @@ class DirectPurchasetPage extends Component {
             this.props.notify('pick one variant first', 500)
         }
         else if(this.state.purchase_unit_count == 0){
-            this.props.notify('you cant buy zero units', 1200)
+            this.props.notify('please specify an amount of the item your adding', 2200)
+        }
+        else if(this.state.purchase_unit_count > this.get_variant_supply()){
+            this.props.notify('the most you can add is '+this.format_account_balance_figure(this.get_variant_supply())+' '+this.get_composition_type())
         }
         else if(this.state.fulfilment_location.trim() == ''){
             this.props.notify('please specify a shipping adress', 2200)
@@ -338,6 +341,13 @@ class DirectPurchasetPage extends Component {
             this.setState({purchase_unit_count:1, selected_variant:null, fulfilment_location:''})
             this.props.notify('Transaction added to Stack', 700)
         }
+    }
+
+    get_composition_type(){
+        var object = this.state.storefront_item
+        var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
+
+        return composition_type
     }
 
 

@@ -43,7 +43,7 @@ class NewStorefrontItemPage extends Component {
         entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object()
+        purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(),
     };
 
     get_new_job_page_tags_object(){
@@ -132,9 +132,32 @@ class NewStorefrontItemPage extends Component {
     }
 
 
+    get_storefront_item_listing_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', 'listed', 'delisted'], [1]
+            ],
+        };
+    }
+
+    get_storefront_item_in_stock_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', 'in-stock', 'out-of-stock'], [1]
+            ],
+        };
+    }
+
+
     
     set(){
-        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object()})
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(),})
     }
 
 
@@ -155,7 +178,6 @@ class NewStorefrontItemPage extends Component {
                     </div>
                 </div>
                 
-                
                 <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
@@ -164,7 +186,7 @@ class NewStorefrontItemPage extends Component {
         )
     }
 
-     when_new_job_page_tags_updated(tag_group){
+    when_new_job_page_tags_updated(tag_group){
         this.setState({get_new_job_page_tags_object: tag_group})
     }
 
@@ -233,6 +255,7 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
 
                 <Tags page_tags_object={this.state.composition_type} tag_size={'l'} when_tags_updated={this.when_composition_type_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
 
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Set denomination: '+selected_composition})}
 
@@ -249,6 +272,8 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
                 <TextInput height={70} placeholder={'Location Details...'} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
                 <div style={{height:10}}/>
+
+
 
 
                 {this.render_detail_item('0')}
@@ -276,6 +301,27 @@ class NewStorefrontItemPage extends Component {
 
 
 
+
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Product Listing', 'details':'If set to delisted, the item will not be visible for purchasing', 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+                
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Product Stock', 'details':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.get_storefront_item_in_stock_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_in_stock_option_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Fulfilment Accounts', 'details':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients', 'size':'l'})}
 
@@ -292,8 +338,6 @@ class NewStorefrontItemPage extends Component {
 
 
 
-            
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Direct Purchase Shipping Fee', 'details':'The shipping fee you charge for shipping your item when directly purchased by your clients', 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -333,6 +377,14 @@ class NewStorefrontItemPage extends Component {
 
     when_chatroom_enabled_tags_object_updated(tag_obj){
         this.setState({chatroom_enabled_tags_object: tag_obj})
+    }
+
+    when_get_storefront_item_listing_option_updated(tag_obj){
+        this.setState({get_storefront_item_listing_option: tag_obj})
+    }
+
+    when_get_storefront_item_in_stock_option_updated(tag_obj){
+        this.setState({get_storefront_item_in_stock_option: tag_obj})
     }
 
 
@@ -438,7 +490,7 @@ class NewStorefrontItemPage extends Component {
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_price_suggestion_clicked(item)}>
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_fulfilment_account_clicked(item)}>
                             {this.render_detail_item('3', {'title':item, 'details':'Account', 'size':'s'})}
                         </li>
                     ))}

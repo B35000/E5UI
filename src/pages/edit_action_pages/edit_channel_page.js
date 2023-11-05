@@ -46,7 +46,7 @@ class NewChannelPage extends Component {
 
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
-        moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], e5: this.props.app_state.selected_e5
+        moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], e5: this.props.app_state.selected_e5, get_channel_locked_tag_setting_object: this.get_channel_locked_tag_setting_object()
     };
 
     get_new_job_page_tags_object(){
@@ -111,9 +111,20 @@ class NewChannelPage extends Component {
         };
     }
 
+    get_channel_locked_tag_setting_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','unlocked', 'locked'], [1]
+            ],
+        };
+    }
+
 
     set_edit_data(){
-        this.setState({type: 'edit-channel', get_new_job_page_tags_object: this.get_new_job_page_tags_object()})
+        this.setState({type: 'edit-channel', get_new_job_page_tags_object: this.get_new_job_page_tags_object(), get_channel_locked_tag_setting_object:this.get_channel_locked_tag_setting_object()})
     }
 
 
@@ -239,6 +250,13 @@ class NewChannelPage extends Component {
 
                 {/* {this.render_detail_item('0')} */}
                 {/* {this.render_subscription_authority_target()} */}
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':'Lock Channel', 'details':'If set to locked, activity will be restricted to existing participants of the channel.', 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.get_channel_locked_tag_setting_object} tag_size={'l'} when_tags_updated={this.when_get_channel_locked_tag_setting_object.bind(this)} theme={this.props.theme}/>
+
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Channel'})}
@@ -260,6 +278,10 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_channel_locked_tag_setting_object(tag_obj){
+        this.setState({get_channel_locked_tag_setting_object: tag_obj})
     }
 
     when_title_text_input_field_changed(text){

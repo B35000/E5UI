@@ -395,7 +395,7 @@ class StackPage extends Component {
     }
 
     render_run_history_items(){
-         var background_color = this.props.theme['card_background_color']
+        var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var middle = this.props.height-100;
         var size = this.props.size;
@@ -411,9 +411,10 @@ class StackPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
                             </li>
@@ -478,6 +479,7 @@ class StackPage extends Component {
     }
 
     render_stack_transactions_part(){
+        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-130;
         var size = this.props.size;
         if(size == 'm'){
@@ -492,9 +494,10 @@ class StackPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:40 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
                             </li>
@@ -3860,11 +3863,33 @@ class StackPage extends Component {
 
                 {this.render_detail_item('0')}
                 {this.render_my_account_id()}
+                <div style={{height:10}}/>
+
+                {this.render_picked_alias_if_any()}
                 
                 <div style={{height:10}}/>
                 {this.render_users_aliases()}
             </div>
         )
+    }
+
+    render_picked_alias_if_any(){
+        var stack = this.props.app_state.stack_items
+        var picked_alias = ''
+        for(var i=0; i<stack.length; i++){
+            if(stack[i].type == 'alias'){
+                picked_alias = stack[i].alias
+                break;
+            }
+        }
+
+        if(picked_alias != ''){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':picked_alias, 'details':'Stacked Alias', 'size':'l'})}
+                </div>
+            )
+        }
     }
 
     when_typed_alias_changed(text){

@@ -724,7 +724,7 @@ class NewContractorPage extends Component {
         )
     }
 
-   get_suggested_tokens(){
+    get_suggested_tokens(){
         var items = [
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},

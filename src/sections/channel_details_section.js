@@ -235,6 +235,9 @@ class ChannelDetailsSection extends Component {
                     {this.render_item_data(items, object)}
                     {this.render_item_images(object)}
 
+                    <div style={{height: 10}}/>
+                    {this.render_chatroom_enabled_message(object)}
+                    <div style={{height: 10}}/>
                     {this.show_channel_transaction_count_chart(object)}
 
                     {this.render_revoke_author_privelages_event(object)}
@@ -249,6 +252,24 @@ class ChannelDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_chatroom_enabled_message(object){
+        var channel_lock = object['ipfs'].get_channel_locked_tag_setting_object == null ? 'unlocked' : this.get_selected_item(object['ipfs'].get_channel_locked_tag_setting_object, 'e')
+
+        if(channel_lock == 'locked'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Channel Locked', 'details':'Channel activity has been restricted to existing participants', 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Channel Unlocked', 'details':'Channel activity is not restricted to existing participants', 'size':'l'})}
+                </div>
+            )
+        }
     }
 
     get_senders_name(sender, object){
@@ -351,7 +372,7 @@ class ChannelDetailsSection extends Component {
         // var object = this.get_channel_items()[this.props.selected_channel_item];
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
-        if(object['event'].returnValues.p5 == my_account){
+        if(object['moderators'].includes(my_account) || object['event'].returnValues.p5 == my_account){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -421,7 +442,7 @@ class ChannelDetailsSection extends Component {
         var events = this.props.app_state.channel_events[object['id']]
         if(events != null){
             events = events['channel_data']
-            if(events.length > 0){
+            if(events.length > 35){
                 var amount = events.length
                 return(
                     <div>
@@ -1086,14 +1107,52 @@ class ChannelDetailsSection extends Component {
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(access_rights_setting == true && (object['my_interactible_time_value'] < Date.now()/1000 && !object['moderators'].includes(my_account)) ){
-            this.props.notify('You cant do that. The channel is access restricted', 600)
+            this.props.notify('You cant do that. The channel is access restricted', 3600)
             return false
         }
         else if(object['my_blocked_time_value'] > Date.now()/1000){
-            this.props.notify('You cant do that. Youve been blocked from the channel for '+(this.get_time_diff(object['my_blocked_time_value'] - Date.now()/1000)), 600)
+            this.props.notify('You cant do that. Youve been blocked from the channel for '+(this.get_time_diff(object['my_blocked_time_value'] - Date.now()/1000)), 3600)
             return false
         }
+        
+        var channel_lock = object['ipfs'].get_channel_locked_tag_setting_object == null ? 'unlocked' : this.get_selected_item(object['ipfs'].get_channel_locked_tag_setting_object, 'e')
+
+        if(channel_lock == 'locked'){
+            var participants = this.get_channel_participants(object)
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(!participants.includes(me)){
+                this.props.notify('The channel has been locked by its moderators', 3500)
+                return false
+            }
+        }
+
         return true
+    }
+
+    
+
+    get_channel_participants(object){
+        var items = this.get_convo_messages(object)
+        var participants = []
+
+        if(!participants.includes(object['event'].returnValues.p5)){
+            participants.push(object['event'].returnValues.p5)
+        }
+
+        items.forEach(message => {
+            if(!participants.includes(message['sender'])){
+                participants.push(message['sender'])
+            }
+        });
+
+        var mods = object['moderators'] == null ? [] : object['moderators']
+        mods.forEach(mod => {
+            if(!participants.includes(mod)){
+                participants.push(mod)
+            }
+        })
+        return participants;
     }
 
 

@@ -1224,7 +1224,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_storefront_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || !this.is_item_listed(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1262,6 +1262,18 @@ class PostListSection extends Component {
 
     when_storefront_item_clicked(index, object){
         this.props.when_storefront_post_item_clicked(index, object['id'], object['e5'])
+    }
+
+    is_item_listed(object){
+        if(object['ipfs'].get_storefront_item_listing_option == null) return true
+
+        var selected_option = this.get_selected_item(object['ipfs'].get_storefront_item_listing_option, 'e')
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1
+        if(selected_option == 'delisted' && object['event'].returnValues.p5 != myid){
+            return false
+        }
+        return true
     }
 
 
@@ -1664,7 +1676,6 @@ class PostListSection extends Component {
                         <img src={Letter} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                     </div>
-                    
                 </div>
             );
     }

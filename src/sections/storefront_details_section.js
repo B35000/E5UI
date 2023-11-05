@@ -218,7 +218,10 @@ class StorefrontDetailsSection extends Component {
                     {this.render_item_data(items)} 
                     {this.render_item_images(object)}
 
-                    {this.render_detail_item('3', {'title':variants.length+' variants', 'details':'To choose from.', 'size':'l'})}                   
+                    {this.render_detail_item('3', {'title':variants.length+' variants', 'details':'To choose from.', 'size':'l'})}   
+                    
+                    <div style={{height: 10}}/>
+                    {this.render_out_of_stock_message_if_any(object)}                
 
                     {this.render_add_to_bag_button(object)}
                     {this.render_direct_purchase_button(object)}
@@ -297,24 +300,48 @@ class StorefrontDetailsSection extends Component {
         }
     }
 
-    render_add_to_bag_button(object){
-        return(
-            <div>
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Add the item to your shopping bag', 'title':'Add to Bag'})}
-                <div style={{height:10}}/>
-                <div onClick={()=> this.open_add_to_bag(object)}>
-                    {this.render_detail_item('5', {'text':'Add to Bag', 'action':''},)}
+    render_out_of_stock_message_if_any(object){
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 'in-stock' : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+
+        if(item_in_stock == 'in-stock'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'In Stock', 'details':'The item is available for purchasing.', 'size':'l'})}
                 </div>
-            </div>
-        )
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Out of Stock', 'details':'The item is not available for purchasing.', 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    render_add_to_bag_button(object){
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 'in-stock' : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+        
+        if(item_in_stock == 'in-stock'){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Add the item to your shopping bag', 'title':'Add to Bag'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=> this.open_add_to_bag(object)}>
+                        {this.render_detail_item('5', {'text':'Add to Bag', 'action':''},)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_direct_purchase_button(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item];
         var direct_purchase_option = object['ipfs'].purchase_option_tags_object == null ? 'disabled' : this.get_selected_item(object['ipfs'].purchase_option_tags_object, 'e')
 
-        if(direct_purchase_option == 'enabled'){
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 'in-stock' : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+
+        if(direct_purchase_option == 'enabled' && item_in_stock == 'in-stock'){
             return(
                 <div>
                     {this.render_detail_item('0')}
