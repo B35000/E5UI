@@ -45,6 +45,10 @@ class NewStorefrontItemPage extends Component {
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
         purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', target_receiver:'', shipping_price_amount:0, shipping_exchange_id: '', shipping_price_data:[], visibility_tags_object: this.get_visibility_tags_object(), fulfilment_accounts:[], fulfilment_account:'', e5: this.props.app_state.selected_e5, chatroom_enabled_tags_object:this.get_chatroom_enabled_tags_object(),
         get_storefront_item_listing_option:this.get_storefront_item_listing_option(), get_storefront_item_in_stock_option:this.get_storefront_item_in_stock_option(),
+
+        content_channeling_setting: this.props.app_state.content_channeling, 
+        device_language_setting: this.props.app_state.device_language, 
+        device_country: this.props.app_state.device_country
     };
 
     get_new_job_page_tags_object(){
@@ -1588,9 +1592,14 @@ class NewStorefrontItemPage extends Component {
             this.props.notify('you should set some fulfilment accounts for your item', 2700)
         }
         else{
-            
             var data = this.state;
-            this.props.when_add_new_object_to_stack(data)
+            var me = this
+            var state_clone = structuredClone(me.state)
+            state_clone.content_channeling_setting = me.props.app_state.content_channeling
+            state_clone.device_language_setting = me.props.app_state.device_language
+            state_clone.device_country = me.props.app_state.device_country
+            state_clone.e5 = me.props.app_state.selected_e5
+            this.props.when_add_new_object_to_stack(state_clone)
 
             this.setState({
                 id: makeid(8), type:'storefront-item',

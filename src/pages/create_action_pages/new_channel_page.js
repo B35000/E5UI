@@ -47,6 +47,10 @@ class NewChannelPage extends Component {
         new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
+
+        content_channeling_setting: this.props.app_state.content_channeling, 
+        device_language_setting: this.props.app_state.device_language, 
+        device_country: this.props.app_state.device_country
     };
 
     get_new_job_page_tags_object(){
@@ -132,7 +136,7 @@ class NewChannelPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-100}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -223,7 +227,7 @@ class NewChannelPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 10px 0px 10px'}}>
+            <div style={{'padding':'0px 0px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Channel'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -1032,7 +1036,13 @@ class NewChannelPage extends Component {
             
             var me = this;
             setTimeout(function() {
-                me.props.when_add_new_object_to_stack(me.state)
+                var state_clone = structuredClone(me.state)
+                state_clone.content_channeling_setting = me.props.app_state.content_channeling
+                state_clone.device_language_setting = me.props.app_state.device_language
+                state_clone.device_country = me.props.app_state.device_country
+                state_clone.e5 = me.props.app_state.selected_e5
+
+                me.props.when_add_new_object_to_stack(state_clone)
         
                 me.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
             }, (1 * 1000));

@@ -29,7 +29,7 @@ class E5DetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','details'],[0]
+              ['xor','',0], ['e','details'],[1]
           ],
         }
     }
@@ -64,18 +64,13 @@ class E5DetailsSection extends Component {
     render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
-        var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
         return(
-            <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
+            </div>
         );
     }
 
@@ -91,6 +86,14 @@ class E5DetailsSection extends Component {
     render_e5_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_e5_list_detail_tags_object, this.state.navigate_view_e5_list_detail_tags_object['i'].active)
         var obj = this.get_item_in_array(this.get_e5_data(), this.props.selected_e5_item)
+
+        if(obj == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }
 
         if(selected_item == 'details' || selected_item == 'e'){
             return(
@@ -858,12 +861,14 @@ class E5DetailsSection extends Component {
         var factor = Math.round(data.length/noOfDps) +1;
         // var noOfDps = data.length
         var largest_number = this.get_withdraw_amount_interval_figure(events)
+        var recorded = false
         for(var i = 0; i < noOfDps; i++) {
             yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
             // yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && !recorded){
+                    recorded = true
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
@@ -945,6 +950,7 @@ class E5DetailsSection extends Component {
         var factor = Math.round(data.length/noOfDps) +1;
         // var noOfDps = data.length
         var largest_number = this.get_deposit_amount_interval_figure(events)
+        var recorded = false;
         for(var i = 0; i < noOfDps; i++) {
             yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
             // yVal = data[factor * xVal]
@@ -952,7 +958,8 @@ class E5DetailsSection extends Component {
 
             
             if(yVal != null && data[factor * xVal] != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && !recorded){
+                    recorded = true
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
                 }else{
                     dps.push({x: xVal, y: yVal});//

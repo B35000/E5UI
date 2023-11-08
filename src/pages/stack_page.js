@@ -45,6 +45,9 @@ class StackPage extends Component {
         get_selected_storage_tags_object: this.get_selected_storage_tags_object(),
         get_refresh_speed_tags_object: this.get_refresh_speed_tags_object(),
         get_masked_data_tags_object: this.get_masked_data_tags_object(),
+        get_content_channeling_object: this.get_content_channeling_object(),
+        get_content_language_object: this.get_content_language_object(),
+        get_content_filtered_setting_object: this.get_content_filtered_setting_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -257,6 +260,136 @@ class StackPage extends Component {
 
 
 
+
+    get_content_channeling_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','local','language','international'], [this.get_content_channeling_option()]
+            ],
+        };
+    }
+
+    get_content_channeling_option(){
+        if(this.props.app_state.content_channeling == 'local'){
+            return 1
+        }
+        else if(this.props.app_state.content_channeling == 'language'){
+            return 2
+        }
+        else if(this.props.app_state.content_channeling == 'international'){
+            return 3
+        }
+        return 1;
+    }
+
+    set_content_channeling_tags(){
+        this.setState({get_content_channeling_object: this.get_content_channeling_object(),})
+    }
+
+
+
+
+
+    get_content_language_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e'].concat(this.get_languages()), [this.get_content_language_option()]
+            ],
+        };
+    }
+
+    get_languages(){
+        var languages = ['ar'/* arabic */, 'de'/* german */, 'en'/* english */, 'es'/* spanish */, 'fr'/* french */, 'hi'/* hindi */, 'ja'/* japanese */, 'ko'/* korean */,'pt'/* portuguese */, 'ru'/* russian */, 'sw'/* swahili */, 'tr'/* turkish */, 'zh'/* chinese */]
+        return languages
+    }
+
+    get_content_language_option(){
+        if(this.props.app_state.device_language == 'ar'){
+            return 1
+        }
+        else if(this.props.app_state.device_language == 'de'){
+            return 2
+        }
+        else if(this.props.app_state.device_language == 'en'){
+            return 3
+        }
+        else if(this.props.app_state.device_language == 'es'){
+            return 4
+        }
+        else if(this.props.app_state.device_language == 'fr'){
+            return 5
+        }
+        else if(this.props.app_state.device_language == 'hi'){
+            return 6
+        }
+        else if(this.props.app_state.device_language == 'ja'){
+            return 7
+        }
+        else if(this.props.app_state.device_language == 'ko'){
+            return 8
+        }
+        else if(this.props.app_state.device_language == 'pt'){
+            return 9
+        }
+        else if(this.props.app_state.device_language == 'ru'){
+            return 10
+        }
+        else if(this.props.app_state.device_language == 'sw'){
+            return 11
+        }
+        else if(this.props.app_state.device_language == 'tr'){
+            return 12
+        }
+        else if(this.props.app_state.device_language == 'zh'){
+            return 13
+        }
+        return 1;
+    }
+
+    set_content_language_tags(){
+        this.setState({get_content_language_object: this.get_content_language_object(),})
+    }
+
+
+
+
+
+    get_content_filtered_setting_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','all', 'filtered'], [this.get_content_filter_settings_option()]
+            ],
+        };
+    }
+
+
+    get_content_filter_settings_option(){
+        if(this.props.app_state.section_tags_setting == 'all'){
+            return 1
+        }
+        else if(this.props.app_state.section_tags_setting == 'filtered'){
+            return 2
+        }
+        return 1
+    }
+
+    set_content_filter_settings_tags(){
+        this.setState({get_content_filtered_setting_object: this.get_content_filtered_setting_object(),})
+    }
+
+
+
+   
+
     get_wallet_thyme_tags_object(){
         return{
             'i':{
@@ -272,12 +405,25 @@ class StackPage extends Component {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     render(){
         return(
-            <div style={{'margin':'10px 10px 0px 10px'}}>
+            <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
                 <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme}/>
                 
-                <div style={{'margin':'10px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-100}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -595,6 +741,7 @@ class StackPage extends Component {
         return sum
     }
 
+    //here
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
         var state_data = localStorage.getItem("state") == null ? "":localStorage.getItem("state")
@@ -625,7 +772,7 @@ class StackPage extends Component {
                 </div>
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {/* <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
                      */}
                     {this.render_detail_item('2', { 'style':'l', 'title':'Local Storage Size limit', 'subtitle':this.format_power_figure(cache_size*1024), 'barwidth':this.calculate_bar_width(cache_size*1024), 'number':this.format_account_balance_figure(cache_size*1024), 'barcolor':'#606060', 'relativepower':'bytes', })}
@@ -823,11 +970,13 @@ class StackPage extends Component {
 
         var xVal = 1, yVal = 0;
         var dps = [];
+        var recorded = false
         for(var i = 0; i < data.length; i++) {
             yVal = data[i]
             if(yVal != null){
-                if(i%(20) == 0 && i != 0){
+                if(i%(20) == 0 && i != 0 && !recorded){
                     dps.push({x: xVal,y: yVal, indexLabel: yVal+" gwei"});//
+                    recorded = true
                 }else{
                     dps.push({x: xVal, y: yVal});//
                 }
@@ -1612,6 +1761,26 @@ class StackPage extends Component {
             ints.push(transaction_obj)
         }
 
+        if(this.props.app_state.should_update_section_tags_onchain){
+            var transaction_obj = [ /* set data */
+                [20000, 13, 0],
+                [0], [53],/* target objects */
+                [3], /* contexts */
+                [0] /* int_data */
+            ]
+
+            var string_obj = [[]]
+            var job_section_tags = this.props.app_state.job_section_tags
+            var explore_section_tags = this.props.app_state.explore_section_tags
+            var data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
+            var string_data = await this.get_object_ipfs_index(data);
+            string_obj[0].push(string_data)
+            
+            strs.push(string_obj)
+            adds.push([])
+            ints.push(transaction_obj)
+        }
+
 
 
         var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
@@ -1641,7 +1810,11 @@ class StackPage extends Component {
     }
 
     get_object_ipfs_index(tx){
-        var object_as_string = JSON.stringify(tx)
+        var object_as_string = JSON.stringify(tx, (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value // return everything else unchanged));
+        )
         var obj_cid = this.props.store_objects_data_in_ipfs_using_option(object_as_string)
         return obj_cid
     }
@@ -3298,6 +3471,42 @@ class StackPage extends Component {
 
                     {this.render_detail_item('0')}
 
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':'Content Channeling', 'details':'Set which channeling option your content and feed is directed to.', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+
+
+                    
+                    {this.render_detail_item('3',{'title':'Content Filter', 'details':'If set to filtered, the content including the tags you follow will be prioritized in your feed.', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
@@ -3358,6 +3567,26 @@ class StackPage extends Component {
         this.setState({get_masked_data_tags_object: tag_group})
         var selected_item = this.get_selected_item(this.state.get_masked_data_tags_object, 'e')
         this.props.when_masked_data_setting_changed(selected_item)
+    }
+
+
+    when_get_content_channeling_object_updated(tag_group){
+        this.setState({get_content_channeling_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_content_channeling_object, 'e')
+        this.props.when_content_channeling_changed(selected_item)
+    }
+
+
+    when_get_content_language_object_updated(tag_group){
+        this.setState({get_content_language_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_content_language_object, 'e')
+        this.props.when_content_language_changed(selected_item)
+    }
+
+    when_get_content_filtered_setting_object_updated(tag_group){
+        this.setState({get_content_filtered_setting_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_content_filtered_setting_object, 'e')
+        this.props.when_content_filter_setting_changed(selected_item)
     }
 
 
@@ -3514,16 +3743,16 @@ class StackPage extends Component {
         var typed_word = this.state.typed_word.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify('type something', 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify('enter one word', 1400)
         }
         else{
             var cloned_seed_array = this.state.added_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({added_tags: cloned_seed_array, typed_word:''})
-            this.props.notify('word added!', 200)
+            this.props.notify('word added', 800)
         }
     }
 
@@ -3534,7 +3763,6 @@ class StackPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({added_tags: cloned_seed_array})
-        this.props.notify('word removed', 200)
     }
 
     hasWhiteSpace(s) {

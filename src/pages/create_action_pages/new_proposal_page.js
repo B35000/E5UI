@@ -66,7 +66,11 @@ class NewProposalPage extends Component {
 
         exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
 
-        bounty_exchange_target:'', bounty_amount:0, bounty_values:[]
+        bounty_exchange_target:'', bounty_amount:0, bounty_values:[],
+
+        content_channeling_setting: this.props.app_state.content_channeling, 
+        device_language_setting: this.props.app_state.device_language, 
+        device_country: this.props.app_state.device_country
     };
 
 
@@ -1831,7 +1835,14 @@ class NewProposalPage extends Component {
         }
 
         else{
-            this.props.when_add_new_proposal_to_stack(this.state)
+            var me = this
+            var state_clone = structuredClone(me.state)
+            state_clone.content_channeling_setting = me.props.app_state.content_channeling
+            state_clone.device_language_setting = me.props.app_state.device_language
+            state_clone.device_country = me.props.app_state.device_country
+            state_clone.e5 = me.props.app_state.selected_e5
+                
+            this.props.when_add_new_proposal_to_stack(state_clone)
 
             this.setState({selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
             entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',

@@ -39,6 +39,7 @@ class ViewGroups extends Component {
             var tag_background_color = this.props.theme['tag_background_color'];
             var tag_shadow = this.props.theme['tag_shadow'];
             var when_tapped = 'null'
+            var selected_tags = []
             if(object_data != null || object_data['active_tags'] != null){
               active_tags = object_data['active_tags']
               if(object_data['index_option'] == 'indexed'){
@@ -51,14 +52,17 @@ class ViewGroups extends Component {
                 active_tags = ['e'];
                 when_tapped = 'null'
               }
+              if(object_data['selected_tags'] != null && object_data['selected_tags'].length != 0){
+                selected_tags = object_data['selected_tags']
+              }
               
             }
             return (
-                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': border_radius,height:'40px'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none', 'display':'flex', width: '97%'}}>
+                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius,height:'40px'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
                       {active_tags.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
-                              <div style={{'background-color': tag_background_color, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
+                              <div style={{'background-color': this.get_tag_color(item, selected_tags, tag_background_color), 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
                                 <p style={{'color': 'white', 'font-size': '16px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify'}} className="text-center">{item}</p>
                             </div>
                           </li>
@@ -355,6 +359,13 @@ class ViewGroups extends Component {
 
     }
 
+    get_tag_color(tag, selected_tags, tag_background_color){
+        if(selected_tags.includes(tag)){
+            return 'black'
+        }
+        return tag_background_color
+    }
+
     copy_id_to_clipboard(text){
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
@@ -442,6 +453,12 @@ class ViewGroups extends Component {
         }
         else if(action_id == 'delete_entered_tag_word'){
             this.props.delete_entered_tag(tag, pos)
+        }
+        else if(action_id == 'delete_added_tag'){
+            this.props.delete_added_tag(tag, pos)
+        }
+        else if(action_id == 'select_deselect_tag'){
+            this.props.select_deselect_tag(tag, pos)
         }
     }
 

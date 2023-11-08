@@ -72,6 +72,14 @@ class EthersDetailsSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_ethers_list_detail_tags_object, this.state.navigate_view_ethers_list_detail_tags_object['i'].active)
         var item = this.get_item_in_array(this.get_ethers_data(), this.props.selected_ether_item)
 
+        if(item == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }
+
         if(selected_item == 'details' || selected_item == 'e'){
             return(
                 <div>
@@ -93,27 +101,39 @@ class EthersDetailsSection extends Component {
     render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
-        var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
         return(
-            <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
+            </div>
         );
     }
 
-    
+    get_gas_price_from_runs(item){
+        var last_events = this.props.app_state.all_E5_runs[item['e5']]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
+            }
+            sum = sum/last_check;
+        }
+        return sum
+    }
 
     render_ethers_main_details_section(item){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-55
-        // var item = this.get_ethers_data()[this.props.selected_ether_item];
+        
+        var gas_price = this.props.app_state.gas_price[item['e5']]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs(item)
+        }
+        var gas_transactions = this.props.app_state.account_balance[item['e5']] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[item['e5']]/gas_price)/2_300_000)
+
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -142,6 +162,16 @@ class EthersDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['lowest_gas_consumed'])}
                     {this.render_detail_item('0')}
+
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                    </div>
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', item['transaction_count_chart_data_label'])}
                     {this.render_detail_item('6', item['transaction_count_chart_data'])}
@@ -501,7 +531,40 @@ class EthersDetailsSection extends Component {
     }
 
 
+    calculate_bar_width(amount){
+        var figure = ''
+        if(amount == null){
+            amount = 0
+        }
+        if(amount < bigInt('1e9')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
+        }
+        else if(amount < bigInt('1e18')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
+        }
+        else if(amount < bigInt('1e36')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
+        }
+        else{
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
+        }
+
+        return figure+'%'
+    }
     
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
 
 
 }

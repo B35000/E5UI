@@ -23,6 +23,7 @@
     "filecoin.js": "^0.0.5-alpha",
     "helia": "^2.0.3",
     "ipfs-http-client": "^60.0.1",
+    "moment-timezone": "^0.5.43",
     "nft.storage": "^7.1.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",

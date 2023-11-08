@@ -31,6 +31,7 @@ class SubscriptionDetailsSection extends Component {
     check_for_new_responses_and_messages() {
         if (this.props.selected_subscription_item != null) {
             var object = this.get_item_in_array(this.get_subscription_items(),this.props.selected_subscription_item)
+            if(object == null) return;
             this.props.get_subscription_event_data(object['id'], object['e5'])
             this.props.get_moderator_event_data(object['id'], object['e5'])
         }
@@ -91,10 +92,29 @@ class SubscriptionDetailsSection extends Component {
         return object
     }
 
+    render_empty_detail_object(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height
+        return(
+            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                </div>
+            </div>
+        );
+    }
+
     render_subscription_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_subscriptions_list_detail_tags_object, this.state.navigate_view_subscriptions_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_subscription_items(),this.props.selected_subscription_item)
-        if(object == null) return;
+        if(object == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }
 
         if(selected_item == 'details'){
             return(
@@ -278,7 +298,7 @@ class SubscriptionDetailsSection extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':'Pin the subscription to your feed', 'title':'Pin Subscription'})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_subscription_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin Subscription', 'action':''},)}
+                    {this.render_detail_item('5', {'text':'Pin/Unpin Subscription', 'action':''},)}
                 </div>
             </div>
         )
@@ -1599,7 +1619,7 @@ class SubscriptionDetailsSection extends Component {
                     </div>
                     <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
                         <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput height={25} placeholder={'Enter ID...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                            <TextInput height={25} placeholder={'Enter ID or Alias...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search(object)}>
                             {this.render_detail_item('5',{'text':'Search','action':''})}
@@ -1617,22 +1637,31 @@ class SubscriptionDetailsSection extends Component {
 
 
     perform_search(object){
-        var typed_account = this.state.typed_search_id.trim()
+        var typed_account = this.get_typed_alias_id(this.state.typed_search_id.trim())
 
         if(typed_account == ''){
-            this.props.notify('type something!', 800)
+            this.props.notify('type something!', 1800)
         }
         else if(isNaN(typed_account)){
-            this.props.notify('that ID is not valid', 800)
+            this.props.notify('that ID is not valid', 1800)
         }
         else if(parseInt(typed_account) < 1001){
-            this.props.notify('that ID is not valid', 800)
+            this.props.notify('that ID is not valid', 1800)
         }else{
-            this.props.notify('searching...', 500)
+            this.props.notify('searching...', 800)
             this.setState({searched_account: typed_account})
             this.props.get_accounts_payment_information(object['id'], object['e5'], typed_account)
         }
         
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
     }
 
 
@@ -1796,24 +1825,7 @@ class SubscriptionDetailsSection extends Component {
 
 
 
-    
-    render_empty_detail_object(){
-        var background_color = this.props.theme['card_background_color']
-        var he = this.props.height
-        var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
-        return(
-            <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-        );
-    }
+
 
     get_selected_item(object, option){
         var selected_item = object[option][2][0]

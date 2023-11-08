@@ -42,7 +42,11 @@ class NewMailPage extends Component {
         // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-        entered_objects:[], recipients:[]
+        entered_objects:[], recipients:[],
+
+        content_channeling_setting: this.props.app_state.content_channeling, 
+        device_language_setting: this.props.app_state.device_language, 
+        device_country: this.props.app_state.device_country
     };
 
     get_new_job_page_tags_object(){
@@ -819,7 +823,13 @@ class NewMailPage extends Component {
             
             var me = this;
             setTimeout(function() {
-                me.props.when_add_new_mail_to_stack(me.state)
+                var state_clone = structuredClone(me.state)
+                state_clone.content_channeling_setting = me.props.app_state.content_channeling
+                state_clone.device_language_setting = me.props.app_state.device_language
+                state_clone.device_country = me.props.app_state.device_country
+                state_clone.e5 = me.props.app_state.selected_e5
+
+                me.props.when_add_new_mail_to_stack(state_clone)
         
                 me.setState({ selected: 0, id: makeid(8), type:'mail', entered_indexing_tags:['send', 'mail'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),/* I copypasted these! sue me */ get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[]})
             }, (1 * 1000));

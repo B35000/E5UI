@@ -104,7 +104,8 @@ const { ethers } = require("ethers");
 const ecies = require('ecies-geth');
 var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
-// const { WalletKey } = require('@zondax/filecoin-signing-tools')
+
+const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 
 // const IPFS = require('ipfs');
 
@@ -157,7 +158,7 @@ class App extends Component {
     account:null,
 
     theme: this.get_theme_data('light'), storage_option:'infura',
-    details_orientation: 'right', refresh_speed:'average', masked_content:'e',
+    details_orientation: 'right', refresh_speed:'average', masked_content:'e', content_channeling:'international', device_language:this.get_language(), section_tags_setting:'all',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -187,6 +188,10 @@ class App extends Component {
     e5s:this.get_e5s(),
     selected_e5:'E15', default_e5:'E15',
     accounts:{}, has_wallet_been_set:false, is_running: false,
+
+    device_country:this.get_country(), 
+    
+    job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
   };
 
 
@@ -274,6 +279,7 @@ class App extends Component {
 
     var obj = {'sluggish':600_000, 'slow':300_000, 'average':60_000, 'fast':20_000}
     this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
+
   }
 
   /* called when the component is unmounted or closed */
@@ -292,8 +298,15 @@ class App extends Component {
     this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
   }
 
+
+
+
   set_cookies(){
-    localStorage.setItem("state", JSON.stringify(this.get_persistent_data()));
+    localStorage.setItem("state", JSON.stringify(this.get_persistent_data(), (key, value) =>
+            typeof value === 'bigint'
+                ? value.toString()
+                : value // return everything else unchanged));
+    ))
   }
 
   get_persistent_data(){
@@ -308,6 +321,12 @@ class App extends Component {
       masked_content: this.state.masked_content,
       blocked_accounts: this.state.blocked_accounts,
       should_update_blocked_accounts_onchain: this.state.should_update_blocked_accounts_onchain,
+      content_channeling:this.state.content_channeling,
+      device_language: this.state.device_language,
+      job_section_tags: this.state.job_section_tags,
+      explore_section_tags: this.state.explore_section_tags,
+      should_update_section_tags_onchain: this.state.should_update_section_tags_onchain,
+      section_tags_setting: this.state.section_tags_setting,
     }
   }
 
@@ -327,6 +346,12 @@ class App extends Component {
       var cookie_masked_content = cookie_state.masked_content
       var cookie_blocked_accounts = cookie_state.blocked_accounts
       var cookie_should_update_blocked_accounts_onchain = cookie_state.should_update_blocked_accounts_onchain
+      var cookie_content_channeling = cookie_state.content_channeling
+      var cookie_device_language = cookie_state.device_language
+      var cookie_job_section_tags = cookie_state.job_section_tags
+      var cookie_explore_section_tags = cookie_state.explore_section_tags
+      var cookie_should_update_section_tags_onchain = cookie_state.should_update_section_tags_onchain
+      var cookie_section_tags_setting = cookie_state.section_tags_setting
       
       if(cookie_theme != null){
         this.setState({theme:cookie_theme})
@@ -367,6 +392,30 @@ class App extends Component {
       if(cookie_should_update_blocked_accounts_onchain != null){
         this.setState({should_update_blocked_accounts_onchain: cookie_should_update_blocked_accounts_onchain})
       }
+
+      if(cookie_content_channeling != null){
+        this.setState({content_channeling: cookie_content_channeling})
+      }
+
+      if(cookie_device_language != null){
+        this.setState({device_language: cookie_device_language})
+      }
+
+      if(cookie_job_section_tags != null){
+        this.setState({job_section_tags: cookie_job_section_tags})
+      }
+
+      if(cookie_explore_section_tags != null){
+        this.setState({explore_section_tags: cookie_explore_section_tags})
+      }
+
+      if(cookie_should_update_section_tags_onchain != null){
+        this.setState({should_update_section_tags_onchain: cookie_should_update_section_tags_onchain})
+      }
+
+      if(cookie_section_tags_setting != null){
+        this.setState({section_tags_setting: cookie_section_tags_setting})
+      }
     }
 
     var me = this;
@@ -376,9 +425,52 @@ class App extends Component {
         me.stack_page.current?.set_e5_option_tag()
         me.stack_page.current?.set_refresh_speed_tag()
         me.stack_page.current?.set_masked_content_tag()
+        me.stack_page.current?.set_content_channeling_tags()
+        me.stack_page.current?.set_content_language_tags()
+        me.stack_page.current?.set_content_filter_settings_tags()
     }, (1 * 1000));
   }
 
+  get_country(){
+    const timeZoneCityToCountry = {};
+    Object.keys(zones).forEach(z => {
+      const cityArr = z.split("/");
+      const city = cityArr[cityArr.length-1];
+      timeZoneCityToCountry[city] = countries[zones[z].countries[0]].name;
+    });
+
+    var userRegion;
+    var userCity;
+    var userCountry;
+    var userTimeZone;
+
+    if (Intl) {
+      userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var tzArr = userTimeZone.split("/");
+      userRegion = tzArr[0];
+      userCity = tzArr[tzArr.length - 1];
+      userCountry = timeZoneCityToCountry[userCity];
+    }
+    
+    console.log("Time Zone:", userTimeZone);
+    console.log("Region:", userRegion);
+    console.log("City:", userCity);
+    console.log("Country:", userCountry);
+
+    return userCountry
+
+  }
+
+  get_language(){
+    var lang = navigator.language || navigator.userLanguage;
+    var language = lang.toString().toLowerCase()
+    if(language.includes('-')){
+      var ln = language.split('-')
+      language = ln[0]
+    }
+    console.log(language)
+    return language
+  }
 
 
 
@@ -611,6 +703,8 @@ class App extends Component {
       show_give_award_bottomsheet={this.show_give_award_bottomsheet.bind(this)} get_post_award_data={this.get_post_award_data.bind(this)} show_add_comment_bottomsheet={this.show_add_comment_bottomsheet.bind(this)}
 
       get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
+
+      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)}
       />
     )
   }
@@ -722,7 +816,6 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack)
   }
 
-
   add_bag_message_to_stack_object(message){
     var stack = this.state.stack_items.slice()
     var pos = -1
@@ -743,7 +836,6 @@ class App extends Component {
     this.set_cookies_after_stack_action(stack)
   }
 
-
   add_storefront_message_to_stack_object(message){
     var stack = this.state.stack_items.slice()
     var pos = -1
@@ -763,6 +855,38 @@ class App extends Component {
     this.setState({stack_items: stack})
     this.set_cookies_after_stack_action(stack)
   }
+
+  when_select_deselect_work_tag(tag, pos){
+    var clone = this.state.job_section_tags.slice()
+    const index = clone.indexOf(tag);
+    if (index > -1) { // only splice array when item is found
+      clone.splice(index, 1); // 2nd parameter means remove one item only
+    } else {
+      clone.push(tag)
+    }
+    this.setState({job_section_tags: clone, should_update_section_tags_onchain: true})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_select_deselect_explore_tag(tag, pos){
+    var clone = this.state.explore_section_tags.slice()
+    const index = clone.indexOf(tag);
+    if (index > -1) { // only splice array when item is found
+      clone.splice(index, 1); // 2nd parameter means remove one item only
+    } else {
+      clone.push(tag)
+    }
+    this.setState({explore_section_tags: clone, should_update_section_tags_onchain: true})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
+  }
+
+
 
 
 
@@ -845,7 +969,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)}/>
+              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -913,6 +1037,30 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  when_content_channeling_changed(item){
+    this.setState({content_channeling: item})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_content_language_changed(item){
+    this.setState({device_language: item})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
+  }
+
+  when_content_filter_setting_changed(item){
+    this.setState({section_tags_setting:item})
+    var me = this;
+    setTimeout(function() {
+        me.set_cookies()
+    }, (1 * 1000));
+  }
+
 
 
 
@@ -946,7 +1094,7 @@ class App extends Component {
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[this.state.selected_e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          me.setState({should_update_contacts_onchain: false, is_running: false})
+          me.setState({should_update_contacts_onchain: false, is_running: false, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false})
           this.delete_stack_items(delete_pos_array)
           this.start_get_accounts_data(false)
           this.prompt_top_notification('run complete!', 600)
@@ -3095,7 +3243,7 @@ class App extends Component {
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'storefront-bag', entered_indexing_tags:['storefront', 'bag', 'cart'], items_to_deliver:[], e5: state_obj.e5}
+      var tx = {selected: 0, id: makeid(8), type:'storefront-bag', entered_indexing_tags:['storefront', 'bag', 'cart'], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country}
       
       tx.items_to_deliver.push(state_obj)
       stack.push(tx)
@@ -4506,6 +4654,35 @@ class App extends Component {
         console.log('setting blocked accounts from chain')
       }else{
         console.log('not setting blocked accounts from chain')
+      }
+    }
+
+    if(is_syncing){
+      this.inc_synch_progress()
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /* ---------------------------------------- BLOCKED ACCOUNTS DATA ------------------------------------------- */
+    var section_tags_data_events = await E52contractInstance.getPastEvents('e4', { fromBlock: this.get_first_block(e5), toBlock: 'latest', filter: { p1/* target_id */: account, p3/* context */:3 } }, (error, events) => {});
+
+
+    if(section_tags_data_events.length != 0){
+      var latest_event = section_tags_data_events[section_tags_data_events.length - 1];
+      var section_tag_data = await this.fetch_objects_data_from_ipfs_using_option(latest_event.returnValues.p4) 
+      var job_section_tags = section_tag_data['job_section_tags']
+      var explore_section_tags = section_tag_data['explore_section_tags']
+      
+      if(!this.state.should_update_section_tags_onchain){
+        this.setState({job_section_tags: job_section_tags, explore_section_tags: explore_section_tags})
       }
     }
 

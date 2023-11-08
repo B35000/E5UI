@@ -69,18 +69,13 @@ class MailDetailsSection extends Component {
     render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
-        var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
         return(
-            <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
+            </div>
         );
     }
 
@@ -98,6 +93,13 @@ class MailDetailsSection extends Component {
     render_mail_details_section(){
         var selected_item = this.get_selected_item(this.state.navigate_view_mail_list_detail_tags_object, this.state.navigate_view_mail_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_mail_items(), this.props.selected_mail_item);
+        if(object == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }
 
         if(object!=null){
             if(selected_item == 'data'){

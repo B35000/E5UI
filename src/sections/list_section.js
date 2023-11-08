@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Letter from './../assets/letter.png';
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 import ViewGroups from './../components/view_groups';
+import TextInput from './../components/text_input';
 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
@@ -21,7 +22,7 @@ class PostListSection extends Component {
     state = {
         selected: 0,
         viewed_posts:[],
-        scroll_positions:{}
+        scroll_positions:{}, typed_search_id:''
     };
 
 
@@ -72,9 +73,20 @@ class PostListSection extends Component {
         else if(selected_page == 'e'){
             var selected_tag = this.props.explore_page_tags_object['i'].active
             if(selected_tag == 'E5s' || selected_tag == 'e'){
-                return(
-                <div>{this.render_E5s_list_group()}</div>
-                )
+                var selected_item = this.get_selected_item(this.props.explore_page_tags_object, selected_tag)
+
+                if(selected_item == 'blockexplorer 🗺️'){
+                    return(
+                        <div>
+                            {this.render_search_user_data()}
+                        </div>
+                    )
+                }
+                else{
+                    return(
+                        <div>{this.render_E5s_list_group()}</div>
+                    )
+                }
             }
             else if(selected_tag == 'posts' ){
                 return(
@@ -303,17 +315,18 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_job_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_detail_item('3', item['id'])}
+                    <div onClick={() => this.when_job_item_clicked(index, object)}>
+                        <div style={{'padding': '0px 0px 0px 0px'}} >
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
-                        {this.render_detail_item('2', item['age'])}
-                    </div>
-                    
                 </div>         
             </div>
         )
@@ -325,7 +338,7 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -399,14 +412,14 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_contract_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_contract_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -422,7 +435,7 @@ class PostListSection extends Component {
         var id_text = ''+object['id']
         if(object['id'] == 2) id_text = 'Main Contract'
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text, 'details':title, 'size':'l'},
             'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
         }
@@ -493,14 +506,14 @@ class PostListSection extends Component {
         //     )
         // }
         return(
-            <div onClick={() => this.when_proposal_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_proposal_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_proposal_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -519,7 +532,7 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p6
         var time = object['event'] == null ? 0 : object['event'].returnValues.p5
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -596,14 +609,14 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_subscription_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_subscription_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_subscription_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -622,7 +635,7 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -708,14 +721,14 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_mail_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_mail_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['author_title'])}
                     </div>
-                    <div style={{'padding': '15px 0px 0px 0px'}}>
+                    <div style={{'padding': '15px 0px 0px 0px'}} onClick={() => this.when_mail_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -744,7 +757,7 @@ class PostListSection extends Component {
             title = 'To '+ this.get_sender_title_text(recipient, object)
         }
         return {
-            'tags':{'active_tags':final_tags, 'index_option':'indexed'},
+            'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'textsize':'14px', 'text':details, 'font':'Sans-serif'},
             'author_title':{'title':title, 'details':details, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
@@ -793,7 +806,8 @@ class PostListSection extends Component {
                     </ul>
                 </div>
             );
-        }else{
+        }
+        else{
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
@@ -827,14 +841,14 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_contractor_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_contractor_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_contractor_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -849,7 +863,7 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -865,13 +879,34 @@ class PostListSection extends Component {
 
 
     render_E5s_list_group(){
+        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
         }
         var items = this.get_e5_data()
-        return ( 
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        return (
             <div ref={this.e5_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
@@ -927,6 +962,97 @@ class PostListSection extends Component {
     when_E5_item_clicked(index, name){
         this.props.when_E5_item_clicked(index, name)
     }
+
+
+
+
+
+
+
+    render_search_user_data(){
+        return(
+            <div>
+                <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={25} placeholder={'Enter ID or Alias...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
+                        {this.render_detail_item('5',{'text':'Search','action':''})}
+                    </div>
+                </div>
+
+                {this.render_search_results()}
+            </div>
+        )
+    }
+
+
+    when_text_input_field_changed(text){
+        this.setState({typed_search_id: text})
+    }
+
+
+    perform_search(){
+        var typed_account = this.get_typed_alias_id(this.state.typed_search_id.trim())
+
+        if(typed_account == ''){
+            this.props.notify('type something!', 800)
+        }
+        else if(isNaN(typed_account)){
+            this.props.notify('that ID is not valid', 800)
+        }
+        else if(parseInt(typed_account) < 1001){
+            this.props.notify('that ID is not valid', 800)
+        }else{
+            this.props.notify('searching...', 500)
+            
+        }
+    }
+
+    get_typed_alias_id(alias){
+        if(!isNaN(alias)){
+            return alias
+        }
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
+
+        return id
+    }
+
+    get_search_results(){
+        return []
+    }
+
+    render_search_results(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-123;
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+        var items = this.get_search_results()
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }else{
+
+        }
+    }
+
 
 
 
@@ -1039,14 +1165,14 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_post_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_post_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_post_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -1061,7 +1187,7 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -1131,14 +1257,14 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_channel_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_channel_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -1157,7 +1283,7 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -1232,14 +1358,14 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_storefront_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -1254,7 +1380,7 @@ class PostListSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
-            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -1686,7 +1812,7 @@ class PostListSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)}/>
+                <ViewGroups item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
             </div>
         )
 
@@ -1694,6 +1820,10 @@ class PostListSection extends Component {
 
     show_images(){
 
+    }
+
+    select_deselect_tag(tag, pos){
+        this.props.select_deselect_tag(tag, pos)
     }
 
     /* gets a formatted time diffrence from now to a given time */

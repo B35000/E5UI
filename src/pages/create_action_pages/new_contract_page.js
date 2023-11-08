@@ -49,6 +49,8 @@ class NewContractPage extends Component {
         exchange_id:'', price_amount:0, price_data:[], 
 
         page:0, 
+
+        content_channeling_setting: this.props.app_state.content_channeling, device_language_setting: this.props.app_state.device_language, device_country: this.props.app_state.device_country
     };
 
     constructor(props) {
@@ -1467,7 +1469,14 @@ class NewContractPage extends Component {
             this.props.notify('that name is too long', 1700)
         }
         else{
-            this.props.when_add_new_object_to_stack(this.state)
+            var me = this
+            var state_clone = structuredClone(me.state)
+            state_clone.content_channeling_setting = me.props.app_state.content_channeling
+            state_clone.device_language_setting = me.props.app_state.device_language
+            state_clone.device_country = me.props.app_state.device_country
+            state_clone.e5 = me.props.app_state.selected_e5
+
+            this.props.when_add_new_object_to_stack(state_clone)
         
             this.setState({ id: makeid(32), type:'contract', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_contract_tags_object: this.get_new_contract_tags_object(), default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
 

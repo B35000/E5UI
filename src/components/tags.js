@@ -4,6 +4,7 @@ class tags extends Component {
     
     state = {
         selected: 0,
+        scroll_pos:{}
     };
 
     constructor(props) {
@@ -20,8 +21,17 @@ class tags extends Component {
     }
 
     componentDidUpdate(){
-        this.myRef.current?.scrollTo({top: 0, behavior: "smooth" });
+        this.myRef.current?.scrollTo({top: 0 });
     }
+
+    handleScroll = (event, id) => {
+        var pos = event.currentTarget.scrollLeft
+        var page_data = this.props.page_tags_object;
+        var active = page_data['i'].active;
+        var clone = structuredClone(this.state.scroll_pos)
+        clone[active] = pos;
+        this.setState({scroll_pos: clone})
+    };
 
     render(){
         var page_data = this.props.page_tags_object;
@@ -50,7 +60,7 @@ class tags extends Component {
         }//
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 7px 0px', width: '97%', 'background-color': 'transparent','border-radius': '8px', height:'40px'}}>
-                    <ul ref={this.myRef} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none', '-webkit-overflow-scrolling': 'touch'}}>
+                    <ul ref={this.myRef} onScroll={event => this.handleScroll(event)} style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none', '-webkit-overflow-scrolling': 'touch'}}>
                       {active_tags.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:30}}>
                               {this.render_tag_button(index,selected,item,tag_size)}
@@ -145,7 +155,7 @@ class tags extends Component {
       var active = page_data['i'].active;
       var clone = {};
       var clicked_tag_name = page_data[active][1/* tag_options */][pos];
-
+      var is_moving_down_option = false
       for (var key in page_data) {
           if (page_data.hasOwnProperty(key)) {
               clone[key] = page_data[key];
@@ -172,6 +182,7 @@ class tags extends Component {
               clone[selected_tag_option][0/* config */][1/* previous_item */] = active;/* set the current active item as the previous item selected in the selected tag option data group */
               clone[selected_tag_option][0/* config */][2/* previous_item_pos */] = pos;/* set the selected item's position in its respective tag option data group */
               clone['i'].active = selected_tag_option;/* set the selected item */
+              is_moving_down_option = true
           }
           else if(selected_text.startsWith('a.')){
               //action detected
@@ -246,8 +257,20 @@ class tags extends Component {
               }
           } 
       }
+      
+    this.props.when_tags_updated(clone);
 
-      this.props.when_tags_updated(clone);
+    var me = this;
+    setTimeout(function() {
+        var active = clone['i'].active;
+        var position = me.state.scroll_pos[active];
+        if(is_moving_down_option){ 
+            position = 0;
+        }
+        if(position != null){
+            me.myRef.current?.scrollTo(position, 0);
+        }
+    }, (1 * 10));
     }
 
 

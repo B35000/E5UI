@@ -53,6 +53,10 @@ class NewSubscriptionPage extends Component {
         exchange_id:'', price_amount:0, price_data:[],
 
         page:0, 
+
+        content_channeling_setting: this.props.app_state.content_channeling, 
+        device_language_setting: this.props.app_state.device_language, 
+        device_country: this.props.app_state.device_country
     };
 
     constructor(props) {
@@ -122,7 +126,7 @@ class NewSubscriptionPage extends Component {
                     </div>
                     
                     
-                    <div style={{'margin':'20px 0px 0px 0px'}}>
+                    <div style={{'margin':'10px 0px 0px 0px'}}>
                         {this.render_everything()}   
                     </div>
                     
@@ -210,7 +214,7 @@ class NewSubscriptionPage extends Component {
 
     render_title_tags_part(){
         return(
-            <div style={{'padding':'0px 10px 0px 10px'}}>
+            <div style={{'padding':'0px 0px 0px 0px'}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Subscription'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -1315,7 +1319,14 @@ class NewSubscriptionPage extends Component {
             this.props.notify('that name is too long', 700)
         }
         else{
-            this.props.when_add_new_object_to_stack(this.state)
+            var me = this;
+            var state_clone = structuredClone(me.state)
+            state_clone.content_channeling_setting = me.props.app_state.content_channeling
+            state_clone.device_language_setting = me.props.app_state.device_language
+            state_clone.device_country = me.props.app_state.device_country
+            state_clone.e5 = me.props.app_state.selected_e5
+
+            this.props.when_add_new_object_to_stack(state_clone)
 
             this.setState({ id: makeid(32), type:'subscription', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: this.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
 

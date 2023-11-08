@@ -82,6 +82,7 @@ class ProposalDetailsSection extends Component {
     check_for_new_responses_and_messages() {
         if(this.props.selected_proposal_item != null){
             var object = this.get_item_in_array(this.get_proposal_items(), this.props.selected_proposal_item)
+            if(object == null) return;
             this.props.get_objects_messages(object['id'],  object['e5'])
             this.props.get_proposal_event_data(object['id'], object['e5'])
         }
@@ -147,7 +148,13 @@ class ProposalDetailsSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_proposal_list_detail_tags_object, this.state.navigate_view_proposal_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_proposal_items(), this.props.selected_proposal_item)
 
-        if(object == null) return;
+        if(object == null){
+            return(
+                <div>
+                    {this.render_empty_detail_object()}
+                </div>
+            )
+        }
         
         if(selected_item == 'details'){
             return(
@@ -189,18 +196,13 @@ class ProposalDetailsSection extends Component {
     render_empty_detail_object(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
-        var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
         return(
-            <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
+            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+                <div style={{'margin':'10px 20px 0px 0px'}}>
+                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
+            </div>
         );
     }
 
@@ -307,7 +309,7 @@ class ProposalDetailsSection extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':'Pin the proposal to your feed', 'title':'Pin Proposal'})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_proposal_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin Proposal', 'action':''},)}
+                    {this.render_detail_item('5', {'text':'Pin/Unpin Proposal', 'action':''},)}
                 </div>
             </div>
         )
