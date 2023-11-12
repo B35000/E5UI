@@ -475,8 +475,8 @@ class ModifyContractPage extends Component {
         if(!isNaN(alias)){
             return alias
         }
-        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
         return id
     }
@@ -645,7 +645,7 @@ class ModifyContractPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.props.app_state.contacts[this.state.e5]
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.recipient_id)){
@@ -696,7 +696,8 @@ class ModifyContractPage extends Component {
         if(this.state.reconfig_values.length == 0){
             this.props.notify('you cant stack no changes', 700)
         }else{
-            this.props.add_modify_contract_to_stack(this.state)
+            var clone = structuredClone(this.state)
+            this.props.add_modify_contract_to_stack(clone)
             this.setState({reconfig_values:[]})
             this.props.notify('transaction added to stack', 700);
         }

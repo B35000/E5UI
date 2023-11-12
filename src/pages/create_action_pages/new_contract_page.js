@@ -811,8 +811,8 @@ class NewContractPage extends Component {
         if(!isNaN(alias)){
             return alias
         }
-        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
         return id
     }
@@ -926,8 +926,8 @@ class NewContractPage extends Component {
         if(!isNaN(alias)){
             return alias
         }
-        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
         return id
     }
@@ -1014,11 +1014,11 @@ class NewContractPage extends Component {
 
     calculate_minimum_end_amount(){
         var amount = 0
-        if(this.props.app_state.created_contract_mapping[this.state.e5] != null){
-            var main_contract_data = this.props.app_state.created_contract_mapping[this.state.e5][2]['data']
+        if(this.props.app_state.created_contract_mapping[this.props.app_state.selected_e5] != null){
+            var main_contract_data = this.props.app_state.created_contract_mapping[this.props.app_state.selected_e5][2]['data']
             var default_end_minimum_contract_amount = main_contract_data[1][3/* <3>default_end_minimum_contract_amount */]
             return default_end_minimum_contract_amount
-            // var gas_price = parseInt(this.props.app_state.gas_price[this.state.e5])
+            // var gas_price = parseInt(this.props.app_state.gas_price[this.props.app_state.selected_e5])
             // if(gas_price == null){
             //     return default_end_minimum_contract_amount
             // }
@@ -1032,10 +1032,10 @@ class NewContractPage extends Component {
 
     calculate_minimum_spend_amount(){
         var amount = 0
-        if(this.props.app_state.created_contract_mapping[this.state.e5] != null){
-            var main_contract_data = this.props.app_state.created_contract_mapping[this.state.e5][2]['data']
+        if(this.props.app_state.created_contract_mapping[this.props.app_state.selected_e5] != null){
+            var main_contract_data = this.props.app_state.created_contract_mapping[this.props.app_state.selected_e5][2]['data']
             var default_spend_minimum_contract_amount = main_contract_data[1][9/* <9>default_spend_minimum_contract_amount */]
-            var rp = this.props.app_state.created_token_object_mapping[this.state.e5] == null ? bigInt('1e18') : bigInt(this.props.app_state.created_token_object_mapping[this.state.e5][5] == null ? bigInt('1e18') : this.props.app_state.created_token_object_mapping[this.state.e5][5]['data'][2][6])
+            var rp = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5] == null ? bigInt('1e18') : bigInt(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5] == null ? bigInt('1e18') : this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]['data'][2][6])
             amount = bigInt(rp).multiply(bigInt(default_spend_minimum_contract_amount)).divide(bigInt('1e18'))
         }
         return amount
@@ -1087,7 +1087,7 @@ class NewContractPage extends Component {
     }
 
     when_add_price_set(){
-        var exchange_id = this.state.exchange_id.trim()
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
             this.props.notify('please put a valid exchange id', 2600)
@@ -1110,10 +1110,19 @@ class NewContractPage extends Component {
     }
 
     does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
             return false
         }
         return true
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
     }
 
     check_if_amount_exceeds_minimum(amount, exchange){
@@ -1226,7 +1235,7 @@ class NewContractPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         if(exchanges_from_sync == null) exchanges_from_sync = [];
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
@@ -1307,7 +1316,7 @@ class NewContractPage extends Component {
     }
 
     get_account_suggestions(target_type){
-        var contacts = this.props.app_state.contacts[this.state.e5]
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
         var return_array = []
 
         if(target_type == 'moderator_id'){

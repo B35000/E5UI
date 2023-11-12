@@ -681,7 +681,7 @@ class NewProposalPage extends Component {
     }
 
     get_account_suggestions(type){
-        var contacts = this.props.app_state.contacts[this.state.e5]
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
         var return_array = []
 
         if(type == 'spend_target'){
@@ -1545,8 +1545,8 @@ class NewProposalPage extends Component {
         if(!isNaN(alias)){
             return alias
         }
-        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
         return id
     }
@@ -1646,8 +1646,8 @@ class NewProposalPage extends Component {
         var minimum_spend_bounty_amount = this.state.contract_item['data'][1][10/* <10>default_minimum_spend_vote_bounty_amount */]
         var minimum_end_bounty_amount = this.state.contract_item['data'][1][4/* <4>default_minimum_end_vote_bounty_amount */]
 
-        var end_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][3]['balance']
-        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
+        var end_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][3]['balance']
+        var spend_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]['balance']
         return(
             <div>
                 {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'The first bounty exchange should be the End or Spend Exchange'})}
@@ -1705,7 +1705,7 @@ class NewProposalPage extends Component {
     }
 
     add_bounty_item(){
-        var target_exchange = this.state.bounty_exchange_target.trim()
+        var target_exchange = this.get_token_id_from_symbol(this.state.bounty_exchange_target.trim())
         var target_amount = this.state.bounty_amount
 
         if(isNaN(target_exchange) || parseInt(target_exchange) < 0 || target_exchange == '' || !this.does_exchange_exist(target_exchange)){
@@ -1725,8 +1725,17 @@ class NewProposalPage extends Component {
         }
     }
 
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
+    }
+
     does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
             return false
         }
         return true
@@ -1887,7 +1896,7 @@ class NewProposalPage extends Component {
         for(var i=0; i<bounty_values.length; i++){
             var bounty_item_exchange = bounty_values[i]['exchange']
             var bounty_item_amount = bounty_values[i]['amount']
-            var my_balance = this.props.app_state.created_token_object_mapping[this.state.e5][bounty_item_exchange]['balance']
+            var my_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][bounty_item_exchange]['balance']
             if(my_balance < bounty_item_amount){
                 has_enough = false
             }

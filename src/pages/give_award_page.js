@@ -333,7 +333,7 @@ class GiveAwardPage extends Component {
 
 
     when_add_price_set(){
-        var exchange_id = this.state.exchange_id.trim()
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
             this.props.notify('please put a valid exchange id', 2600)
@@ -344,9 +344,18 @@ class GiveAwardPage extends Component {
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
-            this.setState({price_data: price_data_clone});
+            this.setState({price_data: price_data_clone, exchange_id:'', price_amount:0});
             this.props.notify('added amount!', 1400)
         }
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()]
+
+        return id
     }
 
     does_exchange_exist(exchange_id){

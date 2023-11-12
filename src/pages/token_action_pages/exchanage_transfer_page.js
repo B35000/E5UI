@@ -146,7 +146,7 @@ class ExchangeTransferPage extends Component {
 
 
     add_exchange_transfer_item(){
-        var target_exchange = this.state.token_item['id']
+        var target_exchange = this.get_token_id_from_symbol(this.state.token_item['id'])
         var target_amount = this.state.exchange_transfer_amount
         var target_receiver = this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
         var targeted_token = this.state.token_target.trim()
@@ -175,6 +175,15 @@ class ExchangeTransferPage extends Component {
             return false
         }
         return true
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.state.token_item['e5']][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.token_item['e5']][typed_search.toUpperCase()]
+
+        return id
     }
 
     load_transfer_actions(){

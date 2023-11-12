@@ -234,7 +234,9 @@ class ForceExitPage extends Component {
         if(this.state.force_exit_accounts.length == 0){
             this.props.notify('you cant stack no changes', 700)
         }else{
-            this.props.add_force_exit_to_stack(this.state)
+            var clone = structuredClone(this.state)
+            // clone.e5 = this.props.app_state.selected_e5
+            this.props.add_force_exit_to_stack(clone)
             this.setState({force_exit_accounts:[]})
             this.props.notify('transaction added to stack', 700);
         }

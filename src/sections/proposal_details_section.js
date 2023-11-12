@@ -139,7 +139,7 @@ class ProposalDetailsSection extends Component {
 
 
     get_item_in_array(object_array, id){
-        var object = object_array.find(x => x['id'] === id);
+        var object = object_array.find(x => x['e5_id'] === id);
         return object
     }
 
@@ -208,7 +208,7 @@ class ProposalDetailsSection extends Component {
 
     render_proposal_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-70
+        var he = this.props.height-50
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
@@ -216,7 +216,7 @@ class ProposalDetailsSection extends Component {
         var item = this.get_proposal_details_data(object)
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>

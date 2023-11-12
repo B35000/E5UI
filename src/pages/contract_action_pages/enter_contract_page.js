@@ -329,7 +329,9 @@ class EnterContractPage extends Component {
             this.props.notify('You dont have enough tokens to enter this contract', 3700);
         }
         else{
-            this.props.enter_contract(this.state)
+            var clone = structuredClone(this.state)
+            // clone.e5 = this.props.app_state.selected_e5
+            this.props.enter_contract(clone)
             this.props.notify('transaction added to stack', 700);
         }
         

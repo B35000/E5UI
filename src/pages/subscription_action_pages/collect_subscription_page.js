@@ -204,7 +204,9 @@ class CollectSubscriptionPage extends Component {
         if(time_units == 0){
             this.props.notify('you cant collect no time units', 2700)
         }else{
-            this.props.add_collect_subscription_to_stack(this.state)
+            var clone = structuredClone(this.state)
+            // clone.e5 = this.props.app_state.selected_e5
+            this.props.add_collect_subscription_to_stack(clone)
             this.props.notify('transaction added to stack', 1700);
         }
     }

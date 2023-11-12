@@ -681,7 +681,7 @@ class NewMintActionPage extends Component {
     check_if_sender_can_interact_with_exchange(){
         var stack_transactions = this.props.app_state.stack_items
         for(var i=0; i<stack_transactions.length; i++){
-            if(stack_transactions[i].type == 'buy-sell' && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id && stack_transactions[i].e5 == this.state.e5){
+            if(stack_transactions[i].type == 'buy-sell' && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id && stack_transactions[i].e5 == this.props.app_state.selected_e5){
                 return false
             }
         }

@@ -4,6 +4,8 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import Dialog from "@mui/material/Dialog";
 
+import Letter from './../assets/letter.png'; 
+
 var bigInt = require("big-integer");
 const Web3 = require('web3');
 
@@ -36,28 +38,99 @@ class WithdrawEtherPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','withdraw-ether'], [1]
+                ['xor','',0], ['e','withdraw-ether', 'pending-withdraws', 'withdraw-history'], [1]
             ],
         };
     }
 
     render(){
-        var e5 = this.state.e5
+        
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div className="row">
-                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.withdraw_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_withdraw_ether_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Withdraw', 'action':''})}
-                        </div>
-                    </div>
-                </div>
+                {this.render_top_title()}
 
                 <div style={{height:10}}/>
 
+                {this.render_everything()}
+
+                {this.render_dialog_ui()}
+
+            </div>
+        )
+    }
+
+
+    when_withdraw_ether_page_tags_object_updated(tag_obj){
+        this.setState({withdraw_ether_page_tags_object: tag_obj})
+    }
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
+
+    render_top_title(){
+        var selected_item = this.get_selected_item(this.state.withdraw_ether_page_tags_object, this.state.withdraw_ether_page_tags_object['i'].active)
+
+        if(selected_item == 'withdraw-ether'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                            <Tags page_tags_object={this.state.withdraw_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_withdraw_ether_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
+                            <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
+                                {this.render_detail_item('5', {'text':'Withdraw', 'action':''})}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <Tags page_tags_object={this.state.withdraw_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_withdraw_ether_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                </div>
+            )
+        }
+    }
+
+
+    render_everything(){
+        var selected_item = this.get_selected_item(this.state.withdraw_ether_page_tags_object, this.state.withdraw_ether_page_tags_object['i'].active)
+
+        if(selected_item == 'withdraw-ether'){
+            return(
+                <div>
+                    {this.render_withdraw_ether_part()}
+                </div>
+            )
+        }
+        else if(selected_item == 'pending-withdraws'){
+            return(
+                <div>
+                    {this.render_pending_withdraws_item_logs()}
+                </div>
+            )
+        }
+        else if(selected_item == 'withdraw-history'){
+            return(
+                <div>
+                    {this.render_withdraws_item_logs()}
+                </div>
+            )
+        }
+    }
+
+
+
+
+    render_withdraw_ether_part(){
+        var e5 = this.state.e5
+        return(
+            <div>
                 {this.render_detail_item('3', {'size':'l', 'details':'Your withdraw balance is shown below', 'title':'Withdraw balance'})}
                 <div style={{height:10}}/>
 
@@ -79,16 +152,8 @@ class WithdrawEtherPage extends Component {
                 <div onClick={() => this.set_my_address()}>
                     {this.render_detail_item('5', {'text':'Set My Address', 'action':''})}
                 </div>
-
-                {this.render_dialog_ui()}
-
             </div>
         )
-    }
-
-
-    when_withdraw_ether_page_tags_object_updated(tag_obj){
-        this.setState({withdraw_ether_page_tags_object: tag_obj})
     }
 
 
@@ -183,9 +248,212 @@ class WithdrawEtherPage extends Component {
 
 
 
+    render_withdraws_item_logs(){
+        var items = this.props.app_state.withdraw_event_data[this.state.e5['id']]
+        var middle = this.props.height - 170;
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_withdraws_item_clicked(index)}>
+                                    {this.render_withdraws_event_item(item, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_withdraws_item_clicked(index){
+        if (this.state.selected_withdraws_event_item == index) {
+            this.setState({ selected_withdraws_event_item: null })
+        } else {
+            this.setState({ selected_withdraws_event_item: index })
+        }
+    }
+
+    render_withdraws_event_item(item, index){
+        var amount = item.returnValues.p5
+        var e5 = this.state.e5['id']
+
+        var gas_price = this.props.app_state.gas_price[e5]
+        if(gas_price == null || gas_price > 10**18){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        var gas_transactions = amount == 0 ? 0 : Math.floor((amount/gas_price)/2_300_000)
+
+        if (this.state.selected_withdraws_event_item == index) {
+            return (
+                <div>
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'transaction ID', 'size': 's' })}
+                    <div style={{ height: 2 }}/>
+                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p3), 'title': 'target', 'size': 's' })}
+                    <div style={{ height: 2 }}/>
+
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Ether', 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
+
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
+                    </div>
+                    <div style={{ height: 2 }}/>
+
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }}/>
+                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                </div>
+            )
+        }
+    }
 
 
 
+
+
+
+
+    render_pending_withdraws_item_logs(){
+        var items = this.props.app_state.pending_withdraw_event_data[this.state.e5['id']]
+        var middle = this.props.height - 120;
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{ overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index} onClick={() => this.when_pending_withdraws_item_clicked(index)}>
+                                    {this.render_pending_withdraws_event_item(item, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_pending_withdraws_item_clicked(index){
+        if (this.state.selected_pending_withdraws_event_item == index) {
+            this.setState({ selected_pending_withdraws_event_item: null })
+        } else {
+            this.setState({ selected_pending_withdraws_event_item: index })
+        }
+    }
+
+    render_pending_withdraws_event_item(item, index){
+        var amount = item.returnValues.p2
+        var e5 = this.state.e5['id']
+
+        var gas_price = this.props.app_state.gas_price[e5]
+        if(gas_price == null || gas_price > 10**18){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        var gas_transactions = amount == 0 ? 0 : Math.floor((amount/gas_price)/2_300_000)
+
+        if (this.state.selected_pending_withdraws_event_item == index) {
+            return (
+                <div>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Ether', 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
+
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
+                    </div>
+                    <div style={{ height: 2 }}/>
+
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p3), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }}/>
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount Added in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+                    </div>
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    get_gas_price_from_runs(){
+        var last_events = this.props.app_state.all_E5_runs[this.state.e5['id']]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
+            }
+            sum = sum/last_check;
+        }
+        return sum
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

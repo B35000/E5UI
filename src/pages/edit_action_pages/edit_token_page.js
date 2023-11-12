@@ -1216,14 +1216,14 @@ class NewTokenPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                      {items.map((item, index) => (
-                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
-                              {this.render_detail_item('3', item['label'])}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                            {this.render_detail_item('3', item['label'])}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         )
     }
 
@@ -1668,7 +1668,7 @@ class NewTokenPage extends Component {
     }
 
     when_add_price_set(){
-        var exchange_id = this.state.exchange_id.trim()
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
             this.props.notify('please put a valid exchange id', 2600)
@@ -1689,6 +1689,15 @@ class NewTokenPage extends Component {
             return false
         }
         return true
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.e5][typed_search.toUpperCase()]
+
+        return id
     }
 
     render_set_prices_list_part(){

@@ -140,12 +140,14 @@ class ViewGroups extends Component {
             var title = 'Author';
             var details = 'e25885';
             var size = 'l';
+            var padding = '10px 15px 10px 15px'
             if(object_data != null){
-              title = object_data['title']
-              details = object_data['details']
-              size = object_data['size']
+                title = object_data['title']
+                details = object_data['details']
+                size = object_data['size']
+                padding = object_data['padding'] == null ? '10px 15px 10px 15px' : object_data['padding']
             }
-            var font_size = ['13px', '11px', 17];
+            var font_size = ['12px', '10px', 16];
             if(size == 'l'){
                 font_size = ['17px', '13px', 19];
             }
@@ -168,19 +170,19 @@ class ViewGroups extends Component {
                             <img src={img} style={{height:50 ,width:50, 'border-radius': '50%'}} />
                         </div>
                         <div style={{'margin':'0px 0px 0px 10px'}}>
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                         </div>
                     </div>
                 </div>
             ); 
             }else{
                 return (
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>
@@ -204,7 +206,7 @@ class ViewGroups extends Component {
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
                       <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 5px 5px 10px','border-radius': '8px' }}>
-                          <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_text_if_empty_or_null(text)}</p>
+                          <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}}>{this.format_text_if_empty_or_null(text)}</p>
                       </div>
                     </div>
                 </div>
@@ -355,6 +357,16 @@ class ViewGroups extends Component {
                 </div>
                 
             );
+        }
+        else if(item_id=='11'){/* banner */
+            var img = object_data != null ? object_data['image']:E5EmptyIcon;
+            var caption = object_data != null ? object_data['caption']:{'text':'E5', 'textsize':'10px', 'font':'Times New Roman'}
+            return(
+                <div style={{width:'90%'}}>
+                    <img src={img} style={{height:'auto' ,width:'90%'}} />
+                    {this.render_detail_item('10', caption)}
+                </div>
+            )
         }
 
     }

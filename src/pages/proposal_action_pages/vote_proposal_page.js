@@ -206,7 +206,7 @@ class VoteProposalPage extends Component {
     }
 
     add_bounty_exchange_item(){
-        var exchange = this.state.bounty_exchange_target.trim()
+        var exchange = this.get_token_id_from_symbol(this.state.bounty_exchange_target.trim())
 
         if(isNaN(exchange) || parseInt(exchange) < 0 || exchange == '' || !this.does_exchange_exist(exchange)){
             this.props.notify('please put a valid exchange id', 1600)
@@ -228,6 +228,15 @@ class VoteProposalPage extends Component {
             return false
         }
         return true
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.state.proposal_item['e5']][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.state.proposal_item['e5']][typed_search.toUpperCase()]
+
+        return id
     }
 
     includes_function(exchange){
@@ -368,7 +377,9 @@ class VoteProposalPage extends Component {
 
 
     finish_creating_object(){
-        this.props.add_vote_proposal_action_to_stack(this.state)
+        var clone = structuredClone(this.state)
+        // clone.e5 = this.props.app_state.selected_e5
+        this.props.add_vote_proposal_action_to_stack(clone)
         this.props.notify('transaction added to stack', 700);
     }
 

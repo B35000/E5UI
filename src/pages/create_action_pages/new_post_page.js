@@ -364,7 +364,7 @@ class NewPostPage extends Component {
 
     get_subscription_items(){
         var my_subscriptions = []
-        var myid = this.props.app_state.user_account_id[this.state.e5]
+        var myid = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         if(myid == null) myid = 1;
         var created_subs = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
         for(var i = 0; i < created_subs.length; i++){
@@ -560,6 +560,9 @@ class NewPostPage extends Component {
 
                 <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
+
+                
+
                 {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
             </div>
         )
@@ -618,6 +621,8 @@ class NewPostPage extends Component {
         );
     }
 
+
+
     when_text_clicked(item){
         var cloned_array = this.state.entered_text_objects.slice()
         const index = cloned_array.indexOf(item);
@@ -641,6 +646,16 @@ class NewPostPage extends Component {
 
         this.props.notify('item removed!', 600)
     }
+
+
+
+
+
+
+
+
+
+
 
 
 

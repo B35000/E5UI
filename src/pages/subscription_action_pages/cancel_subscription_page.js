@@ -160,7 +160,9 @@ class CancelSubscriptionPage extends Component {
         if(time_units_picked == 0){
             this.props.notify('set a valid time unit amount!', 700)
         }else{
-            this.props.add_cancel_subscription_to_stack(this.state)
+            var clone = structuredClone(this.state)
+            // clone.e5 = this.props.app_state.selected_e5
+            this.props.add_cancel_subscription_to_stack(clone)
             this.props.notify('transaction added to stack', 700);
         }
     }

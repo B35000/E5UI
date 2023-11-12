@@ -8,7 +8,6 @@ import Letter from './../assets/letter.png';
 import AddLetter from './../assets/add_icon.png';
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
-import End35 from './../assets/end35.png';
 
 import E35EndImg from './../assets/e35_end_token.png';
 import E35SpendImg from './../assets/e35_spend_token.png';
@@ -54,7 +53,7 @@ class home_page extends Component {
         
         pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], 
         
-        page_scroll_data:{}, page_search_data:{}, tags_search_data:{},
+        page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'', tabs:[]
     };
 
     constructor(props) {
@@ -136,6 +135,9 @@ class home_page extends Component {
             if(cookie_state.pinned_job != null){
                 this.setState({pinned_job: cookie_state.pinned_job})
             }
+            if(cookie_state.tabs != null){
+                this.setState({tabs: cookie_state.tabs})
+            }
         }
     }
 
@@ -159,6 +161,7 @@ class home_page extends Component {
             pinned_contractor: this.state.pinned_contractor,
             pinned_contract: this.state.pinned_contract,
             pinned_job: this.state.pinned_job,
+            tabs: this.state.tabs
         }
     }
 
@@ -223,7 +226,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','ethers ⚗️', 'ends ☝️', 'spends 🫰'],[0]
+              ['xor','',0], ['e','ethers ⚗️', 'ends ☝️', 'spends 🫰'],[1]
           ],
         }
       }
@@ -779,8 +782,15 @@ class home_page extends Component {
             
             var selected_tag = this.state.explore_page_tags_object['i'].active
             if(selected_tag == 'E5s' || selected_tag == 'e'){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_e5_list(scroll_pos)
+                var selected_item = this.get_selected_item(this.state.explore_page_tags_object, selected_tag)
+                if(selected_item == 'blockexplorer 🗺️'){
+                    if(this.list_section.current != null){
+                        this.list_section.current?.set_searched_account_list(scroll_pos)
+                    }
+                }else{
+                    if(this.list_section.current != null){
+                        this.list_section.current?.set_e5_list(scroll_pos)
+                    }
                 }
             }
             else if(selected_tag == 'posts' ){
@@ -1531,6 +1541,11 @@ class home_page extends Component {
         return object
     }
 
+    get_item_in_array2(e5_id, object_array){
+        var object = object_array.find(x => x['e5_id'] === e5_id);
+        return object
+    }
+
     filter_for_blocked_accounts(objects){
         var blocked_account_obj = this.get_all_sorted_objects(this.props.app_state.blocked_accounts)
         var blocked_accounts = []
@@ -1590,9 +1605,10 @@ class home_page extends Component {
         var device_language = this.props.app_state.device_language
 
         objects.forEach(object => {
-            var object_country = object['ipfs'].device_country
-            var object_content_channeling_setting = object['ipfs'].content_channeling_setting
-            var object_language = object['ipfs'].device_language_setting
+            var ipfs = object['ipfs'] == null ? {} : object['ipfs']
+            var object_country = ipfs.device_country
+            var object_content_channeling_setting = ipfs.content_channeling_setting
+            var object_language = ipfs.device_language_setting
             
             if(content_channeling_setting == 'local'){
                 if(device_country == object_country && object_content_channeling_setting == 'local'){
@@ -1670,13 +1686,14 @@ class home_page extends Component {
             
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors}
 
-            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}
+            get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)}
             />
         )
     }
 
     when_ether_object_clicked(index, id){
         this.setState({selected_ether_item: id})
+        this.set_detail_data()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -1684,6 +1701,8 @@ class home_page extends Component {
 
     when_ends_object_clicked(index, id, e5){
         this.setState({selected_end_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -1694,6 +1713,8 @@ class home_page extends Component {
 
     when_spends_object_clicked(index, id, e5){
         this.setState({selected_spend_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -1703,6 +1724,7 @@ class home_page extends Component {
 
     when_E5_item_clicked(index, id){
         this.setState({selected_e5_item: id})
+        this.set_detail_data()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
@@ -1716,7 +1738,9 @@ class home_page extends Component {
     }
 
     when_job_post_item_clicked(index, id, e5){
-        this.setState({selected_job_post_item: id})
+        this.setState({selected_job_post_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_jobs_clone = this.state.viewed_jobs.slice()
         var pos = viewed_jobs_clone.indexOf(id)
         if(pos == -1){
@@ -1734,8 +1758,9 @@ class home_page extends Component {
     }
 
     when_contract_item_clicked(index, id, e5){
-        this.setState({selected_contract_item: id})
-
+        this.setState({selected_contract_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_contracts_clone = this.state.viewed_contracts.slice()
         var pos = viewed_contracts_clone.indexOf(id)
         if(pos == -1){
@@ -1753,8 +1778,9 @@ class home_page extends Component {
     }
 
     when_subscription_item_clicked(index, id, e5){
-        this.setState({selected_subscription_item: id})
-
+        this.setState({selected_subscription_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_subscriptions_clone = this.state.viewed_subscriptions.slice()
         var pos = viewed_subscriptions_clone.indexOf(id)
         if(pos == -1){
@@ -1772,8 +1798,9 @@ class home_page extends Component {
     }
 
     when_post_item_clicked(index, id, e5){
-        this.setState({selected_post_item: id})
-
+        this.setState({selected_post_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_posts_clone = this.state.viewed_posts.slice()
         var pos = viewed_posts_clone.indexOf(id)
         if(pos == -1){
@@ -1791,8 +1818,9 @@ class home_page extends Component {
     }
 
     when_channel_item_clicked(index, id, e5){
-        this.setState({selected_channel_item: id})
-
+        this.setState({selected_channel_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_channel_clone = this.state.viewed_channels.slice()
         var pos = viewed_channel_clone.indexOf(id)
         if(pos == -1){
@@ -1811,8 +1839,9 @@ class home_page extends Component {
     }
 
     when_proposal_item_clicked(index, id, e5){
-        this.setState({selected_proposal_item: id})
-
+        this.setState({selected_proposal_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_proposals_clone = this.state.viewed_proposals.slice()
         var pos = viewed_proposals_clone.indexOf(id)
         if(pos == -1){
@@ -1831,14 +1860,16 @@ class home_page extends Component {
 
     when_mail_item_clicked(index, id){
         this.setState({selected_mail_item: id})
+        this.set_detail_data()
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
     }
 
     when_storefront_post_item_clicked(index, id, e5){
-        this.setState({selected_storefront_item: id})
-
+        this.setState({selected_storefront_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_storefront_clone = this.state.viewed_stores.slice()
         var pos = viewed_storefront_clone.indexOf(id)
         if(pos == -1){
@@ -1856,8 +1887,9 @@ class home_page extends Component {
     }
 
     when_bag_post_item_clicked(index, id, e5){
-        this.setState({selected_bag_item: id})
-
+        this.setState({selected_bag_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_bag_clone = this.state.viewed_bags.slice()
         var pos = viewed_bag_clone.indexOf(id)
         if(pos == -1){
@@ -1875,7 +1907,9 @@ class home_page extends Component {
     }
 
     when_contractor_post_item_clicked(index, id, e5){
-        this.setState({selected_contractor_item: id})
+        this.setState({selected_contractor_item: id+e5})
+        this.set_detail_data()
+        this.add_to_tab(id+e5, id)
         var viewed_contractors_clone = this.state.viewed_contractors.slice()
         var pos = viewed_contractors_clone.indexOf(id)
         if(pos == -1){
@@ -1906,6 +1940,71 @@ class home_page extends Component {
         else{}
     }
 
+    set_detail_data(){
+        var selected_page = this.state.page
+        var selected_tag = ''
+        if(selected_page == '?'){
+            selected_tag = this.state.work_page_tags_object['i'].active
+        }
+        else if(selected_page == 'e'){
+            selected_tag = this.state.explore_page_tags_object['i'].active
+        }
+        else if(selected_page == 'w'){
+            var selected_item = this.state.wallet_page_tags_object['e'][2][0];
+            selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
+        }
+        this.setState({detail_page:this.state.page, detail_selected_tag:selected_tag})
+    }
+
+    add_to_tab(object_e5_id, object_id){
+        var clone = this.state.tabs.slice()
+
+        if(this.props.app_state.visible_tabs == 'e') return;
+
+        if(this.does_tabs_contain_id(object_e5_id)){
+            for(var i=0; i<clone.length; i++){
+                if(clone[i]['e5_id'] == object_e5_id){
+                    const index = i;
+                    clone.splice(index, 1); // 2nd parameter means remove one item only
+                }
+            }
+        }
+        var selected_page = this.state.page
+        var selected_tag = ''
+        if(selected_page == '?'){
+            selected_tag = this.state.work_page_tags_object['i'].active
+            if(selected_tag == 'e'){
+                selected_tag = 'jobs'
+            }
+        }
+        else if(selected_page == 'e'){
+            selected_tag = this.state.explore_page_tags_object['i'].active
+        }
+        else if(selected_page == 'w'){
+            var selected_item = this.state.wallet_page_tags_object['e'][2][0];
+            selected_tag = this.state.wallet_page_tags_object['e'][1][selected_item];
+        }
+        var obj = {'selected_tag':selected_tag, 'selected_page':selected_page, 'e5_id':object_e5_id, 'id':object_id}
+        clone.push(obj)
+
+
+        var me = this;
+        setTimeout(function() {
+            me.setState({tabs: clone})
+            me.update_cookies()
+        }, (1 * 100));
+    }
+
+    does_tabs_contain_id(e5_id){
+        var contains = false
+        this.state.tabs.forEach(element => {
+            if(element['e5_id'] == e5_id){
+                contains = true
+            }
+        });
+        return contains
+    }
+
 
 
 
@@ -1926,13 +2025,16 @@ class home_page extends Component {
 
 
     render_post_detail_object(size){
+        var h = this.props.height - 48
+        if(this.props.app_state.visible_tabs == 'e') h = this.props.height
         return(
             <div>
-                <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} 
+                {this.render_page_tabs()}
+                <PostDetailSection page={this.state.page} screensize={size} work_page_tags_object={this.state.work_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} detail_page={this.state.detail_page} detail_selected_tag={this.state.detail_selected_tag}
 
                 selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item}
 
-                height={this.props.height} screensize={this.props.screensize} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.props.notify.bind(this)}
+                height={h} screensize={this.props.screensize} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.props.notify.bind(this)}
                 
                 when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
                 
@@ -2333,6 +2435,309 @@ class home_page extends Component {
 
 
 
+
+    render_page_tabs(){
+        var items = [].concat(this.state.tabs).reverse()
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+
+        if(this.props.app_state.visible_tabs == 'e') return;
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_tab_clicked(item)}>
+                            {this.render_tab_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+
+    get_object_details(tem){
+        if(tem['selected_tag'] == 'jobs'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_jobs))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'contracts'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_contracts))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'contractors'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_contractors))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'proposals'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.my_proposals))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'subscriptions'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_subscriptions))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'posts'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_posts))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'channels'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_channels))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'storefront'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_stores))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'bags'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_stores))
+            if(object != null){
+                return object['ipfs'].entered_title_text
+            }
+        }
+        else if(tem['selected_tag'] == 'ends ☝️'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
+            if(object != null && object['ipfs'] != null){
+                return object['ipfs'].entered_title_text
+            }else{
+                return tem['e5_id']
+            }
+        }
+        else if(tem['selected_tag'] == 'spends 🫰'){
+            var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_tokens))
+            if(object != null && object['ipfs'] != null){
+                return object['ipfs'].entered_title_text
+            }else{
+                return tem['e5_id']
+            }
+        }
+        return ''
+    }
+
+    render_tab_item(item){
+        if(this.is_tab_active(item)){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(this.get_object_details(item), 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                </div>
+            )
+        }
+    }
+
+    get_title(item){
+        var obj = {'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'posts':'📰','channels':'📡','E5tokens':'🪙','externals':'🌕', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷', 'ends ☝️':'', 'spends 🫰':''}
+        return `${obj[item['selected_tag']]} ${item['selected_tag']}`
+    }
+
+    is_tab_active(tem){
+        var is_tab_active = false
+        if(tem['selected_tag'] == 'jobs'){
+            var selected_item = this.state.selected_job_post_item
+            var detail_selected_tag = this.state.detail_selected_tag == 'e' ? 'jobs' : this.state.detail_selected_tag
+            if(detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'contracts'){
+            var selected_item = this.state.selected_contract_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'contractors'){
+            var selected_item = this.state.selected_contractor_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'proposals'){
+            var selected_item = this.state.selected_proposal_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'subscriptions'){
+            var selected_item = this.state.selected_subscription_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'posts'){
+            var selected_item = this.state.selected_post_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'channels'){
+            var selected_item = this.state.selected_channel_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'storefront'){
+            var selected_item = this.state.selected_storefront_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'bags'){
+            var selected_item = this.state.selected_bag_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'ends ☝️'){
+            var selected_item = this.state.selected_end_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+        else if(tem['selected_tag'] == 'spends 🫰'){
+            var selected_item = this.state.selected_spend_item
+            if(this.state.detail_selected_tag == tem['selected_tag']){
+                if(selected_item == tem['e5_id']){
+                    is_tab_active = true
+                }
+            }
+        }
+
+        return is_tab_active;
+    }
+
+
+    when_tab_clicked(item){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            me.remove_tab_item(item)
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.focus_tab(item)
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
+    }
+
+    remove_tab_item(item){
+        var cloned_array = this.state.tabs.slice()
+        const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+
+            var prev_index = index -1;
+            if(this.is_tab_active(item) && prev_index > -1){
+                this.focus_tab(this.state.tabs[prev_index])
+            }
+            this.setState({tabs: cloned_array})
+            this.update_cookies()
+        }
+    }
+
+
+    focus_tab(tem){
+        if(tem['selected_tag'] == 'jobs'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag: tem['selected_tag'], selected_job_post_item:  tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'contracts'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_contract_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'contractors'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_contractor_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'proposals'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_proposal_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'subscriptions'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_subscription_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'posts'){
+           this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_post_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'channels'){
+           this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_channel_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'storefront'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_storefront_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'bags'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_bag_item: tem['e5_id']})
+        }
+        else if(tem['selected_tag'] == 'ends ☝️'){
+            this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_end_item: tem['e5_id'] })
+        }
+        else if(tem['selected_tag'] == 'spends 🫰'){
+           this.setState({detail_page: tem['selected_page'], detail_selected_tag:tem['selected_tag'], selected_spend_item: tem['e5_id']})
+        }
+    }
 
 
 

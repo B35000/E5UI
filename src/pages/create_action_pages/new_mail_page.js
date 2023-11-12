@@ -717,7 +717,7 @@ class NewMailPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.props.app_state.contacts[this.state.e5]
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.target_recipient)){

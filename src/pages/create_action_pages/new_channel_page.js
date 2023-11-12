@@ -732,8 +732,8 @@ class NewChannelPage extends Component {
         if(!isNaN(alias)){
             return alias
         }
-        var id = (this.props.app_state.alias_owners[this.state.e5][alias] == null ? 
-            alias : this.props.app_state.alias_owners[this.state.e5][alias])
+        var id = (this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias] == null ? 
+            alias : this.props.app_state.alias_owners[this.props.app_state.selected_e5][alias])
 
         return id
     }
@@ -916,7 +916,7 @@ class NewChannelPage extends Component {
     }
 
     get_account_suggestions(target_type){
-        var contacts = this.props.app_state.contacts[this.state.e5]
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
         var return_array = []
 
         if(target_type == 'moderator_id'){

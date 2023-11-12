@@ -146,7 +146,7 @@ class PostsDetailsSection extends Component {
     }
 
     get_item_in_array(object_array, id){
-        var object = object_array.find(x => x['id'] === id);
+        var object = object_array.find(x => x['e5_id'] === id);
         return object
     }
 
@@ -186,7 +186,7 @@ class PostsDetailsSection extends Component {
 
     render_post_main_details_section(object){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-70
+        var he = this.props.height-50
         var size = this.props.screensize
         if(size == 'm'){
             he = this.props.height-190;
@@ -195,7 +195,7 @@ class PostsDetailsSection extends Component {
         var item = this.get_post_details_data(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>

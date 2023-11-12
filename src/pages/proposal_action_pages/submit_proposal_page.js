@@ -176,7 +176,9 @@ class SubmitProposalPage extends Component {
             this.props.notify('You cant submit this proposal', 700);
         }
         else{
-            this.props.add_submit_proposal_action_to_stack(this.state)
+            var clone = structuredClone(this.state)
+            // clone.e5 = this.props.app_state.selected_e5
+            this.props.add_submit_proposal_action_to_stack(clone)
             this.props.notify('transaction added to stack', 700);
         }
     }

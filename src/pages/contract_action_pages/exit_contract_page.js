@@ -265,7 +265,9 @@ class ExitContractPage extends Component {
         if(this.state.contract_item['entry_expiry'] == 0){
             this.props.notify(`You can't exit a contract you haven't entered`, 1500);
         }else{
-            this.props.exit_contract(this.state)
+            var clone = structuredClone(this.state)
+            // clone.e5 = this.props.app_state.selected_e5
+            this.props.exit_contract(clone)
             this.props.notify('transaction added to stack', 700);
         }
         

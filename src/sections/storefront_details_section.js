@@ -136,7 +136,7 @@ class StorefrontDetailsSection extends Component {
     }
 
     get_item_in_array(object_array, id){
-        var object = object_array.find(x => x['id'] === id);
+        var object = object_array.find(x => x['e5_id'] === id);
         return object
     }
 

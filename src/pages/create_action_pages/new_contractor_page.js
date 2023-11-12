@@ -621,7 +621,7 @@ class NewContractorPage extends Component {
     }
 
     when_add_price_set(){
-        var exchange_id = this.state.exchange_id.trim()
+        var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
             this.props.notify('please put a valid exchange id', 2600)
@@ -637,8 +637,17 @@ class NewContractorPage extends Component {
         }
     }
 
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
+    }
+
     does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.state.e5][parseInt(exchange_id)] == null){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
             return false
         }
         return true
@@ -731,7 +740,7 @@ class NewContractorPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {

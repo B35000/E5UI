@@ -264,7 +264,10 @@ class ExtendContractPage extends Component {
             this.props.notify('You have to wait '+(this.get_time_diff(waiting_time))+' to extend your stay.', 1500);
         }
         else{
-            this.props.extend_contract(this.state)
+            var clone = structuredClone(this.state)
+            // clone.e5 = this.props.app_state.selected_e5
+
+            this.props.extend_contract(clone)
             this.props.notify('transaction added to stack', 700);
         }
         

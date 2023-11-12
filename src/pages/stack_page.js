@@ -48,6 +48,7 @@ class StackPage extends Component {
         get_content_channeling_object: this.get_content_channeling_object(),
         get_content_language_object: this.get_content_language_object(),
         get_content_filtered_setting_object: this.get_content_filtered_setting_object(),
+        get_tabs_tags_object: this.get_tabs_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -86,6 +87,17 @@ class StackPage extends Component {
             },
             'e':[
                 ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', 'all-time'], [4]
+            ],
+        };
+    }
+
+    get_wallet_thyme_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','a','i','o','u','?','$','%','#','!'], [1]
             ],
         };
     }
@@ -371,7 +383,6 @@ class StackPage extends Component {
         };
     }
 
-
     get_content_filter_settings_option(){
         if(this.props.app_state.section_tags_setting == 'all'){
             return 1
@@ -388,18 +399,36 @@ class StackPage extends Component {
 
 
 
-   
 
-    get_wallet_thyme_tags_object(){
+
+
+
+    get_tabs_tags_object(){
         return{
             'i':{
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','a','i','o','u','?','$','%','#','!'], [1]
+                ['or','',0], ['e','enabled'], [this.get_selected_tabs_data_option()]
             ],
         };
     }
+
+    get_selected_tabs_data_option(){
+        if(this.props.app_state.visible_tabs == 'e'){
+            return 0
+        }
+        else if(this.props.app_state.visible_tabs == 'enabled'){
+            return 1
+        }
+        return 0;
+    }
+
+    set_tabs_tag(){
+        this.setState({get_tabs_tags_object: this.get_tabs_tags_object(),})
+    }
+
+
 
 
 
@@ -423,7 +452,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
                 <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme}/>
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-100}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -3507,6 +3536,15 @@ class StackPage extends Component {
                     <Tags page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')}
+
+
+                    
+                    {this.render_detail_item('3',{'title':'Content Tabs', 'details':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
@@ -3587,6 +3625,12 @@ class StackPage extends Component {
         this.setState({get_content_filtered_setting_object: tag_group})
         var selected_item = this.get_selected_item(this.state.get_content_filtered_setting_object, 'e')
         this.props.when_content_filter_setting_changed(selected_item)
+    }
+
+    when_get_tabs_tags_object_updated(tag_group){
+        this.setState({get_tabs_tags_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_tabs_tags_object, 'e')
+        this.props.when_tabs_setting_changed(selected_item)
     }
 
 
@@ -4162,27 +4206,38 @@ class StackPage extends Component {
         var typed_word = this.state.typed_alias_word.trim()
         
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify('type something!', 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify('enter one word!', 1400)
         }
         else if(typed_word.length > 23){
-            this.props.notify('That alias is too long', 900)
+            this.props.notify('That alias is too long', 1900)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That alias is too short', 900)
+            this.props.notify('That alias is too short', 1900)
         }
         else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] < 1000){
-            this.props.notify('you need to make at least 1 transaction to reserve an alias', 1200)
+            this.props.notify('you need to make at least 1 transaction to reserve an alias', 3200)
         }
         else if(this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[typed_word] != null){
-            this.props.notify('That alias has already been reserved', 400)
+            this.props.notify('That alias has already been reserved', 1400)
+        }
+        else if(this.is_word_reserved(typed_word)){
+            this.props.notify('That word is reserved', 2000)
         }
         else{
             this.props.add_alias_transaction_to_stack(this.state.typed_alias_word)
             this.setState({typed_alias_word: ''})
         }
+    }
+
+    is_word_reserved(typed_word){
+        var obj = ['Unknown', 'Alias Unknown']
+        if(obj.includes(typed_word)){
+            return true
+        }
+        return false
     }
 
 

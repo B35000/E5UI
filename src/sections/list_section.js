@@ -16,13 +16,19 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function start_and_end(str) {
+  if (str.length > 35) {
+    return str.substr(0, 20) + '...' + str.substr(str.length-10, str.length);
+  }
+  return str;
+}
 
 class PostListSection extends Component {
     
     state = {
         selected: 0,
         viewed_posts:[],
-        scroll_positions:{}, typed_search_id:''
+        scroll_positions:{}, typed_search_id:'', searched_account:''
     };
 
 
@@ -176,6 +182,7 @@ class PostListSection extends Component {
         this.mail_list = React.createRef();
 
         this.e5_list = React.createRef();
+        this.searched_account_list = React.createRef();
         this.post_list = React.createRef();
         this.channel_list = React.createRef();
         this.storefront_list = React.createRef();
@@ -220,6 +227,10 @@ class PostListSection extends Component {
 
     set_e5_list(pos){
         this.e5_list.current?.scrollTo(0, pos);
+    }
+
+    set_searched_account_list(pos){
+        this.searched_account_list.current?.scrollTo(0, pos)
     }
 
     set_post_list(pos){
@@ -889,17 +900,12 @@ class PostListSection extends Component {
 
         if(items.length == 0){
             items = ['0','1'];
-            return ( 
+            return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
+                                {this.render_small_empty_object()}
                             </li>
                         ))}
                     </ul>
@@ -910,11 +916,13 @@ class PostListSection extends Component {
             <div ref={this.e5_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
+                        <li style={{'padding': '1px 5px 1px 5px'}}>
                             {this.render_E5s_object(item['data'], index, item['id'])}
                         </li>
                     ))}
-                    {this.render_empty_object()}
+                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
+                        {this.render_small_empty_object()}
+                    </div> */}
                 </ul>
             </div>
         );
@@ -929,19 +937,22 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.get_e5_data_item_object(item_data, name)
         return ( 
-            <div onClick={() => this.when_E5_item_clicked(index, name)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '0px 0px 0px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 10px 0px 10px'}}>
-                        {this.render_detail_item('8', item['label'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                    <div style={{'margin':'0px 10px 0px 10px'}}>
-                        {this.render_detail_item('10', item['address'])}
-                    </div>
-                    <div style={{height: 10}}/>
-                </div>         
+            // <div onClick={() => this.when_E5_item_clicked(index, name)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            //     <div style={{'padding': '0px 0px 0px 5px'}}>
+            //         {this.render_detail_item('1', item['tags'])}
+            //         <div style={{height: 10}}/>
+            //         <div style={{'padding': '0px 10px 0px 10px'}}>
+            //             {this.render_detail_item('8', item['label'])}
+            //         </div>
+            //         <div style={{height: 10}}/>
+            //         <div style={{'margin':'0px 10px 0px 10px'}}>
+            //             {this.render_detail_item('10', item['address'])}
+            //         </div>
+            //         <div style={{height: 10}}/>
+            //     </div>         
+            // </div>
+            <div onClick={() => this.when_E5_item_clicked(index, name)}>
+                {this.render_detail_item('8', item['data'])}
             </div>
         );
     }
@@ -955,7 +966,8 @@ class PostListSection extends Component {
         return {
                 'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': obj[name]},
                 'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
-                'address':{'font':'Sans-serif', 'text':add_obj[name], 'textsize':'12px'}
+                'address':{'font':'Sans-serif', 'text':add_obj[name], 'textsize':'12px'},
+                'data':{'title':name, 'details':start_and_end(add_obj[name]), 'size':'l', 'image': obj[name]}
             }
     }
 
@@ -972,7 +984,7 @@ class PostListSection extends Component {
     render_search_user_data(){
         return(
             <div>
-                <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
+                <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={25} placeholder={'Enter ID or Alias...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
                     </div>
@@ -980,7 +992,7 @@ class PostListSection extends Component {
                         {this.render_detail_item('5',{'text':'Search','action':''})}
                     </div>
                 </div>
-
+                <div style={{height: 10}}/>
                 {this.render_search_results()}
             </div>
         )
@@ -993,7 +1005,8 @@ class PostListSection extends Component {
 
 
     perform_search(){
-        var typed_account = this.get_typed_alias_id(this.state.typed_search_id.trim())
+        var typed_search = this.state.typed_search_id.trim()
+        var typed_account = this.get_typed_alias_id(typed_search)
 
         if(typed_account == ''){
             this.props.notify('type something!', 800)
@@ -1004,8 +1017,9 @@ class PostListSection extends Component {
         else if(parseInt(typed_account) < 1001){
             this.props.notify('that ID is not valid', 800)
         }else{
-            this.props.notify('searching...', 500)
-            
+            this.props.notify('searching...', 1000)
+            this.setState({searched_account: typed_account})
+            this.props.get_searched_account_data(typed_account, typed_search)
         }
     }
 
@@ -1019,12 +1033,13 @@ class PostListSection extends Component {
     }
 
     get_search_results(){
-        return []
+        var data = this.props.app_state.searched_accounts_data[this.state.searched_account]
+        if(data == null) return []
+        return data
     }
 
     render_search_results(){
-        var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height-153;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1032,26 +1047,67 @@ class PostListSection extends Component {
         var items = this.get_search_results()
         if(items.length == 0){
             items = ['0','1'];
-            return ( 
+            return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
+                            <li style={{'padding': '1px'}}>
+                                {this.render_small_empty_object()}
                             </li>
                         ))}
                     </ul>
                 </div>
             );
         }else{
-
+            return(
+                <div ref={this.searched_account_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '1px'}}>
+                                {this.render_searched_account_item(item)}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
         }
     }
+
+    render_searched_account_item(item){
+        var address = item['address']
+        var ether_balance = item['ether_balance']
+        var e5 = item['e5']
+        var e5_img = this.props.app_state.e5s[e5].end_image
+        var alias = item['alias']
+        
+        return(
+            <div onClick={() => this.props.when_searched_account_clicked(item, this.state.searched_account)}>
+                {this.render_detail_item('8', {'title':alias+': '+this.state.searched_account, 'details':start_and_end(address), 'size':'l', 'image':e5_img})}
+                {/* <div style={{height: 3}}/>
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style': 'l', 'title':'Ether Balance in Wei', 'subtitle': this.format_power_figure(ether_balance), 'barwidth': this.calculate_bar_width(ether_balance), 'number': this.format_account_balance_figure(ether_balance), 'barcolor': '', 'relativepower': 'wei', })}
+                </div>
+                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/> */}
+            </div>
+        )
+    }
+
+
+
+    render_small_empty_object(){
+        return(
+            <div>
+                <div style={{ height: 80, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                        <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+
 
 
 
@@ -1563,10 +1619,13 @@ class PostListSection extends Component {
             <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '5px'}}>
+                        <li style={{'padding': '1px 5px 1px 5px'}}>
                             {this.render_ethers_object(item, index)}
                         </li>
                     ))}
+                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
+                        {this.render_small_empty_object()}
+                    </div> */}
                 </ul>
             </div>
         );
@@ -1576,16 +1635,19 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
-            <div onClick={() => this.when_ether_object_clicked(index, item)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '0px 0px 0px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 10px 0px 10px'}}>
-                        {this.render_detail_item('8', item['label'])}
-                    </div>
-                    <div style={{height: 20}}/>
-                    {this.render_detail_item('2', item['number_label'])}
-                </div>         
+            // <div onClick={() => this.when_ether_object_clicked(index, item)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            //     <div style={{'padding': '0px 0px 0px 5px'}}>
+            //         {this.render_detail_item('1', item['tags'])}
+            //         <div style={{height: 10}}/>
+            //         <div style={{'padding': '0px 10px 0px 10px'}}>
+            //             {this.render_detail_item('8', item['label'])}
+            //         </div>
+            //         <div style={{height: 20}}/>
+            //         {this.render_detail_item('2', item['number_label'])}
+            //     </div>         
+            // </div>
+            <div onClick={() => this.when_ether_object_clicked(index, item)}>
+                {this.render_detail_item('8', item['label'])}
             </div>
         );
     }
@@ -1649,17 +1711,33 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_exchange_tokens(3)
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_small_empty_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+
         return ( 
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li onClick={() => this.when_ends_object_clicked(index, item)} style={{'padding': '5px'}}>
+                        <li onClick={() => this.when_ends_object_clicked(index, item)} style={{'padding': '1px 5px 1px 5px'}}>
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                         </li>
                     ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
+                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
+                        {this.render_small_empty_object()}
+                    </div> */}
                 </ul>
             </div>
         );
@@ -1681,16 +1759,19 @@ class PostListSection extends Component {
             )
         }
         return ( 
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '0px 0px 0px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 10px 0px 10px'}}>
-                        {this.render_detail_item('8', item['label'])}
-                    </div>
-                    <div style={{height: 20}}/>
-                    {this.render_detail_item('2', item['number_label'])}
-                </div>         
+            // <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            //     <div style={{'padding': '0px 0px 0px 5px'}}>
+            //         {this.render_detail_item('1', item['tags'])}
+            //         <div style={{height: 10}}/>
+            //         <div style={{'padding': '0px 10px 0px 10px'}}>
+            //             {this.render_detail_item('8', item['label'])}
+            //         </div>
+            //         <div style={{height: 20}}/>
+            //         {this.render_detail_item('2', item['number_label'])}
+            //     </div>         
+            // </div>
+            <div>
+                {this.render_detail_item('8', item['label'])}
             </div>
         );
     }
@@ -1743,17 +1824,33 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_exchange_tokens(5)
+
+        if(items.length == 0){
+            items = ['0','1'];
+            return ( 
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}}>
+                                {this.render_small_empty_object()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+
         return ( 
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li onClick={() => this.when_spends_object_item_clicked(index, item)} style={{'padding': '5px'}}>
+                        <li onClick={() => this.when_spends_object_item_clicked(index, item)} style={{'padding': '1px 5px 1px 5px'}}>
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </li>
                     ))}
-                    <div style={{'padding': '5px'}}>
-                        {this.render_empty_object()}
-                    </div>
+                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
+                        {this.render_small_empty_object()}
+                    </div> */}
                 </ul>
             </div>
         );
@@ -1771,16 +1868,19 @@ class PostListSection extends Component {
             )
         }
         return ( 
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
-                <div style={{'padding': '0px 0px 0px 5px'}}>
-                    {this.render_detail_item('1', item['tags'])}
-                    <div style={{height: 10}}/>
-                    <div style={{'padding': '0px 10px 0px 10px'}}>
-                        {this.render_detail_item('8', item['label'])}
-                    </div>
-                    <div style={{height: 20}}/>
-                    {this.render_detail_item('2', item['number_label'])}
-                </div>         
+            // <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            //     <div style={{'padding': '0px 0px 0px 5px'}}>
+            //         {this.render_detail_item('1', item['tags'])}
+            //         <div style={{height: 10}}/>
+            //         <div style={{'padding': '0px 10px 0px 10px'}}>
+            //             {this.render_detail_item('8', item['label'])}
+            //         </div>
+            //         <div style={{height: 20}}/>
+            //         {this.render_detail_item('2', item['number_label'])}
+            //     </div>         
+            // </div>
+            <div>
+                {this.render_detail_item('8', item['label'])}
             </div>
         );
     }
@@ -1883,6 +1983,27 @@ class PostListSection extends Component {
             power = 'e72'
         }
         return power
+    }
+
+    calculate_bar_width(amount){
+        var figure = ''
+        if(amount == null){
+            amount = 0
+        }
+        if(amount < bigInt('1e9')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
+        }
+        else if(amount < bigInt('1e18')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
+        }
+        else if(amount < bigInt('1e36')){
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
+        }
+        else{
+            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
+        }
+
+        return figure+'%'
     }
 
 
