@@ -643,7 +643,6 @@ class StackPage extends Component {
                     {this.render_stack_gas_part()}
                     {this.render_detail_item('0')}
                     {this.render_stack_run_settings_part()}
-                    {this.render_detail_item('0')}
                     {this.render_gas_history_chart()}
                     {this.render_dialog_ui()}
                     {this.render_detail_item('0')}
@@ -970,7 +969,7 @@ class StackPage extends Component {
         if(events != null && events.length > 10){
             return(
                 <div>
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':'Gas Prices', 'details':`The gas price data recorded on your selected E5 over time.`, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_gas_history_data_points(events), 'interval':this.get_gas_history_interval_figure(events)})}

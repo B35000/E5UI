@@ -179,7 +179,7 @@ class home_page extends Component {
               ['xor','e',1], ['jobs','all','viewed','created','applied', 'pinned'], [1],[1]
           ],
           'contracts':[
-              ['xor','e',1], ['contracts','created','all','viewed','entered', 'pinned'], [1],[1]
+              ['xor','e',1], ['contracts','all','created','viewed','entered', 'pinned'], [1],[1]
           ],
           'contractors':[
               ['xor','e',1], ['contractors','all','viewed','created','pinned'], [1],[1]
@@ -1265,14 +1265,14 @@ class home_page extends Component {
 
         if(received_messages != null){
             for(var i=0; i<received_messages.length; i++){
-                if(received_messages[i]['ipfs'].entered_title_text == null){
+                if(received_messages[i]['ipfs']!=null && received_messages[i]['ipfs'].entered_title_text == null){
                     all_messages.push(received_messages[i])
                 }
             }
         }
         if(created_messages != null){
             for(var i=0; i<created_messages.length; i++){
-                if(created_messages[i]['ipfs'].entered_title_text == null){
+                if(created_messages[i]['ipfs']!=null && created_messages[i]['ipfs'].entered_title_text == null){
                     all_messages.push(created_messages[i])
                 }
             }
@@ -2488,8 +2488,10 @@ class home_page extends Component {
         }
         else if(tem['selected_tag'] == 'contracts'){
             var object = this.get_item_in_array2(tem['e5_id'],this.get_all_sorted_objects(this.props.app_state.created_contracts))
-            if(object != null){
+            if(object != null && object['ipfs'] != null){
                 return object['ipfs'].entered_title_text
+            }else{
+                return tem['e5_id']
             }
         }
         else if(tem['selected_tag'] == 'contractors'){
@@ -2571,7 +2573,7 @@ class home_page extends Component {
     }
 
     get_title(item){
-        var obj = {'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'posts':'📰','channels':'📡','E5tokens':'🪙','externals':'🌕', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷', 'ends ☝️':'', 'spends 🫰':''}
+        var obj = {'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'posts':'📰','channels':'📡','E5tokens':'🪙','externals':'🌕', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'ends ☝️':'', 'spends 🫰':''}
         return `${obj[item['selected_tag']]} ${item['selected_tag']}`
     }
 

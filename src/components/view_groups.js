@@ -362,7 +362,7 @@ class ViewGroups extends Component {
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
             var caption = object_data != null ? object_data['caption']:{'text':'E5', 'textsize':'10px', 'font':'Times New Roman'}
             return(
-                <div style={{width:'90%'}}>
+                <div style={{width:'90%', margin:'0px 0px 0px 10px'}}>
                     <img src={img} style={{height:'auto' ,width:'90%'}} />
                     {this.render_detail_item('10', caption)}
                 </div>

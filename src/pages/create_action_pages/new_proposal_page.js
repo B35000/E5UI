@@ -1845,41 +1845,42 @@ class NewProposalPage extends Component {
 
         else{
             var me = this
-            var state_clone = structuredClone(me.state)
-            state_clone.content_channeling_setting = me.props.app_state.content_channeling
-            state_clone.device_language_setting = me.props.app_state.device_language
-            state_clone.device_country = me.props.app_state.device_country
-            state_clone.e5 = me.props.app_state.selected_e5
-                
-            this.props.when_add_new_proposal_to_stack(state_clone)
-
-            this.setState({selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
-            entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
-
-            new_proposal_title_tags_object:this.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:this.get_new_proposal_type_tags_object(),
-            reconfig_items_tags_object:this.get_reconfig_items_tags_object(),
-
-            auto_wait_tags_object:this.get_auto_wait_tags_object(),
-            can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(),
-            can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),
-            bounty_limit_type: this.get_bounty_limit_type(),
-            contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
-            new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
-            new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(),
-
-            page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
-            proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
-            modify_target_id:'', modify_target_data:null, spend_target_input_text:'', spend_token_input_text:'', 
-            spend_amount:0, spend_actions:[], 
+            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
+                device_language_setting :me.props.app_state.device_language,
+                device_country :me.props.app_state.device_country,
+                e5 :me.props.app_state.selected_e5,})
             
-            reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
-            reconfig_values:[],
+            setTimeout(function() {
+                me.props.when_add_new_proposal_to_stack(me.state)
 
-            exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
+                me.setState({selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
+                entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
-            bounty_exchange_target:'', bounty_amount:0, bounty_values:[]})
+                new_proposal_title_tags_object:me.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:me.get_new_proposal_type_tags_object(),
+                reconfig_items_tags_object:me.get_reconfig_items_tags_object(),
 
-            this.props.notify('transaction added to stack', 700);
+                auto_wait_tags_object:me.get_auto_wait_tags_object(),
+                can_modify_contract_as_moderator: me.get_can_modify_contract_as_moderator(),
+                can_extend_enter_contract_at_any_time: me.get_can_extend_enter_contract_at_any_time(),
+                bounty_limit_type: me.get_bounty_limit_type(),
+                contract_force_exit_enabled: me.get_contract_force_exit_enabled(),
+                new_token_halving_type_tags_object: me.get_new_token_halving_type_tags_object(),
+                new_token_block_limit_sensitivity_tags_object: me.get_new_token_block_limit_sensitivity_tags_object(),
+
+                page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
+                proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
+                modify_target_id:'', modify_target_data:null, spend_target_input_text:'', spend_token_input_text:'', 
+                spend_amount:0, spend_actions:[], 
+                
+                reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
+                reconfig_values:[],
+
+                exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
+
+                bounty_exchange_target:'', bounty_amount:0, bounty_values:[]})
+
+                me.props.notify('transaction added to stack', 700);
+            }, (1 * 1000));
         }
     }
 

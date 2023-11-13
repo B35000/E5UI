@@ -1329,17 +1329,18 @@ class NewSubscriptionPage extends Component {
         }
         else{
             var me = this;
-            var state_clone = structuredClone(me.state)
-            state_clone.content_channeling_setting = me.props.app_state.content_channeling
-            state_clone.device_language_setting = me.props.app_state.device_language
-            state_clone.device_country = me.props.app_state.device_country
-            state_clone.e5 = me.props.app_state.selected_e5
+            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
+                device_language_setting :me.props.app_state.device_language,
+                device_country :me.props.app_state.device_country,
+                e5 :me.props.app_state.selected_e5,})
+            
+            setTimeout(function() {
+                me.props.when_add_new_object_to_stack(me.state)
 
-            this.props.when_add_new_object_to_stack(state_clone)
+                me.setState({ id: makeid(32), type:'subscription', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: me.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:me.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
 
-            this.setState({ id: makeid(32), type:'subscription', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: this.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
-
-            this.props.notify('transaction added to stack', 700);
+                me.props.notify('transaction added to stack', 700);
+            }, (1 * 1000));
         }
     }
 

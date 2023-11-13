@@ -285,13 +285,22 @@ class MailDetailsSection extends Component {
 
     render_top_title(mail){
         // var mail = this.get_mail_items()[this.props.selected_mail_item];
-        var sender = mail['sender']
-        var recipient = mail['recipient']
+        var sender = this.get_account_alias(mail['sender'], mail)
+        var recipient = this.get_account_alias(mail['recipient'], mail)
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
                 {this.render_detail_item('3', {'title':sender+' with '+recipient, 'details':'conversation', 'size':'l'})} 
             </div>
         )
+    }
+
+    get_account_alias(sender, object){
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     constructor(props) {

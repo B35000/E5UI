@@ -136,7 +136,7 @@ class NewChannelPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-100}}>
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -242,7 +242,7 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Channel'})}
                 <div style={{height:10}}/>
 
-                <div className="row">
+                <div className="row" style={{'width':'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
@@ -382,7 +382,21 @@ class NewChannelPage extends Component {
 
                 <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
-                {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_banner_image_picked.bind(this)} />
+                    </div>
+
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_banner_image_picked.bind(this)} />
+                    </div>
+
+                    <div style={{'padding': '5px', width:205}}>
+                        {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
+                    </div>
+                </div>
             </div>
         )
     }
@@ -426,18 +440,35 @@ class NewChannelPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.state.entered_text_objects)
+        var items = [].concat(this.state.entered_objects)
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
+                    {items.reverse().map((item, index) => (
                         <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>
-                            {this.render_detail_item('4',item)}
+                            {this.render_text_or_banner_if_any(item)}
                         </li>
                     ))}
                 </ul>
             </div>
         );
+    }
+
+    render_text_or_banner_if_any(item){
+        if(item['type'] == '4'){
+            return(
+                <div>
+                    {this.render_detail_item('4',item['data'])}
+                </div>
+            )
+        }
+        else if(item['type'] == '11'){
+            return(
+                <div>
+                    {this.render_detail_item('11',item['data'])}
+                </div>
+            )
+        }
     }
 
     when_text_clicked(item){
@@ -450,7 +481,7 @@ class NewChannelPage extends Component {
 
         var entered_objects_pos = -1;
         for(var i=0; i<this.state.entered_objects.length; i++){
-            if(this.state.entered_objects[i]['data'] == item){
+            if(this.state.entered_objects[i]['data'] == item['data']){
                 entered_objects_pos = i;
             }
         }
@@ -463,6 +494,48 @@ class NewChannelPage extends Component {
 
         this.props.notify('item removed!', 600)
     }
+
+
+
+    when_banner_image_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        this.add_banner_to_object(ev.target.result)
+                        // this.setState({selected_banner_image: ev.target.result});
+                    }
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+        }
+    }
+
+    add_banner_to_object(image){
+        var typed_word = this.state.entered_text.trim();
+
+        if(typed_word == ''){
+            this.props.notify('type something!', 400)
+        }else{
+            var entered_text = this.get_edited_text_object()
+            entered_text['textsize'] = '10px'
+            var obj = {'image':image, 'caption':entered_text}
+
+            var cloned_array = this.state.entered_objects.slice()
+            cloned_array.push({'data':obj, 'type':'11' })
+            this.setState({entered_objects: cloned_array, entered_text:''})
+        }
+    }
+
+
+
+
+
+
+
 
 
 
@@ -1035,16 +1108,16 @@ class NewChannelPage extends Component {
             // }
             
             var me = this;
+            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
+                device_language_setting :me.props.app_state.device_language,
+                device_country :me.props.app_state.device_country,
+                e5 :me.props.app_state.selected_e5,})
             setTimeout(function() {
-                var state_clone = structuredClone(me.state)
-                state_clone.content_channeling_setting = me.props.app_state.content_channeling
-                state_clone.device_language_setting = me.props.app_state.device_language
-                state_clone.device_country = me.props.app_state.device_country
-                state_clone.e5 = me.props.app_state.selected_e5
-
-                me.props.when_add_new_object_to_stack(state_clone)
+                me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+                me.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), 
+                new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(),
+                moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],})
             }, (1 * 1000));
 
             this.props.notify('transaction added to stack', 700);

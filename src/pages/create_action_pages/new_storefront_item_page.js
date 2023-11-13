@@ -265,11 +265,10 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':'Target Payment Recipient', 'details':'Set the account thats set to receive the purchase payments for your new item', 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Account ID'} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                {this.load_account_suggestions('target_receiver')}
 
 
 
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Fulfilment Location', 'details':'Set location of the pick up station for your item when its ordered using a bag and contractors', 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput height={70} placeholder={'Location Details...'} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
@@ -322,37 +321,50 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Fulfilment Accounts', 'details':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients', 'size':'l'})}
 
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID'} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
-
-                <div style={{height:10}}/>
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
-                    {this.render_detail_item('5', {'text':'Add Account', 'action':''})}
+                <div className="row" style={{width: '103%'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                        <TextInput height={25} placeholder={'Account ID'} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '2px 0px 0px 0px'}}>
+                        <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
+                            {this.render_detail_item('5', {'text':'Add', 'action':''})}
+                        </div>
+                    </div>
                 </div>
-                <div style={{height:10}}/>
+                {/* {this.load_account_suggestions('fulfilment_account')} */}
                 {this.render_fulfilment_accounts()}
 
-
-
-
-                {this.render_detail_item('3', {'title':'Direct Purchase Shipping Fee', 'details':'The shipping fee you charge for shipping your item when directly purchased by your clients', 'size':'l'})}
-
-                <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
-                {this.load_token_suggestions('shipping_exchange_id')}
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.shipping_price_amount), 'barwidth':this.calculate_bar_width(this.state.shipping_price_amount), 'number':this.format_account_balance_figure(this.state.shipping_price_amount), 'barcolor':'', 'relativepower':'tokens', })}
-                </div>
-
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
-                </div>
-                {this.render_shipping_set_prices_list_part()}
+                {this.render_direct_shipping_fee_view_if_enabled()}
             </div>
         )
+    }
+
+    render_direct_shipping_fee_view_if_enabled(){
+        var selected_item = this.get_selected_item(this.state.purchase_option_tags_object, this.state.purchase_option_tags_object['i'].active)
+
+        if(selected_item == 'enabled'){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':'Direct Purchase Shipping Fee', 'details':'The shipping fee you charge for shipping your item when directly purchased by your clients', 'size':'l'})}
+
+                    <div style={{height:10}}/>
+                    <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
+                    {this.load_token_suggestions('shipping_exchange_id')}
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.shipping_price_amount), 'barwidth':this.calculate_bar_width(this.state.shipping_price_amount), 'number':this.format_account_balance_figure(this.state.shipping_price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                    </div>
+
+                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                    <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_price_set()}>
+                        {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                    </div>
+                    {this.render_shipping_set_prices_list_part()}
+                </div>
+            )
+        }
     }
 
 
@@ -533,6 +545,84 @@ class NewStorefrontItemPage extends Component {
         }
         this.setState({fulfilment_accounts: cloned_array})
     }
+
+
+
+
+
+    load_account_suggestions(target_type){
+        var items = [].concat(this.get_suggested_accounts(target_type))
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                      {items.map((item, index) => (
+                          <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_suggestion_clicked(item, index, target_type)}>
+                              {this.render_detail_item('3', item['label'])}
+                          </li>
+                      ))}
+                  </ul>
+                </div>
+        )
+    }
+
+    get_suggested_accounts(target_type){
+        var myid = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        if(myid == null) myid = 1
+        if(myid == 1){
+            return this.get_account_suggestions(target_type)
+        }
+        return[
+            {'id':''+myid, 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+        ].concat(this.get_account_suggestions(target_type))
+    }
+
+    get_account_suggestions(target_type){
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        var return_array = []
+
+        if(target_type == 'target_receiver'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.target_receiver)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        else if(target_type == 'fulfilment_account'){
+            contacts.forEach(contact => {
+                if(contact['id'].toString().includes(this.state.fulfilment_account)){
+                    return_array.push({'id':contact['id'],'label':{'title':contact['id'], 'details':this.get_contact_alias(contact), 'size':'s'}})
+                }
+            });
+        }
+        
+        return return_array;
+    }
+
+    get_contact_alias(contact){
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']] == null ? ((contact['address'].toString()).substring(0, 9) + "...") : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[contact['id']])
+    }
+
+
+    when_suggestion_clicked(item, pos, target_type){
+        if(target_type == 'target_receiver'){
+            this.setState({target_receiver: item['id']})
+        }
+        else if(target_type == 'fulfilment_account'){
+            this.setState({fulfilment_account: item['id']})
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -744,7 +834,21 @@ class NewStorefrontItemPage extends Component {
 
                 <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
-                {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
+                <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_banner_image_picked.bind(this)} />
+                    </div>
+
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                        <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                        <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_banner_image_picked.bind(this)} />
+                    </div>
+
+                    <div style={{'padding': '5px', width:205}}>
+                        {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
+                    </div>
+                </div>
             </div>
         )
     }
@@ -788,18 +892,35 @@ class NewStorefrontItemPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.state.entered_text_objects)
+        var items = [].concat(this.state.entered_objects)
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.reverse().map((item, index) => (
                         <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>
-                            {this.render_detail_item('4',item)}
+                            {this.render_text_or_banner_if_any(item)}
                         </li>
                     ))}
                 </ul>
             </div>
         );
+    }
+
+    render_text_or_banner_if_any(item){
+        if(item['type'] == '4'){
+            return(
+                <div>
+                    {this.render_detail_item('4',item['data'])}
+                </div>
+            )
+        }
+        else if(item['type'] == '11'){
+            return(
+                <div>
+                    {this.render_detail_item('11',item['data'])}
+                </div>
+            )
+        }
     }
 
     when_text_clicked(item){
@@ -812,7 +933,7 @@ class NewStorefrontItemPage extends Component {
 
         var entered_objects_pos = -1;
         for(var i=0; i<this.state.entered_objects.length; i++){
-            if(this.state.entered_objects[i]['data'] == item){
+            if(this.state.entered_objects[i]['data'] == item['data']){
                 entered_objects_pos = i;
             }
         }
@@ -825,6 +946,42 @@ class NewStorefrontItemPage extends Component {
 
         this.props.notify('item removed!', 600)
     }
+
+    when_banner_image_picked = (e) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        this.add_banner_to_object(ev.target.result)
+                        // this.setState({selected_banner_image: ev.target.result});
+                    }
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+        }
+    }
+
+    add_banner_to_object(image){
+        var typed_word = this.state.entered_text.trim();
+
+        if(typed_word == ''){
+            this.props.notify('type something!', 400)
+        }else{
+            var entered_text = this.get_edited_text_object()
+            entered_text['textsize'] = '10px'
+            var obj = {'image':image, 'caption':entered_text}
+
+            var cloned_array = this.state.entered_objects.slice()
+            cloned_array.push({'data':obj, 'type':'11' })
+            this.setState({entered_objects: cloned_array, entered_text:''})
+        }
+    }
+
+
+    
 
 
 
@@ -1601,26 +1758,26 @@ class NewStorefrontItemPage extends Component {
             this.props.notify('you should set some fulfilment accounts for your item', 2700)
         }
         else{
-            var data = this.state;
             var me = this
-            var state_clone = structuredClone(me.state)
-            state_clone.content_channeling_setting = me.props.app_state.content_channeling
-            state_clone.device_language_setting = me.props.app_state.device_language
-            state_clone.device_country = me.props.app_state.device_country
-            state_clone.e5 = me.props.app_state.selected_e5
-            this.props.when_add_new_object_to_stack(state_clone)
+            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
+                device_language_setting :me.props.app_state.device_language,
+                device_country :me.props.app_state.device_country,
+                e5 :me.props.app_state.selected_e5,})
 
-            this.setState({
-                id: makeid(8), type:'storefront-item',
-                get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
-                get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
-                entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
-                entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
-                entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
-                purchase_option_tags_object:this.get_purchase_option_tags_object(), available_unit_count:0, composition_type:this.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:''
-            })
-            this.props.notify('Transaction added to Stack', 600)
+            setTimeout(function() {
+                me.props.when_add_new_object_to_stack(me.state)
 
+                me.setState({
+                    id: makeid(8), type:'storefront-item',
+                    get_new_job_page_tags_object: me.get_new_job_page_tags_object(),
+                    get_new_job_text_tags_object: me.get_new_job_text_tags_object(),
+                    entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
+                    entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
+                    entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
+                    purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:''
+                })
+                me.props.notify('Transaction added to Stack', 600)
+            }, (1 * 1000));
         }
     }
 
