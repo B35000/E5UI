@@ -11,6 +11,7 @@ import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 import { Draggable } from "react-drag-reorder";
 
 var bigInt = require("big-integer");
+const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
 function number_with_commas(x) {
     if(x == null) x = '';
@@ -49,6 +50,7 @@ class StackPage extends Component {
         get_content_language_object: this.get_content_language_object(),
         get_content_filtered_setting_object: this.get_content_filtered_setting_object(),
         get_tabs_tags_object: this.get_tabs_tags_object(),
+        get_storage_permissions_tags_object: this.get_storage_permissions_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -157,20 +159,16 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','E15', 'E25'], [this.get_selected_e5_option()]
+                ['xor','',0], ['e',/* 'E15', */ 'E25', /* ,'E35' *//* , 'E45' */ 'E55', /* 'E65' *//* , 'E75' *//* , 'E85' */'E95'/* , 'E105' *//* , 'E125' */], [this.get_selected_e5_option()]
             ],
         };
         
     }
 
     get_selected_e5_option(){
-        if(this.props.app_state.selected_e5 == 'E15'){
-            return 1
-        }
-        else if(this.props.app_state.selected_e5 == 'E25'){
-            return 2
-        }
-        return 1
+        var obj = {'E25':1,'E35':0,'E45':0,'E55':2,'E65':0,'E75':0,'E85':0,'E95':3, 'E105':0, 'E125':0}
+        if(obj[this.props.app_state.selected_e5] == null) return 1
+        return obj[this.props.app_state.selected_e5]
     }
 
     set_e5_option_tag(){
@@ -435,6 +433,38 @@ class StackPage extends Component {
 
 
 
+    get_storage_permissions_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e','enabled'], [this.get_selected_storage_permissions_option()]
+            ],
+        };
+    }
+
+    get_selected_storage_permissions_option(){
+        if(this.props.app_state.storage_permissions == 'e'){
+            return 0
+        }
+        else if(this.props.app_state.storage_permissions == 'enabled'){
+            return 1
+        }
+        return 0;
+    }
+
+    set_storage_permissions_tag(){
+        this.setState({get_storage_permissions_tags_object: this.get_storage_permissions_tags_object(),})
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -577,7 +607,8 @@ class StackPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = [].concat(this.props.app_state.E5_runs[this.props.app_state.selected_e5])
+        var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
+        var items = [].concat(runs)
 
         if(items.length == 0){
             items = [0,3,0]
@@ -772,20 +803,18 @@ class StackPage extends Component {
     //here
     render_stack_gas_part(){
         var cache_size = this.get_browser_cache_size_limit();
-        var state_data = localStorage.getItem("state") == null ? "":localStorage.getItem("state")
         var viewed_data = localStorage.getItem("viewed") == null ? "":localStorage.getItem("viewed")
-        var data = state_data+viewed_data
-        var data_size = this.lengthInUtf8Bytes(data)
+        var data_size = this.lengthInUtf8Bytes(viewed_data) + this.props.app_state.index_db_size
 
         var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
         if(gas_price == null){
             gas_price = this.get_gas_price_from_runs()
         }
         
-        var gas_transactions =this.props.app_state.account_balance[this.props.app_state.selected_e5] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[this.props.app_state.selected_e5]/gas_price)/2_300_000)
+        var gas_transactions = this.props.app_state.account_balance[this.props.app_state.selected_e5] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[this.props.app_state.selected_e5]/gas_price)/2_300_000)
 
         return(
-            <div>  
+            <div>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
@@ -803,9 +832,8 @@ class StackPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {/* <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
                      */}
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Local Storage Size limit', 'subtitle':this.format_power_figure(cache_size*1024), 'barwidth':this.calculate_bar_width(cache_size*1024), 'number':this.format_account_balance_figure(cache_size*1024), 'barcolor':'#606060', 'relativepower':'bytes', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Amount Used', 'subtitle':this.format_power_figure(data_size), 'barwidth':this.calculate_bar_width(data_size), 'number':this.format_account_balance_figure(data_size), 'barcolor':'#606060', 'relativepower':'bytes', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Storage Space Utilized', 'subtitle':this.format_power_figure(data_size), 'barwidth':this.calculate_bar_width(data_size), 'number':this.format_account_balance_figure(data_size), 'barcolor':'#606060', 'relativepower':'bytes', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -823,7 +851,7 @@ class StackPage extends Component {
 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.run_transactions()}>
-                    {this.render_detail_item('5', {'text':'Run Transactions', 'action':''})}
+                    {this.render_detail_item('5', {'text':'Run '+this.props.app_state.selected_e5+' Transactions', 'action':''})}
                 </div>
             </div>
         )
@@ -1062,7 +1090,7 @@ class StackPage extends Component {
 
 
 
-
+    
 
 
     run_transactions = async () => {
@@ -1733,8 +1761,9 @@ class StackPage extends Component {
 
 
 
+        var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
 
-        if(this.props.app_state.E5_runs[this.props.app_state.selected_e5].length == 0){
+        if(runs.length == 0){
             //if its the first time running a transaction
             var obj = [ /* set data */
                 [20000, 13, 0],
@@ -1760,7 +1789,7 @@ class StackPage extends Component {
             ]
 
             var string_obj = [[]]
-            var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
+            var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
             var data = {'contacts':contacts_clone, 'time':Date.now()}
             var string_data = await this.get_object_ipfs_index(data);
             string_obj[0].push(string_data)
@@ -1779,7 +1808,7 @@ class StackPage extends Component {
             ]
 
             var string_obj = [[]]
-            var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
+            var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
             var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
             var string_data = await this.get_object_ipfs_index(data);
             string_obj[0].push(string_data)
@@ -1828,7 +1857,8 @@ class StackPage extends Component {
                 this.props.notify('That transaction gas limit is too low',2900)
             }
             else{
-                this.props.run_transaction_with_e(strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price)
+                var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+                this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
             }
         }else{
             this.props.lock_run(false)
@@ -2768,9 +2798,12 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var target_id = t.messages_to_deliver[i]['id']
-            var context = 35
-            var int_data = 0
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
 
@@ -2796,9 +2829,13 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var target_id = t.messages_to_deliver[i]['id']
-            var context = 35
-            var int_data = 0
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
 
@@ -2827,7 +2864,7 @@ class StackPage extends Component {
         var context = 36
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application'}
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application'}
 
         var string_data = await this.get_object_ipfs_index(application_obj);
 
@@ -2882,9 +2919,13 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var target_id = t.messages_to_deliver[i]['id']
-            var context = 35
-            var int_data = 0
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
 
@@ -2910,9 +2951,13 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var target_id = t.messages_to_deliver[i]['id']
-            var context = 35
-            var int_data = 0
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
 
@@ -3024,7 +3069,7 @@ class StackPage extends Component {
             obj[7].push(0)
         }
 
-        var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.props.app_state.accounts[this.props.app_state.selected_e5].address}
+        var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
         
         var string_data = await this.get_object_ipfs_index(purchase_object);
 
@@ -3084,9 +3129,13 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var target_id = t.messages_to_deliver[i]['id']
-            var context = 35
-            var int_data = 0
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
 
@@ -3112,9 +3161,13 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var target_id = t.messages_to_deliver[i]['id']
-            var context = 35
-            var int_data = 0
+            // var target_id = t.messages_to_deliver[i]['id']
+            // var context = 35
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['id']
+            var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
 
@@ -3205,9 +3258,13 @@ class StackPage extends Component {
         var string_obj = [[]]
 
         for(var i=0; i<t.messages_to_deliver.length; i++){
-            var target_id = t.messages_to_deliver[i]['contractor_id']
-            var context = t.messages_to_deliver[i]['id']
-            var int_data = 0
+            // var target_id = t.messages_to_deliver[i]['contractor_id']
+            // var context = t.messages_to_deliver[i]['id']
+            // var int_data = 0
+
+            var target_id = 17/* shadow_object_container */
+            var context = t.messages_to_deliver[i]['contractor_id']
+            var int_data = t.messages_to_deliver[i]['id']
 
             var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
 
@@ -3450,21 +3507,25 @@ class StackPage extends Component {
                     {this.render_detail_item('0')} */}
 
                     
-                    {this.render_detail_item('3',{'title':'Preferred E5', 'details':'Set the E5 you preferr to use', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':'Preferred E5', 'details':'Set the E5 you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_selected_e5_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_e5_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    {/* <Tags page_tags_object={this.state.get_selected_e5_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_e5_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
+
+                    {this.load_preferred_e5_ui()}
 
                     {this.render_detail_item('0')}
 
+                    
 
 
-                    {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
+
+                    {/* {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')} */}
 
 
 
@@ -3542,6 +3603,16 @@ class StackPage extends Component {
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+                    {this.render_detail_item('3',{'title':'Preserve State (cookies)', 'details':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')}
                 </div>
@@ -3631,6 +3702,65 @@ class StackPage extends Component {
         var selected_item = this.get_selected_item(this.state.get_tabs_tags_object, 'e')
         this.props.when_tabs_setting_changed(selected_item)
     }
+
+    when_storage_permissions_object_updated(tag_group){
+        this.setState({get_storage_permissions_tags_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_storage_permissions_tags_object, 'e')
+        this.props.when_storage_permission_setting_changed(selected_item)
+    }
+
+
+
+
+
+
+
+    load_preferred_e5_ui(){
+        var items = structuredClone(this.state.get_selected_e5_tags_object['e'][1])
+        items.splice(0, 1)
+
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_e5_clicked(item)}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+
+    }
+
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].end_image
+        var details = this.props.app_state.e5s[item].token
+        if(this.props.app_state.selected_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+
+    when_e5_clicked(item){
+        this.props.when_selected_e5_changed(item)
+    }
+
+
+
+
 
 
 
@@ -3820,8 +3950,15 @@ class StackPage extends Component {
 
     get_account_address(){
         if(this.props.app_state.accounts[this.props.app_state.selected_e5] != null){
-            return this.props.app_state.accounts[this.props.app_state.selected_e5].address;
+            return this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5);
         }
+    }
+
+    format_address(address, e5){
+        if(e5 == 'E45'){
+            return toBech32(address)
+        }
+        return address
     }
 
     get_balance_amount_in_wei(){
@@ -4343,25 +4480,13 @@ class StackPage extends Component {
         
     }
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
         }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
+        return last_two_digits+'%'
     }
 
     format_power_figure(amount){

@@ -39,7 +39,9 @@ class NewPostPage extends Component {
 
         content_channeling_setting: this.props.app_state.content_channeling, 
         device_language_setting: this.props.app_state.device_language, 
-        device_country: this.props.app_state.device_country
+        device_country: this.props.app_state.device_country,
+        
+        typed_link_text:'', link_search_results:[], added_links:[]
     };
 
     get_new_job_page_tags_object(){
@@ -48,7 +50,7 @@ class NewPostPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.text', 'images', 'subscription-lock'], [0]
+                ['or','',0], ['e','e.text','links', 'images', 'subscription-lock'], [0]
             ],
             'text':[
                 ['or','',0], ['text','e.font', 'e.size'], [0]
@@ -132,6 +134,13 @@ class NewPostPage extends Component {
                 </div>
             ) 
         }
+        else if(selected_item == 'links'){
+            return(
+                <div>
+                    {this.render_enter_links_part()}
+                </div>
+            )
+        }
         else if(selected_item == 'images'){
             return(
                 <div>
@@ -172,7 +181,6 @@ class NewPostPage extends Component {
                     {this.render_title_tags_part()}
                     
                     {this.render_new_job_object()}
-                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -184,7 +192,6 @@ class NewPostPage extends Component {
                     </div>
                     <div className="col-6">
                         {this.render_new_job_object()}
-                        {this.render_detail_item('0')}
                     </div>
                 </div>
                 
@@ -278,6 +285,7 @@ class NewPostPage extends Component {
 
     
     render_new_job_object(){
+        return;
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var items = [].concat(this.state.entered_objects);
@@ -721,6 +729,286 @@ class NewPostPage extends Component {
 
 
 
+    render_enter_links_part(){
+        return(
+            <div style={{'margin':'10px 0px 0px 0px'}}>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Search an object by its title or id, then tap it to add it to the new channel'})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'103%'}}>
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput height={30} placeholder={'Enter Object ID...'} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
+                        {this.render_detail_item('5',{'text':'Search','action':''})}
+                    </div>
+                </div>
+                <div style={{height:10}}/>
+                {this.render_selected_links()}
+
+                <div style={{height:10}}/>
+                {this.render_searched_link_results()}
+
+            </div>
+        )
+    }
+
+    when_typed_link_text_changed(text){
+        this.setState({typed_link_text: text})
+    }
+
+
+    search_object(){
+        var typed_text = this.state.typed_link_text
+
+        if(typed_text == ''){
+            this.props.notify('Type something', 1800)
+        }else{
+            this.props.notify('Searching...', 600)
+            var return_data = this.search_for_object(typed_text)
+            this.setState({link_search_results: return_data})
+        }
+    }
+
+
+    search_for_object(typed_text){
+        var contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+        var channels = this.get_all_sorted_objects(this.props.app_state.created_channels)
+        var contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
+        var jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
+        var posts = this.get_all_sorted_objects(this.props.app_state.created_posts)
+        var proposals = this.get_all_sorted_objects(this.props.app_state.my_proposals)
+        var storefronts = this.get_all_sorted_objects(this.props.app_state.created_stores)
+        var subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+        var tokens = this.get_all_sorted_objects(this.props.app_state.created_tokens)
+
+        var return_objects = []
+        contracts.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            console.log(object['id'])
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contract'})
+            }
+        });
+
+        channels.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'channel'})
+            }
+        });
+
+        contractors.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contractor'})
+            }
+        });
+
+        jobs.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'job'})
+            }
+        });
+
+
+        posts.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'post'})
+            }
+        });
+
+
+        proposals.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'proposal'})
+            }
+        });
+
+        storefronts.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'storefront'})
+            }
+        });
+
+
+        subscriptions.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'subscription'})
+            }
+        });
+
+        tokens.forEach(object => {
+            var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
+            var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
+            if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
+                return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'token'})
+            }
+        });
+
+        return return_objects
+    }
+
+    get_all_sorted_objects(object){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            if(e5_objects != null){
+                all_objects = all_objects.concat(e5_objects)
+            }
+        }
+
+        return this.sortByAttributeDescending(all_objects, 'timestamp')
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] < b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] > b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+
+    render_selected_links(){
+        var items = [].concat(this.state.added_links).reverse()
+        var background_color = this.props.theme['card_background_color']
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item)}>
+                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_title(item){
+        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
+        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        return `${obj[item['type']]} ${item_id}`
+    }
+
+
+    when_link_item_clicked(item){
+        var clone = this.state.added_links.slice()
+        var pos = clone.indexOf(item)
+        if(pos > -1){
+            clone.splice(pos, 1)
+        }
+        this.setState({added_links: clone})
+        this.props.notify('Link removed from object', 700)
+    }
+
+
+    render_searched_link_results(){
+        var middle = this.props.height-400;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.link_search_results)
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>this.when_searched_link_tapped(item)}>
+                                {this.render_detail_item('3', {'title':''+this.get_title(item), 'details':item['title'], 'size':'l'})}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    when_searched_link_tapped(item){
+        var clone = this.state.added_links.slice()
+        var pos = clone.indexOf(item)
+
+        if(pos > -1){
+            this.props.notify('the link is already in the object', 1700)
+        }else{
+            clone.push(item)
+            this.setState({added_links: clone})
+            this.props.notify('link added to object', 1400)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -929,7 +1217,7 @@ class NewPostPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({ id: makeid(8), type:'post', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], })
+                me.setState({ id: makeid(8), type:'post', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[],typed_link_text:'', link_search_results:[], added_links:[], })
             }, (1 * 1000));
 
             console.log('content channeling: ', this.state.content_channeling_setting)

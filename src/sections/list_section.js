@@ -904,7 +904,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '1px 5px 1px 5px'}}>
                                 {this.render_small_empty_object()}
                             </li>
                         ))}
@@ -957,17 +957,17 @@ class PostListSection extends Component {
         );
     }
 
+    get_address(e5){
+        return this.props.app_state.addresses[e5] == null ? '0x0000000000000000000000000000000000000000' : this.props.app_state.addresses[e5][0]
+    }
+
     get_e5_data_item_object(item_data, name){
-        var obj = {'E15':End35, 'E25':End25}
-        var add_obj = {
-            'E15':this.props.app_state.addresses['E15'][0],
-            'E25':this.props.app_state.addresses['E25'][0]
-        }
+        var image = this.props.app_state.e5s[name].end_image
         return {
-                'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': obj[name]},
+                'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': image},
                 'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
-                'address':{'font':'Sans-serif', 'text':add_obj[name], 'textsize':'12px'},
-                'data':{'title':name, 'details':start_and_end(add_obj[name]), 'size':'l', 'image': obj[name]}
+                'address':{'font':'Sans-serif', 'text':this.get_address(name), 'textsize':'12px'},
+                'data':{'title':name, 'details':start_and_end(this.get_address(name)), 'size':'l', 'image': image}
             }
     }
 
@@ -1653,19 +1653,67 @@ class PostListSection extends Component {
     }
 
     get_ethers_data(){
-        return [
-            {
-                'id':'ETHT',
-                'name': 'Ethereum Testnet',
-                'symbol': 'ETHT',
-                'image': EthereumTestnet,
-                'label':{'title':'ETHT', 'details':'Ethereum Testnet', 'size':'l', 'image': EthereumTestnet},
-                'tags':{'active_tags':['Ether', 'EVM', 'Chain'], 'index_option':'indexed'},
-                'number_label':this.get_blockchain_data('s', 'E15'),
-                'number_label_large': this.get_blockchain_data('l', 'E15'),
-                'banner-icon':{'header':'ETHT', 'subtitle':'Ethereum Testnet', 'image':EthereumTestnet},
-            }
+        var list = [
+            // this.get_token_data('ETHT', 'Ethereum Testnet', 'E15'),
+            this.get_token_data('ETC', 'Ethereum Classic', 'E35'),
+            this.get_token_data('ONE', 'Harmony', 'E45'),
+            this.get_token_data('CELO', 'Celo', 'E55'),
+            this.get_token_data('FLR', 'Flare', 'E65'),
+            this.get_token_data('XDAI', 'Gnosis', 'E75'),
+            this.get_token_data('FUSE', 'Fuse', 'E85'),
+            this.get_token_data('GLMR', 'Moonbeam', 'E95'),
+            this.get_token_data('MOVR', 'Moonriver', 'E105'),
+            this.get_token_data('MATIC', 'Polygon', 'E125'),
+            this.get_token_data('BNB', 'Binance S.C.', 'E135'),
         ]
+
+        var sorted_list =  this.sortByAttributeDescending(list, 'name')
+        var prioritized_list = []
+        sorted_list.forEach(token => {
+            if(this.does_account_have_balance(token['e5'])){
+                prioritized_list.push(token)
+            }
+        });
+        sorted_list.forEach(token => {
+            if(!prioritized_list.includes(token)){
+                prioritized_list.push(token)
+            }
+        });
+        return prioritized_list;
+    }
+
+    does_account_have_balance(e5){
+        if(this.props.app_state.account_balance[e5] != null && this.props.app_state.account_balance[e5]!=0){
+            return true
+        }
+        return false
+    }
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] > b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] < b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    get_token_data(symbol, name,  e5){
+        return {
+                'id':symbol,
+                'e5':e5,
+                'name': name,
+                'symbol': symbol,
+                'image': this.props.app_state.e5s[e5].ether_image,
+                'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
+                'tags':{'active_tags':[name, 'EVM', symbol], 'index_option':'indexed'},
+                'number_label':this.get_blockchain_data('s', e5),
+                'number_label_large': this.get_blockchain_data('l', e5),
+                'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},
+            }
     }
 
     get_blockchain_data(size, e5){
@@ -1786,11 +1834,12 @@ class PostListSection extends Component {
         var active_tags = item['ipfs'] == null ? [''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? 'Token ID: '+token_id : item['ipfs'].entered_title_text
         if(token_id == 3){
-            var obj = {'E15':'E15', 'E25':'E25'}
-            name = obj[item['e5']]
+            // var obj = {'E15':'E15', 'E25':'E25', 'E35':'E35'}
+            name = item['e5']
         } else if(token_id == 5){
-            var obj = {'E15':'315', 'E25':'325'}
-            name = obj[item['e5']]
+            var obj = {'E15':'315', 'E25':'325', 'E35':'335'}
+            // name = obj[item['e5']]
+            name = item['e5'].replace('E','3')
         }
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
@@ -1985,25 +2034,13 @@ class PostListSection extends Component {
         return power
     }
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
         }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
+        return last_two_digits+'%'
     }
 
 

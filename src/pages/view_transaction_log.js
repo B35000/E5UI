@@ -53,7 +53,7 @@ class ViewTransactionLogPage extends Component {
                     {this.render_detail_item('3',{'title':''+item.returnValues.p9, 'details':'Transaction Block ','size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'s'})}
+                    {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -61,14 +61,14 @@ class ViewTransactionLogPage extends Component {
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':item.returnValues.p1, 'title':'Sender Account ID','size':'s'})}
+                    {this.render_detail_item('3',{'details':item.returnValues.p1, 'title':'Sender Account ID','size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':'Sender Account Address','size':'s'})}
+                    {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':'Sender Account Address','size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Included Value in Ether', 'subtitle':this.format_power_figure(parseInt(item.returnValues.p6)/10**18), 'barwidth':this.calculate_bar_width(parseInt(item.returnValues.p6)/10**18), 'number':this.format_account_balance_figure(parseInt(item.returnValues.p6)/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Included Value in Ether', 'subtitle':this.format_power_figure(parseInt(item.returnValues.p6)/10**18), 'barwidth':this.calculate_bar_width(parseInt(item.returnValues.p6)/10**18), 'number':(parseInt(item.returnValues.p6)/10**18), 'barcolor':'', 'relativepower':'ether', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':'Included Value in Wei', 'subtitle':this.format_power_figure(item.returnValues.p6), 'barwidth':this.calculate_bar_width(item.returnValues.p6), 'number':this.format_account_balance_figure(item.returnValues.p6), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
@@ -76,10 +76,10 @@ class ViewTransactionLogPage extends Component {
 
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3',{'details':start_and_end(item.returnValues.p10), 'title':'Coinbase Address','size':'s'})}
+                    {this.render_detail_item('3',{'details':start_and_end(item.returnValues.p10), 'title':'Coinbase Address','size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':start_and_end(item.returnValues.p11), 'title':'Block Difficulty','size':'s'})}
+                    {/* {this.render_detail_item('3',{'details':start_and_end(item.returnValues.p11), 'title':'Block Difficulty','size':'l'})} */}
                     <div style={{height: 10}}/>
                 </div>
             )
@@ -131,25 +131,13 @@ class ViewTransactionLogPage extends Component {
         return last_two_digits+'%'
     }
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
         }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
+        return last_two_digits+'%'
     }
 
     format_power_figure(amount){

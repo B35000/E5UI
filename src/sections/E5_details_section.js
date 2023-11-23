@@ -275,11 +275,11 @@ class E5DetailsSection extends Component {
     }
 
     get_e5_details_data(obj){
-        // var obj = this.get_e5_data()[this.props.selected_e5_item]
-        var img_obj = {'E15':End35, 'E25':End25}
+        var image = this.props.app_state.e5s[obj['id']].end_image
+        var chain = this.props.app_state.e5s[obj['id']].token
         var contract_config = obj['data'][1]
         return{
-            'label':{'header':obj['id'], 'subtitle':'Main Contract', 'size':'l', 'image': img_obj[obj['id']]},
+            'label':{'header':obj['id'], 'subtitle':chain, 'size':'l', 'image': image},
             'tags':{'active_tags':[obj['id'],'E5', 'Main', 'Contract'], 'index_option':'indexed'},
             
             'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':'Vote Bounty Split Proportion', 'size':'l'},
@@ -900,7 +900,7 @@ class E5DetailsSection extends Component {
 
     show_deposit_amount_data_chart(e5_chart_data){
         var events = e5_chart_data['transaction']
-        if(events.length != 0){
+        if(events.length > 3){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -952,7 +952,8 @@ class E5DetailsSection extends Component {
         var largest_number = this.get_deposit_amount_interval_figure(events)
         var recorded = false;
         for(var i = 0; i < noOfDps; i++) {
-            yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
             // yVal = data[factor * xVal]
             // yVal = data[i]
 
@@ -1125,25 +1126,13 @@ class E5DetailsSection extends Component {
         return power
     }
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
         }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
+        return last_two_digits+'%'
     }
 
     format_account_balance_figure(amount){

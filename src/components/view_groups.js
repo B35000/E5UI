@@ -4,8 +4,24 @@ import CanvasJSReact from './../externals/canvasjs.react';
 import E5EmptyIcon from './../assets/e5empty_icon.png';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import Linkify from "linkify-react";
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
+    function urlify(text) {
+        var urlRegex = /(https?:\/\/[^\s]+)/g;
+        
+        return text.replace(urlRegex, function(url) {
+            var hyperlink = url;
+            if(!hyperlink.match('^https?:\/\/')){
+                hyperlink = 'http://' + hyperlink;
+            }
+            return '<a className="blue" href="' + url + '" target="_blank">' + url + '</a>'
+
+        })
+        // or alternatively
+        
+    }
 
 class ViewGroups extends Component {
     
@@ -163,19 +179,19 @@ class ViewGroups extends Component {
                     img = object_data['image'];
                 }
                return (
-                <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '10px 15px 10px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
 
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
-                        <div>
-                            <img src={img} style={{height:50 ,width:50, 'border-radius': '50%'}} />
-                        </div>
-                        <div style={{'margin':'0px 0px 0px 10px'}}>
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                        <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                            <div>
+                                <img src={img} style={{height:50 ,width:50, 'border-radius': '50%'}} />
+                            </div>
+                            <div style={{'margin':'0px 0px 0px 10px'}}>
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            ); 
+                ); 
             }else{
                 return (
                     <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
@@ -206,7 +222,11 @@ class ViewGroups extends Component {
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 0px 0px 0px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
                       <div style={{width: '100%','background-color': background_color, 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 2px','padding': '5px 5px 5px 10px','border-radius': '8px' }}>
-                          <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}}>{this.format_text_if_empty_or_null(text)}</p>
+                          
+                            <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
+
+                          {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} />
+                           */}
                       </div>
                     </div>
                 </div>
@@ -352,7 +372,9 @@ class ViewGroups extends Component {
             return(
                 <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
                     <div style={{'padding': '0px 3px 0px 3px','margin': '0px 0px 0px 0px'}} onClick={() => this.copy_id_to_clipboard(text)}>
-                      <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none'}}>{this.format_text_if_empty_or_null(text)}</p>
+                        <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}}><Linkify options={{target: '_blank'}}>{this.format_text_if_empty_or_null(text)}</Linkify></p>
+
+                        {/* <p style={{'font-size': textsize,'color': color,'margin': '5px 0px 5px 0px','font-family': font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} dangerouslySetInnerHTML={{ __html: urlify(this.format_text_if_empty_or_null(text)) }} /> */}
                     </div>
                 </div>
                 
@@ -367,6 +389,45 @@ class ViewGroups extends Component {
                     {this.render_detail_item('10', caption)}
                 </div>
             )
+        }
+        else if(item_id=='12'){/* image_label */
+            /* {this.render_detail_item('3', {'title':'', details:'', image: img, 'size':'l'})} */
+            var title = 'Author';
+            var details = 'e25885';
+            var size = 'l';
+            if(object_data != null){
+                title = object_data['title']
+                details = object_data['details']
+                size = object_data['size']
+            }
+            var font_size = ['12px', '10px', 16];
+            if(size == 'l'){
+                font_size = ['17px', '13px', 19];
+            }
+            if(title == ''){
+                title = '...'
+            }
+            if(details == ''){
+                details = '...'
+            }
+            var img = E5EmptyIcon;
+            if(object_data != null){
+                img = object_data['image'];
+            }
+            return (
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                        <div style={{'margin':'0px 0px 0px 0px'}}>
+                            <img src={img} style={{height:45 ,width:45, 'border-radius': '50%'}} />
+                        </div>
+                        <div style={{'margin':'3px 0px 0px 5px'}}>
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                            
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                        </div>
+                    </div>
+                </div>
+            ); 
         }
 
     }

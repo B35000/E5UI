@@ -276,7 +276,6 @@ class NewProposalPage extends Component {
                 {this.render_title_tags_part()}
                 
                 {this.render_new_job_object()}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -361,6 +360,7 @@ class NewProposalPage extends Component {
     }
 
     render_new_job_object(){
+        return;
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
@@ -1970,25 +1970,13 @@ class NewProposalPage extends Component {
         
     }
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
         }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
+        return last_two_digits+'%'
     }
 
     format_power_figure(amount){

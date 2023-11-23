@@ -165,6 +165,7 @@ class ContractorDetailsSection extends Component {
                     {this.render_item_data(items, object)}
 
                     {this.render_item_images(object)}
+                    {this.render_selected_links(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':'Fees Per Hour', 'details':'The amounts they charge per hour for their work', 'size':'l'})}
@@ -189,6 +190,38 @@ class ContractorDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_selected_links(object){
+        if(object['ipfs'].added_links == null) return;
+        var items = [].concat(object['ipfs'].added_links).reverse()
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item)}>
+                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_title(item){
+        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
+        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        return `${obj[item['type']]} ${item_id}`
+    }
+
+
+    when_link_item_clicked(item){
+        this.props.open_e5_link(item)
     }
 
     get_senders_name(sender, object){
@@ -603,25 +636,13 @@ class ContractorDetailsSection extends Component {
         return power
     }
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
         }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
+        return last_two_digits+'%'
     }
 
     format_account_balance_figure(amount){

@@ -6,6 +6,7 @@ import Letter from './../assets/letter.png';
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 
 var bigInt = require("big-integer");
+const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
 function bgN(number, power) {
   return bigInt((number+"e"+power)).toString();
@@ -14,6 +15,13 @@ function bgN(number, power) {
 function number_with_commas(x) {
     if(x == null) x = '';
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function start_and_end(str) {
+  if (str.length > 35) {
+    return str.substr(0, 20) + '...' + str.substr(str.length-10, str.length);
+  }
+  return str;
 }
 
 class EthersDetailsSection extends Component {
@@ -144,13 +152,17 @@ class EthersDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['number_label_large'])}
                     </div>
+                    {/* <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['supply'])}
+                    </div> */}
                     {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', item['chain_id'])}
+                    {/* <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['peer_count'])} */}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['peer_count'])}
-                    <div style={{height: 10}}/>
-                    {/* {this.render_detail_item('3', item['network_type'])} */}
+                    {this.render_wallet_address(item, item['e5'])}
                     {this.render_detail_item('0')}
 
                     {/* {this.render_detail_item('3', item['gas_used_chart_data_label'])} */}
@@ -173,6 +185,13 @@ class EthersDetailsSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Wei', 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])), 'number':this.format_account_balance_figure(this.get_gas_price(item['e5'])), 'barcolor':'#606060', 'relativepower':'wei', })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])/10**9), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])/10**9), 'number':(this.get_gas_price(item['e5'])/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    </div>
+                    <div style={{height:10}}/>
+
                     {this.render_detail_item('3', item['transaction_count_chart_data_label'])}
                     {this.render_detail_item('6', item['transaction_count_chart_data'])}
                     {this.render_detail_item('0')}
@@ -180,6 +199,8 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('3', item['gas_limit'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['base_fee_per_gas'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['block_time'])}
                     {this.render_detail_item('0')}
                     
                     {this.render_detail_item('3', {'title':'Send/Receive Ether', 'details':'Send or receive ether from a specified account.', 'size':'l'})}
@@ -212,36 +233,177 @@ class EthersDetailsSection extends Component {
     }
 
     get_ethers_data(){
-        var peer_count = this.props.app_state.number_of_peers['E15'];
-        return [
-            {
-                'id':'ETHT',
-                'name': 'Ethereum Testnet',
-                'symbol': 'ETHT',
-                'e5':'E15',
-                'image': EthereumTestnet,
-                'label':{'title':'ETHT', 'details':'Ethereum Testnet', 'size':'l', 'image': EthereumTestnet},
-                'tags':{'active_tags':['Ether', 'EVM', 'Chain'], 'index_option':'indexed'},
-                'number_label':this.get_blockchain_data('s', 'E15'),
-                'number_label_large': this.get_blockchain_data('l', 'E15'),
-                'banner-icon':{'header':'ETHT', 'subtitle':'Ethereum Testnet', 'image':EthereumTestnet},
-                'chain_id':{'title':this.props.app_state.chain_id['E15'], 'details':'Chain ID', 'size' :'l'},
-                'peer_count':{'title':''+peer_count, 'details':'Number of Peers', 'size' :'l'},
+        var list = [
+            // this.get_token('ETHT', 'Ethereum Testnet', 'E15'),
+            this.get_token('ETC', 'Ethereum Classic', 'E35'),
+            this.get_token('ONE', 'Harmony', 'E45'),
+            this.get_token('CELO', 'Celo', 'E55'),
+            this.get_token('FLR', 'Flare', 'E65'),
+            this.get_token('XDAI', 'Gnosis', 'E75'),
+            this.get_token('FUSE', 'Fuse', 'E85'),
+            this.get_token('GLMR', 'Moonbeam', 'E95'),
+            this.get_token('MOVR', 'Moonriver', 'E105'),
+            this.get_token('MATIC', 'Polygon', 'E125'),
+            this.get_token('BNB', 'Binance S.C.', 'E135'),
+        ]
+
+        var sorted_list =  this.sortByAttributeDescending(list, 'name')
+        var prioritized_list = []
+        sorted_list.forEach(token => {
+            if(this.does_account_have_balance(token['e5'])){
+                prioritized_list.push(token)
+            }
+        });
+        sorted_list.forEach(token => {
+            if(!prioritized_list.includes(token)){
+                prioritized_list.push(token)
+            }
+        });
+        return prioritized_list;
+    }
+
+    does_account_have_balance(e5){
+        if(this.props.app_state.account_balance[e5] != null && this.props.app_state.account_balance[e5]!=0){
+            return true
+        }
+        return false
+    }
+
+
+    sortByAttributeDescending(array, attribute) {
+      return array.sort((a, b) => {
+          if (a[attribute] > b[attribute]) {
+          return 1;
+          }
+          if (a[attribute] < b[attribute]) {
+          return -1;
+          }
+          return 0;
+      });
+    }
+
+    
+
+    get_token(symbol, name, e5){
+        return {
+                'id':symbol,
+                'name': name,
+                'symbol': symbol,
+                'e5': e5,
+                'image': this.props.app_state.e5s[e5].ether_image,
+                'label':{'title':symbol, 'details':name, 'size':'l', 'image': this.props.app_state.e5s[e5].ether_image},
+                'tags':{'active_tags':[name, 'EVM', symbol], 'index_option':'indexed'},
+                'number_label':this.get_blockchain_data('s', e5),
+                'number_label_large': this.get_blockchain_data('l', e5),
+                'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},
+                'chain_id':{'title':this.props.app_state.chain_id[e5], 'details':'Chain ID', 'size' :'l'},
+                'peer_count':{'title':''+this.props.app_state.number_of_peers[e5], 'details':'Number of Peers', 'size' :'l'},
                 
                 'gas_used_chart_data_label':{'title':'Gas Used', 'details':'Amount of gas used in the last 100 blocks', 'size' :'l'},
-                'gas_used_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_gas_used_data_points('E15')},
-                'gas_used_chart_data_average':{'title':number_with_commas(this.get_gas_used_data_point_average('E15')), 'details':'Average Gas Used', 'size' :'l'},
-                'highest_gas_consumed':{'title':number_with_commas(this.get_highest_gas_figure('E15')), 'details':'Highest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
-                'lowest_gas_consumed':{'title':number_with_commas(this.get_lowest_gas_figure('E15')), 'details':'Lowest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
+                'gas_used_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_gas_used_data_points(e5)},
+                'gas_used_chart_data_average':{'title':number_with_commas(this.get_gas_used_data_point_average(e5)), 'details':'Average Gas Used', 'size' :'l'},
+                'highest_gas_consumed':{'title':number_with_commas(this.get_highest_gas_figure(e5)), 'details':'Highest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
+                'lowest_gas_consumed':{'title':number_with_commas(this.get_lowest_gas_figure(e5)), 'details':'Lowest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
 
                 'transaction_count_chart_data_label':{'title':'Transactions Processed', 'details':'Amount of transactions processed in the last 100 blocks', 'size' :'l'},
-                'transaction_count_chart_data':{'interval':0, 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points('E15')},
+                'transaction_count_chart_data':{'interval':0, 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points(e5)},
                 
 
-                'gas_limit':{'title':number_with_commas(this.get_latest_block_data('E15').gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
-                'base_fee_per_gas':{'title':number_with_commas(this.get_latest_block_data('E15').baseFeePerGas), 'details':'Base Fee per Gas Unit', 'size' :'l'},
+                'gas_limit':{'title':number_with_commas(this.get_latest_block_data(e5).gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
+                'base_fee_per_gas':{'title':number_with_commas(this.get_latest_block_data(e5).baseFeePerGas), 'details':'Base Fee per Gas Unit', 'size' :'l'},
+
+                'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
+
+                'address':{'details':this.get_account_address(e5), 'title':'Your Address', 'size' :'l'},
+                'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':'Average block time for the last 100 blocks', 'size' :'l'},
+        }
+    }
+
+    get_supply_figure(e5){
+        var value = this.props.app_state.e5_ether_supply_data[e5]
+        if(value == null || value['available_supply'] == null){
+            return 0
+        }
+        return parseInt(value['available_supply'])
+    }
+
+
+    render_wallet_address(item, e5){
+        if(this.props.app_state.has_wallet_been_set){
+            return(
+                <div>
+                    <div onClick={() => this.copy_to_clipboard(this.get_account_address(e5))}>
+                        {this.render_detail_item('3', item['address'])}
+                    </div>
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div>
+                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':'0x0000000000000000000000000000000000000000', 'size':'l'})}
+                    </div>
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
+    }
+
+    get_account_address(e5){
+        if(this.props.app_state.accounts[e5] != null){
+            return this.format_address_if_harmony(this.props.app_state.accounts[e5].address, e5);
+        }
+    }
+
+    format_address_if_harmony(address, e5){
+        if(e5 == 'E45'){
+            return toBech32(address)
+        }
+
+        return address
+    }
+
+    copy_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify('copied address to clipboard', 600)
+    }
+
+
+    get_gas_price(e5){
+        var gas_price = this.props.app_state.gas_price[e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs(e5)
+        }
+        return gas_price
+    }
+
+
+    get_gas_price_from_runs(e5){
+        var last_events = this.props.app_state.all_E5_runs[e5]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
             }
-        ]
+            sum = sum/last_check;
+        }
+        return sum
+    }
+
+    get_average_block_time_from_blocks(e5){
+        var blocks = this.props.app_state.last_blocks[e5]== null ? [] : this.props.app_state.last_blocks[e5]        
+        var total_time = 0
+        var is = 0
+        for(var i=1; i<blocks.length; i++){
+            var block = blocks[i];
+            let time = block.timestamp - blocks[i-1].timestamp
+            total_time += time
+            is++
+        }
+        var av_time = total_time / is
+        return av_time+' seconds'
     }
 
 
@@ -258,18 +420,40 @@ class EthersDetailsSection extends Component {
 
 
     render_block_history_logs(object){
-        var middle = this.props.height-65;
+        var middle = this.props.height-55;
         var size = this.props.screensize;
         if(size == 'm'){
             middle = this.props.height-190;
         }
-        var items = [].concat(this.props.app_state.last_blocks[object['e5']])
+        var tx_history = this.props.app_state.e5_ether_tx_history[object['e5']]
+        if(tx_history == null || this.get_txs_history_txs(tx_history, object['e5']) == null || this.get_txs_history_txs(tx_history, object['e5']).length == 0){
+            var items = [0, 1, 2]
+            return(
+                <div style={{height: middle, 'margin':'10px 5px 0px 5px'}}>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 5px 0px 5px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px'}}>
+                                    <div style={{ height: 80, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+        var items = [].concat(this.get_txs_history_txs(tx_history, object['e5']))
+        var middle = this.props.height-45;
         return ( 
-            <div style={{overflow: 'auto',height: middle, 'margin':'0px 0px 20px 0px'}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
-                    {items.reverse().map((item, index) => (
-                        <li style={{'padding': '5px'}}>
-                            {this.render_block_history_log_item(item, index)}
+            <div style={{overflow: 'auto',height: middle, 'margin':'0px 0px 0px 0px'}}>
+                <ul style={{ 'padding': '0px 5px 0px 5px', 'list-style': 'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '5px'}} onClick={()=> this.when_tx_history_item_clicked(index)}>
+                            {this.render_block_history_log_item(item, index, object['e5'])}
                         </li>
                     ))}
                 </ul>
@@ -277,53 +461,177 @@ class EthersDetailsSection extends Component {
         );
     }
 
-    render_block_history_log_item(item, index){
-        var item_object = this.get_block_history_log_item_object(item)
-        var background_color = this.props.theme['card_background_color']
-        var shadow_color = this.props.theme['card_shadow_color']
-        return ( 
-            <div onClick={() => console.log()} style={{height:'auto', 'background-color': 'transparent', 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 0px 0px '+shadow_color}}>
-                <div style={{'padding': '5px 5px 5px 5px'}}>
-                    {this.render_detail_item('3', item_object['age'])}
-                    <div style={{height: 5}}/>
-                    {this.render_detail_item('3', item_object['number'])}
-                    <div style={{height: 5}}/>
-                    {this.render_detail_item('3', item_object['gasUsed'])}
-                    <div style={{height: 5}}/>
-                    {this.render_detail_item('3', item_object['miner'])}
-                    <div style={{height: 5}}/>
-                </div>         
-            </div>
-        );
+    get_txs_history_txs(tx_history, e5){
+        if(e5 == 'E25' || e5 == 'E35'){
+            return tx_history['items']
+        }
+        else if(e5 == 'E45'){
+            var data =  tx_history['result']['transactions']
+            return data
+        }
+        else if(e5 == 'E55' || e5 == 'E65'|| e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'){
+            return tx_history['result']
+        }
+
     }
 
-    get_block_history_log_item_object(item){
-        return{
-            'tags':{'active_tags':[this.get_time_difference(item.timestamp)+' ago'], 'indexed_option':'indexed'},
-            'age':{'title':this.get_time_difference(item.timestamp),'details':'ago', 'size':'s'},
-            'number':{'title':item.number,'details':' Block Number', 'size':'s'},
-            'gasUsed':{'title':number_with_commas(item.gasUsed),'details':' Gas Used', 'size':'s'},
-            'miner':{'details':item.miner,'title':' Transaction Miner', 'size':'s'}
+
+    when_tx_history_item_clicked(index){
+        if (this.state.selected_tx_history_event_item == index) {
+            this.setState({ selected_tx_history_event_item: null })
+        } else {
+            this.setState({ selected_tx_history_event_item: index })
         }
+    }
+
+    render_block_history_log_item(item, index, e5){
+        var item_object = this.get_block_history_log_item_object(item, e5)
+        if(this.state.selected_tx_history_event_item == index){
+            return ( 
+                <div>
+                    <div style={{}}>
+                        {this.from_to_filter(item, e5)}
+                        {this.render_gas_used_value(item_object, e5)}
+                        <div style={{height: 2}}/>
+                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                            {this.render_detail_item('2', item_object['gas_price'])}
+                            {this.render_detail_item('2', item_object['gas_price_gwei'])}
+                        </div>
+                        <div style={{height: 2}}/>
+                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                            {this.render_detail_item('2', item_object['value'])}
+                            {this.render_detail_item('2', item_object['value_ether'])}
+                        </div>
+                        <div style={{height: 2}}/>
+                        {this.render_detail_item('3', item_object['time'])}
+                        <div style={{height: 2}}/>
+                        {this.render_detail_item('3', item_object['block'])}
+                        <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }}/>
+                    </div>         
+                </div>
+            );
+        }else{
+            return ( 
+                <div>
+                    <div style={{}}>
+                        {this.from_to_filter(item, e5)}
+                        <div style={{height: 2}}/>
+                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                            {this.render_detail_item('2', item_object['value'])}
+                            {this.render_detail_item('2', item_object['value_ether'])}
+                        </div>
+                        <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }}/>
+                    </div>         
+                </div>
+            );
+        }
+        
+    }
+
+    render_gas_used_value(item_object, e5){
+        if(e5 != 'E45'){
+            return(
+                <div>
+                    <div style={{height: 2}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item_object['gas_used'])}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    get_from_value(item, e5){
+        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E85'){
+            var relative_time = this.get_time_difference(new Date(item['timestamp']).getTime()/1000)
+            return {'from':item['from']['hash'], 'to':item['to']['hash'], 'gas_used':item['gas_used'], 'gas_price':item['gas_price'], 'value':item['value'], 'time':''+(new Date(item['timestamp'])), 'block':number_with_commas(item['block']), 'relative_time':''+(relative_time)}
+        }
+        else if(e5 == 'E45'){
+            var relative_time = this.get_time_difference(item['timestamp'])
+            return {'from':item['from'], 'to':item['to'], 'gas_used':item['gas'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timestamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
+        }
+        else if(e5 == 'E55' || e5 == 'E65'){
+            var relative_time = this.get_time_difference(item['timeStamp'])
+            return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
+        }
+        else if(e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'){
+            var relative_time = this.get_time_difference(item['timeStamp'])
+            return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
+        }
+    }
+
+    from_to_filter(item, e5){
+        var from = this.get_from_value(item, e5)['from']
+        var to = this.get_from_value(item, e5)['to']
+        if(this.format_address(from, e5) == 'You'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'To: ','details':this.format_address(to, e5), 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'From: ','details':this.format_address(from, e5), 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    get_block_history_log_item_object(item, e5){
+        var from = this.get_from_value(item, e5)['from']
+        var to = this.get_from_value(item, e5)['to']
+        var gas_used = parseInt(this.get_from_value(item, e5)['gas_used'])
+        var gas_price = parseInt(this.get_from_value(item, e5)['gas_price'])
+        var value = parseInt(this.get_from_value(item, e5)['value'])
+        var block = this.get_from_value(item, e5)['block']
+        var time = this.get_from_value(item, e5)['time']
+        var relative_time = this.get_from_value(item, e5)['relative_time']
+        return{
+            'from':{'title':'From: ','details':this.format_address(from, e5), 'size':'l'},
+            'to':{'title':'To: ','details':this.format_address(to, e5), 'size':'l'},
+            
+            'gas_used':{'style': 'l', 'title':'Gas Used', 'subtitle': this.format_power_figure(gas_used), 'barwidth': this.calculate_bar_width(gas_used), 'number': this.format_account_balance_figure(gas_used), 'barcolor': '', 'relativepower': 'gas',},
+            
+            'gas_price':{'style': 'l', 'title':'Gas Price Paid in Wei', 'subtitle': this.format_power_figure(gas_price), 'barwidth': this.calculate_bar_width(gas_price), 'number': this.format_account_balance_figure(gas_price), 'barcolor': '', 'relativepower': 'wei',},
+            
+            'gas_price_gwei':{'style': 'l', 'title':'Gas Price Paid in Gwei', 'subtitle': this.format_power_figure(gas_price/10**9), 'barwidth': this.calculate_bar_width(gas_price/10**9), 'number': gas_price/10**9, 'barcolor': '', 'relativepower': 'gwei',},
+            
+            'value':{'style': 'l', 'title':'Value', 'subtitle': this.format_power_figure(value), 'barwidth': this.calculate_bar_width(value), 'number': this.format_account_balance_figure(value), 'barcolor': '', 'relativepower': 'wei',},
+
+            'value_ether':{'style': 'l', 'title':'Value', 'subtitle': this.format_power_figure(value/10**18), 'barwidth': this.calculate_bar_width(value/10**18), 'number': (value/10**18), 'barcolor': '', 'relativepower': 'ether',},
+
+            'block':{ 'details': block, 'title': 'Block Number', 'size': 'l' },
+            'time':{ 'details': time+', '+relative_time+' ago', 'title': 'Timestamp', 'size': 'l' },
+        }
+    }
+
+    format_address(address, e5){
+        var my_address = this.format_address_if_harmony(this.props.app_state.accounts[e5].address, e5)
+        if(my_address.toString().toLowerCase() == address.toString().toLowerCase()){
+            return 'You'
+        }
+        return start_and_end(address)
     }
 
 
     get_blockchain_data(size, e5){
+        var number_of_blocks = this.props.app_state.number_of_blocks[e5] == null ? 0 : this.props.app_state.number_of_blocks[e5]
         return{
             'style':size,
             'title':'Number of Blocks Mined',
-            'subtitle':this.format_power_figure(this.props.app_state.number_of_blocks[e5]),
-            'barwidth':this.get_number_width(this.props.app_state.number_of_blocks[e5]),
-            'number':`${number_with_commas(this.props.app_state.number_of_blocks[e5])} blocks`,
+            'subtitle':this.format_power_figure(number_of_blocks),
+            'barwidth':this.get_number_width(number_of_blocks),
+            'number':`${number_with_commas(number_of_blocks)}`,
             'barcolor':'#606060',
-            'relativepower':'ledger size',
+            'relativepower':'blocks',
         }
     }
 
     get_gas_used_data_points(e5){
         var xVal = 1, yVal = 0;
         var dps = [];
-        var noOfDps = this.props.app_state.last_blocks[e5].length;
+        var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 :this.props.app_state.last_blocks[e5].length;
         var highest_gas_figure = this.get_highest_gas_figure(e5);
         for(var i = noOfDps-1; i >= 0; i--) {
             if(this.props.app_state.last_blocks[e5][i] != null){
@@ -367,7 +675,7 @@ class EthersDetailsSection extends Component {
     get_transaction_count_data_points(e5){
         var xVal = 1, yVal = 0;
         var dps = [];
-        var noOfDps = this.props.app_state.last_blocks[e5].length;
+        var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 : this.props.app_state.last_blocks[e5].length;
         for(var i = noOfDps-1; i >= 0; i--) {
             if(this.props.app_state.last_blocks[e5][i] != null){
                 var transaction_count = this.props.app_state.last_blocks[e5][i].transactions.length;
@@ -390,7 +698,7 @@ class EthersDetailsSection extends Component {
 
     get_highest_gas_figure(e5){
         var highest = 0
-        var noOfDps = this.props.app_state.last_blocks[e5].length;
+        var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 : this.props.app_state.last_blocks[e5].length;
         for(var i = 0; i < noOfDps; i++) {
             if(this.props.app_state.last_blocks[e5][i] != null){
                 if(highest < this.props.app_state.last_blocks[e5][i].gasUsed){
@@ -404,7 +712,7 @@ class EthersDetailsSection extends Component {
 
     get_lowest_gas_figure(e5){
         var lowest = 3000000000
-        var noOfDps = this.props.app_state.last_blocks[e5].length;
+        var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 : this.props.app_state.last_blocks[e5].length;
         for(var i = 0; i < noOfDps; i++) {
             if(this.props.app_state.last_blocks[e5][i] != null){
                 if(this.props.app_state.last_blocks[e5][i].gasUsed < lowest && this.props.app_state.last_blocks[e5][i].gasUsed != 0){
@@ -417,7 +725,7 @@ class EthersDetailsSection extends Component {
     }
 
     get_gas_used_data_point_average(e5){
-        var noOfDps = this.props.app_state.last_blocks[e5].length-1;
+        var noOfDps = this.props.app_state.last_blocks[e5] == null ? 0 : this.props.app_state.last_blocks[e5].length-1;
         var total = 0
         for(var i = 0; i < noOfDps; i++) {
             if(this.props.app_state.last_blocks[e5][i] != null){
@@ -431,8 +739,8 @@ class EthersDetailsSection extends Component {
     }
 
     get_latest_block_data(e5){
-        if(this.props.app_state.last_blocks[e5].length  ==  0){
-            return []
+        if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
+            return {}
         }
         return this.props.app_state.last_blocks[e5][0];
     }
@@ -531,25 +839,13 @@ class EthersDetailsSection extends Component {
     }
 
 
-    calculate_bar_width(amount){
-        var figure = ''
-        if(amount == null){
-            amount = 0
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
         }
-        if(amount < bigInt('1e9')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e9').toString().length)
-        }
-        else if(amount < bigInt('1e18')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e18').toString().length)
-        }
-        else if(amount < bigInt('1e36')){
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e36').toString().length)
-        }
-        else{
-            figure = Math.round((amount.toString().length * 100) / bigInt('1e72').toString().length)
-        }
-
-        return figure+'%'
+        return last_two_digits+'%'
     }
     
 

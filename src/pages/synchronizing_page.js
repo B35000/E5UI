@@ -36,7 +36,7 @@ class synchronizing_page extends Component {
     }
 
     get_sync_text(){
-        if(this.props.sync_progress >= 100){
+        if(this.props.sync_progress >= 99){
             return 'Synchronized.'
         }else{
             return 'Synchronizing...'
