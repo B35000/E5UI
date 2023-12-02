@@ -15,6 +15,11 @@ import glmr from './assets/glmr.png'
 import movr from './assets/movr.png'
 import matic from './assets/matic.png'
 import bnb from './assets/bnb.png'
+import xdc from './assets/xdc.png'
+import tt from './assets/tt.png'
+import nrg from './assets/nrg.png'
+import viction from './assets/viction.png'
+import evmos from './assets/evmos.png'
 
 /* e5 images */
 import E25EndImg from './assets/E25.png';
@@ -35,12 +40,20 @@ import E95EndImg from './assets/E95.png';
 import E95SpendImg from './assets/395.png';
 import E105EndImg from './assets/E105.png';
 import E105SpendImg from './assets/3105.png';
-
-
+import E115EndImg from './assets/E115.png';
+import E115SpendImg from './assets/3115.png';
 import E125EndImg from './assets/E125.png';
 import E125SpendImg from './assets/3125.png';
 import E135EndImg from './assets/E135.png';
 import E135SpendImg from './assets/3135.png';
+import E145EndImg from './assets/E145.png';
+import E145SpendImg from './assets/3145.png';
+import E155EndImg from './assets/E155.png';
+import E155SpendImg from './assets/3155.png';
+import E165EndImg from './assets/E165.png';
+import E165SpendImg from './assets/3165.png';
+import E175EndImg from './assets/E175.png';
+import E175SpendImg from './assets/3175.png';
 
 /* blockchain stuff */
 import { mnemonicToSeedSync } from 'bip39';
@@ -122,6 +135,7 @@ import WithdrawEtherPage from './pages/withdraw_ether_page'
 import GiveAwardPage from './pages/give_award_page'
 import AddCommentPage from './pages/add_comment_page'
 import SearchedAccountPage from './pages/view_searched_account'
+import RPCSettingsPage from './pages/rpc_settings_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -144,7 +158,6 @@ const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 var TextDecoder = textEncoding.TextDecoder;
 
 window.Buffer = window.Buffer || Buffer;
-
 
 function makeid(length) {
     let result = '';
@@ -184,7 +197,7 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null,
@@ -207,7 +220,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(67), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
+    sync_steps:(85), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -224,95 +237,118 @@ class App extends Component {
     device_country:this.get_country(), 
     
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
-    searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{}, 
+    searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
     
-    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0
+    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[]
   };
 
 
   get_e5s(){
     var others = []
     return{
-      'data':[/* 'E15', */ 'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E125', 'E135'].concat(others),
+      'data':[/* 'E15', */ 'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135',/* 'E145', */ 'E155', 'E165', 'E175'].concat(others),
       'E15':{
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
         e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0', 
-        first_block:20, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:400_000
+        first_block:20, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0
       },
       'E25':{
         web3:['https://etc.etcdesktop.com'], 
         token:'ETC',
         e5_address:'0x57d2189085D4F4e0156F70B71F0c90897836967E', 
-        first_block:18730085, end_image:E25EndImg, spend_image:E25SpendImg, ether_image:EthereumTestnet, iteration:400_000
+        first_block:18730085, end_image:E25EndImg, spend_image:E25SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d', 
-        first_block:18716990, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:400_000
+        first_block:18716990, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0
       },
       'E45':{
         web3:['https://api.harmony.one'],
         token:'ONE',
-        e5_address:'0xe0bDCd87720a6AE2a3bd0FF4aaC8B5b16960126D', 
-        first_block:49786263, end_image:E45EndImg, spend_image:E45SpendImg, ether_image:Harmony, iteration:1_024/* this limit is horrible! bad blockchain. */
+        e5_address:'0xC621A0305D1826AB1E24C7d78792035cD9204eD4', 
+        first_block:50166065, end_image:E45EndImg, spend_image:E45SpendImg, ether_image:Harmony, iteration:1_024/* this limit is horrible! bad blockchain. */, url:0
       },
       'E55':{
-        web3:['https://forno.celo.org'],
+        web3:['https://1rpc.io/celo', 'https://forno.celo.org'],
         token:'CELO',
         e5_address:'0xdfaE4E1a8447E560a0064fdB89D1919bF7cC0902', 
-        first_block:22528756, end_image:E55EndImg, spend_image:E55SpendImg, ether_image:Celo, iteration:400_000
+        first_block:22528756, end_image:E55EndImg, spend_image:E55SpendImg, ether_image:Celo, iteration:40_000, url:0
       },
       'E65':{
         web3:['https://rpc.ftso.au/flare'],
         token:'FLR',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:15492557, end_image:E65EndImg, spend_image:E65SpendImg, ether_image:Flare, iteration:400_000
+        first_block:15492557, end_image:E65EndImg, spend_image:E65SpendImg, ether_image:Flare, iteration:40_000, url:0
       },
       'E75':{
         web3:['https://rpc.gnosischain.com'],
         token:'XDAI',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:31015240, end_image:E75EndImg, spend_image:E75SpendImg, ether_image:xDai, iteration:40_000
+        first_block:31015240, end_image:E75EndImg, spend_image:E75SpendImg, ether_image:xDai, iteration:40_000, url:0
       },
       'E85':{
         web3:['https://rpc.fuse.io'],
         token:'FUSE',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:26508302, end_image:E85EndImg, spend_image:E85SpendImg, ether_image:fuse, iteration:400_000
+        first_block:26508302, end_image:E85EndImg, spend_image:E85SpendImg, ether_image:fuse, iteration:40_000, url:0
       },
       'E95':{
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:4910897, end_image:E95EndImg, spend_image:E95SpendImg, ether_image:glmr, iteration:400_000
+        first_block:4910897, end_image:E95EndImg, spend_image:E95SpendImg, ether_image:glmr, iteration:40_000, url:0
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
         token:'MOVR',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
-        first_block:5587390, end_image:E105EndImg, spend_image:E105SpendImg, ether_image:movr, iteration:400_000
+        first_block:5587390, end_image:E105EndImg, spend_image:E105SpendImg, ether_image:movr, iteration:40_000, url:0
       },
       'E115':{
-        web3:['https://syscoin-evm.publicnode.com'],
-        token:'SYS',
-        e5_address:'',
-        first_block:0, end_image:E105EndImg, spend_image:E105SpendImg, ether_image:movr, iteration:400_000
+        web3:['https://xdc.public-rpc.com'],
+        token:'XDC',
+        e5_address:'0xAf7e201B3424D0Cc43392C8Eae71FBdc983932Fb',
+        first_block:68418980, end_image:E115EndImg, spend_image:E115SpendImg, ether_image:xdc, iteration:40_000, url:0
       },
       'E125':{
         web3:['https://polygon.llamarpc.com'],
         token:'MATIC',
         e5_address:'0x3D610010C43fC1Af89D8d040ED530398817A8E94',
-        first_block:50258928, end_image:E125EndImg, spend_image:E125SpendImg, ether_image:matic, iteration:400_000
+        first_block:50258928, end_image:E125EndImg, spend_image:E125SpendImg, ether_image:matic, iteration:40_000, url:0
       },
       'E135':{
         web3:['https://binance.llamarpc.com'],
         token:'BNB',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
-        first_block:33723227, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:300_000
+        first_block:33723227, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:40_000, url:0
       },
-
+      'E145':{
+        web3:['https://nodeapi.energi.network'],
+        token:'NRG',
+        e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
+        first_block:1955370, end_image:E145EndImg, spend_image:E145SpendImg, ether_image:nrg, iteration:10_000, url:1	
+      },
+      'E155':{
+        web3:['https://mainnet-rpc.thundercore.io'],
+        token:'TT',
+        e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
+        first_block:148816985, end_image:E155EndImg, spend_image:E155SpendImg, ether_image:tt, iteration:40_000, url:0	
+      },
+      'E165':{
+        web3:['https://rpc.tomochain.com'],
+        token:'VIC',
+        e5_address:'0xd3B4c06c7514a72284fCe95DCAD911c8EaD9Be3F',
+        first_block:73021490, end_image:E165EndImg, spend_image:E165SpendImg, ether_image:viction, iteration:40_000, url:0	
+      },
+      'E175':{
+        web3:['https://evmos-jsonrpc.theamsolutions.info'],
+        token:'EVMOS',
+        e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
+        first_block:17475951, end_image:E175EndImg, spend_image:E175SpendImg, ether_image:evmos, iteration:40_000, url:0
+      },
 
 
 
@@ -395,6 +431,7 @@ class App extends Component {
     this.stack_page = React.createRef();
     this.depthmint_page = React.createRef();
     this.searched_account_page = React.createRef();
+    this.rpc_settings_page = React.createRef();
   }
 
   componentDidMount() {
@@ -492,7 +529,19 @@ class App extends Component {
       g52_events:this.g52_events,
       h5_events:this.h5_events,
       h52_events:this.h52_events,
+
+      added_providers: this.state.added_providers,
+      selected_providers: this.get_selected_urls(),
     }
+  }
+
+  get_selected_urls(){
+    var array = this.state.e5s['data']
+    var selected_array = []
+    array.forEach(e5 => {
+      selected_array.push([e5, this.state.e5s[e5].url])
+    });
+    return selected_array
   }
 
   load_cupcakes = async () =>{
@@ -521,6 +570,8 @@ class App extends Component {
       var cupcake_section_tags_setting = cupcake_state.section_tags_setting
       var cupcake_visible_tabs = cupcake_state.visible_tabs
       var cupcake_storage_permissions = cupcake_state.storage_permissions
+      var cupcake_added_providers = cupcake_state.added_providers
+      var cupcake_selected_providers = cupcake_state.selected_providers
       
       if(cupcake_theme != null){
         this.setState({theme:cupcake_theme})
@@ -593,6 +644,14 @@ class App extends Component {
       if(cupcake_storage_permissions != null){
         this.setState({storage_permissions: cupcake_storage_permissions})
       }
+
+      if(cupcake_selected_providers != null && cupcake_added_providers != null){
+        this.setState({added_providers: cupcake_added_providers})
+        var me = this;
+        setTimeout(function() {
+          me.set_providers(cupcake_selected_providers, cupcake_added_providers)
+        }, (1 * 800));
+      }
     }
 
     var me = this;
@@ -610,9 +669,20 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+
+  set_providers(cupcake_selected_providers, cached_providers){
+    var clone = structuredClone(this.state.e5s)
+    cupcake_selected_providers.forEach(provider => {
+      clone[provider[0]].url = provider[1]
+    })
+    cached_providers.forEach(provider => {
+      clone[provider[0]]['web3'].push(provider[1])
+    });
+    this.setState({e5s:clone})
+  }
+
   fetch_data(cupcake_state){
-    try{
-      
+    try{  
       var ce = JSON.parse(cupcake_state)
       return ce
     }catch(e){
@@ -667,7 +737,7 @@ class App extends Component {
     // 0xD637CBbc18fa589bd9d3708ecA90bf71e2A8B243
 
     var seed = ''+process.env.REACT_APP_SEED_API_KEY
-    var web3_url = this.get_web3_url_from_e5('E145')
+    var web3_url = this.get_web3_url_from_e5('E175')
     var account = this.get_account_from_seed(seed, web3_url)
     console.log(account)
     // console.log(toBech32(account.address))
@@ -679,28 +749,27 @@ class App extends Component {
 
 
 
-    var recipientAddress = '0x5c40bf56A48ced034da9EE17421D05d799763592'
+    var recipientAddress = '0xa88FcDa55dFE3929E3f089FbEce6Ce2728f8bf3a'
     const me = this;
     web3.eth.accounts.wallet.add(account.privateKey);
 
-    // web3.eth.sendTransaction({
-    //   from: account.address,
-    //   to: recipientAddress,
-    //   value: (0.197 * 10**18),
-    //   gas: 50000,
-    //   gasPrice: 3_000_000_000 // Adjust gas price as needed
-    // }).on('transactionHash', function (hash) {
-    //   me.prompt_top_notification('send complete!', 600)
-    // })
-    // .on('error', function (error) {
-    //   console.error('Failed to send transaction:', error);
-    //   if(error == 'Error: Invalid JSON RPC response: {}'){
-    //     me.prompt_top_notification('send complete!', 600)
-    //   }else{
-    //     me.prompt_top_notification('send failed, '+error, 6000)
-    //   }
-    // });
-  
+    web3.eth.sendTransaction({
+      from: account.address,
+      to: recipientAddress,
+      value: (6.5 * 10**18),
+      gas: 50000,
+      gasPrice: 30_000_000_000 // Adjust gas price as needed
+    }).on('transactionHash', function (hash) {
+      me.prompt_top_notification('send complete!', 600)
+    })
+    .on('error', function (error) {
+      console.error('Failed to send transaction:', error);
+      if(error == 'Error: Invalid JSON RPC response: {}'){
+        me.prompt_top_notification('send complete!', 600)
+      }else{
+        me.prompt_top_notification('send failed, '+error, 6000)
+      }
+    });
   }
 
   init_db = async () => {
@@ -808,7 +877,8 @@ class App extends Component {
   }
 
   get_web3_url_from_e5(e5){
-    var random = this.random(0,this.state.e5s[e5].web3.length-1)
+    // var random = this.random(0,this.state.e5s[e5].web3.length-1)
+    var random = this.state.e5s[e5].url
     return this.state.e5s[e5].web3[random]
   }
 
@@ -986,6 +1056,7 @@ class App extends Component {
           {this.render_add_comment_bottomsheet()}
           {this.render_depthmint_bottomsheet()}
           {this.render_searched_account_bottomsheet()}
+          {this.render_rpc_settings_bottomsheet()}
           <ToastContainer limit={3} containerId="id"/>
         </div>
       );
@@ -1032,15 +1103,18 @@ class App extends Component {
 
       get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
 
-      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)}
+      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)}
       />
     )
   }
 
   set_cupcakes_after_stack_action(stack_items){
     var me = this;
-    setTimeout(function() {
-        me.set_cupcakes()
+    setTimeout(function() { 
+      if(me.stack_page.current!= null){
+        me.stack_page.current?.run_transactions(true)
+      } 
+      me.set_cupcakes()
     }, (1 * 1000));
   }
 
@@ -1305,7 +1379,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)}/>
+              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -1422,6 +1496,24 @@ class App extends Component {
     this.setState({is_running: value})
   }
 
+  calculate_gas_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
+    const web3 = new Web3(this.get_selected_web3_url());
+    const contractArtifact = require('./contract_abis/E5.json');
+    const contractAddress = this.get_selected_E5_contract()
+    const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
+    const me = this
+
+    var v5/* t_limits */ = [1000000000000, 1000000000000];
+    console.log('calculating gas price for current stack...')
+    contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).estimateGas({from: me.state.accounts[me.state.selected_e5].address, gas: run_gas_limit, value: wei}, function(error, gasAmount){
+        console.log('---------------------calculate_gas_with_e-------------------------')
+        console.log(gasAmount)
+        var clone = structuredClone(me.state.calculated_gas_figures)
+        clone[me.state.selected_e5] = gasAmount
+        me.setState({calculated_gas_figures: clone})
+    });
+  }
+
   run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
@@ -1451,6 +1543,9 @@ class App extends Component {
           me.setState({should_update_contacts_onchain: false, is_running: false, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false})
           this.delete_stack_items(delete_pos_array)
           this.start_get_accounts_data(false)
+          setTimeout(function() {
+            me.reset_gas_calculation_figure(me)
+          }, (1 * 3000));
           this.prompt_top_notification('run complete!', 600)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
@@ -1499,6 +1594,12 @@ class App extends Component {
     //   console.log('Transaction failed. Transaction hash:', receipt.transactionHash);
     //   this.prompt_top_notification('run failed. Check your stacks transactions and try again', 1500)
     // }
+  }
+
+  reset_gas_calculation_figure(me){
+    var clone = structuredClone(me.state.calculated_gas_figures)
+    clone[me.state.selected_e5] = 0
+    me.setState({calculated_gas_figures: clone})
   }
 
   delete_stack_items(delete_pos_array){
@@ -4320,6 +4421,88 @@ class App extends Component {
 
 
 
+  render_rpc_settings_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_rpc_settings_bottomsheet.bind(this)} open={this.state.rpc_settings_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <RPCSettingsPage ref={this.rpc_settings_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_rpc_url={this.add_rpc_url.bind(this)} when_rpc_tapped={this.when_rpc_tapped.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_rpc_settings_bottomsheet(){
+    if(this.state != null){
+        this.setState({rpc_settings_bottomsheet: !this.state.rpc_settings_bottomsheet});
+      }
+  }
+
+  show_rpc_settings_bottomsheet(ether){
+    if(this.rpc_settings_page.current != null){
+      this.rpc_settings_page.current.set_ether(ether)
+    }
+
+    this.open_rpc_settings_bottomsheet()
+  }
+
+
+
+  add_rpc_url(url, ether){
+    var clone = structuredClone(this.state.e5s)
+    clone[ether['e5']].web3.push(url)
+
+    var added_providers_clone = this.state.added_providers.slice()
+    added_providers_clone.push([ether['e5'], url])
+    this.setState({e5s: clone, added_providers: added_providers_clone})
+    
+    var me = this;
+    setTimeout(function() {
+        me.set_cupcakes()
+    }, (1 * 1000));
+  }
+
+
+  when_rpc_tapped(url, index, ether){
+    var clone = structuredClone(this.state.e5s)
+    clone[ether['e5']].url = index
+    this.setState({e5s: clone})
+
+    var me = this;
+    setTimeout(function() {
+      me.set_cupcakes()
+      me.start_get_accounts_for_specific_e5(false, ether['e5'])
+    }, (1 * 1000));
+  }
+
+
+  load_rpc_times = async (e5) => {
+    var items = this.state.e5s[e5].web3
+    for(var i=0; i<items.length; i++){
+      var url = items[i]
+      const web3 = new Web3(url);
+      var is_conn = await web3.eth.net.isListening()
+      if(is_conn){
+        var now = Date.now()
+        await web3.eth.getBlockNumber()
+        var time = Date.now() - now;
+        var clone = structuredClone(this.state.rpc_times)
+        clone[url] = ''+time+' milliseconds'
+        this.setState({rpc_times: clone})
+      }else{
+        var clone = structuredClone(this.state.rpc_times)
+        clone[url] = 'offline'
+        this.setState({rpc_times: clone})
+      }
+    }
+
+  }
+
+
+
+
+
 
 
 
@@ -4810,20 +4993,21 @@ class App extends Component {
         return localStorage.getItem('size')
   }
 
-  start_get_accounts_data = async (is_syncing) => {
+  start_get_accounts_data = async (is_synching) => {
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
-      // var random = random(0,this.state.e5s[e5].web3.length-1)
-      // var web3_url = this.state.e5s[e5].web3[random]
-      var web3_url = this.get_web3_url_from_e5(e5)
-      var e5_address = this.state.e5s[e5].e5_address;
-      var account_for_e5 = this.state.accounts[e5]
-      if(e5_address != ''){
-        // this.get_accounts_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
-        this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
-        if(this.get_contract_from_e5(e5) != ''){
-          this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5)
-        }
+      this.start_get_accounts_for_specific_e5(is_synching, e5)
+    }
+  }
+
+  start_get_accounts_for_specific_e5 = async (is_syncing, e5) =>{
+    var web3_url = this.get_web3_url_from_e5(e5)
+    var e5_address = this.state.e5s[e5].e5_address;
+    var account_for_e5 = this.state.accounts[e5]
+    if(e5_address != ''){
+      this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+      if(this.get_contract_from_e5(e5) != ''){
+        this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5)
       }
     }
   }
@@ -5038,9 +5222,12 @@ class App extends Component {
     const web3 = new Web3(web3_url);
     const address_account = _account
 
+    this.load_rpc_times(e5)
+
     var clone = structuredClone(this.state.account_balance)
     clone[e5] = 0
-    this.setState({account_balance: clone});
+    if(clone[e5] == null)this.setState({account_balance: clone});
+
     var balance = await web3.eth.getBalance(address_account.address)
     var clone = structuredClone(this.state.account_balance)
     clone[e5] = parseInt(balance)
@@ -5057,46 +5244,44 @@ class App extends Component {
     console.log('-----------------get_wallet_data------------------------')
     console.log(e5,' gas price: ',gasPrice)
 
-    if(is_syncing){
-      var id = await web3.eth.net.getId()
-      var clone = structuredClone(this.state.chain_id)
-      clone[e5] = id
-      this.setState({chain_id: clone});
-      this.inc_synch_progress()
+    var id = await web3.eth.net.getId()
+    var clone = structuredClone(this.state.chain_id)
+    clone[e5] = id
+    this.setState({chain_id: clone});
+    this.inc_synch_progress()
+    await this.wait(this.state.web3_delay)
+
+
+    // var peers = await web3.eth.net.getPeerCount()
+    // var clone = structuredClone(this.state.number_of_peers)
+    // clone[e5] = parseInt(peers)
+    // this.setState({ number_of_peers: clone});
+    // console.log('number of peers: ', peers)
+    // this.inc_synch_progress()
+
+    var blockNumber = await web3.eth.getBlockNumber()
+    await this.wait(this.state.web3_delay)
+    var last_blocks = [];
+    var count = 5
+    var start = parseInt(blockNumber)-count;
+    if(blockNumber < count){
+      start = 0;
+    }
+    for (let i = start; i <= blockNumber; i++) {
       await this.wait(this.state.web3_delay)
-
-
-      // var peers = await web3.eth.net.getPeerCount()
-      // var clone = structuredClone(this.state.number_of_peers)
-      // clone[e5] = parseInt(peers)
-      // this.setState({ number_of_peers: clone});
-      // console.log('number of peers: ', peers)
-      // this.inc_synch_progress()
-
-
-
-      var blockNumber = await web3.eth.getBlockNumber()
-      await this.wait(this.state.web3_delay)
-      var last_blocks = [];
-      var start = parseInt(blockNumber)-100;
-      if(blockNumber < 100){
-        start = 0;
-      }
-      for (let i = start; i <= blockNumber; i++) {
-        await this.wait(this.state.web3_delay)
-        var block = await web3.eth.getBlock(i)
-        last_blocks.push(block)
-      }
-
-      var last_blocks_clone = structuredClone(this.state.last_blocks)
-      last_blocks_clone[e5] = last_blocks
-
-      var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
-      number_of_blocks_clone[e5] = blockNumber
-      this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
-      this.inc_synch_progress()
+      var block = await web3.eth.getBlock(i)
+      last_blocks.push(block)
     }
 
+    var last_blocks_clone = structuredClone(this.state.last_blocks)
+    last_blocks_clone[e5] = last_blocks
+
+    var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
+    number_of_blocks_clone[e5] = blockNumber
+    this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
+    this.inc_synch_progress()
+
+    
 
   } 
 
@@ -5694,11 +5879,80 @@ class App extends Component {
         console.log('Error fetching data: ', error)
       }
     }
+    else if(e5 == 'E115'){
+      var xdc_add = this.replace_0x_with_xdc(address)
+      link = `https://xdc.blocksscan.io/api/txs/listByAccount/${xdc_add}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('-----------------------------------E115:load_ether_history--------------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E155'){
+      link = `http://explorer-mainnet.thundercore.com/api?module=account&action=txlist&address=${address}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E155:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E145'){
+      link=`http://explorer.energi.network/api?module=account&action=tokentx&address=${address}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E145:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E165'){
+      link = `https://tomoscan.io/api/transaction/list?account=${address}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E145:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
 
     var clone = structuredClone(this.state.e5_ether_tx_history)
     clone[e5] = e5_address_obj
     this.setState({e5_ether_tx_history: clone})
     
+  }
+
+  replace_0x_with_xdc(address){
+    return 'xdc'+address.toString().slice(2)
   }
 
   //unused
@@ -5842,9 +6096,24 @@ class App extends Component {
     var created_subscription_object_data = []
     var created_subscription_object_mapping = {}
     var is_first_time = this.state.created_subscriptions[e5] == null
+    
+
+    var account_as_list = []
+    for(var i=0; i<created_subscriptions.length; i++){
+      account_as_list.push([account])
+    }
+    var my_payments_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await F5contractInstance.methods.f229(created_subscriptions, account_as_list).call((error, result) => {});
+
+    var interactible_checker_status_values_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f254(created_subscriptions,0).call((error, result) => {});
+
+    var my_interactable_time_value_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f256(created_subscriptions, account_as_list, 0,2).call((error, result) => {})
+
+    var my_blocked_time_value_for_all_subscriptions = created_subscriptions.length == 0 ? [] : await E52contractInstance.methods.f256(created_subscriptions, account_as_list, 0,3).call((error, result) => {});
+
+
     for(var i=0; i<created_subscriptions.length; i++){
       var subscription_data = await this.fetch_objects_data(created_subscriptions[i], web3, e5, contract_addresses);
-      var my_payment = await F5contractInstance.methods.f229([created_subscriptions[i]], [[account]]).call((error, result) => {});
+      var my_payment = my_payments_for_all_subscriptions[i]
 
       var paid_accounts = [];
       var paid_amounts = [];
@@ -5852,25 +6121,36 @@ class App extends Component {
       if(created_subscription_events[i].returnValues.p3 == account){
         //if the sender is the authority of the subscription
         var all_subscription_payment_events = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p1/* subscription_id */:created_subscriptions[i]})
+
+        var accounts_in_focus_as_list = []
+        for(var j=0; j<all_subscription_payment_events.length; j++){
+          var account_in_focus = all_subscription_payment_events[j].returnValues.p2
+          accounts_in_focus_as_list.push(account_in_focus)
+        }
+
+        var collectible_time_value_for_all_accounts = created_subscription_data[i][1][2/* can_cancel_subscription */] == 1? 
+        await F5contractInstance.methods.f235([created_subscriptions[i]], [accounts_in_focus_as_list]).call((error, result) => {}) :
+        await F5contractInstance.methods.f229([created_subscriptions[i]], [accounts_in_focus_as_list]).call((error, result) => {});
+
         
         for(var j=0; j<all_subscription_payment_events.length; j++){
           var account_in_focus = all_subscription_payment_events[j].returnValues.p2
           
           if(!paid_accounts.includes(account_in_focus)){
             if(created_subscription_data[i][1][2/* can_cancel_subscription */] == 1){
-              var collectible_time_value = await F5contractInstance.methods.f235([created_subscriptions[i]], [[account_in_focus]]).call((error, result) => {});
+              var collectible_time_value = /* await F5contractInstance.methods.f235([created_subscriptions[i]], [[account_in_focus]]).call((error, result) => {}); */ collectible_time_value_for_all_accounts
               
-              if(collectible_time_value[0][0] != 0){
+              if(collectible_time_value[0][j] != 0){
                 paid_accounts.push(account_in_focus)
-                paid_amounts.push(collectible_time_value[0][0])
+                paid_amounts.push(collectible_time_value[0][j])
               }
             }
             else{
-              var collectible_time_value = await F5contractInstance.methods.f229([created_subscriptions[i]], [[account_in_focus]]).call((error, result) => {});
+              var collectible_time_value = /* await F5contractInstance.methods.f229([created_subscriptions[i]], [[account_in_focus]]).call((error, result) => {}); */ collectible_time_value_for_all_accounts
 
-              if(collectible_time_value[0][0] != 0){
+              if(collectible_time_value[0][j] != 0){
                 paid_accounts.push(account_in_focus)
-                paid_amounts.push(collectible_time_value[0][0])
+                paid_amounts.push(collectible_time_value[0][j])
               }
             }
           }
@@ -5895,17 +6175,17 @@ class App extends Component {
         }
       }
 
-      var interactible_checker_status_values = await E52contractInstance.methods.f254([created_subscriptions[i]],0).call((error, result) => {});
+      var interactible_checker_status_values = /* await E52contractInstance.methods.f254([created_subscriptions[i]],0).call((error, result) => {}); */interactible_checker_status_values_for_all_subscriptions[i]
 
-      var my_interactable_time_value = await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,2).call((error, result) => {});
+      var my_interactable_time_value = /* await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,2).call((error, result) => {}); */ my_interactable_time_value_for_all_subscriptions[i]
 
-      var my_blocked_time_value = await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {});
+      var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_subscriptions[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_subscriptions[i]
 
 
-      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment[0][0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3}
+      var subscription_object = {'id':created_subscriptions[i], 'e5_id':created_subscriptions[i]+e5, 'data':created_subscription_data[i], 'ipfs':subscription_data, 'event':created_subscription_events[i], 'payment':my_payment/* [0] */[0], 'paid_accounts':paid_accounts, 'paid_amounts':paid_amounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'e5':e5, 'timestamp':created_subscription_events[i].returnValues.p4, 'author':created_subscription_events[i].returnValues.p3}
 
-      if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){}
-      else if(my_blocked_time_value[0][0] > Date.now()/1000){}
+      if(interactible_checker_status_values/* [0] */[0] == true && (my_interactable_time_value/* [0] */[0] < Date.now()/1000 && !moderators.includes(account) && created_subscription_events[i].returnValues.p3 != account )){}
+      else if(my_blocked_time_value/* [0] */[0] > Date.now()/1000){}
       else{
         created_subscription_object_data.push(subscription_object)
       }
@@ -5950,6 +6230,24 @@ class App extends Component {
     var created_contract_object_data = []
     var created_contract_mapping = {}
     var is_first_time = this.state.created_contracts[e5] == null
+
+
+
+
+    var account_as_list = []
+    for(var i=0; i<created_contracts.length; i++){
+      account_as_list.push([account])
+    }
+
+    var interactible_checker_status_values_for_all_contracts = created_contracts.length==0? []: await E52contractInstance.methods.f254(created_contracts,0).call((error, result) => {});
+
+    var my_interactable_time_value_for_all_contracts = created_contracts.length==0? []: await E52contractInstance.methods.f256(created_contracts, account_as_list, 0,2).call((error, result) => {});
+
+    var my_blocked_time_value_for_all_contracts = created_contracts.length==0? []: await E52contractInstance.methods.f256(created_contracts, account_as_list, 0,3).call((error, result) => {});
+
+
+
+
     for(var i=0; i<created_contracts.length; i++){
       var contracts_data = await this.fetch_objects_data(created_contracts[i], web3, e5, contract_addresses);
       var event = i>0 ? created_contract_events[i-1]: null
@@ -5959,11 +6257,15 @@ class App extends Component {
       var entered_accounts = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p3/* action */:3/* enter_contract(3) */,p1/* contract_id */:created_contracts[i]})
 
       var contract_entered_accounts = []
+      var archive_accounts = []
       for(var e=0; e<entered_accounts.length; e++){
         var account_entered_time = await G52contractInstance.methods.f266([created_contracts[i]], [[entered_accounts[e].returnValues.p2]], 3).call((error, result) => {});
 
         if(!contract_entered_accounts.includes(entered_accounts[e].returnValues.p2) && account_entered_time > Date.now()/1000){
           contract_entered_accounts.push(entered_accounts[e].returnValues.p2)
+        }
+        if(!archive_accounts.includes(entered_accounts[e].returnValues.p2)){
+          archive_accounts.push(entered_accounts[e].returnValues.p2)
         }
       }
 
@@ -5986,19 +6288,19 @@ class App extends Component {
         }
       }
 
-      var interactible_checker_status_values = await E52contractInstance.methods.f254([created_contracts[i]],0).call((error, result) => {});
+      var interactible_checker_status_values = /* await E52contractInstance.methods.f254([created_contracts[i]],0).call((error, result) => {}); */interactible_checker_status_values_for_all_contracts
 
-      var my_interactable_time_value = await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,2).call((error, result) => {});
+      var my_interactable_time_value = /* await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,2).call((error, result) => {}); */ my_interactable_time_value_for_all_contracts
 
-      var my_blocked_time_value = await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {});
+      var my_blocked_time_value =/*  await E52contractInstance.methods.f256([created_contracts[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_contracts
 
       var timestamp = event == null ? 0 : event.returnValues.p4
       var author = event == null ? 0 : event.returnValues.p3
-      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':contract_entered_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0], 'my_interactable_time_value':my_interactable_time_value[0][0], 'my_blocked_time_value':my_blocked_time_value[0][0], 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
+      var contract_obj = {'id':created_contracts[i], 'data':created_contract_data[i], 'ipfs':contracts_data, 'event':event, 'entry_expiry':entered_timestamp_data[i][0], 'end_balance':end_balance, 'spend_balance':spend_balance, 'participants':contract_entered_accounts, 'archive_accounts':archive_accounts, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i], 'my_interactable_time_value':my_interactable_time_value[i][0], 'my_blocked_time_value':my_blocked_time_value[i][0], 'e5':e5, 'timestamp':timestamp, 'author':author, 'e5_id':created_contracts[i]+e5 }
 
-      if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
+      if(interactible_checker_status_values[0] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
       }
-      else if(my_blocked_time_value[0][0] > Date.now()/1000){
+      else if(my_blocked_time_value[i][0] > Date.now()/1000){
 
       }
       else{
@@ -6082,15 +6384,35 @@ class App extends Component {
     var created_proposal_data = await G5contractInstance.methods.f78(my_proposal_ids, false).call((error, result) => {});
     var consensus_data = await G52contractInstance.methods.f266(my_proposal_ids, [], 0).call((error, result) => {});
     var is_first_time = this.state.my_proposals[e5] == null
+
+
+    var all_exchanges_in_list = []
+    var depths = []
+    var proposal_modify_target_types = []
+    var account_as_list = []
+    for(var i=0; i<my_proposal_ids.length; i++){
+      all_exchanges_in_list.push([3, 5])
+      depths.push(0)
+      proposal_modify_target_types.push(created_proposal_data[i][1][9])
+      account_as_list.push([account])
+    }
+
+    var balances = await this.get_balance_in_exchange_for_multiple_accounts(my_proposal_ids, all_exchanges_in_list, e5, contract_addresses, depths, 1)
+
+    var proposal_modify_target_type_data = await E52contractInstance.methods.f134(proposal_modify_target_types).call((error, result) => {});
+
+    var senders_vote_in_proposal_for_all_proposals = await G52contractInstance.methods.f237(my_proposal_ids, account_as_list).call((error, result) => {});
+
+
     for(var i=0; i<my_proposal_ids.length; i++){
       var proposals_data = await this.fetch_objects_data(my_proposal_ids[i], web3, e5, contract_addresses);
       var event = my_proposals_events[i]
-      var end_balance = await this.get_balance_in_exchange(3, my_proposal_ids[i], e5, contract_addresses);
-      var spend_balance = await this.get_balance_in_exchange(5, my_proposal_ids[i], e5, contract_addresses);
+      var end_balance = /* await this.get_balance_in_exchange(3, my_proposal_ids[i], e5, contract_addresses); */ balances[i][0]
+      var spend_balance = /* await this.get_balance_in_exchange(5, my_proposal_ids[i], e5, contract_addresses); */ balances[i][1]
 
-      var proposal_modify_target_type = await E52contractInstance.methods.f135(created_proposal_data[i][1][9]).call((error, result) => {});
+      var proposal_modify_target_type = /* await E52contractInstance.methods.f135(created_proposal_data[i][1][9]).call((error, result) => {}); */ proposal_modify_target_type_data[i]
 
-      var senders_vote_in_proposal = await G52contractInstance.methods.f237([my_proposal_ids[i]], [[account]]).call((error, result) => {});
+      var senders_vote_in_proposal = /* await G52contractInstance.methods.f237([my_proposal_ids[i]], [[account]]).call((error, result) => {}); */ senders_vote_in_proposal_for_all_proposals[i]
 
       var proposal_voters = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p2/* consensus_id */:my_proposal_ids[i]})
 
@@ -6101,7 +6423,7 @@ class App extends Component {
         }
       }
 
-      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal[0][0], 'archive_accounts':archive_participants, 'e5':e5, 'timestamp':event.returnValues.p5, 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5 }
+      var obj = {'id':my_proposal_ids[i], 'data':created_proposal_data[i], 'ipfs':proposals_data, 'event':event, 'end_balance':end_balance, 'spend_balance':spend_balance, 'consensus_data':consensus_data[i], 'modify_target_type':proposal_modify_target_type, 'account_vote':senders_vote_in_proposal/* [0] */[0], 'archive_accounts':archive_participants, 'e5':e5, 'timestamp':event.returnValues.p5, 'author':event.returnValues.p3, 'e5_id':my_proposal_ids[i]+e5 }
 
       created_proposal_object_data.push(obj)
 
@@ -6134,15 +6456,24 @@ class App extends Component {
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
     var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
 
-    // console.log('-------------------------get_token_data-------------------------')
-    // console.log(e5)
-    // console.log(token_balances)
-
     var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
     var created_token_object_data = []
     var created_token_object_mapping = {}
     var is_first_time = this.state.created_tokens[e5] == null
+
+    var account_as_list = []
+    for(var i=0; i<created_tokens.length; i++){
+      account_as_list.push([account])
+    }
+
+    var interactible_checker_status_values_for_all_tokens = await E52contractInstance.methods.f254(created_tokens,0).call((error, result) => {});
+
+    var my_interactable_time_value_for_all_tokens = await E52contractInstance.methods.f256(created_tokens, account_as_list, 0,2).call((error, result) => {});
+
+    var my_blocked_time_value_for_all_tokens = await E52contractInstance.methods.f256(created_tokens, account_as_list, 0,3).call((error, result) => {});
+
+
     for(var i=0; i<created_tokens.length; i++){
       var tokens_data = await this.fetch_objects_data(created_tokens[i], web3, e5, contract_addresses);
       var event = i>1 ? created_token_events[i-2]: null
@@ -6171,11 +6502,11 @@ class App extends Component {
         }
       }
 
-      var interactible_checker_status_values = await E52contractInstance.methods.f254([created_tokens[i]],0).call((error, result) => {});
+      var interactible_checker_status_values = /* await E52contractInstance.methods.f254([created_tokens[i]],0).call((error, result) => {}); */ interactible_checker_status_values_for_all_tokens
 
-      var my_interactable_time_value = await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,2).call((error, result) => {});
+      var my_interactable_time_value = /* await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,2).call((error, result) => {}); */ my_interactable_time_value_for_all_tokens
 
-      var my_blocked_time_value = await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {});
+      var my_blocked_time_value = /* await E52contractInstance.methods.f256([created_tokens[i]], [[account]], 0,3).call((error, result) => {}); */ my_blocked_time_value_for_all_tokens
 
 
 
@@ -6185,12 +6516,12 @@ class App extends Component {
 
       var timestamp = event == null ? 0 : event.returnValues.p4
       var author = event == null ? 0 : event.returnValues.p3
-      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[0],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5 }
+      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5 }
 
-      if(interactible_checker_status_values[0] == true && (my_interactable_time_value[0][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
+      if(interactible_checker_status_values[i] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
 
       }
-      else if(my_blocked_time_value[0][0] > Date.now()/1000){
+      else if(my_blocked_time_value[i][0] > Date.now()/1000){
 
       }
       else{
@@ -6882,7 +7213,6 @@ class App extends Component {
   }
 
   wait = async (t) => {
-    //apparently those gateways dont like it when you spam their apis like i intend to do here, so a delay function to spread out those calls is necessary(if it even works)
     await this.sleep(t)
   }
 
@@ -6903,6 +7233,17 @@ class App extends Component {
       var token_balances = await H52contractInstance.methods.f140e([exchange_id], account, [0]).call((error, result) => {});
 
       return token_balances[0]
+  }
+
+  get_balance_in_exchange_for_multiple_accounts = async (exchange_ids, accounts, e5, addresses, depths, action) => {
+      const web3 = new Web3(this.get_web3_url_from_e5(e5));
+      const H52contractArtifact = require('./contract_abis/H52.json');
+      const H52_address = addresses[6];
+      const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+      
+      var token_balances = await H52contractInstance.methods.f270(exchange_ids, accounts, depths, 1, action).call((error, result) => {});
+
+      return token_balances
   }
 
 
@@ -6991,6 +7332,8 @@ class App extends Component {
   get_accounts_public_key = async (account, e5) => {
     const web3 = new Web3(this.get_web3_url_from_e5(e5));
     const E52contractArtifact = require('./contract_abis/E52.json');
+    console.log(this.state.addresses)
+    console.log(e5)
     const E52_address = this.state.addresses[e5][1];
     const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
     var events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:'0'})

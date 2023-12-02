@@ -267,7 +267,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Set denomination: '+selected_composition})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Target Recipient', 'details':'Set the account thats set to receive the purchase payments for your new item', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Target Recipient', 'details':'Set the account thats set to receive the purchase payments for your new item("53" simplifier is disabled here)', 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput height={30} placeholder={'Enter Account ID'} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -1878,20 +1878,16 @@ class NewStorefrontItemPage extends Component {
     }
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
     /* gets a formatted time diffrence from now to a given time */
@@ -1961,7 +1957,7 @@ class NewStorefrontItemPage extends Component {
         else if(variants.length == 0){
             this.props.notify('you should set some variants for your item', 700)
         }
-        else if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver==''){
+        else if(isNaN(target_receiver) || parseInt(target_receiver) < 1000 || target_receiver==''){
             this.props.notify('set a valid receiver target', 700)
         }
         else if(fulfilment_location==''){

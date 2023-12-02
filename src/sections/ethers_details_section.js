@@ -5,6 +5,8 @@ import Tags from './../components/tags';
 import Letter from './../assets/letter.png'; 
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 
+import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
@@ -167,13 +169,13 @@ class EthersDetailsSection extends Component {
 
                     {/* {this.render_detail_item('3', item['gas_used_chart_data_label'])} */}
                     {/* {this.render_detail_item('6', item['gas_used_chart_data'])} */}
-                    <div style={{height: 10}}/>
+                    {/* <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['gas_used_chart_data_average'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['highest_gas_consumed'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['lowest_gas_consumed'])}
-                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')} */}
 
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -192,9 +194,9 @@ class EthersDetailsSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', item['transaction_count_chart_data_label'])}
+                    {/* {this.render_detail_item('3', item['transaction_count_chart_data_label'])}
                     {this.render_detail_item('6', item['transaction_count_chart_data'])}
-                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')} */}
 
                     {this.render_detail_item('3', item['gas_limit'])}
                     <div style={{height: 10}}/>
@@ -207,6 +209,13 @@ class EthersDetailsSection extends Component {
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_receive_ether_bottomsheet(item)}>
                         {this.render_detail_item('5', {'text':'Send/Receive', 'action': ''})}
+                    </div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':'Node Settings', 'details':'Change the remote procedure call (RPC) provider setting for making your transactions.', 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_rpc_settings(item)}>
+                        {this.render_detail_item('5', {'text':'Open', 'action': ''})}
                     </div>
                     <div style={{height:10}}/>
 
@@ -228,6 +237,10 @@ class EthersDetailsSection extends Component {
         }
     }
 
+    open_rpc_settings(item){
+        this.props.open_rpc_settings(item)
+    }
+
     when_navigate_view_ethers_list_detail_tags_object_updated(tag_group){
         this.setState({navigate_view_ethers_list_detail_tags_object: tag_group})
     }
@@ -243,8 +256,13 @@ class EthersDetailsSection extends Component {
             this.get_token('FUSE', 'Fuse', 'E85'),
             this.get_token('GLMR', 'Moonbeam', 'E95'),
             this.get_token('MOVR', 'Moonriver', 'E105'),
+            this.get_token('XDC', 'Xinfin Network', 'E115'),
             this.get_token('MATIC', 'Polygon', 'E125'),
             this.get_token('BNB', 'Binance S.C.', 'E135'),
+            this.get_token('TT', 'ThunderCore', 'E155'),
+            // this.get_token('NRG', 'Energi', 'E145'),
+            this.get_token('VIC', 'Viction', 'E165'),
+            this.get_token('EVMOS', 'Evmos', 'E175'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
@@ -301,7 +319,7 @@ class EthersDetailsSection extends Component {
                 
                 'gas_used_chart_data_label':{'title':'Gas Used', 'details':'Amount of gas used in the last 100 blocks', 'size' :'l'},
                 'gas_used_chart_data':{'chart_color':'#FCFCFC', 'background_color':'#D5D5D5', 'dataPoints':this.get_gas_used_data_points(e5)},
-                'gas_used_chart_data_average':{'title':number_with_commas(this.get_gas_used_data_point_average(e5)), 'details':'Average Gas Used', 'size' :'l'},
+                'gas_used_chart_data_average':{'title':number_with_commas(this.get_gas_used_data_point_average(e5)), 'details':'Average Gas Used in the last 100 blocks', 'size' :'l'},
                 'highest_gas_consumed':{'title':number_with_commas(this.get_highest_gas_figure(e5)), 'details':'Highest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
                 'lowest_gas_consumed':{'title':number_with_commas(this.get_lowest_gas_figure(e5)), 'details':'Lowest amount of Gas Consumed for Last 100 Blocks', 'size' :'l'},
 
@@ -309,8 +327,8 @@ class EthersDetailsSection extends Component {
                 'transaction_count_chart_data':{'interval':0, 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points(e5)},
                 
 
-                'gas_limit':{'title':number_with_commas(this.get_latest_block_data(e5).gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
-                'base_fee_per_gas':{'title':number_with_commas(this.get_latest_block_data(e5).baseFeePerGas), 'details':'Base Fee per Gas Unit', 'size' :'l'},
+                'gas_limit':{'title':this.format_account_balance_figure(this.get_latest_block_data(e5).gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
+                'base_fee_per_gas':{'title':this.format_account_balance_figure(this.get_latest_block_data(e5).baseFeePerGas), 'details':'Base Fee per Gas Unit', 'size' :'l'},
 
                 'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
 
@@ -360,8 +378,17 @@ class EthersDetailsSection extends Component {
         if(e5 == 'E45'){
             return toBech32(address)
         }
-
+        else if(e5 == 'E115'){
+            return this.replace_0x_with_xdc(address)
+        }
+        else if(e5 == 'E175'){
+            return ethToEvmos(address)
+        }
         return address
+    }
+
+    replace_0x_with_xdc(address){
+        return 'xdc'+address.toString().slice(2)
     }
 
     copy_to_clipboard(signature_data){
@@ -398,9 +425,11 @@ class EthersDetailsSection extends Component {
         var is = 0
         for(var i=1; i<blocks.length; i++){
             var block = blocks[i];
-            let time = block.timestamp - blocks[i-1].timestamp
-            total_time += time
-            is++
+            if(block != null && block.timestamp != null && blocks[i-1].timestamp != null){
+                let time = block.timestamp - blocks[i-1].timestamp
+                total_time += time
+                is++
+            }
         }
         var av_time = total_time / is
         return av_time+' seconds'
@@ -462,15 +491,18 @@ class EthersDetailsSection extends Component {
     }
 
     get_txs_history_txs(tx_history, e5){
-        if(e5 == 'E25' || e5 == 'E35'){
+        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115'){
             return tx_history['items']
         }
         else if(e5 == 'E45'){
             var data =  tx_history['result']['transactions']
             return data
         }
-        else if(e5 == 'E55' || e5 == 'E65'|| e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'){
+        else if(e5 == 'E55' || e5 == 'E65'|| e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135' || e5 == 'E155' || e5 == 'E145'){
             return tx_history['result']
+        }
+        else if(e5 == 'E165'){
+            return tx_history['data']
         }
 
     }
@@ -554,9 +586,13 @@ class EthersDetailsSection extends Component {
             var relative_time = this.get_time_difference(item['timeStamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
-        else if(e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'){
+        else if(e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'|| e5 == 'E155' || e5 == 'E145'){
             var relative_time = this.get_time_difference(item['timeStamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
+        }
+        else if(e5 == 'E115' || e5 == 'E165'){
+            var relative_time = this.get_time_difference(item['timestamp'])
+            return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timestamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
     }
 
@@ -822,20 +858,16 @@ class EthersDetailsSection extends Component {
 
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
 

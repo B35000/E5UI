@@ -481,17 +481,17 @@ class SubscriptionDetailsSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             
-            'age':{ 'style':'l', 'title':'Block ID', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', },
+            'age':{ 'style':'l', 'title':'Block ID', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${this.format_account_balance_figure(age)}`, 'barcolor':'', 'relativepower':'block', },
             
             'target_authority_id': {'title':subscription_config[0], 'details':'Authority ID', 'size':'l'},
             
-            'minimum_buy_amount':{ 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${number_with_commas(subscription_config[1])}`, 'barcolor':'', 'relativepower':'time-units', },
+            'minimum_buy_amount':{ 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${this.format_account_balance_figure(subscription_config[1])}`, 'barcolor':'', 'relativepower':'time-units', },
 
             'can_cancel_subscription': {'title':can_cancel_subscription, 'details':'Subscription Type', 'size':'l'},
 
-            'maximum_buy_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${number_with_commas(subscription_config[3])}`, 'barcolor':'', 'relativepower':'time-units', },
+            'maximum_buy_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${this.format_account_balance_figure(subscription_config[3])}`, 'barcolor':'', 'relativepower':'time-units', },
 
-            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${number_with_commas(subscription_config[4])}`, 'barcolor':'', 'relativepower':'time-units', },
+            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${this.format_account_balance_figure(subscription_config[4])}`, 'barcolor':'', 'relativepower':'time-units', },
 
             'time_unit': {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'l'},
 
@@ -1870,20 +1870,16 @@ class SubscriptionDetailsSection extends Component {
     }
 
     format_power_figure(amount) {
-        var power = 'e72'
-        if (amount < bigInt('1e9')) {
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if (amount < bigInt('1e18')) {
-            power = 'e18'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
-        else if (amount < bigInt('1e36')) {
-            power = 'e36'
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        else {
-            power = 'e72'
-        }
-        return power
     }
 
 

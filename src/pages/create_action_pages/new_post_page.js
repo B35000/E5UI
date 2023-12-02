@@ -213,7 +213,7 @@ class NewPostPage extends Component {
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Set tags for indexing your new Post'})}
                 <div style={{height:10}}/>
 
-                <div className="row">
+                <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>

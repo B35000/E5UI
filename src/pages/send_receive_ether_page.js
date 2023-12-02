@@ -8,6 +8,8 @@ import Html5QrcodePlugin from '../externals/Html5QrcodePlugin'
 import Dialog from "@mui/material/Dialog";
 import Letter from './../assets/letter.png';
 
+import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+
 var bigInt = require("big-integer");
 const Web3 = require('web3');
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -488,7 +490,17 @@ class SendReceiveEtherPage extends Component {
         if(e5 == 'E45'){
             return toBech32(address)
         }
+        else if(e5 == 'E115'){
+            return this.replace_0x_with_xdc(address)
+        }
+        else if(e5 == 'E175'){
+            return ethToEvmos(address)
+        }
         return address
+    }
+
+    replace_0x_with_xdc(address){
+        return 'xdc'+address.toString().slice(2)
     }
 
     
@@ -518,20 +530,16 @@ class SendReceiveEtherPage extends Component {
 
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
     render_amount_number_picker(){
@@ -713,7 +721,19 @@ class SendReceiveEtherPage extends Component {
         if(e5 == 'E45'){
             return fromBech32(address)
         }
+        if(e5 == 'E115'){
+            return this.replace_xdc_with_0x(address)
+        }
+        if(e5 == 'E175'){
+            return evmosToEth(address)
+        }
         return address
+    }
+
+
+    replace_xdc_with_0x(address){
+        if(address.toString().startsWith('0x')) return address
+        return '0x'+address.toString().slice(3)
     }
 
 

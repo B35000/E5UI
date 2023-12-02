@@ -129,6 +129,10 @@ class E5DetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height:10}}/>
+                    <div onClick={() => this.when_address_tapped(obj)}>
+                        {this.render_detail_item('3', item['address'])}
+                    </div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
                    <div style={{height:10}}/>
                     {this.render_detail_item('3', item['default_proposal_expiry_duration_limit'])}
@@ -231,13 +235,13 @@ class E5DetailsSection extends Component {
 
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.basic_transaction_data[e5][0], 'details':'Last Transaction Block', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_last_transaction_block(e5), 'details':'Last Transaction Block', 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_time_difference(this.props.app_state.basic_transaction_data[e5][1]), 'details':'Last Transaction age', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_difference(this.get_last_transaction_time(e5)), 'details':'Last Transaction age', 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.basic_transaction_data[e5][2], 'details':'Number of entered contracts', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_last_entered_contracts_count(e5), 'details':'Number of entered contracts', 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.props.app_state.basic_transaction_data[e5][3], 'details':'Number of E5 runs', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_number_of_e5_runs(e5), 'details':'Number of E5 runs', 'size':'l'})}
 
 
                     {this.render_detail_item('0')}
@@ -264,6 +268,44 @@ class E5DetailsSection extends Component {
         )
     }
 
+    when_address_tapped(obj){
+        var address = this.props.app_state.e5s[obj['id']].e5_address
+        this.copy_to_clipboard(address)
+    }
+
+    copy_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify('copied address to clipboard', 600)
+    }
+
+    get_last_transaction_block(e5){
+        if(this.props.app_state.basic_transaction_data[e5] == null){
+            return 0
+        }
+        return this.props.app_state.basic_transaction_data[e5][0]
+    }
+
+    get_last_transaction_time(e5){
+        if(this.props.app_state.basic_transaction_data[e5] == null){
+            return 0
+        }
+        return this.props.app_state.basic_transaction_data[e5][1]
+    }
+
+    get_last_entered_contracts_count(e5){
+        if(this.props.app_state.basic_transaction_data[e5] == null){
+            return 0
+        }
+        return this.props.app_state.basic_transaction_data[e5][2]
+    }
+
+    get_number_of_e5_runs(e5){
+        if(this.props.app_state.basic_transaction_data[e5] == null){
+            return 0
+        }
+        return this.props.app_state.basic_transaction_data[e5][3]
+    }
+
 
     open_withdraw_ether_ui(obj){
         // var obj = this.get_e5_data()[this.props.selected_e5_item]
@@ -277,11 +319,14 @@ class E5DetailsSection extends Component {
     get_e5_details_data(obj){
         var image = this.props.app_state.e5s[obj['id']].end_image
         var chain = this.props.app_state.e5s[obj['id']].token
+        var address = this.props.app_state.e5s[obj['id']].e5_address
         var contract_config = obj['data'][1]
         return{
             'label':{'header':obj['id'], 'subtitle':chain, 'size':'l', 'image': image},
             'tags':{'active_tags':[obj['id'],'E5', 'Main', 'Contract'], 'index_option':'indexed'},
             
+            'address': {'title':'E5 Address:', 'details':address, 'size':'l'},
+
             'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':'Vote Bounty Split Proportion', 'size':'l'},
             
             'default_end_minimum_contract_amount':{'style':'l','title':'Minimum End Contract Amount', 'subtitle':this.format_power_figure(contract_config[3]), 'barwidth':this.calculate_bar_width(contract_config[3]), 'number':this.format_account_balance_figure(contract_config[3]), 'relativepower':'tokens'},
@@ -1110,20 +1155,16 @@ class E5DetailsSection extends Component {
     }
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
     calculate_bar_width(num){

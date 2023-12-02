@@ -617,20 +617,16 @@ class RespondToJobPage extends Component {
     }
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
     /* gets a formatted time diffrence from now to a given time */

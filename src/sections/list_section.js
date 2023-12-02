@@ -1663,8 +1663,13 @@ class PostListSection extends Component {
             this.get_token_data('FUSE', 'Fuse', 'E85'),
             this.get_token_data('GLMR', 'Moonbeam', 'E95'),
             this.get_token_data('MOVR', 'Moonriver', 'E105'),
+            this.get_token_data('XDC', 'Xinfin Network', 'E115'),
             this.get_token_data('MATIC', 'Polygon', 'E125'),
             this.get_token_data('BNB', 'Binance S.C.', 'E135'),
+            this.get_token_data('TT', 'ThunderCore', 'E155'),
+            // this.get_token_data('NRG', 'Energi', 'E145'),
+            this.get_token_data('VIC', 'Viction', 'E165'),
+            this.get_token_data('EVMOS', 'Evmos', 'E175'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
@@ -1837,7 +1842,7 @@ class PostListSection extends Component {
             // var obj = {'E15':'E15', 'E25':'E25', 'E35':'E35'}
             name = item['e5']
         } else if(token_id == 5){
-            var obj = {'E15':'315', 'E25':'325', 'E35':'335'}
+            // var obj = {'E15':'315', 'E25':'325', 'E35':'335'}
             // name = obj[item['e5']]
             name = item['e5'].replace('E','3')
         }
@@ -2018,20 +2023,16 @@ class PostListSection extends Component {
     }
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
     calculate_bar_width(num){

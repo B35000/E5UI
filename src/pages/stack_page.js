@@ -8,8 +8,8 @@ import Letter from './../assets/letter.png';
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
-import { Draggable } from "react-drag-reorder";
 
+import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
@@ -159,14 +159,14 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',/* 'E15', */ 'E25', /* ,'E35' *//* , 'E45' */ 'E55', /* 'E65' *//* , 'E75' *//* , 'E85' */'E95'/* , 'E105' *//* , 'E125' */], [this.get_selected_e5_option()]
+                ['xor','',0], ['e',/* 'E15', */ 'E25', /* ,'E35' *//* , 'E45' */ /* 'E55', */ /* 'E65' *//* , 'E75' *//* , 'E85' *//* 'E95' *//* , 'E105' */ /* 'E115' *//* , 'E125' *//* , 'E135' */ /* 'E145', *//* 'E155' */ /* 'E165' */ 'E175'], [this.get_selected_e5_option()]
             ],
         };
         
     }
 
     get_selected_e5_option(){
-        var obj = {'E25':1,'E35':0,'E45':0,'E55':2,'E65':0,'E75':0,'E85':0,'E95':3, 'E105':0, 'E125':0}
+        var obj = {'E25':1,'E35':0,'E45':0,'E55':0,'E65':0,'E75':0,'E85':0,'E95':0, 'E105':0, 'E115':0, 'E125':0, 'E135':0,'E145':0, 'E155':0, 'E165':0, 'E175':2}
         if(obj[this.props.app_state.selected_e5] == null) return 1
         return obj[this.props.app_state.selected_e5]
     }
@@ -763,7 +763,7 @@ class StackPage extends Component {
 
                     {this.render_detail_item('3',{'details':'Stack ID ', 'title':item.id,'size':'s'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':'Type: '+item.type, 'details':'Gas: '+number_with_commas(this.get_estimated_gas(item))+' - '+number_with_commas(Math.floor(this.get_estimated_gas(item)*1.6)),'size':'s'})}
+                    {this.render_detail_item('3',{'title':item.type, 'details':'Type','size':'s'})}
                     <div style={{height: 10}}/>
 
                 </div>         
@@ -838,7 +838,9 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas To Be Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed())+' - '+this.format_account_balance_figure((Math.floor(this.estimated_gas_consumed()*1.6))), 'barcolor':'', 'relativepower':'gas', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas To Be Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Wallet Impact', 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
                 </div>
                 <div style={{height:10}}/>
 
@@ -850,144 +852,32 @@ class StackPage extends Component {
                 
 
                 <div style={{height:10}}/>
-                <div style={{'padding': '5px'}} onClick={()=>this.run_transactions()}>
+                <div style={{'padding': '5px'}} onClick={()=>this.run_transactions(false)}>
                     {this.render_detail_item('5', {'text':'Run '+this.props.app_state.selected_e5+' Transactions', 'action':''})}
                 </div>
             </div>
         )
     }
 
-    estimated_gas_consumed(){
-        var txs = this.props.app_state.stack_items
-        var gas = 0;
-
-        for(var i=0; i<txs.length; i++){
-            var g = this.get_estimated_gas(txs[i])
-            gas += g
+    calculate_wallet_impact_figure(){
+        var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
+        var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
         }
+        var total_ether_to_be_spent = estimated_gas_to_be_consumed * gas_price
+        var my_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
 
-        return gas
+        if(my_balance == 0) return 0
+
+        var x = (total_ether_to_be_spent / my_balance) * 100
+        return Math.round(x * 1000) / 1000
     }
 
-    get_estimated_gas(t){
-        if(t.type == 'channel' || t.type == 'job' || t.type == 'post' || t.type == 'contractor'){
-            return 344622
-        }
-        else if(t.type == 'mail'){
-            return 279695
-        }
-        else if(t.type == 'contract'){
-            return 964043 + (60_000 * t.price_data.length)
-        }
-        else if(t.type == 'storefront-item'){
-            return 261200
-        }
-        else if(t.type == 'subscription'){
-            return 630605 + (60_000 * t.price_data.length)
-        }
-        else if(t.type == 'token'){
-            return 976263 + (50_000 * t.price_data.length)
-        }
-        else if(t.type == 'buy-sell'){
-            return 793469
-        }
-        else if(t.type == 'transfer'){
-            return 100_132 +(32_000 * t.stack_items.length)
-        }
-        else if(t.type == 'enter-contract'){
-            return 563061
-        }
-        else if(t.type == 'extend-contract'){
-            return 426227
-        }
-        else if(t.type == 'exit-contract'){
-            return 481612
-        }
-        else if(t.type == 'proposal'){
-            return 809949 + (98_818 * t.bounty_values.length)
-        }
-        else if(t.type == 'vote'){
-            return 485179
-        }
-        else if(t.type == 'submit'){
-            return 562392
-        }
-        else if(t.type == 'pay-subscription'){
-            return 351891
-        }
-        else if(t.type == 'cancel-subscription'){
-            return 276496
-        }
-        else if(t.type == 'collect-subscription'){
-            return 273441
-        }
-        else if(t.type == 'modify-subscription'){
-            return 234392
-        }
-        else if(t.type == 'modify-contract'){
-            return 630599
-        }
-        else if(t.type == 'modify-token'){
-            return 376037
-        }
-        else if(t.type == 'exchange-transfer'){
-            return 240068
-        }
-        else if(t.type == 'force-exit'){
-            return 438394
-        }
-        else if(t.type == 'archive'){
-            return 1037673
-        }
-        else if(t.type == 'freeze/unfreeze'){
-            return 405717
-        }
-        else if(t.type == 'authmint'){
-            return 493989
-        }
-        else if(t.type == 'access-rights-settings'){
-            return 170897
-        }
-        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages' || t.type == 'job-messages' || t.type == 'proposal-messages' || t.type == 'bag-messages' || t.type == 'storefront-messages' || t.type == 'job-request-messages'){
-            return 279695 +(18000 * t.messages_to_deliver.length)
-        }
-        else if(t.type == 'job-response'){
-            return 279695
-        }
-        else if(t.type == 'accept-job-application'){
-            return 279695
-        }
-        else if(t.type == 'storefront-bag'){
-            return 300622
-        }
-        else if(t.type == 'bag-response'){
-            return 279695
-        }
-        else if(t.type == 'accept-bag-application'){
-            return 279695
-        }
-        else if(t.type == 'direct-purchase'){
-            return 279695
-        }
-        else if(t.type == 'clear-purchase'){
-            return 279695
-        }
-        else if(t.type == 'job-request'){
-            return 279695
-        }
-        else if(t.type == 'accept-job-request'){
-            return 279695
-        }
-        else if(t.type == 'alias' || t.type == 'unalias' || t.type == 're-alias'){
-            return 279695
-        }
-        else if(t.type == 'edit-channel' || t.type == 'edit-contractor' || t.type == 'edit-job' || t.type == 'edit-post' || t.type == 'edit-storefront' || t.type == 'edit-token'){
-            return 276073
-        }
-        else if(t.type == 'depthmint'){
-            return 623115
-        }
-
+    estimated_gas_consumed(){
+        var gas_figure = this.props.app_state.calculated_gas_figures[this.props.app_state.selected_e5]
+        if(gas_figure == null) return 0
+        return gas_figure
     }
 
 
@@ -1093,15 +983,18 @@ class StackPage extends Component {
     
 
 
-    run_transactions = async () => {
-        if(this.props.app_state.is_running){
-            this.props.notify('e is already running a transaction for you', 1200)
-            return;
-        }
-        this.props.lock_run(true)
+    run_transactions = async (calculate_gas) => {
         var txs = this.props.app_state.stack_items
-        if(txs.length > 0){
-            this.props.notify('running your transactions...', 600)
+        if(!calculate_gas){
+            if(this.props.app_state.is_running){
+                this.props.notify('e is already running a transaction for you', 1200)
+                return;
+            }
+            this.props.lock_run(true)
+            
+            if(txs.length > 0){
+                this.props.notify('running your transactions...', 600)
+            }
         }
         var strs = []
         var ints = []
@@ -1498,56 +1391,56 @@ class StackPage extends Component {
                     }    
                 }
                 else if(txs[i].type == 'mail'){
-                    var mail_obj = await this.format_mail_object(txs[i])
+                    var mail_obj = await this.format_mail_object(txs[i], calculate_gas)
                     
                     strs.push(mail_obj.str)
                     adds.push([])
                     ints.push(mail_obj.int)    
                 }
                 else if(txs[i].type == 'mail-messages'){
-                    var message_obj = await this.format_message_object(txs[i])
+                    var message_obj = await this.format_message_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'channel-messages'){
-                    var message_obj = await this.format_channel_message_object(txs[i])
+                    var message_obj = await this.format_channel_message_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'post-messages'){
-                    var message_obj = await this.format_post_comment_object(txs[i])
+                    var message_obj = await this.format_post_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'job-response'){
-                    var message_obj = await this.format_job_application_object(txs[i])
+                    var message_obj = await this.format_job_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'accept-job-application'){
-                    var message_obj = await this.format_accept_application_object(txs[i])
+                    var message_obj = await this.format_accept_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == 'job-messages'){
-                    var message_obj = await this.format_job_comment_object(txs[i])
+                    var message_obj = await this.format_job_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'proposal-messages'){
-                    var message_obj = await this.format_proposal_message_object(txs[i])
+                    var message_obj = await this.format_proposal_message_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
@@ -1576,7 +1469,7 @@ class StackPage extends Component {
                     metadata_action[2].push(35)
                     metadata_action[3].push(0)
                     metadata_action[4].push(0)
-                    var ipfs_obj = await this.get_object_ipfs_index(final_bag_object);
+                    var ipfs_obj = await this.get_object_ipfs_index(final_bag_object, calculate_gas);
                     metadata_strings[0].push(ipfs_obj.toString())
 
                     ints.push(metadata_action)
@@ -1584,42 +1477,42 @@ class StackPage extends Component {
                     adds.push([])
                 }
                 else if(txs[i].type == 'bag-response'){
-                    var message_obj = await this.format_bag_application_object(txs[i])
+                    var message_obj = await this.format_bag_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'accept-bag-application'){
-                    var message_obj = await this.format_accept_bag_application_object(txs[i])
+                    var message_obj = await this.format_accept_bag_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == 'direct-purchase'){
-                    var message_obj = await this.format_direct_purchase_object(txs[i])
+                    var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == 'clear-purchase'){
-                    var clear_obj = await this.format_clear_purchase_object(txs[i])
+                    var clear_obj = await this.format_clear_purchase_object(txs[i], calculate_gas)
                     
                     strs.push(clear_obj.str)
                     adds.push([])
                     ints.push(clear_obj.int)    
                 }
                 else if(txs[i].type == 'bag-messages'){
-                    var message_obj = await this.format_bag_comment_object(txs[i])
+                    var message_obj = await this.format_bag_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'storefront-messages'){
-                    var message_obj = await this.format_storefront_comment_object(txs[i])
+                    var message_obj = await this.format_storefront_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
@@ -1632,42 +1525,42 @@ class StackPage extends Component {
                     ints.push(contractor_obj)
                 }
                 else if(txs[i].type == 'job-request'){
-                    var message_obj = await this.format_job_request_object(txs[i])
+                    var message_obj = await this.format_job_request_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == 'accept-job-request'){
-                    var message_obj = await this.format_accept_job_request_object(txs[i])
+                    var message_obj = await this.format_accept_job_request_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }  
                 else if(txs[i].type == 'job-request-messages'){
-                    var message_obj = await this.format_job_request_comment_object(txs[i])
+                    var message_obj = await this.format_job_request_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == 'alias'){
-                    var alias_obj = await this.format_alias_object(txs[i])
+                    var alias_obj = await this.format_alias_object(txs[i], calculate_gas)
                     
                     strs.push(alias_obj.str)
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
                 else if(txs[i].type == 'unalias'){
-                    var alias_obj = await this.format_unalias_object(txs[i])
+                    var alias_obj = await this.format_unalias_object(txs[i], calculate_gas)
                     
                     strs.push(alias_obj.str)
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
                 else if(txs[i].type == 're-alias'){
-                    var alias_obj = await this.format_realias_object(txs[i])
+                    var alias_obj = await this.format_realias_object(txs[i], calculate_gas)
                     
                     strs.push(alias_obj.str)
                     adds.push([])
@@ -1678,13 +1571,13 @@ class StackPage extends Component {
                     ints.push(alias_obj.int)
                 }
                 else if(txs[i].type == 'edit-channel' || txs[i].type == 'edit-contractor' || txs[i].type == 'edit-job' || txs[i].type == 'edit-post' || txs[i].type == 'edit-storefront' || txs[i].type == 'edit-token'){
-                    var format_edit_object = await this.format_edit_object(txs[i])
+                    var format_edit_object = await this.format_edit_object(txs[i], calculate_gas)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
                     ints.push(format_edit_object.metadata_action)
                 }
                 else if(txs[i].type == 'award'){
-                    var format_object = await this.format_award_object(txs[i])
+                    var format_object = await this.format_award_object(txs[i], calculate_gas)
                     strs.push(format_object.str)
                     adds.push([])
                     ints.push(format_object.int)
@@ -1719,7 +1612,7 @@ class StackPage extends Component {
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
                 metadata_action[4].push(0)
-                var ipfs_obj = await this.get_object_ipfs_index(pushed_txs[i]);
+                var ipfs_obj = await this.get_object_ipfs_index(pushed_txs[i], calculate_gas);
                 metadata_strings[0].push(ipfs_obj.toString())
             }
         }
@@ -1791,7 +1684,7 @@ class StackPage extends Component {
             var string_obj = [[]]
             var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
             var data = {'contacts':contacts_clone, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data);
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas);
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -1810,7 +1703,7 @@ class StackPage extends Component {
             var string_obj = [[]]
             var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
             var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data);
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas);
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -1830,7 +1723,7 @@ class StackPage extends Component {
             var job_section_tags = this.props.app_state.job_section_tags
             var explore_section_tags = this.props.app_state.explore_section_tags
             var data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data);
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas);
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -1844,30 +1737,38 @@ class StackPage extends Component {
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
         var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
 
-        if(pushed_txs.length > 0){
-            if(account_balance == 0){
-                this.props.open_wallet_guide_bottomsheet('one')
+        if(!calculate_gas){
+            if(pushed_txs.length > 0){
+                if(account_balance == 0){
+                    this.props.open_wallet_guide_bottomsheet('one')
+                    this.props.lock_run(false)
+                }
+                else if(account_balance < (run_gas_limit * run_gas_price)){
+                    this.setState({invalid_ether_amount_dialog_box: true})
+                    this.props.lock_run(false)
+                }
+                else if(run_gas_limit < 35000){
+                    this.props.notify('That transaction gas limit is too low',2900)
+                }
+                else{
+                    var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
+                }
+            }else{
                 this.props.lock_run(false)
-            }
-            else if(account_balance < (run_gas_limit * run_gas_price)){
-                this.setState({invalid_ether_amount_dialog_box: true})
-                this.props.lock_run(false)
-            }
-            else if(run_gas_limit < 35000){
-                this.props.notify('That transaction gas limit is too low',2900)
-            }
-            else{
-                var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-                this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
+                this.props.notify('add some transactions first!',1600)
             }
         }else{
-            this.props.lock_run(false)
-            this.props.notify('add some transactions first!',1600)
+            var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+            this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
         }
         
     }
 
-    get_object_ipfs_index(tx){
+    get_object_ipfs_index(tx, calculate_gas){
+        if(calculate_gas != null && calculate_gas == true){
+            return 'QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk'
+        }
         var object_as_string = JSON.stringify(tx, (key, value) =>
             typeof value === 'bigint'
                 ? value.toString()
@@ -2714,7 +2615,7 @@ class StackPage extends Component {
         return obj
     }
 
-    format_mail_object = async (t) =>{
+    format_mail_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
         [20000, 13, 0],
         [], [],/* target objects */
@@ -2723,7 +2624,9 @@ class StackPage extends Component {
       ]
 
         var string_obj = [[]]
-        var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t, t.target_recipient));
+        var string_data = ''
+        if(calculate_gas) string_data = await this.get_object_ipfs_index('', calculate_gas)
+        else string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t, t.target_recipient), calculate_gas);
 
         var recipient_account = t.target_recipient
         var context = 30
@@ -2745,7 +2648,7 @@ class StackPage extends Component {
         var encrypted_obj = this.props.encrypt_data_object(t, key)
         var recipent_data = {}
         var recipient = recip
-        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, 'E15')
+        var recipients_pub_key_hash = await this.props.get_accounts_public_key(recipient, t.e5)
 
         if(recipients_pub_key_hash != ''){
             var encrypted_key = await this.props.encrypt_key_with_accounts_public_key_hash(key, recipients_pub_key_hash)
@@ -2759,7 +2662,7 @@ class StackPage extends Component {
         return {'obj':encrypted_obj, 'recipient_data':recipent_data}
     }
 
-    format_message_object = async (t) =>{
+    format_message_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2774,7 +2677,7 @@ class StackPage extends Component {
             var context = 30
             var int_data = t.messages_to_deliver[i].convo_id
 
-            var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t.messages_to_deliver[i], t.messages_to_deliver[i]['recipient']));
+            var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t.messages_to_deliver[i], t.messages_to_deliver[i]['recipient']), calculate_gas);
 
             obj[1].push(recipient_account)
             obj[2].push(23)
@@ -2787,7 +2690,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_channel_message_object = async (t) =>{
+    format_channel_message_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2805,7 +2708,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -2818,7 +2721,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_post_comment_object = async (t) =>{
+    format_post_comment_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2837,7 +2740,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -2850,7 +2753,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_job_application_object = async (t) =>{
+    format_job_application_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2866,7 +2769,7 @@ class StackPage extends Component {
 
         var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application'}
 
-        var string_data = await this.get_object_ipfs_index(application_obj);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -2878,7 +2781,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_accept_application_object = async (t) =>{
+    format_accept_application_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2894,7 +2797,7 @@ class StackPage extends Component {
 
         var application_obj = {'accepted':true}
 
-        var string_data = await this.get_object_ipfs_index(application_obj);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -2908,7 +2811,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_job_comment_object = async (t) =>{
+    format_job_comment_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2927,7 +2830,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -2940,7 +2843,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_proposal_message_object = async (t) => {
+    format_proposal_message_object = async (t, calculate_gas) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2959,7 +2862,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -2979,7 +2882,7 @@ class StackPage extends Component {
         return obj
     }
 
-    format_bag_application_object = async (t) =>{
+    format_bag_application_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -2995,7 +2898,7 @@ class StackPage extends Component {
 
         var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
 
-        var string_data = await this.get_object_ipfs_index(application_obj);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -3007,7 +2910,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_accept_bag_application_object = async (t) =>{
+    format_accept_bag_application_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3023,7 +2926,7 @@ class StackPage extends Component {
 
         var application_obj = {'accepted':true}
 
-        var string_data = await this.get_object_ipfs_index(application_obj);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -3037,7 +2940,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_direct_purchase_object = async (t) => {
+    format_direct_purchase_object = async (t, calculate_gas) => {
         var obj = [/* send awwards */
             [30000, 7, 0],
             [t.storefront_item['ipfs'].target_receiver], [23],/* target receivers */
@@ -3071,7 +2974,7 @@ class StackPage extends Component {
 
         var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
         
-        var string_data = await this.get_object_ipfs_index(purchase_object);
+        var string_data = await this.get_object_ipfs_index(purchase_object, calculate_gas);
 
         string_obj[0].push(string_data)
 
@@ -3082,7 +2985,7 @@ class StackPage extends Component {
         return bigInt(amount).multiply(bigInt(count))
     }
 
-    format_clear_purchase_object = async (t) =>{
+    format_clear_purchase_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3105,7 +3008,7 @@ class StackPage extends Component {
                 'signature_data':t.items_to_clear[i].order_data['signature_data'],
                 'signature': t.items_to_clear[i].received_signature
             }
-            var string_data = await this.get_object_ipfs_index(string_object);
+            var string_data = await this.get_object_ipfs_index(string_object, calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -3118,7 +3021,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_bag_comment_object = async (t) => {
+    format_bag_comment_object = async (t, calculate_gas) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3137,7 +3040,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -3150,7 +3053,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_storefront_comment_object = async (t) => {
+    format_storefront_comment_object = async (t, calculate_gas) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3169,7 +3072,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -3189,7 +3092,7 @@ class StackPage extends Component {
         return obj
     }
 
-    format_job_request_object = async (t) => {
+    format_job_request_object = async (t, calculate_gas) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3205,7 +3108,7 @@ class StackPage extends Component {
 
         var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':int_data}
 
-        var string_data = await this.get_object_ipfs_index(application_obj);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -3217,7 +3120,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_accept_job_request_object = async (t) =>{
+    format_accept_job_request_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3233,7 +3136,7 @@ class StackPage extends Component {
 
         var application_obj = {'accepted':true, 'contract_id':t.picked_contract['id']}
 
-        var string_data = await this.get_object_ipfs_index(application_obj);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -3247,7 +3150,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_job_request_comment_object = async (t) =>{
+    format_job_request_comment_object = async (t, calculate_gas) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3266,7 +3169,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['contractor_id']
             var int_data = t.messages_to_deliver[i]['id']
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i]);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -3279,7 +3182,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_alias_object = async (t) =>{
+    format_alias_object = async (t, calculate_gas) =>{
         var obj = [ /* add data */
             [20000, 13, 0],
             [11], [23],/* 11(alias_obj_id) */
@@ -3292,7 +3195,7 @@ class StackPage extends Component {
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
-        var string_data = await this.get_object_ipfs_index(t.alias);
+        var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -3302,7 +3205,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_unalias_object = async (t) =>{
+    format_unalias_object = async (t, calculate_gas) =>{
         var obj = [ /* add data */
             [20000, 13, 0],
             [11], [23],/* 11(alias_obj_id) */
@@ -3315,7 +3218,7 @@ class StackPage extends Component {
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
-        var string_data = await this.get_object_ipfs_index(t.alias);
+        var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -3325,7 +3228,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_realias_object = async (t) =>{
+    format_realias_object = async (t, calculate_gas) =>{
         var obj = [ /* add data */
             [20000, 13, 0],
             [11], [23],/* 11(alias_obj_id) */
@@ -3338,7 +3241,7 @@ class StackPage extends Component {
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
-        var string_data = await this.get_object_ipfs_index(t.alias);
+        var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -3348,7 +3251,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_edit_object = async (t) => {
+    format_edit_object = async (t, calculate_gas) => {
         var metadata_action = [ /* set metadata */
             [20000, 1, 0],
             [], [],/* target objects */
@@ -3361,34 +3264,14 @@ class StackPage extends Component {
         metadata_action[2].push(23)
         metadata_action[3].push(0)
         metadata_action[4].push(0)
-        // var object_clone = structuredClone(t)
         
-        // if(object_clone.type == 'edit-channel'){
-        //     object_clone.type = 'channel'
-
-        // }
-        // else if(object_clone.type == 'edit-contractor'){
-        //     object_clone.type = 'contractor'
-        // }
-        // else if(t.type == 'edit-job'){
-        //     t.type = 'job'
-        // }
-        // else if(object_clone.type == 'edit-post'){
-        //     object_clone.type = 'post'
-        // }
-        // else if(object_clone.type == 'edit-storefront'){
-        //     object_clone.type = 'storefront-item'
-        // }
-        // else if(object_clone.type == 'edit-token'){
-        //     object_clone.type = 'token'
-        // }
-        var ipfs_obj = await this.get_object_ipfs_index(t);
+        var ipfs_obj = await this.get_object_ipfs_index(t, calculate_gas);
         metadata_strings[0].push(ipfs_obj.toString())
 
         return {metadata_action: metadata_action, metadata_strings:metadata_strings}
     }
 
-    format_award_object = async (t) => {
+    format_award_object = async (t, calculate_gas) => {
         var author = t.post_item['event'].returnValues.p5
         var post_id = t.post_item['id'];
         var obj = [/* send awwards */
@@ -3414,7 +3297,7 @@ class StackPage extends Component {
 
         var award_object = {'selected_tier_object':t.selected_tier_object, 'post_id':post_id, 'multiplier':t.multiplier, 'custom_amounts':t.price_data, 'entered_message':t.entered_message_text}
         
-        var string_data = await this.get_object_ipfs_index(award_object);
+        var string_data = await this.get_object_ipfs_index(award_object, calculate_gas);
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj}
@@ -3958,7 +3841,17 @@ class StackPage extends Component {
         if(e5 == 'E45'){
             return toBech32(address)
         }
+        else if(e5 == 'E115'){
+            return this.replace_0x_with_xdc(address)
+        }
+        else if(e5 == 'E175'){
+            return ethToEvmos(address)
+        }
         return address
+    }
+
+    replace_0x_with_xdc(address){
+        return 'xdc'+address.toString().slice(2)
     }
 
     get_balance_amount_in_wei(){
@@ -4251,9 +4144,6 @@ class StackPage extends Component {
     render_alias_stuff(){
         return(
             <div>
-                {/* {this.render_my_account_id()} */}
-                {/* {this.render_detail_item('0')} */}
-                <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':'Reserve Alias', 'details':'Reserve an alias for your account ID', 'size':'l'})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
@@ -4305,9 +4195,6 @@ class StackPage extends Component {
     }
 
     render_my_account_id(){
-        // console.log('--------------------render_my_account_id-----------------------')
-        // console.log(this.props.app_state.user_account_id)
-        // console.log(this.props.app_state.selected_e5)
         var display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         
         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? 'Alias Unknown' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
@@ -4490,20 +4377,16 @@ class StackPage extends Component {
     }
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
     /* gets a formatted time diffrence from now to a given time */

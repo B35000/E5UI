@@ -129,12 +129,15 @@ class NewMintActionPage extends Component {
                 <div style={{height:20}}/>
                 {this.set_price_data()}
 
-                {this.render_detail_item('0')}
-                {this.set_upper_lower_bounds()}
+                {/* {this.render_detail_item('0')}
+                {this.set_upper_lower_bounds()} */}
 
                 {/* <div style={{'padding': '5px'}} onClick={()=>  this.add_transaction()}>
                     {this.render_detail_item('5', {'text':'Add Transaction To Stack', 'action':''})}
                 </div> */}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
 
             </div>
         )
@@ -511,20 +514,16 @@ class NewMintActionPage extends Component {
     }
 
     format_power_figure(amount){
-        var power = 'e72'
-        if(amount < bigInt('1e9')){
-            power = 'e9'
+        if(amount == null){
+            amount = 0;
         }
-        else if(amount < bigInt('1e18')){
-            power = 'e18'
-        }
-        else if(amount < bigInt('1e36')){
-            power = 'e36'
+        if(amount < 1_000_000_000){
+            return 'e0'
         }
         else{
-            power = 'e72'
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
         }
-        return power
     }
 
     /* gets a formatted time diffrence from now to a given time */
