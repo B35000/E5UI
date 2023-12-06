@@ -144,8 +144,15 @@ class NewMintActionPage extends Component {
     }
 
     set_maximum(){
-        var max = this.get_token_buy_limit()
-        this.setState({amount: max})
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        if(action == 'mint-buy'){
+            var max = this.get_token_buy_limit()
+            this.setState({amount: max})
+        }else{
+            var max = this.state.token_item['balance']
+            this.setState({amount: max})
+        }
+        
     }
 
     set_price_data(){

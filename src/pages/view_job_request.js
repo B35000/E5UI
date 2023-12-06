@@ -893,22 +893,56 @@ class ViewJobRequestPage extends Component {
             )
         }
         return(
-            <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
-                <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
-                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} > {this.get_sender_title_text(item)}</p>
+            <div>
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 0px 0px 0px', 'background-color': this.props.theme['view_group_card_item_background'],'border-radius': '7px'}}>
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} > {this.get_sender_title_text(item)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                        </div>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
-                    <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
-                    </div>
-                </div>
-                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
 
-                {this.render_images_if_any(item)}
-                <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
-                
+                    {this.render_images_if_any(item)}
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                </div>
+                {this.render_response_if_any(item)}
             </div>
         )
+    }
+
+    render_response_if_any(_item){
+        if(_item['focused_message_id'] == 0) return;
+        if(this.get_focused_message() != null) return;
+        var message_items = this.get_convo_messages().concat(this.get_stacked_items())
+        var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
+        if(item == null) return;
+        var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
+        if(selected_view_option == 'comment-structure') return
+        return(
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
+                <div className="row" style={{'padding':'0px 0px 10px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}}>{this.get_sender_title_text(item)}</p>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                        <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                    </div>
+                </div>
+                <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 53)}</p>
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_item_in_message_array(message_id, object_array){
+        var object = object_array.find(x => x['message_id'] === message_id);
+        return object
     }
 
     is_sender_in_blocked_accounts(item){

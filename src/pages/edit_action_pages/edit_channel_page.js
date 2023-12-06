@@ -545,17 +545,13 @@ class NewChannelPage extends Component {
     add_banner_to_object(image){
         var typed_word = this.state.entered_text.trim();
 
-        if(typed_word == ''){
-            this.props.notify('type something!', 400)
-        }else{
-            var entered_text = this.get_edited_text_object()
-            entered_text['textsize'] = '10px'
-            var obj = {'image':image, 'caption':entered_text}
+        var entered_text = this.get_edited_text_object()
+        entered_text['textsize'] = '10px'
+        var obj = {'image':image, 'caption':entered_text}
 
-            var cloned_array = this.state.entered_objects.slice()
-            cloned_array.push({'data':obj, 'type':'11' })
-            this.setState({entered_objects: cloned_array, entered_text:''})
-        }
+        var cloned_array = this.state.entered_objects.slice()
+        cloned_array.push({'data':obj, 'type':'11' })
+        this.setState({entered_objects: cloned_array, entered_text:''})
     }
 
 

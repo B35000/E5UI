@@ -9,9 +9,10 @@ import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
-import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+// import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
+
 
 function number_with_commas(x) {
     if(x == null) x = '';
@@ -51,6 +52,7 @@ class StackPage extends Component {
         get_content_filtered_setting_object: this.get_content_filtered_setting_object(),
         get_tabs_tags_object: this.get_tabs_tags_object(),
         get_storage_permissions_tags_object: this.get_storage_permissions_tags_object(),
+        get_stack_optimizer_tags_object: this.get_stack_optimizer_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -59,6 +61,7 @@ class StackPage extends Component {
         run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
 
         typed_contact_word:'', typed_alias_word:'', typed_blocked_account_word:'',
+        run_time_expiry:0
     };
 
     get_stack_page_tags_object(){
@@ -159,14 +162,13 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',/* 'E15', */ 'E25', /* ,'E35' *//* , 'E45' */ /* 'E55', */ /* 'E65' *//* , 'E75' *//* , 'E85' *//* 'E95' *//* , 'E105' */ /* 'E115' *//* , 'E125' *//* , 'E135' */ /* 'E145', *//* 'E155' */ /* 'E165' */ 'E175'], [this.get_selected_e5_option()]
+                ['xor','',0], ['e',/* 'E15', */ 'E25', /* ,'E35' *//* , 'E45' */ /* 'E55', */ /* 'E65' *//* , 'E75' *//* , 'E85' *//* 'E95' *//* , 'E105' */ /* 'E115' *//* , 'E125' *//* , 'E135' */ /* 'E145', *//* 'E155' */ /* 'E165' */ /* 'E175' */], [this.get_selected_e5_option()]
             ],
         };
-        
     }
 
     get_selected_e5_option(){
-        var obj = {'E25':1,'E35':0,'E45':0,'E55':0,'E65':0,'E75':0,'E85':0,'E95':0, 'E105':0, 'E115':0, 'E125':0, 'E135':0,'E145':0, 'E155':0, 'E165':0, 'E175':2}
+        var obj = {'E25':1,'E35':0,'E45':0,'E55':0,'E65':0,'E75':0,'E85':0,'E95':0, 'E105':0, 'E115':0, 'E125':0, 'E135':0,'E145':0, 'E155':0, 'E165':0, 'E175':0}
         if(obj[this.props.app_state.selected_e5] == null) return 1
         return obj[this.props.app_state.selected_e5]
     }
@@ -467,6 +469,40 @@ class StackPage extends Component {
 
 
 
+    get_stack_optimizer_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e','enabled'], [this.get_selected_stack_optimizer_option()]
+            ],
+        };
+    }
+
+    get_selected_stack_optimizer_option(){
+        if(this.props.app_state.stack_optimizer == 'e'){
+            return 0
+        }
+        else if(this.props.app_state.stack_optimizer == 'enabled'){
+            return 1
+        }
+        return 0;
+    }
+
+    set_stack_optimizer_tag(){
+        this.setState({get_stack_optimizer_tags_object: this.get_stack_optimizer_tags_object(),})
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -567,7 +603,7 @@ class StackPage extends Component {
         var height = this.props.height-150
         return(
             <div style={{}}>
-                {this.render_detail_item('3', {'title':'Transaction Gas Limit', 'details':'The gas budget for your next run with E5. The default is set to 5.3 million gas.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Transaction Gas Limit', 'details':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.', 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -575,8 +611,13 @@ class StackPage extends Component {
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                
+                <div style={{height:10}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.set_tx_gas_limit()}>
+                    {this.render_detail_item('5', {'text':'Auto-Set Gas Limit', 'action':''})}
+                </div>
 
-
+                {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':'Transaction Gas Price', 'details':'The gas price for your next run with E5. The default is set to the amount set by the network.', 'size':'l'})}
                 <div style={{height:10}}/>
@@ -587,8 +628,22 @@ class StackPage extends Component {
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
 
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Run Expiry Duration', 'details':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.', 'size':'l'})}
+                <div style={{height:20}}/>
+                
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':'Estimated Time.', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
+
             </div>
         )
+    }
+
+    set_tx_gas_limit(){
+        var estimated_gas = this.estimated_gas_consumed()
+        this.setState({run_gas_limit: estimated_gas+80_000})
     }
 
     when_run_gas_limit(number){
@@ -597,6 +652,10 @@ class StackPage extends Component {
 
     when_run_gas_price(number){
         this.setState({run_gas_price: number})
+    }
+
+    when_run_expiry_time_set(number){
+        this.setState({run_time_expiry: number})
     }
 
     render_run_history_items(){
@@ -636,7 +695,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div onClick={() => this.props.show_view_transaction_log_bottomsheet(item)} style={{height:'auto', 'background-color': background_color, 'border-radius': '13px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 5px 0px'}}>
                                     <div style={{'padding': '5px 0px 0px 5px'}}>
-                                        {this.render_detail_item('3',{'title':'Transaction ID: '+item.returnValues.p3, 'details':'Age: '+this.get_time_difference(item.returnValues.p8),'size':'s'})}
+                                        {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':'Age: '+this.get_time_difference(item.returnValues.p8),'size':'s'})}
             
                                         <div style={{height: 10}}/>
                                         {this.render_detail_item('2', { 'style':'s', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
@@ -672,9 +731,11 @@ class StackPage extends Component {
             return(
                 <div style={{'padding': '0px 0px 0px 0px', 'overflow-x':'hidden'}}>
                     {this.render_stack_gas_part()}
+                    {this.render_simplified_stack_history()}
                     {this.render_detail_item('0')}
                     {this.render_stack_run_settings_part()}
                     {this.render_gas_history_chart()}
+                    {this.render_mempool_metrics()}
                     {this.render_dialog_ui()}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -805,6 +866,7 @@ class StackPage extends Component {
         var cache_size = this.get_browser_cache_size_limit();
         var viewed_data = localStorage.getItem("viewed") == null ? "":localStorage.getItem("viewed")
         var data_size = this.lengthInUtf8Bytes(viewed_data) + this.props.app_state.index_db_size
+        var formatted_data_size = this.format_data_size(data_size)
 
         var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
         if(gas_price == null){
@@ -815,7 +877,7 @@ class StackPage extends Component {
 
         return(
             <div>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5()}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
@@ -832,12 +894,11 @@ class StackPage extends Component {
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {/* <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
                      */}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Storage Space Utilized', 'subtitle':this.format_power_figure(data_size), 'barwidth':this.calculate_bar_width(data_size), 'number':this.format_account_balance_figure(data_size), 'barcolor':'#606060', 'relativepower':'bytes', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Storage Space Utilized', 'subtitle':this.format_power_figure(formatted_data_size['size']), 'barwidth':this.calculate_bar_width(formatted_data_size['size']), 'number':this.format_account_balance_figure(formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':formatted_data_size['unit'], })}
                 </div>
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={()=> this.fetch_gas_figures()}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas To Be Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':'Wallet Impact', 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
@@ -852,7 +913,7 @@ class StackPage extends Component {
                 
 
                 <div style={{height:10}}/>
-                <div style={{'padding': '5px'}} onClick={()=>this.run_transactions(false)}>
+                <div style={{'padding': '5px'}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
                     {this.render_detail_item('5', {'text':'Run '+this.props.app_state.selected_e5+' Transactions', 'action':''})}
                 </div>
             </div>
@@ -878,6 +939,21 @@ class StackPage extends Component {
         var gas_figure = this.props.app_state.calculated_gas_figures[this.props.app_state.selected_e5]
         if(gas_figure == null) return 0
         return gas_figure
+    }
+
+    format_data_size(size){
+        if(size > 1_000_000_000){
+            return {'size':Math.round(size/1_000_000_000), 'unit':'gigabytes'}
+        }
+        else if(size > 1_000_000){
+            return {'size':Math.round(size/1_000_000), 'unit':'megabytes'}
+        }
+        else if(size > 1_000){
+            return {'size':Math.round(size/1_000), 'unit':'kilobytes'}
+        }
+        else{
+            return {'size':size, 'unit':'bytes'}
+        }
     }
 
 
@@ -975,7 +1051,216 @@ class StackPage extends Component {
         return data
     }
 
+    render_simplified_stack_history(){
+        var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
+        var items = [].concat(runs)
+        var background_color = this.props.theme['card_background_color']
 
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.props.show_view_transaction_log_bottomsheet(item)}>
+                            {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+' ago','size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_average_mempool_data(e5){
+        var mempool_items = this.props.app_state.mempool[e5]
+        if(mempool_items == null) return;
+        var items = this.sortByAttributeDescending(mempool_items, 'gasPrice')
+        if(items.length == 0){
+            return;
+        }
+
+        var twenty_percent_figure = Math.ceil(0.2 * items.length)
+        var top_twenty_percent_txs = []
+        var bottom_twenty_percent_txs = []
+
+        for(var i=0; i<twenty_percent_figure; i++){
+            top_twenty_percent_txs.push(items[i])
+        }
+
+        var items_in_reverse = items.reverse()
+        for(var i=0; i<twenty_percent_figure; i++){
+            bottom_twenty_percent_txs.push(items_in_reverse[i])
+        }
+        bottom_twenty_percent_txs = bottom_twenty_percent_txs.reverse()
+
+
+
+
+        var top_total = 0;
+        var top_total_transactions = 0;
+        top_twenty_percent_txs.forEach(tx => {
+            top_total += parseInt(tx.gasPrice)
+            top_total_transactions++;
+        });
+        var top_av = Math.round(top_total/top_twenty_percent_txs.length)
+
+
+
+
+        var bottom_total = 0
+        bottom_twenty_percent_txs.forEach(tx => {
+            bottom_total += parseInt(tx.gasPrice)
+        });
+        var bottom_av =  Math.round(bottom_total / bottom_twenty_percent_txs.length)
+
+        var all_av = Math.round((top_av+bottom_av)/2)
+
+        
+        if(this.props.app_state.addresses[e5] == null) return;
+        var e5_address = this.props.app_state.addresses[e5][0]
+        
+        var e5_txs_count = 0
+        var top_twenty_e5_txs_count = 0;
+        items.forEach(tx => {
+            if(tx.to == e5_address){
+                e5_txs_count++;
+            }
+        });
+        top_twenty_percent_txs.forEach(tx => {
+            if(tx.to == e5_address){
+                top_twenty_e5_txs_count++;
+            }
+        });
+
+
+        var dominance_percentage = items.length==0? 0 : Math.round((e5_txs_count*100)/items.length)
+        var top_twenty_dominance_percentage = top_twenty_percent_txs.length==0? 0: Math.round((top_twenty_e5_txs_count*100)/top_twenty_percent_txs.length)
+
+        var total_value_transfer = 0;
+        var e5_value_transfer = 0;
+        items.forEach(tx => {
+            if(tx.to == e5_address){
+                total_value_transfer += parseInt(tx.value)
+                e5_value_transfer += parseInt(tx.value)
+            }else{
+                total_value_transfer += parseInt(tx.value)
+            }
+        });
+
+        var obj =  {'mempool_size':items.length, 'top_20_size':top_total_transactions, 'top_av': top_av, 'bottom_av':bottom_av, 'all_av':all_av, 'e5_txs_count':e5_txs_count, 'top_twenty_e5_txs_count':top_twenty_e5_txs_count, 'dominance_percentage':dominance_percentage, 'top_twenty_dominance_percentage':top_twenty_dominance_percentage, 'total_value_transfer':total_value_transfer, 'e5_value_transfer':e5_value_transfer}
+
+
+        return obj
+    }
+
+
+    render_mempool_metrics(){
+        var e5 = this.props.app_state.selected_e5
+        var data = this.get_average_mempool_data(e5)
+        if(data == null) return;
+        return(
+            <div>
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Mempool Metrics', 'details':'Below is some useful information about the state of the mempool for your selected E5s ether.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Mempool size', 'subtitle':this.format_power_figure(data['mempool_size']), 'barwidth':this.calculate_bar_width(data['mempool_size']), 'number':this.format_account_balance_figure(data['mempool_size']), 'barcolor':'', 'relativepower':'transactions', })}
+                </div>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('3', {'title':'Top 20% Average', 'details':'The average gas price offered for the top 20% transactions set to be included in the next blocks.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in wei', 'subtitle':this.format_power_figure(data['top_av']), 'barwidth':this.calculate_bar_width(data['top_av']), 'number':this.format_account_balance_figure(data['top_av']), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in gwei', 'subtitle':this.format_power_figure(data['top_av']/10**9), 'barwidth':this.calculate_bar_width(data['top_av']/10**9), 'number':(data['top_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('3', {'title':'Bottom 20% Average', 'details':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in wei', 'subtitle':this.format_power_figure(data['bottom_av']), 'barwidth':this.calculate_bar_width(data['bottom_av']), 'number':this.format_account_balance_figure(data['bottom_av']), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in gwei', 'subtitle':this.format_power_figure(data['bottom_av']/10**9), 'barwidth':this.calculate_bar_width(data['bottom_av']/10**9), 'number':(data['bottom_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('3', {'title':'Gas Price Average', 'details':'The average gas price offered for all transactions in the mempool.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in wei', 'subtitle':this.format_power_figure(data['all_av']), 'barwidth':this.calculate_bar_width(data['all_av']), 'number':this.format_account_balance_figure(data['all_av']), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in gwei', 'subtitle':this.format_power_figure(data['all_av']/10**9), 'barwidth':this.calculate_bar_width(data['all_av']/10**9), 'number':(data['all_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('3', {'title':'E5 Transactions Count', 'details':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Total E5 Transaction Count', 'subtitle':this.format_power_figure(data['e5_txs_count']), 'barwidth':this.calculate_bar_width(data['e5_txs_count']), 'number':this.format_account_balance_figure(data['e5_txs_count'])+'/'+this.format_account_balance_figure(data['mempool_size']), 'barcolor':'', 'relativepower':'units', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Top 20% Transaction Count', 'subtitle':this.format_power_figure(data['top_twenty_e5_txs_count']), 'barwidth':this.calculate_bar_width(data['top_twenty_e5_txs_count']), 'number':this.format_account_balance_figure(data['top_twenty_e5_txs_count'])+'/'+this.format_account_balance_figure(data['top_20_size']), 'barcolor':'', 'relativepower':'units', })}
+                </div>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('3', {'title':'E5 Mempool Dominance', 'details':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'E5 Dominance', 'subtitle':this.format_power_figure(data['dominance_percentage']), 'barwidth':this.calculate_bar_width(data['dominance_percentage']), 'number':this.format_account_balance_figure(data['dominance_percentage'])+'%', 'barcolor':'', 'relativepower':'proportion', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'E5 Top 20% Dominance', 'subtitle':this.format_power_figure(data['top_twenty_dominance_percentage']), 'barwidth':this.calculate_bar_width(data['top_twenty_dominance_percentage']), 'number':this.format_account_balance_figure(data['top_twenty_dominance_percentage'])+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                </div>
+                <div style={{height:10}}/>
+                
+
+                {this.render_detail_item('3', {'title':'Value Transfer', 'details':'The total amount of value transfer thats pending in the mempool.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in wei', 'subtitle':this.format_power_figure(data['total_value_transfer']), 'barwidth':this.calculate_bar_width(data['total_value_transfer']), 'number':this.format_account_balance_figure(data['total_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in ether', 'subtitle':this.format_power_figure(data['total_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['total_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['total_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                </div>
+                <div style={{height:10}}/>
+
+
+                {this.render_detail_item('3', {'title':'Value Transfer into E5', 'details':'The total amount of ether going into E5 thats pending in the mempool.', 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in wei', 'subtitle':this.format_power_figure(data['e5_value_transfer']), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']), 'number':this.format_account_balance_figure(data['e5_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in ether', 'subtitle':this.format_power_figure(data['e5_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['e5_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                </div>
+                <div style={{height:10}}/>
+            </div>
+        )
+    }
 
 
 
@@ -983,11 +1268,61 @@ class StackPage extends Component {
     
 
 
+    open_confirmation_bottomsheet(){
+        var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
+        var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
+        var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
+        var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
+
+        var run_data = {'run_gas_limit':run_gas_limit, 'run_gas_price':run_gas_price, 'run_expiry_duration':run_expiry_duration}
+
+        var pushed_txs = []
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
+                pushed_txs.push(txs[i])
+            }
+        }
+
+        var gas_limit = this.get_latest_block_data(this.props.app_state.selected_e5).gasLimit
+        var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
+
+        if(pushed_txs.length == 0){
+            this.props.notify('add some transactions first',1600)
+        }
+        else if(account_balance == 0){
+            this.props.open_wallet_guide_bottomsheet('one')
+        }
+        else if(account_balance < (estimated_gas_to_be_consumed * run_gas_price)){
+            this.setState({invalid_ether_amount_dialog_box: true})
+        }
+        else if(run_gas_limit < 35000){
+            this.props.notify('That transaction gas limit is too low',3900)
+        }
+        else if(estimated_gas_to_be_consumed > gas_limit){
+            this.props.notify('That transaction is too large, please reduce your stack size',4900)
+        }
+        else if(estimated_gas_to_be_consumed > run_gas_limit){
+            this.props.notify('Set a gas limit above '+estimated_gas_to_be_consumed+' gas',3900)
+        }
+        else{
+            this.props.show_confirm_run_bottomsheet(run_data)
+        }
+    }
+
+
+    fetch_gas_figures(){
+        this.props.notify('calculating your stacks gas figure...', 2200)
+        this.run_transactions(true)
+    }
+
     run_transactions = async (calculate_gas) => {
         var txs = this.props.app_state.stack_items
         if(!calculate_gas){
-            if(this.props.app_state.is_running){
-                this.props.notify('e is already running a transaction for you', 1200)
+            var is_running = this.props.app_state.is_running[this.props.app_state.selected_e5]
+            if(is_running == null) is_running = false
+            if(is_running){
+                this.props.notify('e is already running a transaction for you', 2200)
                 return;
             }
             this.props.lock_run(true)
@@ -1061,6 +1396,29 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
+                    }
+
+                    var include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
+
+                    if(include_enter_value == 'enter-contract'){
+                        var t = txs[i];
+                        var max_enter_contract_duration = t.max_enter_contract_duration == 0 ? bgN(1, 16) : t.max_enter_contract_duration.toString().toLocaleString('fullwide', {useGrouping:false})
+
+                        var obj = [/* enter a contract */
+                            [30000, 3, 0],
+                            [], [],/* contract ids */
+                            []/* expiry time (seconds) */
+                        ];
+
+                        var expiry_time = Math.floor(Date.now()/1000) + bigInt(max_enter_contract_duration)
+
+                        obj[1].push(contract_stack_id)
+                        obj[2].push(35)
+                        obj[3].push(expiry_time)
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(obj)
                     }
                 }
                 else if(txs[i].type == 'token'){
@@ -1732,10 +2090,22 @@ class StackPage extends Component {
         }
 
 
+        var optimized_run = this.optimize_run_if_enabled(ints, strs, adds)
+        console.log(optimized_run)
+        ints = optimized_run['ints']
+        strs = optimized_run['strs']
+        adds = optimized_run['adds']
+
+        
+
 
         var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
         var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
+        var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
+
+        var gas_limit = this.get_latest_block_data(this.props.app_state.selected_e5).gasLimit
+        var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
 
         if(!calculate_gas){
             if(pushed_txs.length > 0){
@@ -1743,26 +2113,42 @@ class StackPage extends Component {
                     this.props.open_wallet_guide_bottomsheet('one')
                     this.props.lock_run(false)
                 }
-                else if(account_balance < (run_gas_limit * run_gas_price)){
+                else if(account_balance < (estimated_gas_to_be_consumed * run_gas_price)){
                     this.setState({invalid_ether_amount_dialog_box: true})
                     this.props.lock_run(false)
                 }
                 else if(run_gas_limit < 35000){
-                    this.props.notify('That transaction gas limit is too low',2900)
+                    this.props.notify('That transaction gas limit is too low',3900)
+                    this.props.lock_run(false)
+                }
+                else if(estimated_gas_to_be_consumed > gas_limit){
+                    this.props.notify('That transaction is too large, please reduce your stack size',4900)
+                    this.props.lock_run(false)
+                }
+                else if(estimated_gas_to_be_consumed > run_gas_limit){
+                    this.props.notify('Set a gas limit above '+estimated_gas_to_be_consumed+' gas',3900)
+                    this.props.lock_run(false)
                 }
                 else{
                     var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
+                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration)
                 }
             }else{
                 this.props.lock_run(false)
-                this.props.notify('add some transactions first!',1600)
+                this.props.notify('add some transactions first',1600)
             }
         }else{
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
             this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
         }
         
+    }
+
+    get_latest_block_data(e5){
+        if(this.props.app_state.last_blocks[e5] == null || this.props.app_state.last_blocks[e5].length  ==  0){
+            return {}
+        }
+        return this.props.app_state.last_blocks[e5][0];
     }
 
     get_object_ipfs_index(tx, calculate_gas){
@@ -2135,7 +2521,6 @@ class StackPage extends Component {
 
       obj[1].push(t.contract_item['id'])
       obj[2].push(23)
-
       obj[3].push(t.interactible_timestamp)
 
       return obj
@@ -3334,6 +3719,950 @@ class StackPage extends Component {
         return obj
     }
 
+    optimize_run_if_enabled(ints, strs, adds){
+        var selected_item = this.get_selected_item(this.state.get_stack_optimizer_tags_object, 'e')
+        if(selected_item == 'e'){
+            return {'ints':ints, 'strs':strs, 'adds':adds}
+        }else{
+            var new_ints = []
+            var new_adds = []
+            var new_strs = []
+
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == 10000){
+                    new_ints.push(ints[i])
+                    new_strs.push(strs[i])
+                    new_adds.push(adds[i])
+                }
+            }  
+
+
+            var obj = [ /* set metadata */
+                [20000, 1, 0],
+                [], [],/* target objects */
+                []/* contexts */, 
+                []/* int_data */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == 20000){
+                    var action = ints[i][0][1]
+                    if(action == 1/* modify_metadata */){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+
+            var obj = [ /* set account to be interactible */
+                [20000, 2, 0],
+                [], [],/* target objects */
+                [], [],/* target account ids*/
+                []/* interacible expiry time limit */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️auth modify token exchange */
+                [20000, 3, 0],
+                [], [],/* targets */
+                [],/* target_array */
+                [],/* target_array_items */
+                [], []/* new_items */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [ /* set account as mod */
+                [20000, 4, 0],
+                [], [],/* target objects */
+                [], []/* target moderator account ids*/
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [ /* enable interactible checkers */
+                [20000, 5, 0],
+                [], []/* target objects */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [ /* alias data */
+                [20000, 10, 0],
+                [], [],/* target objects */
+                [], /* contexts */
+                [] /* int_data */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️auth modify subscription */
+                [20000, 11, 0],
+                [], [],/* targets */
+                [],/* target_array_pos */
+                [],/* target_array_items */
+                [], []/* new_items */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+            
+
+            var obj = [ /* set data */
+                [20000, 13, 0],
+                [], [],/* target objects */
+                [], /* contexts */
+                [] /* int_data */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* auth modify proposal */
+                [20000, 14, 0],
+                [], [],/* targets */
+                [],/* target_array_pos */
+                [],/* target_array_items */
+                [], []/* new_items */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️auth modify contract */
+                [20000, 15, 0],
+                [], [],/* targets */
+                [],/* target_array_pos */
+                [],/* target_array_items */
+                [], []/* new_items */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* revoke author's moderator privelages */
+                [20000, 16, 0],
+                [], [],/* target objects */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* block account */
+                [20000, 17, 0],
+                [], [],/* target objects */
+                [], [],/* target account ids */
+                []/* expiry_time */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+
+
+
+
+            var obj = [/* ✔️send tokens to another account */
+                [30000, 1, 0],
+                [], [],/* exchanges */
+                [], [],/* receivers */
+                [],/* amounts */
+                []/* depths */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️pay subscription */
+                [30000, 2, 0],
+                [], [],/* target subscription ids */
+                []/* subscription buy amounts */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️enter a contract */
+                [30000, 3, 0],
+                [], [],/* contract ids */
+                []/* expiry time (seconds) */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️vote proposal */
+                [30000, 4, 0],
+                [], [],/* proposal ids */
+                [],/* votes */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<4; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+                        for(var j=4; j<ints[i].length; j++){
+                            obj.push(ints[i][j])
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️submit consensus request */
+                [30000, 5, 0/* payer_account_data_start */, 0/* payer_account_data_end */, 0/* vote_proposal_bounty_data_start */, 0/* vote_proposal_bounty_data_end */, 0],
+                [], [],/* targets */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* ✔️auth freeze tokens [1-freeze_tokens , 0-unfreeze_tokens] */
+                [30000, 6, 0],
+                [], [],/* target_exchanges */
+                [], [],/* target_account_ids */
+                [],/* freeze_amounts */
+                [],/* action */
+                []/* depths */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* send awwards */
+                [30000, 7, 0],
+                [], [],/* target receivers */
+                [],/* awward contexts */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<4; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+                        for(var j=4; j<ints[i].length; j++){
+                            obj.push(ints[i][j])
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* ✔️buy end/spend */
+                [30000, 8, 0],
+                [], [],/* exchanges */
+                [], [],/* receivers */
+                []/* amounts */, [],/* action */
+                []/* lower_bounds */, []/* upper_bounds */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️auth mint token */
+                [30000, 9, 0],
+                [], [],/* exchanges */
+                [], [],/* receivers */
+                []/* amounts */, [],/* action */
+                []/* lower_bounds */, []/* upper_bounds */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* ✔️exit contract */
+                [30000, 11, 0],
+                [], []/* contract ids */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* ✔️cancel subscription */
+                [30000, 12, 0],
+                [], [],/* target subscription ids */
+                []/* subscription sell amounts */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️collect subscription */
+                [30000, 13, 0],
+                [], [],/* target subscription ids */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<3; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+                        for(var j=3; j<ints[i].length; j++){
+                            obj.push(ints[i][j])
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* ✔️extend enter contract */
+                [30000, 14, 0],
+                [], [],/* contract ids */
+                []/* expiry time (seconds) */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* ✔️archive proposal/contract */
+                [30000, 15, 0],
+                [], [],/* proposal/contract ids */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<3; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+                        for(var j=3; j<ints[i].length; j++){
+                            obj.push(ints[i][j])
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* depth_mint\swap up\swap down tokens [2(depth_auth_mint), 1(swap_up), 0(swap_down)] */
+                [30000,16,0],
+                [], [],/* target exchange ids */
+                [], [],/* receivers */
+                [],/* action */ 
+                [],/* depth */
+                []/* amount */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+            var obj = [/* ✔️exchange transfer */
+                [30000, 17, 0],
+                [], [],/* exchange ids */
+                [], [],/* receivers */
+                [], [],/* amounts/depths */
+                [], [],/* token targets */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+            var obj = [/* ✔️force exit account */
+                [30000, 18, 0],
+                [], [],/* contract ids */
+                []/* target account */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        str_obj[0].concat(strs[i][0])
+                        add_obj.concat(adds[i])
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+            return {'ints':new_ints, 'adds':new_adds, 'strs':new_strs}
+        }
+    }
+
     
 
 
@@ -3368,6 +4697,7 @@ class StackPage extends Component {
         
     }
 
+    //here
     render_settings_details(){
         return(
             <div>
@@ -3460,12 +4790,12 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
+                    {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
 
-                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')} */}
 
 
 
@@ -3498,11 +4828,21 @@ class StackPage extends Component {
                     <Tags page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')}
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':'Stack Optimizer (Experimental)', 'details':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.', 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
     }
-
     
 
     when_theme_tags_updated(tag_group){
@@ -3592,15 +4932,35 @@ class StackPage extends Component {
         this.props.when_storage_permission_setting_changed(selected_item)
     }
 
+    when_stack_optimizer_object_updated(tag_object){
+        this.setState({get_stack_optimizer_tags_object: tag_object})
+        var selected_item = this.get_selected_item(this.state.get_stack_optimizer_tags_object, 'e')
+        this.props.when_stack_optimizer_setting_changed(selected_item)
+        this.run_transactions(true)
+    }
 
 
 
 
 
+
+
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
 
     load_preferred_e5_ui(){
-        var items = structuredClone(this.state.get_selected_e5_tags_object['e'][1])
-        items.splice(0, 1)
+        // var items = structuredClone(this.state.get_selected_e5_tags_object['e'][1])
+        // items.splice(0, 1)
+        var items = this.load_active_e5s()
 
         return(
             <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
@@ -3618,7 +4978,7 @@ class StackPage extends Component {
 
 
     render_e5_item(item){
-        var image = this.props.app_state.e5s[item].end_image
+        var image = this.props.app_state.e5s[item].e5_img
         var details = this.props.app_state.e5s[item].token
         if(this.props.app_state.selected_e5 == item){
             return(
@@ -3691,7 +5051,7 @@ class StackPage extends Component {
         return(
             <div>
                 {this.render_wallet_address()}
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5()}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
@@ -3785,7 +5145,7 @@ class StackPage extends Component {
         }
         else{
             this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item, false)
-            this.props.notify('setting your wallet...', 900)
+            this.props.notify('Setting your wallet. This might take a while...', 3500)
         }
         
     }
@@ -3844,9 +5204,9 @@ class StackPage extends Component {
         else if(e5 == 'E115'){
             return this.replace_0x_with_xdc(address)
         }
-        else if(e5 == 'E175'){
-            return ethToEvmos(address)
-        }
+        // else if(e5 == 'E175'){
+        //     return ethToEvmos(address)
+        // }
         return address
     }
 

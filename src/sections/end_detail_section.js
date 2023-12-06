@@ -455,7 +455,7 @@ class EndDetailSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                         {buy_tokens.map((item, index) => (
                             <li style={{'padding': '1px'}}>
-                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_price(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                             </li>
                         ))}
                     </ul>
@@ -487,7 +487,17 @@ class EndDetailSection extends Component {
         if(amount >10**18 || price >10**18){
             return bigInt(amount).times(bigInt(price))
         }else{
-            return Math.round(amount*price)
+            return amount*price
+        }
+    }
+
+    format_price(price_value){
+        if(price_value > 1000){
+            return this.format_account_balance_figure(price_value)
+        }
+        else{
+            let roundedNumber = parseFloat(price_value.toFixed(7));
+            return roundedNumber
         }
     }
 

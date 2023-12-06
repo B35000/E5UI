@@ -1089,7 +1089,7 @@ class NewTokenPage extends Component {
         else if(page == 21){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Exchange Ratio X', 'details':'The buy output exchange ratio X for your new token (formula used: xy = k)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Exchange Ratio X', 'details':'The buy output exchange ratio X for your new token', 'size':'l'})}
                     <div style={{height:20}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -1099,6 +1099,10 @@ class NewTokenPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':'Sans-serif'})}
 
+                    <div style={{height:5}}/>
+
+                    {this.render_detail_item('3', {'title':this.format_exchange_ratio(this.state.token_exchange_ratio_x, this.state.token_exchange_ratio_y), 'details':'Exchange Ratio X:Y', 'size':'l'})}
+
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_x.bind(this)} theme={this.props.theme} power_limit={63}/>
                     
                 </div>
@@ -1107,14 +1111,19 @@ class NewTokenPage extends Component {
         else if(page == 22){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Exchange Ratio Y', 'details':'The buy input exchange ratio Y for your new token (formula being: x * y = k)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Exchange Ratio Y', 'details':'The buy input exchange ratio Y for your new token', 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_y), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_y), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_y), 'barcolor':'', 'relativepower':'tokens', })}
                     </div>
 
-                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'textsize':'10px', 'font':'Sans-serif'})}
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':'Recommended: '+this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply/100), 'textsize':'10px', 'font':'Sans-serif'})}
+
+                    <div style={{height:5}}/>
+
+                    {this.render_detail_item('3', {'title':this.format_exchange_ratio(this.state.token_exchange_ratio_x, this.state.token_exchange_ratio_y), 'details':'Exchange Ratio X:Y', 'size':'l'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_token_exchange_ratio_y.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -1136,6 +1145,20 @@ class NewTokenPage extends Component {
             this.setState({custom_page: this.state.custom_page-1})
             this.reset_the_number_picker()
         }
+    }
+
+    format_exchange_ratio(ratio_x, ratio_y){
+        // Calculate the ratio
+        const gcd = this.calculateGCD(ratio_x, ratio_y);
+        const ratio = `${this.format_account_balance_figure(ratio_x / gcd)} : ${this.format_account_balance_figure(ratio_y / gcd)}`;
+        return ratio;
+    }
+
+    calculateGCD(a, b) {
+        if (b === 0) {
+            return a;
+        }
+        return this.calculateGCD(b, a % b);
     }
 
 
@@ -1699,12 +1722,28 @@ class NewTokenPage extends Component {
         else if(amount == 0){
             this.props.notify('please put a valid amount', 2600)
         }
+        else if(this.is_exchange_already_added(exchange_id)){
+            this.props.notify('You cant use the same exchange twice', 3600)
+        }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
             this.props.notify('added price!', 1400)
         }
+    }
+
+
+    is_exchange_already_added(exchange_id){
+        if(this.get_item_in_array(exchange_id, this.state.price_data) == null){
+            return false
+        }
+        return true
+    }
+
+    get_item_in_array(exchange_id, object_array){
+        var object = object_array.find(x => x['id'] === exchange_id);
+        return object
     }
 
     does_exchange_exist(exchange_id){

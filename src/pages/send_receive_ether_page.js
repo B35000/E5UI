@@ -8,7 +8,7 @@ import Html5QrcodePlugin from '../externals/Html5QrcodePlugin'
 import Dialog from "@mui/material/Dialog";
 import Letter from './../assets/letter.png';
 
-import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+// import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 
 var bigInt = require("big-integer");
 const Web3 = require('web3');
@@ -493,9 +493,9 @@ class SendReceiveEtherPage extends Component {
         else if(e5 == 'E115'){
             return this.replace_0x_with_xdc(address)
         }
-        else if(e5 == 'E175'){
-            return ethToEvmos(address)
-        }
+        // else if(e5 == 'E175'){
+        //     return ethToEvmos(address)
+        // }
         return address
     }
 
@@ -724,9 +724,9 @@ class SendReceiveEtherPage extends Component {
         if(e5 == 'E115'){
             return this.replace_xdc_with_0x(address)
         }
-        if(e5 == 'E175'){
-            return evmosToEth(address)
-        }
+        // if(e5 == 'E175'){
+        //     return evmosToEth(address)
+        // }
         return address
     }
 

@@ -955,12 +955,27 @@ class NewSubscriptionPage extends Component {
         else if(amount == 0){
             this.props.notify('please put a valid amount', 2600)
         }
+        else if(this.is_exchange_already_added(exchange_id)){
+            this.props.notify('You cant use the same exchange twice', 3600)
+        }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
             this.props.notify('added price!', 1400)
         }
+    }
+
+    is_exchange_already_added(exchange_id){
+        if(this.get_item_in_array(exchange_id, this.state.bounty_values) == null){
+            return false
+        }
+        return true
+    }
+
+    get_item_in_array(exchange_id, object_array){
+        var object = object_array.find(x => x['exchange'] === exchange_id);
+        return object
     }
 
     does_exchange_exist(exchange_id){

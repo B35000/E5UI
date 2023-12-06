@@ -903,6 +903,8 @@ class BagDetailsSection extends Component {
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
         if(item == null) return;
+        var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
+        if(selected_view_option == 'comment-structure') return
         return(
             <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
                 <div className="row" style={{'padding':'0px 0px 10px 10px'}}>

@@ -13,75 +13,73 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function start_and_end(str) {
-  if (str.length > 35) {
-    return str.substr(0, 20) + '...' + str.substr(str.length-10, str.length);
-  }
-  return str;
-}
-
-class ViewTransactionLogPage extends Component {
+class template extends Component {
     
     state = {
-        selected: 0, log_item: null
+        selected: 0, run_data:null
     };
 
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
-                {this.render_log_item_data()}
+                {this.render_detail_item('3',{'title':'Transaction Confirmation', 'details':'Are you sure you want to make this run?','size':'l'})}
+
+                {this.render_detail_item('0')}
+                {this.render_everything()}
             </div>
         )
     }
 
+    set_data(run_data){
+        this.setState({run_data:run_data})
+    }
 
-    render_log_item_data(){
-        var item = this.state.log_item
-        if(item != null){
+
+    render_everything(){
+        if(this.state.run_data != null){
+            var txs = this.props.app_state.stack_items
+            var gas_limit = this.state.run_data['run_gas_limit']
+            var estimated_gas_to_be_consumed = this.props.app_state.calculated_gas_figures[this.props.app_state.selected_e5] == null ? 0 : this.props.app_state.calculated_gas_figures[this.props.app_state.selected_e5]
+            var gas_price = this.state.run_data['run_gas_price']
+            var run_expiry_duration = this.state.run_data['run_expiry_duration']
+
             return(
                 <div>
-                    
-                    {this.render_detail_item('3',{'title':''+item.returnValues.p3, 'details':'Transaction ID ','size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3',{'title':'Timestamp', 'details':''+new Date(item.returnValues.p8*1000),'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3',{'title':''+this.get_time_difference(item.returnValues.p8), 'details':'Transaction Age ','size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3',{'title':''+item.returnValues.p9, 'details':'Transaction Block ','size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'l'})}
+                    {this.render_detail_item('3',{'title':txs.length, 'details':'Transaction Stack Size','size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Limit', 'subtitle':this.format_power_figure(gas_limit), 'barwidth':this.calculate_bar_width(gas_limit), 'number':this.format_account_balance_figure(gas_limit), 'barcolor':'', 'relativepower':'gas', })}
                     </div>
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(item.returnValues.p7/10**9), 'barwidth':this.calculate_bar_width(item.returnValues.p7/10**9), 'number':this.format_account_balance_figure(item.returnValues.p7/10**9), 'barcolor':'', 'relativepower':'gwei', })}
-
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in wei', 'subtitle':this.format_power_figure(item.returnValues.p7), 'barwidth':this.calculate_bar_width(item.returnValues.p7), 'number':this.format_account_balance_figure(item.returnValues.p7), 'barcolor':'', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas to be Consumed', 'subtitle':this.format_power_figure(estimated_gas_to_be_consumed), 'barwidth':this.calculate_bar_width(estimated_gas_to_be_consumed), 'number':this.format_account_balance_figure(estimated_gas_to_be_consumed), 'barcolor':'', 'relativepower':'gas', })}
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':item.returnValues.p1, 'title':'Sender Account ID','size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':'Sender Account Address','size':'l'})}
-                    <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Included Value in Ether', 'subtitle':this.format_power_figure(parseInt(item.returnValues.p6)/10**18), 'barwidth':this.calculate_bar_width(parseInt(item.returnValues.p6)/10**18), 'number':(parseInt(item.returnValues.p6)/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Included Value in Wei', 'subtitle':this.format_power_figure(item.returnValues.p6), 'barwidth':this.calculate_bar_width(item.returnValues.p6), 'number':this.format_account_balance_figure(item.returnValues.p6), 'barcolor':'', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in wei', 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
+
+                    <div style={{height: 10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={()=> this.fetch_gas_figures()}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Wallet Impact', 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                    </div>
+
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(run_expiry_duration), 'details':'Run Expiry Duration', 'size':'l'})}
                     
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'details':start_and_end(item.returnValues.p10), 'title':'Coinbase Address','size':'l'})}
+
+                    <div style={{'padding': '5px'}} onClick={()=> this.props.start_run()}>
+                        {this.render_detail_item('5', {'text':'Run Transactions', 'action':''})}
+                    </div>
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -90,18 +88,28 @@ class ViewTransactionLogPage extends Component {
         }
     }
 
+    calculate_wallet_impact_figure(){
+        var estimated_gas_to_be_consumed = this.props.app_state.calculated_gas_figures[this.props.app_state.selected_e5] == null ? 0 : this.props.app_state.calculated_gas_figures[this.props.app_state.selected_e5]
+        
+        var gas_price = this.state.run_data['run_gas_price']
+        var total_ether_to_be_spent = estimated_gas_to_be_consumed * gas_price
+        var my_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
 
-    set_transaction(transaction){
-        this.setState({log_item: transaction})
+        if(my_balance == 0) return 0
+
+        var x = (total_ether_to_be_spent / my_balance) * 100
+        return Math.round(x * 1000) / 1000
     }
 
 
-
-
-
-
-
-     /* renders the specific element in the post or detail object */
+    
+    
+    
+    
+    
+    
+    
+    /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var size = this.props.screensize
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
@@ -211,10 +219,9 @@ class ViewTransactionLogPage extends Component {
         }
     }
 
-
 }
 
 
 
 
-export default ViewTransactionLogPage;
+export default template;

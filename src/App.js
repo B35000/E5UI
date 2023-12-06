@@ -21,39 +21,59 @@ import nrg from './assets/nrg.png'
 import viction from './assets/viction.png'
 import evmos from './assets/evmos.png'
 
+
+
 /* e5 images */
 import E25EndImg from './assets/E25.png';
 import E25SpendImg from './assets/325.png';
+import End25Img from './assets/End25.png'
+
 import E35EndImg from './assets/e35_end_token.png';
 import E35SpendImg from './assets/e35_spend_token.png';
+
 import E45EndImg from './assets/E45.png';
 import E45SpendImg from './assets/345.png';
+
 import E55EndImg from './assets/E55.png';
 import E55SpendImg from './assets/355.png';
+
 import E65EndImg from './assets/E65.png';
 import E65SpendImg from './assets/365.png';
+
 import E75EndImg from './assets/E75.png';
 import E75SpendImg from './assets/375.png';
+
 import E85EndImg from './assets/E85.png';
 import E85SpendImg from './assets/385.png';
+
 import E95EndImg from './assets/E95.png';
 import E95SpendImg from './assets/395.png';
+
 import E105EndImg from './assets/E105.png';
 import E105SpendImg from './assets/3105.png';
+
 import E115EndImg from './assets/E115.png';
 import E115SpendImg from './assets/3115.png';
+
 import E125EndImg from './assets/E125.png';
 import E125SpendImg from './assets/3125.png';
+
 import E135EndImg from './assets/E135.png';
 import E135SpendImg from './assets/3135.png';
+
 import E145EndImg from './assets/E145.png';
 import E145SpendImg from './assets/3145.png';
+
 import E155EndImg from './assets/E155.png';
 import E155SpendImg from './assets/3155.png';
+
 import E165EndImg from './assets/E165.png';
 import E165SpendImg from './assets/3165.png';
+
 import E175EndImg from './assets/E175.png';
 import E175SpendImg from './assets/3175.png';
+
+
 
 /* blockchain stuff */
 import { mnemonicToSeedSync } from 'bip39';
@@ -136,6 +156,7 @@ import GiveAwardPage from './pages/give_award_page'
 import AddCommentPage from './pages/add_comment_page'
 import SearchedAccountPage from './pages/view_searched_account'
 import RPCSettingsPage from './pages/rpc_settings_page'
+import ConfirmRunPage from './pages/confirm_run_page'
 
 import { HttpJsonRpcConnector, MnemonicWalletProvider} from 'filecoin.js';
 import { LotusClient } from 'filecoin.js'
@@ -197,13 +218,13 @@ class App extends Component {
     page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null,
 
     theme: this.get_theme_data('light'), storage_option:'nft-storage',
-    details_orientation: 'right', refresh_speed:'average', masked_content:'e', content_channeling:'international', device_language:this.get_language(), section_tags_setting:'all', visible_tabs:'e', storage_permissions: 'e',
+    details_orientation: 'right', refresh_speed:'average', masked_content:'e', content_channeling:'international', device_language:this.get_language(), section_tags_setting:'all', visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -220,7 +241,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(85), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
+    sync_steps:(45), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -232,14 +253,14 @@ class App extends Component {
 
     e5s:this.get_e5s(),
     selected_e5:'E25', default_e5:'E25',
-    accounts:{}, has_wallet_been_set:false, is_running: false,
+    accounts:{}, has_wallet_been_set:false, is_running: {},
 
     device_country:this.get_country(), 
     
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
     
-    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[]
+    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[], mempool:{},
   };
 
 
@@ -251,103 +272,103 @@ class App extends Component {
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
         e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0', 
-        first_block:20, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0
+        first_block:20, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E25':{
         web3:['https://etc.etcdesktop.com'], 
         token:'ETC',
         e5_address:'0x57d2189085D4F4e0156F70B71F0c90897836967E', 
-        first_block:18730085, end_image:E25EndImg, spend_image:E25SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0
+        first_block:18730085, end_image:E25EndImg, spend_image:E25SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:true, e5_img:End25Img
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d', 
-        first_block:18716990, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0
+        first_block:18716990, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E45':{
         web3:['https://api.harmony.one'],
         token:'ONE',
         e5_address:'0xC621A0305D1826AB1E24C7d78792035cD9204eD4', 
-        first_block:50166065, end_image:E45EndImg, spend_image:E45SpendImg, ether_image:Harmony, iteration:1_024/* this limit is horrible! bad blockchain. */, url:0
+        first_block:50166065, end_image:E45EndImg, spend_image:E45SpendImg, ether_image:Harmony, iteration:1_024/* this limit is horrible! bad blockchain. */, url:0, active:false, e5_img:End25Img
       },
       'E55':{
         web3:['https://1rpc.io/celo', 'https://forno.celo.org'],
         token:'CELO',
         e5_address:'0xdfaE4E1a8447E560a0064fdB89D1919bF7cC0902', 
-        first_block:22528756, end_image:E55EndImg, spend_image:E55SpendImg, ether_image:Celo, iteration:40_000, url:0
+        first_block:22528756, end_image:E55EndImg, spend_image:E55SpendImg, ether_image:Celo, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E65':{
         web3:['https://rpc.ftso.au/flare'],
         token:'FLR',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:15492557, end_image:E65EndImg, spend_image:E65SpendImg, ether_image:Flare, iteration:40_000, url:0
+        first_block:15492557, end_image:E65EndImg, spend_image:E65SpendImg, ether_image:Flare, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E75':{
         web3:['https://rpc.gnosischain.com'],
         token:'XDAI',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:31015240, end_image:E75EndImg, spend_image:E75SpendImg, ether_image:xDai, iteration:40_000, url:0
+        first_block:31015240, end_image:E75EndImg, spend_image:E75SpendImg, ether_image:xDai, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E85':{
         web3:['https://rpc.fuse.io'],
         token:'FUSE',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:26508302, end_image:E85EndImg, spend_image:E85SpendImg, ether_image:fuse, iteration:40_000, url:0
+        first_block:26508302, end_image:E85EndImg, spend_image:E85SpendImg, ether_image:fuse, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E95':{
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:4910897, end_image:E95EndImg, spend_image:E95SpendImg, ether_image:glmr, iteration:40_000, url:0
+        first_block:4910897, end_image:E95EndImg, spend_image:E95SpendImg, ether_image:glmr, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
         token:'MOVR',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
-        first_block:5587390, end_image:E105EndImg, spend_image:E105SpendImg, ether_image:movr, iteration:40_000, url:0
+        first_block:5587390, end_image:E105EndImg, spend_image:E105SpendImg, ether_image:movr, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E115':{
         web3:['https://xdc.public-rpc.com'],
         token:'XDC',
         e5_address:'0xAf7e201B3424D0Cc43392C8Eae71FBdc983932Fb',
-        first_block:68418980, end_image:E115EndImg, spend_image:E115SpendImg, ether_image:xdc, iteration:40_000, url:0
+        first_block:68418980, end_image:E115EndImg, spend_image:E115SpendImg, ether_image:xdc, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E125':{
         web3:['https://polygon.llamarpc.com'],
         token:'MATIC',
         e5_address:'0x3D610010C43fC1Af89D8d040ED530398817A8E94',
-        first_block:50258928, end_image:E125EndImg, spend_image:E125SpendImg, ether_image:matic, iteration:40_000, url:0
+        first_block:50258928, end_image:E125EndImg, spend_image:E125SpendImg, ether_image:matic, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E135':{
         web3:['https://binance.llamarpc.com'],
         token:'BNB',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
-        first_block:33723227, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:40_000, url:0
+        first_block:33723227, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E145':{
         web3:['https://nodeapi.energi.network'],
         token:'NRG',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
-        first_block:1955370, end_image:E145EndImg, spend_image:E145SpendImg, ether_image:nrg, iteration:10_000, url:1	
+        first_block:1955370, end_image:E145EndImg, spend_image:E145SpendImg, ether_image:nrg, iteration:10_000, url:1	, active:false, e5_img:End25Img
       },
       'E155':{
         web3:['https://mainnet-rpc.thundercore.io'],
         token:'TT',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
-        first_block:148816985, end_image:E155EndImg, spend_image:E155SpendImg, ether_image:tt, iteration:40_000, url:0	
+        first_block:148816985, end_image:E155EndImg, spend_image:E155SpendImg, ether_image:tt, iteration:40_000, url:0	, active:false, e5_img:End25Img
       },
       'E165':{
         web3:['https://rpc.tomochain.com'],
         token:'VIC',
         e5_address:'0xd3B4c06c7514a72284fCe95DCAD911c8EaD9Be3F',
-        first_block:73021490, end_image:E165EndImg, spend_image:E165SpendImg, ether_image:viction, iteration:40_000, url:0	
+        first_block:73021490, end_image:E165EndImg, spend_image:E165SpendImg, ether_image:viction, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E175':{
         web3:['https://evmos-jsonrpc.theamsolutions.info'],
         token:'EVMOS',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6',
-        first_block:17475951, end_image:E175EndImg, spend_image:E175SpendImg, ether_image:evmos, iteration:40_000, url:0
+        first_block:17475951, end_image:E175EndImg, spend_image:E175SpendImg, ether_image:evmos, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
 
 
@@ -432,6 +453,7 @@ class App extends Component {
     this.depthmint_page = React.createRef();
     this.searched_account_page = React.createRef();
     this.rpc_settings_page = React.createRef();
+    this.confirm_run_page = React.createRef();
   }
 
   componentDidMount() {
@@ -532,6 +554,7 @@ class App extends Component {
 
       added_providers: this.state.added_providers,
       selected_providers: this.get_selected_urls(),
+      stack_optimizer: this.state.stack_optimizer
     }
   }
 
@@ -572,6 +595,17 @@ class App extends Component {
       var cupcake_storage_permissions = cupcake_state.storage_permissions
       var cupcake_added_providers = cupcake_state.added_providers
       var cupcake_selected_providers = cupcake_state.selected_providers
+      
+      var cupcake_from = cupcake_state.from
+      var cupcake_e5_events = cupcake_state.e5_events
+      var cupcake_e52_events = cupcake_state.e52_events
+      var cupcake_f5_events = cupcake_state.f5_events
+      var cupcake_g5_events = cupcake_state.g5_events
+      var cupcake_g52_events = cupcake_state.g52_events
+      var cupcake_h5_events = cupcake_state.h5_events
+      var cupcake_h52_events = cupcake_state.h52_events
+
+      var cupcake_stack_optimizer = cupcake_state.stack_optimizer
       
       if(cupcake_theme != null){
         this.setState({theme:cupcake_theme})
@@ -652,6 +686,45 @@ class App extends Component {
           me.set_providers(cupcake_selected_providers, cupcake_added_providers)
         }, (1 * 800));
       }
+
+      if(cupcake_from != null){
+        this.from = cupcake_from
+      }
+
+      if(cupcake_e5_events != null){
+        this.e5_events = cupcake_e5_events
+      }
+
+      if(cupcake_e52_events != null){
+        this.e52_events = cupcake_e52_events
+      }
+
+      if(cupcake_f5_events != null){
+        this.f5_events = cupcake_f5_events
+      }
+
+      if(cupcake_g5_events != null){
+        this.g5_events = cupcake_g5_events
+      }
+
+      if(cupcake_g52_events != null){
+        this.g52_events = cupcake_g52_events
+      }
+
+      if(cupcake_h5_events != null){
+        this.h5_events = cupcake_h5_events
+      }
+
+      if(cupcake_h52_events != null){
+        this.h52_events = cupcake_h52_events
+        console.log('---------------------------cupcake_from--------------------------')
+        console.log(this.h52_events)
+      }
+
+      if(cupcake_stack_optimizer != null){
+        this.setState({stack_optimizer: cupcake_stack_optimizer})
+      }
+
     }
 
     var me = this;
@@ -666,6 +739,7 @@ class App extends Component {
         me.stack_page.current?.set_content_filter_settings_tags()
         me.stack_page.current?.set_tabs_tag()
         me.stack_page.current?.set_storage_permissions_tag()
+        me.stack_page.current?.set_stack_optimizer_tag()
     }, (1 * 1000));
   }
 
@@ -753,23 +827,23 @@ class App extends Component {
     const me = this;
     web3.eth.accounts.wallet.add(account.privateKey);
 
-    web3.eth.sendTransaction({
-      from: account.address,
-      to: recipientAddress,
-      value: (6.5 * 10**18),
-      gas: 50000,
-      gasPrice: 30_000_000_000 // Adjust gas price as needed
-    }).on('transactionHash', function (hash) {
-      me.prompt_top_notification('send complete!', 600)
-    })
-    .on('error', function (error) {
-      console.error('Failed to send transaction:', error);
-      if(error == 'Error: Invalid JSON RPC response: {}'){
-        me.prompt_top_notification('send complete!', 600)
-      }else{
-        me.prompt_top_notification('send failed, '+error, 6000)
-      }
-    });
+    // web3.eth.sendTransaction({
+    //   from: account.address,
+    //   to: recipientAddress,
+    //   value: (6.5 * 10**18),
+    //   gas: 50000,
+    //   gasPrice: 30_000_000_000 // Adjust gas price as needed
+    // }).on('transactionHash', function (hash) {
+    //   me.prompt_top_notification('send complete!', 600)
+    // })
+    // .on('error', function (error) {
+    //   console.error('Failed to send transaction:', error);
+    //   if(error == 'Error: Invalid JSON RPC response: {}'){
+    //     me.prompt_top_notification('send complete!', 600)
+    //   }else{
+    //     me.prompt_top_notification('send failed, '+error, 6000)
+    //   }
+    // });
   }
 
   init_db = async () => {
@@ -1057,6 +1131,7 @@ class App extends Component {
           {this.render_depthmint_bottomsheet()}
           {this.render_searched_account_bottomsheet()}
           {this.render_rpc_settings_bottomsheet()}
+          {this.render_confirm_run_bottomsheet()}
           <ToastContainer limit={3} containerId="id"/>
         </div>
       );
@@ -1379,7 +1454,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} />
+              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -1487,13 +1562,30 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  when_stack_optimizer_setting_changed(item){
+    this.setState({stack_optimizer: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cupcakes()
+    }, (1 * 1000));
+  }
+
 
 
 
 
 
   lock_run(value){
-    this.setState({is_running: value})
+    var clone = structuredClone(this.state.is_running)
+    clone[this.state.selected_e5] = true
+    this.setState({is_running: clone})
+
+    var me = this;
+    setTimeout(function() {
+      var clone = structuredClone(me.state.is_running)
+      clone[me.state.selected_e5] = false
+      me.setState({is_running: clone})
+    }, (60 * 1000));
   }
 
   calculate_gas_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
@@ -1505,23 +1597,36 @@ class App extends Component {
 
     var v5/* t_limits */ = [1000000000000, 1000000000000];
     console.log('calculating gas price for current stack...')
+    console.log(ints)
+    if(this.state.stack_items.length == 0){
+      var clone = structuredClone(me.state.calculated_gas_figures)
+      clone[me.state.selected_e5] = 0
+      me.setState({calculated_gas_figures: clone})
+      return;
+    }
     contractInstance.methods.e(v5/* t_limits */, adds, ints, strs).estimateGas({from: me.state.accounts[me.state.selected_e5].address, gas: run_gas_limit, value: wei}, function(error, gasAmount){
         console.log('---------------------calculate_gas_with_e-------------------------')
         console.log(gasAmount)
+        if(gasAmount == null){
+          me.prompt_top_notification('Your next run might fail with its current stack', 4000)
+        }
         var clone = structuredClone(me.state.calculated_gas_figures)
         clone[me.state.selected_e5] = gasAmount
         me.setState({calculated_gas_figures: clone})
     });
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price, run_expiry_duration) => {
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
 
-    var v5/* t_limits */ = [1000000000000, 1000000000000];
+    var now = await contractInstance.methods.f147(2).call((error, result) => {})
+    var run_expiry_time = now + run_expiry_duration
+
+    var v5/* t_limits */ = [100000000000000, run_expiry_time];
     var network_gp = await web3.eth.getGasPrice()
     var run_gas_price = run_gas_price == null ? network_gp : run_gas_price
     console.log("gasPrice: "+run_gas_price);
@@ -1534,23 +1639,27 @@ class App extends Component {
         value: wei,
         to: contractAddress,
         data: encoded,
-        gasPrice: run_gas_price.toString()
+        gasPrice: run_gas_price.toString(),
+        time:now
     }
 
     
     web3.eth.accounts.signTransaction(tx, me.state.accounts[this.state.selected_e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
-          me.setState({should_update_contacts_onchain: false, is_running: false, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false})
+          var clone = structuredClone(this.state.is_running)
+          clone[this.state.selected_e5] = false
+          me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false})
           this.delete_stack_items(delete_pos_array)
-          this.start_get_accounts_data(false)
-          setTimeout(function() {
-            me.reset_gas_calculation_figure(me)
-          }, (1 * 3000));
+          // this.start_get_accounts_data(false)
+          this.start_get_accounts_for_specific_e5(false, this.state.selected_e5)
+          me.reset_gas_calculation_figure(me)
           this.prompt_top_notification('run complete!', 600)
-        }) .on('error', (error) => {
+        }).on('error', (error) => {
           console.error('Transaction error:', error);
-          me.setState({is_running: false})
-          this.prompt_top_notification('Run failed. Check your stack then try again', 1500)
+          var clone = structuredClone(this.state.is_running)
+          clone[this.state.selected_e5] = false
+          me.setState({is_running: clone})
+          this.prompt_top_notification('Your transaction was reverted.', 9500)
         });
     })
 
@@ -4160,7 +4269,7 @@ class App extends Component {
     this.open_withdraw_ether_bottomsheet()
   }
 
-  withdraw_ether_to_address = async (target_recipient_address, e5) =>{
+  withdraw_ether_to_address = async (target_recipient_address, e5, run_expiry_duration) =>{
     this.prompt_top_notification('withdrawing your ether...', 600)
 
     const web3 = new Web3(this.get_selected_web3_url());
@@ -4170,7 +4279,10 @@ class App extends Component {
     const me = this
     const gasPrice = await web3.eth.getGasPrice();
     
-    var v5/* t_limits */ = [1000000000000, 1000000000000];
+    var now = await contractInstance.methods.f147(2).call((error, result) => {})
+    var run_expiry_time = now + run_expiry_duration
+
+    var v5/* t_limits */ = [100000000000000, run_expiry_time];
     var encoded = contractInstance.methods.f145(target_recipient_address, v5/* t_limits */).encodeABI()
 
     var tx = {
@@ -4178,12 +4290,13 @@ class App extends Component {
         value: 0,
         to: contractAddress,
         data: encoded,
-        // gasPrice: 100_000_008
+        time:now,
     }
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
-          this.start_get_accounts_data(false)
+          // this.start_get_accounts_data(false)
+          this.start_get_accounts_for_specific_e5(false, e5)
           this.prompt_top_notification('withdraw complete!', 600)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
@@ -4463,7 +4576,6 @@ class App extends Component {
     }, (1 * 1000));
   }
 
-
   when_rpc_tapped(url, index, ether){
     var clone = structuredClone(this.state.e5s)
     clone[ether['e5']].url = index
@@ -4475,7 +4587,6 @@ class App extends Component {
       me.start_get_accounts_for_specific_e5(false, ether['e5'])
     }, (1 * 1000));
   }
-
 
   load_rpc_times = async (e5) => {
     var items = this.state.e5s[e5].web3
@@ -4497,6 +4608,51 @@ class App extends Component {
       }
     }
 
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  render_confirm_run_bottomsheet(){
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_confirm_run_bottomsheet.bind(this)} open={this.state.confirm_run_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <ConfirmRunPage ref={this.confirm_run_page} app_state={this.state} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} start_run={this.start_run.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_confirm_run_bottomsheet(){
+    if(this.state != null){
+        this.setState({confirm_run_bottomsheet: !this.state.confirm_run_bottomsheet});
+    }
+  }
+
+  show_confirm_run_bottomsheet(data){
+    if(this.confirm_run_page.current != null){
+      this.confirm_run_page.current.set_data(data)
+    }
+
+    this.open_confirm_run_bottomsheet()
+  }
+
+  start_run(){
+    this.open_confirm_run_bottomsheet()
+    if(this.stack_page.current != null){
+      this.stack_page.current?.run_transactions(false)
+    }
   }
 
 
@@ -5216,7 +5372,13 @@ class App extends Component {
 
 
 
-
+  get_wallet_data_for_specific_e5(){
+    this.prompt_top_notification('updating your wallets balance...', 2000)
+    var e5 = this.state.selected_e5
+    var web3_url = this.get_web3_url_from_e5(e5)
+    var account_for_e5 = this.state.accounts[e5]
+    this.get_wallet_data(account_for_e5, false, web3_url, null, e5)
+  }
 
   get_wallet_data = async (_account, is_syncing, web3_url, e5_address, e5) => {
     const web3 = new Web3(web3_url);
@@ -5248,7 +5410,7 @@ class App extends Component {
     var clone = structuredClone(this.state.chain_id)
     clone[e5] = id
     this.setState({chain_id: clone});
-    this.inc_synch_progress()
+    if(is_syncing)this.inc_synch_progress()
     await this.wait(this.state.web3_delay)
 
 
@@ -5279,9 +5441,14 @@ class App extends Component {
     var number_of_blocks_clone = structuredClone(this.state.number_of_blocks)
     number_of_blocks_clone[e5] = blockNumber
     this.setState({last_blocks: last_blocks_clone, number_of_blocks: number_of_blocks_clone});
-    this.inc_synch_progress()
+    if(is_syncing)this.inc_synch_progress()
 
-    
+
+
+    var mempool = await web3.eth.getPendingTransactions()
+    var mempool_clone = structuredClone(this.state.mempool)
+    mempool_clone[e5] = mempool
+    this.setState({mempool: mempool_clone})
 
   } 
 
@@ -6365,10 +6532,9 @@ class App extends Component {
       var contracts_proposals = await this.load_event_data(web3, G5contractInstance, 'e1', e5, {p1/* contract_id */:contracts_ive_entered[i]})
 
 
-      for(var i=0; i<contracts_proposals.length; i++){
-        my_proposal_ids.push(parseInt(contracts_proposals[i].returnValues.p2)) //<--------issue! should be p4
-        
-        my_proposals_events.push(contracts_proposals[i])
+      for(var j=0; j<contracts_proposals.length; j++){
+        my_proposal_ids.push(parseInt(contracts_proposals[j].returnValues.p2)) //<--------issue! should be p4
+        my_proposals_events.push(contracts_proposals[j])
       }
 
     }

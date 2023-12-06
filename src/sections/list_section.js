@@ -936,6 +936,14 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.get_e5_data_item_object(item_data, name)
+        var is_active = this.props.app_state.e5s[name].active
+        if(!is_active){
+            return(
+                <div>
+                    {this.render_small_empty_object()}
+                </div>
+            )
+        }
         return ( 
             // <div onClick={() => this.when_E5_item_clicked(index, name)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
             //     <div style={{'padding': '0px 0px 0px 5px'}}>
@@ -962,12 +970,12 @@ class PostListSection extends Component {
     }
 
     get_e5_data_item_object(item_data, name){
-        var image = this.props.app_state.e5s[name].end_image
+        var image = this.props.app_state.e5s[name].e5_img
         return {
                 'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': image},
                 'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
                 'address':{'font':'Sans-serif', 'text':this.get_address(name), 'textsize':'12px'},
-                'data':{'title':name, 'details':start_and_end(this.get_address(name)), 'size':'l', 'image': image}
+                'data':{'title':name, 'details':start_and_end(this.get_address(name)), 'size':'l', 'image': image, 'border_radius':'0%'}
             }
     }
 
@@ -1097,7 +1105,7 @@ class PostListSection extends Component {
     render_small_empty_object(){
         return(
             <div>
-                <div style={{ height: 80, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
                         <img src={Letter} style={{ height: 30, width: 'auto' }} />
                     </div>
@@ -1669,7 +1677,7 @@ class PostListSection extends Component {
             this.get_token_data('TT', 'ThunderCore', 'E155'),
             // this.get_token_data('NRG', 'Energi', 'E145'),
             this.get_token_data('VIC', 'Viction', 'E165'),
-            this.get_token_data('EVMOS', 'Evmos', 'E175'),
+            this.get_token_data('EVMOS', 'Evmos EVM', 'E175'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
@@ -1779,14 +1787,13 @@ class PostListSection extends Component {
                 </div>
             );
         }
-
         return ( 
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li onClick={() => this.when_ends_object_clicked(index, item)} style={{'padding': '1px 5px 1px 5px'}}>
+                        <div>
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
-                        </li>
+                        </div>
                     ))}
                     {/* <div style={{'padding': '1px 5px 1px 5px'}}>
                         {this.render_small_empty_object()}
@@ -1800,15 +1807,21 @@ class PostListSection extends Component {
         return this.props.get_exchange_tokens(exchange_type)
     }
 
-    render_ends_object(object_array, index, token_id, img, item){
+    render_ends_object(object_array, index, token_id, img, object){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
-        var item = this.get_exchanges_data(object_array, token_id, img, item)
-        if(this.is_object_sender_blocked(item)){
+        var item = this.get_exchanges_data(object_array, token_id, img, object)
+        if(this.is_object_sender_blocked(object)){
             return(
                 <div>
                     {this.render_empty_object()}
                 </div>
+            )
+        }
+        var is_active = this.props.app_state.e5s[object['e5']].active
+        if(!is_active){
+            return(
+                <div></div>
             )
         }
         return ( 
@@ -1823,7 +1836,7 @@ class PostListSection extends Component {
             //         {this.render_detail_item('2', item['number_label'])}
             //     </div>         
             // </div>
-            <div>
+            <div style={{'padding': '1px 5px 1px 5px'}} onClick={() => this.when_ends_object_clicked(index, object)}>
                 {this.render_detail_item('8', item['label'])}
             </div>
         );
@@ -1898,9 +1911,9 @@ class PostListSection extends Component {
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
-                        <li onClick={() => this.when_spends_object_item_clicked(index, item)} style={{'padding': '1px 5px 1px 5px'}}>
+                        <div>
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
-                        </li>
+                        </div>
                     ))}
                     {/* <div style={{'padding': '1px 5px 1px 5px'}}>
                         {this.render_small_empty_object()}
@@ -1921,7 +1934,11 @@ class PostListSection extends Component {
                 </div>
             )
         }
-        return ( 
+        var is_active = this.props.app_state.e5s[object['e5']].active
+        if(!is_active){
+            return;
+        }
+        return (
             // <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
             //     <div style={{'padding': '0px 0px 0px 5px'}}>
             //         {this.render_detail_item('1', item['tags'])}
@@ -1933,7 +1950,7 @@ class PostListSection extends Component {
             //         {this.render_detail_item('2', item['number_label'])}
             //     </div>         
             // </div>
-            <div>
+            <div style={{'padding': '1px 5px 1px 5px'}} onClick={() => this.when_spends_object_item_clicked(index, object)}>
                 {this.render_detail_item('8', item['label'])}
             </div>
         );

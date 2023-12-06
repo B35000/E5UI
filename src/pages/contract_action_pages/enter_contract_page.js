@@ -331,7 +331,7 @@ class EnterContractPage extends Component {
             var token_id = entry_tokens[i]
             var token_balance = this.props.app_state.created_token_object_mapping[this.state.contract_item['e5']][token_id]
             token_balance = token_balance == null ? 0 : token_balance['balance']
-            if(token_balance < entry_amounts[i]){
+            if(bigInt(token_balance) < bigInt(entry_amounts[i])){
                 can_enter = false
             }
         }

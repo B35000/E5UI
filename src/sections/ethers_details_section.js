@@ -5,7 +5,7 @@ import Tags from './../components/tags';
 import Letter from './../assets/letter.png'; 
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 
-import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+// import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -144,6 +144,10 @@ class EthersDetailsSection extends Component {
         }
         var gas_transactions = this.props.app_state.account_balance[item['e5']] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[item['e5']]/gas_price)/2_300_000)
 
+
+        var e5_transactions_per_ether =  Math.floor((10**18/gas_price)/2_300_000)
+        var gas_transactions_per_ether =  Math.floor((10**18/gas_price)/23_000)
+
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -194,13 +198,23 @@ class EthersDetailsSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':'E5 txs/ether (2.3M Gas average)', 'subtitle':'', 'barwidth':this.calculate_bar_width(e5_transactions_per_ether), 'number':this.format_account_balance_figure(e5_transactions_per_ether), 'barcolor':'#606060', 'relativepower':'transactions', })}
+
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas txs/ether (23K Gas average)', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_transactions_per_ether), 'number':this.format_account_balance_figure(gas_transactions_per_ether), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                    </div>
+                    <div style={{height:10}}/>
+
                     {/* {this.render_detail_item('3', item['transaction_count_chart_data_label'])}
                     {this.render_detail_item('6', item['transaction_count_chart_data'])}
                     {this.render_detail_item('0')} */}
 
                     {this.render_detail_item('3', item['gas_limit'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', item['base_fee_per_gas'])}
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['base_fee_per_gas_unit'])}
+                    </div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['block_time'])}
                     {this.render_detail_item('0')}
@@ -262,7 +276,7 @@ class EthersDetailsSection extends Component {
             this.get_token('TT', 'ThunderCore', 'E155'),
             // this.get_token('NRG', 'Energi', 'E145'),
             this.get_token('VIC', 'Viction', 'E165'),
-            this.get_token('EVMOS', 'Evmos', 'E175'),
+            this.get_token('EVMOS', 'Evmos EVM', 'E175'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
@@ -328,12 +342,13 @@ class EthersDetailsSection extends Component {
                 
 
                 'gas_limit':{'title':this.format_account_balance_figure(this.get_latest_block_data(e5).gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
-                'base_fee_per_gas':{'title':this.format_account_balance_figure(this.get_latest_block_data(e5).baseFeePerGas), 'details':'Base Fee per Gas Unit', 'size' :'l'},
+
+                'base_fee_per_gas_unit':{ 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barwidth':this.calculate_bar_width(this.get_latest_block_data(e5).baseFeePerGas), 'number':this.format_account_balance_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barcolor':'#606060', 'relativepower':'gwei', },
 
                 'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
 
                 'address':{'details':this.get_account_address(e5), 'title':'Your Address', 'size' :'l'},
-                'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':'Average block time for the last 100 blocks', 'size' :'l'},
+                'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':'Average block time for the last 5 blocks', 'size' :'l'},
         }
     }
 
@@ -381,9 +396,9 @@ class EthersDetailsSection extends Component {
         else if(e5 == 'E115'){
             return this.replace_0x_with_xdc(address)
         }
-        else if(e5 == 'E175'){
-            return ethToEvmos(address)
-        }
+        // else if(e5 == 'E175'){
+        //     return ethToEvmos(address)
+        // }
         return address
     }
 

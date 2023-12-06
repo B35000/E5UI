@@ -99,7 +99,7 @@ class template extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Amount set to submit/receive for the buy/sell action', 'title':'Fees for Action'})}
+                {this.render_detail_item('3', {'size':'l', 'details':'Amount to transfer to the speicified target account', 'title':'Amount for Transfer'})}
 
                 <div style={{height:10}}/>
 
@@ -108,8 +108,14 @@ class template extends Component {
                 </div>
 
                 <div style={{height:10}}/>
+                <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
+                    {this.render_detail_item('5', {'text':'Set Maximum', 'action':''})}
+                </div>
 
+                <div style={{height:10}}/>
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':'Add Transaction', 'action':''})}
@@ -119,6 +125,11 @@ class template extends Component {
 
             </div>
         )
+    }
+
+    set_maximum(){
+        var max = this.state.token_item['balance']
+        this.setState({amount: max})
     }
 
     get_number_limit(){

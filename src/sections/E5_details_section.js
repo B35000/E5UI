@@ -317,7 +317,7 @@ class E5DetailsSection extends Component {
     }
 
     get_e5_details_data(obj){
-        var image = this.props.app_state.e5s[obj['id']].end_image
+        var image = this.props.app_state.e5s[obj['id']].e5_img
         var chain = this.props.app_state.e5s[obj['id']].token
         var address = this.props.app_state.e5s[obj['id']].e5_address
         var contract_config = obj['data'][1]
@@ -1111,6 +1111,12 @@ class E5DetailsSection extends Component {
     get_transaction_transaction_count_interval_figure(events){
         return events.length
     }
+
+
+
+
+
+
 
 
 

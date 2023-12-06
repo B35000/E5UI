@@ -3,6 +3,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import Dialog from "@mui/material/Dialog";
+import NumberPicker from './../components/number_picker';
 
 import Letter from './../assets/letter.png'; 
 
@@ -30,7 +31,8 @@ class WithdrawEtherPage extends Component {
     
     state = {
         selected: 0, withdraw_ether_page_tags_object: this.get_withdraw_ether_page_tags_object(),
-        recipient_address:'', confirmation_dialog_box: false, e5:{'data':[], 'id':this.props.app_state.selected_e5}
+        recipient_address:'', confirmation_dialog_box: false, e5:{'data':[], 'id':this.props.app_state.selected_e5},
+        run_time_expiry:0
     };
 
     get_withdraw_ether_page_tags_object(){
@@ -153,6 +155,15 @@ class WithdrawEtherPage extends Component {
                 <div onClick={() => this.set_my_address()}>
                     {this.render_detail_item('5', {'text':'Set My Address', 'action':''})}
                 </div>
+
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':'Withdraw Expiry Duration', 'details':'The duration of time after which your withdrawal transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.', 'size':'l'})}
+                <div style={{height:20}}/>
+                
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':'Estimated Time.', 'size':'l'})}
+
+                <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
             </div>
         )
     }
@@ -160,6 +171,10 @@ class WithdrawEtherPage extends Component {
 
     when_text_input_field_changed(text){
         this.setState({recipient_address: text})
+    }
+
+    when_run_expiry_time_set(number){
+        this.setState({run_time_expiry: number})
     }
 
     isValidAddress = (adr) => {
@@ -244,7 +259,8 @@ class WithdrawEtherPage extends Component {
     when_withdraw_ether_confirmation_received(){
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.e5['id']
-        this.props.withdraw_ether_to_address(this.state.recipient_address, e5)
+        var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
+        this.props.withdraw_ether_to_address(this.state.recipient_address, e5, run_expiry_duration)
     }
 
 

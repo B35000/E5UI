@@ -42,7 +42,7 @@ class NewContractPage extends Component {
         id: makeid(8), type:'contract', e5:this.props.app_state.selected_e5,
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_contract_tags_object: this.get_new_contract_tags_object(), new_contract_type_tags_object:this.get_new_contract_type_tags_object(),
-        default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
+        default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(), include_enter_contract_action_tags_object: this.get_include_enter_contract_action_tags_object(),
 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
@@ -152,6 +152,16 @@ class NewContractPage extends Component {
     }
 
 
+    get_include_enter_contract_action_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e','enter-contract'], [0]
+            ],
+        };
+    }
 
 
 
@@ -281,11 +291,20 @@ class NewContractPage extends Component {
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':'Enter Contract', 'details':'If set to enter-contract, youll enter the contract your creating in one transaction.', 'size':'l'})}
+                <div style={{height:20}}/>
+                <Tags page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_include_enter_contract_action_tags_object(tag_obj){
+        this.setState({include_enter_contract_action_tags_object: tag_obj})
     }
 
     when_title_text_input_field_changed(text){
@@ -1100,12 +1119,27 @@ class NewContractPage extends Component {
         else if(!this.check_if_amount_exceeds_minimum(amount, exchange_id)){
             return;
         }
+        else if(this.is_exchange_already_added(exchange_id)){
+            this.props.notify('You cant use the same exchange twice', 3600)
+        }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, exchange_id:'', amount:0});
             this.props.notify('added entry fee price!', 1000)
         }
+    }
+
+    is_exchange_already_added(exchange_id){
+        if(this.get_item_in_array(exchange_id, this.state.price_data) == null){
+            return false
+        }
+        return true
+    }
+
+    get_item_in_array(exchange_id, object_array){
+        var object = object_array.find(x => x['id'] === exchange_id);
+        return object
     }
 
     does_exchange_exist(exchange_id){

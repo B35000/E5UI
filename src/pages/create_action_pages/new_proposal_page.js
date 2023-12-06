@@ -1714,6 +1714,9 @@ class NewProposalPage extends Component {
         else if(target_amount == 0){
             this.props.notify('please put a valid amount', 1600)
         }
+        else if(this.is_exchange_already_added(target_exchange)){
+            this.props.notify('You cant use the same exchange twice', 3600)
+        }
         else{
             var bounty_values_clone = this.state.bounty_values.slice()
             var tx = {'exchange':target_exchange, 'amount':target_amount}
@@ -1723,6 +1726,18 @@ class NewProposalPage extends Component {
 
             this.props.notify('bounty amount added', 1000)
         }
+    }
+
+    is_exchange_already_added(exchange_id){
+        if(this.get_item_in_array(exchange_id, this.state.bounty_values) == null){
+            return false
+        }
+        return true
+    }
+
+    get_item_in_array(exchange_id, object_array){
+        var object = object_array.find(x => x['exchange'] === exchange_id);
+        return object
     }
 
     get_token_id_from_symbol(typed_search){

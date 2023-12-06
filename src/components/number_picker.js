@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Slider from './slider'
 import ViewGroups from './view_groups'
+import E5EmptyIcon3 from './../assets/e5empty_icon.png';
 var bigInt = require("big-integer");
 
 
@@ -53,12 +54,12 @@ class NumberPicker extends Component {
                     {this.render_number_picker_sliders()}
                     <div style={{height: 10}}/>
                     <div className="row">
-                        <div className="col-8" style={{'padding': '0px 0px 0px 10px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 10px'}}>
                             {this.render_detail_item('1', this.get_number_power_data())}
                         </div>
-                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                            <div style={{'padding': '5px'}} onClick={()=>this.reset_number_picker()}>
-                                {this.render_detail_item('5', {'text':'reset', 'action':''})}
+                        <div className="col-2" style={{'padding': '3px 0px 0px 0px'}}>
+                            <div className="text-end" style={{'padding': '5px'}} onClick={()=>this.reset_number_picker()}>
+                              <img src={E5EmptyIcon3} style={{height:35 ,width:35}} />
                             </div>
                             
                         </div>
