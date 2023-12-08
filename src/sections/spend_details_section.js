@@ -258,6 +258,7 @@ class SpendDetailSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
+                    {this.render_object_age(selected_object, item)}
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['token_type'])}
@@ -412,6 +413,19 @@ class SpendDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_object_age(object, item){
+        if(object['id'] != 5){
+            return(
+                <div>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    <div style={{ height: 10 }} />
+                </div>
+            )
+        }
     }
 
     render_token_liquidity_balance(selected_object, symbol){
@@ -750,6 +764,8 @@ class SpendDetailSection extends Component {
         // var selected_object = this.get_exchange_tokens(5)[selected_item]
         var title = selected_object['id'];
         var img = selected_object['img']
+        var age = selected_object['event'] == null ? 0 : selected_object['event'].returnValues.p5
+        var time = selected_object['event'] == null ? 0 : selected_object['event'].returnValues.p4
         
         var selected_obj_root_config = selected_object['data'][0];
         var selected_obj_config = selected_object['data'][1];
@@ -762,8 +778,6 @@ class SpendDetailSection extends Component {
         var halfing_type = selected_obj_config[15] == 0 ? 'Fixed' : 'Spread'
 
         if(title == 5){
-            // var obj = {'E15':'315', 'E25':'325'}
-            // title = obj[selected_object['e5']]
             title = selected_object['e5'].replace('E', '3')
         }
 
@@ -779,6 +793,7 @@ class SpendDetailSection extends Component {
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
             'token_id': {'title':'ID: '+selected_object['id'], 'details':'Token Identifier', 'size':'l'},
             'token_type': {'title':'Token Type', 'details':type, 'size':'l'},
+            'age': { 'style': 'l', 'title': 'Block Number', 'subtitle': 'age', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} ago`, },
 
             'unlocked_supply': {'title':'Unlocked Supply', 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
             'unlocked_liquidity': {'title':'Unlocked Liquidity', 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},

@@ -280,7 +280,7 @@ class BagDetailsSection extends Component {
         return {
             'sender_account':{'title':''+object['event'].returnValues.p3, 'details':'Sender Account', 'size':'l'},
             'id':{'title':'Bag ID: '+object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
         }
     }
 
@@ -331,7 +331,7 @@ class BagDetailsSection extends Component {
                 <div style={{height: 10}}/>
                 {items.map((units, index) => (
                     <li style={{'padding': '2px 0px 2px 0px'}}>
-                        {this.render_detail_item('2', { 'style':'s', 'title':'Exchange ID: '+units['id'], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+units['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
                     </li>
                 ))}
             </div>

@@ -228,7 +228,7 @@ class MailDetailsSection extends Component {
                     {items.map((item, index) => (
                         <div key={index}>
                             {this.render_detail_item(item['type'], item['data'])} 
-                            <div style={{height:10}}/>
+                            <div style={{height:2}}/>
                         </div>
                     ))}
                 </div>
@@ -263,7 +263,7 @@ class MailDetailsSection extends Component {
         return {
             'tags':{'active_tags':final_tags, 'index_option':'indexed'},
             'id':{'textsize':'14px', 'text':title, 'font':'Sans-serif'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
         }
     }
 

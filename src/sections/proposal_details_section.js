@@ -470,7 +470,7 @@ class ProposalDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Age of Proposal', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+            'age':{'style':'l', 'title':'Age of Proposal', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
 
             '':{'title':'', 'details':'', 'size':'l'},
 
@@ -537,7 +537,7 @@ class ProposalDetailsSection extends Component {
         }
         else if(proposal_action == 1){
             return(
-                <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                         {this.load_reconfig_items(items, object)}
                     </div>
@@ -546,7 +546,7 @@ class ProposalDetailsSection extends Component {
         }
         else if(proposal_action == 6){
             return(
-                <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ width:'95%','margin':'5px 10px 20px 10px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                         {this.load_transfer_actions(items, object)}
                     </div>
@@ -609,7 +609,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['spend_token']], 'details':'target: '+item['spend_target']+', token ID: '+item['spend_token'], 'size':'l'})}
                             </li>
                         ))}
@@ -699,7 +699,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
@@ -798,12 +798,12 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':'tokens', })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':'tokens', })}
                                 </div>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':'Exchange ID:'+item['exchange'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['exchange']], 'size':'s'})}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
@@ -870,7 +870,7 @@ class ProposalDetailsSection extends Component {
 
     show_add_comment_bottomsheet(object){
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'proposal')
     }
 
@@ -1761,7 +1761,7 @@ class ProposalDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

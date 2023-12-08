@@ -698,6 +698,7 @@ class ContractDetailsSection extends Component {
         var tags = object['ipfs'] == null ? [object['e5'], 'Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var contract_config = object['data'][1]
         var auto_wait = contract_config[8] == 0 ? 'false' : 'true'
         var can_modify_contract_as_moderator = contract_config[28] == 0 ? 'false' : 'true'
@@ -707,7 +708,7 @@ class ContractDetailsSection extends Component {
         return {
             'tags': { 'active_tags': tags, 'index_option': 'indexed' },
             'id': { 'title': object['id'], 'details': title, 'size': 'l' },
-            'age': { 'style': 'l', 'title': 'Block ID', 'subtitle': '??', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': 'block', },
+            'age': { 'style': 'l', 'title': 'Block Number', 'subtitle': '', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} ago`, },
 
             'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': 'Vote Bounty Split Proportion', 'size': 'l' },
 
@@ -735,9 +736,9 @@ class ContractDetailsSection extends Component {
 
             'entry_fees': { 'title': 'Entry Fees', 'details': object['data'][2].length + ' tokens used', 'size': 'l' },
 
-            'end_balance': { 'style': 'l', 'title': 'End Bounty Balance', 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${number_with_commas(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, },
+            'end_balance': { 'style': 'l', 'title': 'End Balance', 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${number_with_commas(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, },
 
-            'spend_balance': { 'style': 'l', 'title': 'Spend Bounty Balance', 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${number_with_commas(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, },
+            'spend_balance': { 'style': 'l', 'title': 'Spend Balance', 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${number_with_commas(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, },
         }
     }
 

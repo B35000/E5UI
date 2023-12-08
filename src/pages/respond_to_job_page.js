@@ -401,12 +401,27 @@ class RespondToJobPage extends Component {
         else if(amount == 0){
             this.props.notify('please put a valid amount', 600)
         }
+        else if(this.is_exchange_already_added(exchange_id)){
+            this.props.notify('You cant use the same exchange twice', 3600)
+        }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
             this.props.notify('added price!', 400)
         }
+    }
+
+    is_exchange_already_added(exchange_id){
+        if(this.get_item_in_array(exchange_id, this.state.price_data) == null){
+            return false
+        }
+        return true
+    }
+
+    get_item_in_array(exchange_id, object_array){
+        var object = object_array.find(x => x['id'] === exchange_id);
+        return object
     }
 
     get_token_id_from_symbol(typed_search){
@@ -457,7 +472,7 @@ class RespondToJobPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Exchange ID: '+item['id'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
                             </li>
                         ))}

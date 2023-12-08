@@ -2140,8 +2140,7 @@ class StackPage extends Component {
         }else{
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
             this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
-        }
-        
+        }  
     }
 
     get_latest_block_data(e5){
@@ -3757,8 +3756,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -3790,8 +3793,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -3822,8 +3829,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -3852,8 +3863,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -3881,8 +3896,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -3912,8 +3931,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -3944,8 +3967,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -3976,8 +4003,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4009,8 +4040,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4041,8 +4076,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4071,8 +4110,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4103,8 +4146,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4140,8 +4187,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4170,8 +4221,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4200,8 +4255,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4233,8 +4292,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4262,8 +4325,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4296,8 +4363,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4330,8 +4401,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4363,8 +4438,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4395,8 +4474,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4425,8 +4508,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4456,8 +4543,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4488,8 +4579,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4519,8 +4614,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4552,8 +4651,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4585,8 +4688,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4617,8 +4724,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -4648,8 +4759,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        str_obj[0].concat(strs[i][0])
-                        add_obj.concat(adds[i])
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
                     }
                 }
             }
@@ -5168,7 +5283,7 @@ class StackPage extends Component {
             var cloned_seed_array = this.state.added_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({added_tags: cloned_seed_array, typed_word:''})
-            this.props.notify('word added', 800)
+            // this.props.notify('word added', 800)
         }
     }
 

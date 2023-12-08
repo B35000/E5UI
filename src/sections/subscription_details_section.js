@@ -473,6 +473,7 @@ class SubscriptionDetailsSection extends Component {
         var tags = object['ipfs'] == null ? ['Subscription'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var subscription_config = object['data'][1]
         var can_cancel_subscription = subscription_config[2] == 0 ? 'non-cancellable': 'cancellable'
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
@@ -481,7 +482,7 @@ class SubscriptionDetailsSection extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             
-            'age':{ 'style':'l', 'title':'Block ID', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${this.format_account_balance_figure(age)}`, 'barcolor':'', 'relativepower':'block', },
+            'age':{ 'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${this.format_account_balance_figure(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
             
             'target_authority_id': {'title':subscription_config[0], 'details':'Authority ID', 'size':'l'},
             

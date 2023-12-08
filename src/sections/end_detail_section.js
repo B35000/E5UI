@@ -246,6 +246,8 @@ class EndDetailSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
+                    {this.render_object_age(selected_object, item)}
+
                     {this.render_detail_item('3', {'size':'l', 'details':'Access Rights', 'title':this.get_access_rights_status(selected_object['access_rights_enabled'])})}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['token_type'])}
@@ -372,6 +374,19 @@ class EndDetailSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_object_age(object, item){
+        if(object['id'] != 3){
+            return(
+                <div>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['age'])}
+                    </div>
+                    <div style={{ height: 10 }} />
+                </div>
+            )
+        }
     }
 
     get_senders_name(sender, object){
@@ -692,6 +707,8 @@ class EndDetailSection extends Component {
         // var selected_object = this.get_exchange_tokens(3)[selected_item]
         var title = selected_object['id'];
         var img = selected_object['img']
+        var age = selected_object['event'] == null ? 0 : selected_object['event'].returnValues.p5
+        var time = selected_object['event'] == null ? 0 : selected_object['event'].returnValues.p4
         
         var selected_obj_root_config = selected_object['data'][0];
         var selected_obj_config = selected_object['data'][1];
@@ -722,6 +739,7 @@ class EndDetailSection extends Component {
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
             'token_id': {'title':'ID: '+selected_object['id'], 'details':'Token Identifier', 'size':'l'},
             'token_type': {'title':'Token Type', 'details':type, 'size':'l'},
+            'age': { 'style': 'l', 'title': 'Block Number', 'subtitle': 'age', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} ago`, },
 
             'unlocked_supply': {'title':'Unlocked Supply', 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
             'unlocked_liquidity': {'title':'Unlocked Liquidity', 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
@@ -2639,6 +2657,14 @@ class EndDetailSection extends Component {
             return a;
         }
         return this.calculateGCD(b, a % b);
+    }
+
+    get_number_width(number) {
+        var last_two_digits = number.toString().slice(0, 1) + '0';
+        if (number > 10) {
+            last_two_digits = number.toString().slice(0, 2);
+        }
+        return last_two_digits + '%'
     }
 
 

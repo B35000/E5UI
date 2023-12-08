@@ -213,6 +213,7 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('3', item['gas_limit'])}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['base_fee_per_gas_unit_in_gwei'])}
                         {this.render_detail_item('2', item['base_fee_per_gas_unit'])}
                     </div>
                     <div style={{height: 10}}/>
@@ -343,7 +344,9 @@ class EthersDetailsSection extends Component {
 
                 'gas_limit':{'title':this.format_account_balance_figure(this.get_latest_block_data(e5).gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
 
-                'base_fee_per_gas_unit':{ 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barwidth':this.calculate_bar_width(this.get_latest_block_data(e5).baseFeePerGas), 'number':this.format_account_balance_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barcolor':'#606060', 'relativepower':'gwei', },
+                'base_fee_per_gas_unit':{ 'style':'l', 'title':'Base Fee in wei', 'subtitle':this.format_power_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barwidth':this.calculate_bar_width(this.get_latest_block_data(e5).baseFeePerGas), 'number':this.format_account_balance_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barcolor':'#606060', 'relativepower':'wei', },
+
+                'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':'Base Fee in gwei', 'subtitle':this.format_power_figure(this.get_latest_block_data(e5).baseFeePerGas/10**9), 'barwidth':this.calculate_bar_width(this.get_latest_block_data(e5).baseFeePerGas/10**9), 'number':(this.get_latest_block_data(e5).baseFeePerGas/10**9), 'barcolor':'#606060', 'relativepower':'gwei', },
 
                 'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
 
@@ -506,7 +509,7 @@ class EthersDetailsSection extends Component {
     }
 
     get_txs_history_txs(tx_history, e5){
-        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115'){
+        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115' || e5 == 'E85'){
             return tx_history['items']
         }
         else if(e5 == 'E45'){

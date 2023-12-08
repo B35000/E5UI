@@ -32,7 +32,7 @@ class WithdrawEtherPage extends Component {
     state = {
         selected: 0, withdraw_ether_page_tags_object: this.get_withdraw_ether_page_tags_object(),
         recipient_address:'', confirmation_dialog_box: false, e5:{'data':[], 'id':this.props.app_state.selected_e5},
-        run_time_expiry:0
+        run_time_expiry:0, run_gas_price:0,
     };
 
     get_withdraw_ether_page_tags_object(){
@@ -128,10 +128,26 @@ class WithdrawEtherPage extends Component {
     }
 
 
-
+    get_gas_price_from_runs(e5){
+        var last_events = this.props.app_state.all_E5_runs[e5]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
+            }
+            sum = sum/last_check;
+        }
+        return sum
+    }
 
     render_withdraw_ether_part(){
         var e5 = this.state.e5
+        var gas_price = this.props.app_state.gas_price[e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs(e5)
+        }
+
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':'Your withdraw balance is shown below', 'title':'Withdraw balance'})}
@@ -164,6 +180,28 @@ class WithdrawEtherPage extends Component {
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':'Estimated Time.', 'size':'l'})}
 
                 <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
+
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':'Transaction Gas Price', 'details':'The gas price for your next run with E5. The default is set to the amount set by the network.', 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Transaction Gas Price in Wei', 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Transaction Gas Price in Gwei', 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_price/10**9), 'number':this.format_account_balance_figure(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'wei', })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Network Gas Price in Wei', 'subtitle':this.format_power_figure(this.state.gas_price), 'barwidth':this.calculate_bar_width(this.state.gas_price), 'number':this.format_account_balance_figure(this.state.gas_price), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':'Network Gas Price in Gwei', 'subtitle':this.format_power_figure(this.state.gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.gas_price/10**9), 'number':this.format_account_balance_figure(this.state.gas_price/10**9), 'barcolor':'', 'relativepower':'wei', })}
+                </div>
+
+                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
             </div>
         )
     }
@@ -175,6 +213,10 @@ class WithdrawEtherPage extends Component {
 
     when_run_expiry_time_set(number){
         this.setState({run_time_expiry: number})
+    }
+
+    when_run_gas_price(number){
+        this.setState({run_gas_price: number})
     }
 
     isValidAddress = (adr) => {
@@ -189,11 +231,16 @@ class WithdrawEtherPage extends Component {
 
 
     set_my_address(){
-        this.setState({recipient_address: this.get_account_address()})
+        if(this.props.app_state.has_wallet_been_set){
+            this.setState({recipient_address: this.get_account_address()})
+        }else{
+            this.props.notify('Please set your wallet first', 2500)
+        }
     }
 
     get_account_address(){
         var e5 = this.state.e5
+        
         if(this.props.app_state.accounts[e5['id']] != null){
             return this.format_address(this.props.app_state.accounts[e5['id']].address, e5['id']);
         }
@@ -260,7 +307,7 @@ class WithdrawEtherPage extends Component {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.e5['id']
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
-        this.props.withdraw_ether_to_address(this.state.recipient_address, e5, run_expiry_duration)
+        this.props.withdraw_ether_to_address(this.state.recipient_address, e5, run_expiry_duration, this.state.run_gas_price)
     }
 
 
@@ -320,6 +367,11 @@ class WithdrawEtherPage extends Component {
         }
     }
 
+    copy_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify('copied address to clipboard', 600)
+    }
+
     render_withdraws_event_item(item, index){
         var amount = item.returnValues.p5
         var e5 = this.state.e5['id']
@@ -335,7 +387,9 @@ class WithdrawEtherPage extends Component {
                 <div>
                     {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'transaction ID', 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p3), 'title': 'target', 'size': 's' })}
+                    <div onClick={() => this.copy_to_clipboard(item.returnValues.p3)}>
+                        {this.render_detail_item('3', { 'details': (item.returnValues.p3), 'title': 'target', 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }}/>
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
@@ -343,7 +397,7 @@ class WithdrawEtherPage extends Component {
 
                         {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Ether', 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
+                        {/* {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })} */}
                     </div>
                     <div style={{ height: 2 }}/>
 
@@ -436,7 +490,7 @@ class WithdrawEtherPage extends Component {
 
                         {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Ether', 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
+                        {/* {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })} */}
                     </div>
                     <div style={{ height: 2 }}/>
 

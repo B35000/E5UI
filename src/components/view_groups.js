@@ -211,7 +211,7 @@ class ViewGroups extends Component {
             var font = 'Sans-serif';/* Sans-serif , Times New Roman */
             var textsize = '15px';
             var text = 'some random text';
-            var color = this.props.theme['primary_text_color'];
+            var color = this.props.theme['secondary_text_color'];
 
             if(object_data!=null){
               font = object_data['font'];

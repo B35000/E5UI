@@ -260,7 +260,7 @@ class App extends Component {
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
     
-    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[], mempool:{},
+    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[], mempool:{}, token_name_directory:{},
   };
 
 
@@ -4269,15 +4269,16 @@ class App extends Component {
     this.open_withdraw_ether_bottomsheet()
   }
 
-  withdraw_ether_to_address = async (target_recipient_address, e5, run_expiry_duration) =>{
+  withdraw_ether_to_address = async (target_recipient_address, e5, run_expiry_duration, _run_gas_price) =>{
     this.prompt_top_notification('withdrawing your ether...', 600)
 
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
-    const contractAddress = this.state.e5_address
+    const contractAddress = this.state.addresses[e5][0]
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
     const gasPrice = await web3.eth.getGasPrice();
+    var run_gas_price = _run_gas_price == 0 ? gasPrice : _run_gas_price
     
     var now = await contractInstance.methods.f147(2).call((error, result) => {})
     var run_expiry_time = now + run_expiry_duration
@@ -4290,12 +4291,14 @@ class App extends Component {
         value: 0,
         to: contractAddress,
         data: encoded,
+        gasPrice: run_gas_price.toString(),
         time:now,
     }
     web3.eth.accounts.signTransaction(tx, me.state.accounts[e5].privateKey).then(signed => {
         web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt', (receipt) => {
           // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
           // this.start_get_accounts_data(false)
+          this.update_withdraw_balance(e5)
           this.start_get_accounts_for_specific_e5(false, e5)
           this.prompt_top_notification('withdraw complete!', 600)
         }) .on('error', (error) => {
@@ -4304,6 +4307,12 @@ class App extends Component {
         });
     })
 
+  }
+
+  update_withdraw_balance(e5){
+    var clone = structuredClone(this.state.withdraw_balance)
+    clone[e5] = 0
+    this.setState({withdraw_balance: clone})
   }
 
 
@@ -6718,20 +6727,34 @@ class App extends Component {
 
 
     var token_symbol_directory = {}
+    var token_name_directory = {}
     token_symbol_directory[0] = 'wei'
     token_symbol_directory['wei'] = 0
     for(var u=0; u<created_token_object_data.length; u++){
       var token_name = created_token_object_data[u]['ipfs'] == null ? 'tokens' : created_token_object_data[u]['ipfs'].entered_symbol_text
+      var token_title = created_token_object_data[u]['ipfs'] == null ? 'tokens' : created_token_object_data[u]['ipfs'].entered_title_text
       var token_id = created_token_object_data[u]['id']
-      if(token_id == 3) token_name = 'END'
-      if(token_id == 5) token_name = 'SPEND'
+
+      if(token_id == 3){
+        token_name = 'END'
+        token_title = e5
+      } 
+      if(token_id == 5) {
+        token_name = 'SPEND'
+        token_title = e5.replace('E','3')
+      }
       token_symbol_directory[token_id] = token_name;
       token_symbol_directory[token_name] = token_id
+      token_name_directory[e5+token_id] = token_title
     }
 
     var token_directory_clone = structuredClone(this.state.token_directory)
     token_directory_clone[e5] = token_symbol_directory
     this.setState({token_directory: token_directory_clone});
+
+    var token_name_directory_clone = structuredClone(this.state.token_name_directory)
+    token_name_directory_clone[e5] = token_name_directory
+    this.setState({token_name_directory: token_name_directory_clone});
   }
 
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses) => {

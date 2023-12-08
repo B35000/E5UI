@@ -369,7 +369,7 @@ class ChannelDetailsSection extends Component {
                     {items.map((item, index) => (
                         <div key={index}>
                             {this.render_detail_item(item['type'], item['data'])} 
-                            <div style={{height:10}}/>
+                            <div style={{height:2}}/>
                         </div>
                     ))}
                 </div>
@@ -449,7 +449,7 @@ class ChannelDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
         }
     }
 

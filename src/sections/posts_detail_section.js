@@ -315,7 +315,7 @@ class PostsDetailsSection extends Component {
                     {items.map((item, index) => (
                         <div key={index}>
                             {this.render_detail_item(item['type'], item['data'])} 
-                            <div style={{height:10}}/>
+                            <div style={{height:2}}/>
                         </div>
                     ))}
                 </div>
@@ -345,7 +345,7 @@ class PostsDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
         }
     }
 
@@ -532,7 +532,7 @@ class PostsDetailsSection extends Component {
 
     show_add_comment_bottomsheet(object){
         // var object = this.get_post_items()[this.props.selected_post_item];
-        var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
+        var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'post')
     }
 
