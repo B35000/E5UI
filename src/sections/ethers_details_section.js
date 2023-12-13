@@ -162,9 +162,9 @@ class EthersDetailsSection extends Component {
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', item['supply'])}
                     </div> */}
-                    {this.render_detail_item('0')}
+                    {/* {this.render_detail_item('0')} */}
 
-                    {this.render_detail_item('3', item['chain_id'])}
+                    {/* {this.render_detail_item('3', item['chain_id'])} */}
                     {/* <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['peer_count'])} */}
                     <div style={{height: 10}}/>
@@ -182,7 +182,7 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('0')} */}
 
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
@@ -278,6 +278,13 @@ class EthersDetailsSection extends Component {
             // this.get_token('NRG', 'Energi', 'E145'),
             this.get_token('VIC', 'Viction', 'E165'),
             this.get_token('EVMOS', 'Evmos EVM', 'E175'),
+
+            this.get_token('ETH', 'Ethereum', 'E185'),
+            this.get_token('OETH', 'Optimism', 'E195'),
+            this.get_token('BETH', 'Base', 'E205'),
+            this.get_token('AETH', 'Arbitrum One', 'E215'),
+            this.get_token('ASTR', 'Astar EVM', 'E225'),
+            this.get_token('CRO', 'Cronos EVM', 'E235'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
@@ -509,14 +516,14 @@ class EthersDetailsSection extends Component {
     }
 
     get_txs_history_txs(tx_history, e5){
-        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115' || e5 == 'E85'){
+        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115' || e5 == 'E85' || e5 == 'E185' || e5 == 'E195' || e5 == 'E205'){
             return tx_history['items']
         }
         else if(e5 == 'E45'){
             var data =  tx_history['result']['transactions']
             return data
         }
-        else if(e5 == 'E55' || e5 == 'E65'|| e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135' || e5 == 'E155' || e5 == 'E145'){
+        else if(e5 == 'E55' || e5 == 'E65'|| e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135' || e5 == 'E155' || e5 == 'E145' || e5 == 'E215' || e5 == 'E225' || e5 == 'E235'){
             return tx_history['result']
         }
         else if(e5 == 'E165'){
@@ -592,7 +599,7 @@ class EthersDetailsSection extends Component {
     }
 
     get_from_value(item, e5){
-        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E85'){
+        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E85' || e5 == 'E185'|| e5 == 'E195' || e5 == 'E205'){
             var relative_time = this.get_time_difference(new Date(item['timestamp']).getTime()/1000)
             return {'from':item['from']['hash'], 'to':item['to']['hash'], 'gas_used':item['gas_used'], 'gas_price':item['gas_price'], 'value':item['value'], 'time':''+(new Date(item['timestamp'])), 'block':number_with_commas(item['block']), 'relative_time':''+(relative_time)}
         }
@@ -600,11 +607,11 @@ class EthersDetailsSection extends Component {
             var relative_time = this.get_time_difference(item['timestamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gas'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timestamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
-        else if(e5 == 'E55' || e5 == 'E65'){
+        else if(e5 == 'E55' || e5 == 'E65' || e5 == 'E225' || e5 == 'E235'){
             var relative_time = this.get_time_difference(item['timeStamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
-        else if(e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'|| e5 == 'E155' || e5 == 'E145'){
+        else if(e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'|| e5 == 'E155' || e5 == 'E145' || e5 == 'E215'){
             var relative_time = this.get_time_difference(item['timeStamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }

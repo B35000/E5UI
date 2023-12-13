@@ -174,7 +174,7 @@ class WithdrawEtherPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Withdraw Expiry Duration', 'details':'The duration of time after which your withdrawal transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Withdraw Transaction Expiry Duration', 'details':'The duration of time after which your withdrawal transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.', 'size':'l'})}
                 <div style={{height:20}}/>
                 
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':'Estimated Time.', 'size':'l'})}

@@ -58,7 +58,7 @@ class home_page extends Component {
     }
 
 
-    set_cupcakes(){
+    set_cookies(){
         if(this.props.app_state.storage_permissions =='enabled'){
             localStorage.setItem("viewed", JSON.stringify(this.get_persistent_data()));
         }else{
@@ -1728,10 +1728,10 @@ class home_page extends Component {
         }
     }
 
-    update_cupcakes(){
+    update_cookies(){
         var me = this;
         setTimeout(function() {
-           me.set_cupcakes()
+           me.set_cookies()
         }, (1 * 1000));
     }
 
@@ -1744,7 +1744,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_jobs_clone.push(id)
             this.setState({viewed_jobs: viewed_jobs_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_job_objects_responses(id, e5)
@@ -1764,7 +1764,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_contracts_clone.push(id)
             this.setState({viewed_contracts: viewed_contracts_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_contract_event_data(id, e5)
@@ -1784,7 +1784,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_subscriptions_clone.push(id)
             this.setState({viewed_subscriptions: viewed_subscriptions_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_subscription_event_data(id, e5)
@@ -1804,7 +1804,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_posts_clone.push(id)
             this.setState({viewed_posts: viewed_posts_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_objects_messages(id, e5)
@@ -1824,7 +1824,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_channel_clone.push(id)
             this.setState({viewed_channels: viewed_channel_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_objects_messages(id, e5)
@@ -1845,7 +1845,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_proposals_clone.push(id)
             this.setState({viewed_proposals: viewed_proposals_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_objects_messages(id, e5)
@@ -1873,7 +1873,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_storefront_clone.push(id)
             this.setState({viewed_stores: viewed_storefront_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_direct_purchase_events(id, e5)
@@ -1893,7 +1893,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_bag_clone.push(id)
             this.setState({viewed_bags: viewed_bag_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_job_objects_responses(id, e5)
@@ -1913,7 +1913,7 @@ class home_page extends Component {
         if(pos == -1){
             viewed_contractors_clone.push(id)
             this.setState({viewed_contractors: viewed_contractors_clone})
-            this.update_cupcakes()
+            this.update_cookies()
         }
 
         this.props.get_contractor_applications(id, e5)
@@ -1988,7 +1988,7 @@ class home_page extends Component {
         var me = this;
         setTimeout(function() {
             me.setState({tabs: clone})
-            me.update_cupcakes()
+            me.update_cookies()
         }, (1 * 100));
     }
 
@@ -2051,7 +2051,7 @@ class home_page extends Component {
 
                 get_job_objects_responses={this.props.get_job_objects_responses.bind(this)} get_objects_messages={this.props.get_objects_messages.bind(this)} get_contractor_applications={this.props.get_contractor_applications.bind(this)} get_post_award_data={this.props.get_post_award_data.bind(this)} get_e5_data={this.get_e5_data.bind(this)} show_add_comment_bottomsheet={this.props.show_add_comment_bottomsheet.bind(this)}
 
-                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.props.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} pin_bag={this.pin_bag.bind(this)} pin_channel={this.pin_channel.bind(this)} pin_item={this.pin_item.bind(this)} pin_post={this.pin_post.bind(this)} pin_subscription={this.pin_subscription.bind(this)} pin_proposal={this.pin_proposal.bind(this)} pin_contractor={this.pin_contractor.bind(this)} pin_contract={this.pin_contract.bind(this)} pin_job={this.pin_job.bind(this)} get_channel_event_data={this.props.get_channel_event_data.bind(this)} open_e5_link={this.open_e5_link.bind(this)} open_rpc_settings={this.open_rpc_settings.bind(this)}
+                get_contract_event_data={this.props.get_contract_event_data.bind(this)} get_proposal_event_data={this.props.get_proposal_event_data.bind(this)} get_subscription_event_data={this.props.get_subscription_event_data.bind(this)} get_exchange_event_data={this.props.get_exchange_event_data.bind(this)} get_moderator_event_data={this.props.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.props.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.props.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.props.open_wallet_guide_bottomsheet.bind(this)} pin_bag={this.pin_bag.bind(this)} pin_channel={this.pin_channel.bind(this)} pin_item={this.pin_item.bind(this)} pin_post={this.pin_post.bind(this)} pin_subscription={this.pin_subscription.bind(this)} pin_proposal={this.pin_proposal.bind(this)} pin_contractor={this.pin_contractor.bind(this)} pin_contract={this.pin_contract.bind(this)} pin_job={this.pin_job.bind(this)} get_channel_event_data={this.props.get_channel_event_data.bind(this)} open_e5_link={this.open_e5_link.bind(this)} open_rpc_settings={this.open_rpc_settings.bind(this)} get_wallet_data_for_specific_e5={this.props.get_wallet_data_for_specific_e5.bind(this)}
                 />
             </div>
         )
@@ -2202,12 +2202,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_bag_clone.push(id)
             this.setState({pinned_bags: pinned_bag_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Bag Pinned',900)
         }else{
             pinned_bag_clone.splice(pos, 1)
             this.setState({pinned_bags: pinned_bag_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Bag Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2225,12 +2225,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_channel_clone.push(id)
             this.setState({pinned_channels: pinned_channel_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Channel Pinned',900)
         }else{
             pinned_channel_clone.splice(pos, 1)
             this.setState({pinned_channels: pinned_channel_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Channel Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2248,12 +2248,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_item_clone.push(id)
             this.setState({pinned_item: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Item Pinned',900)
         }else{
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_item: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Item Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2271,12 +2271,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_item_clone.push(id)
             this.setState({pinned_post: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Post Pinned',900)
         }else{
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_post: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Post Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2294,12 +2294,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_item_clone.push(id)
             this.setState({pinned_subscriptions: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Subscription Pinned',900)
         }else{
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_subscriptions: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Subscription Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2317,12 +2317,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_item_clone.push(id)
             this.setState({pinned_proposal: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Proposal Pinned',900)
         }else{
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_proposal: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Proposal Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2340,12 +2340,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_item_clone.push(id)
             this.setState({pinned_contractor: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Contractor Pinned',900)
         }else{
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_contractor: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Contractor Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2363,12 +2363,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_item_clone.push(id)
             this.setState({pinned_contract: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Contract Pinned',900)
         }else{
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_contract: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Contract Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2386,12 +2386,12 @@ class home_page extends Component {
         if(pos == -1){
             pinned_item_clone.push(id)
             this.setState({pinned_job: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Job Pinned',900)
         }else{
             pinned_item_clone.splice(pos, 1)
             this.setState({pinned_job: pinned_item_clone})
-            this.update_cupcakes()
+            this.update_cookies()
             this.props.notify('Job Unpinned',900)
 
             if(this.is_in_pinned_section){
@@ -2704,7 +2704,7 @@ class home_page extends Component {
                 this.focus_tab(this.state.tabs[prev_index])
             }
             this.setState({tabs: cloned_array})
-            this.update_cupcakes()
+            this.update_cookies()
         }
     }
 
@@ -2829,7 +2829,7 @@ class home_page extends Component {
         var me = this;
         setTimeout(function() {
             me.setState({tabs: clone})
-            me.update_cupcakes()
+            me.update_cookies()
         }, (1 * 100));
 
     }

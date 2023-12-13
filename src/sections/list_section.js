@@ -1678,6 +1678,13 @@ class PostListSection extends Component {
             // this.get_token_data('NRG', 'Energi', 'E145'),
             this.get_token_data('VIC', 'Viction', 'E165'),
             this.get_token_data('EVMOS', 'Evmos EVM', 'E175'),
+
+            this.get_token_data('ETH', 'Ethereum', 'E185'),
+            this.get_token_data('OETH', 'Optimism', 'E195'),
+            this.get_token_data('BETH', 'Base', 'E205'),
+            this.get_token_data('AETH', 'Arbitrum One', 'E215'),
+            this.get_token_data('ASTR', 'Astar EVM', 'E225'),
+            this.get_token_data('CRO', 'Cronos EVM', 'E235'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')

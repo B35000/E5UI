@@ -202,7 +202,7 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('0')}
 
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(e5)}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}

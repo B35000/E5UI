@@ -97,12 +97,10 @@ class template extends Component {
                 <TextInput height={30} placeholder={'Recipient ID'} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
                 {this.load_account_suggestions()}
 
-
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'size':'l', 'details':'Amount to transfer to the speicified target account', 'title':'Amount for Transfer'})}
 
                 <div style={{height:10}}/>
-
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('2', { 'style':'l', 'title':'Transfer Amount', 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
@@ -114,8 +112,6 @@ class template extends Component {
 
                 <div style={{height:10}}/>
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':'Add Transaction', 'action':''})}

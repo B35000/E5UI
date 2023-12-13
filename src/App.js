@@ -20,8 +20,12 @@ import tt from './assets/tt.png'
 import nrg from './assets/nrg.png'
 import viction from './assets/viction.png'
 import evmos from './assets/evmos.png'
-
-
+import eth from './assets/ethereum.png'
+import optimism from './assets/optimism.png'
+import base from './assets/base.png'
+import arbitrum from './assets/arbitrum.png'
+import astar from './assets/astar.png'
+import cronos from './assets/cronos.png'
 
 /* e5 images */
 import E25EndImg from './assets/E25.png';
@@ -265,9 +269,9 @@ class App extends Component {
 
 
   get_e5s(){
-    var others = []
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235']
     return{
-      'data':[/* 'E15', */ 'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135',/* 'E145', */ 'E155', 'E165', 'E175'].concat(others),
+      'data':[/* 'E15', */ 'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135',/* 'E145', */ 'E155', 'E165', 'E175',].concat(others),
       'E15':{
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
@@ -379,11 +383,48 @@ class App extends Component {
 
 
 
-      'F1':{
+      'E5':{
         web3:[''],
         token:'',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:3_000
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+
+      'E185':{
+        web3:['https://rpc.ankr.com/eth'],
+        token:'ETH',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:eth, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E195':{
+        web3:['https://optimism.llamarpc.com'],
+        token:'OETH',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:optimism, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E205':{
+        web3:['https://base.llamarpc.com'],
+        token:'BETH',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:base, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E215':{
+        web3:['https://arbitrum.llamarpc.com'],
+        token:'AETH',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:arbitrum, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E225':{
+        web3:['https://astar-rpc.dwellir.com'],
+        token:'ASTR',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:astar, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E235':{
+        web3:['https://cronos-evm.publicnode.com'],
+        token:'CRO',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:cronos, iteration:3_000, url:0, active:false, e5_img:End25Img
       },
       
     }
@@ -459,7 +500,7 @@ class App extends Component {
   componentDidMount() {
     console.log("mounted");
     
-    this.load_cupcakes();
+    this.load_cookies();
     this.load_e5_data();
      
     /* listens for when the window is resized */
@@ -480,7 +521,7 @@ class App extends Component {
 
     clearInterval(this.interval);
 
-    this.set_cupcakes()
+    this.set_cookies()
   }
 
   reset_background_sync(){
@@ -496,7 +537,7 @@ class App extends Component {
     return str.length + (m ? m.length : 0);
   }
 
-  set_cupcakes(){
+  set_cookies(){
     // localStorage.setItem("state", JSON.stringify(this.get_persistent_data(), (key, value) =>
     //         typeof value === 'bigint'
     //             ? value.toString()
@@ -517,7 +558,7 @@ class App extends Component {
       this.setState({index_db_size: this.lengthInUtf8Bytes('')})
       
       if(this.homepage.current){
-        this.homepage.current?.set_cupcakes()
+        this.homepage.current?.set_cookies()
       }
     }
   }
@@ -567,7 +608,7 @@ class App extends Component {
     return selected_array
   }
 
-  load_cupcakes = async () =>{
+  load_cookies = async () =>{
     // var cupcake_state = localStorage.getItem("state");
     var cupcake_state = await this.load_data_from_indexdb()
     if(cupcake_state != null){
@@ -808,7 +849,7 @@ class App extends Component {
 
 
   get_key = async () => {
-    // 0xD637CBbc18fa589bd9d3708ecA90bf71e2A8B243
+    // 0xD637CBbc18fa589bd9d3708ecA90bf71e2A8B243 <----dont use this address, REACT_APP_SEED_API_KEY is compromised!
 
     var seed = ''+process.env.REACT_APP_SEED_API_KEY
     var web3_url = this.get_web3_url_from_e5('E175')
@@ -844,6 +885,25 @@ class App extends Component {
     //     me.prompt_top_notification('send failed, '+error, 6000)
     //   }
     // });
+
+
+    const address = '14ZivGjRUMyUXWaakBYDzEfLTiiN5ZZ4Qo';
+    var link = `https://blockchain.info/unspent?active=${address}`//get utxos
+    link = `https://blockchain.info/rawaddr/${address}`//get transaction history
+
+    link = `https://api.fullstack.cash/v5/electrumx/unconfirmed/${address}`
+
+    try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Status: ${response}`);
+        }
+        const data = await response.text();
+        var e5_address_obj = JSON.parse(data);
+        console.log(e5_address_obj)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
   }
 
   init_db = async () => {
@@ -1178,18 +1238,18 @@ class App extends Component {
 
       get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
 
-      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)}
+      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)}
       />
     )
   }
 
-  set_cupcakes_after_stack_action(stack_items){
+  set_cookies_after_stack_action(stack_items){
     var me = this;
     setTimeout(function() { 
       if(me.stack_page.current!= null){
         me.stack_page.current?.run_transactions(true)
       } 
-      me.set_cupcakes()
+      me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1210,7 +1270,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
   add_channel_message_to_stack_object(message){
@@ -1230,7 +1290,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
   add_post_reply_to_stack(message){
@@ -1250,7 +1310,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
   add_job_message_to_stack_object(message){
@@ -1270,7 +1330,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
   add_proposal_message_to_stack_object(message){
@@ -1290,7 +1350,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
   add_bag_message_to_stack_object(message){
@@ -1310,7 +1370,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
   add_storefront_message_to_stack_object(message){
@@ -1330,7 +1390,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
   when_select_deselect_work_tag(tag, pos){
@@ -1344,7 +1404,7 @@ class App extends Component {
     this.setState({job_section_tags: clone, should_update_section_tags_onchain: true})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1359,7 +1419,7 @@ class App extends Component {
     this.setState({explore_section_tags: clone, should_update_section_tags_onchain: true})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1367,7 +1427,7 @@ class App extends Component {
     this.setState({visible_tabs: 'enabled'})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
         me.stack_page.current?.set_tabs_tag()
     }, (1 * 1000));
   }
@@ -1425,7 +1485,7 @@ class App extends Component {
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_receive_ether_bottomsheet.bind(this)} open={this.state.send_receive_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': overlay_background,'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '5px 5px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+overlay_shadow_color,'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
               
-              <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} start_scan={this.start_scan.bind(this)}/>
+              <SendReceiveEtherPage ref={this.send_receive_ether_page}  app_state={this.state} size={size} width={this.state.width} height={this.state.height} notify={this.prompt_top_notification.bind(this)} send_ether_to_target={this.send_ether_to_target.bind(this)} transaction_history={this.state.account_transaction_history} theme={this.state.theme} ether_balance={this.state.account_balance} start_scan={this.start_scan.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -1472,7 +1532,7 @@ class App extends Component {
     this.setState({theme: this.get_theme_data(theme)})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
     
   }
@@ -1487,7 +1547,7 @@ class App extends Component {
     setTimeout(function() {
         // console.log('------------------when_selected_e5_changed---------------------')
         // console.log(me.state.selected_e5)
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1495,7 +1555,7 @@ class App extends Component {
     this.setState({storage_option: option})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1509,7 +1569,7 @@ class App extends Component {
     this.setState({refresh_speed: item})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
         me.reset_background_sync()
     }, (1 * 1000));
   }
@@ -1518,7 +1578,7 @@ class App extends Component {
     this.setState({masked_content: item})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1526,7 +1586,7 @@ class App extends Component {
     this.setState({content_channeling: item})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1534,7 +1594,7 @@ class App extends Component {
     this.setState({device_language: item})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1542,7 +1602,7 @@ class App extends Component {
     this.setState({section_tags_setting:item})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1550,7 +1610,7 @@ class App extends Component {
     this.setState({visible_tabs: item})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1558,7 +1618,7 @@ class App extends Component {
     this.setState({storage_permissions: item})
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1566,7 +1626,7 @@ class App extends Component {
     this.setState({stack_optimizer: item})
     var me = this;
     setTimeout(function() {
-      me.set_cupcakes()
+      me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1721,7 +1781,7 @@ class App extends Component {
     }
 
     this.setState({stack_items: new_stack})
-    this.set_cupcakes_after_stack_action(new_stack)
+    this.set_cookies_after_stack_action(new_stack)
   }
 
   view_transaction(tx, index){
@@ -1751,7 +1811,7 @@ class App extends Component {
 
     var me = this;
     setTimeout(function() {
-      me.set_cupcakes()
+      me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1780,7 +1840,7 @@ class App extends Component {
       stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'alias', entered_indexing_tags:['alias', 'reserve', 'identification'], alias:id})
       this.prompt_top_notification('Transaction added to stack', 1000)
       this.setState({stack_items: stack_clone})
-      this.set_cupcakes_after_stack_action(stack_clone)
+      this.set_cookies_after_stack_action(stack_clone)
     }
   }
 
@@ -1798,7 +1858,7 @@ class App extends Component {
       stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'unalias', entered_indexing_tags:['unalias', 'unreserve', 'identification'], alias:id['alias']})
       this.prompt_top_notification('Unreserve transaction added to stack', 1000)
       this.setState({stack_items: stack_clone})
-      this.set_cupcakes_after_stack_action(stack_clone)
+      this.set_cookies_after_stack_action(stack_clone)
     }
   }
 
@@ -1816,7 +1876,7 @@ class App extends Component {
       stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'re-alias', entered_indexing_tags:['re-alias', 'reserve', 'identification'], alias:id['alias']})
       this.prompt_top_notification('Reset transaction added to stack', 1000)
       this.setState({stack_items: stack_clone})
-      this.set_cupcakes_after_stack_action(stack_clone)
+      this.set_cookies_after_stack_action(stack_clone)
     }
   }
 
@@ -1831,7 +1891,7 @@ class App extends Component {
     
     var me = this;
     setTimeout(function() {
-      me.set_cupcakes()
+      me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -1973,7 +2033,7 @@ class App extends Component {
         stack_clone.push(state_obj)
       }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -1991,7 +2051,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2281,7 +2341,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2337,7 +2397,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2387,7 +2447,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2436,7 +2496,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2486,7 +2546,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2522,7 +2582,7 @@ class App extends Component {
     var stack_clone = this.state.stack_items.slice()
     stack_clone.push(state)
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2571,7 +2631,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2622,7 +2682,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2660,7 +2720,7 @@ class App extends Component {
     var stack_clone = this.state.stack_items.slice()      
     stack_clone.push(state_obj)
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2716,7 +2776,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2767,7 +2827,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2821,7 +2881,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2874,7 +2934,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2926,7 +2986,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -2978,7 +3038,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3029,7 +3089,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3077,7 +3137,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3130,7 +3190,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3179,7 +3239,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3231,7 +3291,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3282,7 +3342,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3332,7 +3392,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
 
     var clone = JSON.parse(JSON.stringify(this.state.my_contract_applications))
     clone[state_obj.picked_contract['id']] = state_obj.application_expiry_time
@@ -3387,7 +3447,7 @@ class App extends Component {
       var stack_clone = this.state.stack_items.slice()      
       stack_clone.push(state_obj)
       this.setState({stack_items: stack_clone})
-      this.set_cupcakes_after_stack_action(stack_clone)
+      this.set_cookies_after_stack_action(stack_clone)
 
       this.show_enter_contract_bottomsheet(state_obj.application_item['contract'])
       this.open_view_application_contract_bottomsheet()
@@ -3439,7 +3499,7 @@ class App extends Component {
       stack_clone.splice(index, 1); // 2nd parameter means remove one item only
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
     this.open_view_transaction_bottomsheet()
   }
 
@@ -3680,7 +3740,7 @@ class App extends Component {
         stack[pos].messages_to_deliver.splice(index, 1); // 2nd parameter means remove one item only
       }
       this.setState({stack_items: stack})
-      this.set_cupcakes_after_stack_action(stack)
+      this.set_cookies_after_stack_action(stack)
     }
   }
 
@@ -3707,7 +3767,7 @@ class App extends Component {
         stack[pos].items_to_deliver.splice(index, 1); // 2nd parameter means remove one item only
       }
       this.setState({stack_items: stack})
-      this.set_cupcakes_after_stack_action(stack)
+      this.set_cookies_after_stack_action(stack)
     }
 
   }
@@ -3727,7 +3787,7 @@ class App extends Component {
         stack[pos].items_to_clear.splice(index, 1); // 2nd parameter means remove one item only
       }
       this.setState({stack_items: stack})
-      this.set_cupcakes_after_stack_action(stack)
+      this.set_cookies_after_stack_action(stack)
     }
   }
 
@@ -3825,7 +3885,7 @@ class App extends Component {
       }
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
 
@@ -3876,7 +3936,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -3917,7 +3977,7 @@ class App extends Component {
     var stack_clone = this.state.stack_items.slice()      
     stack_clone.push(state_obj)
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
 
     this.show_enter_contract_bottomsheet(state_obj.application_item['contract'])
     this.open_view_bag_application_contract_bottomsheet()
@@ -3973,7 +4033,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -4051,7 +4111,7 @@ class App extends Component {
       stack[pos].items_to_clear.push(state_obj)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
 
@@ -4101,7 +4161,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -4153,7 +4213,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
   add_job_request_message_to_stack_object(message){
@@ -4173,7 +4233,7 @@ class App extends Component {
       stack[pos].messages_to_deliver.push(message)
     }
     this.setState({stack_items: stack})
-    this.set_cupcakes_after_stack_action(stack)
+    this.set_cookies_after_stack_action(stack)
   }
 
 
@@ -4366,7 +4426,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -4489,7 +4549,7 @@ class App extends Component {
       stack_clone.push(state_obj)
     }
     this.setState({stack_items: stack_clone})
-    this.set_cupcakes_after_stack_action(stack_clone)
+    this.set_cookies_after_stack_action(stack_clone)
   }
 
 
@@ -4581,7 +4641,7 @@ class App extends Component {
     
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -4592,7 +4652,7 @@ class App extends Component {
 
     var me = this;
     setTimeout(function() {
-      me.set_cupcakes()
+      me.set_cookies()
       me.start_get_accounts_for_specific_e5(false, ether['e5'])
     }, (1 * 1000));
   }
@@ -5169,11 +5229,13 @@ class App extends Component {
     var web3_url = this.get_web3_url_from_e5(e5)
     var e5_address = this.state.e5s[e5].e5_address;
     var account_for_e5 = this.state.accounts[e5]
-    if(e5_address != ''){
+    if(web3_url != ''){
       this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
       if(this.get_contract_from_e5(e5) != ''){
         this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5)
       }
+    }else{
+      console.log(e5, ' e5 missing web3_url')
     }
   }
 
@@ -5372,7 +5434,7 @@ class App extends Component {
       this.h52_events[e5].push(element)
     });
 
-    this.set_cupcakes()
+    this.set_cookies()
     this.get_accounts_data(_account, is_syncing, web3_url, e5_address, e5)
   }
 
@@ -5381,9 +5443,8 @@ class App extends Component {
 
 
 
-  get_wallet_data_for_specific_e5(){
+  get_wallet_data_for_specific_e5(e5){
     this.prompt_top_notification('updating your wallets balance...', 2000)
-    var e5 = this.state.selected_e5
     var web3_url = this.get_web3_url_from_e5(e5)
     var account_for_e5 = this.state.accounts[e5]
     this.get_wallet_data(account_for_e5, false, web3_url, null, e5)
@@ -5851,8 +5912,8 @@ class App extends Component {
 
   //here
   load_ether_history = async (e5, address) =>{
-    console.log('loading ether history from e5: ',e5)
     if(address.toString() == '0xB5195BA86F7a2D6AE1bFE15129Dbc9202f04B4c1') return;
+    console.log('loading ether history from e5: ',e5)
     var link = ''
     var body = {}
     var e5_address_obj = {}
@@ -6114,6 +6175,94 @@ class App extends Component {
         const data = await response.text();
         e5_address_obj = JSON.parse(data);
         console.log('--------------------------------E145:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E185'){
+      link = `https://eth.blockscout.com/api/v2/addresses/${address}/transactions`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E195'){
+      link = `https://optimism.blockscout.com/api/v2/addresses/${address}/transactions`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E205'){
+      link = `https://base.blockscout.com/api/v2/addresses/${address}/transactions`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E215'){
+      var key = ''+process.env.REACT_APP_ARBITRUM_API_KEY
+      link = `https://api.arbiscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=${key}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('-------------------------------------E215:load_ether_history----------------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E225'){
+      link = `https://blockscout.com/astar/api?module=account&action=txlist&address=${address}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E225:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E235'){
+      link = `https://cronos.org/explorer/api?module=account&action=txlist&address=${address}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E235:load_ether_history-----------------------------------')
         console.log(e5_address_obj)
         console.log(address)
       } catch (error) {
@@ -7930,7 +8079,7 @@ class App extends Component {
 
     var me = this;
     setTimeout(function() {
-        me.set_cupcakes()
+        me.set_cookies()
     }, (1 * 1000));
   }
 
@@ -7974,7 +8123,7 @@ class App extends Component {
 
     var me = this;
     setTimeout(function() {
-      me.set_cupcakes()
+      me.set_cookies()
     }, (1 * 1000));
   }
 

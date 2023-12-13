@@ -54,7 +54,7 @@ class NewMintActionPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
@@ -67,7 +67,7 @@ class NewMintActionPage extends Component {
                     </div>
                 </div>
                 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Buy or Sell the specified token'})}
 
                     <div style={{height:10}}/> 
@@ -117,16 +117,10 @@ class NewMintActionPage extends Component {
 
                 <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
-                {this.render_detail_item('0')}
                 {this.render_fees_for_action_title()}
 
-                <div style={{height:10}}/>
-                {this.render_buy_token_uis(this.state.token_item['data'][3], this.calculate_token_prices(this.state.token_item['data'][4]), this.state.token_item['data'][5])}
-
-                <div style={{height:20}}/>
                 {this.render_my_balances_if_buy_action()}
                 
-                <div style={{height:20}}/>
                 {this.set_price_data()}
 
                 {/* {this.render_detail_item('0')}
@@ -149,8 +143,13 @@ class NewMintActionPage extends Component {
             var max = this.get_token_buy_limit()
             this.setState({amount: max})
         }else{
-            var max = this.state.token_item['balance']
-            this.setState({amount: max})
+            if(this.state.token_item['balance'] < this.get_token_sell_limit()){
+                var max = this.state.token_item['balance']
+                this.setState({amount: max})
+            }else{
+                var max = this.get_token_sell_limit()
+                this.setState({amount: max})
+            }
         }
         
     }
@@ -169,6 +168,7 @@ class NewMintActionPage extends Component {
                 var buy_depths = [].concat(selected_object['data'][5])
                 return(
                     <div>
+                        <div style={{height:20}}/>
                         {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling the token', 'title':'Receive Amount'})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
@@ -192,6 +192,7 @@ class NewMintActionPage extends Component {
                 var buy_depths = selected_object['data'][5]
                 return(
                     <div>
+                        <div style={{height:20}}/>
                         {this.render_detail_item('3', {'size':'l', 'details':'The amount youll probably get from the buy action', 'title':'Receive Amount'})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
@@ -240,12 +241,9 @@ class NewMintActionPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':'Amount set to submit for the buy action', 'title':'Fees for Action'})}
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Amount set to receive for the sell action', 'title':'Receive Amount'})}
+
+                    <div style={{height:10}}/>
+                    {this.render_buy_token_uis(this.state.token_item['data'][3], this.calculate_token_prices(this.state.token_item['data'][4]), this.state.token_item['data'][5])}
                 </div>
             )
         }
@@ -323,6 +321,7 @@ class NewMintActionPage extends Component {
         if(action == 'mint-buy'){
             return(
                 <div>
+                    <div style={{height:20}}/>
                     {this.render_detail_item('3', {'size':'l', 'details':'The amounts you have available for buying the token', 'title':'Your balances'})}
                     <div style={{height:10}}/>
 
@@ -653,16 +652,25 @@ class NewMintActionPage extends Component {
         }
         else{
             if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){
-                this.props.notify('you dont have enough tokens for that')
+                this.props.notify('you dont have enough tokens for that sell action', 3500)
             }
             else if(!this.check_if_sender_has_tokens_for_buy() && action == 'mint-buy'){
-                this.props.notify('you dont have enough tokens to buy that much')
+                this.props.notify('you dont have enough tokens to buy that much', 3500)
             }
             else if(!this.check_if_sender_can_interact_with_exchange()){
-                this.props.notify('you cant interact with the same exchange twice in one run', 1200)
+                this.props.notify('you cant interact with the same exchange twice in one run', 3200)
+            }
+            else if(amount > this.get_token_buy_limit() && action == 'mint-buy'){
+                this.props.notify('the amount youve set exceeds the maximum buy amount enforced by the exchange', 6500)
+            }
+            else if(amount > this.get_token_sell_limit() && action == 'dump-sell'){
+                this.props.notify('the amount youve set exceeds the maximum sell amount enforced by the exchange', 6500)
             }
             else if(!can_make_swap){
                 this.props.notify(reason, 1500)
+            }
+            else if(!this.check_if_sender_can_sell_end_tokens()){
+                this.props.notify('You cant sell end while having a withdraw balance. Withdraw your ether first.',7500)
             }
             else{
                 this.props.add_buy_sell_transaction_to_stack(this.state)
@@ -766,6 +774,19 @@ class NewMintActionPage extends Component {
 
 
         return {can_make_swap:can_make_swap, reason: reason}
+    }
+
+    check_if_sender_can_sell_end_tokens(){
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        if(action == 'dump-sell' && this.state.token_item['id'].toString() == '3'){
+            var e5 = this.state.token_item['e5']
+            var withdraw_balance = this.props.app_state.withdraw_balance[e5]
+            if(withdraw_balance != 0){
+                return false
+            }
+        }
+
+        return true
     }
 
 
