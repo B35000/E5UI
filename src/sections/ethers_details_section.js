@@ -6,6 +6,7 @@ import Letter from './../assets/letter.png';
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+import { from } from "@iotexproject/iotex-address-ts";
 
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -155,6 +156,9 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 20}}/>
+                    
+                    {this.render_wallet_status(item)}
+                    <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['number_label_large'])}
                     </div>
@@ -241,6 +245,22 @@ class EthersDetailsSection extends Component {
         )
     }
 
+    render_wallet_status(item){
+        if(this.get_gas_limit(item['e5']) == 0){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Syncronizing wallet, please wait...', 'size' :'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Syncronized.', 'size' :'l'})}
+                </div>
+            )
+        }
+    }
+
 
     open_send_receive_ether_bottomsheet(item){
         if(!this.props.app_state.has_wallet_been_set){
@@ -275,7 +295,7 @@ class EthersDetailsSection extends Component {
             this.get_token('MATIC', 'Polygon', 'E125'),
             this.get_token('BNB', 'Binance S.C.', 'E135'),
             this.get_token('TT', 'ThunderCore', 'E155'),
-            // this.get_token('NRG', 'Energi', 'E145'),
+            this.get_token('NRG', 'Energi', 'E145'),
             this.get_token('VIC', 'Viction', 'E165'),
             this.get_token('EVMOS', 'Evmos EVM', 'E175'),
 
@@ -285,6 +305,59 @@ class EthersDetailsSection extends Component {
             this.get_token('AETH', 'Arbitrum One', 'E215'),
             this.get_token('ASTR', 'Astar EVM', 'E225'),
             this.get_token('CRO', 'Cronos EVM', 'E235'),
+            this.get_token('KAVA', 'Kava EVM', 'E245'),
+            this.get_token('NEON', 'Neon EVM', 'E255'),
+            this.get_token('mADA', 'Milkomeda', 'E265'),
+            this.get_token('FTM', 'Fantom Opera', 'E275'),
+            this.get_token('BRISE', 'Bitgert', 'E285'),
+            this.get_token('SYS', 'Syscoin EVM', 'E295'),
+            this.get_token('AVAX', 'Avalanche C-Chain', 'E305'),
+            this.get_token('FRA', 'Findora', 'E315'),
+            this.get_token('FDX', '5Dax', 'E325'),
+            this.get_token('ROSE', 'Oasis Emerald', 'E335'),
+            this.get_token('OZO', 'Ozone Chain', 'E345'),
+            this.get_token('PIX', 'Pixie', 'E355'),
+            this.get_token('REI', 'Rei Network', 'E365'),
+            this.get_token('KLAY', 'Klaytn Mainnet', 'E375'),
+            this.get_token('MNT', 'Mantle', 'E385'),
+            this.get_token('PLS', 'Pulse Chain', 'E395'),
+            this.get_token('CANTO', 'Canto', 'E405'),
+            this.get_token('EOS', 'EOS EVM', 'E415'),
+            this.get_token('IOTX', 'IoTeX', 'E425'),
+            this.get_token('SGB', 'Songbird Canary', 'E435'),
+            this.get_token('ULX', 'Ultron Mainnet', 'E445'),
+            this.get_token('CET', 'CoinEx Smart Chain', 'E455'),
+            this.get_token('TFUEL', 'Theta Mainnet', 'E465'),
+            this.get_token('FITFI', 'Step Network', 'E475'),
+            this.get_token('EWT', 'Energy Web Chain', 'E485'),
+            this.get_token('CLO', 'Callisto', 'E495'),
+            this.get_token('SDN', 'Shiden', 'E505'),
+            this.get_token('TENET', 'Tenet', 'E515'),
+            this.get_token('UBQ', 'Ubiq', 'E525'),
+            this.get_token('GO', 'GoChain', 'E535'),
+            this.get_token('OMAX', 'Omax Mainnet', 'E545'),
+            this.get_token('WEMIX', 'Wemix3.0 Mainnet', 'E555'),
+            this.get_token('CFX', 'Conflux eSpace', 'E565'),
+            this.get_token('TLOS', 'Telos EVM', 'E575'),
+            this.get_token('RSK', 'RSK Mainnet', 'E585'),
+            this.get_token('META', 'Metadium', 'E595'),
+            this.get_token('KAI', 'Kardiachain', 'E605'),
+            this.get_token('CMP', 'Caduceus', 'E615'),
+            this.get_token('SEELE', 'Seele', 'E625'),
+            this.get_token('BTT', 'BitTorrent Chain', 'E635'),
+            this.get_token('AAC', 'Double-A Chain', 'E645'),
+            this.get_token('KAR', 'Karura EVM', 'E655'),
+            this.get_token('ACA', 'Acala EVM', 'E665'),
+            this.get_token('EDG', 'Edgeware EVM', 'E675'),
+            this.get_token('BERG', 'Bloxberg', 'E685'),
+            this.get_token('PHOENIX', 'Phoenix', 'E695'),
+            this.get_token('OMC', 'Omchain', 'E705'),
+            this.get_token('OM', 'Om', 'E715'),
+            this.get_token('MINTME', 'MintMe.com Coin', 'E725'),
+            this.get_token('ECS', 'eCredits', 'E735'),
+            this.get_token('ELV', 'Eluv.io', 'E745'),
+            this.get_token('ETHO', 'Etho Protocol', 'E755'),
+            this.get_token('OLT', 'One Ledger', 'E765'),
         ]
 
         var sorted_list =  this.sortByAttributeDescending(list, 'name')
@@ -349,11 +422,11 @@ class EthersDetailsSection extends Component {
                 'transaction_count_chart_data':{'interval':0, 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points(e5)},
                 
 
-                'gas_limit':{'title':this.format_account_balance_figure(this.get_latest_block_data(e5).gasLimit), 'details':'Gas Limit per Block', 'size' :'l'},
+                'gas_limit':{'title':this.get_gas_limit(e5), 'details':'Gas Limit per Block', 'size' :'l'},
 
-                'base_fee_per_gas_unit':{ 'style':'l', 'title':'Base Fee in wei', 'subtitle':this.format_power_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barwidth':this.calculate_bar_width(this.get_latest_block_data(e5).baseFeePerGas), 'number':this.format_account_balance_figure(this.get_latest_block_data(e5).baseFeePerGas), 'barcolor':'#606060', 'relativepower':'wei', },
+                'base_fee_per_gas_unit':{ 'style':'l', 'title':'Base Fee in wei', 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)), 'number':this.format_account_balance_figure(this.get_base_fee_in_wei(e5)), 'barcolor':'#606060', 'relativepower':'wei', },
 
-                'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':'Base Fee in gwei', 'subtitle':this.format_power_figure(this.get_latest_block_data(e5).baseFeePerGas/10**9), 'barwidth':this.calculate_bar_width(this.get_latest_block_data(e5).baseFeePerGas/10**9), 'number':(this.get_latest_block_data(e5).baseFeePerGas/10**9), 'barcolor':'#606060', 'relativepower':'gwei', },
+                'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':'Base Fee in gwei', 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)/10**9), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)/10**9), 'number':(this.get_base_fee_in_wei(e5)/10**9), 'barcolor':'#606060', 'relativepower':'gwei', },
 
                 'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
 
@@ -385,7 +458,7 @@ class EthersDetailsSection extends Component {
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':'0x0000000000000000000000000000000000000000', 'size':'l'})}
+                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.format_address_if_harmony('0x0000000000000000000000000000000000000000', e5), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -409,11 +482,19 @@ class EthersDetailsSection extends Component {
         // else if(e5 == 'E175'){
         //     return ethToEvmos(address)
         // }
+        else if(e5 == 'E425'){
+            return this.convert_to_iotx(address)
+        }
         return address
     }
 
     replace_0x_with_xdc(address){
         return 'xdc'+address.toString().slice(2)
+    }
+
+    convert_to_iotx(address){
+        const addr = from(address.toString());
+        return addr.string();
     }
 
     copy_to_clipboard(signature_data){
@@ -450,11 +531,16 @@ class EthersDetailsSection extends Component {
         var is = 0
         for(var i=1; i<blocks.length; i++){
             var block = blocks[i];
-            if(block != null && block.timestamp != null && blocks[i-1].timestamp != null){
-                let time = block.timestamp - blocks[i-1].timestamp
-                total_time += time
-                is++
+            try{
+                if(block != null && block.timestamp != null && blocks[i-1].timestamp != null){
+                    let time = block.timestamp - blocks[i-1].timestamp
+                    total_time += time
+                    is++
+                }
+            }catch(e){
+                // console.log(e)
             }
+            
         }
         var av_time = total_time / is
         return av_time+' seconds'
@@ -480,8 +566,17 @@ class EthersDetailsSection extends Component {
             middle = this.props.height-190;
         }
         var tx_history = this.props.app_state.e5_ether_tx_history[object['e5']]
+
+        // if(tx_history == null){
+        //     return(
+        //         <div style={{height: middle, 'margin':'10px 5px 0px 5px'}}>
+        //             {this.render_detail_item('4', {'text':'Transaction history Unavailable', 'textsize':'15px', 'font':'Sans-serif'})}
+        //         </div>
+        //     )
+        // }
+
         if(tx_history == null || this.get_txs_history_txs(tx_history, object['e5']) == null || this.get_txs_history_txs(tx_history, object['e5']).length == 0){
-            var items = [0, 1, 2]
+            var items = [0, 1]
             return(
                 <div style={{height: middle, 'margin':'10px 5px 0px 5px'}}>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
@@ -516,14 +611,14 @@ class EthersDetailsSection extends Component {
     }
 
     get_txs_history_txs(tx_history, e5){
-        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115' || e5 == 'E85' || e5 == 'E185' || e5 == 'E195' || e5 == 'E205'){
+        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E115' || e5 == 'E85' || e5 == 'E185' || e5 == 'E195' || e5 == 'E205' || e5 == 'E255' || e5 == 'E285' || e5 == 'E305' || e5 == 'E395'){
             return tx_history['items']
         }
         else if(e5 == 'E45'){
             var data =  tx_history['result']['transactions']
             return data
         }
-        else if(e5 == 'E55' || e5 == 'E65'|| e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135' || e5 == 'E155' || e5 == 'E145' || e5 == 'E215' || e5 == 'E225' || e5 == 'E235'){
+        else if(e5 == 'E55' || e5 == 'E65'|| e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135' || e5 == 'E155' || e5 == 'E145' || e5 == 'E215' || e5 == 'E225' || e5 == 'E235' || e5 == 'E245' || e5 == 'E265' || e5 == 'E275' || e5 == 'E295' || e5 == 'E315' || e5 == 'E325' || e5 == 'E335' || e5 == 'E345' || e5 == 'E355' || e5 == 'E365' || e5 == 'E385' || e5 == 'E485' || e5 == 'E495'|| e5 == 'E505'|| e5 == 'E515' || e5 == 'E565' || e5 == 'E625' || e5 == 'E675' || e5 == 'E685' || e5 == 'E695' || e5 == 'E705' || e5 == 'E735' || e5 == 'E755'){
             return tx_history['result']
         }
         else if(e5 == 'E165'){
@@ -599,7 +694,7 @@ class EthersDetailsSection extends Component {
     }
 
     get_from_value(item, e5){
-        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E85' || e5 == 'E185'|| e5 == 'E195' || e5 == 'E205'){
+        if(e5 == 'E25' || e5 == 'E35' || e5 == 'E85' || e5 == 'E185'|| e5 == 'E195' || e5 == 'E205' || e5 == 'E255' || e5 == 'E285' || e5 == 'E395'){
             var relative_time = this.get_time_difference(new Date(item['timestamp']).getTime()/1000)
             return {'from':item['from']['hash'], 'to':item['to']['hash'], 'gas_used':item['gas_used'], 'gas_price':item['gas_price'], 'value':item['value'], 'time':''+(new Date(item['timestamp'])), 'block':number_with_commas(item['block']), 'relative_time':''+(relative_time)}
         }
@@ -607,17 +702,21 @@ class EthersDetailsSection extends Component {
             var relative_time = this.get_time_difference(item['timestamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gas'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timestamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
-        else if(e5 == 'E55' || e5 == 'E65' || e5 == 'E225' || e5 == 'E235'){
+        else if(e5 == 'E55' || e5 == 'E65' || e5 == 'E225' || e5 == 'E235' || e5 == 'E245' || e5 == 'E265'){
             var relative_time = this.get_time_difference(item['timeStamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
-        else if(e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'|| e5 == 'E155' || e5 == 'E145' || e5 == 'E215'){
+        else if(e5 == 'E75' || e5 == 'E95' || e5 == 'E105' || e5 == 'E125' || e5 == 'E135'|| e5 == 'E155' || e5 == 'E145' || e5 == 'E215' || e5 == 'E275' || e5 == 'E295' || e5 == 'E315' || e5 == 'E325' || e5 == 'E335' || e5 == 'E345' || e5 == 'E355' || e5 == 'E365' || e5 == 'E385' || e5 == 'E485'|| e5 == 'E495'|| e5 == 'E505'|| e5 == 'E515' || e5 == 'E625' || e5 == 'E675' || e5 == 'E685' || e5 == 'E695' || e5 == 'E705'|| e5 == 'E735'|| e5 == 'E755'){
             var relative_time = this.get_time_difference(item['timeStamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timeStamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
-        else if(e5 == 'E115' || e5 == 'E165'){
+        else if(e5 == 'E115' || e5 == 'E165'|| e5 == 'E565'){
             var relative_time = this.get_time_difference(item['timestamp'])
             return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timestamp']*1000)), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
+        }
+        else if(e5 == 'E305'){
+            var relative_time = this.get_time_difference(new Date(item['timestamp']).getTime()/1000)
+            return {'from':item['from'], 'to':item['to'], 'gas_used':item['gasUsed'], 'gas_price':item['gasPrice'], 'value':item['value'], 'time':''+(new Date(item['timestamp'])), 'block':number_with_commas(item['blockNumber']), 'relative_time':''+(relative_time)}
         }
     }
 
@@ -804,6 +903,24 @@ class EthersDetailsSection extends Component {
             return {}
         }
         return this.props.app_state.last_blocks[e5][0];
+    }
+
+    get_gas_limit(e5){
+        try{
+            return this.format_account_balance_figure(this.get_latest_block_data(e5).gasLimit)
+        }catch(e){
+            // console.log(e)
+            return 0
+        }
+    }
+
+    get_base_fee_in_wei(e5){
+        try{
+            return this.get_latest_block_data(e5).baseFeePerGas
+        }catch(e){
+            // console.log(e)
+            return 0
+        }
     }
 
 

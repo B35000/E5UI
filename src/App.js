@@ -26,6 +26,60 @@ import base from './assets/base.png'
 import arbitrum from './assets/arbitrum.png'
 import astar from './assets/astar.png'
 import cronos from './assets/cronos.png'
+import kava from './assets/kava.png'
+import neon from './assets/neon.png'
+import mAda from './assets/milkomeda.png'
+import fantom from './assets/fantom.png'
+import brise from './assets/brise.png'
+import syscoin from './assets/syscoin.png'
+import avalanche from './assets/avalanche.png'
+import findora from './assets/findora.png'
+import iexec from './assets/iexec.png'
+import oasis from './assets/oasis.png'
+import ozone from './assets/ozone.png'
+import pixie from './assets/pixie.png'
+import rei from './assets/rei.png'
+import klaytn from './assets/klaytn.png'
+import mantle from './assets/mantle.png'
+import pulse from './assets/pulse.png'
+import canto from './assets/canto.png'
+import eos from './assets/eos.png'
+import iotex from './assets/iotex.png'
+import songbird from './assets/songbird.png'
+import ultron from './assets/ultron.png'
+import coinex from './assets/coinex.png'
+import tfuel from './assets/tfuel.png'
+import step from './assets/step.png'
+import energyweb from './assets/energyweb.png'
+import callisto from './assets/callisto.png'
+import shiden from './assets/shiden.png'
+import tenet from './assets/tenet.png'
+import ubiq from './assets/ubiq.png'
+import gochain from './assets/gochain.png'
+import omax from './assets/omax.png'
+import wemix from './assets/wemix.png'
+import confulx from './assets/conflux.png'
+import telos from './assets/telos.png'
+import rsk from './assets/rsk.png'
+import metadium from './assets/metadium.png'
+import kardiachain from './assets/kardiachain.png'
+import cmp from './assets/cmp.png'
+import seele from './assets/seele.png'
+import btt from './assets/btt.png'
+import doublea from './assets/doublea.png'
+import karura from './assets/karura.png'
+import acala from './assets/acala.png'
+import edgeware from './assets/edgeware.png'
+import bloxberg from './assets/bloxberg.png'
+import phoenix from './assets/phoenix.png'
+import omchain from './assets/omchain.png'
+import om from './assets/om.png'
+import mintme from './assets/mintme.png'
+import ecredits from './assets/ecredits.png'
+import eluv from './assets/eluv.png'
+import etho from './assets/etho.png'
+import oneledger from './assets/oneledger.png'
+
 
 /* e5 images */
 import E25EndImg from './assets/E25.png';
@@ -245,7 +299,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(45), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
+    sync_steps:(40), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -269,9 +323,9 @@ class App extends Component {
 
 
   get_e5s(){
-    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235']
+    var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765']
     return{
-      'data':[/* 'E15', */ 'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135',/* 'E145', */ 'E155', 'E165', 'E175',].concat(others),
+      'data':[/* 'E15', */ 'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
@@ -426,7 +480,324 @@ class App extends Component {
         e5_address:'',
         first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:cronos, iteration:3_000, url:0, active:false, e5_img:End25Img
       },
-      
+      'E245':{
+        web3:['https://evm.kava.io'],
+        token:'KAVA',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:kava, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E255':{
+        web3:['https://neon-proxy-mainnet.solana.p2p.org'],
+        token:'NEON',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:neon, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E265':{
+        web3:['https://rpc-mainnet-cardano-evm.c1.milkomeda.com'],
+        token:'mADA',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:mAda, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E275':{
+        web3:['https://fantom-mainnet.public.blastapi.io'],
+        token:'FTM',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:fantom, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E285':{
+        web3:['https://flux-rpc2.brisescan.com'],
+        token:'BRISE',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:brise, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E295':{
+        web3:['https://syscoin.public-rpc.com'],
+        token:'SYS',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:syscoin, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E305':{
+        web3:['https://avalanche.drpc.org'],
+        token:'AVAX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:avalanche, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E315':{
+        web3:['https://rpc-mainnet.findora.org'],
+        token:'FRA',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:findora, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E325':{
+        web3:['https://bellecour.iex.ec'],
+        token:'xRLC',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:iexec, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E335':{
+        web3:['https://emerald.oasis.dev'],
+        token:'ROSE',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:oasis, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E345':{
+        web3:['https://node1.ozonechain.io'],
+        token:'OZO',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ozone, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E355':{
+        web3:['https://http-mainnet.chain.pixie.xyz'],
+        token:'PIX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:pixie, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E365':{
+        web3:['https://rpc.rei.network'],
+        token:'REI',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:rei, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E375':{
+        web3:['https://public-en-cypress.klaytn.net'],
+        token:'KLAY',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:klaytn, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E385':{
+        web3:['https://rpc.mantle.xyz'],
+        token:'MNT',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:mantle, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E395':{
+        web3:['https://rpc.pulsechain.com'],
+        token:'PLS',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:pulse, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E405':{
+        web3:['https://jsonrpc.canto.nodestake.top'],
+        token:'CANTO',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:canto, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E415':{
+        web3:['https://api.evm.eosnetwork.com'],
+        token:'EOS',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:eos, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E425':{
+        web3:['https://babel-api.mainnet.iotex.io'],
+        token:'IOTX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:iotex, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E435':{
+        web3:['https://sgb.ftso.com.au/ext/bc/C/rpc'],
+        token:'SGB',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:songbird, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E445':{
+        web3:['https://ultron-rpc.net'],
+        token:'ULX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ultron, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E455':{
+        web3:['https://rpc.coinex.net'],
+        token:'CET',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:coinex, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E465':{
+        web3:['https://eth-rpc-api.thetatoken.org/rpc'],
+        token:'TFUEL',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:tfuel, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E475':{
+        web3:['https://rpc.step.network'],
+        token:'FITFI',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:step, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E485':{
+        web3:['https://rpc.energyweb.org'],
+        token:'EWT',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:energyweb, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E495':{
+        web3:['https://rpc.callisto.network'],
+        token:'CLO',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:callisto, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E505':{
+        web3:['https://shiden-rpc.dwellir.com'],
+        token:'SDN',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:shiden, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E515':{
+        web3:['https://tenet-evm.publicnode.com'],
+        token:'TENET',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:tenet, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E525':{
+        web3:['https://pyrus2.ubiqscan.io'],
+        token:'UBQ',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ubiq, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E535':{
+        web3:['https://rpc.gochain.io'],
+        token:'GO',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:gochain, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E545':{
+        web3:['https://mainapi.omaxray.com'],
+        token:'OMAX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:omax, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E555':{
+        web3:['https://api.wemix.com'],
+        token:'WEMIX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:wemix, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E565':{
+        web3:['https://evm.confluxrpc.com'],
+        token:'CFX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:confulx, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E575':{
+        web3:['https://rpc1.eu.telos.net/evm'],
+        token:'TLOS',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:telos, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E585':{
+        web3:['https://mycrypto.rsk.co'],
+        token:'RSK',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:rsk, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E595':{
+        web3:['https://api.metadium.com/prod'],
+        token:'META',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:metadium, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E605':{
+        web3:['https://rpc.kardiachain.io'],
+        token:'KAI',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:kardiachain, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E615':{
+        web3:['https://mainnet.block.caduceus.foundation'],
+        token:'CMP',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:cmp, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E625':{
+        web3:['https://rpc.seelen.pro'],
+        token:'SEELE',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:seele, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E635':{
+        web3:['https://rpc.bittorrentchain.io'],
+        token:'BTT',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:btt, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E645':{
+        web3:['https://rpc.acuteangle.com'],
+        token:'AAC',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:doublea, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E655':{
+        web3:['https://rpc.evm.karura.network'],
+        token:'KAR',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:karura, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E665':{
+        web3:['https://eth-rpc-acala.aca-staging.network'],
+        token:'ACA',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:acala, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E675':{
+        web3:['https://mainnet3.edgewa.re/evm'],
+        token:'EDG',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:edgeware, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E685':{
+        web3:['https://core.bloxberg.org'],
+        token:'BERG',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bloxberg, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E695':{
+        web3:['https://rpc.phoenixplorer.com'],
+        token:'PHOENIX',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:phoenix, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E705':{
+        web3:['https://seed.omlira.com'],
+        token:'OMC',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:omchain, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E715':{
+        web3:['https://rpc-cnx.omplatform.com'],
+        token:'OM',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:om, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E725':{
+        web3:['https://node1.mintme.com'],
+        token:'MINTME',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:mintme, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E735':{
+        web3:['https://rpc.ecredits.com'],
+        token:'ECS',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ecredits, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E745':{
+        web3:['https://host-154-14-192-66.contentfabric.io/eth'],
+        token:'ELV',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:eluv, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E755':{
+        web3:['https://rpc.ethoprotocol.com'],
+        token:'ETHO',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:etho, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
+      'E765':{
+        web3:['https://mainnet-rpc.oneledger.network'],
+        token:'OLT',
+        e5_address:'',
+        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:oneledger, iteration:3_000, url:0, active:false, e5_img:End25Img
+      },
     }
   }
 
@@ -4995,9 +5366,9 @@ class App extends Component {
       console.error('Failed to send transaction:', error);
       if(error == 'Error: Invalid JSON RPC response: {}'){
         me.start_get_accounts_data(false)
-        me.prompt_top_notification('send complete!', 600)
+        me.prompt_top_notification('send complete!', 15600)
       }else{
-        me.prompt_top_notification('send failed, '+error, 6000)
+        me.prompt_top_notification('send failed, '+error, 16000)
       }
     });
   }
@@ -6269,6 +6640,441 @@ class App extends Component {
         console.log('Error fetching data: ', error)
       }
     }
+    else if(e5 == 'E245'){
+      link = `https://kavascan.com/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E245:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E255'){
+      link = `https://neon.blockscout.com/api/v2/addresses/${address}/transactions`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E255:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E265'){
+      link = `https://explorer-mainnet-cardano-evm.c1.milkomeda.com/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E265:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E275'){
+      var key = ''+process.env.REACT_APP_FANTOM_API_KEY
+      link = `https://api.ftmscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=${key}`
+      try {
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('-------------------------------------E275:load_ether_history----------------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E285'){
+      link = `https://brisescan.com/api/v2/addresses/${address}/transactions`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E285:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E295'){
+      link = `https://explorer.syscoin.org/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E295:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E305'){
+      link = `https://api-beta.avascan.info/v2/network/mainnet/evm/43114/address/${address}/transactions?ecosystem=avalanche&sort=desc`
+
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E305:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E315'){
+      link = `https://evm.findorascan.io/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E315:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E325'){
+      link = `https://blockscout.bellecour.iex.ec/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E325:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E335'){
+      link = `https://explorer.emerald.oasis.dev/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E335:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E345'){
+      link = `https://ozonescan.io/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E345:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E355'){
+      link = `https://scan.chain.pixie.xyz/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E355:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E365'){
+      link = `https://scan.rei.network/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E365:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E385'){
+      link = `https://explorer.mantle.xyz/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E385:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E395'){
+      link = `https://api.scan.pulsechain.com/api/v2/addresses/${address}/transactions`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E395:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E485'){
+      link = `https://explorer.energyweb.org/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E485:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E495'){
+      link = `https://explorer.callisto.network/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E495:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E505'){
+      link = `https://blockscout.com/shiden/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E505:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E515'){
+      link = `https://tenetscan.io/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E515:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E565'){
+      link = `https://evmapi.confluxscan.net/api?module=account&action=txlist&address=${address}&page=1&offset=100&sort=desc`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E515:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E625'){
+      link = `https://seeleview.net/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E625:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E675'){
+      link = `http://edgscan.live/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E675:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E685'){
+      link = `http://blockexplorer.bloxberg.org/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E685:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E695'){
+      link = `http://phoenixplorer.com/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E695:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E705'){
+      link = `http://explorer.omchain.io/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E705:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E735'){
+      link = `https://explorer.ecredits.com/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E735:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    else if(e5 == 'E755'){
+      link = `https://explorer.ethoprotocol.com/api?module=account&action=txlist&address=${address}`
+      try{
+        const response = await fetch(link);
+        if (!response.ok) {
+          throw new Error(`Failed to retrieve ${e5} address tx history data. Status: ${response}`);
+        }
+        const data = await response.text();
+        e5_address_obj = JSON.parse(data);
+        console.log('--------------------------------E745:load_ether_history-----------------------------------')
+        console.log(e5_address_obj)
+        console.log(address)
+      } catch (error) {
+        console.log('Error fetching data: ', error)
+      }
+    }
+    
 
     var clone = structuredClone(this.state.e5_ether_tx_history)
     clone[e5] = e5_address_obj

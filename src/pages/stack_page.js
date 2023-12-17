@@ -10,6 +10,8 @@ import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+import { from } from "@iotexproject/iotex-address-ts";
+
 var bigInt = require("big-integer");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
@@ -5191,7 +5193,7 @@ class StackPage extends Component {
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':'0x0000000000000000000000000000000000000000', 'size':'s'})}
+                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'s'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -5322,11 +5324,19 @@ class StackPage extends Component {
         // else if(e5 == 'E175'){
         //     return ethToEvmos(address)
         // }
+        else if(e5 == 'E425'){
+            return this.convert_to_iotx(address)
+        }
         return address
     }
 
     replace_0x_with_xdc(address){
         return 'xdc'+address.toString().slice(2)
+    }
+
+    convert_to_iotx(address){
+        const addr = from(address.toString());
+        return addr.string();
     }
 
     get_balance_amount_in_wei(){

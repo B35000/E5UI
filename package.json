@@ -9,6 +9,7 @@
     "@harmony-js/crypto": "^0.1.56",
     "@helia/json": "^1.0.3",
     "@helia/strings": "^1.0.1",
+    "@iotexproject/iotex-address-ts": "^1.0.4",
     "@mui/material": "^5.14.15",
     "@mui/x-date-pickers": "^6.17.0",
     "@sandstreamdev/react-swipeable-list": "^1.0.2",

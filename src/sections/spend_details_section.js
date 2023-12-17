@@ -355,10 +355,10 @@ class SpendDetailSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['maturity_limit'])}
                     </div>
-                    <div style={{height:10}}/>
+                    {/* <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['current_block_mint_total'])}
-                    </div>
+                    </div> */}
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['active_block_limit_reduction_proportion'])}
 

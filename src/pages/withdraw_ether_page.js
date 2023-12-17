@@ -6,6 +6,7 @@ import Dialog from "@mui/material/Dialog";
 import NumberPicker from './../components/number_picker';
 
 import Letter from './../assets/letter.png'; 
+import { from } from "@iotexproject/iotex-address-ts";
 
 var bigInt = require("big-integer");
 const Web3 = require('web3');
@@ -250,8 +251,22 @@ class WithdrawEtherPage extends Component {
         if(e5 == 'E45'){
             return toBech32(address)
         }
-
+        else if(e5 == 'E115'){
+            return this.replace_0x_with_xdc(address)
+        }
+        else if(e5 == 'E425'){
+            return this.convert_to_iotx(address)
+        }
         return address
+    }
+
+    convert_to_iotx(address){
+        const addr = from(address.toString());
+        return addr.string();
+    }
+
+    replace_0x_with_xdc(address){
+        return 'xdc'+address.toString().slice(2)
     }
 
 
@@ -307,13 +322,49 @@ class WithdrawEtherPage extends Component {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.e5['id']
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
-        this.props.withdraw_ether_to_address(this.state.recipient_address, e5, run_expiry_duration, this.state.run_gas_price)
+        var addr = this.format_to_address(this.state.recipient_address, e5)
+        this.props.withdraw_ether_to_address(addr, e5, run_expiry_duration, this.state.run_gas_price)
     }
 
 
     set_object(item){
         this.setState({e5: item})
     }
+
+
+    format_to_address(address, e5){
+        if(e5 == 'E45'){
+            return fromBech32(address)
+        }
+        if(e5 == 'E115'){
+            return this.replace_xdc_with_0x(address)
+        }
+        // if(e5 == 'E175'){
+        //     return evmosToEth(address)
+        // }
+        if(e5 == 'E425'){
+            return this.convert_from_iotx(address)
+        }
+        return address
+    }
+
+
+    replace_xdc_with_0x(address){
+        if(address.toString().startsWith('0x')) return address
+        return '0x'+address.toString().slice(3)
+    }
+
+    convert_from_iotx(address){
+        const addr2 = from(address.toString());
+        return addr2.stringEth()
+    }
+
+
+
+
+
+
+
 
 
 

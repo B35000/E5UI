@@ -9,6 +9,7 @@ import Dialog from "@mui/material/Dialog";
 import Letter from './../assets/letter.png';
 
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
+import { from } from "@iotexproject/iotex-address-ts";
 
 var bigInt = require("big-integer");
 const Web3 = require('web3');
@@ -496,7 +497,15 @@ class SendReceiveEtherPage extends Component {
         // else if(e5 == 'E175'){
         //     return ethToEvmos(address)
         // }
+        else if(e5 == 'E425'){
+            return this.convert_to_iotx(address)
+        }
         return address
+    }
+
+    convert_to_iotx(address){
+        const addr = from(address.toString());
+        return addr.string();
     }
 
     replace_0x_with_xdc(address){
@@ -727,6 +736,9 @@ class SendReceiveEtherPage extends Component {
         // if(e5 == 'E175'){
         //     return evmosToEth(address)
         // }
+        if(e5 == 'E425'){
+            return this.convert_from_iotx(address)
+        }
         return address
     }
 
@@ -734,6 +746,11 @@ class SendReceiveEtherPage extends Component {
     replace_xdc_with_0x(address){
         if(address.toString().startsWith('0x')) return address
         return '0x'+address.toString().slice(3)
+    }
+
+    convert_from_iotx(address){
+        const addr2 = from(address.toString());
+        return addr2.stringEth()
     }
 
 
