@@ -12,6 +12,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import Linkify from "linkify-react";
 
 var bigInt = require("big-integer");
 
@@ -198,48 +199,48 @@ class ViewJobRequestPage extends Component {
         if(is_application_accepted){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
                     <div style={{height:5}}/>
                     
-                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'s'})}
+                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:5}}/>
 
                     {this.render_image_part([].concat(item['entered_images']))}
 
-                    {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'l'})}
                     <div style={{height:5}}/>
                     <div onClick={()=>this.open_contract(item['contract'])}>
                         {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
                     </div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The requested pay for the job', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The requested pay for the job', 'size':'l'})}
                     {this.render_set_prices_list_part(item)}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'s'})}
+                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:5}}/>
                     {this.render_image_part(item['entered_images'])}
 
                     <div style={{height:5}}/>
-                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The amounts youll be receiving for the job', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The amounts youll be receiving for the job', 'size':'l'})}
                     {this.render_set_prices_list_part(item)}
                 </div>
             )
@@ -324,7 +325,7 @@ class ViewJobRequestPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
                                 </div>
@@ -497,7 +498,7 @@ class ViewJobRequestPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contract_item(object)
 
-        if(this.state.picked_contract == object){
+        if(this.is_object_picked_contract(object)){
             return(
                 <div onClick={() => this.when_contract_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'padding': '5px 0px 5px 5px'}}>
@@ -546,12 +547,18 @@ class ViewJobRequestPage extends Component {
     }
 
     when_contract_item_clicked(object){
-        if(this.state.picked_contract == object){
+        if(this.is_object_picked_contract(object)){
             this.setState({picked_contract: null})
         }else{
             this.setState({picked_contract: object})
         }
         
+    }
+
+    is_object_picked_contract(object){
+        if(this.state.picked_contract == null) return false
+        if(object['e5_id'] == this.state.picked_contract['e5_id']) return true
+        return false
     }
 
 
@@ -581,7 +588,7 @@ class ViewJobRequestPage extends Component {
 
 
     render_messages_parts(){
-        var he = this.props.height-195
+        var he = this.props.height-180
         var size = this.props.screensize
         return(
             <div>
@@ -863,21 +870,28 @@ class ViewJobRequestPage extends Component {
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
-            me.unfocus_message()
+            me.when_message_double_tapped(item)
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {
                 clearTimeout(this.all_timeout);
                 // single tap
-                if(focused_message == null){
-                    me.focus_message(item)
-                }
+                
             }, 200);
         }
         this.last_all_click_time = Date.now();
     }
 
 
+    when_message_double_tapped(item){
+        var message = item['message'];
+        this.copy_to_clipboard(message)
+    }
+
+    copy_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify('copied message to clipboard', 600)
+    }
 
 
     render_stack_message_item(item){
@@ -903,7 +917,7 @@ class ViewJobRequestPage extends Component {
                         <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
                         </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'])}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'])}</Linkify></p>
 
                     {this.render_images_if_any(item)}
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>

@@ -158,7 +158,11 @@ class EthersDetailsSection extends Component {
                     <div style={{height: 20}}/>
                     
                     {this.render_wallet_status(item)}
-                    <div style={{height: 10}}/>
+                    <div style={{height:10}}/>
+                    <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
+                        {this.render_detail_item('5', {'text':'reload wallet', 'action': ''})}
+                    </div>
+                    {this.render_detail_item('0')}
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['number_label_large'])}
                     </div>
@@ -186,7 +190,7 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('0')} */}
 
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
@@ -247,11 +251,20 @@ class EthersDetailsSection extends Component {
 
     render_wallet_status(item){
         if(this.get_gas_limit(item['e5']) == 0){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Syncronizing wallet, please wait...', 'size' :'l'})}
-                </div>
-            )
+            if(this.props.app_state.wallet_status[item['e5']] == 'synchronizing'){
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Syncronizing wallet, please wait...', 'size' :'l'})}
+                    </div>
+                )
+            }else{
+                return(
+                    <div>
+                        {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Wallet sync failed. Please reload the wallet.', 'size' :'l'})}
+                    </div>
+                )
+            }
+            
         }else{
             return(
                 <div>

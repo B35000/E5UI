@@ -270,6 +270,7 @@ class EndDetailSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['sell_limit'])}
                     </div>
+
                     <div style={{height:10}}/>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -308,6 +309,19 @@ class EndDetailSection extends Component {
 
                     {this.render_detail_item('0')}
 
+                    
+                    <div style={{height:10}}/>
+                    {this.render_token_cap(selected_object)}
+
+
+                    {this.render_detail_item('0')}
+
+                    
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['max_supply'])}
+                    </div>
+
+                    <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['ratio_x'])}
                     </div>
@@ -345,8 +359,8 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', {'size':'l', 'details':'Transfer some tokens to  a specified account', 'title':'Transfer'})}
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-
                         {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
+                        
                     </div>
 
                     <div style={{height:10}}/>
@@ -469,9 +483,9 @@ class EndDetailSection extends Component {
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                         {buy_tokens.map((item, index) => (
-                            <li style={{'padding': '1px'}}>
-                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_price(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
-                            </li>
+                            <div style={{'padding': '1px'}}>
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_price(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            </div>
                         ))}
                     </ul>
                 </div>
@@ -733,7 +747,7 @@ class EndDetailSection extends Component {
         //     symbol = EndImg
         // }
         var image = item['ipfs'] == null ? img : item['ipfs'].token_image
-
+        var max_supply = this.calculate_maximum_supply(selected_object)
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
@@ -767,13 +781,64 @@ class EndDetailSection extends Component {
 
             'exchanges_liquidity':{'style':'l','title':'Exchanges Liquidity', 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':symbol},
             'mint_burn_button':{'text':'Buy/Sell Token', 'action':''},
-            '':{},
+            
+            'max_supply':{'style':'l','title':'Tokens Total Supply', 'subtitle':this.format_power_figure(max_supply), 'barwidth':this.calculate_bar_width(max_supply), 'number':this.format_account_balance_figure(max_supply), 'relativepower':symbol},
             '':{},
             '':{},
             '':{},
             '':{},
 
         }
+    }
+
+    calculate_maximum_supply(object){
+        if(object['id'] == 3) return bigInt('1e72')
+        var set_max_supply = bigInt(object['ipfs'].token_exchange_liquidity_total_supply)
+        var items = [].concat(this.get_item_logs(object, 'depth_mint'))
+        var depthminted_amount = 0;
+        items.forEach(item => {
+            var amount = bigInt(item.returnValues.p5)
+            depthminted_amount = bigInt(depthminted_amount).add(amount)
+        });
+
+        var final_max_supply = bigInt(depthminted_amount).add(set_max_supply)
+        return final_max_supply
+    }
+
+    render_token_cap(selected_object){
+        var max_supply = this.calculate_maximum_supply(selected_object)
+        
+        var input_amount = 1
+        var input_reserve_ratio = selected_object['data'][2][0]
+        var output_reserve_ratio = selected_object['data'][2][1]
+        var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio, selected_object)
+        var buy_tokens = [].concat(selected_object['data'][3])
+        var buy_amounts = [].concat(selected_object['data'][4])
+        var buy_depths = [].concat(selected_object['data'][5])
+
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':'The Market Capitalization of the token in its respective buy denominations.', 'title':'Token Market Cap'})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                        {buy_tokens.map((item, index) => (
+                            <div style={{'padding': '1px'}}>
+                                {this.render_detail_item('2', {'style':'l',
+                                'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(this.calculate_total_cap_amount(buy_amounts[index], price, max_supply)), 'barwidth':this.calculate_bar_width(this.calculate_total_cap_amount(buy_amounts[index], price, max_supply)), 'number':this.format_price(this.calculate_total_cap_amount(buy_amounts[index], price, max_supply)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
+    calculate_total_cap_amount(buy_amounts, price, cap){
+        var price_per_unit = this.calculate_price_from_sell_action(buy_amounts, price)
+        var powered_cap =  (Math.round(price_per_unit * cap)).toString().toLocaleString('fullwide', {useGrouping:false})
+        return bigInt(powered_cap)
     }
 
 

@@ -489,7 +489,7 @@ class SendJobRequestPage extends Component {
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                    {this.render_detail_item('5', {'text':'Add Pay', 'action':''})}
                 </div>
 
                 {this.render_set_prices_list_part()}

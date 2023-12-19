@@ -176,6 +176,7 @@ class SendReceiveEtherPage extends Component {
         if(gas_price == null){
             gas_price = this.get_gas_price_from_runs()
         }
+        if(gas_price == 0 || gas_price > 10**18) gas_price = 10**10
         var gas_transactions = this.state.picked_wei_amount == 0 ? 0 : Math.floor((this.state.picked_wei_amount/gas_price)/2_300_000)
 
         var balance_gas_transactions = this.props.app_state.account_balance[e5] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[e5]/gas_price)/2_300_000)
@@ -233,6 +234,10 @@ class SendReceiveEtherPage extends Component {
                 
                 {this.render_amount_number_picker()}
 
+                <div style={{'padding': '5px'}} onClick={()=>this.set_maximum(gas_price, e5)}>
+                    {this.render_detail_item('5', {'text':'Set Maximum', 'action':''})}
+                </div>
+
                 {this.render_detail_item('0')}
                 
                 {/* <div style={{height: 10}}/> */}
@@ -255,6 +260,20 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    set_maximum(g, e5){
+        var gas_price = g
+        if(this.state.picked_wei_gas_price != 0){
+            gas_price = this.state.picked_wei_gas_price
+        }
+        var tx_ether = gas_price * 35_000
+        var my_balance = this.props.app_state.account_balance[e5]
+        var maximum = my_balance - tx_ether
+        if(maximum < 0) maximum = 0
+
+        this.setState({picked_wei_amount: maximum})
+        this.props.notify('Maximum amount set.', 1000)
     }
 
     get_gas_price_from_runs(){

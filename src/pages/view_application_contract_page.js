@@ -97,8 +97,7 @@ class ViewApplicationContractPage extends Component {
         if(this.props.app_state.user_account_id[item['e5']] != item['applicant_id'] && !item['is_response_accepted']){
             return(
                 <div>
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the job application and enter their contract(This action cant be undone)', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the job application and enter their contract(This action cant be undone)', 'size':'l'})}
                     <div style={{height:10}}/>
 
                     <div onClick={()=> this.accept_job_application()}>

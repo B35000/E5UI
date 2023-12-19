@@ -8,6 +8,7 @@ import E5EmptyIcon3 from './../assets/e5empty_icon3.png';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import Linkify from "linkify-react";
 
 import SwipeableViews from 'react-swipeable-views';
 
@@ -294,14 +295,14 @@ class BagDetailsSection extends Component {
                     {/* <SwipeableViews index={0}>
                         {items_to_deliver.map((item, index) => (
                             <div style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
-                                {this.render_variant_details(item)}
+                                {this.render_variant_details(item, object)}
                             </div>
                         ))}
                     </SwipeableViews> */}
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                             {items_to_deliver.map((item, index) => (
                                 <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none', 'width':'95%'}}>
-                                    {this.render_variant_details(item)}
+                                    {this.render_variant_details(item, object)}
                                 </li>
                             ))}
                         </ul>
@@ -845,18 +846,27 @@ class BagDetailsSection extends Component {
         let me = this;
         if(Date.now() - this.last_all_click_time < 200){
             //double tap
-            me.unfocus_message()
+            me.when_message_double_tapped(item)
             clearTimeout(this.all_timeout);
         }else{
             this.all_timeout = setTimeout(function() {
                 clearTimeout(this.all_timeout);
                 // single tap
-                if(focused_message == null){
-                    me.focus_message(item)
-                }
+                
             }, 200);
         }
         this.last_all_click_time = Date.now();
+    }
+
+
+    when_message_double_tapped(item){
+        var message = item['message'];
+        this.copy_to_clipboard(message)
+    }
+
+    copy_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify('copied message to clipboard', 600)
     }
 
 
@@ -886,7 +896,7 @@ class BagDetailsSection extends Component {
                             <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
                             </div>
                     </div>
-                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.format_message(item['message'], object)}</p>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
                     {this.render_images_if_any(item)}
                     <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>

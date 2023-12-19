@@ -231,6 +231,7 @@ const ecies = require('ecies-geth');
 var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
 
+
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
 
@@ -299,7 +300,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(40), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
+    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -318,7 +319,7 @@ class App extends Component {
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
     
-    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[], mempool:{}, token_name_directory:{},
+    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[], mempool:{}, token_name_directory:{}, wallet_status:{}
   };
 
 
@@ -378,7 +379,7 @@ class App extends Component {
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6', 
-        first_block:4910897, end_image:E95EndImg, spend_image:E95SpendImg, ether_image:glmr, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:4910897, end_image:E95EndImg, spend_image:E95SpendImg, ether_image:glmr, iteration:10_000, url:0, active:false, e5_img:End25Img
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
@@ -1885,7 +1886,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} />
+              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -2001,6 +2002,11 @@ class App extends Component {
     }, (1 * 1000));
   }
 
+  clear_transaction_stack(){
+    this.setState({stack_items: []})
+    this.prompt_top_notification('stack cleared.', 1700)
+  }
+
 
 
 
@@ -2047,7 +2053,7 @@ class App extends Component {
     });
   }
 
-  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, run_gas_price, run_expiry_duration) => {
+  run_transaction_with_e = async (strs, ints, adds, run_gas_limit, wei, delete_pos_array, _run_gas_price, run_expiry_duration) => {
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
@@ -2059,7 +2065,7 @@ class App extends Component {
 
     var v5/* t_limits */ = [100000000000000, run_expiry_time];
     var network_gp = await web3.eth.getGasPrice()
-    var run_gas_price = run_gas_price == null ? network_gp : run_gas_price
+    var run_gas_price = (_run_gas_price == null || _run_gas_price == 0 || _run_gas_price > 100**18) ? network_gp : run_gas_price
     console.log("gasPrice: "+run_gas_price);
     const gasLimit = run_gas_limit;
 
@@ -2845,16 +2851,19 @@ class App extends Component {
       }
   }
 
-  show_enter_contract_bottomsheet(contract_item){
+  show_enter_contract_bottomsheet(contract_item, job_acceptance_action_state_object){
     if(this.enter_contract_page.current != null){
-      this.enter_contract_page.current.set_contract(contract_item)
+      this.enter_contract_page.current.set_contract(contract_item, job_acceptance_action_state_object)
     }
 
     this.open_enter_contract_bottomsheet()
   }
 
-  enter_contract(state_obj){
+  enter_contract(state_obj, job_acceptance_action_state_object){
     var stack_clone = this.state.stack_items.slice()
+    if(job_acceptance_action_state_object != null) {
+      stack_clone.push(job_acceptance_action_state_object)
+    }
     var edit_id = -1
     for(var i=0; i<stack_clone.length; i++){
       if(stack_clone[i].id == state_obj.id){
@@ -2866,6 +2875,7 @@ class App extends Component {
     }else{
       stack_clone.push(state_obj)
     }
+
     this.setState({stack_items: stack_clone})
     this.set_cookies_after_stack_action(stack_clone)
   }
@@ -3815,16 +3825,10 @@ class App extends Component {
       this.prompt_top_notification('Your account was blocked from entering the contract', 4000)
     }
     else{
-      var stack_clone = this.state.stack_items.slice()      
-      stack_clone.push(state_obj)
-      this.setState({stack_items: stack_clone})
-      this.set_cookies_after_stack_action(stack_clone)
-
-      this.show_enter_contract_bottomsheet(state_obj.application_item['contract'])
+      this.show_enter_contract_bottomsheet(state_obj.application_item['contract'], state_obj)
       this.open_view_application_contract_bottomsheet()
     }
   }
-
 
 
 
@@ -4231,8 +4235,9 @@ class App extends Component {
   add_bag_item_to_bag_in_stack(state_obj){
     var stack = this.state.stack_items.slice() 
     var pos = -1
+    var storefront_item_content_channeling = state_obj.storefront_item['ipfs'].content_channeling_setting
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'storefront-bag' && stack[i].e5 == state_obj.e5){
+      if(stack[i].type == 'storefront-bag' && stack[i].e5 == state_obj.e5 && stack[i].content_channeling_setting == storefront_item_content_channeling){
         pos = i
         break;
       }
@@ -4709,7 +4714,7 @@ class App extends Component {
     const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress); 
     const me = this
     const gasPrice = await web3.eth.getGasPrice();
-    var run_gas_price = _run_gas_price == 0 ? gasPrice : _run_gas_price
+    var run_gas_price = (_run_gas_price == 0 || _run_gas_price == null || _run_gas_price > 100**18) ? gasPrice : _run_gas_price
     
     var now = await contractInstance.methods.f147(2).call((error, result) => {})
     var run_expiry_time = now + run_expiry_duration
@@ -5350,13 +5355,14 @@ class App extends Component {
     const me = this;
 
     web3.eth.accounts.wallet.add(state.accounts[e5].privateKey);
+    var gas_price = (gasPrice == null || gasPrice == 0 || gasPrice > 100**18) ? 10**9 : gasPrice
 
     web3.eth.sendTransaction({
       from: state.accounts[e5].address,
       to: recipientAddress,
       value: amount.toString(),
       gas: 50000,
-      gasPrice: gasPrice.toString() // Adjust gas price as needed
+      gasPrice: gas_price.toString() // Adjust gas price as needed
     }).on('transactionHash', function (hash) {
       me.start_get_accounts_data(false)
       me.prompt_top_notification('send complete!', 600)
@@ -5372,6 +5378,13 @@ class App extends Component {
       }
     });
   }
+
+
+
+
+
+
+
 
 
   when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
@@ -5601,9 +5614,9 @@ class App extends Component {
     var e5_address = this.state.e5s[e5].e5_address;
     var account_for_e5 = this.state.accounts[e5]
     if(web3_url != ''){
-      this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+      await this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
       if(this.get_contract_from_e5(e5) != ''){
-        this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5)
+        await this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5)
       }
     }else{
       console.log(e5, ' e5 missing web3_url')
@@ -5806,7 +5819,7 @@ class App extends Component {
     });
 
     this.set_cookies()
-    this.get_accounts_data(_account, is_syncing, web3_url, e5_address, e5)
+    await this.get_accounts_data(_account, is_syncing, web3_url, e5_address, e5)
   }
 
 
@@ -5815,7 +5828,7 @@ class App extends Component {
 
 
   get_wallet_data_for_specific_e5(e5){
-    this.prompt_top_notification('updating your wallets balance...', 2000)
+    this.prompt_top_notification('reloading your wallet...', 2000)
     var web3_url = this.get_web3_url_from_e5(e5)
     var account_for_e5 = this.state.accounts[e5]
     this.get_wallet_data(account_for_e5, false, web3_url, null, e5)
@@ -5825,7 +5838,12 @@ class App extends Component {
     const web3 = new Web3(web3_url);
     const address_account = _account
 
-    this.load_rpc_times(e5)
+    var wallet_status_clone = structuredClone(this.state.wallet_status)
+    wallet_status_clone[e5] = 'synchronizing'
+    this.setState({wallet_status: wallet_status_clone})
+
+
+    await this.load_rpc_times(e5)
 
     var clone = structuredClone(this.state.account_balance)
     clone[e5] = 0
@@ -5835,8 +5853,8 @@ class App extends Component {
     var clone = structuredClone(this.state.account_balance)
     clone[e5] = parseInt(balance)
     this.setState({account_balance: clone});
-    console.log('-----------------get_wallet_data------------------------')
-    console.log(e5,' account ether balance: ',balance)
+    // console.log('-----------------get_wallet_data------------------------')
+    // console.log(e5,' account ether balance: ',balance)
 
     this.load_ether_history(e5, address_account.address)
 
@@ -5844,8 +5862,8 @@ class App extends Component {
     var clone = structuredClone(this.state.gas_price)
     clone[e5] = parseInt(gasPrice)
     this.setState({gas_price: clone})
-    console.log('-----------------get_wallet_data------------------------')
-    console.log(e5,' gas price: ',gasPrice)
+    // console.log('-----------------get_wallet_data------------------------')
+    // console.log(e5,' gas price: ',gasPrice)
 
     var id = await web3.eth.net.getId()
     var clone = structuredClone(this.state.chain_id)
@@ -5890,6 +5908,12 @@ class App extends Component {
     var mempool_clone = structuredClone(this.state.mempool)
     mempool_clone[e5] = mempool
     this.setState({mempool: mempool_clone})
+
+
+
+    var wallet_status_clone = structuredClone(this.state.wallet_status)
+    wallet_status_clone[e5] = 'done'
+    this.setState({wallet_status: wallet_status_clone})
 
   } 
 
@@ -7685,6 +7709,7 @@ class App extends Component {
     var token_name_directory = {}
     token_symbol_directory[0] = 'wei'
     token_symbol_directory['wei'] = 0
+    token_name_directory[e5+'0'] = this.state.e5s[e5].token
     for(var u=0; u<created_token_object_data.length; u++){
       var token_name = created_token_object_data[u]['ipfs'] == null ? 'tokens' : created_token_object_data[u]['ipfs'].entered_symbol_text
       var token_title = created_token_object_data[u]['ipfs'] == null ? 'tokens' : created_token_object_data[u]['ipfs'].entered_title_text
@@ -7705,11 +7730,11 @@ class App extends Component {
 
     var token_directory_clone = structuredClone(this.state.token_directory)
     token_directory_clone[e5] = token_symbol_directory
-    this.setState({token_directory: token_directory_clone});
 
     var token_name_directory_clone = structuredClone(this.state.token_name_directory)
     token_name_directory_clone[e5] = token_name_directory
-    this.setState({token_name_directory: token_name_directory_clone});
+
+    this.setState({token_directory: token_directory_clone, token_name_directory: token_name_directory_clone});
   }
 
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses) => {
@@ -7865,8 +7890,9 @@ class App extends Component {
     my_applications_clone[e5] = my_applications
 
     this.setState({created_jobs: created_jobs_clone, created_job_mappings:created_job_mappings_clone, my_applications:my_applications_clone, /* my_contract_applications:my_contract_applications */})
-    console.log('job count: '+created_job.length)
-    console.log('job applications count: '+my_applications.length)
+    console.log(e5, 'job count: '+created_job.length)
+    console.log(created_job)
+    console.log(e5, 'job applications count: '+my_applications.length)
 
   }
 
@@ -8006,7 +8032,9 @@ class App extends Component {
     created_bags_clone[e5] = created_bags
     this.setState({created_bags: created_bags_clone})
 
-    console.log('bag count: '+created_bags.length)
+    console.log(e5, ' bag count: '+created_bags.length)
+    console.log('-------------------------------------------------------------- '+e5+' get bag data--------------')
+    console.log(e5, created_bags)
   }
 
   get_contractor_data = async (E52contractInstance, contract_addresses, e5, web3) => {

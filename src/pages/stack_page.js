@@ -63,7 +63,7 @@ class StackPage extends Component {
         run_gas_limit:0, run_gas_price:0, hidden:[], invalid_ether_amount_dialog_box: false,
 
         typed_contact_word:'', typed_alias_word:'', typed_blocked_account_word:'',
-        run_time_expiry:0
+        run_time_expiry:0, confirm_clear_stack_dialog:false,
     };
 
     get_stack_page_tags_object(){
@@ -701,7 +701,6 @@ class StackPage extends Component {
             
                                         <div style={{height: 10}}/>
                                         {this.render_detail_item('2', { 'style':'s', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
-                                        
                                     </div>         
                                 </div>
                             </li>
@@ -777,6 +776,8 @@ class StackPage extends Component {
             return(
                 <div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
+                        {this.render_clear_stack_button()}
+                        <div style={{height: 10}}/>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 2px 2px 2px'}} onClick={()=>console.log()}>
@@ -785,11 +786,61 @@ class StackPage extends Component {
                             ))}
                         </ul>
                     </div>
+                    {this.render_confirm_clear_dialog()}
                 </div>
                 
             )
         }
     }
+
+    render_clear_stack_button(){
+        var items = [].concat(this.props.app_state.stack_items)
+        if(items.length > 0){
+            return(
+                <div>
+                    <div style={{'padding': '5px'}} onClick={()=> this.open_confirm_clear_stack_dialog()}>
+                        {this.render_detail_item('5', {'text':'Clear Transactions', 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_confirm_clear_stack_dialog(){
+        this.setState({confirm_clear_stack_dialog: true})
+    }
+
+    render_confirm_clear_dialog(){
+        return(
+            <Dialog onClose = {() => this.cancel_clear_transactions_dialog_box()} open = {this.state.confirm_clear_stack_dialog}>
+                <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                    
+                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirm Action</h4>
+
+                    {this.render_detail_item('3', {'title':'Confirm Clear Stack Action', 'details':'This action cannot be undone.', 'size':'l'})}
+
+                    <div style={{height: 5, width: 300}}/>
+
+                    <div style={{'padding': '5px'}} onClick={()=> this.clear_stack()}>
+                        {this.render_detail_item('5', {'text':'Confirm', 'action':''})}
+                    </div>
+
+                </div>
+                
+            </Dialog>
+        )
+    }
+
+    clear_stack(){
+        this.cancel_clear_transactions_dialog_box()
+        this.props.clear_transaction_stack()
+    }
+
+    cancel_clear_transactions_dialog_box(){
+        this.setState({confirm_clear_stack_dialog: false})
+    }
+
+
 
     lengthInUtf8Bytes(str) {
         // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -1817,7 +1868,8 @@ class StackPage extends Component {
                         bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count})
                     });
 
-                    var final_bag_object = {'bag_orders':bag_variants, 'timestamp':Date.now()}
+                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country }
+
                     var metadata_action = [ /* set metadata */
                         [20000, 1, 0],
                         [], [],/* target objects */
@@ -1976,9 +2028,13 @@ class StackPage extends Component {
                 metadata_strings[0].push(ipfs_obj.toString())
             }
         }
-        ints.push(metadata_action)
-        strs.push(metadata_strings)
-        adds.push([])
+
+        if(metadata_action[1].length != 0){
+            ints.push(metadata_action)
+            strs.push(metadata_strings)
+            adds.push([])
+        }
+        
 
 
 
@@ -2008,9 +2064,11 @@ class StackPage extends Component {
             }
         }
 
-        ints.push(index_data_in_tags)
-        strs.push(index_data_strings)
-        adds.push([])
+        if(index_data_in_tags[1].length != 0){
+            ints.push(index_data_in_tags)
+            strs.push(index_data_strings)
+            adds.push([])
+        }
 
 
 
@@ -2098,6 +2156,13 @@ class StackPage extends Component {
         strs = optimized_run['strs']
         adds = optimized_run['adds']
 
+        console.log('-------------------------------------------run-transactions--------------------------------')
+        console.log(ints)
+        console.log(strs)
+        console.log(adds)
+
+        // this.props.lock_run(false)
+        // return;
         
 
 
@@ -3972,6 +4037,45 @@ class StackPage extends Component {
                         strs[i][0].forEach(element => {
                             str_obj[0].push(element)
                         });
+                        adds[i].forEach(element => {
+                            add_obj.push(element)
+                        });
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+
+
+            var obj = [/* index data in tags */
+                [20000, 12, 0],
+                [], []/* target objects */
+            ]
+            var str_obj = [[], [], []]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+                        
+                        for(var j=0; j<strs[i].length; j++){
+                            strs[i][j].forEach(element => {
+                                str_obj[j].push(element)
+                            });
+                        }
+                        
                         adds[i].forEach(element => {
                             add_obj.push(element)
                         });

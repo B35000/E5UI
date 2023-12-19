@@ -1607,6 +1607,10 @@ class home_page extends Component {
             var object_country = ipfs.device_country
             var object_content_channeling_setting = ipfs.content_channeling_setting
             var object_language = ipfs.device_language_setting
+
+            // console.log('--------------------------------filter_by_content_channeling---------------------')
+            // console.log(ipfs)
+            // console.log(object_country, ' ',object_content_channeling_setting, ' ', object_language)
             
             if(content_channeling_setting == 'local'){
                 if(device_country == object_country && object_content_channeling_setting == 'local'){
@@ -1622,6 +1626,9 @@ class home_page extends Component {
                 if(object_content_channeling_setting == 'international'){
                     return_objs.push(object)
                 }
+            } 
+            else{
+                console.log('invalid content channeling setting!')
             }
         });
 
@@ -1680,7 +1687,7 @@ class home_page extends Component {
             <PostListSection ref={this.list_section} size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.props.notify.bind(this)}
             when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)}
 
-            theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} 
+            theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} when_view_image_clicked={this.when_view_image_clicked.bind(this)}
             
             viewed_posts={this.state.viewed_posts} viewed_channels={this.state.viewed_channels} viewed_jobs={this.state.viewed_jobs} viewed_contracts={this.state.viewed_contracts} viewed_subscriptions={this.state.viewed_subscriptions} viewed_proposals={this.state.viewed_proposals} viewed_stores={this.state.viewed_stores} viewed_bags={this.state.viewed_bags} viewed_contractors={this.state.viewed_contractors}
 

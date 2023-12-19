@@ -149,6 +149,10 @@ class WithdrawEtherPage extends Component {
             gas_price = this.get_gas_price_from_runs(e5)
         }
 
+        var x = (this.props.app_state.withdraw_balance[e5['id']] / this.props.app_state.account_balance[e5['id']]) * 100
+
+        var impact_percetage = Math.round(x * 1000) / 1000
+
         return(
             <div>
                 {this.render_detail_item('3', {'size':'l', 'details':'Your withdraw balance is shown below', 'title':'Withdraw balance'})}
@@ -158,6 +162,8 @@ class WithdrawEtherPage extends Component {
                     {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5['id']]), 'relativepower':'tokens'})}
 
                     {this.render_detail_item('2', {'style':'l','title':'Withdraw balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'number':(this.props.app_state.withdraw_balance[e5['id']]/10**18), 'relativepower':'Ether'})}
+
+                    {this.render_detail_item('2', {'style':'l','title':'Impact', 'subtitle':this.format_power_figure(impact_percetage), 'barwidth':this.calculate_bar_width(impact_percetage), 'number':'+'+(impact_percetage)+'%', 'relativepower':'Proportion'})}
                 </div>
 
                 {this.render_detail_item('0')}

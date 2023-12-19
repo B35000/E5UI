@@ -252,7 +252,7 @@ class RespondToJobPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contract_item(object)
 
-        if(this.state.picked_contract == object){
+        if(this.is_object_picked_contract(object)){
             return(
                 <div onClick={() => this.when_contract_item_clicked(object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                     <div style={{'padding': '5px 0px 5px 5px'}}>
@@ -301,12 +301,17 @@ class RespondToJobPage extends Component {
     }
 
     when_contract_item_clicked(object){
-        if(this.state.picked_contract == object){
+        if(this.is_object_picked_contract(object)){
             this.setState({picked_contract: null})
         }else{
             this.setState({picked_contract: object})
         }
-        
+    }
+
+    is_object_picked_contract(object){
+        if(this.state.picked_contract == null) return false
+        if(object['e5_id'] == this.state.picked_contract['e5_id']) return true
+        return false
     }
 
 
@@ -572,7 +577,7 @@ class RespondToJobPage extends Component {
         else if(selected_time-Date.now()/1000 < 900){
             this.props.notify('you cant set an expiry time thats less than fifteen minutes from now', 600)
         }
-        else{
+        else{          
             this.props.add_respond_to_job_to_stack(this.state)
             this.setState({
                 selected: 0,  type:'job-response', id:makeid(8),

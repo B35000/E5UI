@@ -231,14 +231,6 @@ class NewTokenPage extends Component {
                 </div>
             )    
         }
-        // else
-        // if(selected_item == 'basic-configuration'){
-        //     return(
-        //         <div>
-        //             {this.render_basic_configuration_token_part()}
-        //         </div>
-        //     )    
-        // }
         else if(selected_item == 'custom'){
             return(
                 <div>
@@ -341,6 +333,11 @@ class NewTokenPage extends Component {
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part()}
+
+                {this.render_detail_item('0')}
+
+                {this.render_presets_menu()}
+                <div style={{height:20}}/>
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -428,7 +425,6 @@ class NewTokenPage extends Component {
         )
     }
 
-
     when_image_gif_picked = (e) => {
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){ 
@@ -447,6 +443,164 @@ class NewTokenPage extends Component {
 
 
 
+
+    render_presets_menu(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Preset the new tokens settings based on common use cases.'})}
+                <div style={{height:10}}/>
+
+                <div onClick={()=>this.preset_stock_token()}>
+                    {this.render_detail_item('3', {'title':'📈 Stock Token', 'details':'A fixed supply token used for managing stake in a workgroup and raising capital inside of E5.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                <div  onClick={()=>this.preset_end_token()}>
+                    {this.render_detail_item('3', {'title':'☝️ End Token', 'details':'A fixed supply token with a very large supply similar to END.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                <div onClick={()=>this.preset_spend_token()}>
+                    {this.render_detail_item('3', {'title':'🫰 Spend Token', 'details':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                <div onClick={()=>this.preset_utility_token()}>
+                    {this.render_detail_item('3', {'title':'🔧 Utility Token', 'details':'An uncapped, general purpose token which is bought and sold from its exchange.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+            </div>
+        )
+    }
+
+
+    preset_stock_token(){
+        var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','capped', 'uncapped'], [1] ], };
+        var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [2] ], };
+        var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [2] ], };
+        var fully_custom = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','partially-custom', 'fully-custom'], [2] ], };
+        var block_limit_sensitivity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','1', '2', '3', '4', '5'], [1] ], };
+        var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','fixed', 'spread'], [1] ], };
+        var price = [{'id':'5', 'amount':bigInt('1')}]
+
+
+        this.setState({ 
+            new_token_type_tags_object: type, 
+            token_exchange_liquidity_total_supply: bigInt('1e10'),
+            default_exchange_amount_buy_limit: bigInt('1e10'),
+            default_exchange_amount_sell_limit: bigInt('1e9'),
+            trust_fee_proportion: bigInt('35e15'),/* 3.5% */
+
+            new_token_unlocked_liquidity_tags_object: unlocked_liquidity,
+            new_token_unlocked_supply_tags_object: unlocked_supply,
+            new_token_fully_custom_tags_object: fully_custom,
+            
+            token_exchange_ratio_x: bigInt('1e10'),
+            token_exchange_ratio_y: bigInt('1e6'),
+            price_data: price,
+
+            minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0,
+            new_token_block_limit_sensitivity_tags_object: block_limit_sensitivity,
+            default_authority_mint_limit:0, new_token_halving_type_tags_object: halving_type, maturity_limit:0,
+        });
+
+        this.props.notify('Stock token preset has been applied', 2500)
+    }
+
+
+    preset_end_token(){
+        var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','capped', 'uncapped'], [1] ], };
+        var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [1] ], };
+        var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [2] ], };
+        var fully_custom = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','partially-custom', 'fully-custom'], [2] ], };
+        var block_limit_sensitivity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','1', '2', '3', '4', '5'], [1] ], };
+        var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','fixed', 'spread'], [1] ], };
+        var price = [{'id':'5', 'amount':bigInt('1')}]
+
+        this.setState({
+            new_token_type_tags_object: type,
+            token_exchange_liquidity_total_supply: bigInt('1e72'),
+            default_exchange_amount_buy_limit: bigInt('1e6'),
+            default_exchange_amount_sell_limit: bigInt('1e6'),
+            trust_fee_proportion: bigInt('35e15'),
+
+            new_token_unlocked_liquidity_tags_object: unlocked_liquidity,
+            new_token_unlocked_supply_tags_object: unlocked_supply,
+            new_token_fully_custom_tags_object: fully_custom,
+
+            token_exchange_ratio_x: bigInt('1e72'),
+            token_exchange_ratio_y: bigInt('1e72'),
+            price_data: price,
+
+            minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, 
+            minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object:block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object:0, maturity_limit:0
+        })
+
+        this.props.notify('End token preset has been applied', 2500)
+    }
+
+    preset_spend_token(){
+        var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','capped', 'uncapped'], [2] ], };
+        var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [1] ], };
+        var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [1] ], };
+        var fully_custom = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','partially-custom', 'fully-custom'], [2] ], };
+        var block_limit_sensitivity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','1', '2', '3', '4', '5'], [3] ], };
+        var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','fixed', 'spread'], [2] ], };
+        var price = []
+
+        this.setState({
+            new_token_type_tags_object: type,
+            default_exchange_amount_buy_limit: bigInt('720e6'),
+            default_exchange_amount_sell_limit:0,
+            minimum_transactions_for_first_buy:1,
+            trust_fee_proportion:bigInt('35e15'),
+            block_limit:bigInt('1e9'),
+            
+            new_token_unlocked_liquidity_tags_object: unlocked_liquidity,
+            new_token_unlocked_supply_tags_object: unlocked_supply,
+            new_token_fully_custom_tags_object: fully_custom,
+
+            internal_block_halfing_proportion:bigInt('50e16'),block_limit_reduction_proportion:bigInt('90e16'), block_reset_limit:bigInt('2'), new_token_block_limit_sensitivity_tags_object:block_limit_sensitivity, default_authority_mint_limit:bigInt('720e6'),new_token_halving_type_tags_object:halving_type, maturity_limit:bigInt('10e9'),
+
+            token_exchange_ratio_x: bigInt('1e72'),
+            token_exchange_ratio_y: bigInt('1e72'),
+            price_data: price,
+
+
+            token_exchange_liquidity_total_supply:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_entered_contracts_for_first_buy:0,
+        })
+
+        this.props.notify('Spend token preset has been applied', 2500)
+    }
+
+    preset_utility_token(){
+        var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','capped', 'uncapped'], [2] ], };
+        var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [2] ], };
+        var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','locked', 'unlocked'], [2] ], };
+        var fully_custom = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','partially-custom', 'fully-custom'], [2] ], };
+        var block_limit_sensitivity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','1', '2', '3', '4', '5'], [1] ], };
+        var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','fixed', 'spread'], [1] ], };
+        var price = [{'id':'3', 'amount':bigInt('1')}, {'id':'5', 'amount':bigInt('1')}]
+
+        this.setState({
+            new_token_type_tags_object: type,
+            default_exchange_amount_buy_limit:bigInt('1e72'),
+            default_exchange_amount_sell_limit:bigInt('1e72'),
+            trust_fee_proportion:bigInt('35e15'),
+
+            new_token_unlocked_liquidity_tags_object: unlocked_liquidity,
+            new_token_unlocked_supply_tags_object: unlocked_supply,
+            new_token_fully_custom_tags_object: fully_custom,
+
+            token_exchange_ratio_x: bigInt('1e72'),
+            token_exchange_ratio_y: bigInt('1e72'),
+            price_data: price,
+
+            token_exchange_liquidity_total_supply:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object: halving_type, maturity_limit:0, 
+        })
+
+        this.props.notify('Utility token preset has been applied', 2500)
+    }
    
 
 
@@ -1605,7 +1759,7 @@ class NewTokenPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
+                <div style={{overflow: 'auto', maxHeight: height, 'overflow-x':'hidden'}}>
                     {this.render_set_token_and_amount_part()}
                     <div style={{height: 20}}/>
                     {this.render_set_prices_list_part()}

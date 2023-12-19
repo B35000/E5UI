@@ -39,7 +39,7 @@ class EnterContractPage extends Component {
     state = {
         selected: 0, type:'enter-contract', id:makeid(8),
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:0,
-        entered_indexing_tags:['enter', 'contract']
+        entered_indexing_tags:['enter', 'contract'], job_acceptance_action_state_object:null
     };
 
     get_enter_contract_title_tags_object(){
@@ -187,7 +187,7 @@ class EnterContractPage extends Component {
     }
 
 
-    set_contract(contract){
+    set_contract(contract, job_acceptance_action_state_object){
         if(this.state.contract_item['id'] != contract['id']){
             this.setState({
                 selected: 0, type:'enter-contract', id:makeid(8),
@@ -195,7 +195,7 @@ class EnterContractPage extends Component {
                 entered_indexing_tags:['enter', 'contract']
             })
         }
-        this.setState({contract_item: contract, e5: contract['e5']})
+        this.setState({contract_item: contract, e5: contract['e5'], job_acceptance_action_state_object: job_acceptance_action_state_object})
       
     }
 
@@ -313,9 +313,10 @@ class EnterContractPage extends Component {
             this.props.notify('You dont have enough tokens to enter this contract', 3700);
         }
         else{
-            var clone = structuredClone(this.state)
+            // var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
-            this.props.enter_contract(clone)
+            
+            this.props.enter_contract(this.state, this.state.job_acceptance_action_state_object)
             this.props.notify('transaction added to stack', 700);
         }
         

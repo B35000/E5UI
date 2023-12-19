@@ -1143,12 +1143,12 @@ class NewJobPage extends Component {
             {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
             {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
-        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {
             var exchange_e5 = exchanges_from_sync[i]['e5']
-            var myid = this.props.app_state.user_account_id[exchange_e5]
+            var myid = this.props.app_state.user_account_id[exchange_e5] == null ? 1 : this.props.app_state.user_account_id[exchange_e5]
             var author_account = exchanges_from_sync[i]['event'] == null ? '':exchanges_from_sync[i]['event'].returnValues.p3.toString() 
             if(author_account == myid.toString()){
                 sorted_token_exchange_data.push(exchanges_from_sync[i])

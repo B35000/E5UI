@@ -68,6 +68,7 @@ class ViewJobRequestContractPage extends Component {
             var item = this.state.contract_data
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'The contractors contract is shown below.'})}
                     {this.render_contracts_data()}
                     <div style={{height:10}}/>
@@ -116,7 +117,7 @@ class ViewJobRequestContractPage extends Component {
     render_enter_contract_button(){
         return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Enter Contract', 'details':'Enter the contract sent from the contractor', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'Enter Contract', 'details':'Enter the contract sent from the contractor', 'size':'l'})}
                     <div style={{height:10}}/>
 
                     <div onClick={()=> this.enter_contract()}>

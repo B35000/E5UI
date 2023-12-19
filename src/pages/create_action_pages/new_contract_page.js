@@ -41,8 +41,12 @@ class NewContractPage extends Component {
     state = {
         id: makeid(8), type:'contract', e5:this.props.app_state.selected_e5,
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
-        new_contract_tags_object: this.get_new_contract_tags_object(), new_contract_type_tags_object:this.get_new_contract_type_tags_object(),
-        default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(), include_enter_contract_action_tags_object: this.get_include_enter_contract_action_tags_object(),
+        new_contract_tags_object: this.get_new_contract_tags_object(), 
+        
+        new_contract_type_tags_object:this.get_new_contract_type_tags_object(),
+        default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, 
+        
+        auto_wait_tags_object:this.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: this.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: this.get_bounty_limit_type(), contract_force_exit_enabled: this.get_contract_force_exit_enabled(), include_enter_contract_action_tags_object: this.get_include_enter_contract_action_tags_object(),
 
         new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(),
         moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],
@@ -296,6 +300,11 @@ class NewContractPage extends Component {
                 {this.render_detail_item('3', {'title':'Enter Contract', 'details':'If set to enter-contract, youll enter the contract your creating in one transaction.', 'size':'l'})}
                 <div style={{height:20}}/>
                 <Tags page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+                {this.render_presets_menu()}
+                <div style={{height:20}}/>
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -355,7 +364,167 @@ class NewContractPage extends Component {
         this.props.notify('tag removed', 200)
     }
 
+
+    render_presets_menu(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Preset the new contract settings based on common use cases.'})}
+                <div style={{height:10}}/>
+
+                <div onClick={()=>this.preset_workgroup_contract()}>
+                    {this.render_detail_item('3', {'title':'👥 Workgroup Contract', 'details':'A contract representing shared consensus within an organization or group of people.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                <div  onClick={()=>this.preset_personal_contract()}>
+                    {this.render_detail_item('3', {'title':'🧘 Personal Contract', 'details':'A contract primarily used by one person.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                <div onClick={()=>this.preset_work_contract()}>
+                    {this.render_detail_item('3', {'title':'👷🏼 Work Contract', 'details':'A contract used for the job and contractor markets.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                <div onClick={()=>this.preset_life_contract()}>
+                    {this.render_detail_item('3', {'title':'⚭ Life Contract', 'details':'A contract representing shared consensus between two or more people for an extended period of time.', 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+            </div>
+        )
+    }
+
+
+    preset_workgroup_contract(){
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [1] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [1] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [1] ], };
+        var price = [{'id':'3', 'amount':bigInt('35000')}, {'id':'5', 'amount':bigInt('1000')}]
+
+        this.setState({
+            new_contract_type_tags_object: contract_type,
+            default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
+            max_extend_enter_contract_limit: (60*60*24*7*53),/* 1 year */
+            default_minimum_end_vote_bounty_amount: bigInt('5000'),
+            default_proposal_expiry_duration_limit: (60*60*24), /* 1 day */
+            max_enter_contract_duration: (60*60*24*7*53),/* 1 year */
+
+            auto_wait_tags_object:auto_wait,
+            default_minimum_spend_vote_bounty_amount:bigInt('1000'),
+            proposal_modify_expiry_duration_limit: (60*60*3), /* 3 hrs */
+            can_modify_contract_as_moderator: can_modify_contrac_as_mod,
+            can_extend_enter_contract_at_any_time: can_extend_enter_contract_at_any_time,
+            maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7*2),/* 2 weeks */
+            bounty_limit_type:bounty_limit_type,
+            contract_force_exit_enabled: force_exit_enabled,
+            price_data:price,
+        })
+
+        this.props.notify('Workgroup contract preset has been applied', 2500)
+    }
+
+
+    preset_personal_contract(){
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [2] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [1] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [1] ], };
+        var price = [{'id':'3', 'amount':bigInt('3500')}]
+
+        this.setState({
+            new_contract_type_tags_object: contract_type,
+            default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
+            max_extend_enter_contract_limit: (60*60*24*7*53),/* 1 year */
+            default_minimum_end_vote_bounty_amount: bigInt('0'),
+            default_proposal_expiry_duration_limit: (60*60*24), /* 1 day */
+            max_enter_contract_duration: bigInt('1e72'),/* forever */
+
+            auto_wait_tags_object:auto_wait,
+            default_minimum_spend_vote_bounty_amount:bigInt('0'),
+            proposal_modify_expiry_duration_limit: bigInt('1e72'), /* forever */
+            can_modify_contract_as_moderator: can_modify_contrac_as_mod,
+            can_extend_enter_contract_at_any_time: can_extend_enter_contract_at_any_time,
+            maximum_proposal_expiry_submit_expiry_time_difference: bigInt('1e72'),/* forever */
+            bounty_limit_type:bounty_limit_type,
+            contract_force_exit_enabled: force_exit_enabled,
+            price_data:price,
+        })
+
+        this.props.notify('Personal contract preset has been applied', 2500)
+    }
+
+
+
+    preset_work_contract(){
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [1] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [1] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [2] ], };
+        var price = [{'id':'3', 'amount':bigInt('20000')}, {'id':'5', 'amount':bigInt('5000')}]
+
+        this.setState({
+            new_contract_type_tags_object: contract_type,
+            default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
+            max_extend_enter_contract_limit: (60*60*12),/* 1/2 day */
+            default_minimum_end_vote_bounty_amount: bigInt('0'),
+            default_proposal_expiry_duration_limit: (60*60), /* 1 hr */
+            max_enter_contract_duration: (60*60*24*7),/* 1 wk */
+
+            auto_wait_tags_object:auto_wait,
+            default_minimum_spend_vote_bounty_amount:bigInt('0'),
+            proposal_modify_expiry_duration_limit: (60*60*3), /* 3 hrs */
+            can_modify_contract_as_moderator: can_modify_contrac_as_mod,
+            can_extend_enter_contract_at_any_time: can_extend_enter_contract_at_any_time,
+            maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7),/* 1 week */
+            bounty_limit_type:bounty_limit_type,
+            contract_force_exit_enabled: force_exit_enabled,
+            price_data:price,
+        })
+
+        this.props.notify('Work contract preset has been applied', 2500)
+    }
    
+
+    preset_life_contract(){
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [2] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [2] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [2] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [1] ], };
+        var price = [{'id':'3', 'amount':bigInt('35000')}, {'id':'5', 'amount':bigInt('15000')}]
+
+
+
+        this.setState({
+            new_contract_type_tags_object: contract_type,
+            default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
+            max_extend_enter_contract_limit: bigInt('1e72'),/* forever */
+            default_minimum_end_vote_bounty_amount: bigInt('0'),
+            default_proposal_expiry_duration_limit: (60*60*24), /* 1 hr */
+            max_enter_contract_duration: bigInt('1e72'),/* forever */
+
+            auto_wait_tags_object:auto_wait,
+            default_minimum_spend_vote_bounty_amount:bigInt('0'),
+            proposal_modify_expiry_duration_limit: (60*60*10), /* 10 hrs */
+            can_modify_contract_as_moderator: can_modify_contrac_as_mod,
+            can_extend_enter_contract_at_any_time: can_extend_enter_contract_at_any_time,
+            maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7),/* 1 week */
+            bounty_limit_type:bounty_limit_type,
+            contract_force_exit_enabled: force_exit_enabled,
+            price_data:price,
+        })
+
+
+        this.props.notify('Life contract preset has been applied', 2500)
+    }
 
 
 

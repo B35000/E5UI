@@ -28,7 +28,7 @@ class PostListSection extends Component {
     state = {
         selected: 0,
         viewed_posts:[],
-        scroll_positions:{}, typed_search_id:'', searched_account:''
+        scroll_positions:{}, typed_search_id:'', searched_account:'', typed_search_ether_id:'',
     };
 
 
@@ -1182,9 +1182,9 @@ class PostListSection extends Component {
         else{
             return(
                 <div>
-                    <div style={{height:180, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{height:160, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 0px 0px'}}>
-                            <img src={Letter} style={{height:70 ,width:'auto'}} />
+                            <img src={Letter} style={{height:60 ,width:'auto'}} />
                             <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}>locked</p>
                         </div>
                     </div>
@@ -1378,9 +1378,9 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -1403,7 +1403,7 @@ class PostListSection extends Component {
                     </ul>
                 </div>
             );
-        } 
+        }
     }
 
     get_storefront_items(){
@@ -1429,6 +1429,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
+                    {this.render_storefront_item_images(object)}
                     <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -1464,6 +1465,27 @@ class PostListSection extends Component {
             return false
         }
         return true
+    }
+
+    render_storefront_item_images(object){
+        var items = object['ipfs'].entered_image_objects
+        if(items == null || items.length == 0) return;
+
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
+                            <img src={item} style={{height:45 ,width:45, 'border-radius': '50%'}} onClick={() => this.when_image_tapped(items, index)}/>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    when_image_tapped(items, index){
+        this.props.when_view_image_clicked(index, items)
     }
 
 
@@ -1533,17 +1555,17 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div onClick={() => this.when_bag_item_clicked(index, object)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {/* {this.render_detail_item('1', item['tags'])} */}
                     {/* <div style={{height: 10}}/> */}
-                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
                     <div style={{padding:'0px 0px 0px 0px'}}>
                         {this.render_images(object)}
                     </div>
-                    <div style={{'padding': '20px 0px 0px 0px'}}>
+                    <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
                     
@@ -1559,7 +1581,7 @@ class PostListSection extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
-                            <img src={item} style={{height:45 ,width:45, 'border-radius': '50%'}} />
+                            <img src={item} style={{height:45 ,width:45, 'border-radius': '50%'}} onClick={() => this.when_image_tapped(items, index)}/>
                         </li>
                     ))}
                 </ul>
@@ -1581,6 +1603,7 @@ class PostListSection extends Component {
 
     get_bag_images(object){
         var images = []
+        if(this.props.app_state.created_store_mappings[object['e5']] == null) return images;
 
         for(var i=0; i<object['ipfs']['bag_orders'].length; i++){
             var variant_id = object['ipfs']['bag_orders'][i]['storefront_variant_id']
@@ -1623,20 +1646,50 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_ethers_data()
+        if(items.length == 0){
+            items = ['0','1'];
+            return (
+                <div>
+                    <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                        <TextInput height={25} placeholder={'Enter Name or Symbol...'} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
+                    </div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '1px 5px 1px 5px'}}>
+                                    {this.render_small_empty_object()}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
         return ( 
-            <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
-                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.map((item, index) => (
-                        <li style={{'padding': '1px 5px 1px 5px'}}>
-                            {this.render_ethers_object(item, index)}
-                        </li>
-                    ))}
-                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
-                        {this.render_small_empty_object()}
-                    </div> */}
-                </ul>
+            <div>
+                <div style={{ 'margin': '5px 5px 5px 5px'}}>
+                    <TextInput height={25} placeholder={'Enter Name or Symbol...'} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
+                </div>
+
+                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-40}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '1px 5px 1px 5px'}}>
+                                {this.render_ethers_object(item, index)}
+                            </li>
+                        ))}
+                        {/* <div style={{'padding': '1px 5px 1px 5px'}}>
+                            {this.render_small_empty_object()}
+                        </div> */}
+                    </ul>
+                </div>
             </div>
         );
+    }
+
+    when_search_ether_input_field_changed(text){
+        this.setState({typed_search_ether_id: text})
     }
 
     render_ethers_object(item, index){
@@ -1752,7 +1805,21 @@ class PostListSection extends Component {
                 prioritized_list.push(token)
             }
         });
-        return prioritized_list;
+
+        
+        if(this.state.typed_search_ether_id == '') return prioritized_list;
+        else{
+            var filtered_list = []
+            prioritized_list.forEach(token => {
+                var name = token['name']
+                var symbol = token['id']
+                var typed_word = this.state.typed_search_ether_id.toLowerCase()
+                if(name.toLowerCase().startsWith(typed_word) || symbol.toLowerCase().startsWith(typed_word)){
+                    filtered_list.push(token)
+                }
+            });
+            return filtered_list;
+        }
     }
 
     does_account_have_balance(e5){

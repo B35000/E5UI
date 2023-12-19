@@ -485,7 +485,7 @@ class ContractorDetailsSection extends Component {
             return this.props.app_state.contractor_applications[object['id']]
         }else{
             var filtered_responses = []
-            var all_responses = this.props.app_state.contractor_applications[object['id']]
+            var all_responses = this.props.app_state.contractor_applications[object['id']] == null ? [] : this.props.app_state.contractor_applications[object['id']]
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
@@ -511,10 +511,6 @@ class ContractorDetailsSection extends Component {
 
                         {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'s'})}
                     </div>
-                    {/* <div style={{height:5}}/> */}
-                    {/* <div onClick={()=>this.open_contract(item['contract'])}>
-                        {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
-                    </div> */}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
@@ -538,10 +534,6 @@ class ContractorDetailsSection extends Component {
         if(object['event'].returnValues.p5 == this.props.app_state.user_account_id[object['e5']]){
             this.props.open_view_job_request_ui(item, object)
         }
-    }
-
-    open_contract(contract, object){
-        this.props.open_view_contract_ui(contract)
     }
 
 
