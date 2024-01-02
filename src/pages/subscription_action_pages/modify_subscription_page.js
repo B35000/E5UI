@@ -32,7 +32,7 @@ function makeid(length) {
 class ModifySubscriptionPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8),type:'modify-subscription', entered_indexing_tags:['modify', 'subscription', 'auth'],
+        selected: 0,id:makeid(8),type:this.props.app_state.loc['840']/* 'modify-subscription' */, entered_indexing_tags:[this.props.app_state.loc['841']/* 'modify' */, this.props.app_state.loc['842']/* 'subscription' */, this.props.app_state.loc['843']/* 'authority' */],
         subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_subscription_title_tags_object:this.get_modify_subscription_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
         reconfig_number:0,reconfig_target_id:'', reconfig_values:[]
     };
@@ -43,7 +43,7 @@ class ModifySubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modify-subscription'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['840']/* 'modify-subscription' */], [1]
             ],
         };
     }
@@ -54,14 +54,14 @@ class ModifySubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','Minimum Buy Amount','Target Authority', 'Target Beneficiary', 'Maximum Buy Amount', 'Minimum Cancellable Amount'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['438c']/* 'Minimum Buy Amount' */,this.props.app_state.loc['438a']/* 'Target Authority' */, this.props.app_state.loc['438b']/* 'Target Beneficiary' */, this.props.app_state.loc['438d']/* 'Maximum Buy Amount' */, this.props.app_state.loc['438e']/* 'Minimum Cancellable Balance Amount' */], [1]
             ],
         };
     }
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
@@ -69,7 +69,7 @@ class ModifySubscriptionPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@ class ModifySubscriptionPage extends Component {
         
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Make changes to the configuration of the subscription ID: '+this.state.subscription_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['844']/* 'Make changes to the configuration of the subscription ID: ' */+this.state.subscription_item['id']})}
 
                 {this.render_detail_item('0')}
 
@@ -129,7 +129,7 @@ class ModifySubscriptionPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':this.props.app_state.loc['845']/* 'units' */, })}
                     </div>
 
                     <div style={{height:10}}/>
@@ -139,7 +139,7 @@ class ModifySubscriptionPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['846']/* 'Add Change' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -147,7 +147,7 @@ class ModifySubscriptionPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['847']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
                     {this.load_account_suggestions('reconfig_target_id')}
 
                     <div style={{height:10}}/>
@@ -155,7 +155,7 @@ class ModifySubscriptionPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['846']/* 'Add Change' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -177,7 +177,7 @@ class ModifySubscriptionPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['848']/* 'Current ' */+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':this.props.app_state.loc['845']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -185,28 +185,28 @@ class ModifySubscriptionPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':'Current '+selected_item, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':this.props.app_state.loc['848']/* 'Current ' */+selected_item, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':this.props.app_state.loc['849']/* 'Current Value' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':this.props.app_state.loc['849']/* 'Current Value' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':current_value, 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':current_value, 'details':this.props.app_state.loc['849']/* 'Current Value' */, 'size':'l'})}
                 </div>
             )
         } 
@@ -218,8 +218,15 @@ class ModifySubscriptionPage extends Component {
             'Target Beneficiary':{'position':[1,6], 'picker':'id', 'powerlimit':63},
             'Minimum Buy Amount':{'position':[1,1], 'picker':'number', 'powerlimit':63},
             'Maximum Buy Amount':{'position':[1,3], 'picker':'number', 'powerlimit':63}, 
-            'Minimum Cancellable Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63},
+            'Minimum Cancellable Balance Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63},
         }
+
+        obj[this.props.app_state.loc['438a']]/* 'Target Authority' */ = {'position':[1,0], 'picker':'id', 'powerlimit':63}
+        obj[this.props.app_state.loc['438b']]/* 'Target Beneficiary' */ = {'position':[1,6], 'picker':'id', 'powerlimit':63}
+        obj[this.props.app_state.loc['438c']]/* 'Minimum Buy Amount' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['438d']]/* 'Maximum Buy Amount' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['438e']]/* 'Minimum Cancellable Balance Amount' */ = {'position':[1,4], 'picker':'number', 'powerlimit':63}
+
 
         return obj[property]
     }
@@ -236,17 +243,17 @@ class ModifySubscriptionPage extends Component {
             var number = this.state.reconfig_number;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_number:0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['850']/* 'reconfig action added!' */, 1600)
         }
         else if(ui == 'id'){
             var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
-                this.props.notify('please put a valid account id', 600)
+                this.props.notify(this.props.app_state.loc['851']/* 'Please put a valid account ID.' */, 3600)
             }
             else{
                 reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
                 this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
-                this.props.notify('reconfig action added!', 600)
+                this.props.notify(this.props.app_state.loc['850']/* 'reconfig action added!' */, 1600)
             }
         }
     }
@@ -295,7 +302,7 @@ class ModifySubscriptionPage extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
                                 {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['852']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -316,7 +323,7 @@ class ModifySubscriptionPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['845']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -324,7 +331,7 @@ class ModifySubscriptionPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['853']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -354,9 +361,9 @@ class ModifySubscriptionPage extends Component {
     get_suggested_accounts(type){
         if(type == 'reconfig_target_id'){
             return[
-                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-                {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+                {'id':'53', 'label':{'title':this.props.app_state.loc['854']/* 'My Account' */, 'details':this.props.app_state.loc['857']/* 'Account' */, 'size':'s'}},
+                {'id':'2', 'label':{'title':this.props.app_state.loc['855']/* 'Main Contract' */, 'details':this.props.app_state.loc['858']/* 'Contract ID 2' */, 'size':'s'}},
+                {'id':'0','label':{'title':this.props.app_state.loc['856']/* 'Burn Account' */, 'details':this.props.app_state.loc['859']/* 'Account ID 0' */, 'size':'s'}},
             ]
         }
     }
@@ -389,7 +396,7 @@ class ModifySubscriptionPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({reconfig_values: cloned_array})
-        this.props.notify('reconfig action removed!', 600)
+        this.props.notify(this.props.app_state.loc['860']/* 'reconfig action removed!' */, 1600)
     }
 
 
@@ -404,7 +411,7 @@ class ModifySubscriptionPage extends Component {
     set_subscription(subscription_item){
         if(this.state.subscription_item['id'] != subscription_item['id']){
             this.setState({
-                selected: 0,id:makeid(8),type:'modify-subscription', entered_indexing_tags:['modify', 'subscription', 'auth'],
+                selected: 0,id:makeid(8),type:this.props.app_state.loc['840']/* 'modify-subscription' */, entered_indexing_tags:[this.props.app_state.loc['841']/* 'modify' */, this.props.app_state.loc['842']/* 'subscription' */, this.props.app_state.loc['843']/* 'auth' */],
                 subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_subscription_title_tags_object:this.get_modify_subscription_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
                 reconfig_number:0,reconfig_target_id:'', reconfig_values:[]
             })
@@ -415,12 +422,12 @@ class ModifySubscriptionPage extends Component {
 
     finish(){
         if(this.state.reconfig_values.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['861']/* 'you cant stack no changes' */, 3700)
         }else{
             var clone = structuredClone(this.state)
             this.props.add_modify_subscription_to_stack(clone)
             this.setState({reconfig_values:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -502,32 +509,32 @@ class ModifySubscriptionPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

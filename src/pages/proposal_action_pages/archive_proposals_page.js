@@ -31,7 +31,7 @@ function makeid(length) {
 class ArchiveProposalPage extends Component {
     
     state = {
-        selected: 0, id:makeid(8), type:'archive', object_item:{'id':'', 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['archive', 'object'],
+        selected: 0, id:makeid(8), type:this.props.app_state.loc['768']/* 'archive' */, object_item:{'id':'', 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:[this.props.app_state.loc['768']/* 'archive' */, this.props.app_state.loc['769']/* 'object' */],
 
         archive_proposal_title_tags_object: this.get_archive_proposal_title_tags_object(),
         bounty_target:'', bounty_exchanges:[]
@@ -43,7 +43,7 @@ class ArchiveProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','archive-object'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['770']/* 'archive-object' */], [1]
             ],
         };
     }
@@ -58,12 +58,12 @@ class ArchiveProposalPage extends Component {
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                                {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                             </div>
                         </div>
                     </div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':'Archive your specified contract or proposal ID: '+this.state.object_item['id'], 'textsize':'14px', 'font':'Sans-serif'})} 
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['771']/* 'Archive your specified contract or proposal ID: ' */+this.state.object_item['id'], 'textsize':'14px', 'font':'Sans-serif'})} 
                     <div style={{height:10}}/>
                     {this.render_everything()}
                 </div>
@@ -81,30 +81,30 @@ class ArchiveProposalPage extends Component {
         var object = this.state.object_item
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.state.object_item['archive_accounts'].length+' accounts', 'details':'The number of participants in the proposal /contract.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.state.object_item['archive_accounts'].length+' accounts', 'details':this.props.app_state.loc['772']/* 'The number of participants in the proposal /contract.' */, 'size':'l'})}
                 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':'End Bounty Balance', 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['773']/* 'End Bounty Balance' */, 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':'END', })}
                 </div>
 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':'Spend Bounty Balance', 'subtitle':'Spend', 'barwidth':this.get_number_width(object['spend_balance']), 'number':` ${number_with_commas(object['spend_balance'])}`, 'barcolor':'', 'relativepower':`SPEND`, })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['774']/* 'Spend Bounty Balance' */, 'subtitle':'Spend', 'barwidth':this.get_number_width(object['spend_balance']), 'number':` ${number_with_commas(object['spend_balance'])}`, 'barcolor':'', 'relativepower':`SPEND`, })}
                 </div>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Bounty Exchanges', 'details':'Specify Bounty Exchange to collect the contracts/proposals remaining balance', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['775']/* 'Bounty Exchanges' */, 'details':this.props.app_state.loc['776']/* 'Specify Bounty Exchange to collect the contracts/proposals remaining balance' */, 'size':'l'})}
                 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Target Exchange ID...'} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['777']/* 'Target Exchange ID...' */} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.load_token_suggestions('bounty_exchange_target')}
 
                 <div style={{height:10}}/>
                 <div onClick={()=>this.add_bounty_exchange_item()}>
-                    {this.render_detail_item('5', {'text':'Add Bounty Exchange', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['778']/* 'Add Bounty Exchange' */, 'action':''})}
                 </div>
 
                 {this.render_detail_item('0')}
@@ -121,17 +121,17 @@ class ArchiveProposalPage extends Component {
         var exchange = this.get_token_id_from_symbol(this.state.bounty_exchange_target.trim())
 
         if(isNaN(exchange) || parseInt(exchange) < 0 || exchange == '' || !this.does_exchange_exist(exchange)){
-            this.props.notify('please put a valid exchange id', 1600)
+            this.props.notify(this.props.app_state.loc['779']/* 'please put a valid exchange id' */, 1600)
         }
         else if(this.includes_function(exchange)){
-            this.props.notify('you cant include the same exchange more than once', 3600)
+            this.props.notify(this.props.app_state.loc['780']/* 'you cant include the same exchange more than once' */, 3600)
         }
         else{
             var tx = {'exchange': exchange}
             var bounty_exchanges_clone = this.state.bounty_exchanges.slice()
             bounty_exchanges_clone.push(tx)
             this.setState({bounty_exchanges: bounty_exchanges_clone, bounty_exchange_target:''})
-            this.props.notify('bounty exchange added!', 1600)
+            this.props.notify(this.props.app_state.loc['781']/* 'bounty exchange added!' */, 1600)
         }
     }
 
@@ -194,7 +194,7 @@ class ArchiveProposalPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_when_exchange_clicked(item)}>
-                                {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'details':'Default depth 0', 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'details':this.props.app_state.loc['782']/* 'Default depth 0' */, 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -210,7 +210,6 @@ class ArchiveProposalPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({bounty_exchanges: cloned_array})
-        this.props.notify('bounty exchange removed!', 600)
     }
 
 
@@ -234,8 +233,8 @@ class ArchiveProposalPage extends Component {
 
     get_suggested_exchange_accounts(type){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['268']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['269']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.object_item['e5']]
         var sorted_token_exchange_data = []
@@ -276,7 +275,7 @@ class ArchiveProposalPage extends Component {
     set_object(proposal){
         if(this.state.object_item['id'] != proposal['id']){
             this.setState({
-                selected: 0, id:makeid(8), type:'archive', object_item:{'id':0, 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['archive', 'object'],
+                selected: 0, id:makeid(8), type:this.props.app_state.loc['768']/* 'archive' */, object_item:{'id':0, 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:[this.props.app_state.loc['768']/* 'archive' */, this.props.app_state.loc['769']/* 'object' */],
                 archive_proposal_title_tags_object: this.get_archive_proposal_title_tags_object(),
                 bounty_target:'', bounty_exchanges:[]
             })
@@ -288,7 +287,7 @@ class ArchiveProposalPage extends Component {
         var clone = structuredClone(this.state)
         // clone.e5 = this.props.app_state.selected_e5
         this.props.add_archive_proposal_action_to_stack(clone)
-        this.props.notify('transaction added to stack!', 600)
+        this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack!' */, 1600)
     }
 
 
@@ -370,32 +369,32 @@ class ArchiveProposalPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

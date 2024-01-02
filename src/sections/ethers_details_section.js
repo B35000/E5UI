@@ -40,7 +40,7 @@ class EthersDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','details','transactions'],[0]
+              ['or','',0], ['e',this.props.app_state.loc['2232']/* 'details' */,this.props.app_state.loc['2448']/* 'transactions' */],[0]
           ],
         }
     }
@@ -91,13 +91,13 @@ class EthersDetailsSection extends Component {
             )
         }
 
-        if(selected_item == 'details' || selected_item == 'e'){
+        if(selected_item == this.props.app_state.loc['2232']/* 'details' */ || selected_item == 'e'){
             return(
                 <div>
                     {this.render_ethers_main_details_section(item)}
                 </div>
             )
-        }else if(selected_item == 'transactions'){
+        }else if(selected_item == this.props.app_state.loc['2448']/* 'transactions' */){
             return(
                 <div>
                     {this.render_block_history_logs(item)}
@@ -160,7 +160,7 @@ class EthersDetailsSection extends Component {
                     {this.render_wallet_status(item)}
                     <div style={{height:10}}/>
                     <div onClick={() => this.props.get_wallet_data_for_specific_e5(item['e5'])}>
-                        {this.render_detail_item('5', {'text':'reload wallet', 'action': ''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
                     </div>
                     {this.render_detail_item('0')}
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -191,26 +191,26 @@ class EthersDetailsSection extends Component {
 
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2451']/* 'Your Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2452']/* Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
                     </div>
                     <div style={{height:10}}/>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Wei', 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])), 'number':this.format_account_balance_figure(this.get_gas_price(item['e5'])), 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])), 'number':this.format_account_balance_figure(this.get_gas_price(item['e5'])), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])/10**9), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])/10**9), 'number':(this.get_gas_price(item['e5'])/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2454']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])/10**9), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])/10**9), 'number':(this.get_gas_price(item['e5'])/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                     </div>
                     <div style={{height:10}}/>
 
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'E5 txs/ether (2.3M Gas average)', 'subtitle':'', 'barwidth':this.calculate_bar_width(e5_transactions_per_ether), 'number':this.format_account_balance_figure(e5_transactions_per_ether), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2455']/* 'E5 txs/ether (2.3M Gas average)' */, 'subtitle':'', 'barwidth':this.calculate_bar_width(e5_transactions_per_ether), 'number':this.format_account_balance_figure(e5_transactions_per_ether), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas txs/ether (23K Gas average)', 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_transactions_per_ether), 'number':this.format_account_balance_figure(gas_transactions_per_ether), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2456']/* 'Gas txs/ether (23K Gas average)' */, 'subtitle':'', 'barwidth':this.calculate_bar_width(gas_transactions_per_ether), 'number':this.format_account_balance_figure(gas_transactions_per_ether), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
                     </div>
                     <div style={{height:10}}/>
 
@@ -228,17 +228,17 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('3', item['block_time'])}
                     {this.render_detail_item('0')}
                     
-                    {this.render_detail_item('3', {'title':'Send/Receive Ether', 'details':'Send or receive ether from a specified account.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2457']/* 'Send/Receive Ether' */, 'details':this.props.app_state.loc['2458']/* 'Send or receive ether from a specified account.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_receive_ether_bottomsheet(item)}>
-                        {this.render_detail_item('5', {'text':'Send/Receive', 'action': ''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2459']/* 'Send/Receive' */, 'action': ''})}
                     </div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Node Settings', 'details':'Change the remote procedure call (RPC) provider setting for making your transactions.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2460']/* 'Node Settings' */, 'details':this.props.app_state.loc['2461']/* 'Change the remote procedure call (RPC) provider setting for making your transactions.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_rpc_settings(item)}>
-                        {this.render_detail_item('5', {'text':'Open', 'action': ''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2462']/* 'Open' */, 'action': ''})}
                     </div>
                     <div style={{height:10}}/>
 
@@ -254,13 +254,13 @@ class EthersDetailsSection extends Component {
             if(this.props.app_state.wallet_status[item['e5']] == 'synchronizing'){
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Syncronizing wallet, please wait...', 'size' :'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2463']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2464']/* Syncronizing wallet, please wait...' */, 'size' :'l'})}
                     </div>
                 )
             }else{
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Wallet sync failed. Please reload the wallet.', 'size' :'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2463']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2465']/* 'Wallet sync failed. Please reload the wallet.' */, 'size' :'l'})}
                     </div>
                 )
             }
@@ -268,7 +268,7 @@ class EthersDetailsSection extends Component {
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Wallet Status', 'details':'Syncronized.', 'size' :'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2466']/* 'Wallet Status' */, 'details':this.props.app_state.loc['2467']/* 'Syncronized.' */, 'size' :'l'})}
                 </div>
             )
         }
@@ -422,7 +422,7 @@ class EthersDetailsSection extends Component {
                 'number_label':this.get_blockchain_data('s', e5),
                 'number_label_large': this.get_blockchain_data('l', e5),
                 'banner-icon':{'header':symbol, 'subtitle':name, 'image':this.props.app_state.e5s[e5].ether_image},
-                'chain_id':{'title':this.props.app_state.chain_id[e5], 'details':'Chain ID', 'size' :'l'},
+                'chain_id':{'title':this.props.app_state.chain_id[e5], 'details':this.props.app_state.loc['2468']/* 'Chain ID' */, 'size' :'l'},
                 'peer_count':{'title':''+this.props.app_state.number_of_peers[e5], 'details':'Number of Peers', 'size' :'l'},
                 
                 'gas_used_chart_data_label':{'title':'Gas Used', 'details':'Amount of gas used in the last 100 blocks', 'size' :'l'},
@@ -435,16 +435,16 @@ class EthersDetailsSection extends Component {
                 'transaction_count_chart_data':{'interval':0, 'background_color':'#D5D5D5', 'dataPoints':this.get_transaction_count_data_points(e5)},
                 
 
-                'gas_limit':{'title':this.get_gas_limit(e5), 'details':'Gas Limit per Block', 'size' :'l'},
+                'gas_limit':{'title':this.get_gas_limit(e5), 'details':this.props.app_state.loc['2469']/* 'Gas Limit per Block' */, 'size' :'l'},
 
-                'base_fee_per_gas_unit':{ 'style':'l', 'title':'Base Fee in wei', 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)), 'number':this.format_account_balance_figure(this.get_base_fee_in_wei(e5)), 'barcolor':'#606060', 'relativepower':'wei', },
+                'base_fee_per_gas_unit':{ 'style':'l', 'title':this.props.app_state.loc['2470']/* Base Fee in wei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)), 'number':this.format_account_balance_figure(this.get_base_fee_in_wei(e5)), 'barcolor':'#606060', 'relativepower':'wei', },
 
-                'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':'Base Fee in gwei', 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)/10**9), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)/10**9), 'number':(this.get_base_fee_in_wei(e5)/10**9), 'barcolor':'#606060', 'relativepower':'gwei', },
+                'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':this.props.app_state.loc['2471']/* 'Base Fee in gwei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)/10**9), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)/10**9), 'number':(this.get_base_fee_in_wei(e5)/10**9), 'barcolor':'#606060', 'relativepower':'gwei', },
 
                 'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
 
-                'address':{'details':this.get_account_address(e5), 'title':'Your Address', 'size' :'l'},
-                'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':'Average block time for the last 5 blocks', 'size' :'l'},
+                'address':{'details':this.get_account_address(e5), 'title':this.props.app_state.loc['2472']/* 'Your Address' */, 'size' :'l'},
+                'block_time':{'title':this.get_average_block_time_from_blocks(e5), 'details':this.props.app_state.loc['2473']/* 'Average block time for the last 5 blocks' */, 'size' :'l'},
         }
     }
 
@@ -471,7 +471,7 @@ class EthersDetailsSection extends Component {
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.format_address_if_harmony('0x0000000000000000000000000000000000000000', e5), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2474']/* 'Wallet Address' */, 'details':this.format_address_if_harmony('0x0000000000000000000000000000000000000000', e5), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -512,7 +512,7 @@ class EthersDetailsSection extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied address to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['2475']/* 'copied address to clipboard' */, 600)
     }
 
 
@@ -556,7 +556,7 @@ class EthersDetailsSection extends Component {
             
         }
         var av_time = total_time / is
-        return av_time+' seconds'
+        return av_time+this.props.app_state.loc['2476']/* ' seconds' */
     }
 
 
@@ -739,13 +739,13 @@ class EthersDetailsSection extends Component {
         if(this.format_address(from, e5) == 'You'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'To: ','details':this.format_address(to, e5), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2419']/* 'To: ' */,'details':this.format_address(to, e5), 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'From: ','details':this.format_address(from, e5), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2420']/* 'From: ' */,'details':this.format_address(from, e5), 'size':'l'})}
                 </div>
             )
         }
@@ -761,20 +761,20 @@ class EthersDetailsSection extends Component {
         var time = this.get_from_value(item, e5)['time']
         var relative_time = this.get_from_value(item, e5)['relative_time']
         return{
-            'from':{'title':'From: ','details':this.format_address(from, e5), 'size':'l'},
-            'to':{'title':'To: ','details':this.format_address(to, e5), 'size':'l'},
+            'from':{'title':this.props.app_state.loc['2420']/* 'From: ' */,'details':this.format_address(from, e5), 'size':'l'},
+            'to':{'title':this.props.app_state.loc['2419']/* 'To: ' */,'details':this.format_address(to, e5), 'size':'l'},
             
-            'gas_used':{'style': 'l', 'title':'Gas Used', 'subtitle': this.format_power_figure(gas_used), 'barwidth': this.calculate_bar_width(gas_used), 'number': this.format_account_balance_figure(gas_used), 'barcolor': '', 'relativepower': 'gas',},
+            'gas_used':{'style': 'l', 'title':this.props.app_state.loc['2477']/* 'Gas Used' */, 'subtitle': this.format_power_figure(gas_used), 'barwidth': this.calculate_bar_width(gas_used), 'number': this.format_account_balance_figure(gas_used), 'barcolor': '', 'relativepower': 'gas',},
             
-            'gas_price':{'style': 'l', 'title':'Gas Price Paid in Wei', 'subtitle': this.format_power_figure(gas_price), 'barwidth': this.calculate_bar_width(gas_price), 'number': this.format_account_balance_figure(gas_price), 'barcolor': '', 'relativepower': 'wei',},
+            'gas_price':{'style': 'l', 'title':this.props.app_state.loc['2478']/* 'Gas Price Paid in Wei' */, 'subtitle': this.format_power_figure(gas_price), 'barwidth': this.calculate_bar_width(gas_price), 'number': this.format_account_balance_figure(gas_price), 'barcolor': '', 'relativepower': 'wei',},
             
-            'gas_price_gwei':{'style': 'l', 'title':'Gas Price Paid in Gwei', 'subtitle': this.format_power_figure(gas_price/10**9), 'barwidth': this.calculate_bar_width(gas_price/10**9), 'number': gas_price/10**9, 'barcolor': '', 'relativepower': 'gwei',},
+            'gas_price_gwei':{'style': 'l', 'title':this.props.app_state.loc['2479']/* 'Gas Price Paid in Gwei' */, 'subtitle': this.format_power_figure(gas_price/10**9), 'barwidth': this.calculate_bar_width(gas_price/10**9), 'number': gas_price/10**9, 'barcolor': '', 'relativepower': 'gwei',},
             
-            'value':{'style': 'l', 'title':'Value', 'subtitle': this.format_power_figure(value), 'barwidth': this.calculate_bar_width(value), 'number': this.format_account_balance_figure(value), 'barcolor': '', 'relativepower': 'wei',},
+            'value':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value), 'barwidth': this.calculate_bar_width(value), 'number': this.format_account_balance_figure(value), 'barcolor': '', 'relativepower': 'wei',},
 
-            'value_ether':{'style': 'l', 'title':'Value', 'subtitle': this.format_power_figure(value/10**18), 'barwidth': this.calculate_bar_width(value/10**18), 'number': (value/10**18), 'barcolor': '', 'relativepower': 'ether',},
+            'value_ether':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value/10**18), 'barwidth': this.calculate_bar_width(value/10**18), 'number': (value/10**18), 'barcolor': '', 'relativepower': 'ether',},
 
-            'block':{ 'details': block, 'title': 'Block Number', 'size': 'l' },
+            'block':{ 'details': block, 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' },
             'time':{ 'details': time+', '+relative_time+' ago', 'title': 'Timestamp', 'size': 'l' },
         }
     }
@@ -792,7 +792,7 @@ class EthersDetailsSection extends Component {
         var number_of_blocks = this.props.app_state.number_of_blocks[e5] == null ? 0 : this.props.app_state.number_of_blocks[e5]
         return{
             'style':size,
-            'title':'Number of Blocks Mined',
+            'title':this.props.app_state.loc['2481']/* 'Number of Blocks Mined' */,
             'subtitle':this.format_power_figure(number_of_blocks),
             'barwidth':this.get_number_width(number_of_blocks),
             'number':`${number_with_commas(number_of_blocks)}`,
@@ -982,32 +982,32 @@ class EthersDetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

@@ -29,7 +29,7 @@ class E5DetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','details'],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2232']/* 'details' */],[1]
           ],
         }
     }
@@ -95,19 +95,12 @@ class E5DetailsSection extends Component {
             )
         }
 
-        if(selected_item == 'details' || selected_item == 'e'){
+        if(selected_item == this.props.app_state.loc['2232']/* 'details' */ || selected_item == 'e'){
             return(
                 <div>
                     {this.render_e5_main_details_section(obj)}
                 </div>
             )
-        }else if(selected_item == 'transactions'){
-            return(
-                <div>
-                    
-                </div>
-            )
-            
         }
     }
 
@@ -212,49 +205,49 @@ class E5DetailsSection extends Component {
                     {this.render_detail_item('0')}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l','title':'End Balance', 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_E5[e5]), 'relativepower':'END'})}
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_E5[e5]), 'relativepower':'END'})}
                     </div>
 
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l','title':'Spend Balance', 'subtitle':this.format_power_figure(this.props.app_state.spend_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.spend_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.spend_balance_of_E5[e5]), 'relativepower':'SPEND'})}
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* Spend Balance' */, 'subtitle':this.format_power_figure(this.props.app_state.spend_balance_of_E5[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.spend_balance_of_E5[e5]), 'number':this.format_account_balance_figure(this.props.app_state.spend_balance_of_E5[e5]), 'relativepower':'SPEND'})}
                     </div>
                     <div style={{height:10}}/>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l','title':'End Balance of Burn Account', 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':'END'})}
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2233']/* 'End Balance of Burn Account' */, 'subtitle':this.format_power_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.end_balance_of_burn_account[e5]), 'number':this.format_account_balance_figure(this.props.app_state.end_balance_of_burn_account[e5]), 'relativepower':'END'})}
                     </div>
 
                     <div style={{height:10}}/>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l','title':'E5 Ether balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.props.app_state.E5_balance[e5]/10**18), 'relativepower':'Ether'})}
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2234']/* 'E5 Ether balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]/10**18), 'number':(this.props.app_state.E5_balance[e5]/10**18), 'relativepower':'Ether'})}
 
-                        {this.render_detail_item('2', {'style':'l','title':'E5 Ether balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2235']/* 'E5 Ether balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.E5_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.E5_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.E5_balance[e5]), 'relativepower':'wei'})}
                     </div>
 
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.get_last_transaction_block(e5), 'details':'Last Transaction Block', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_last_transaction_block(e5), 'details':this.props.app_state.loc['2236']/* 'Last Transaction Block' */, 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_time_difference(this.get_last_transaction_time(e5)), 'details':'Last Transaction age', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_difference(this.get_last_transaction_time(e5)), 'details':this.props.app_state.loc['2237']/* 'Last Transaction age' */, 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_last_entered_contracts_count(e5), 'details':'Number of entered contracts', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_last_entered_contracts_count(e5), 'details':this.props.app_state.loc['2238']/* 'Number of entered contracts' */, 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':this.get_number_of_e5_runs(e5), 'details':'Number of E5 runs', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_number_of_e5_runs(e5), 'details':this.props.app_state.loc['2239']/* 'Number of E5 runs' */, 'size':'l'})}
 
 
                     {this.render_detail_item('0')}
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', {'style':'l','title':'Withdraw balance', 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5]), 'relativepower':'wei'})}
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['2240']/* 'Withdraw balance' */, 'subtitle':this.format_power_figure(this.props.app_state.withdraw_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.withdraw_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.withdraw_balance[e5]), 'relativepower':'wei'})}
                     </div>
 
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Withdraw your Ether to a specified address', 'title':'Withdraw Ether'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2241']/* 'Withdraw your Ether to a specified address' */, 'title':this.props.app_state.loc['2242']/* 'Withdraw Ether' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_withdraw_ether_ui(obj)}>
-                        {this.render_detail_item('5', {'text':'Withdraw', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2243']/* 'Withdraw' */, 'action':''})}
                     </div>
 
                     {this.render_detail_item('0')}
@@ -275,7 +268,7 @@ class E5DetailsSection extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied address to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['1564']/* 'copied address to clipboard' */, 600)
     }
 
     get_last_transaction_block(e5){
@@ -323,48 +316,48 @@ class E5DetailsSection extends Component {
         var contract_config = obj['data'][1]
         return{
             'label':{'header':obj['id'], 'subtitle':chain, 'size':'l', 'image': image},
-            'tags':{'active_tags':[obj['id'],'E5', 'Main', 'Contract'], 'index_option':'indexed'},
+            'tags':{'active_tags':[obj['id'],this.props.app_state.loc['2244']/* 'E5' */, this.props.app_state.loc['2245']/* 'Main' */, this.props.app_state.loc['361']/* 'Contract' */], 'index_option':'indexed'},
             
-            'address': {'title':'E5 Address:', 'details':address, 'size':'l'},
+            'address': {'title':this.props.app_state.loc['2246']/* 'E5 Address:' */, 'details':address, 'size':'l'},
 
-            'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':'Vote Bounty Split Proportion', 'size':'l'},
+            'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':this.props.app_state.loc['2247']/* 'Vote Bounty Split Proportion' */, 'size':'l'},
             
-            'default_end_minimum_contract_amount':{'style':'l','title':'Minimum End Contract Amount', 'subtitle':this.format_power_figure(contract_config[3]), 'barwidth':this.calculate_bar_width(contract_config[3]), 'number':this.format_account_balance_figure(contract_config[3]), 'relativepower':'tokens'},
+            'default_end_minimum_contract_amount':{'style':'l','title':this.props.app_state.loc['2248']/* 'Minimum End Contract Amount' */, 'subtitle':this.format_power_figure(contract_config[3]), 'barwidth':this.calculate_bar_width(contract_config[3]), 'number':this.format_account_balance_figure(contract_config[3]), 'relativepower':this.props.app_state.loc['1885']/* 'tokens' */},
 
-            'default_minimum_end_vote_bounty_amount':{'style':'l','title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':'tokens'},
+            'default_minimum_end_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['70']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */},
 
-            'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':'Proposal Expiry Duration Limit', 'size':'l'},
+            'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':this.props.app_state.loc['71']/* 'Proposal Expiry Duration Limit' */, 'size':'l'},
 
-            'default_spend_minimum_contract_amount':{'style':'l','title':'Minimum Spend Contract Amount', 'subtitle':this.format_power_figure(contract_config[9]), 'barwidth':this.calculate_bar_width(contract_config[9]), 'number':this.format_account_balance_figure(contract_config[9]), 'relativepower':'tokens'},
+            'default_spend_minimum_contract_amount':{'style':'l','title':this.props.app_state.loc['240']/* Minimum Spend Contract Amount' */, 'subtitle':this.format_power_figure(contract_config[9]), 'barwidth':this.calculate_bar_width(contract_config[9]), 'number':this.format_account_balance_figure(contract_config[9]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */},
 
-            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':'tokens'},
+            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['421']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */},
 
-            'tx_gas_limit':{'style':'l','title':'Transaction Gas Limit', 'subtitle':this.format_power_figure(contract_config[11]), 'barwidth':this.calculate_bar_width(contract_config[11]), 'number':this.format_account_balance_figure(contract_config[11]), 'relativepower':'gas'},
+            'tx_gas_limit':{'style':'l','title':this.props.app_state.loc['1429']/* Transaction Gas Limit' */, 'subtitle':this.format_power_figure(contract_config[11]), 'barwidth':this.calculate_bar_width(contract_config[11]), 'number':this.format_account_balance_figure(contract_config[11]), 'relativepower':'gas'},
 
-            'contract_block_invocation_limit': {'title':contract_config[12], 'details':'E5 block invocation Limit', 'size':'l'},
+            'contract_block_invocation_limit': {'title':contract_config[12], 'details':this.props.app_state.loc['2249']/* 'E5 block invocation Limit' */, 'size':'l'},
 
-            'contract_time_invocation_limit': {'title':contract_config[13], 'details':'E5 time invocation Limit', 'size':'l'},
+            'contract_time_invocation_limit': {'title':contract_config[13], 'details':this.props.app_state.loc['2250']/* 'E5 time invocation Limit' */, 'size':'l'},
 
-            'minimum_entered_contracts': {'title':contract_config[14], 'details':'Minimum Entered Contracts for Consensus Participation', 'size':'l'},
+            'minimum_entered_contracts': {'title':contract_config[14], 'details':this.props.app_state.loc['2251']/* 'Minimum Entered Contracts for Consensus Participation' */, 'size':'l'},
 
-            'tag_indexing_limit': {'title':contract_config[16], 'details':'Tag Indexing Limit', 'size':'l'},
-            'minimum_transaction_count': {'title':contract_config[19], 'details':'Minimum Transaction Count for Consensus Particiation', 'size':'l'},
+            'tag_indexing_limit': {'title':contract_config[16], 'details':this.props.app_state.loc['2253']/* 'Tag Indexing Limit' */, 'size':'l'},
+            'minimum_transaction_count': {'title':contract_config[19], 'details':this.props.app_state.loc['2254']/* 'Minimum Transaction Count for Consensus Particiation' */, 'size':'l'},
 
-            'gas_anchor_price':{'style':'l','title':'Gas Anchor Price', 'subtitle':this.format_power_figure(contract_config[23]), 'barwidth':this.calculate_bar_width(contract_config[23]), 'number':this.format_account_balance_figure(contract_config[23]), 'relativepower':'wei'},
+            'gas_anchor_price':{'style':'l','title':this.props.app_state.loc['2255']/* 'Gas Anchor Price' */, 'subtitle':this.format_power_figure(contract_config[23]), 'barwidth':this.calculate_bar_width(contract_config[23]), 'number':this.format_account_balance_figure(contract_config[23]), 'relativepower':'wei'},
 
-            'tx_gas_reduction_proportion': {'title':this.format_proportion(contract_config[24]), 'details':'Transaction Gas Reduction Proportion', 'size':'l'},
+            'tx_gas_reduction_proportion': {'title':this.format_proportion(contract_config[24]), 'details':this.props.app_state.loc['2256']/* 'Transaction Gas Reduction Proportion' */, 'size':'l'},
 
-            'tx_gas_anchor_price':{'style':'l','title':'Transaction Gas Anchor Price', 'subtitle':this.format_power_figure(contract_config[25]), 'barwidth':this.calculate_bar_width(contract_config[25]), 'number':this.format_account_balance_figure(contract_config[25]), 'relativepower':'wei'},
+            'tx_gas_anchor_price':{'style':'l','title':this.props.app_state.loc['2257']/* 'Transaction Gas Anchor Price' */, 'subtitle':this.format_power_figure(contract_config[25]), 'barwidth':this.calculate_bar_width(contract_config[25]), 'number':this.format_account_balance_figure(contract_config[25]), 'relativepower':'wei'},
 
-            'tx_gas_lower_limit':{'style':'l','title':'Transaction Gas Lower Limit', 'subtitle':this.format_power_figure(contract_config[26]), 'barwidth':this.calculate_bar_width(contract_config[26]), 'number':this.format_account_balance_figure(contract_config[26]), 'relativepower':'wei'},
+            'tx_gas_lower_limit':{'style':'l','title':this.props.app_state.loc['2258']/* 'Transaction Gas Lower Limit' */, 'subtitle':this.format_power_figure(contract_config[26]), 'barwidth':this.calculate_bar_width(contract_config[26]), 'number':this.format_account_balance_figure(contract_config[26]), 'relativepower':'wei'},
 
-            'absolute_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[30]), 'details':'Absolute Proposal Expiry Duration Limit', 'size':'l'},
+            'absolute_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[30]), 'details':this.props.app_state.loc['2259']/* 'Absolute Proposal Expiry Duration Limit' */, 'size':'l'},
 
             'invite_only_e5': {'title':this.enabled_disabled(contract_config[32]), 'details':'Invite Only E5', 'size':'l'},
 
-            'primary_tx_account': {'title':contract_config[39], 'details':'Primary Transaction Account', 'size':'l'},
+            'primary_tx_account': {'title':contract_config[39], 'details':this.props.app_state.loc['2260']/* 'Primary Transaction Account' */, 'size':'l'},
 
-            'primary_account_tx_period': {'title':this.get_time_diff(contract_config[40]), 'details':'Primary Account Transaction Period', 'size':'l'},
+            'primary_account_tx_period': {'title':this.get_time_diff(contract_config[40]), 'details':this.props.app_state.loc['2261']/* 'Primary Account Transaction Period' */, 'size':'l'},
         }
     }
 
@@ -406,14 +399,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Subscriptions Created', 'details':`Chart containing the total number of subscriptions made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2262']/* Subscriptions Created' */, 'details':this.props.app_state.loc['2263']/* `Chart containing the total number of subscriptions made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Subscriptions Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2269e']/* 'Y-Axis: Total Subscriptions Made' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Subscriptions', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'subscriptions', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2270']/* 'Total Subscriptions' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2271']/* 'subscriptions' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -489,14 +482,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Contracts Created', 'details':`Chart containing the total number of contracts made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2272']/* 'Contracts Created' */, 'details':this.props.app_state.loc['2273']/* `Chart containing the total number of contracts made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Contracts Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2274']/* 'Y-Axis: Total Contracts Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Contracts', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'contracts', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2276']/* 'Total Contracts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2277']/* 'contracts' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -511,14 +504,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Proposals Created', 'details':`Chart containing the total number of proposals made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2278']/* 'Proposals Created' */, 'details':this.props.app_state.loc['2279']/* `Chart containing the total number of proposals made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Proposals Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2280']/* 'Y-Axis: Total Proposals Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Proposals', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'proposals', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2281']/* 'Total Proposals' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2282']/* 'proposals' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -533,14 +526,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Exchanges Created', 'details':`Chart containing the total number of exchanges made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2283']/* 'Exchanges Created' */, 'details':this.props.app_state.loc['2284']/* `Chart containing the total number of exchanges made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Exchanges Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2285']/* 'Y-Axis: Total Exchanges Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Exchanges', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'exchanges', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2286']/* 'Total Exchanges' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2287']/* 'exchanges' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -558,14 +551,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Indexed Posts Created', 'details':`Chart containing the total number of indexed posts made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2288']/* 'Indexed Posts Created' */, 'details':this.props.app_state.loc['2289']/* `Chart containing the total number of indexed posts made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Posts Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2290']/* 'Y-Axis: Total Posts Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Posts', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'posts', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2291']/* 'Total Posts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2292']/* 'posts' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -642,14 +635,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Indexed Channels Created', 'details':`Chart containing the total number of indexed channels made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2293']/* 'Indexed Channels Created' */, 'details':this.props.app_state.loc['2294']/* `Chart containing the total number of indexed channels made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Channels Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2295']/* 'Y-Axis: Total Channels Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Channels', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'channels', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2296']/* 'Total Channels' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2297']/* 'channels' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -664,14 +657,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Indexed Jobs Created', 'details':`Chart containing the total number of indexed jobs made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2298']/* 'Indexed Jobs Created' */, 'details':this.props.app_state.loc['2299']/* `Chart containing the total number of indexed jobs made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Jobs Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2300']/* 'Y-Axis: Total Jobs Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Jobs', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'jobs', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2301']/* 'Total Jobs' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2302']/* 'jobs' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -686,14 +679,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Indexed Storefront Items Created', 'details':`Chart containing the total number of indexed storefront items made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2303']/* 'Indexed Storefront Items Created' */, 'details':this.props.app_state.loc['2304']/* `Chart containing the total number of indexed storefront items made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Storefront Items Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2305']/* 'Y-Axis: Total Storefront Items Made' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Storefront Items', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'items', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2306']/* 'Total Storefront Items' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['445']/* 'items' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -708,14 +701,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Bags Created', 'details':`Chart containing the total number of bags made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2308']/* 'Bags Created' */, 'details':this.props.app_state.loc['2309']/* `Chart containing the total number of bags made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Bags Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2310']/* 'Y-Axis: Total Bags Made' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Bags', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'bags', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2311']/* 'Total Bags' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2312']/* 'bags' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -730,14 +723,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Indexed Contractors Created', 'details':`Chart containing the total number of indexed contractors made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2313']/* 'Indexed Contractors Created' */, 'details':this.props.app_state.loc['2314']/* `Chart containing the total number of indexed contractors made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Contractor Posts', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2315']/* 'Y-Axis: Total Contractor Posts' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Contractor Posts', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'contractors', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2316']/* 'Total Contractor Posts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['1198']/* 'contractors' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -752,14 +745,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Data Throughput', 'details':`Chart containing the data throughput over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2317']/* 'Data Throughput' */, 'details':this.props.app_state.loc['2318']/* `Chart containing the data throughput over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Data Events', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2319']/* 'Y-Axis: Total Data Events' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Data Events', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'events', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2320']/* 'Total Data Events' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['1263']/* 'events' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -777,14 +770,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Metadata Throughput', 'details':`Chart containing the total number of metadata events made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2321']/* 'Metadata Throughput' */, 'details':this.props.app_state.loc['2322']/* `Chart containing the total number of metadata events made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_metadata_transaction_count_data_points(events), 'interval':this.get_metadata_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Metadata Events', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2323']/* 'Y-Axis: Total Metadata Events' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Metadata Events', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'events', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2324']/* 'Total Metadata Events' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2325']/* 'events' */, })}
                     </div>
                     {this.render_detail_item('0')}
                 </div>
@@ -861,11 +854,11 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Withdrawn Ether', 'details':`The total amount of ether thats been withdrawn from the E5 over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2326']/* 'Withdrawn Ether' */, 'details':this.props.app_state.loc['2327']/* `The total amount of ether thats been withdrawn from the E5 over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_withdraw_amount_data_points(events), 'interval':110, 'hide_label': true})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Withdrawn Ether', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2328']/* 'Y-Axis: Total Withdrawn Ether' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -949,11 +942,11 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Deposited Ether', 'details':`The total amount of ether thats been deposited into the E5 over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2329']/* 'Deposited Ether' */, 'details':this.props.app_state.loc['2330']/* `The total amount of ether thats been deposited into the E5 over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(events), 'interval':110, 'hide_label': true})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Deposited Ether', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2331']/* 'Y-Axis: Total Deposited Ether' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -1039,14 +1032,14 @@ class E5DetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Transaction Runs', 'details':`Chart containing the total number of E5 runs made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2332']/* 'Transaction Runs' */, 'details':this.props.app_state.loc['2333']/* `Chart containing the total number of E5 runs made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_transaction_count_data_points(events), 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Runs Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2334']/* 'Y-Axis: Total Runs Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Runs', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'runs', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2335']/* 'Total Runs' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336']/* 'runs' */, })}
                     </div>
                     {/* {this.render_detail_item('0')} */}
                 </div>
@@ -1208,32 +1201,32 @@ class E5DetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

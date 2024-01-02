@@ -37,10 +37,10 @@ function makeid(length) {
 class ExtendContractPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8), type:'extend-contract',
+        selected: 0,id:makeid(8), type:this.props.app_state.loc['35'],
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0}, extend_contract_title_tags_object:this.get_extend_contract_title_tags_object(),
         interactible_timestamp:0,
-        entered_indexing_tags:['extend', 'contract']
+        entered_indexing_tags:[this.props.app_state.loc['36'], this.props.app_state.loc['37']]
     };
 
 
@@ -50,7 +50,7 @@ class ExtendContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','extend-contract'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['35']], [1]
             ],
         };
     }
@@ -65,7 +65,7 @@ class ExtendContractPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_extending_contract_ui()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':''})}
                         </div>
                         
                     </div>
@@ -95,7 +95,7 @@ class ExtendContractPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Extend Entry exipry time', 'details':'Set the new time after which you will not participate in the contract', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['38'], 'details':this.props.app_state.loc['39'], 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -106,10 +106,10 @@ class ExtendContractPage extends Component {
                 </ThemeProvider>
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':this.props.app_state.loc['40'], 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[2]), 'details':'Max Extend Enter Contract Duration', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[2]), 'details':this.props.app_state.loc['41'], 'size':'l'})}
                 <div style={{height:10}}/>
 
             </div>
@@ -124,10 +124,10 @@ class ExtendContractPage extends Component {
         if(expiry_time_in_seconds != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':this.props.app_state.loc['42']})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':this.props.app_state.loc['43']})}
                 </div>
             )
         }
@@ -143,10 +143,10 @@ class ExtendContractPage extends Component {
     set_contract(contract){
         if(this.state.contract_item['id'] != contract['id']){
             this.setState({
-                selected: 0,id:makeid(8), type:'extend-contract',
+                selected: 0,id:makeid(8), type:this.props.app_state.loc['35'],
                 contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0}, extend_contract_title_tags_object:this.get_extend_contract_title_tags_object(),
                 interactible_timestamp:0,
-                entered_indexing_tags:['extend', 'contract']
+                entered_indexing_tags:[this.props.app_state.loc['36'], this.props.app_state.loc['37']]
             })
         }
         this.setState({contract_item: contract, e5: contract['e5']})
@@ -199,32 +199,32 @@ class ExtendContractPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -238,21 +238,21 @@ class ExtendContractPage extends Component {
         var limit = this.state.contract_item['data'][1][2];
 
         if(this.state.contract_item['entry_expiry'] > picked_time){
-            this.props.notify('You cant set a time before the current expiry time', 1500);
+            this.props.notify(this.props.app_state.loc['44'], 4500);
         }
         else if(picked_time - this.state.contract_item['entry_expiry'] >limit){
-            this.props.notify('You cant set a time beyond the extend limit', 1500);
+            this.props.notify(this.props.app_state.loc['45'], 4500);
         }
         else if(this.state.contract_item['data'][1][29] == 0 && this.state.contract_item['entry_expiry'] - Date.now()/1000 > limit){
             var waiting_time = (this.state.contract_item['entry_expiry'] - Date.now()/1000) - limit
-            this.props.notify('You have to wait '+(this.get_time_diff(waiting_time))+' to extend your stay.', 1500);
+            this.props.notify(this.props.app_state.loc['46']+(this.get_time_diff(waiting_time))+this.props.app_state.loc['47'], 4500);
         }
         else{
             var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
 
             this.props.extend_contract(clone)
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18'], 700);
         }
         
     }

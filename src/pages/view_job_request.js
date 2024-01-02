@@ -74,8 +74,7 @@ function toTree(data) {
 class ViewJobRequestPage extends Component {
     
     state = {
-        selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:'accept-job-request', id:makeid(8),
-        entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), contractor_object:null, entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
+        selected:0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8), entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object(), contractor_object:null, entered_text:'', focused_message:{'tree':{}}, e5: this.props.app_state.selected_e5, comment_structure_tags: this.get_comment_structure_tags(), hidden_message_children_array:[]
     };
 
     get_comment_structure_tags(){
@@ -84,7 +83,7 @@ class ViewJobRequestPage extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e','channel-structure', 'comment-structure'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
             ],
         };
     }
@@ -95,7 +94,7 @@ class ViewJobRequestPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'contract', 'activity'], [0]
+                ['or','',0], ['e', this.props.app_state.loc['1673']/* 'contract' */, this.props.app_state.loc['1674']/* 'activity' */], [0]
             ],
         };
     }
@@ -106,7 +105,7 @@ class ViewJobRequestPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'activity'], [0]
+                ['or','',0], ['e', this.props.app_state.loc['1675']/* 'activity' */], [0]
             ],
         };
     }
@@ -164,14 +163,14 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'contract'){
+        else if(selected_item == this.props.app_state.loc['1676']/* 'contract' */){
             return(
                 <div>
                     {this.render_select_contract_parts()}
                 </div>
             )
         }
-        else if(selected_item == 'activity'){
+        else if(selected_item == this.props.app_state.loc['1677']/* 'activity' */){
             return(
                 <div>
                     {this.render_messages_parts()}
@@ -199,53 +198,65 @@ class ViewJobRequestPage extends Component {
         if(is_application_accepted){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1679']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
                     <div style={{height:5}}/>
                     
-                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1680']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['1681']/* 'Sender ID' */, 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:5}}/>
 
                     {this.render_image_part([].concat(item['entered_images']))}
 
-                    {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1682']/* 'Accepted' */, 'details':this.props.app_state.loc['1698']/* 'The contractor Accepted the job request.' */, 'size':'l'})}
                     <div style={{height:5}}/>
                     <div onClick={()=>this.open_contract(item['contract'])}>
                         {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
                     </div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The requested pay for the job', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1683']/* 'Set Pay' */, 'details':this.props.app_state.loc['1684']/* 'The requested pay for the job' */, 'size':'l'})}
                     {this.render_set_prices_list_part(item)}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Payment Option', 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1686']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'details':'Sender ID', 'title':item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['1687']/* 'Sender ID' */, 'title':item['applicant_id'], 'size':'l'})}
                     <div style={{height:5}}/>
 
-                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1688']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
                     <div style={{height:5}}/>
                     {this.render_image_part(item['entered_images'])}
 
                     <div style={{height:5}}/>
-                    {this.render_detail_item('3', {'title':'Set Pay', 'details':'The amounts youll be receiving for the job', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1689']/* 'Set Pay' */, 'details':this.props.app_state.loc['1690']/* 'The amounts youll be receiving for the job.' */, 'size':'l'})}
                     {this.render_set_prices_list_part(item)}
                 </div>
             )
         }
         
+    }
+
+    get_expiry_time(item){
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
+        var t = ''
+        if(time_diff < 0){
+            t = this.get_time_diff(time_diff*-1) +this.props.app_state.loc['1698a']/* ' ago.' */
+        }else{
+            t = this.props.app_state.loc['1698b']/* 'In ' */+this.get_time_diff(time_diff)
+        }
+
+        return t
     }
 
     open_contract(contract){
@@ -378,8 +389,8 @@ class ViewJobRequestPage extends Component {
     set_object(request_item, contractor_object){
         if(this.state.request_item['job_request_id'] != request_item['job_request_id']){
             this.setState({
-                selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:'accept-job-request', id:makeid(8), contractor_object: null,
-                entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
+                selected: 0, picked_contract: null, request_item:{'job_request_id':0}, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8), contractor_object: null,
+                entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */, this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
             })
         }
         this.setState({request_item: request_item, contractor_object: contractor_object, e5: request_item['e5']})
@@ -420,7 +431,7 @@ class ViewJobRequestPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1691']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -430,7 +441,7 @@ class ViewJobRequestPage extends Component {
 
     render_my_contracts(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height-203;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -462,7 +473,7 @@ class ViewJobRequestPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '5px 2px 5px 2px'}}>
                                 {this.render_contract_item(item, index)}
                             </li>
                         ))}
@@ -542,7 +553,7 @@ class ViewJobRequestPage extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['27']/* 'block' */, }
         }
     }
 
@@ -564,17 +575,22 @@ class ViewJobRequestPage extends Component {
 
     finish_creating_response(){
         var selected_contract = this.state.picked_contract
+        var item = this.state.request_item
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
 
         if(selected_contract == null){
-            this.props.notify('you need to pick a contract first', 600)
+            this.props.notify(this.props.app_state.loc['1153']/* 'You need to pick a contract first' */, 1600)
+        }
+        else if(time_diff < 0){
+            this.props.notify(this.props.app_state.loc['1698c']/* 'The job request has already expired.' */, 1600)
         }
         else{
             this.props.add_response_action_to_stack(this.state)
             this.setState({
-                selected: 0, picked_contract: null, type:'accept-job-request', id:makeid(8),
-                entered_indexing_tags:['accept', 'job', 'request'], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
+                selected: 0, picked_contract: null, type:this.props.app_state.loc['1667']/* 'accept-job-request' */, id:makeid(8),
+                entered_indexing_tags:[this.props.app_state.loc['1668']/* 'accept' */,this.props.app_state.loc['1669']/* 'job' */, this.props.app_state.loc['1670']/* 'request' */], accept_job_request_title_tags_object: this.get_accept_job_request_title_tags_object()
             })
-            this.props.notify('transaction added to stack', 600)
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
         }
     }
 
@@ -589,6 +605,7 @@ class ViewJobRequestPage extends Component {
 
     render_messages_parts(){
         var he = this.props.height-180
+        if(this.get_focused_message() != null) he = this.props.height-240
         var size = this.props.screensize
         return(
             <div>
@@ -596,12 +613,12 @@ class ViewJobRequestPage extends Component {
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         {/* <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/> */}
                         {/* {this.render_top_title()} */}
-                        {this.render_focus_list()}
+                        {/* {this.render_focus_list()} */}
                         {/* <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/> */}
                         {this.render_sent_received_messages()}
                     </div>
                 </div>
-
+                {this.render_focused_message()}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 0px', width: '99%'}}>
                     <div style={{'margin':'1px 10px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
@@ -621,6 +638,25 @@ class ViewJobRequestPage extends Component {
                 </div>
             </div> 
         )
+    }
+
+    render_focused_message(){
+        var item = this.get_focused_message();
+        if(item != null){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 70px 5px 50px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message()}> 
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'])}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 41)}</p>
+                </div>
+            )
+        }
     }
 
     when_comment_structure_tags_updated(tag_obj){
@@ -650,6 +686,7 @@ class ViewJobRequestPage extends Component {
 
     render_sent_received_messages(){
         var middle = this.props.height-250;
+        if(this.get_focused_message() != null) middle = this.props.height-300
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -677,32 +714,31 @@ class ViewJobRequestPage extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message() != null){
-            var focused_message_replies = this.get_focused_message_replies()
-            return(
-                <div>
-                    <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message())}
-                    </div>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-                        <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-                            <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies)}
-                                <div ref={this.messagesEnd}/>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+        // else if(this.get_focused_message() != null){
+        //     var focused_message_replies = this.get_focused_message_replies()
+        //     return(
+        //         <div>
+        //             <div style={{'padding': '2px 5px 2px 5px'}}>
+        //                 {this.render_message_as_focused_if_so(this.get_focused_message())}
+        //             </div>
+        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
+        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
+        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
+        //                         {this.render_messages(focused_message_replies)}
+        //                         <div ref={this.messagesEnd}/>
+        //                     </ul>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     )
+        // }
         else{
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-            if(selected_view_option == 'channel-structure'){
+            if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items)}
-                        {this.render_messages(stacked_items)}
+                        {this.render_messages(items.concat(stacked_items))}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -722,7 +758,7 @@ class ViewJobRequestPage extends Component {
 
     render_messages(items){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message() != null){
+        if(items.length == 0){
             var items = [0,1]
             return(
                 <div>
@@ -817,53 +853,65 @@ class ViewJobRequestPage extends Component {
 
 
     render_message_as_focused_if_so(item){
-        var focused_message = this.get_focused_message()
-
-        if(item == focused_message){
-            return(
-                <div>
-                    <SwipeableList>
+        return(
+            <div>
+                <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
-                            content: <div>Focus</div>,
-                            action: () => console.log()
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
-                            }}>
-                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
-                        </SwipeableListItem>
-                    </SwipeableList>
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    <SwipeableList>
-                        <SwipeableListItem
-                            swipeLeft={{
-                            content: <div>Focus</div>,
+                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
                             action: () => this.focus_message(item)
-                            }}
-                            swipeRight={{
-                            content: <div>Unfocus</div>,
-                            action: () => this.unfocus_message()
                             }}>
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
                         </SwipeableListItem>
                     </SwipeableList>
+            </div>
+        )
+        // var focused_message = this.get_focused_message()
+        // if(item == focused_message){
+        //     return(
+        //         <div>
+        //             <SwipeableList>
+        //                 <SwipeableListItem
+        //                     swipeLeft={{
+        //                     content: <div>Focus</div>,
+        //                     action: () => console.log()
+        //                     }}
+        //                     swipeRight={{
+        //                     content: <div>Unfocus</div>,
+        //                     action: () => this.unfocus_message()
+        //                     }}>
+        //                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+        //                 </SwipeableListItem>
+        //             </SwipeableList>
+        //             {/* <div onClick={(e) => this.when_message_clicked(e, item, 'focused_message')}>
+        //                 {this.render_stack_message_item(item)}
+        //             </div> */}
+        //             <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+        //         </div>
+        //     )
+        // }else{
+        //     return(
+        //         <div>
+        //             <SwipeableList>
+        //                 <SwipeableListItem
+        //                     swipeLeft={{
+        //                     content: <div>Focus</div>,
+        //                     action: () => this.focus_message(item)
+        //                     }}
+        //                     swipeRight={{
+        //                     content: <div>Unfocus</div>,
+        //                     action: () => this.unfocus_message()
+        //                     }}>
+        //                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item)}</div>
+        //                 </SwipeableListItem>
+        //             </SwipeableList>
 
-                    {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
-                        {this.render_stack_message_item(item)}
-                    </div> */}
-                </div>
-            )
-        }
+        //             {/* <div onClick={(e) => this.when_message_clicked(e, item)}>
+        //                 {this.render_stack_message_item(item)}
+        //             </div> */}
+        //         </div>
+        //     )
+        // }
     }
 
     when_message_clicked = (event, item, focused_message) => {
@@ -890,7 +938,7 @@ class ViewJobRequestPage extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied message to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['1692']/* 'Copied message to clipboard.' */, 1600)
     }
 
 
@@ -920,7 +968,7 @@ class ViewJobRequestPage extends Component {
                     <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'])}</Linkify></p>
 
                     {this.render_images_if_any(item)}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item).length} {this.props.app_state.loc['1693']} </p>
                 </div>
                 {this.render_response_if_any(item)}
             </div>
@@ -929,16 +977,16 @@ class ViewJobRequestPage extends Component {
 
     render_response_if_any(_item){
         if(_item['focused_message_id'] == 0) return;
-        if(this.get_focused_message() != null) return;
+        // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages().concat(this.get_stacked_items())
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
         if(item == null) return;
         var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-        if(selected_view_option == 'comment-structure') return
+        if(selected_view_option == this.props.app_state.loc['1672']/* 'comment-structure' */) return
         return(
-            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
-                <div className="row" style={{'padding':'0px 0px 10px 10px'}}>
-                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
+                <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}}>{this.get_sender_title_text(item)}</p>
                     </div>
                     <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
@@ -986,7 +1034,7 @@ class ViewJobRequestPage extends Component {
 
     get_sender_title_text(item){
         if(item['sender'] == this.props.app_state.user_account_id[this.state.e5]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             return item['sender'].toString()
         }
@@ -1033,7 +1081,7 @@ class ViewJobRequestPage extends Component {
         var stack = this.props.app_state.stack_items
         var stacked_items = []
         for(var i=0; i<stack.length; i++){
-            if(stack[i].type == 'job-request-messages'){
+            if(stack[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
                 for(var e=0; e<stack[i].messages_to_deliver.length; e++){
                     var message_obj = stack[i].messages_to_deliver[e]
                     if(message_obj['id'] == convo_id){
@@ -1114,10 +1162,10 @@ class ViewJobRequestPage extends Component {
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message() != null ? this.get_focused_message()['message_id'] : 0
         if(message == ''){
-            this.props.notify('type something first', 600)
+            this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 1600)
         }
         else if(this.props.app_state.user_account_id[this.state.e5] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
             var tx = {'id':object['job_request_id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[this.state.e5], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'contractor_id':this.state.contractor_object['id'], 'e5':this.state.e5}
@@ -1125,7 +1173,7 @@ class ViewJobRequestPage extends Component {
             this.props.add_job_request_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify('message added to stack', 600)
+            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -1366,32 +1414,32 @@ class ViewJobRequestPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

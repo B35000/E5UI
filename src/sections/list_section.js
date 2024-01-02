@@ -44,32 +44,32 @@ class PostListSection extends Component {
         var selected_page = this.props.page;
         if(selected_page == '?'){
             var selected_tag = this.props.work_page_tags_object['i'].active
-            if(selected_tag == 'jobs' || selected_tag == 'e'){
+            if(selected_tag == this.props.app_state.loc['1196']/* 'jobs' */ || selected_tag == 'e'){
                 return(
                 <div>{this.render_jobs_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'contracts'){
+            else if(selected_tag == this.props.app_state.loc['1197']/* 'contracts' */){
                 return(
                 <div>{this.render_contracts_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'proposals' ){
+            else if(selected_tag == this.props.app_state.loc['1199']/* 'proposals' */ ){
                 return(
                 <div>{this.render_proposal_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'subscriptions' ){
+            else if(selected_tag == this.props.app_state.loc['1200']/* 'subscriptions' */ ){
                 return(
                 <div>{this.render_subscription_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'mail'){
+            else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
                 return(
                 <div>{this.render_mail_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'contractors'){
+            else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
                 return(
                 <div>{this.render_contractor_list_group()}</div>
                 )
@@ -81,7 +81,7 @@ class PostListSection extends Component {
             if(selected_tag == 'E5s' || selected_tag == 'e'){
                 var selected_item = this.get_selected_item(this.props.explore_page_tags_object, selected_tag)
 
-                if(selected_item == 'blockexplorer 🗺️'){
+                if(selected_item == this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */){
                     return(
                         <div>
                             {this.render_search_user_data()}
@@ -94,22 +94,22 @@ class PostListSection extends Component {
                     )
                 }
             }
-            else if(selected_tag == 'posts' ){
+            else if(selected_tag == this.props.app_state.loc['1213']/* 'posts' */ ){
                 return(
                 <div>{this.render_posts_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'channels' ){
+            else if(selected_tag == this.props.app_state.loc['1214']/* 'channels' */ ){
                 return(
                 <div>{this.render_channels_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'storefront'){
+            else if(selected_tag == this.props.app_state.loc['1215']/* 'storefront' */){
                 return(
                 <div>{this.render_storefront_item_list_group()}</div>
                 )
             }
-            else if(selected_tag == 'bags'){
+            else if(selected_tag == this.props.app_state.loc['1216']/* 'bags' */){
                 return(
                 <div>{this.render_bag_item_list_group()}</div>
                 )
@@ -118,17 +118,17 @@ class PostListSection extends Component {
         else if(selected_page == 'w'){
             var selected_option_name = this.get_selected_item(this.props.wallet_page_tags_object, this.props.wallet_page_tags_object['i'].active)
 
-            if(selected_option_name == 'ethers ⚗️' || selected_option_name == 'e'){
+            if(selected_option_name == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_option_name == 'e'){
                 return(
                 <div>{this.render_ethers_list_group()}</div>
                 )
             }
-            else if(selected_option_name == 'ends ☝️' ){
+            else if(selected_option_name == this.props.app_state.loc['1218']/* 'ends ☝️' */ ){
                 return(
                 <div>{this.render_ends_list_group()}</div>
                 )
             }
-            else if(selected_option_name == 'spends 🫰' ){
+            else if(selected_option_name == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
                 return(
                 <div>{this.render_spends_list_group()}</div>
                 )
@@ -351,7 +351,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
@@ -448,7 +448,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text, 'details':title, 'size':'l'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1317']/* 'block' */, }
         }
     }
 
@@ -771,7 +771,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'textsize':'14px', 'text':details, 'font':'Sans-serif'},
             'author_title':{'title':title, 'details':details, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':this.props.app_state.loc['1317']/* block */+` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
@@ -876,7 +876,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
@@ -1017,15 +1017,15 @@ class PostListSection extends Component {
         var typed_account = this.get_typed_alias_id(typed_search)
 
         if(typed_account == ''){
-            this.props.notify('type something!', 800)
+            this.props.notify(this.props.app_state.loc['1337']/* 'Type something.' */, 3800)
         }
         else if(isNaN(typed_account)){
-            this.props.notify('that ID is not valid', 800)
+            this.props.notify(this.props.app_state.loc['2508']/* 'That ID is not valid.' */, 3800)
         }
         else if(parseInt(typed_account) < 1001){
-            this.props.notify('that ID is not valid', 800)
+            this.props.notify(this.props.app_state.loc['2508']/* 'That ID is not valid.' */, 3800)
         }else{
-            this.props.notify('searching...', 1000)
+            this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 1000)
             this.setState({searched_account: typed_account})
             this.props.get_searched_account_data(typed_account, typed_search)
         }
@@ -1176,7 +1176,7 @@ class PostListSection extends Component {
 
     render_post_object_if_locked(item, index){
         var required_subscriptions = item['ipfs'].selected_subscriptions
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions)){
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item)){
             return this.render_post_object(item, index)
         }
         else{
@@ -1197,6 +1197,7 @@ class PostListSection extends Component {
         var has_sender_paid_all_subs = true
         required_subscriptions.forEach(subscription_id => {
             var subscription_item = this.get_all_sorted_objects_mappings(this.props.app_state.created_subscription_object_mapping)[subscription_id]
+            if(subscription_item == null) return false
             if(subscription_item['payment'] == 0){
                 has_sender_paid_all_subs = false
             }
@@ -1204,6 +1205,14 @@ class PostListSection extends Component {
 
         return has_sender_paid_all_subs
     }
+
+    is_post_preview_enabled(object){
+        if(object['ipfs'].get_post_preview_option == null) return false
+        var selected_post_preview_option = this.get_selected_item(object['ipfs'].get_post_preview_option, 'e')
+        if(selected_post_preview_option == 'visible') return true
+        return false
+    }
+
 
     get_all_sorted_objects_mappings(object){
         var all_objects = {}
@@ -1253,12 +1262,17 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
     when_post_item_clicked(index, object){
-        this.props.when_post_item_clicked(index, object['id'], object['e5'])
+        var required_subscriptions = object['ipfs'].selected_subscriptions
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions)){
+            this.props.when_post_item_clicked(index, object['id'], object['e5'])
+        }else{
+            this.props.show_post_item_preview_with_subscription(object)
+        }
     }
 
 
@@ -1349,7 +1363,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
@@ -1447,7 +1461,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
@@ -1597,7 +1611,7 @@ class PostListSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`block ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
+            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
         }
     }
 
@@ -1651,10 +1665,10 @@ class PostListSection extends Component {
             return (
                 <div>
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                        <TextInput height={25} placeholder={'Enter Name or Symbol...'} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
+                        <TextInput height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
                     </div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <ul style={{ 'margin': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '1px 5px 1px 5px'}}>
                                     {this.render_small_empty_object()}
@@ -1669,10 +1683,10 @@ class PostListSection extends Component {
         return ( 
             <div>
                 <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                    <TextInput height={25} placeholder={'Enter Name or Symbol...'} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
+                    <TextInput height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
                 </div>
 
-                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-40}}>
+                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-50}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '1px 5px 1px 5px'}}>
@@ -2137,32 +2151,32 @@ class PostListSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

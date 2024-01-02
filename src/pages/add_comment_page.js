@@ -31,18 +31,18 @@ class AddCommentPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'16px','text':'Detailed message.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'16px','text':this.props.app_state.loc['1038']/* 'Detailed message.' */})}
                 <div style={{height:10}}/>
-                <TextInput height={110} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
+                <TextInput height={110} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image and tap to remove.'})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image and tap to remove.' */})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
 
                 <div style={{'padding': '5px 0px 0px 0px'}} onClick={()=>this.finish()}>
-                        {this.render_detail_item('5', {'text':'Finish', 'action':'-'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':'-'})}
                     </div>
             </div>
         )
@@ -87,7 +87,7 @@ class AddCommentPage extends Component {
                 reader.readAsDataURL(e.target.files[i]);
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
-            this.props.notify('Your selected '+e.target.files.length+image+' been added.',500);
+            // this.props.notify('Your selected '+e.target.files.length+image+' been added.',500);
         }
     }
 
@@ -159,7 +159,7 @@ class AddCommentPage extends Component {
     finish(){
         var object = this.state.object
         if(this.props.app_state.user_account_id[object['e5']] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            this.props.notify(this.props.app_state.loc['1040']/* 'You need to make at least 1 transaction to participate.' */, 1200)
             return
         }
         var message = this.state.entered_title_text.trim()
@@ -167,7 +167,7 @@ class AddCommentPage extends Component {
         var focused_message_id = this.state.focused_message_id
 
         if(message == ''){
-            this.props.notify('type something!', 700)
+            this.props.notify(this.props.app_state.loc['1041']/* 'Type something.' */, 700)
             return
         }
         var tx = {};
@@ -201,7 +201,7 @@ class AddCommentPage extends Component {
 
         this.props.add_comment_to_respective_forum_page(tx, page)
         this.setState({entered_title_text: '', entered_image_objects:[]})
-        this.props.notify('message added to stack', 600)
+        this.props.notify(this.props.app_state.loc['1042']/* 'Message added to stack.' */, 1600)
     }
 
 

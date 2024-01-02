@@ -32,7 +32,7 @@ function makeid(length) {
 class ForceExitPage extends Component {
     
     state = {
-        selected: 0,id: makeid(8), type:'force-exit', entered_indexing_tags:['force', 'exit', 'accounts'],
+        selected: 0,id: makeid(8), type:this.props.app_state.loc['48'], entered_indexing_tags:[this.props.app_state.loc['49'], this.props.app_state.loc['50'], this.props.app_state.loc['51']],
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'participants':[]},
         new_force_exit_title_tags_object:this.get_new_force_exit_title_tags_object(),
 
@@ -45,7 +45,7 @@ class ForceExitPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','force-exit'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['48']], [0]
             ],
         };
     }
@@ -59,13 +59,13 @@ class ForceExitPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':''})}
                         </div>
                     </div>
                 </div>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Run a force edit action for the contract ID: '+this.state.contract_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['52']+this.state.contract_item['id']})}
 
                 <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
@@ -84,14 +84,14 @@ class ForceExitPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Target Account', 'details':'Set the account ID to remove', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['53'], 'details':this.props.app_state.loc['54'], 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={'Target Account...'} when_text_input_field_changed={this.when_force_exit_target_text_input_field_changed.bind(this)} text={this.state.force_exit_target} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['55']} when_text_input_field_changed={this.when_force_exit_target_text_input_field_changed.bind(this)} text={this.state.force_exit_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions()}
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.add_force_exit_item()}>
-                    {this.render_detail_item('5', {'text':'Add Force Exit Action', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['56'], 'action':''})}
                 </div>
 
                 {this.load_force_exit_actions()}
@@ -108,10 +108,10 @@ class ForceExitPage extends Component {
         var account = this.get_typed_alias_id(this.state.force_exit_target)
 
         if(!this.state.contract_item['participants'].includes(account)){
-            this.props.notify('That account isnt part of the contract', 600)
+            this.props.notify(this.props.app_state.loc['57'], 4600)
         }
         else if(this.state.force_exit_accounts.includes(account)){
-            this.props.notify('you cant force exit an account twice', 600)
+            this.props.notify(this.props.app_state.loc['58'], 4600)
         }
         else{
             var force_exit_accounts_clone = this.state.force_exit_accounts.slice()
@@ -162,7 +162,7 @@ class ForceExitPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_force_exit_value_clicked(item)}>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Account ID: '+item, 'details':'Contract ID: '+this.state.contract_item['id'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['59']+item, 'details':this.props.app_state.loc['60']+this.state.contract_item['id'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -178,7 +178,7 @@ class ForceExitPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({force_exit_accounts: cloned_array})
-        this.props.notify('force exit action removed!', 600)
+        this.props.notify(this.props.app_state.loc['61'], 1600)
     }
 
 
@@ -206,7 +206,7 @@ class ForceExitPage extends Component {
         var accounts = this.state.contract_item['participants']
         var obj = []
         for(var i=0; i<accounts.length; i++){
-            obj.push({'id':''+accounts[i], 'label':{'title':'Account: '+this.get_typed_alias_id(accounts[i]), 'details':'Account', 'size':'s'}})
+            obj.push({'id':''+accounts[i], 'label':{'title':'Account: '+this.get_typed_alias_id(accounts[i]), 'details':this.props.app_state.loc['62'], 'size':'s'}})
         }
         return obj
         
@@ -221,7 +221,7 @@ class ForceExitPage extends Component {
     set_contract(contract_item){
         if(this.state.contract_item['id'] != contract_item['id']){
             this.setState({
-                selected: 0,id: makeid(8), type:'force-exit', entered_indexing_tags:['force', 'exit', 'accounts'],
+                selected: 0,id: makeid(8), type:this.props.app_state.loc['48'], entered_indexing_tags:[this.props.app_state.loc['49'], this.props.app_state.loc['50'], this.props.app_state.loc['51']],
                 contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'participants':[]},
                 new_force_exit_title_tags_object:this.get_new_force_exit_title_tags_object(),
                 force_exit_target:'', force_exit_accounts:[]
@@ -232,13 +232,13 @@ class ForceExitPage extends Component {
 
     finish(){
         if(this.state.force_exit_accounts.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['63'], 2700)
         }else{
             var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
             this.props.add_force_exit_to_stack(clone)
             this.setState({force_exit_accounts:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18'], 700);
         }
     }
 
@@ -319,32 +319,32 @@ class ForceExitPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

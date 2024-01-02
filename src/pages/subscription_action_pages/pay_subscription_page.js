@@ -29,7 +29,7 @@ function makeid(length) {
 class PaySubscriptionPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8), type:'pay-subscription', entered_indexing_tags:['pay', 'subscription'],
+        selected: 0,id:makeid(8), type:this.props.app_state.loc['862']/* 'pay-subscription' */, entered_indexing_tags:[this.props.app_state.loc['863']/* 'pay' */, this.props.app_state.loc['864']/* 'subscription' */],
         subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, pay_subscription_title_tags_object:this.get_pay_subscription_title_tags_object(), time_units:0
     };
 
@@ -39,7 +39,7 @@ class PaySubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','pay-subscription'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['862']/* 'pay-subscription' */], [1]
             ],
         };
     }
@@ -54,7 +54,7 @@ class PaySubscriptionPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -77,10 +77,10 @@ class PaySubscriptionPage extends Component {
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Pay for the subscription ID: '+this.state.subscription_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['865']/* 'Pay for the subscription ID: ' */+this.state.subscription_item['id']})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['866']/* 'Time Unit' */, 'size':'s'})}
 
                 {this.render_minimum_buy_amount()}
 
@@ -89,14 +89,14 @@ class PaySubscriptionPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Time Units', 'subtitle':this.format_power_figure(this.state.time_units), 'barwidth':this.calculate_bar_width(this.state.time_units), 'number':this.format_account_balance_figure(this.state.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['867']/* 'Time Units' */, 'subtitle':this.format_power_figure(this.state.time_units), 'barwidth':this.calculate_bar_width(this.state.time_units), 'number':this.format_account_balance_figure(this.state.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_units_set.bind(this)} theme={this.props.theme} power_limit={27}/>
+                <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_units_set.bind(this)} theme={this.props.theme} power_limit={10}/>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Total Debit Amount', 'details':'The amount youll pay for the subscription payment is shown below', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['868']/* 'Total Debit Amount' */, 'details':this.props.app_state.loc['869']/* 'The amount youll pay for the subscription payment is shown below' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
@@ -124,7 +124,7 @@ class PaySubscriptionPage extends Component {
             }
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The amounts you have available for paying the subscription', 'title':'Your balances'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['870']/* 'The amounts you have available for paying the subscription' */, 'title':this.props.app_state.loc['871']/* 'Your balances' */})}
                     <div style={{height:10}}/>
 
                     {this.render_buy_token_uis2(entry_tokens, buy_amount_balances, entry_amount_depths)}
@@ -140,7 +140,7 @@ class PaySubscriptionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['872']/* 'Token ID: ' */+item, 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -156,7 +156,7 @@ class PaySubscriptionPage extends Component {
                 <div>
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${number_with_commas(subscription_config[1])}`, 'barcolor':'', 'relativepower':'time-units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['873']/* 'Minimum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[1]), 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${this.format_account_balance_figure(subscription_config[1])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['874']/* 'time-units' */, })}
                     </div>
                 </div>
             )
@@ -170,7 +170,7 @@ class PaySubscriptionPage extends Component {
                 <div>
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${number_with_commas(subscription_config[3])}`, 'barcolor':'', 'relativepower':'time-units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['875']/* 'Maximum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[3]), 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${this.format_account_balance_figure(subscription_config[3])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['874']/* 'time-units' */, })}
                     </div>
                 </div>
             )
@@ -196,7 +196,7 @@ class PaySubscriptionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['872']/* 'Token ID: ' */+item, 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -226,7 +226,7 @@ class PaySubscriptionPage extends Component {
     set_subscription(subscription_item){
         if(this.state.subscription_item['id'] != subscription_item['id']){
             this.setState({
-                selected: 0,id:makeid(8), type:'pay-subscription', entered_indexing_tags:['pay', 'subscription'],
+                selected: 0,id:makeid(8), type:this.props.app_state.loc['862']/* 'pay-subscription' */, entered_indexing_tags:[this.props.app_state.loc['863']/* 'pay' */,this.props.app_state.loc['864']/* 'subscription' */],
                 subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, pay_subscription_title_tags_object:this.get_pay_subscription_title_tags_object(), time_units:0
             })
         }
@@ -238,20 +238,20 @@ class PaySubscriptionPage extends Component {
         var minimum_amount = this.state.subscription_item['data'][1][1]
         var maximum_amount = this.state.subscription_item['data'][1][3]
         if(time_units_picked == 0){
-            this.props.notify('set a valid time unit amount', 1700)
+            this.props.notify(this.props.app_state.loc['876']/* 'Set a valid time unit amount.' */, 3700)
         }
         else if(time_units_picked < minimum_amount){
-            this.props.notify('the amount youve set is less than the minimum requirement', 3200)
+            this.props.notify(this.props.app_state.loc['877']/* 'The amount youve set is less than the minimum requirement.' */, 3200)
         }
         else if(time_units_picked > maximum_amount){
-            this.props.notify('the amount youve set exceeds the maximum that you can pay for', 3400)
+            this.props.notify(this.props.app_state.loc['878']/* 'The amount youve set exceeds the maximum that you can pay for.' */, 3400)
         }
         else if(!this.can_sender_pay_for_subscription()){
-            this.props.notify('Your token balance is insufficient for that time unit purchase', 4500)
+            this.props.notify(this.props.app_state.loc['879']/* 'Your token balance is insufficient for that time unit purchase.' */, 4500)
         }
         else{
             this.props.add_pay_subscription_to_stack(this.state)
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -346,32 +346,32 @@ class PaySubscriptionPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

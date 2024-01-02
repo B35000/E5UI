@@ -38,8 +38,8 @@ function makeid(length) {
 class FulfilBagPage extends Component {
     
     state = {
-        selected: 0, bag_item:{'id':0} ,  type:'bag-response', id:makeid(8),
-        entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(), estimated_delivery_time:0,
+        selected: 0, bag_item:{'id':0} ,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
+        entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(), estimated_delivery_time:0,
         e5: this.props.app_state.selected_e5
     };
 
@@ -49,7 +49,7 @@ class FulfilBagPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','contract', 'expiry-time', 'amount'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1130']/* 'contract' */, this.props.app_state.loc['1131']/* 'expiry-time' */, this.props.app_state.loc['1132']/* 'amount' */], [1]
             ],
         };
     }
@@ -61,7 +61,7 @@ class FulfilBagPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','prepaid', 'postpaid'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1133']/* 'prepaid' */, this.props.app_state.loc['1134']/* 'postpaid' */], [1]
             ],
         }
     }
@@ -75,7 +75,7 @@ class FulfilBagPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                         
                     </div>
@@ -93,8 +93,8 @@ class FulfilBagPage extends Component {
 
     set_bag(item){
         if(this.state.bag_item['id'] != item['id']){
-            this.setState({selected: 0 ,  type:'bag-response', id:makeid(8),
-            entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
+            this.setState({selected: 0 ,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
+            entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
         }
         this.setState({bag_item: item, e5: item['e5']})
     }
@@ -103,21 +103,21 @@ class FulfilBagPage extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.respond_to_bag_title_tags_object, this.state.respond_to_bag_title_tags_object['i'].active)
 
-        if(selected_item == 'contract'){
+        if(selected_item == this.props.app_state.loc['1130']/* 'contract' */){
             return(
                 <div>
                     {this.render_select_contract_parts()}
                 </div>
             )
         }
-        else if(selected_item == 'expiry-time'){
+        else if(selected_item == this.props.app_state.loc['1131']/* 'expiry-time' */){
             return(
                 <div>
                     {this.render_application_expiry_time()}
                 </div>
             )
         }
-        else if(selected_item == 'amount'){
+        else if(selected_item == this.props.app_state.loc['1132']/* 'amount' */){
             return(
                 <div>
                     {this.render_application_prices()}
@@ -139,7 +139,7 @@ class FulfilBagPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1135']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -306,7 +306,7 @@ class FulfilBagPage extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1136']/* 'block' */, }
         }
     }
 
@@ -326,7 +326,7 @@ class FulfilBagPage extends Component {
     render_application_expiry_time(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your fulfilment application'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1137']/* 'Select an expiry time for your fulfilment application.' */})}
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -360,17 +360,17 @@ class FulfilBagPage extends Component {
     render_application_prices(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Prepaid or Postpaid', 'details':'Set the payment option you prefer for the application', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1138']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1139']/* 'Set the payment option you prefer for the application' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <Tags page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
 
 
-                {this.render_detail_item('3', {'title':'Estimated Delivery time', 'details':'set the estimated amount of time youll take to deliver the items in the bag', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1140']/* 'Estimated Delivery time' */, 'details':this.props.app_state.loc['1141']/* 'set the estimated amount of time youll take to deliver the items in the bag' */, 'size':'l'})}
                 <div style={{height:20}}/>
                     
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.estimated_delivery_time), 'details':'Estimated Delivery time', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.estimated_delivery_time), 'details':this.props.app_state.loc['1142']/* 'Estimated Delivery time' */, 'size':'l'})}
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_estimated_delivery_time_updated.bind(this)} theme={this.props.theme} power_limit={63}/>
 
@@ -378,22 +378,22 @@ class FulfilBagPage extends Component {
 
 
 
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1143']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1144']/* 'Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1143']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1145']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1146']/* 'tokens' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1147']/* 'Add Price' */, 'action':''})}
                 </div>
 
                 {this.render_set_prices_list_part()}
@@ -421,16 +421,16 @@ class FulfilBagPage extends Component {
         var exchange_id = this.state.exchange_id.trim()
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == ''){
-            this.props.notify('please put a valid exchange id', 600)
+            this.props.notify(this.props.app_state.loc['1148']/* 'Please put a valid exchange ID.' */, 600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify(this.props.app_state.loc['1149']/* 'Please put a valid amount.' */, 600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 400)
+            this.props.notify(this.props.app_state.loc['1150']/* 'Added price.' */, 400)
         }
     }
 
@@ -507,8 +507,8 @@ class FulfilBagPage extends Component {
 
    get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['1151']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['1152']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         var sorted_token_exchange_data = []
@@ -548,17 +548,17 @@ class FulfilBagPage extends Component {
         var selected_time = this.state.application_expiry_time
 
         if(selected_contract == null){
-            this.props.notify('you need to pick a contract first', 600)
+            this.props.notify(this.props.app_state.loc['1153']/* 'You need to pick a contract first.' */, 3600)
         }
         else if(selected_time-Date.now()/1000 < 900){
-            this.props.notify('you cant set an expiry time thats less than fifteen minutes from now', 600)
+            this.props.notify(this.props.app_state.loc['1154']/* 'You cant set an expiry time thats less than fifteen minutes from now.' */, 5600)
         }
         else{
             this.props.add_respond_to_bag_to_stack(this.state)
-            this.setState({selected: 0,  type:'bag-response', id:makeid(8),
-            entered_indexing_tags:['respond', 'fulfil', 'bag'], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
+            this.setState({selected: 0,  type:this.props.app_state.loc['1126']/* 'bag-response' */, id:makeid(8),
+            entered_indexing_tags:[this.props.app_state.loc['1127']/* 'respond' */, this.props.app_state.loc['1128']/* 'fulfil' */, this.props.app_state.loc['1129']/* 'bag' */], respond_to_bag_title_tags_object: this.get_respond_to_bag_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()})
 
-            this.props.notify('transaction added to stack', 600)
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 600)
         }
     }
 
@@ -635,32 +635,32 @@ class FulfilBagPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

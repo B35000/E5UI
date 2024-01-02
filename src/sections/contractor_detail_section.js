@@ -44,7 +44,7 @@ class ContractorDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','details','job-requests'],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2215']/* 'details' */,this.props.app_state.loc['2216']/* 'job-requests' */],[1]
           ],
         }
     }
@@ -118,14 +118,14 @@ class ContractorDetailsSection extends Component {
         }
 
         if(object != null){
-            if(selected_item == 'details' || selected_item == 'e'){
+            if(selected_item == this.props.app_state.loc['2215']/* 'details' */ || selected_item == 'e'){
                 return(
                     <div>
                         {this.render_contractor_posts_main_details_section(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'job-requests'){
+            else if(selected_item == this.props.app_state.loc['2216']/* 'job-requests' */){
                 return(
                     <div>
                         {this.render_contractor_job_responses(object)}
@@ -156,7 +156,7 @@ class ContractorDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': 'Author', 'size': 'l' }, )}
+                    {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' }, )}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -168,7 +168,7 @@ class ContractorDetailsSection extends Component {
                     {this.render_selected_links(object)}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Fees Per Hour', 'details':'The amounts they charge per hour for their work', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2217']/* 'Fees Per Hour' */, 'details':this.props.app_state.loc['2218']/* 'The amounts they charge per hour for their work' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_price_amounts(object)}
 
@@ -177,10 +177,10 @@ class ContractorDetailsSection extends Component {
                     {this.render_edit_object_button(object)}
                     <div style={{height: 20}}/>
 
-                    {this.render_detail_item('3', {'title':'Send Job Request', 'details':'Send a job request to the contractor to do a job for you', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2219']/* 'Send Job Request' */, 'details':this.props.app_state.loc['2220']/* 'Send a job request to the contractor to do a job for you' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_send_job_request_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Send Request', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2221']/* 'Send Request' */, 'action':''})}
                     </div>
 
                     {this.render_pin_contractor_button(object)}
@@ -227,7 +227,7 @@ class ContractorDetailsSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -277,10 +277,10 @@ class ContractorDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Pin the contractor to your feed', 'title':'Pin Contractor'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2222']/* 'Pin the contractor to your feed' */, 'title':this.props.app_state.loc['2223']/* 'Pin Contractor' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_contractor_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin/Unpin Contractor', 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2224']/* 'Pin/Unpin Contractor' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -308,7 +308,7 @@ class ContractorDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
     }
 
@@ -330,10 +330,10 @@ class ContractorDetailsSection extends Component {
         if(object['event'].returnValues.p5 == my_account){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Edit Contractor Post', 'details':'Change the basic details for your Contractor Post', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2225']/* 'Edit Contractor Post' */, 'details':this.props.app_state.loc['2226']/* 'Change the basic details for your Contractor Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_edit_contractor_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2227']/* 'Perform Action' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -429,7 +429,7 @@ class ContractorDetailsSection extends Component {
         // var object = this.get_contractor_items()[this.props.selected_contractor_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Job Requests', 'size':'l'})} 
+                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':this.props.app_state.loc['2228']/* 'Job Requests' */, 'size':'l'})} 
             </div>
         )
     }
@@ -503,13 +503,13 @@ class ContractorDetailsSection extends Component {
             return(
                 <div>
                     <div onClick={() => this.view_contract(item, object)}>
-                        {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                        {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                         <div style={{height:3}}/>
 
-                        {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'s'})}
                         <div style={{height:3}}/>
 
-                        {this.render_detail_item('3', {'title':'Accepted', 'details':'The contractor Accepted the job request', 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2230']/* 'Accepted' */, 'details':'The contractor Accepted the job request', 'size':'s'})}
                     </div>
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                 </div>
@@ -517,16 +517,28 @@ class ContractorDetailsSection extends Component {
         }else{
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2231']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
 
-                    {this.render_detail_item('3', {'title':'Job Description', 'details':item['title_description'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2229']/* 'Job Description' */, 'details':item['title_description'], 'size':'s'})}
                     <div style={{height:3}}/>
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
         }
         
+    }
+
+    get_expiry_time(item){
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
+        var t = ''
+        if(time_diff < 0){
+            t = this.get_time_diff(time_diff*-1) +this.props.app_state.loc['1698a']/* ' ago.' */
+        }else{
+            t = this.props.app_state.loc['1698b']/* 'In ' */+this.get_time_diff(time_diff)
+        }
+
+        return t
     }
 
     view_contract(item, object){
@@ -582,32 +594,32 @@ class ContractorDetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

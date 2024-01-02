@@ -32,7 +32,7 @@ function makeid(length) {
 class ModifyContractPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8),type:'modify-contract', entered_indexing_tags:['modify', 'contract', 'auth'],
+        selected: 0,id:makeid(8),type:this.props.app_state.loc['64'], entered_indexing_tags:[this.props.app_state.loc['65'], this.props.app_state.loc['66'], this.props.app_state.loc['67']],
         contract_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_contract_title_tags_object:this.get_modify_contract_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
 
         auto_wait_tags_object:this.get_auto_wait_tags_object(),
@@ -51,7 +51,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modify-contract'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['64']], [1]
             ],
         };
     }
@@ -62,7 +62,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','Vote Bounty Split Proportion','Maximum Extend Enter Contract Limit', 'Minimum End Bounty Amount', 'Proposal Expiry Duration Limit', 'Maximum Enter Contract Duration', 'Auto Wait', 'Proposal Modify Expiry Duration Limit', 'Moderator Modify Privelage', 'Unlimited Extend Contract Time', 'Maximum Proposal Expiry Submit Expiry time difference', 'Bounty Limit Type', 'Force Exit Enabled', 'Minimum Spend Bounty Amount'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['68'],this.props.app_state.loc['69'], this.props.app_state.loc['70'], this.props.app_state.loc['71'], this.props.app_state.loc['72'], this.props.app_state.loc['73'], this.props.app_state.loc['74'], this.props.app_state.loc['75'], this.props.app_state.loc['76'], this.props.app_state.loc['77'], this.props.app_state.loc['78'], this.props.app_state.loc['79'], this.props.app_state.loc['80']], [1]
             ],
         };
     }
@@ -73,7 +73,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','no', 'yes'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1]
             ],
         };
     }
@@ -84,7 +84,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modifiable', 'non-modifiable'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [1]
             ],
         };
     }
@@ -95,7 +95,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1]
             ],
         };
     }
@@ -106,7 +106,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','relative', 'absolute'], [2]
+                ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2]
             ],
         };
     }
@@ -117,7 +117,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1]
             ],
         };
     }
@@ -132,7 +132,7 @@ class ModifyContractPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -151,7 +151,7 @@ class ModifyContractPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Make changes to the configuration of the contract ID: '+this.state.contract_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['91']+this.state.contract_item['id']})}
 
                 {this.render_detail_item('0')}
 
@@ -190,7 +190,7 @@ class ModifyContractPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':this.props.app_state.loc['92'], })}
                     </div>
 
                     <div style={{height:10}}/>
@@ -200,7 +200,7 @@ class ModifyContractPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['93'], 'action':''})}
                     </div>
                 </div>
             )
@@ -217,7 +217,7 @@ class ModifyContractPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['93'], 'action':''})}
                     </div>
                 </div>
             )
@@ -233,7 +233,7 @@ class ModifyContractPage extends Component {
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['93'], 'action':''})}
                     </div>
                 </div>
             )
@@ -247,7 +247,7 @@ class ModifyContractPage extends Component {
                     {this.render_current_items(properties, selected_item)}
 
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['93'], 'action':''})}
                     </div>
                 </div>
             )
@@ -255,7 +255,7 @@ class ModifyContractPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['94']} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}
 
@@ -264,7 +264,7 @@ class ModifyContractPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['93'], 'action':''})}
                     </div>
                 </div>
             )
@@ -278,7 +278,7 @@ class ModifyContractPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':this.props.app_state.loc['92'], })}
                     </div>
                 </div>
             )
@@ -286,28 +286,28 @@ class ModifyContractPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':'Current '+selected_item, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':this.props.app_state.loc['95']+selected_item, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':this.props.app_state.loc['96'], 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':this.props.app_state.loc['96'], 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':current_value, 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':current_value, 'details':this.props.app_state.loc['96'], 'size':'l'})}
                 </div>
             )
         } 
@@ -332,19 +332,32 @@ class ModifyContractPage extends Component {
     get_target_configuration(property){
         var obj = {
             'Vote Bounty Split Proportion':{'position':[1,1], 'picker':'proportion', 'powerlimit':9},
-            'Maximum Extend Enter Contract Limit':{'position':[1,2], 'picker':'time', 'powerlimit':63}, 
-            'Minimum End Bounty Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63}, 
-            'Proposal Expiry Duration Limit':{'position':[1,5], 'picker':'time', 'powerlimit':63}, 
-            'Maximum Enter Contract Duration':{'position':[1,6], 'picker':'time', 'powerlimit':63}, 
-            'Auto Wait':{'position':[1,8], 'picker':'tag', 'powerlimit':63}, 
+            'Maximum Extend Enter Contract Limit':{'position':[1,2], 'picker':'time', 'powerlimit':63},
+            'Minimum End Bounty Amount':{'position':[1,4], 'picker':'number', 'powerlimit':63},
+            'Proposal Expiry Duration Limit':{'position':[1,5], 'picker':'time', 'powerlimit':63},
+            'Maximum Enter Contract Duration':{'position':[1,6], 'picker':'time', 'powerlimit':63},
+            'Auto Wait':{'position':[1,8], 'picker':'tag', 'powerlimit':63},
             'Proposal Modify Expiry Duration Limit':{'position':[1,27], 'picker':'time', 'powerlimit':63},
-            'Moderator Modify Privelage':{'position':[1,28], 'picker':'tag', 'powerlimit':9}, 
+            'Moderator Modify Privelage':{'position':[1,28], 'picker':'tag', 'powerlimit':9},
             'Unlimited Extend Contract Time':{'position':[1,29], 'picker':'tag', 'powerlimit':9}, 
             'Maximum Proposal Expiry Submit Expiry time difference':{'position':[1,36], 'picker':'time', 'powerlimit':63}, 
             'Bounty Limit Type':{'position':[1,37], 'picker':'tag', 'powerlimit':9}, 
             'Force Exit Enabled':{'position':[1,38], 'picker':'tag', 'powerlimit':9}, 
             'Minimum Spend Bounty Amount':{'position':[1,10], 'picker':'number', 'powerlimit':63},
         }
+        obj[this.props.app_state.loc['68']] = {'position':[1,1], 'picker':'proportion', 'powerlimit':9};
+        obj[this.props.app_state.loc['69']] = {'position':[1,2], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['70']] = {'position':[1,4], 'picker':'number', 'powerlimit':63};
+        obj[this.props.app_state.loc['71']] = {'position':[1,5], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['72']] = {'position':[1,6], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['73']] = {'position':[1,8], 'picker':'tag', 'powerlimit':63};
+        obj[this.props.app_state.loc['74']] = {'position':[1,27], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['75']] = {'position':[1,28], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['76']] = {'position':[1,29], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['77']] = {'position':[1,36], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['78']] = {'position':[1,37], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['79']] = {'position':[1,38], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['80']] = {'position':[1,10], 'picker':'number', 'powerlimit':63};
 
         return obj[property]
     }
@@ -353,7 +366,7 @@ class ModifyContractPage extends Component {
     load_tags_ui(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Auto Wait'){
+        if(selected_item == this.props.app_state.loc['73']){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -363,7 +376,7 @@ class ModifyContractPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Moderator Modify Privelage'){
+        else if(selected_item == this.props.app_state.loc['75']){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -373,7 +386,7 @@ class ModifyContractPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Unlimited Extend Contract Time'){
+        else if(selected_item == this.props.app_state.loc['76']){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -383,7 +396,7 @@ class ModifyContractPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Bounty Limit Type'){
+        else if(selected_item == this.props.app_state.loc['78']){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -393,7 +406,7 @@ class ModifyContractPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Force Exit Enabled'){
+        else if(selected_item == this.props.app_state.loc['79']){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -438,35 +451,35 @@ class ModifyContractPage extends Component {
             var number = this.state.reconfig_number;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_number:0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['97'], 1600)
         }
         else if(ui == 'proportion'){
             var number = this.state.reconfig_proportion;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_proportion: 0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['97'], 1600)
         }
         else if(ui == 'time'){
             var number = this.state.reconfig_duration;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['97'], 1600)
         }
         else if(ui == 'tag'){
             var number = this.get_tag_value()
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['97'], 1600)
         }
         else if(ui == 'id'){
             var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
-                this.props.notify('please put a valid account id', 600)
+                this.props.notify(this.props.app_state.loc['98'], 3600)
             }
             else{
                 reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
                 this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
-                this.props.notify('reconfig action added!', 600)
+                this.props.notify(this.props.app_state.loc['99'], 2600)
             }
         }
     }
@@ -485,27 +498,27 @@ class ModifyContractPage extends Component {
     get_tag_value(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Auto Wait'){
+        if(selected_item == this.props.app_state.loc['73']){
             var item = this.get_selected_item(this.state.auto_wait_tags_object, this.state.auto_wait_tags_object['i'].active)
             var value = item == 'no' ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Moderator Modify Privelage'){
+        else if(selected_item == this.props.app_state.loc['75']){
             var item = this.get_selected_item(this.state.can_modify_contract_as_moderator, this.state.can_modify_contract_as_moderator['i'].active)
             var value = item == 'non-modifiable' ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Unlimited Extend Contract Time'){
+        else if(selected_item == this.props.app_state.loc['76']){
             var item = this.get_selected_item(this.state.can_extend_enter_contract_at_any_time, this.state.can_extend_enter_contract_at_any_time['i'].active)
             var value = item == 'disabled' ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Bounty Limit Type'){
+        else if(selected_item == this.props.app_state.loc['78']){
             var item = this.get_selected_item(this.state.bounty_limit_type, this.state.bounty_limit_type['i'].active)
             var value = item == 'relative' ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Force Exit Enabled'){
+        else if(selected_item == this.props.app_state.loc['79']){
             var item = this.get_selected_item(this.state.contract_force_exit_enabled, this.state.contract_force_exit_enabled['i'].active)
             var value = item == 'disabled' ? 0 : 1
             return value;
@@ -544,9 +557,9 @@ class ModifyContractPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['100'], 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['101'], 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -566,7 +579,7 @@ class ModifyContractPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['92'], })}
                     </div>
                 </div>
             )
@@ -574,14 +587,14 @@ class ModifyContractPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':this.props.app_state.loc['102'], 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':this.props.app_state.loc['103'], 'size':'l'})}
 
                 </div>
             )
@@ -589,21 +602,32 @@ class ModifyContractPage extends Component {
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':this.props.app_state.loc['104']+number, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['105'], 'size':'l'})}
                 </div>
             )
         }
     }
 
     get_tag_selected_item(title, number){
-        var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}}
+        var obj = {
+            'Auto Wait':{0:'no', 1:'yes'}, 
+            'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 
+            'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 
+            'Bounty Limit Type':{0:'relative', 1:'absolute'}, 
+            'Force Exit Enabled':{1:'enabled', 0:'disabled'}
+        }
+        obj[this.props.app_state.loc['73']] = {0:'no', 1:'yes'};
+        obj[this.props.app_state.loc['75']] = {1:'modifiable', 0:'non-modifiable'};
+        obj[this.props.app_state.loc['76']] = {1:'enabled', 0:'disabled'};
+        obj[this.props.app_state.loc['78']] = {0:'relative', 1:'absolute'};
+        obj[this.props.app_state.loc['79']] = {1:'enabled', 0:'disabled'};
 
         return obj[title][number]
     }
@@ -615,7 +639,7 @@ class ModifyContractPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({reconfig_values: cloned_array})
-        this.props.notify('reconfig action removed!', 600)
+        this.props.notify(this.props.app_state.loc['106'], 1600)
     }
 
 
@@ -639,7 +663,7 @@ class ModifyContractPage extends Component {
     get_suggested_accounts(type){
         if(type == 'reconfig_target_id'){
             return[
-                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+                {'id':'53', 'label':{'title':this.props.app_state.loc['107'], 'details':this.props.app_state.loc['108'], 'size':'s'}},
             ]
         } 
     }
@@ -678,7 +702,7 @@ class ModifyContractPage extends Component {
     set_contract(contract_item){
         if(this.state.contract_item['id'] != contract_item['id']){
             this.setState({
-                selected: 0,id:makeid(8),type:'modify-contract', entered_indexing_tags:['modify', 'contract', 'auth'],
+                selected: 0,id:makeid(8),type:this.props.app_state.loc['64'], entered_indexing_tags:[this.props.app_state.loc['65'], this.props.app_state.loc['66'], this.props.app_state.loc['67']],
                 contract_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_contract_title_tags_object:this.get_modify_contract_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
                 auto_wait_tags_object:this.get_auto_wait_tags_object(),
                 can_modify_contract_as_moderator: this.get_can_modify_contract_as_moderator(),
@@ -694,12 +718,12 @@ class ModifyContractPage extends Component {
 
     finish(){
         if(this.state.reconfig_values.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['63'], 2700)
         }else{
             var clone = structuredClone(this.state)
             this.props.add_modify_contract_to_stack(clone)
             this.setState({reconfig_values:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18'], 1700);
         }
     }
 
@@ -777,32 +801,32 @@ class ModifyContractPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

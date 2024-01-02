@@ -31,7 +31,7 @@ function makeid(length) {
 class CollectSubscriptionPage extends Component {
     
     state = {
-        selected: 0, id:makeid(8),type:'collect-subscription', entered_indexing_tags:['collect', 'subscription', 'payments'],
+        selected: 0, id:makeid(8),type:this.props.app_state.loc['829']/* collect-subscription' */, entered_indexing_tags:[this.props.app_state.loc['830']/* 'collect' */, this.props.app_state.loc['831']/* 'subscription' */, this.props.app_state.loc['832']/* 'payments' */],
         subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'paid_accounts':[], 'paid_amounts':[]}, collect_subscription_title_tags_object:this.get_collect_subscription_title_tags_object()
     };
 
@@ -41,7 +41,7 @@ class CollectSubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','collect-subscription'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['829']/* 'collect-subscription' */], [1]
             ],
         };
     }
@@ -56,7 +56,7 @@ class CollectSubscriptionPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -75,13 +75,13 @@ class CollectSubscriptionPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Collect token payments for the subscription ID: '+this.state.subscription_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['833']/* 'Collect token payments for the subscription ID: ' */+this.state.subscription_item['id']})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':''+this.get_time_diff(this.get_total_subscription_collectible_time()), 'details':'Total Collectible Time', 'size':'s'})}
+                {this.render_detail_item('3', {'title':''+this.get_time_diff(this.get_total_subscription_collectible_time()), 'details':this.props.app_state.loc['834']/* 'Total Collectible Time' */, 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':''+this.get_total_subscription_collectible_timeunits(), 'details':'Total Collectible Time Units', 'size':'s'})}
+                {this.render_detail_item('3', {'title':''+this.get_total_subscription_collectible_timeunits(), 'details':this.props.app_state.loc['835']/* 'Total Collectible Time Units' */, 'size':'s'})}
                 <div style={{height: 10}}/>
 
                 {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
@@ -117,7 +117,7 @@ class CollectSubscriptionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['836']/* 'Token ID: ' */+item, 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -151,7 +151,7 @@ class CollectSubscriptionPage extends Component {
     set_subscription(subscription_item){
         if(this.state.subscription_item['id'] != subscription_item['id']){
             this.setState({
-                selected: 0, id:makeid(8),type:'collect-subscription', entered_indexing_tags:['collect', 'subscription', 'payments'],
+                selected: 0, id:makeid(8),type:this.props.app_state.loc['829']/* 'collect-subscription' */, entered_indexing_tags:[this.props.app_state.loc['830']/* 'collect' */, this.props.app_state.loc['831']/* 'subscription' */, this.props.app_state.loc['832']/* 'payments' */],
                 subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'paid_accounts':[], 'paid_amounts':[]}, collect_subscription_title_tags_object:this.get_collect_subscription_title_tags_object()
             })
         }
@@ -190,7 +190,7 @@ class CollectSubscriptionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_transfer_action_value_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Account ID: '+item, 'details':'Collectible time: '+this.get_time_diff(paid_amount_items[index]), 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['837']/* 'Account ID: ' */+item, 'details':this.props.app_state.loc['838']/* 'Collectible time: ' */+this.get_time_diff(paid_amount_items[index]), 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -202,12 +202,12 @@ class CollectSubscriptionPage extends Component {
     finish(){
         var time_units = this.get_total_subscription_collectible_timeunits()
         if(time_units == 0){
-            this.props.notify('you cant collect no time units', 2700)
+            this.props.notify(this.props.app_state.loc['839']/* 'You cant collect no time units.' */, 2700)
         }else{
             var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
             this.props.add_collect_subscription_to_stack(clone)
-            this.props.notify('transaction added to stack', 1700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -282,32 +282,32 @@ class CollectSubscriptionPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

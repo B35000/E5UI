@@ -17,6 +17,9 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Draggable } from "react-drag-reorder";
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 
 function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -37,7 +40,7 @@ function makeid(length) {
 class NewChannelPage extends Component {
     
     state = {
-        id: makeid(8), type:'channel', e5:this.props.app_state.selected_e5,
+        id: makeid(8), type:this.props.app_state.loc['109'], e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
@@ -52,30 +55,46 @@ class NewChannelPage extends Component {
         device_language_setting: this.props.app_state.device_language, 
         device_country: this.props.app_state.device_country,
 
-        typed_link_text:'', link_search_results:[], added_links:[]
+        typed_link_text:'', link_search_results:[], added_links:[],
+        edit_text_item_pos:-1,
     };
 
     get_new_job_page_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.text', 'links', 'images', 'e.authorities'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110'], this.props.app_state.loc['111'], this.props.app_state.loc['112'], this.props.app_state.loc['113']], [0]
             ],
             'authorities':[
-              ['xor','e',1], ['authorities','moderators', 'interactible'], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
             ],
             'text':[
-                ['or','',0], ['text','e.font', 'e.size'], [0]
+                ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
             ],
             'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
             ],
             'size':[
-                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
             ],
         };
+
+        obj[this.props.app_state.loc['114']] = [
+              ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
+            ];
+        obj[this.props.app_state.loc['115']] = [
+                ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
+            ];
+        obj[this.props.app_state.loc['116']] = [
+                ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+            ];
+        obj[this.props.app_state.loc['117']] = [
+                ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
+            ];
+
+        return obj
     }
 
     get_new_token_interactible_moderator_tags_object(){
@@ -95,7 +114,7 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [2]
+                ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [2]
             ],
         };
     }
@@ -131,7 +150,7 @@ class NewChannelPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':'finish_creating_object'})}
                         </div>
                         
                     </div>
@@ -168,21 +187,21 @@ class NewChannelPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'links'){
+        else if(selected_item == this.props.app_state.loc['111']){
             return(
                 <div>
                     {this.render_enter_links_part()}
                 </div>
             )
         }
-        else if(selected_item == 'images'){
+        else if(selected_item == this.props.app_state.loc['112']){
             return(
                 <div>
                     {this.render_enter_image_part()}
                 </div>
             ) 
         }
-        else if(selected_item == 'moderators' || selected_item == 'interactible'){
+        else if(selected_item == this.props.app_state.loc['118'] || selected_item == this.props.app_state.loc['119']){
             return(
                 <div>
                     {this.render_authorities_part()}
@@ -192,7 +211,7 @@ class NewChannelPage extends Component {
     }
 
     is_text_selected_item(selected_item){
-        var obj = ['text','font','size','Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
+        var obj = [this.props.app_state.loc['115'],this.props.app_state.loc['116'],this.props.app_state.loc['117'],'Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
         if(obj.includes(selected_item)){
             return true
         }
@@ -235,29 +254,29 @@ class NewChannelPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Channel'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['122']})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_subscription_authority_target()}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Channel'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['125']})}
                 <div style={{height:10}}/>
 
                 <div className="row" style={{'width':'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
@@ -279,25 +298,25 @@ class NewChannelPage extends Component {
         var typed_word = this.state.entered_tag_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128'], 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify(this.props.app_state.loc['129'], 1400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That tag is too long', 400)
+            this.props.notify(this.props.app_state.loc['130'], 1400)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That tag is too short', 400)
+            this.props.notify(this.props.app_state.loc['131'], 1400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify('you cant enter the same word twice', 400)
+            this.props.notify(this.props.app_state.loc['132'], 1400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify('tag added!', 200)
+            // this.props.notify('tag added!', 1200)
         }
     }
 
@@ -312,7 +331,7 @@ class NewChannelPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
-        this.props.notify('tag removed', 200)
+        // this.props.notify('tag removed', 200)
     }
 
    
@@ -358,7 +377,6 @@ class NewChannelPage extends Component {
             return(
                 <div style={{'padding': '0px 10px 0px 0px'}}>
                     {this.render_text_part()}
-                    {this.render_detail_item('0')}
                     {this.render_entered_texts()}
                 </div>
             )
@@ -379,16 +397,17 @@ class NewChannelPage extends Component {
     }
 
     render_text_part(){
+        var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Enter your preferred text then tap add to add it'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['134']})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
                 {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
-                <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                <TextInput height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
@@ -402,7 +421,7 @@ class NewChannelPage extends Component {
                     </div>
 
                     <div style={{'padding': '5px', width:205}}>
-                        {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
+                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
                     </div>
                 </div>
             </div>
@@ -429,21 +448,26 @@ class NewChannelPage extends Component {
         var typed_word = this.state.entered_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128'], 1400)
         }else{
             var entered_text = this.get_edited_text_object()
-            var cloned_entered_text_array = this.state.entered_text_objects.slice()
-            cloned_entered_text_array.push(entered_text);
-            this.setState({entered_text_objects: cloned_entered_text_array, entered_text:''})
+            if(this.state.edit_text_item_pos != -1){
+                this.finish_editing_text_item(entered_text)
+            }else{
+                var cloned_entered_text_array = this.state.entered_text_objects.slice()
+                cloned_entered_text_array.push(entered_text);
+                this.setState({entered_text_objects: cloned_entered_text_array, entered_text:''})
 
-            var cloned_array = this.state.entered_objects.slice()
-            cloned_array.push({'data':entered_text, 'type':'4' })
-            this.setState({entered_objects: cloned_array})
+                var cloned_array = this.state.entered_objects.slice()
+                cloned_array.push({'data':entered_text, 'type':'4' })
+                this.setState({entered_objects: cloned_array})
+            }
+            
         }
     }
 
     render_entered_texts(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-420;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -452,34 +476,62 @@ class NewChannelPage extends Component {
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.reverse().map((item, index) => (
-                        <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>
-                            {this.render_text_or_banner_if_any(item)}
-                        </li>
+                    {items.map((item, index) => (
+                        <SwipeableList>
+                            <SwipeableListItem
+                                swipeLeft={{
+                                content: <div>Delete</div>,
+                                action: () => this.delete_text_item(item)
+                                }}
+                                swipeRight={{
+                                content: <div></div>,
+                                action: () => console.log() }}>
+                                <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
+                                    {this.render_text_or_banner_if_any(item, index)}
+                                </li></div>
+                            </SwipeableListItem>
+                        </SwipeableList>
+                        
                     ))}
                 </ul>
             </div>
         );
     }
 
-    render_text_or_banner_if_any(item){
-        if(item['type'] == '4'){
+    render_text_or_banner_if_any(item, index){
+        if(item['type'] == '11'){
             return(
                 <div>
-                    {this.render_detail_item('4',item['data'])}
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                        <div>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                                <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
+                            </div>
+
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={(e) => this.when_banner_image_updated(e, index)} />
+                            </div>
+                        </div>
+                        <div style={{width:2}}/>
+                        {this.render_detail_item('11',item['data'])}
+                    </div>
                 </div>
             )
         }
-        else if(item['type'] == '11'){
+        else if(item['type'] == '4'){
+            var object = structuredClone(item['data'])
+            if(this.state.edit_text_item_pos == index) object['text'] = ''
             return(
                 <div>
-                    {this.render_detail_item('11',item['data'])}
+                    {this.render_detail_item('4', object)}
                 </div>
             )
         }
     }
 
-    when_text_clicked(item){
+    delete_text_item(item){
         var cloned_array = this.state.entered_text_objects.slice()
         const index = cloned_array.indexOf(item);
         if (index > -1) { // only splice array when item is found
@@ -500,7 +552,7 @@ class NewChannelPage extends Component {
         }
         this.setState({entered_objects: cloned_array})
 
-        this.props.notify('item removed!', 600)
+        // this.props.notify('item removed!', 600)
     }
 
 
@@ -522,16 +574,66 @@ class NewChannelPage extends Component {
         }
     }
 
-    add_banner_to_object(image){
-        var typed_word = this.state.entered_text.trim();
+    when_banner_image_updated = (e, index) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        this.update_banner_in_object(ev.target.result, index)
+                        // this.setState({selected_banner_image: ev.target.result});
+                    }
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+        }
+    }
 
+    add_banner_to_object(image){
         var entered_text = this.get_edited_text_object()
         entered_text['textsize'] = '10px'
         var obj = {'image':image, 'caption':entered_text}
-
         var cloned_array = this.state.entered_objects.slice()
-        cloned_array.push({'data':obj, 'type':'11' })
+        cloned_array.push({'data':obj, 'type':'11' }) 
         this.setState({entered_objects: cloned_array, entered_text:''})
+    }
+
+    update_banner_in_object(image, index){
+        var entered_text = this.get_edited_text_object()
+        entered_text['textsize'] = '10px'
+        var obj = {'image':image, 'caption':entered_text}
+        var cloned_array = this.state.entered_objects.slice()
+        var pos = index
+        cloned_array[pos] = {'data':obj, 'type':'11' }
+        this.setState({entered_objects: cloned_array, entered_text:''})
+    }
+
+
+    edit_text_item(item){
+        var entered_objects_pos = -1;
+        for(var i=0; i<this.state.entered_objects.length; i++){
+            if(this.state.entered_objects[i]['data'] == item['data']){
+                entered_objects_pos = i;
+            }
+        }
+        if(item['type'] == '11'){
+            return;
+        }else{
+            var text = item['data']['text']
+            this.setState({edit_text_item_pos: entered_objects_pos, entered_text:text})
+        }
+        this.props.notify(this.props.app_state.loc['138'], 1600)
+    }
+
+
+    finish_editing_text_item(item){
+        var cloned_array = this.state.entered_objects.slice()
+        var pos = this.state.edit_text_item_pos
+        cloned_array[pos] = {'data':item, 'type':'4' }
+        console.log(cloned_array)
+        this.setState({entered_objects: cloned_array, entered_text:'', edit_text_item_pos: -1})
     }
 
 
@@ -545,14 +647,14 @@ class NewChannelPage extends Component {
         if(this.state.link_search_results == null) return null;
         return(
             <div style={{'margin':'10px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Search an object by its title or id, then tap it to add it to the new channel'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['139']})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Object ID...'} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':'Search','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['140'],'action':''})}
                     </div>
                 </div>
                 <div style={{height:10}}/>
@@ -574,9 +676,9 @@ class NewChannelPage extends Component {
         var typed_text = this.state.typed_link_text
 
         if(typed_text == ''){
-            this.props.notify('Type something', 1800)
+            this.props.notify(this.props.app_state.loc['128'], 1800)
         }else{
-            this.props.notify('Searching...', 600)
+            this.props.notify(this.props.app_state.loc['141'], 1600)
             var return_data = this.search_for_object(typed_text)
             this.setState({link_search_results: return_data})
         }
@@ -753,7 +855,7 @@ class NewChannelPage extends Component {
             clone.splice(pos, 1)
         }
         this.setState({added_links: clone})
-        this.props.notify('Link removed from object', 700)
+        this.props.notify(this.props.app_state.loc['142'], 1700)
     }
 
 
@@ -803,11 +905,11 @@ class NewChannelPage extends Component {
         var pos = clone.indexOf(item)
 
         if(pos > -1){
-            this.props.notify('the link is already in the object', 1700)
+            this.props.notify(this.props.app_state.loc['143'], 1700)
         }else{
             clone.push(item)
             this.setState({added_links: clone})
-            this.props.notify('link added to object', 1400)
+            this.props.notify(this.props.app_state.loc['144'], 1400)
         }
     }
 
@@ -828,8 +930,8 @@ class NewChannelPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap an image to remove. '})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['145']})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -998,7 +1100,7 @@ class NewChannelPage extends Component {
     render_subscription_authority_target(){
         return(
             <div>
-                 {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the channel will be restricted to moderators and specified accounts', 'size':'l'})}
+                 {this.render_detail_item('3', {'title':this.props.app_state.loc['147'], 'details':this.props.app_state.loc['148'], 'size':'l'})}
 
                 <div style={{height:20}}/>
                 <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
@@ -1028,14 +1130,14 @@ class NewChannelPage extends Component {
     render_moderator_or_interactible_setting(){
         var selected_item = this.get_selected_item(this.state.get_new_job_page_tags_object, this.state.get_new_job_page_tags_object['i'].active)
 
-        if(selected_item == 'moderators'){
+        if(selected_item == this.props.app_state.loc['118']){
             return(
                 <div>
                     {this.render_moderator_settings()}
                 </div>
             )    
         }
-        else if(selected_item == 'interactible'){
+        else if(selected_item == this.props.app_state.loc['119']){
             return(
                 <div>
                     {this.render_interactible_settings()}
@@ -1048,16 +1150,16 @@ class NewChannelPage extends Component {
     render_moderator_settings(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['149'], 'details':this.props.app_state.loc['150'], 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['149']} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('moderator_id')}
 
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['151'], 'action':''})}
                 </div>
 
                 {this.render_added_moderators()}
@@ -1072,13 +1174,13 @@ class NewChannelPage extends Component {
     when_add_moderator_button_tapped(){
         var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
-            this.props.notify('please put a valid account id', 1600)
+            this.props.notify(this.props.app_state.loc['98'], 1600)
         }
         else{
             var moderators_clone = this.state.moderators.slice()
             moderators_clone.push(parseInt(moderator_id))
             this.setState({moderators: moderators_clone});
-            this.props.notify('added moderator!', 1400)
+            this.props.notify(this.props.app_state.loc['152'], 1400)
         }
     }
 
@@ -1123,7 +1225,7 @@ class NewChannelPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item, 'details':'Account ID', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item, 'details':this.props.app_state.loc['153'], 'size':'l'})}
                             </li>
                         ))}
                     </ul>
@@ -1145,10 +1247,10 @@ class NewChannelPage extends Component {
         return(
             <div>
                 <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['154'], 'details':this.props.app_state.loc['155'], 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Interactible ID'} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['154']} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('interactible_id')}
 
@@ -1163,7 +1265,7 @@ class NewChannelPage extends Component {
 
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Interactible Account', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['156'], 'action':''})}
                 </div>
                 
                 <div style={{height:20}}/>
@@ -1185,13 +1287,13 @@ class NewChannelPage extends Component {
     when_add_interactible_button_tapped(){
         var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0){
-            this.props.notify('please put a valid account id', 1600)
+            this.props.notify(this.props.app_state.loc['98'], 1600)
         }
         else{
             var interactibles_clone = this.state.interactibles.slice()
             interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
             this.setState({interactibles: interactibles_clone});
-            this.props.notify('added interactible account!', 1400)
+            this.props.notify(this.props.app_state.loc['157'], 1400)
         }
     }
 
@@ -1226,7 +1328,7 @@ class NewChannelPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Interactible Account ID: '+item['id'], 'details':'Until: '+(new Date(item['timestamp']*1000)), 'size':'l'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['158']+item['id'], 'details':this.props.app_state.loc['159']+(new Date(item['timestamp']*1000)), 'size':'l'})}
                             </li>
                         ))}
                     </ul>
@@ -1265,7 +1367,7 @@ class NewChannelPage extends Component {
 
     get_suggested_accounts(target_type){
         return[
-            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+            {'id':'53', 'label':{'title':this.props.app_state.loc['107'], 'details':this.props.app_state.loc['108'], 'size':'s'}},
         ].concat(this.get_account_suggestions(target_type))
     }
 
@@ -1370,13 +1472,13 @@ class NewChannelPage extends Component {
         var id = Math.round(new Date().getTime()/1000);
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify(this.props.app_state.loc['160'], 2700)
         }
         else if(title == ''){
-            this.props.notify('add a title for your channel', 700)
+            this.props.notify(this.props.app_state.loc['161'], 2700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that title is too long', 700)
+            this.props.notify(this.props.app_state.loc['162'], 2700)
         }
         else{
 
@@ -1396,12 +1498,12 @@ class NewChannelPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({ id: makeid(32), type:'channel', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), 
+                me.setState({ id: makeid(32), type:this.props.app_state.loc['109'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), 
                 new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(),
                 moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],typed_link_text:'', link_search_results:[], added_links:[],})
             }, (1 * 1000));
 
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18'], 1700);
         }
     }
 

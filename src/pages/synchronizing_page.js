@@ -37,9 +37,12 @@ class synchronizing_page extends Component {
 
     get_sync_text(){
         if(this.props.sync_progress >= 99){
-            return 'Synchronized.'
-        }else{
-            return 'Synchronizing...'
+            return this.props.app_state.loc['1594']/* 'Synchronized.' */
+        }else if(this.props.sync_progress == 0){
+            return this.props.app_state.loc['1595']/* 'Unsynchronized.' */
+        }
+        else{
+            return this.props.app_state.loc['1596']/* 'Synchronizing...' */
         }
     }
 
@@ -66,13 +69,13 @@ class synchronizing_page extends Component {
         return(
             <div>
                 <Row>
-                    <Col><p style={{margin: '60% 0% 0% 0%', width:'70%', color:text_color}}>P2P Trust</p></Col>
+                    <Col><p style={{margin: '60% 0% 0% 0%', width:'70%', color:text_color}}>{this.props.app_state.loc['1597']/* P2P Trust */}</p></Col>
                     <Col>
                         <img style={{width:'130%', margin:'5% 0% 0% 17%'}} src={p2p_trust}/>
                     </Col>
                 </Row>
                 <Row style={{margin: '25% 0% 0% 0%'}}>
-                    <Col><p style={{margin: '35% 0% 0% -20%', color:text_color}}>Unanimous Consensus</p></Col>
+                    <Col><p style={{margin: '35% 0% 0% -20%', color:text_color}}>{this.props.app_state.loc['1598']/* Unanimous Consensus */}</p></Col>
                     <Col>
                         <img style={{width:'130%', margin:'5% 0% 0% 17%'}} src={unanimous_consensus} alt="Paris"/>
                     </Col>

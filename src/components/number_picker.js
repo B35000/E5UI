@@ -58,7 +58,7 @@ class NumberPicker extends Component {
                             {this.render_detail_item('1', this.get_number_power_data())}
                         </div>
                         <div className="col-2" style={{'padding': '3px 0px 0px 0px'}}>
-                            <div className="text-end" style={{'padding': '5px'}} onClick={()=>this.reset_number_picker()}>
+                            <div className="text-end" style={{'padding': '5px'}} onClick={()=>this.reset_number_picker2()}>
                               <img src={E5EmptyIcon3} style={{height:35 ,width:35}} />
                             </div>
                             
@@ -72,6 +72,12 @@ class NumberPicker extends Component {
 
     reset_number_picker(){
       this.setState({create_number_data: this.get_create_number_data()})
+      // this.props.when_number_picker_value_changed(bigInt('0'))
+    }
+
+    reset_number_picker2(){
+      this.setState({create_number_data: this.get_create_number_data()})
+      this.props.when_number_picker_value_changed(bigInt('0'))
     }
 
     get_number_power_data(){

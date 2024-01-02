@@ -12,6 +12,9 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 var bigInt = require("big-integer");
 
 function number_with_commas(x) {
@@ -37,7 +40,7 @@ function makeid(length) {
 class NewStorefrontItemPage extends Component {
     
     state = {
-        id: makeid(8), type:'storefront-item', e5:this.props.app_state.selected_e5,
+        id: makeid(8), type:this.props.app_state.loc['439']/* 'storefront-item' */, e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
@@ -50,27 +53,40 @@ class NewStorefrontItemPage extends Component {
         device_language_setting: this.props.app_state.device_language, 
         device_country: this.props.app_state.device_country,
 
-        typed_link_text:'', link_search_results:[], added_links:[]
+        typed_link_text:'', link_search_results:[], added_links:[], 
+        edit_text_item_pos:-1,
     };
 
     get_new_job_page_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'configuration','e.text','links', 'images', 'variants'], [0]
+                ['or','',0], ['e', this.props.app_state.loc['440']/* 'configuration' */,this.props.app_state.loc['110']/* 'e.text' */,this.props.app_state.loc['111']/* 'links' */, this.props.app_state.loc['112']/* 'images' */, this.props.app_state.loc['441']/* 'variants' */], [0]
             ],
             'text':[
-                ['or','',0], ['text','e.font', 'e.size'], [0]
+                ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
             ],
             'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
             ],
             'size':[
-                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
             ],
         };
+
+        obj[this.props.app_state.loc['115']] = [
+                ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
+            ];
+        obj[this.props.app_state.loc['116']] = [
+                ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
+            ];
+        obj[this.props.app_state.loc['117']] = [
+                ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
+            ];
+
+        return obj;
     }
 
     get_new_job_text_tags_object(){
@@ -97,7 +113,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['89']/* 'enabled' */, this.props.app_state.loc['90']/* 'disabled' */], [1]
             ],
         };
     }
@@ -109,7 +125,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','invisible', 'masked', 'unmasked'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['442']/* 'invisible' */, this.props.app_state.loc['443']/* 'masked' */, this.props.app_state.loc['444']/* 'unmasked' */], [1]
             ],
         };
     }
@@ -121,7 +137,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'enabled', 'disabled'], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['89']/* 'enabled' */, this.props.app_state.loc['90']/* 'disabled' */], [1]
             ],
         };
     }
@@ -133,7 +149,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'items','grams','kilos','ounces','pounds', 'centimeters','meters','inches','feet', 'mililiters','liters','gallons'], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['445']/* 'items' */,this.props.app_state.loc['446']/* 'grams' */,this.props.app_state.loc['447']/* 'kilos' */,this.props.app_state.loc['448']/* 'ounces' */,this.props.app_state.loc['449']/* 'pounds' */,this.props.app_state.loc['450'] /* 'centimeters' */,this.props.app_state.loc['451']/* 'meters' */,this.props.app_state.loc['452']/* 'inches' */,this.props.app_state.loc['453']/* 'feet' */,this.props.app_state.loc['454'] /* 'mililiters' */,this.props.app_state.loc['455']/* 'liters' */,this.props.app_state.loc['456']/* 'gallons' */], [1]
             ]
         };
     }
@@ -146,7 +162,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'listed', 'delisted'], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['457']/* 'listed' */, this.props.app_state.loc['458'] /* 'delisted' */], [1]
             ],
         };
     }
@@ -158,7 +174,7 @@ class NewStorefrontItemPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e', 'in-stock', 'out-of-stock'], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['459']/* 'in-stock' */, this.props.app_state.loc['460']/* 'out-of-stock' */], [1]
             ],
         };
     }
@@ -174,7 +190,7 @@ class NewStorefrontItemPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* finish */, 'action':'finish_creating_object'})}
                         </div>
                         
                     </div>
@@ -204,7 +220,7 @@ class NewStorefrontItemPage extends Component {
                 </div>
             )    
         }
-        if(selected_item == 'configuration'){
+        if(selected_item == this.props.app_state.loc['440']/* 'configuration' */){
             return(
                 <div>
                     {this.render_subscription_configuration_part()}
@@ -218,21 +234,21 @@ class NewStorefrontItemPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'links'){
+        else if(selected_item == this.props.app_state.loc['111']/* 'links' */){
             return(
                 <div>
                     {this.render_enter_links_part()}
                 </div>
             )
         }
-        else if(selected_item == 'images'){
+        else if(selected_item == this.props.app_state.loc['112']/* 'images' */){
             return(
                 <div>
                     {this.render_enter_image_part()}
                 </div>
             ) 
         }
-        else if(selected_item == 'variants'){
+        else if(selected_item == this.props.app_state.loc['441']/* 'variants' */){
             return(
                 <div>
                     {this.render_variants_picker_part()}
@@ -242,7 +258,7 @@ class NewStorefrontItemPage extends Component {
     }
 
     is_text_selected_item(selected_item){
-        var obj = ['text','font','size','Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
+        var obj = [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['116']/* 'font' */,this.props.app_state.loc['117']/* 'size' */,'Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
         if(obj.includes(selected_item)){
             return true
         }
@@ -262,30 +278,30 @@ class NewStorefrontItemPage extends Component {
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Unit Denomination', 'details':'Specify the denomination of the item from the tag picker below', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['463']/* 'Unit Denomination' */, 'details':this.props.app_state.loc['464']/* 'Specify the denomination of the item from the tag picker below' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <Tags page_tags_object={this.state.composition_type} tag_size={'l'} when_tags_updated={this.when_composition_type_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Set denomination: '+selected_composition})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['465']/* 'Set denomination: ' */+selected_composition})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Target Payment Recipient', 'details':'Set the account thats set to receive the purchase payments for your new item("53" simplifier is disabled here)', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['466']/* 'Target Payment Recipient' */, 'details':this.props.app_state.loc['467']/* 'Set the account ID thats set to receive the purchase payments for your new item' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Account ID'} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['535b']/* 'Enter Account ID' */} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
                 {this.load_account_suggestions('target_receiver')}
 
 
 
-                {this.render_detail_item('3', {'title':'Fulfilment Location', 'details':'Set location of the pick up station for your item when its ordered using a bag and contractors', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['468']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['469']/* 'Set location of the pick up station for your item when its ordered using a bag and contractors' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={70} placeholder={'Location Details...'} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                <TextInput height={70} placeholder={this.props.app_state.loc['470']/* 'Location Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Direct Purchase Option', 'details':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['471']/* 'Direct Purchase Option' */, 'details':this.props.app_state.loc['472']/* 'If set to enabled, youll handle the shipping for the item when purchased directly by your clients' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -300,7 +316,7 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Product Chatroom', 'details':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['473']/* 'Product Chatroom' */, 'details':this.props.app_state.loc['474']/* 'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -309,7 +325,7 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Product Listing', 'details':'If set to delisted, the item will not be visible for purchasing', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['475']/* 'Product Listing' */, 'details':this.props.app_state.loc['476']/* 'If set to delisted, the item will not be visible for purchasing' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -319,7 +335,7 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Product Stock', 'details':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['477']/* 'Product Stock' */, 'details':this.props.app_state.loc['478']/* 'If set to out-of-stock, users will not be able to direct purchase or add to their bags.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.get_storefront_item_in_stock_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_in_stock_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
@@ -328,15 +344,15 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Fulfilment Accounts', 'details':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['479']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['480']/* 'Set the accounts involved with shipping and fulfilling direct purchase orders from clients' */, 'size':'l'})}
 
                 <div className="row" style={{width: '103%'}}>
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <TextInput height={25} placeholder={'Account ID'} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
+                        <TextInput height={25} placeholder={this.props.app_state.loc['153']} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '2px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
-                            {this.render_detail_item('5', {'text':'Add', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['169']/* 'Add' */, 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -351,24 +367,24 @@ class NewStorefrontItemPage extends Component {
     render_direct_shipping_fee_view_if_enabled(){
         var selected_item = this.get_selected_item(this.state.purchase_option_tags_object, this.state.purchase_option_tags_object['i'].active)
 
-        if(selected_item == 'enabled'){
+        if(selected_item == this.props.app_state.loc['89']/* 'enabled' */){
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Direct Purchase Shipping Fee', 'details':'The shipping fee you charge for shipping your item when directly purchased by your clients', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['481']/* 'Direct Purchase Shipping Fee' */, 'details':this.props.app_state.loc['482']/* 'The shipping fee you charge for shipping your item when directly purchased by your clients' */, 'size':'l'})}
 
                     <div style={{height:10}}/>
-                    <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['535a']/* 'Exchange ID' */} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
                     {this.load_token_suggestions('shipping_exchange_id')}
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.shipping_price_amount), 'barwidth':this.calculate_bar_width(this.state.shipping_price_amount), 'number':this.format_account_balance_figure(this.state.shipping_price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['484']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.shipping_price_amount), 'barwidth':this.calculate_bar_width(this.state.shipping_price_amount), 'number':this.format_account_balance_figure(this.state.shipping_price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['483']/* 'tokens' */, })}
                     </div>
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                     <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_price_set()}>
-                        {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['485']/* 'Add Price' */, 'action':''})}
                     </div>
                     {this.render_shipping_set_prices_list_part()}
                 </div>
@@ -410,19 +426,19 @@ class NewStorefrontItemPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.shipping_exchange_id.trim())
         var amount = this.state.shipping_price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 1600)
+            this.props.notify(this.props.app_state.loc['486']/* 'please put a valid exchange id' */, 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 1600)
+            this.props.notify(this.props.app_state.loc['487']/* 'please put a valid amount' */, 1600)
         }
         else if(this.is_exchange_already_added(exchange_id, this.state.shipping_price_data)){
-            this.props.notify('You cant use the same exchange twice', 3600)
+            this.props.notify(this.props.app_state.loc['488']/* 'You cant use the same exchange twice' */, 3600)
         }
         else{
             var price_data_clone = this.state.shipping_price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({shipping_price_data: price_data_clone, shipping_price_amount:0, shipping_exchange_id:''});
-            this.props.notify('added shipping price!', 1400)
+            this.props.notify(this.props.app_state.loc['489']/* 'added shipping price!' */, 1400)
         }
     }
 
@@ -511,12 +527,12 @@ class NewStorefrontItemPage extends Component {
     when_add_shipping_account_set(){
         var account = this.get_typed_alias_id(this.state.fulfilment_account)
         if(isNaN(account) || account == '' || parseInt(account) < 1000){
-            this.props.notify('please put a valid account id', 2600)
+            this.props.notify(this.props.app_state.loc['490']/* 'please put a valid account id' */, 2600)
         }else{
             var clone = this.state.fulfilment_accounts.slice()
             clone.push(account)
             this.setState({fulfilment_accounts: clone, fulfilment_account:''})
-            this.props.notify('added account', 1400)
+            this.props.notify(this.props.app_state.loc['491']/* 'added account' */, 1400)
         }
     }
 
@@ -540,7 +556,7 @@ class NewStorefrontItemPage extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_fulfilment_account_clicked(item)}>
-                            {this.render_detail_item('3', {'title':item, 'details':'Account', 'size':'s'})}
+                            {this.render_detail_item('3', {'title':item, 'details':this.props.app_state.loc['492']/* 'Account' */, 'size':'s'})}
                         </li>
                     ))}
                 </ul>
@@ -586,7 +602,7 @@ class NewStorefrontItemPage extends Component {
             return this.get_account_suggestions(target_type)
         }
         return[
-            {'id':''+myid, 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+            {'id':''+myid, 'label':{'title':this.props.app_state.loc['493']/* 'My Account' */, 'details':this.props.app_state.loc['492']/* 'Account' */, 'size':'s'}},
         ].concat(this.get_account_suggestions(target_type))
     }
 
@@ -672,27 +688,27 @@ class NewStorefrontItemPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Storefront Item'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['494']/* 'Set a title for your new Storefront Item' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['495']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Storefront Item'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['496']/* 'Set tags for indexing your new Storefront Item' */})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['126']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['127']/* 'Add' */, 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
                 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
@@ -736,25 +752,25 @@ class NewStorefrontItemPage extends Component {
         var typed_word = this.state.entered_tag_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That tag is too long', 400)
+            this.props.notify(this.props.app_state.loc['130']/* 'That tag is too long' */, 400)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That tag is too short', 400)
+            this.props.notify(this.props.app_state.loc['131']/* 'That tag is too short' */, 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify('you cant enter the same word twice', 400)
+            this.props.notify(this.props.app_state.loc['132']/* 'you cant enter the same word twice' */, 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify('tag added!', 200)
+            // this.props.notify('tag added!', 200)
         }
     }
 
@@ -769,7 +785,7 @@ class NewStorefrontItemPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
-        this.props.notify('tag removed', 200)
+        // this.props.notify('tag removed', 200)
     }
 
    
@@ -815,7 +831,6 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div style={{'padding': '0px 10px 0px 0px'}}>
                     {this.render_text_part()}
-                    {this.render_detail_item('0')}
                     {this.render_entered_texts()}
                 </div>
             )
@@ -836,16 +851,17 @@ class NewStorefrontItemPage extends Component {
     }
 
     render_text_part(){
+        var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136']/* 'Add Text' */ : this.props.app_state.loc['137']/* 'Edit Text' */
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Enter your preferred text then tap add to add it'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['497']/* 'Enter your preferred text then tap add to add it' */})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
                 {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
-                <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                <TextInput height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
@@ -859,7 +875,7 @@ class NewStorefrontItemPage extends Component {
                     </div>
 
                     <div style={{'padding': '5px', width:205}}>
-                        {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
+                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
                     </div>
                 </div>
             </div>
@@ -886,21 +902,26 @@ class NewStorefrontItemPage extends Component {
         var typed_word = this.state.entered_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
         }else{
             var entered_text = this.get_edited_text_object()
-            var cloned_entered_text_array = this.state.entered_text_objects.slice()
-            cloned_entered_text_array.push(entered_text);
-            this.setState({entered_text_objects: cloned_entered_text_array, entered_text:''})
+            if(this.state.edit_text_item_pos != -1){
+                this.finish_editing_text_item(entered_text)
+            }else{
+                var cloned_entered_text_array = this.state.entered_text_objects.slice()
+                cloned_entered_text_array.push(entered_text);
+                this.setState({entered_text_objects: cloned_entered_text_array, entered_text:''})
 
-            var cloned_array = this.state.entered_objects.slice()
-            cloned_array.push({'data':entered_text, 'type':'4' })
-            this.setState({entered_objects: cloned_array})
+                var cloned_array = this.state.entered_objects.slice()
+                cloned_array.push({'data':entered_text, 'type':'4' })
+                this.setState({entered_objects: cloned_array})
+            }
+            
         }
     }
 
     render_entered_texts(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-420;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -909,34 +930,62 @@ class NewStorefrontItemPage extends Component {
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.reverse().map((item, index) => (
-                        <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>
-                            {this.render_text_or_banner_if_any(item)}
-                        </li>
+                    {items.map((item, index) => (
+                        <SwipeableList>
+                            <SwipeableListItem
+                                swipeLeft={{
+                                content: <div>Delete</div>,
+                                action: () => this.delete_text_item(item)
+                                }}
+                                swipeRight={{
+                                content: <div></div>,
+                                action: () => console.log() }}>
+                                <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
+                                    {this.render_text_or_banner_if_any(item, index)}
+                                </li></div>
+                            </SwipeableListItem>
+                        </SwipeableList>
+                        
                     ))}
                 </ul>
             </div>
         );
     }
 
-    render_text_or_banner_if_any(item){
-        if(item['type'] == '4'){
+    render_text_or_banner_if_any(item, index){
+        if(item['type'] == '11'){
             return(
                 <div>
-                    {this.render_detail_item('4',item['data'])}
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                        <div>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                                <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
+                            </div>
+
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={(e) => this.when_banner_image_updated(e, index)} />
+                            </div>
+                        </div>
+                        <div style={{width:2}}/>
+                        {this.render_detail_item('11',item['data'])}
+                    </div>
                 </div>
             )
         }
-        else if(item['type'] == '11'){
+        else if(item['type'] == '4'){
+            var object = structuredClone(item['data'])
+            if(this.state.edit_text_item_pos == index) object['text'] = ''
             return(
                 <div>
-                    {this.render_detail_item('11',item['data'])}
+                    {this.render_detail_item('4', object)}
                 </div>
             )
         }
     }
 
-    when_text_clicked(item){
+    delete_text_item(item){
         var cloned_array = this.state.entered_text_objects.slice()
         const index = cloned_array.indexOf(item);
         if (index > -1) { // only splice array when item is found
@@ -957,7 +1006,7 @@ class NewStorefrontItemPage extends Component {
         }
         this.setState({entered_objects: cloned_array})
 
-        this.props.notify('item removed!', 600)
+        // this.props.notify('item removed!', 600)
     }
 
     when_banner_image_picked = (e) => {
@@ -977,16 +1026,67 @@ class NewStorefrontItemPage extends Component {
         }
     }
 
-    add_banner_to_object(image){
-        var typed_word = this.state.entered_text.trim();
+    when_banner_image_updated = (e, index) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        this.update_banner_in_object(ev.target.result, index)
+                        // this.setState({selected_banner_image: ev.target.result});
+                    }
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+        }
+    }
 
+    add_banner_to_object(image){
         var entered_text = this.get_edited_text_object()
         entered_text['textsize'] = '10px'
         var obj = {'image':image, 'caption':entered_text}
-
         var cloned_array = this.state.entered_objects.slice()
-        cloned_array.push({'data':obj, 'type':'11' })
+        cloned_array.push({'data':obj, 'type':'11' }) 
         this.setState({entered_objects: cloned_array, entered_text:''})
+    }
+
+
+    update_banner_in_object(image, index){
+        var entered_text = this.get_edited_text_object()
+        entered_text['textsize'] = '10px'
+        var obj = {'image':image, 'caption':entered_text}
+        var cloned_array = this.state.entered_objects.slice()
+        var pos = index
+        cloned_array[pos] = {'data':obj, 'type':'11' }
+        this.setState({entered_objects: cloned_array, entered_text:''})
+    }
+
+
+    edit_text_item(item){
+        var entered_objects_pos = -1;
+        for(var i=0; i<this.state.entered_objects.length; i++){
+            if(this.state.entered_objects[i]['data'] == item['data']){
+                entered_objects_pos = i;
+            }
+        }
+        if(item['type'] == '11'){
+            return;
+        }else{
+            var text = item['data']['text']
+            this.setState({edit_text_item_pos: entered_objects_pos, entered_text:text})
+        }
+        // this.props.notify('editing item', 600)
+    }
+
+
+    finish_editing_text_item(item){
+        var cloned_array = this.state.entered_objects.slice()
+        var pos = this.state.edit_text_item_pos
+        cloned_array[pos] = {'data':item, 'type':'4' }
+        console.log(cloned_array)
+        this.setState({entered_objects: cloned_array, entered_text:'', edit_text_item_pos: -1})
     }
 
 
@@ -1002,14 +1102,14 @@ class NewStorefrontItemPage extends Component {
     render_enter_links_part(){
         return(
             <div style={{'margin':'10px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Search an object by its title or id, then tap it to add it to the new channel'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['498']/* 'Search an object by its title or id, then tap it to add it to the new channel' */})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput height={30} placeholder={'Enter Object ID...'} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':'Search','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':''})}
                     </div>
                 </div>
                 <div style={{height:10}}/>
@@ -1031,9 +1131,9 @@ class NewStorefrontItemPage extends Component {
         var typed_text = this.state.typed_link_text
 
         if(typed_text == ''){
-            this.props.notify('Type something', 1800)
+            this.props.notify(this.props.app_state.loc['128']/* 'Type something' */, 1800)
         }else{
-            this.props.notify('Searching...', 600)
+            this.props.notify(this.props.app_state.loc['141']/* 'Searching...' */, 600)
             var return_data = this.search_for_object(typed_text)
             this.setState({link_search_results: return_data})
         }
@@ -1210,7 +1310,7 @@ class NewStorefrontItemPage extends Component {
             clone.splice(pos, 1)
         }
         this.setState({added_links: clone})
-        this.props.notify('Link removed from object', 700)
+        // this.props.notify('Link removed from object', 700)
     }
 
 
@@ -1260,11 +1360,11 @@ class NewStorefrontItemPage extends Component {
         var pos = clone.indexOf(item)
 
         if(pos > -1){
-            this.props.notify('the link is already in the object', 1700)
+            this.props.notify(this.props.app_state.loc['500']/* 'the link is already in the object' */, 3700)
         }else{
             clone.push(item)
             this.setState({added_links: clone})
-            this.props.notify('link added to object', 1400)
+            this.props.notify(this.props.app_state.loc['501']/* 'link added to object' */, 1400)
         }
     }
 
@@ -1285,8 +1385,8 @@ class NewStorefrontItemPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove.'})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image. Then tap to remove.' */})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -1462,23 +1562,23 @@ class NewStorefrontItemPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':'Price per unit', 'details':'Specify the price for one unit of your new items variant', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['502']/* 'Price per unit' */, 'details':this.props.app_state.loc['503']/* 'Specify the price for one unit of your new items variant' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['504']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
  
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['505']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['506']/* 'tokens' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['507']/* 'Add Price' */, 'action':''})}
                 </div>
             </div>
         )
@@ -1496,19 +1596,19 @@ class NewStorefrontItemPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 1600)
+            this.props.notify(this.props.app_state.loc['508']/* 'please put a valid exchange id' */, 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 1600)
+            this.props.notify(this.props.app_state.loc['509']/* 'please put a valid amount' */, 1600)
         }
         else if(this.is_exchange_already_added(exchange_id, this.state.price_data)){
-            this.props.notify('You cant use the same exchange twice', 3600)
+            this.props.notify(this.props.app_state.loc['510']/* 'You cant use the same exchange twice' */, 3600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, price_amount:0, exchange_id:''});
-            this.props.notify('added price!', 1000)
+            this.props.notify(this.props.app_state.loc['511']/* 'added price!' */, 1000)
         }
     }
 
@@ -1584,15 +1684,15 @@ class NewStorefrontItemPage extends Component {
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':'Variant Title', 'details':'Set a basic description of the variant of the item your selling like a color or size option', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['512']/* 'Variant Title' */, 'details':this.props.app_state.loc['513']/* 'Set a basic description of the variant of the item your selling like a color or size option' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Variant Title'} when_text_input_field_changed={this.when_variant_description_input_field_changed.bind(this)} text={this.state.variant_description} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['512']/* 'Variant Title' */} when_text_input_field_changed={this.when_variant_description_input_field_changed.bind(this)} text={this.state.variant_description} theme={this.props.theme}/>
                 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Variant Images', 'details':'You can set some images for your variant(for visual context)', 'size':'l'})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['514']/* 'Variant Images' */, 'details':this.props.app_state.loc['515']/* 'You can set some images for your variant' */, 'size':'l'})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 <div style={{height:10}}/>
                 {this.render_variant_image_picker_ui()}
                 <div style={{height:10}}/>
@@ -1600,11 +1700,11 @@ class NewStorefrontItemPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Number of Units in '+selected_composition, 'details':'You can specify the number of units of the variant that are available for sale', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['516']/* 'Number of Units in ' */+selected_composition, 'details':this.props.app_state.loc['517']/* 'You can specify the number of units of the variant that are available for sale' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of '+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -1615,7 +1715,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_variant_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Variant', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['520']/* 'Add Variant' */, 'action':''})}
                 </div>
 
 
@@ -1730,20 +1830,20 @@ class NewStorefrontItemPage extends Component {
         var available_unit_count = this.state.available_unit_count
 
         if(variant_description == ''){
-            this.props.notify('that variant description isnt valid', 800)
+            this.props.notify(this.props.app_state.loc['521']/* 'that variant description isnt valid' */, 800)
         }
         else if(price_data.length == 0){
-            this.props.notify('set a price for your variant first', 900)
+            this.props.notify(this.props.app_state.loc['522']/* 'set a price for your variant first' */, 900)
         }
         else if(available_unit_count == 0){
-            this.props.notify('You need to specify how many units are available first', 900)
+            this.props.notify(this.props.app_state.loc['523']/* 'You need to specify how many units are available first' */, 900)
         }else{
             var variant = {'variant_id':makeid(8),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
 
             var clone = this.state.variants.slice()
             clone.push(variant)
             this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0})
-            this.props.notify('added the variant to the item', 600)
+            this.props.notify(this.props.app_state.loc['524']/* 'added the variant to the item' */, 600)
         }
     }
 
@@ -1786,7 +1886,7 @@ class NewStorefrontItemPage extends Component {
                                         {this.render_detail_item('9', item['image_data']['data'])}
                                     </div>
                                     <div style={{height:5}}/>
-                                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['525']/* 'Number of Units' */, 'size':'l'})}
                                     <div style={{height:15}}/>
                                     {this.render_variant_price_data(item)}
                                 </div>
@@ -1820,7 +1920,7 @@ class NewStorefrontItemPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({variants: cloned_array})
-        this.props.notify('variant removed!',600)
+        this.props.notify(this.props.app_state.loc['526']/* 'variant removed!' */,600)
     }
 
 
@@ -1849,8 +1949,8 @@ class NewStorefrontItemPage extends Component {
 
     get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['527']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['528']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         var sorted_token_exchange_data = []
@@ -1985,32 +2085,32 @@ class NewStorefrontItemPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -2028,25 +2128,25 @@ class NewStorefrontItemPage extends Component {
         var fulfilment_location = this.state.fulfilment_location.trim()
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 1700)
+            this.props.notify(this.props.app_state.loc['529']/* 'add some tags first!' */, 2700)
         }
         else if(title == ''){
-            this.props.notify('add a title for your Item', 1700)
+            this.props.notify(this.props.app_state.loc['530']/* 'add a title for your Item' */, 2700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that title is too long', 1700)
+            this.props.notify(this.props.app_state.loc['531']/* 'that title is too long' */, 2700)
         }
         else if(variants.length == 0){
-            this.props.notify('you should set some variants for your item', 1700)
+            this.props.notify(this.props.app_state.loc['532']/* 'you should set some variants for your item' */, 3700)
         }
         else if(isNaN(target_receiver) || parseInt(target_receiver) < 1000 || target_receiver==''){
-            this.props.notify('set a valid receiver target', 1700)
+            this.props.notify(this.props.app_state.loc['533']/* 'set a valid receiver target' */, 3700)
         }
         else if(fulfilment_location==''){
-            this.props.notify('set a valid fulfilment location for your storefront items', 2900)
+            this.props.notify(this.props.app_state.loc['534']/* 'set a valid fulfilment location for your storefront items' */, 4900)
         }
         else if(this.state.fulfilment_accounts.length == 0){
-            this.props.notify('you should set some fulfilment accounts for your item', 2700)
+            this.props.notify(this.props.app_state.loc['535']/* 'you should set some fulfilment accounts for your item' */, 4700)
         }
         else{
             var me = this
@@ -2059,7 +2159,7 @@ class NewStorefrontItemPage extends Component {
                 me.props.when_add_new_object_to_stack(me.state)
 
                 me.setState({
-                    id: makeid(8), type:'storefront-item',
+                    id: makeid(8), type:this.props.app_state.loc['439']/* 'storefront-item' */,
                     get_new_job_page_tags_object: me.get_new_job_page_tags_object(),
                     get_new_job_text_tags_object: me.get_new_job_text_tags_object(),
                     entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
@@ -2067,7 +2167,7 @@ class NewStorefrontItemPage extends Component {
                     entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
                     purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:'', typed_link_text:'', link_search_results:[], added_links:[],
                 })
-                me.props.notify('Transaction added to Stack', 600)
+                me.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1600)
             }, (1 * 1000));
         }
     }

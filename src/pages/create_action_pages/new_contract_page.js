@@ -39,7 +39,7 @@ function makeid(length) {
 class NewContractPage extends Component {
     
     state = {
-        id: makeid(8), type:'contract', e5:this.props.app_state.selected_e5,
+        id: makeid(8), type:this.props.app_state.loc['66'], e5:this.props.app_state.selected_e5,
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_contract_tags_object: this.get_new_contract_tags_object(), 
         
@@ -54,7 +54,9 @@ class NewContractPage extends Component {
 
         page:0, 
 
-        content_channeling_setting: this.props.app_state.content_channeling, device_language_setting: this.props.app_state.device_language, device_country: this.props.app_state.device_country
+        content_channeling_setting: this.props.app_state.content_channeling, device_language_setting: this.props.app_state.device_language, device_country: this.props.app_state.device_country,
+
+        default_consensus_majority_limit:0, voter_weight_exchange_id:''
     };
 
     constructor(props) {
@@ -63,17 +65,22 @@ class NewContractPage extends Component {
     }
 
     get_new_contract_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','configuration', 'e.authorities', 'entry-fees'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['163'], this.props.app_state.loc['113'], this.props.app_state.loc['164']], [0]
             ],
             'authorities':[
-              ['xor','e',1], ['authorities','moderators', 'interactible'], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
           ],
         };
+
+        obj[this.props.app_state.loc['114']] = [
+              ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]
+          ];
+        return obj
     }
 
     get_auto_wait_tags_object(){
@@ -82,7 +89,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','no', 'yes'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1]
             ],
         };
     }
@@ -93,7 +100,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modifiable', 'non-modifiable'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [1]
             ],
         };
     }
@@ -104,7 +111,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1]
             ],
         };
     }
@@ -115,7 +122,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','relative', 'absolute'], [2]
+                ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2]
             ],
         };
     }
@@ -126,7 +133,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1]
             ],
         };
     }
@@ -138,7 +145,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','moderators', 'interactible'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1]
             ],
         };
     }
@@ -150,7 +157,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','private', 'public'], [2]
+                ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [2]
             ],
         };
     }
@@ -162,7 +169,7 @@ class NewContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','enter-contract'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['1']], [0]
             ],
         };
     }
@@ -179,7 +186,7 @@ class NewContractPage extends Component {
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                                {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':''})}
                             </div>
                             
                         </div>
@@ -214,21 +221,21 @@ class NewContractPage extends Component {
                 </div>
             )    
         }else
-        if(selected_item == 'configuration'){
+        if(selected_item == this.props.app_state.loc['163']){
             return(
                 <div>
                     {this.render_contract_list()}
                 </div>
             ) 
         }
-        else if(selected_item == 'moderators' || selected_item == 'interactible'){
+        else if(selected_item == this.props.app_state.loc['118'] || selected_item == this.props.app_state.loc['119']){
             return(
                 <div>
                     {this.render_authorities_part()}
                 </div>
             ) 
         }
-        else if(selected_item == 'entry-fees'){
+        else if(selected_item == this.props.app_state.loc['164']){
             return(
                 <div>
                     {this.render_prices_part()}
@@ -273,31 +280,31 @@ class NewContractPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Contract'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['167']})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Contract'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['168']})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['169'], 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Enter Contract', 'details':'If set to enter-contract, youll enter the contract your creating in one transaction.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['170'], 'details':this.props.app_state.loc['171'], 'size':'l'})}
                 <div style={{height:20}}/>
                 <Tags page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
 
@@ -328,25 +335,25 @@ class NewContractPage extends Component {
         var typed_word = this.state.entered_tag_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128'], 400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify(this.props.app_state.loc['129'], 400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That tag is too long', 400)
+            this.props.notify(this.props.app_state.loc['130'], 400)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That tag is too short', 400)
+            this.props.notify(this.props.app_state.loc['131'], 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify('you cant enter the same word twice', 400)
+            this.props.notify(this.props.app_state.loc['132'], 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify('tag added!', 200)
+            // this.props.notify('tag added!', 200)
         }
     }
 
@@ -361,48 +368,68 @@ class NewContractPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
-        this.props.notify('tag removed', 200)
+        // this.props.notify('tag removed', 200)
     }
+
+
+
+
+
 
 
     render_presets_menu(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Preset the new contract settings based on common use cases.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['172']})}
                 <div style={{height:10}}/>
 
                 <div onClick={()=>this.preset_workgroup_contract()}>
-                    {this.render_detail_item('3', {'title':'👥 Workgroup Contract', 'details':'A contract representing shared consensus within an organization or group of people.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['173'], 'details':this.props.app_state.loc['174'], 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
 
                 <div  onClick={()=>this.preset_personal_contract()}>
-                    {this.render_detail_item('3', {'title':'🧘 Personal Contract', 'details':'A contract primarily used by one person.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['175'], 'details':this.props.app_state.loc['176'], 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
 
                 <div onClick={()=>this.preset_work_contract()}>
-                    {this.render_detail_item('3', {'title':'👷🏼 Work Contract', 'details':'A contract used for the job and contractor markets.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['177'], 'details':this.props.app_state.loc['178'], 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
 
                 <div onClick={()=>this.preset_life_contract()}>
-                    {this.render_detail_item('3', {'title':'⚭ Life Contract', 'details':'A contract representing shared consensus between two or more people for an extended period of time.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['179'], 'details':this.props.app_state.loc['180'], 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
             </div>
         )
     }
 
+    get_mint_limit(token_id){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5] == null || this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id] == null){
+            if(this.props.app_state.selected_e5 == 'E25') return bigInt('35000000')
+            else if(this.props.app_state.selected_e5 == 'E35') return bigInt('3500000')
+            else return bigInt('72000000')
+        }else{
+            return this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][token_id]['data'][1][0/* <0>default_exchange_amount_buy_limit */]
+        }
+    }
 
     preset_workgroup_contract(){
-        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [1] ], };
-        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [1] ], };
-        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
-        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
-        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
-        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [1] ], };
-        var price = [{'id':'3', 'amount':bigInt('35000')}, {'id':'5', 'amount':bigInt('1000')}]
+        var end_mint_limit = this.get_mint_limit(3)
+        var spend_mint_limit = this.get_mint_limit(5)
+
+        var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
+
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [1] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
+        var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
         this.setState({
             new_contract_type_tags_object: contract_type,
@@ -420,20 +447,19 @@ class NewContractPage extends Component {
             maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7*2),/* 2 weeks */
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
-            price_data:price,
+            price_data:price, default_consensus_majority_limit: bigInt('75e16')
         })
 
-        this.props.notify('Workgroup contract preset has been applied', 2500)
+        this.props.notify(this.props.app_state.loc['181'], 2500)
     }
 
-
     preset_personal_contract(){
-        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [2] ], };
-        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [1] ], };
-        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
-        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
-        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
-        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [1] ], };
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [2] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [1] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
         var price = [{'id':'3', 'amount':bigInt('3500')}]
 
         this.setState({
@@ -452,22 +478,26 @@ class NewContractPage extends Component {
             maximum_proposal_expiry_submit_expiry_time_difference: bigInt('1e72'),/* forever */
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
-            price_data:price,
+            price_data:price, default_consensus_majority_limit: 0
         })
 
-        this.props.notify('Personal contract preset has been applied', 2500)
+        this.props.notify(this.props.app_state.loc['182'], 2500)
     }
 
-
-
     preset_work_contract(){
-        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [1] ], };
-        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [1] ], };
-        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
-        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
-        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
-        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [2] ], };
-        var price = [{'id':'3', 'amount':bigInt('20000')}, {'id':'5', 'amount':bigInt('5000')}]
+        var end_mint_limit = this.get_mint_limit(3)
+        var spend_mint_limit = this.get_mint_limit(5)
+
+        var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
+
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['85'], this.props.app_state.loc['86']], [2] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [2] ], };
+        var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
         this.setState({
             new_contract_type_tags_object: contract_type,
@@ -485,21 +515,26 @@ class NewContractPage extends Component {
             maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7),/* 1 week */
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
-            price_data:price,
+            price_data:price, default_consensus_majority_limit: 0
         })
 
-        this.props.notify('Work contract preset has been applied', 2500)
+        this.props.notify(this.props.app_state.loc['183'], 2500)
     }
    
-
     preset_life_contract(){
-        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','no', 'yes'], [2] ], };
-        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','modifiable', 'non-modifiable'], [2] ], };
-        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [1] ], };
-        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','relative', 'absolute'], [2] ], };
-        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','enabled', 'disabled'], [2] ], };
-        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','private', 'public'], [1] ], };
-        var price = [{'id':'3', 'amount':bigInt('35000')}, {'id':'5', 'amount':bigInt('15000')}]
+        var end_mint_limit = this.get_mint_limit(3)
+        var spend_mint_limit = this.get_mint_limit(5)
+        
+        var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.01)).toString())
+
+        var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [2] ], };
+        var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
+        var can_extend_enter_contract_at_any_time = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [1] ], };
+        var bounty_limit_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['87'], this.props.app_state.loc['88']], [2] ], };
+        var force_exit_enabled = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['89'], this.props.app_state.loc['90']], [2] ], };
+        var contract_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['165'], this.props.app_state.loc['166']], [1] ], };
+        var price = [{'id':'3', 'amount':end_price}, {'id':'5', 'amount':spend_price}]
 
 
 
@@ -519,12 +554,16 @@ class NewContractPage extends Component {
             maximum_proposal_expiry_submit_expiry_time_difference: (60*60*24*7),/* 1 week */
             bounty_limit_type:bounty_limit_type,
             contract_force_exit_enabled: force_exit_enabled,
-            price_data:price,
+            price_data:price, default_consensus_majority_limit: 0
         })
 
 
-        this.props.notify('Life contract preset has been applied', 2500)
+        this.props.notify(this.props.app_state.loc['184'], 2500)
     }
+
+
+
+
 
 
 
@@ -614,7 +653,7 @@ class NewContractPage extends Component {
     render_contract_list(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':'Create a basic E5 contract'})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['185']})}
                 <div style={{height:20}}/>
                 {this.render_contract_section_parts()}
 
@@ -634,10 +673,10 @@ class NewContractPage extends Component {
 
     show_next_button(){
         var page = this.state.page
-        if(page < 13){
+        if(page < 14){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.enter_next_page()}>
-                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['186'], 'action':''})}
                 </div>
             )
         }
@@ -648,7 +687,7 @@ class NewContractPage extends Component {
         if(page != 0){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.enter_previous_page()}>
-                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['187'], 'action':''})}
                 </div>
             )
         }
@@ -662,25 +701,25 @@ class NewContractPage extends Component {
         if(page == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Contract Type', 'details':'Set the type of contract, either private or public', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['188'], 'details':this.props.app_state.loc['189'], 'size':'l'})}
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.new_contract_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_type_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Note: if set to private, you will be giving new accounts access to the contract manually after its created', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['190'], 'textsize':'10px', 'font':'Sans-serif'})}
                 </div>
             )
         }
         else if(page == 1){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Vote Bounty Split Proportion(Optional)', 'details':'the mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['191'], 'details':this.props.app_state.loc['192'], 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_vote_bounty_split_proportion), 'details':'Vote Bounty Split Proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_vote_bounty_split_proportion), 'details':this.props.app_state.loc['193'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 3% - 5%', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['194'], 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
@@ -689,13 +728,13 @@ class NewContractPage extends Component {
         else if(page == 2){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Maximum Extend Enter Contract Limit', 'details':'the maximum amount of time a sender can extend their stay in your new contract.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['195'], 'details':this.props.app_state.loc['196'], 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':'Maximum Extend Enter Contract Limit', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':this.props.app_state.loc['195'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 1 dy', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['197'], 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_extend_enter_contract_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -704,15 +743,15 @@ class NewContractPage extends Component {
         else if(page == 3){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum End Bounty Amount (Optional)', 'details':'The imimum amount of end that can be used as bounty for creating a proposal for your new contract.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['198'], 'details':this.props.app_state.loc['199'], 'size':'l'})}
                     <div style={{height:20}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['200'], 'subtitle':this.format_power_figure(this.state.default_minimum_end_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_end_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_end_vote_bounty_amount), 'barcolor':'', 'relativepower':'END', })}
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 500 END', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -721,28 +760,30 @@ class NewContractPage extends Component {
         else if(page == 4){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Expiry Duration Limit', 'details':'the minimum amount of time difference that can be used while setting the expiry time for a new proposal sent to your new contract.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['201'], 'details':this.props.app_state.loc['202'], 'size':'l'})}
                     <div style={{height:20}}/>
-
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.default_proposal_expiry_duration_limit), 'details':'Proposal Expiry Duration Limit', 'size':'l'})}
+                    
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['203'], 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                    </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 1hr - 3Hrs', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_proposal_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
         else if(page == 5){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Maximum Enter Contract Duration', 'details':'maximum amount of time a sender can enter your new contract for.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['204'], 'details':this.props.app_state.loc['205'], 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_enter_contract_duration), 'details':'Maximum Enter Contract Duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_enter_contract_duration), 'details':this.props.app_state.loc['204'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 4wks', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['206'], 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_enter_contract_duration.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -751,85 +792,99 @@ class NewContractPage extends Component {
         else if(page == 6){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Auto Wait', 'details':'If set to yes, all new proposals sent to your new contract are automatically voted wait for each participant in the contract', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['207'], 'details':this.props.app_state.loc['208'], 'size':'l'})}
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: no', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['209'], 'textsize':'10px', 'font':'Sans-serif'})}
 
                 </div>
             )
         }
+        // else if(page == 7){
+        //     return(
+        //         <div>
+        //             {this.render_detail_item('3', {'title':this.props.app_state.loc['210'], 'details':this.props.app_state.loc['211'], 'size':'l'})}
+        //             <div style={{height:20}}/>
+                    
+        //             {this.render_detail_item('3', {'title':this.get_time_diff(this.state.proposal_modify_expiry_duration_limit), 'details':this.props.app_state.loc['210'], 'size':'l'})}
+
+        //             <div style={{height:2}}/>
+        //             {this.render_detail_item('10', {'text':this.props.app_state.loc['212'], 'textsize':'10px', 'font':'Sans-serif'})}
+
+        //             <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+        //         </div>
+        //     )
+        // }
         else if(page == 7){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Modify Expiry Duration Limit', 'details':'The period of time before the expiry of a proposal, during which the proposal cannot be modified', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['213'], 'details':this.props.app_state.loc['214'], 'size':'l'})}
+
                     <div style={{height:20}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.proposal_modify_expiry_duration_limit), 'details':'Proposal Modify Expiry Duration Limit', 'size':'l'})}
+                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 3 Hrs', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['215'], 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
         else if(page == 8){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Moderator Modify Privelage', 'details':'If set to modifiable, you as a moderator can directly modify your contracts configuration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['216'], 'details':this.props.app_state.loc['217'], 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
+                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: modifiable', 'textsize':'10px', 'font':'Sans-serif'})}
-
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['218'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    
                 </div>
             )
         }
         else if(page == 9){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Unlimited Extend Contract Time', 'details':'If set to enabled, you can extend your stay in this contract at any time after entry', 'size':'l'})}
-
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['219'], 'details':this.props.app_state.loc['220'], 'size':'l'})}
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+                    
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.maximum_proposal_expiry_submit_expiry_time_difference), 'details':this.props.app_state.loc['219'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: enabled', 'textsize':'10px', 'font':'Sans-serif'})}
-                    
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['221'], 'textsize':'10px', 'font':'Sans-serif'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_proposal_expiry_submit_expiry_time_difference.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
         else if(page == 10){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Maximum Proposal Expiry Submit Expiry time difference', 'details':'the maximum difference in time between the proposal expiry and submit expiry time for all proposals set to your new contract.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['222'], 'details':this.props.app_state.loc['223'], 'size':'l'})}
+
                     <div style={{height:20}}/>
-                    
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.maximum_proposal_expiry_submit_expiry_time_difference), 'details':'Maximum Proposal Expiry Submit Expiry time difference', 'size':'l'})}
+                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: at least 2wks', 'textsize':'10px', 'font':'Sans-serif'})}
-
-                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_proposal_expiry_submit_expiry_time_difference.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['224'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    
                 </div>
             )
         }
         else if(page == 11){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Bounty Limit Type', 'details':'If set to absolute, the bounty limits set for end and spend will be used as is', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['225'], 'details':this.props.app_state.loc['226'], 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: absolute', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['227'], 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -837,34 +892,57 @@ class NewContractPage extends Component {
         else if(page == 12){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Force Exit Enabled', 'details':'If set to enabled, you as a moderator can force other members of the contract to exit the contract', 'size':'l'})}
-
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['228'], 'details':this.props.app_state.loc['229'], 'size':'l'})}
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.default_proposal_expiry_duration_limit), 'details':this.props.app_state.loc['228'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: enabled', 'textsize':'10px', 'font':'Sans-serif'})}
-                    
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['230'], 'textsize':'10px', 'font':'Sans-serif'})}
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_proposal_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
         else if(page == 13){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum Spend Bounty Amount (Optional)', 'details':'the minimum amount of spend that can be used as bounty for new proposals targeting your new contract.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['231'], 'details':this.props.app_state.loc['232'], 'size':'l'})}
                     <div style={{height:20}}/>
-                    
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barwidth':this.calculate_bar_width(this.state.default_minimum_spend_vote_bounty_amount), 'number':this.format_account_balance_figure(this.state.default_minimum_spend_vote_bounty_amount), 'barcolor':'', 'relativepower':'units', })}
-                    </div>
+
+                    {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_consensus_majority_limit), 'details':this.props.app_state.loc['231'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 500 SPEND', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['233'], 'textsize':'10px', 'font':'Sans-serif'})}
 
-                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_consensus_majority_limit.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
             )
         }
+        else if(page == 14){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['234'], 'details':this.props.app_state.loc['235'], 'size':'l'})}
+                    <div style={{height:20}}/>
+
+                    <TextInput height={30} placeholder={this.props.app_state.loc['237']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_voter_weight_id_changed.bind(this)} text={this.state.voter_weight_exchange_id} theme={this.props.theme}/>
+
+                    <div style={{height:2}}/>
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['252a'], 'textsize':'10px', 'font':'Sans-serif'})}
+
+                    {this.load_token_suggestions('weight_exchange_id')}
+                </div>
+            )
+        }
+    }
+
+
+    when_default_consensus_majority_limit(number){
+        this.setState({default_consensus_majority_limit: number})
+    }
+
+    when_exchange_voter_weight_id_changed(id){
+        this.setState({voter_weight_exchange_id: id})
     }
 
     
@@ -938,16 +1016,16 @@ class NewContractPage extends Component {
     }
 
     render_moderator_or_interactible_setting(){
-        var selected_item = this.get_selected_item(this.state.new_contract_tags_object, 'authorities')
+        var selected_item = this.get_selected_item(this.state.new_contract_tags_object, this.props.app_state.loc['114'])
 
-        if(selected_item == 'moderators' || selected_item == 'e'){
+        if(selected_item == this.props.app_state.loc['118'] || selected_item == 'e'){
             return(
                 <div>
                     {this.render_moderator_settings()}
                 </div>
             )    
         }
-        else if(selected_item == 'interactible'){
+        else if(selected_item == this.props.app_state.loc['119']){
             return(
                 <div>
                     {this.render_interactible_settings()}
@@ -960,16 +1038,16 @@ class NewContractPage extends Component {
     render_moderator_settings(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['149'], 'details':this.props.app_state.loc['150'], 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['149']} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('moderator_id')}
 
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['151'], 'action':''})}
                 </div>
 
                 {this.render_added_moderators()}
@@ -984,13 +1062,13 @@ class NewContractPage extends Component {
     when_add_moderator_button_tapped(){
         var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
-            this.props.notify('please put a valid account id', 1600)
+            this.props.notify(this.props.app_state.loc['98'], 1600)
         }
         else{
             var moderators_clone = this.state.moderators.slice()
             moderators_clone.push(parseInt(moderator_id))
             this.setState({moderators: moderators_clone, moderator_id:''});
-            this.props.notify('added moderator!', 1400)
+            this.props.notify(this.props.app_state.loc['152'], 1400)
         }
     }
 
@@ -1035,7 +1113,7 @@ class NewContractPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item, 'details':'Account ID', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item, 'details':this.props.app_state.loc['153'], 'size':'l'})}
                             </li>
                         ))}
                     </ul>
@@ -1056,10 +1134,10 @@ class NewContractPage extends Component {
     render_interactible_settings(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['154'], 'details':this.props.app_state.loc['155'], 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Interactible ID'} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['154']} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('interactible_id')}
 
@@ -1074,7 +1152,7 @@ class NewContractPage extends Component {
 
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Interactible Account', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['157'], 'action':''})}
                 </div>
                 
                 <div style={{height:20}}/>
@@ -1096,16 +1174,16 @@ class NewContractPage extends Component {
     when_add_interactible_button_tapped(){
         var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
         if(isNaN(interactible_id)  || parseInt(interactible_id) < 0 || interactible_id == ''){
-            this.props.notify('please put a valid account id', 2600)
+            this.props.notify(this.props.app_state.loc['98'], 2600)
         }
         if(this.state.interactible_timestamp == 0){
-            this.props.notify('please put a valid date and time', 2600)
+            this.props.notify(this.props.app_state.loc['236'], 2600)
         }
         else{
             var interactibles_clone = this.state.interactibles.slice()
             interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
             this.setState({interactibles: interactibles_clone, interactible_id: ''});
-            this.props.notify('added interactible account!', 1400)
+            this.props.notify(this.props.app_state.loc['157'], 1400)
         }
     }
 
@@ -1150,7 +1228,7 @@ class NewContractPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Interactible Account ID: '+item['id'], 'details':'Until: '+(new Date(item['timestamp']*1000)), 'size':'l'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['158']+item['id'], 'details':this.props.app_state.loc['159']+(new Date(item['timestamp']*1000)), 'size':'l'})}
                             </li>
                         ))}
                     </ul>
@@ -1233,33 +1311,33 @@ class NewContractPage extends Component {
         var minimum_spend_amount = this.calculate_minimum_spend_amount()
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'The an exchange by its id, then the desired amount. The first exchange must be the End or Spend exchange', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['237'], 'details':this.props.app_state.loc['238'], 'size':'l'})}
                 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Default Minimum End Contract Amount', 'subtitle':this.format_power_figure(minimum_end_amount), 'barwidth':this.calculate_bar_width(minimum_end_amount), 'number':this.format_account_balance_figure(minimum_end_amount), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['239'], 'subtitle':this.format_power_figure(minimum_end_amount), 'barwidth':this.calculate_bar_width(minimum_end_amount), 'number':this.format_account_balance_figure(minimum_end_amount), 'barcolor':'', 'relativepower':'END', })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Default Minimum Spend Contract Amount', 'subtitle':this.format_power_figure(minimum_spend_amount), 'barwidth':this.calculate_bar_width(minimum_spend_amount), 'number':this.format_account_balance_figure(minimum_spend_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['140'], 'subtitle':this.format_power_figure(minimum_spend_amount), 'barwidth':this.calculate_bar_width(minimum_spend_amount), 'number':this.format_account_balance_figure(minimum_spend_amount), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
 
                 {this.render_detail_item('0')}
 
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['237']} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['241'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['242'], 'action':''})}
                 </div>
             </div>
         )
@@ -1277,25 +1355,25 @@ class NewContractPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 2600)
+            this.props.notify(this.props.app_state.loc['243'], 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 2600)
+            this.props.notify(this.props.app_state.loc['244'], 2600)
         }
         else if(this.state.price_data.length == 0 && (exchange_id != '3' && exchange_id != '5')){
-            this.props.notify('the first exchange must be the End or Spend exchange', 4100)
+            this.props.notify(this.props.app_state.loc['245'], 4100)
         }
         else if(!this.check_if_amount_exceeds_minimum(amount, exchange_id)){
             return;
         }
         else if(this.is_exchange_already_added(exchange_id)){
-            this.props.notify('You cant use the same exchange twice', 3600)
+            this.props.notify(this.props.app_state.loc['246'], 3600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, exchange_id:'', amount:0});
-            this.props.notify('added entry fee price!', 1000)
+            this.props.notify(this.props.app_state.loc['247'], 1000)
         }
     }
 
@@ -1333,13 +1411,13 @@ class NewContractPage extends Component {
 
         if(exchange == '3'){
             if(amount < minimum_end_amount){
-                this.props.notify('That End amount is less than the minimum required by the main contract', 3500)
+                this.props.notify(this.props.app_state.loc['248'], 6500)
                 return false
             }
         }
         if(exchange == '5'){
             if(amount < minimum_spend_amount){
-                this.props.notify('That Spend amount is less than the minimum required by the main contract', 3500)
+                this.props.notify(this.props.app_state.loc['249'], 6500)
                 return false
             }
         }
@@ -1434,8 +1512,6 @@ class NewContractPage extends Component {
 
     get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         if(exchanges_from_sync == null) exchanges_from_sync = [];
@@ -1488,7 +1564,12 @@ class NewContractPage extends Component {
     }
 
     when_price_suggestion_clicked(item, pos, target_type){
-        this.setState({exchange_id: item['id']})
+        if(target_type == 'weight_exchange_id'){
+            this.setState({voter_weight_exchange_id: item['id']})
+        }
+        else if(target_type == 'exchange_id'){
+            this.setState({exchange_id: item['id']})
+        }
     }
 
 
@@ -1615,32 +1696,32 @@ class NewContractPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -1653,29 +1734,41 @@ class NewContractPage extends Component {
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
+        var voter_weight_exchange_target = ''
+        if(this.state.voter_weight_exchange_id.trim() != ''){
+            var voter_weight_exchange_id = this.get_token_id_from_symbol(this.state.voter_weight_exchange_id.trim())
+            if(isNaN(voter_weight_exchange_id) || parseInt(voter_weight_exchange_id) < 0 || !this.does_exchange_exist(voter_weight_exchange_id)){
+                this.props.notify(this.props.app_state.loc['250'], 4600)
+                return;
+            }else{
+                voter_weight_exchange_target = voter_weight_exchange_id
+            }
+        }
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 1700)
+            this.props.notify(this.props.app_state.loc['160'], 1700)
         }
         else if(title == ''){
-            this.props.notify('add a name first!', 1700)
+            this.props.notify(this.props.app_state.loc['251'], 1700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that name is too long', 1700)
+            this.props.notify(this.props.app_state.loc['252'], 1700)
         }
         else{
             var me = this
             this.setState({content_channeling_setting: me.props.app_state.content_channeling,
                 device_language_setting :me.props.app_state.device_language,
                 device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
+                e5 :me.props.app_state.selected_e5,
+                voter_weight_exchange_id: voter_weight_exchange_target,
+            })
 
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
             
-                me.setState({ id: makeid(32), type:'contract', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_contract_tags_object: me.get_new_contract_tags_object(), default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:me.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: me.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: me.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: me.get_bounty_limit_type(), contract_force_exit_enabled: me.get_contract_force_exit_enabled(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
+                me.setState({ id: makeid(32), type:this.props.app_state.loc['3'], entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_contract_tags_object: me.get_new_contract_tags_object(), default_vote_bounty_split_proportion:0, max_extend_enter_contract_limit:0, default_minimum_end_vote_bounty_amount:0, default_proposal_expiry_duration_limit:0, max_enter_contract_duration:0, auto_wait_tags_object:me.get_auto_wait_tags_object(), default_minimum_spend_vote_bounty_amount:0, proposal_modify_expiry_duration_limit:0, can_modify_contract_as_moderator: me.get_can_modify_contract_as_moderator(), can_extend_enter_contract_at_any_time: me.get_can_extend_enter_contract_at_any_time(),maximum_proposal_expiry_submit_expiry_time_difference:0, bounty_limit_type: me.get_bounty_limit_type(), contract_force_exit_enabled: me.get_contract_force_exit_enabled(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], voter_weight_exchange_id:''})
 
-                me.props.notify('transaction added to stack', 1700);
+                me.props.notify(this.props.app_state.loc['18'], 1700);
             }, (1 * 1000));
         }
     }

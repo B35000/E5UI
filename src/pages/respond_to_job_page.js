@@ -38,8 +38,8 @@ function makeid(length) {
 class RespondToJobPage extends Component {
     
     state = {
-        selected: 0, job_item:{'id':0},  type:'job-response', id:makeid(8),
-        entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
+        selected: 0, job_item:{'id':0},  type:this.props.app_state.loc['1307']/* 'job-response' */, id:makeid(8),
+        entered_indexing_tags:[this.props.app_state.loc['1308']/* 'respond' */, this.props.app_state.loc['1309']/* 'job' */, this.props.app_state.loc['1310']/* 'ad' */], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
         e5: this.props.app_state.selected_e5
     };
 
@@ -49,7 +49,7 @@ class RespondToJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','contract', 'expiry-time', 'amount'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1311']/* 'contract' */, this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [1]
             ],
         };
     }
@@ -60,7 +60,7 @@ class RespondToJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','prepaid', 'postpaid'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1314']/* 'prepaid' */, this.props.app_state.loc['1315']/* 'postpaid' */], [1]
             ],
         }
     }
@@ -74,7 +74,7 @@ class RespondToJobPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                         
                     </div>
@@ -95,21 +95,21 @@ class RespondToJobPage extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.respond_to_job_title_tags_object, this.state.respond_to_job_title_tags_object['i'].active)
 
-        if(selected_item == 'contract'){
+        if(selected_item == this.props.app_state.loc['1311']/* 'contract' */){
             return(
                 <div>
                     {this.render_select_contract_parts()}
                 </div>
             )
         }
-        else if(selected_item == 'expiry-time'){
+        else if(selected_item == this.props.app_state.loc['1312']/* 'expiry-time' */){
             return(
                 <div>
                     {this.render_application_expiry_time()}
                 </div>
             )
         }
-        else if(selected_item == 'amount'){
+        else if(selected_item == this.props.app_state.loc['1313']/* 'amount' */){
             return(
                 <div>
                     {this.render_application_prices()}
@@ -130,7 +130,7 @@ class RespondToJobPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1316']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -296,7 +296,7 @@ class RespondToJobPage extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1317']/* 'block' */, }
         }
     }
 
@@ -323,7 +323,7 @@ class RespondToJobPage extends Component {
     render_application_expiry_time(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your application'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1318']/* 'Select an expiry time for your application' */})}
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -356,28 +356,28 @@ class RespondToJobPage extends Component {
     render_application_prices(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Prepaid or Postpaid', 'details':'Set the payment option you prefer for the application', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1319']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1320']/* 'Set the payment option you prefer for the application.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
                 <Tags page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1321']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1322']/* 'Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1321']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1324']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1325']/* 'tokens' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1326']/* 'Add Price' */, 'action':''})}
                 </div>
 
                 {this.render_set_prices_list_part()}
@@ -401,19 +401,19 @@ class RespondToJobPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 600)
+            this.props.notify(this.props.app_state.loc['1327']/* 'Please put a valid exchange ID.' */, 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify(this.props.app_state.loc['1328']/* 'Please put a valid amount.' */, 3600)
         }
         else if(this.is_exchange_already_added(exchange_id)){
-            this.props.notify('You cant use the same exchange twice', 3600)
+            this.props.notify(this.props.app_state.loc['1329']/* 'You cant use the same exchange twice.' */, 3600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 400)
+            this.props.notify(this.props.app_state.loc['1330']/* 'Added price.' */, 400)
         }
     }
 
@@ -560,8 +560,8 @@ class RespondToJobPage extends Component {
     set_object(job_post){
         if(this.state.job_item['id'] != job_post['id']){
             this.setState({
-                selected: 0, job_item:{'id':0},  type:'job-response', id:makeid(8),
-                entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
+                selected: 0, job_item:{'id':0},  type:this.props.app_state.loc['1307']/* 'job-response' */, id:makeid(8),
+                entered_indexing_tags:[this.props.app_state.loc['1308']/* 'respond' */, this.props.app_state.loc['1309']/* 'job' */, this.props.app_state.loc['1310']/* 'ad' */], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
             })
         }
         this.setState({job_item: job_post, e5: job_post['e5']})
@@ -572,10 +572,10 @@ class RespondToJobPage extends Component {
         var selected_time = this.state.application_expiry_time
 
         if(selected_contract == null){
-            this.props.notify('you need to pick a contract first', 600)
+            this.props.notify(this.props.app_state.loc['1331']/* 'You need to pick a contract first.' */, 3600)
         }
         else if(selected_time-Date.now()/1000 < 900){
-            this.props.notify('you cant set an expiry time thats less than fifteen minutes from now', 600)
+            this.props.notify(this.props.app_state.loc['1332']/* 'You cant set an expiry time thats less than fifteen minutes from now.' */, 6600)
         }
         else{          
             this.props.add_respond_to_job_to_stack(this.state)
@@ -583,7 +583,7 @@ class RespondToJobPage extends Component {
                 selected: 0,  type:'job-response', id:makeid(8),
                 entered_indexing_tags:['respond', 'job', 'ad'], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object()
             })
-            this.props.notify('transaction added to stack', 600)
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 600)
         }
     }
 
@@ -662,32 +662,32 @@ class RespondToJobPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

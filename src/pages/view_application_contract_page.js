@@ -30,8 +30,8 @@ function makeid(length) {
 class ViewApplicationContractPage extends Component {
     
     state = {
-        selected: 0, application_item:{}, type:'accept-job-application', id:makeid(8),
-        entered_indexing_tags:['accept', 'job', 'application'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
+        selected: 0, application_item:{}, type:this.props.app_state.loc['1599']/* 'accept-job-application' */, id:makeid(8),
+        entered_indexing_tags:[this.props.app_state.loc['1600']/* 'accept' */, this.props.app_state.loc['273']/* 'job' */, this.props.app_state.loc['1601']/* 'application' */], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
     };
 
     get_view_application_contract_title_tags_object(){
@@ -40,7 +40,7 @@ class ViewApplicationContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','applications-contract'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1602']/* 'applications-contract' */], [1]
             ],
         };
     }
@@ -71,13 +71,13 @@ class ViewApplicationContractPage extends Component {
             return(
                 <div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'The contract they applied with is shown below.'})}
+                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':this.props.app_state.loc['1603']/* 'The contract they applied with is shown below.' */})}
                     {this.render_contracts_data()}
 
-                    {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1604']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
                 
-                    {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1605']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['1606']/* 'Sender ID: ' */+item['applicant_id'], 'size':'l'})}
 
                     {this.render_detail_item('0')}
                     {this.render_application_price_amounts(item)}
@@ -97,11 +97,11 @@ class ViewApplicationContractPage extends Component {
         if(this.props.app_state.user_account_id[item['e5']] != item['applicant_id'] && !item['is_response_accepted']){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Accept application', 'details':'Accept the job application and enter their contract(This action cant be undone)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1607']/* 'Accept application' */, 'details':this.props.app_state.loc['1608']/* 'Accept the job application and enter their contract(This action cant be undone)' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     <div onClick={()=> this.accept_job_application()}>
-                        {this.render_detail_item('5', {'text':'Accept and Enter', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1609']/* 'Accept and Enter' */, 'action':''},)}
                     </div>
                 </div>
             )
@@ -137,7 +137,7 @@ class ViewApplicationContractPage extends Component {
         }
         return(
             <div style={{overflow: 'auto', maxHeight: 600}}>
-                {this.render_detail_item('3', {'title':'Applicants Requested Pay', 'details':'Below is the applicants requested pay in their respective token denominations.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1610']/* 'Applicants Requested Pay' */, 'details':this.props.app_state.loc['1611']/* 'Below is the applicants requested pay in their respective token denominations.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
@@ -214,6 +214,15 @@ class ViewApplicationContractPage extends Component {
                     </div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
+                    <div style={{ height: 10 }} />
+                    {this.render_detail_item('3', item['default_consensus_majority_limit'])}
+                    <div style={{ height: 10 }} />
+                    {this.render_detail_item('3', item['default_voter_weight_exchange'])}
+
+                    <div style={{ height: 10 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['voter_weight_balance'])}
+                    </div>
 
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -249,6 +258,16 @@ class ViewApplicationContractPage extends Component {
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
 
                     {this.render_detail_item('0')}
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['end_balance'])}
+                    </div>
+
+                    <div style={{ height: 10 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['spend_balance'])}
+                    </div>
+
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             </div>
@@ -261,49 +280,89 @@ class ViewApplicationContractPage extends Component {
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var contract_config = object['data'][1]
-        var auto_wait = contract_config[8] == 0 ? 'false' : 'true'
-        var can_modify_contract_as_moderator = contract_config[28] == 0 ? 'false' : 'true'
-        var can_extend_enter_contract_at_any_time = contract_config[29] == 0 ? 'false' : 'true'
-        var bounty_limit_type = contract_config[37] == 0 ? 'relative' : 'absolute'
-        var contract_force_exit_enabled = contract_config[38] == 0 ? 'disabled': 'enabled'
+        var auto_wait = contract_config[8] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var can_modify_contract_as_moderator = contract_config[28] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var can_extend_enter_contract_at_any_time = contract_config[29] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var bounty_limit_type = contract_config[37] == 0 ? this.props.app_state.loc['87']/* 'relative' */ : this.props.app_state.loc['88']/* 'absolute' */
+        var contract_force_exit_enabled = contract_config[38] == 0 ? this.props.app_state.loc['90']/* 'disabled' */: this.props.app_state.loc['89']/* 'enabled' */
+        var consensus_majority = contract_config[7] == 0 ? bigInt('1e18') : contract_config[7]
+        var voter_weight_target_name = this.get_exchange_name_from_id(contract_config[33], object)
+        var voter_weight_balance = this.get_voter_weight_balance(contract_config[33], object)
         return{
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{ 'style':'l', 'title':'Block ID', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', },
+            'age':{ 'style':'l', 'title':this.props.app_state.loc['1612']/* 'Block ID' */, 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['27']/* 'block' */, },
 
-            'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':'Vote Bounty Split Proportion', 'size':'l'},
+            'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':this.props.app_state.loc['1613']/* 'Vote Bounty Split Proportion' */, 'size':'l'},
 
-            'default_minimum_end_vote_bounty_amount':{'style':'l','title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':'tokens'},
+            'default_minimum_end_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['1614']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */},
 
-            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':'tokens'},
+            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */},
 
-            'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':'Proposal Expiry Duration Limit', 'size':'l'},
+            'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':this.props.app_state.loc['71']/* 'Proposal Expiry Duration Limit' */, 'size':'l'},
 
-            'max_enter_contract_duration': {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'},
+            'max_enter_contract_duration': {'title':this.get_time_diff(contract_config[6]), 'details':this.props.app_state.loc['1615']/* 'Max Enter Contract Duration' */, 'size':'l'},
 
-            'auto_wait_for_all_proposals_for_all_voters': {'title':auto_wait, 'details':'Auto Wait For All Proposals For All Voters', 'size':'l'},
+            'auto_wait_for_all_proposals_for_all_voters': {'title':auto_wait, 'details':this.props.app_state.loc['1616']/* 'Auto Wait For All Proposals For All Voters' */, 'size':'l'},
 
-            'proposal_modify_expiry_duration_limit': {'title':this.get_time_diff(contract_config[27]), 'details':'Proposal Modify Expiry Duration Limit', 'size':'l'},
+            'proposal_modify_expiry_duration_limit': {'title':this.get_time_diff(contract_config[27]), 'details':this.props.app_state.loc['1617']/* 'Proposal Modify Expiry Duration Limit' */, 'size':'l'},
 
-            'can_modify_contract_as_moderator': {'title':can_modify_contract_as_moderator, 'details':'Can Modify Contract As Moderator', 'size':'l'},
+            'can_modify_contract_as_moderator': {'title':can_modify_contract_as_moderator, 'details':this.props.app_state.loc['1618']/* 'Can Modify Contract As Moderator' */, 'size':'l'},
 
-            'can_extend_enter_contract_at_any_time': {'title':can_extend_enter_contract_at_any_time, 'details':'Can Extend Enter Contract At Any Time', 'size':'l'},
+            'can_extend_enter_contract_at_any_time': {'title':can_extend_enter_contract_at_any_time, 'details':this.props.app_state.loc['1619']/* 'Can Extend Enter Contract At Any Time' */, 'size':'l'},
 
-            'maximum_proposal_expiry_submit_expiry_time_difference': {'title':this.get_time_diff(contract_config[36]), 'details':'Maximum Proposal Expiry Submit Expiry Time Difference', 'size':'l'},
+            'maximum_proposal_expiry_submit_expiry_time_difference': {'title':this.get_time_diff(contract_config[36]), 'details':this.props.app_state.loc['1620']/* 'Maximum Proposal Expiry Submit Expiry Time Difference' */, 'size':'l'},
 
-            'bounty_limit_type': {'title':bounty_limit_type, 'details':'Bounty Limit Type', 'size':'l'},
+            'bounty_limit_type': {'title':bounty_limit_type, 'details':this.props.app_state.loc['1621']/* 'Bounty Limit Type' */, 'size':'l'},
 
-            'contract_force_exit_enabled': {'title':contract_force_exit_enabled, 'details':'Contract Force Exit', 'size':'l'},
+            'contract_force_exit_enabled': {'title':contract_force_exit_enabled, 'details':this.props.app_state.loc['1622']/* 'Contract Force Exit' */, 'size':'l'},
 
-            'entry_fees': {'title':'Entry Fees', 'details':object['data'][2].length+' tokens used', 'size':'l'},
+            'entry_fees': {'title':this.props.app_state.loc['1623']/* 'Entry Fees' */, 'details':object['data'][2].length+this.props.app_state.loc['1624']/* ' tokens used' */, 'size':'l'},
+
+            'default_consensus_majority_limit': { 'title': this.format_proportion(consensus_majority), 'details':this.props.app_state.loc['1625'] /* 'Consensus Majority Proportion' */, 'size': 'l' },
+
+            'default_voter_weight_exchange': { 'title': voter_weight_target_name, 'details': this.props.app_state.loc['1626']/* 'Voter Weight Exchange' */, 'size': 'l' },
+
+            'voter_weight_balance': { 'style': 'l', 'title': this.props.app_state.loc['1627']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${this.format_account_balance_figure(voter_weight_balance)}`, 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* `units` */, },
+
+            'end_balance': { 'style': 'l', 'title': this.props.app_state.loc['377'],/* 'End Balance' */ 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${this.format_account_balance_figure(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, },
+
+            'spend_balance': { 'style': 'l', 'title': this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${this.format_account_balance_figure(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, },
         }
+    }
+
+    get_exchange_name_from_id(id, object){
+        if(id == 0) return 'None'
+        return this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+id]
+    }
+
+    get_voter_weight_balance(id, object){
+        if(id == 0) return this.is_sender_part_of_contract(object) ? 1 : 0
+        if(this.props.app_state.created_token_object_mapping[object['e5']] != null){
+            var voter_exchange = this.props.app_state.created_token_object_mapping[object['e5']][id]
+            if(voter_exchange != null){
+                var balance = voter_exchange['balance']
+                return balance
+            }
+        }
+        return this.is_sender_part_of_contract(object) ? 1 : 0
+    }
+
+    is_sender_part_of_contract(object){
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2) {
+            return true
+        }
+        return false;
     }
 
     get_access_rights_status(value){
         if(value == true){
-            return 'Enabled'
+            return this.props.app_state.loc['1629']/* 'Enabled' */
         }else{
-            return 'Disabled'
+            return this.props.app_state.loc['1630']/* 'Disabled' */
         }
     }
 
@@ -314,7 +373,7 @@ class ViewApplicationContractPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':'tokens'})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['1631']/* 'Token ID: ' */+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':'tokens'})}
                         </li>
                     ))}
                 </ul>
@@ -326,8 +385,8 @@ class ViewApplicationContractPage extends Component {
     set_object(item){
         if(this.state.application_item['contract'] != item['contract']){
             this.setState({
-                selected: 0, application_item:{}, type:'accept-job-application', id:makeid(8),
-                entered_indexing_tags:['accept', 'job', 'application'], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
+                selected: 0, application_item:{}, type:this.props.app_state.loc['1599']/* 'accept-job-application' */, id:makeid(8),
+                entered_indexing_tags:[this.props.app_state.loc['1600']/* 'accept' */, this.props.app_state.loc['273']/* 'job' */, this.props.app_state.loc['1601']/* 'application' */], view_application_contract_title_tags_object: this.get_view_application_contract_title_tags_object()
             })
         }
         
@@ -340,7 +399,7 @@ class ViewApplicationContractPage extends Component {
         if(item['application_expiry_time'] > (Date.now()/1000)){
             this.props.add_job_acceptance_action_to_stack(this.state)
         }else{
-            this.props.notify('the application has already expired', 1900)
+            this.props.notify(this.props.app_state.loc['1632']/* 'The application has already expired.' */, 4900)
         }
     }
 
@@ -426,32 +485,32 @@ class ViewApplicationContractPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

@@ -74,23 +74,29 @@ class StorefrontDetailsSection extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e','channel-structure', 'comment-structure'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
             ],
         };
     }
 
     get_navigate_storefront_list_detail_tags_object_tags(){
-        return{
+        var obj = {
           'i':{
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','metadata','activity', 'e.direct-purchases'],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
           ],
           'direct-purchases':[
-              ['xor','e',1], ['direct-purchases','all','unfulfilled','fulfilled'], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['1605']/* 'fulfilled' */], [1],[1]
           ],
         }
+
+        obj[this.props.app_state.loc['2603']] = [
+              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['1605']/* 'fulfilled' */], [1],[1]
+          ]
+
+        return obj
     }
 
     render(){
@@ -153,20 +159,20 @@ class StorefrontDetailsSection extends Component {
             )
         }
         
-        if(selected_item == 'metadata'){
+        if(selected_item == this.props.app_state.loc['2028']/* 'metadata' */){
             return(
                 <div>
                     {this.render_storefront_main_details_section(object)}
                 </div>
             )
-        }else if(selected_item == 'activity'){
+        }else if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
             return(
                 <div>
                     {this.render_storefront_message_activity(object)}
                 </div>
             ) 
         }
-        else if(selected_item == 'all' || selected_item == 'unfulfilled' || selected_item == 'fulfilled'){
+        else if(selected_item == this.props.app_state.loc['1426']/* 'all' */ || selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */ || selected_item == this.props.app_state.loc['1605']/* 'fulfilled' */){
             return(
                 <div>
                     {this.render_direct_purchases(object)}
@@ -200,20 +206,20 @@ class StorefrontDetailsSection extends Component {
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':composition_type, 'details':'Set Denomination', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':composition_type, 'details':this.props.app_state.loc['2606']/* 'Set Denomination' */, 'size':'l'})}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':'Author Seller', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2607']/* 'Author Seller' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['ipfs'].target_receiver, object), 'details':'Target Payment Recipient', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['ipfs'].target_receiver, object), 'details':this.props.app_state.loc['2608']/* Target Payment Recipient' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':'Fulfilment Accounts', 'details':'The accounts involved with shipping and fulfilling direct purchase orders from clients', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2609']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['2610']/* 'The accounts involved with shipping and fulfilling direct purchase orders from clients.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     {this.render_fulfilment_accounts(object)}
 
-                    {this.render_detail_item('3', {'title':'Fulfilment Location', 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2611']/* 'Fulfilment Location' */, 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('0')}
@@ -221,7 +227,7 @@ class StorefrontDetailsSection extends Component {
                     {this.render_item_images(object)}
                     {this.render_selected_links(object)}
                     
-                    {this.render_detail_item('3', {'title':variants.length+' variants', 'details':'To choose from.', 'size':'l'})}   
+                    {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']/* ' variants' */, 'details':this.props.app_state.loc['2613']/* 'To choose from.' */, 'size':'l'})}   
                     
                     <div style={{height: 10}}/>
                     {this.render_out_of_stock_message_if_any(object)}                
@@ -305,10 +311,10 @@ class StorefrontDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Pin the storefront item to your feed', 'title':'Pin Item'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2614']/* 'Pin the storefront item to your feed.' */, 'title':this.props.app_state.loc['2615']/* 'Pin Item' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_item_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin/Unpin Item', 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2616']/* 'Pin/Unpin Item' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -323,13 +329,13 @@ class StorefrontDetailsSection extends Component {
         if(setting == 'enabled'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Activity Section Enabled', 'details':'You can leave a product review message in the activity section', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2617']/* Activity Section Enabled' */, 'details':this.props.app_state.loc['2618']/* 'You can leave a product review message in the activity section' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Activity Section Disabled', 'details':'The activity section has been disabled by the storefront owner', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2619']/* 'Activity Section Disabled' */, 'details':this.props.app_state.loc['2620']/* 'The activity section has been disabled by the storefront owner' */, 'size':'l'})}
                 </div>
             )
         }
@@ -341,29 +347,29 @@ class StorefrontDetailsSection extends Component {
         if(item_in_stock == 'in-stock'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'In Stock', 'details':'The item is available for purchasing.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2621']/* 'In Stock' */, 'details':this.props.app_state.loc['2622']/* 'The item is available for purchasing.' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Out of Stock', 'details':'The item is not available for purchasing.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2623']/* 'Out of Stock' */, 'details':this.props.app_state.loc['2624']/* 'The item is not available for purchasing.' */, 'size':'l'})}
                 </div>
             )
         }
     }
 
     render_add_to_bag_button(object){
-        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 'in-stock' : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1/* 'in-stock' */ : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
         
-        if(item_in_stock == 'in-stock'){
+        if(item_in_stock == 1/* 'in-stock' */){
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':'Add the item to your shopping bag', 'title':'Add to Bag'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2625']/* 'Add the item to your shopping bag.' */, 'title':this.props.app_state.loc['2626']/* 'Add to Bag' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.open_add_to_bag(object)}>
-                        {this.render_detail_item('5', {'text':'Add to Bag', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2626']/* 'Add to Bag' */, 'action':''},)}
                     </div>
                 </div>
             )
@@ -372,18 +378,18 @@ class StorefrontDetailsSection extends Component {
 
     render_direct_purchase_button(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item];
-        var direct_purchase_option = object['ipfs'].purchase_option_tags_object == null ? 'disabled' : this.get_selected_item(object['ipfs'].purchase_option_tags_object, 'e')
+        var direct_purchase_option = object['ipfs'].purchase_option_tags_object == null ? 2/* 'disabled' */ : this.get_selected_item2(object['ipfs'].purchase_option_tags_object, 'e')
 
-        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 'in-stock' : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1/* 'in-stock' */ : this.get_selected_item2(object['ipfs'].get_storefront_item_in_stock_option, 'e')
 
-        if(direct_purchase_option == 'enabled' && item_in_stock == 'in-stock'){
+        if(direct_purchase_option == 1/* 'enabled' */ && item_in_stock == 1/* 'in-stock' */){
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':'Purchase the item directly from the seller', 'title':'Direct Purchase'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2627']/* 'Purchase the item directly from the seller.' */, 'title':this.props.app_state.loc['2628']/* 'Direct Purchase' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=> this.open_direct_purchase(object)}>
-                        {this.render_detail_item('5', {'text':'Purchase', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2629']/* 'Purchase' */, 'action':''},)}
                     </div>
                 </div>
             )
@@ -399,10 +405,10 @@ class StorefrontDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Edit Storefront Post', 'details':'Change the basic details for your Storefront Post', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2630']/* 'Edit Storefront Post' */, 'details':this.props.app_state.loc['2631']/* 'Change the basic details for your Storefront Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Edit Item', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2632']/* 'Edit Item' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -542,7 +548,7 @@ class StorefrontDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
+            'age':{'style':'l', 'title':this.props.app_state.loc['2633']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
         }
     }
 
@@ -570,7 +576,7 @@ class StorefrontDetailsSection extends Component {
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Direct Purchases', 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2634']/* 'Direct Purchases' */, 'size':'l'})} 
             </div>
         )
     }
@@ -649,13 +655,13 @@ class StorefrontDetailsSection extends Component {
 
 
     filter_using_bottom_tags(filtered_purchases, object){
-        var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, 'direct-purchases')
+        var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, this.props.app_state.loc['2603']/* 'direct-purchases' */)
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
 
-        if(selected_item == 'all'){
+        if(selected_item == this.props.app_state.loc['1426']/* 'all' */){
             return filtered_purchases
         }
-        else if(selected_item == 'unfulfilled'){
+        else if(selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */){
             var unfulfilled_items = []
             filtered_purchases.forEach(item => {
                 var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
@@ -666,7 +672,7 @@ class StorefrontDetailsSection extends Component {
             });
             return unfulfilled_items
         }
-        else if(selected_item == 'fulfilled'){
+        else if(selected_item == this.props.app_state.loc['1605']/* 'fulfilled' */){
             var fulfilled_items = []
             filtered_purchases.forEach(item => {
                 var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]
@@ -699,13 +705,13 @@ class StorefrontDetailsSection extends Component {
             signature = signature[item['signature_data']]
             return(
                 <div onClick={()=> this.when_item_clicked(index)}>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id']+', Sender Account ID: '+item['sender_account'], 'details':'Fulfilent Signature: '+start_and_end(signature['signature']) })}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id']+this.props.app_state.loc['2635']/* ', Sender Account ID: ' */+item['sender_account'], 'details':this.props.app_state.loc['2636']/* 'Fulfilent Signature: ' */+start_and_end(signature['signature']) })}
                 </div>
             )
         }else{
             return(
                 <div onClick={()=> this.when_item_clicked(index)}>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id']+' , Client ID: '+item['sender_account'], 'details':item['shipping_detail'] })}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id']+this.props.app_state.loc['2637']/* ' , Client ID: ' */+item['sender_account'], 'details':item['shipping_detail'] })}
                 </div>
             )
         }
@@ -725,11 +731,11 @@ class StorefrontDetailsSection extends Component {
         return(
             <div>
                 <div onClick={()=> this.when_item_clicked(index)}>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Shipping Details', 'details':item['shipping_detail']})}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':item['shipping_detail']})}
                     <div style={{height:3}}/>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
                     <div style={{height:3}}/>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Quantity: '+this.format_account_balance_figure(item['purchase_unit_count']), 'details':'Sender Account ID: '+item['sender_account'] })}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'details':this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account'] })}
                     <div style={{height:3}}/>
                     {this.render_fulfilment_signature_if_any(item, object)}
                     <div style={{height:5}}/>
@@ -748,7 +754,7 @@ class StorefrontDetailsSection extends Component {
             return(
                 <div>
                     <div style={{'padding': '1px'}} onClick={() => this.props.open_clear_purchase(item, sender_type, object)}>
-                        {this.render_detail_item('5', {'text':'Clear Purchase', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2638']/* 'Clear Purchase' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -777,11 +783,11 @@ class StorefrontDetailsSection extends Component {
             signature = signature[item['signature_data']]
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Fulfilment Signature: ', 'details':start_and_end(signature['signature']) })}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['2639']/* 'Fulfilment Signature: ' */, 'details':start_and_end(signature['signature']) })}
                     <div style={{height:3}}/>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Signature Data: ', 'details':start_and_end(signature['signature_data']) })}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['2640']/* 'Signature Data: ' */, 'details':start_and_end(signature['signature_data']) })}
                     <div style={{height:3}}/>
-                    {this.render_detail_item('3', {'size':'s', 'title':'Signature Address: ', 'details':start_and_end(signature['sender_address']) })}
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['2641']/* 'Signature Address: ' */, 'details':start_and_end(signature['sender_address']) })}
                 </div>
             )
         }
@@ -800,6 +806,7 @@ class StorefrontDetailsSection extends Component {
 
     render_storefront_message_activity(object){
         var he = this.props.height-100
+        if(this.get_focused_message(object) != null) he = this.props.height-160
         var size = this.props.screensize
         return(
             <div>
@@ -807,12 +814,12 @@ class StorefrontDetailsSection extends Component {
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
-                        {this.render_focus_list(object)}
+                        {/* {this.render_focus_list(object)} */}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
-
+                {this.render_focused_message(object)}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
                     <div style={{'margin':'1px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
@@ -823,15 +830,34 @@ class StorefrontDetailsSection extends Component {
                         </div>
                     </div>
                     <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
-                        <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        <TextInput height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
                     <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
-                        {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2151']/* 'Send' */, 'action':'-'})}
                     </div>
                 </div>
             </div> 
         )
+    }
+
+    render_focused_message(object){
+        var item = this.get_focused_message(object);
+        if(item != null){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 70px 5px 50px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message(object)}> 
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 41)}</p>
+                </div>
+            )
+        }
     }
 
     when_comment_structure_tags_updated(tag_obj){
@@ -841,10 +867,10 @@ class StorefrontDetailsSection extends Component {
     show_add_comment_bottomsheet(object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
-        var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
+        var setting = this.get_selected_item2(object['ipfs'].chatroom_enabled_tags_object, 'e')
 
-        if(setting == 'disabled'){
-            this.props.notify('The activity section has been disabled.', 1200)
+        if(setting == 2/* 'disabled' */){
+            this.props.notify(this.props.app_state.loc['2642']/* 'The activity section has been disabled.' */, 4200)
             return;
         }
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'storefront')
@@ -867,6 +893,7 @@ class StorefrontDetailsSection extends Component {
 
     render_sent_received_messages(object){
         var middle = this.props.height-250;
+        if(this.get_focused_message(object) != null) middle = this.props.height-300
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -894,32 +921,31 @@ class StorefrontDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message(object) != null){
-            var focused_message_replies = this.get_focused_message_replies(object)
-            return(
-                <div>
-                    <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
-                    </div>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-                        <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-                            <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies, object)}
-                                <div ref={this.messagesEnd}/>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+        // else if(this.get_focused_message(object) != null){
+        //     var focused_message_replies = this.get_focused_message_replies(object)
+        //     return(
+        //         <div>
+        //             <div style={{'padding': '2px 5px 2px 5px'}}>
+        //                 {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
+        //             </div>
+        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
+        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
+        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
+        //                         {this.render_messages(focused_message_replies, object)}
+        //                         <div ref={this.messagesEnd}/>
+        //                     </ul>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     )
+        // }
         else{
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-            if(selected_view_option == 'channel-structure'){
+            if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items, object)}
-                        {this.render_messages(stacked_items, object)}
+                        {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -939,7 +965,7 @@ class StorefrontDetailsSection extends Component {
 
     render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message(object) != null){
+        if(items.length == 0){
             var items = [0,1]
             return(
                 <div>
@@ -1033,6 +1059,19 @@ class StorefrontDetailsSection extends Component {
 
 
     render_message_as_focused_if_so(item, object){
+        return(
+            <div>
+                <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            action: () => this.focus_message(item, object)
+                            }}>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+            </div>
+        )
         var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
@@ -1106,7 +1145,7 @@ class StorefrontDetailsSection extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied message to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['1692']/* 'Copied message to clipboard.' */, 1600)
     }
 
 
@@ -1138,7 +1177,7 @@ class StorefrontDetailsSection extends Component {
                     <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
                     {this.render_images_if_any(item)}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p>
                 </div>
                 {this.render_response_if_any(item, object)}
             </div>
@@ -1148,16 +1187,16 @@ class StorefrontDetailsSection extends Component {
 
     render_response_if_any(_item, object){
         if(_item['focused_message_id'] == 0) return;
-        if(this.get_focused_message(object) != null) return;
+        // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
         if(item == null) return;
         var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-        if(selected_view_option == 'comment-structure') return
+        if(selected_view_option == this.props.app_state.loc['1672']/* 'comment-structure' */) return
         return(
-            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
-                <div className="row" style={{'padding':'0px 0px 10px 10px'}}>
-                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
+                <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                     </div>
                     <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
@@ -1206,7 +1245,7 @@ class StorefrontDetailsSection extends Component {
     get_sender_title_text(item, object){
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             return item['sender']
         }
@@ -1278,7 +1317,7 @@ class StorefrontDetailsSection extends Component {
         var stack = this.props.app_state.stack_items
         var stacked_items = []
         for(var i=0; i<stack.length; i++){
-            if(stack[i].type == 'storefront-messages'){
+            if(stack[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                 for(var e=0; e<stack[i].messages_to_deliver.length; e++){
                     var message_obj = stack[i].messages_to_deliver[e]
                     if(message_obj['id'] == convo_id){
@@ -1358,15 +1397,18 @@ class StorefrontDetailsSection extends Component {
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
-        var setting = this.get_selected_item(object['ipfs'].chatroom_enabled_tags_object, 'e')
+
+        var setting = this.get_selected_item2(object['ipfs'].chatroom_enabled_tags_object, 'e')
+
+
         if(message == ''){
-            this.props.notify('type something first', 600)
+            this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 1600)
         }
         else if(this.props.app_state.user_account_id[object['e5']] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 4200)
         }
-        else if(setting == 'disabled'){
-            this.props.notify('The activity section has been disabled.', 1200)
+        else if(setting == 2/* 'disabled' */){
+            this.props.notify(this.props.app_state.loc['2642']/* 'The activity section has been disabled.' */, 5200)
         }
         else{
             var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
@@ -1374,7 +1416,7 @@ class StorefrontDetailsSection extends Component {
             this.props.add_storefront_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify('message added to stack', 600)
+            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack' */, 1600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -1538,6 +1580,10 @@ class StorefrontDetailsSection extends Component {
         return picked_item
     }
 
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){
         var size = this.props.screensize
@@ -1612,32 +1658,32 @@ class StorefrontDetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

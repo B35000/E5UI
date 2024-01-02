@@ -14,7 +14,28 @@ class tags extends Component {
 
     /* returns an emoji used in displaying the tag item */
     tag_item_emoji_modifier(item){
-      var items = {'sort':'🧮', 'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'info':'🌐', 'metadata':'📄', 'engagement':'💍', 'signatures':'‚✍', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕','my':'🙋','add-new-text':'📝','create-new-job':'🎑','add-new-tag':'🔖','set-tags':'📌', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'contractors':'👷', 'stack-data':'🧱', 'settings-data':'🛠️', 'account-data':'🔐', 'events':'🎊', 'moderator-events':'🧑‍⚖️'}
+      var items = {'contracts':'📑', 'jobs':'💼', 'contractors':'👷🏻‍♀️', 'storefront':'🏪','subscriptions':'🎫', 'posts':'📰','channels':'📡','E5s':'🗿','E5tokens':'🪙','externals':'🌕', 'proposals':'🧎', 'mail':'📬', 'bags':'🛍', 'stack-data':'🧱', 'settings-data':'🛠️', 'account-data':'🔐', 'events':'🎊', 'moderator-events':'🧑‍⚖️'}
+
+      if(this.props.app_state != null){
+          items[this.props.app_state.loc['1197']/* contracts */] = '📑'
+          items[this.props.app_state.loc['1196']/* jobs */] = '💼'
+          items[this.props.app_state.loc['1198']/* contractors */] = '👷🏻‍♀️'
+          items[this.props.app_state.loc['1215']/* storefront */] = '🏪'
+          items[this.props.app_state.loc['1200']/* subscriptions */] = '🎫'
+          items[this.props.app_state.loc['1213']/* posts */] = '📰'
+          items[this.props.app_state.loc['1214']/* channels */] = '📡'
+          items[this.props.app_state.loc['1212']/* E5s */] = '🗿'
+          items[this.props.app_state.loc['1258']/* E5tokens */] = '🪙'
+          items[this.props.app_state.loc['1259']/* externals */] = '🌕'
+          items[this.props.app_state.loc['1199']/* proposals */] = '🧎'
+          items[this.props.app_state.loc['1201']/* mail */] = '📬'
+          items[this.props.app_state.loc['1216']/* bags */] = '🛍'
+          items[this.props.app_state.loc['1260']/* stack-data */] = '🧱'
+          items[this.props.app_state.loc['1261']/* settings-data */] = '🛠️'
+          items[this.props.app_state.loc['1262']/* account-data */] = '🔐'
+          items[this.props.app_state.loc['1263']/* events */] = '🎊'
+          items[this.props.app_state.loc['1264']/* moderator-events */] = '🧑‍⚖️'
+      }
       
       if(items[item] != null) return items[item];
       else return null;

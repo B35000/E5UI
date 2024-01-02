@@ -51,19 +51,19 @@ class SearchedAccountPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.main-data','e.subscription-data','e.contract-data','e.exchange-data'], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1699']/* 'e.main-data' */,'e.'+this.props.app_state.loc['1700']/* 'e.subscription-data' */,'e.'+this.props.app_state.loc['1701']/* 'e.contract-data' */,'e.'+this.props.app_state.loc['1702']/* 'e.exchange-data' */], [0]
             ],
             'main-data':[
-              ['xor','',0], ['main-data','creations','withdraws','pending-withdraws','runs'], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1699']/* 'main-data' */,this.props.app_state.loc['1703']/* 'creations' */,this.props.app_state.loc['1704']/* 'withdraws' */,this.props.app_state.loc['1705']/* 'pending-withdraws' */,this.props.app_state.loc['1706']/* 'runs' */], [1],[1]
             ],
             'subscription-data':[
-              ['xor','',0], ['subscription-data','payments','cancellations'], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1700']/* 'subscription-data' */,this.props.app_state.loc['1707']/* 'payments' */,this.props.app_state.loc['1708']/* cancellations' */], [1],[1]
             ],
             'contract-data':[
-              ['xor','',0], ['contract-data','entries','exits','votes'], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1701']/* 'contract-data' */,this.props.app_state.loc['1709']/* 'entries' */,this.props.app_state.loc['1710']/* 'exits' */,this.props.app_state.loc['1711']/* 'votes' */], [1],[1]
             ],
             'exchange-data':[
-              ['xor','',0], ['exchange-data','swaps','transfers'], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1702']/* 'exchange-data' */,this.props.app_state.loc['1712']/* 'swaps' */,this.props.app_state.loc['1713']/* 'transfers' */], [1],[1]
             ],
         };
     }
@@ -75,7 +75,7 @@ class SearchedAccountPage extends Component {
     render(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
         var f = 170
-        if(selected_item == 'pending-withdraws' || selected_item == 'e'){
+        if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e'){
             f = 120
         }
         return(
@@ -111,77 +111,77 @@ class SearchedAccountPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'creations'){
+        else if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
             return(
                 <div>
                     {this.render_creations_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'withdraws'){
+        else if(selected_item == this.props.app_state.loc['1704']/* 'withdraws' */){
             return(
                 <div>
                     {this.render_withdraws_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'pending-withdraws'){
+        else if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */){
             return(
                 <div>
                     {this.render_pending_withdraws_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'runs'){
+        else if(selected_item == this.props.app_state.loc['1706']/* 'runs' */){
             return(
                 <div>
                     {this.render_transactions_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'payments'){
+        else if(selected_item == this.props.app_state.loc['1707']/* 'payments' */){
             return(
                 <div>
                     {this.render_pay_subscription_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'cancellations'){
+        else if(selected_item == this.props.app_state.loc['1708']/* 'cancellations' */){
             return(
                 <div>
                     {this.render_cancellations_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'entries'){
+        else if(selected_item == this.props.app_state.loc['1709']/* 'entries' */){
             return(
                 <div>
                     {this.render_entry_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'exits'){
+        else if(selected_item == this.props.app_state.loc['1710']/* 'exits' */){
             return(
                 <div>
                     {this.render_exit_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'votes'){
+        else if(selected_item == this.props.app_state.loc['1711']/* 'votes' */){
             return(
                 <div>
                     {this.render_vote_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'swaps'){
+        else if(selected_item == this.props.app_state.loc['1712']/* 'swaps' */){
             return(
                 <div>
                     {this.render_swap_item_logs()}
                 </div>
             )
         }
-        else if(selected_item == 'transfers'){
+        else if(selected_item == this.props.app_state.loc['1713']/* 'transfers' */){
             return(
                 <div>
                     {this.render_transfers_item_logs()}
@@ -202,7 +202,18 @@ class SearchedAccountPage extends Component {
         if(search_id_text == null) search_id_text = ''
         var obj = {'creations':'Object Type','withdraws':'Address','runs':'Transaction ID', 'payments':'Subscription ID','cancellations':'Subscription ID', 'entries':'Contract ID','exits':'Contract ID','votes':'Contract ID', 'swaps':'Exchange ID','transfers':'Account ID'}
 
-        if(selected_item == 'pending-withdraws' || selected_item == 'e') return;
+        obj[this.props.app_state.loc['1703']/* creations */] = 'Object Type'
+        obj[this.props.app_state.loc['1704']/* withdraws */] = 'Address'
+        obj[this.props.app_state.loc['1706']/* runs */] = 'Transaction ID'
+        obj[this.props.app_state.loc['1707']/* payments */] = 'Subscription ID'
+        obj[this.props.app_state.loc['1708']/* cancellations */] = 'Subscription ID'
+        obj[this.props.app_state.loc['1709']/* entries */] = 'Contract ID'
+        obj[this.props.app_state.loc['1710']/* exits */] = 'Contract ID'
+        obj[this.props.app_state.loc['1711']/* votes */] = 'Contract ID'
+        obj[this.props.app_state.loc['1712']/* swaps */] = 'Exchange ID'
+        obj[this.props.app_state.loc['1713']/* transfers */] = 'Account ID'
+
+        if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */ || selected_item == 'e') return;
 
         return(
             <div>
@@ -248,37 +259,37 @@ class SearchedAccountPage extends Component {
 
         var pos = scroll_pos
 
-        if(selected_item == 'creations'){
+        if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
             this.creations_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'withdraws'){
+        else if(selected_item == this.props.app_state.loc['1704']/* 'withdraws' */){
             this.withdraws_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'pending-withdraws'){
+        else if(selected_item == this.props.app_state.loc['1705']/* 'pending-withdraws' */){
             this.pending_withdraws_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'runs'){
+        else if(selected_item == this.props.app_state.loc['1706']/* 'runs' */){
             this.runs_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'payments'){
+        else if(selected_item == this.props.app_state.loc['1707']/* 'payments' */){
             this.payments_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'cancellations'){
+        else if(selected_item == this.props.app_state.loc['1708']/* 'cancellations' */){
             this.cancellations_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'entries'){
+        else if(selected_item == this.props.app_state.loc['1709']/* 'entries' */){
             this.entries_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'exits'){
+        else if(selected_item == this.props.app_state.loc['1710']/* 'exits' */){
             this.exits_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'votes'){
+        else if(selected_item == this.props.app_state.loc['1711']/* 'votes' */){
             this.votes_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'swaps'){
+        else if(selected_item == this.props.app_state.loc['1712']/* 'swaps' */){
             this.swaps_ref.current?.scrollTo(0, pos);
         }
-        else if(selected_item == 'transfers'){
+        else if(selected_item == this.props.app_state.loc['1713']/* 'transfers' */){
             this.transfers_ref.current?.scrollTo(0, pos);
         }
     }
@@ -307,51 +318,51 @@ class SearchedAccountPage extends Component {
                 {this.render_detail_item('3', {'title':alias, 'details':item['id'], 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Address', 'details':start_and_end(address), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1714']/* 'Address' */, 'details':start_and_end(address), 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style': 'l', 'title':'Ether Balance in Ether', 'subtitle': this.format_power_figure(ether_balance/10**18), 'barwidth': this.calculate_bar_width(ether_balance/10**18), 'number': (ether_balance/10**18), 'barcolor': '', 'relativepower': 'ether', })}
+                    {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1715']/* 'Ether Balance in Ether' */, 'subtitle': this.format_power_figure(ether_balance/10**18), 'barwidth': this.calculate_bar_width(ether_balance/10**18), 'number': (ether_balance/10**18), 'barcolor': '', 'relativepower': 'ether', })}
                     
-                    {this.render_detail_item('2', { 'style': 'l', 'title':'Ether Balance in Wei', 'subtitle': this.format_power_figure(ether_balance), 'barwidth': this.calculate_bar_width(ether_balance), 'number': this.format_account_balance_figure(ether_balance), 'barcolor': '', 'relativepower': 'wei', })}
+                    {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1716']/* 'Ether Balance in Wei' */, 'subtitle': this.format_power_figure(ether_balance), 'barwidth': this.calculate_bar_width(ether_balance), 'number': this.format_account_balance_figure(ether_balance), 'barcolor': '', 'relativepower': 'wei', })}
                     
-                    {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
+                    {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l','title':'End Balance', 'subtitle':this.format_power_figure(item['end_balance']), 'barwidth':this.calculate_bar_width(item['end_balance']), 'number':this.format_account_balance_figure(item['end_balance']), 'relativepower':'END'})}
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(item['end_balance']), 'barwidth':this.calculate_bar_width(item['end_balance']), 'number':this.format_account_balance_figure(item['end_balance']), 'relativepower':'END'})}
 
-                    {this.render_detail_item('2', {'style':'l','title':'Spend Balance', 'subtitle':this.format_power_figure(item['spend_balance']), 'barwidth':this.calculate_bar_width(item['spend_balance']), 'number':this.format_account_balance_figure(item['spend_balance']), 'relativepower':'SPEND'})}
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(item['spend_balance']), 'barwidth':this.calculate_bar_width(item['spend_balance']), 'number':this.format_account_balance_figure(item['spend_balance']), 'relativepower':'SPEND'})}
                 </div>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':run_data[0], 'details':'Last Transaction Block', 'size':'l'})}
+                {this.render_detail_item('3', {'title':run_data[0], 'details':this.props.app_state.loc['1717']/* 'Last Transaction Block' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_difference(run_data[1]), 'details':'Last Transaction age', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_difference(run_data[1]), 'details':this.props.app_state.loc['1718']/* 'Last Transaction age' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':run_data[2], 'details':'Number of entered contracts', 'size':'l'})}
+                {this.render_detail_item('3', {'title':run_data[2], 'details':this.props.app_state.loc['1719']/* 'Number of entered contracts' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':run_data[3], 'details':'Number of E5 runs', 'size':'l'})}
+                {this.render_detail_item('3', {'title':run_data[3], 'details':this.props.app_state.loc['1720']/* 'Number of E5 runs' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
                 {this.show_transaction_transaction_count_chart(item['transactions'])}
 
 
-                {this.render_detail_item('3', {'title':'Balance Search', 'details':'Search the accounts balance in a specified exchange', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1721']/* 'Balance Search' */, 'details':this.props.app_state.loc['1722']/* 'Search the accounts balance in a specified exchange' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={25} placeholder={'Exchange ID...'} when_text_input_field_changed={this.when_typed_search_exchange_id_changed.bind(this)} text={this.state.typed_search_exchange_id} theme={this.props.theme}/>
+                        <TextInput height={25} placeholder={this.props.app_state.loc['1723']/* 'Exchange ID...' */} when_text_input_field_changed={this.when_typed_search_exchange_id_changed.bind(this)} text={this.state.typed_search_exchange_id} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
-                        {this.render_detail_item('5',{'text':'Search','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['140']/* 'Search' */,'action':''})}
                     </div>
                 </div>
                 <div style={{height:10}}/>
@@ -371,7 +382,7 @@ class SearchedAccountPage extends Component {
     perform_search(){
         var exchange_id = this.get_token_id_from_symbol(this.state.typed_search_exchange_id.trim())
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 2600)
+            this.props.notify(this.props.app_state.loc['414']/* 'Please put a valid exchange ID.' */, 4600)
         }else{
             this.props.notify('searching...', 1000)
             this.setState({searched_exchange: exchange_id})
@@ -402,12 +413,12 @@ class SearchedAccountPage extends Component {
 
         if(balance == null){
             balance = 0;
-            exchange_symbol = 'tokens'
+            exchange_symbol = this.props.app_state.loc['483']/* 'tokens' */
         }
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l','title':'Balance', 'subtitle':this.format_power_figure(balance), 'barwidth':this.calculate_bar_width(balance), 'number':this.format_account_balance_figure(balance), 'relativepower':exchange_symbol})}
+                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['1724']/* 'Balance' */, 'subtitle':this.format_power_figure(balance), 'barwidth':this.calculate_bar_width(balance), 'number':this.format_account_balance_figure(balance), 'relativepower':exchange_symbol})}
                 </div>
             </div>
         )
@@ -423,11 +434,11 @@ class SearchedAccountPage extends Component {
         if(events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Transaction Runs', 'details':`Chart containing the total number of E5 runs theyve made over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1725']/* 'Transaction Runs' */, 'details':this.props.app_state.loc['1726']/* `Chart containing the total number of E5 runs theyve made over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_transaction_count_data_points(events), 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Runs Made', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1727']/* 'Y-Axis: Total Runs Made' */, 'details':this.props.app_state.loc['1728']/* 'X-Axis: Time' */, 'size':'s'})}
                     {this.render_detail_item('0')}
                 </div>
             )
@@ -549,18 +560,18 @@ class SearchedAccountPage extends Component {
     }
 
     render_creations_event_item(item, index){
-        var object_id_obj = {'17':'job object','18':'post object','24':'shadow object','25':'storefront bag object','26':'contractor object','27':'storefront item object','28':'storefront object','29':'account object','30':'contract object','31':'token exchange object','32':'consensus object','33':'subscription object','34':'custom object','36':'channel object'}
+        var object_id_obj = {'17':this.props.app_state.loc['1729']/* 'job object' */,'18':this.props.app_state.loc['1730']/* 'post object' */,'24':this.props.app_state.loc['1731']/* 'shadow object' */,'25':this.props.app_state.loc['1732']/* 'storefront bag object' */,'26':this.props.app_state.loc['1733']/* 'contractor object' */,'27':this.props.app_state.loc['1734']/* 'storefront item object' */,'28':this.props.app_state.loc['1735']/* 'storefront object' */,'29':this.props.app_state.loc['1736']/* 'account object' */,'30':this.props.app_state.loc['1737']/* 'contract object' */,'31':this.props.app_state.loc['1738']/* 'token exchange object' */,'32':this.props.app_state.loc['1739']/* 'consensus object' */,'33':this.props.app_state.loc['1740']/* 'subscription object' */,'34':this.props.app_state.loc['1741']/* 'custom object' */,'36':this.props.app_state.loc['1742']/* 'channel object' */}
         var object_type = object_id_obj[item.returnValues.p2]
         if (this.state.selected_creations_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': 'Object ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': this.props.app_state.loc['1743']/* 'Object ID' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
                     {this.render_detail_item('3', { 'title': object_type, 'details': 'Object Type', 'size': 's' })}
                     <div style={{ height: 2 }}/>
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -576,7 +587,7 @@ class SearchedAccountPage extends Component {
 
     creations_filter(items){
         var search = this.state.typed_search_id['creations']
-        var object_id_obj = {'17':'job object','18':'post object','24':'shadow object','25':'storefront bag object','26':'contractor object','27':'storefront item object','28':'storefront object','29':'account object','30':'contract object','31':'token exchange object','32':'consensus object','33':'subscription object','34':'custom object','36':'channel object'}
+        var object_id_obj = {'17':this.props.app_state.loc['1729']/* 'job object' */,'18':this.props.app_state.loc['1730']/* 'post object' */,'24':this.props.app_state.loc['1731']/* 'shadow object' */,'25':this.props.app_state.loc['1732']/* 'storefront bag object' */,'26':this.props.app_state.loc['1733']/* 'contractor object' */,'27':this.props.app_state.loc['1734']/* 'storefront item object' */,'28':this.props.app_state.loc['1735']/* 'storefront object' */,'29':this.props.app_state.loc['1736']/* 'account object' */,'30':this.props.app_state.loc['1737']/* 'contract object' */,'31':this.props.app_state.loc['1738']/* 'token exchange object' */,'32':this.props.app_state.loc['1739']/* 'consensus object' */,'33':this.props.app_state.loc['1740']/* 'subscription object' */,'34':this.props.app_state.loc['1741']/* 'custom object' */,'36':this.props.app_state.loc['1742']/* 'channel object' */}
         var objects_to_filter_with = []
         Object.entries(object_id_obj).forEach(([key, value]) => {
             if(value.includes(search)){
@@ -662,23 +673,23 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_withdraws_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'transaction ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1745']/* 'transaction ID' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
                     {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p3), 'title': 'target', 'size': 's' })}
                     <div style={{ height: 2 }}/>
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1746']/* 'Amount in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Ether', 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1747']/* 'Amount in Ether' */, 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': this.props.app_state.loc['1378']/* 'transactions' */, })}
                     </div>
                     <div style={{ height: 2 }}/>
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -686,7 +697,7 @@ class SearchedAccountPage extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1746']/* 'Amount in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
@@ -775,17 +786,17 @@ class SearchedAccountPage extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1746']/* 'Amount in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount in Ether', 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1747']/* 'Amount in Ether' */, 'subtitle': this.format_power_figure(amount/10**18), 'barwidth': this.calculate_bar_width(amount/10**18), 'number': (amount/10**18), 'barcolor': '', 'relativepower': 'ether', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Transactions (2.3M Gas average)', 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle': this.format_power_figure(gas_transactions), 'barwidth': this.calculate_bar_width(gas_transactions), 'number': this.format_account_balance_figure(gas_transactions), 'barcolor': '', 'relativepower': 'transactions', })}
                     </div>
                     <div style={{ height: 2 }}/>
 
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p3), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -793,7 +804,7 @@ class SearchedAccountPage extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Amount Added in Wei', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1749']/* 'Amount Added in Wei' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'wei', })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
@@ -863,33 +874,33 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_transactions_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': 'Transaction ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': this.props.app_state.loc['1750']/* 'Transaction ID' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'Transaction Stack Size', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1751']/* 'Transaction Stack Size' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Estimated Gas Consumed', 'subtitle': this.format_power_figure(estimated_gas_consumed), 'barwidth': this.calculate_bar_width(estimated_gas_consumed), 'number': this.format_account_balance_figure(estimated_gas_consumed), 'barcolor': '', 'relativepower': 'Gas', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1752']/* 'Estimated Gas Consumed' */, 'subtitle': this.format_power_figure(estimated_gas_consumed), 'barwidth': this.calculate_bar_width(estimated_gas_consumed), 'number': this.format_account_balance_figure(estimated_gas_consumed), 'barcolor': '', 'relativepower': 'Gas', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Included Wei', 'subtitle': this.format_power_figure(msg_value), 'barwidth': this.calculate_bar_width(msg_value), 'number': this.format_account_balance_figure(msg_value), 'barcolor': '', 'relativepower': 'Wei', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1753']/* Included Wei' */, 'subtitle': this.format_power_figure(msg_value), 'barwidth': this.calculate_bar_width(msg_value), 'number': this.format_account_balance_figure(msg_value), 'barcolor': '', 'relativepower': 'Wei', })}
 
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Gas Price Paid', 'subtitle': this.format_power_figure(gas_price_paid), 'barwidth': this.calculate_bar_width(gas_price_paid), 'number': this.format_account_balance_figure(gas_price_paid), 'barcolor': '', 'relativepower': 'Wei', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1754']/* 'Gas Price Paid' */, 'subtitle': this.format_power_figure(gas_price_paid), 'barwidth': this.calculate_bar_width(gas_price_paid), 'number': this.format_account_balance_figure(gas_price_paid), 'barcolor': '', 'relativepower': 'Wei', })}
                     </div>
                     <div style={{ height: 2 }}/>
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p8), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p9, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p9, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p10), 'title': 'Coinbase (Miner)', 'size': 's' })}
+                    {this.render_detail_item('3', { 'details': start_and_end(item.returnValues.p10), 'title':this.props.app_state.loc['1755'] /* 'Coinbase (Miner)' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': 'Transaction ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p3, 'details': this.props.app_state.loc['1750']/* 'Transaction ID' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Estimated Gas Consumed', 'subtitle': this.format_power_figure(estimated_gas_consumed), 'barwidth': this.calculate_bar_width(estimated_gas_consumed), 'number': this.format_account_balance_figure(estimated_gas_consumed), 'barcolor': '', 'relativepower': 'Gas', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1752']/* 'Estimated Gas Consumed' */, 'subtitle': this.format_power_figure(estimated_gas_consumed), 'barwidth': this.calculate_bar_width(estimated_gas_consumed), 'number': this.format_account_balance_figure(estimated_gas_consumed), 'barcolor': '', 'relativepower': 'Gas', })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
@@ -972,7 +983,7 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_pay_subscription_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': 'Subscription ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':'Time Units: ', 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
@@ -981,17 +992,17 @@ class SearchedAccountPage extends Component {
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': 'Subscription ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Time Units: ', 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1757']/* 'Time Units: ' */, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
@@ -1072,26 +1083,26 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_cancellations_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': 'Subscription ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Subscription ID:  '+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
 
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': 'Subscription ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Subscription ID:  '+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
@@ -1171,20 +1182,20 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_entry_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': 'Contract ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': 'Entry Expiry', 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details':this.props.app_state.loc['1744'] /* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': 'Contract ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details':this.props.app_state.loc['1759'] /* 'Contract ID' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
             )
@@ -1262,18 +1273,18 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_exit_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': 'Contract ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': 'Contract ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
             )
@@ -1354,20 +1365,20 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_vote_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': 'Contract ID: '+item.returnValues.p1, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1760']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p2 , 'details': 'Proposal ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p2 , 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': 'Contract ID: '+item.returnValues.p1, 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1762']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
             )
@@ -1451,48 +1462,48 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_swap_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': 'Exchange ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': action, 'details': 'Action', 'size': 's' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount Swapped', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Updted Token Exchange Liquidity', 'subtitle': this.format_power_figure(token_exchange_liquidity), 'barwidth': this.calculate_bar_width(token_exchange_liquidity), 'number': this.format_account_balance_figure(token_exchange_liquidity), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1765']/* 'Updted Token Exchange Liquidity' */, 'subtitle': this.format_power_figure(token_exchange_liquidity), 'barwidth': this.calculate_bar_width(token_exchange_liquidity), 'number': this.format_account_balance_figure(token_exchange_liquidity), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Updated Exchange Ratio X', 'subtitle': this.format_power_figure(updated_exchange_ratio_x), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_x), 'number': this.format_account_balance_figure(updated_exchange_ratio_x), 'barcolor': '', 'relativepower': 'units', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1766']/* 'Updated Exchange Ratio X' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_x), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_x), 'number': this.format_account_balance_figure(updated_exchange_ratio_x), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Updated Exchange Ratio Y', 'subtitle': this.format_power_figure(updated_exchange_ratio_y), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_y), 'number': this.format_account_balance_figure(updated_exchange_ratio_y), 'barcolor': '', 'relativepower': 'units', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1767']/* 'Updated Exchange Ratio Y' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_y), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_y), 'number': this.format_account_balance_figure(updated_exchange_ratio_y), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', {'title':this.format_exchange_ratio(updated_exchange_ratio_x, updated_exchange_ratio_y), 'details':'Updated Exchange Ratios X:Y', 'size':'l'},)}
+                    {this.render_detail_item('3', {'title':this.format_exchange_ratio(updated_exchange_ratio_x, updated_exchange_ratio_y), 'details':this.props.app_state.loc['1768']/* 'Updated Exchange Ratios X:Y' */, 'size':'l'},)}
                     <div style={{ height: 2 }} />
 
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p9), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p10, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p10, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': 'Exchange ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount Swapped', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
@@ -1593,7 +1604,7 @@ class SearchedAccountPage extends Component {
                     {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's'})}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['13']/* 'Token ID:  ' */+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
@@ -1606,10 +1617,10 @@ class SearchedAccountPage extends Component {
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['13']/* 'Token ID:  ' */+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
                 </div>
@@ -1719,32 +1730,32 @@ class SearchedAccountPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

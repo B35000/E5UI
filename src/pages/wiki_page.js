@@ -49,21 +49,21 @@ class WikiPage extends Component {
         if(this.state.option == 'one'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'One more step', 'details':'You need to set your wallet and fill it with some ether', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1980']/* 'One more step' */, 'details':this.props.app_state.loc['1981']/* 'You need to set your wallet and fill it with some ether' */, 'size':'l'})}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('4', {'text':'The wallet section is in the settings-data...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':'Sans-serif'})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
                     <div style={{height: 30}}/>
 
-                    {this.render_detail_item('4', {'text':'Under the Wallet tag...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1983']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':'Sans-serif'})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
                     <div style={{height: 30}}/>
 
 
-                    {this.render_detail_item('4', {'text':'Then afterwards fill it with the E5s ether of your choice', 'textsize':'12px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1984']/* 'Then afterwards fill it with the E5s ether of your choice' */, 'textsize':'12px', 'font':'Sans-serif'})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SendEtherDataImage} alt="E5"/>
                     <div style={{height: 20}}/>
@@ -73,20 +73,20 @@ class WikiPage extends Component {
         else if(this.state.option == 'action'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Action Required', 'details':'You need to set your wallet first', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1985']/* 'Action Required' */, 'details':this.props.app_state.loc['1986']/* 'You need to set your wallet first' */, 'size':'l'})}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('4', {'text':'The wallet section is in the stack page...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':'Sans-serif'})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={OpenStackDataImage} alt="E5"/>
                     <div style={{height: 30}}/>
 
-                    {this.render_detail_item('4', {'text':'In the settings-data section...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1988']/* 'In the settings-data section...' */, 'textsize':'12px', 'font':'Sans-serif'})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
                     <div style={{height: 30}}/>
 
-                    {this.render_detail_item('4', {'text':'Under the Wallet tag...', 'textsize':'12px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['1989']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':'Sans-serif'})}
                     <div style={{height: 20}}/>
                     <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
                     <div style={{height: 30}}/>

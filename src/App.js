@@ -223,7 +223,7 @@ import { Web3Storage } from 'web3.storage'
 import { NFTStorage, Blob } from 'nft.storage'
 
 import Dexie from 'dexie';
-
+import { locale } from 'dayjs';
 
 const Web3 = require('web3');
 const { ethers } = require("ethers");
@@ -234,6 +234,7 @@ var CryptoJS = require("crypto-js");
 
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
+
 
 var TextDecoder = textEncoding.TextDecoder;
 
@@ -280,10 +281,10 @@ class App extends Component {
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
-    account:null,
+    account:null, size:'s',
 
-    theme: this.get_theme_data('light'), storage_option:'nft-storage',
-    details_orientation: 'right', refresh_speed:'average', masked_content:'e', content_channeling:'international', device_language:this.get_language(), section_tags_setting:'all', visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e',
+    theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'nft-storage',
+    details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1423']/* 'average' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -319,7 +320,9 @@ class App extends Component {
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
     
-    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[], mempool:{}, token_name_directory:{}, wallet_status:{}
+    e5_ether_tx_history:{}, e5_ether_supply_data:{}, index_db_size:0, calculated_gas_figures:{}, rpc_times:{}, added_providers:[], mempool:{}, token_name_directory:{}, wallet_status:{},
+
+    loc:this.getLocale()
   };
 
 
@@ -802,6 +805,241 @@ class App extends Component {
     }
   }
 
+  getLocale(){
+    var language = this.get_language()
+    var accepted_languages = ['en']
+    var obj = {
+      //this.props.app_state.loc['']
+      //this.getLocale()['']
+      'en':{
+        /* enter contract page */
+        '1':'enter-contract','2':'enter','3':'contract','4':'finish.','5':'Max Enter Contract Duration.','6':'Your entering duration.','7':'Entry expiry time.','8':'Set the time after which you wont participate in the contract.','9':'The entry fees charged for entering the contract.','10':'Entry Fees.','11':'The amounts you have available for entering the contract.','12':'Your balances.','13':'Token ID: ','14':'You cant pick a time before now.','15':'You cant pick a time beyond the contracts limit.','16':'Youve already entered this contract.','17':'You dont have enough tokens to enter this contract.','18':'Transaction added to stack.',
+        
+        /* exit contract page */
+        '19':'exit-contract','20':'exit','21':'contract','22':'Max Enter Contract Duration.','23':'Exit the specific contract.','24':'Exit Contract.','25':'Entry Expiry Time.','26':'Time Remaining.','27':'block','28':'You cant exit a contract you havent entered.',
+        
+        '29':' sec','30':' min','31':' hr','32':' dy','33':' wk','34':' yr',
+        
+        /* extend enter contract page */
+        '35':'extend-contract','36':'extend','37':'contract','38':'Extend Entry Expiry Time.','39':'Set the new time after which you will not participate in the contract.','40':'Max Enter Contract Duration.','41':'Max Extend Enter Contract Duration.','42':'Entry Expiry Time.','43':'Time Remaining.','44':'You cant set a time before the current expiry time.','45':'You cant set a time beyond the extend limit.','46':'You have to wait ','47':' to extend your stay.',
+        
+        /* force exit contract page */
+        '48':'force-exit','49':'force','50':'exit','51':'accounts','52':'Run a force exit action for the contract ID: ','53':'Target Account.','54':'Set the account ID to remove.','55':'Target Account...','56':'Add Force Exit Action.','57':'That account isnt part of the contract.','58':'You cant force exit an account twice.','59':'Account ID: ','60':'Contract ID: ','61':'Force exit action removed.','62':'Account','63':'You cant stack no changes.',
+        
+        /* modify contract page */
+        '64':'modify-contract','65':'modify','66':'contract','67':'auth','68':'Vote Bounty Split Proportion','69':'Maximum Extend Enter Contract Limit','70':'Minimum End Bounty Amount','71':'Proposal Expiry Duration Limit','72':'Maximum Enter Contract Duration','73':'Auto Wait','74':'Proposal Modify Expiry Duration Limit','75':'Moderator Modify Privelage','76':'Unlimited Extend Contract Time','77':'Maximum Proposal Expiry Submit Expiry time difference','78':'Bounty Limit Type','79':'Force Exit Enabled','80':'Minimum Spend Bounty Amount','81':'no','82':'yes','83':'modifiable','84':'non-modifiable','85':'enabled','86':'disabled','87':'relative','88':'absolute','89':'enabled','90':'disabled','91':'Make changes to the configuration of the contract ID: ','92':'units','93':'Add Change.','94':'Target ID...','95':'Current ','96':'Current Value.','97':'Reconfiguration action added.','98':'Please pute a valid account ID.','99':'Reconfiguration action added.','100':'Modify Target.','101':'Position.','102':'Proportion.','103':'Duration.','104':'Value: ','105':'Target ID','106':'Reconfiguration action removed.','107':'My Account','108':'Account',
+        
+        /* new channel page */
+        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'Black stages gif, grey stages an image. Then tap it to remove.','146':'Images larger than 500kb will be ignored','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactible ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.',
+        
+        /* new contract page */
+        '163':'configuration','164':'entry-fees','165':'private','166':'public','167':'Set a title for your new Contract.','168':'Set tags for indexing your new Contract.','169':'Add.','170':'Enter Contract.','171':'If set to enter-contract, youll enter the contract your creating in one transaction.','172':'Preset the new contract settings based on common use cases.','173':'👥 Workgroup Contract','174':'A contract representing shared consensus within an organization or group of people.','175':'🧘 Personal Contract','176':'A contract primarily used by one person.','177':'👷🏼 Work Contract','178':'A contract used for the job and contractor markets.','179':'⚭ Life Contract','180':'A contract representing shared consensus between two or more people for an extended period of time.','181':'Workgroup contract preset has been applied.','182':'Personal contract preset has been applied.','183':'Work contract preset has been applied.','184':'Life contract preset has been applied.','185':'Create a basic E5 contract.','186':'Next.','187':'Previous.','188':'Contract Type.','189':'set the type of contract, either private or public.','190':'Note: if set to private, youll be giving new accounts access to the contract manually after its created.','191':'Vote Bounty Split Proportion (Optional).','192':'The mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then, the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.','193':'Vote Bounty Split Proportion.','194':'Recommended: 3% - 5%','195':'Maximum Extend Enter Contract Limit.','196':'The maximum amount of time a sender can extend their stay in your new contract.','197':'Recommended: 1 dy.','198':'Minimum End Bounty Amount (Optional).','199':'The minimum amount of end that can be used as bounty for creating a proposal for your new contract.','200':'Minimum End Bounty Amount.','201':'Minimum Spend Bounty Amount (Optional).','202':'The minimum amount of spend that can be used as bounty for new proposals targeting your new contract.','203':'Minimum Spend Bounty Amount.','204':'Maximum Enter Contract Duration.','205':'The maximum amount of time an account can enter your new contract for.','206':'Recommended: 4wks.','207':'Auto Wait.','208':'If set to yes, all new propsals sent to your new contract are automatically voted wait for each participant in the contract.','209':'Recommended: no.','210':'Proposal Modify Expiry Duration Limit.','211':'The period of time before the expiry of a proposal, during which the propsal cannot be modified.','212':'Recommended: 3 Hrs.','213':'Moderator Modify Privelage.','214':'If set to modifiable, you as a moderator can directly modify your contracts configuration.','215':'Recommended: modifiable.','216':'Unlimited Extend Contract Time.','217':'If set to enabled, you can extend your stay in this contract at any time after entry.','218':'Recommended: enabled','219':'Maximum Proposal Expiry Submit Expiry Time Difference.','220':'The maximum difference in time between the proposal expiry and submit expiry time for all proposals sent to your new contract.','221':'Recommended: at least 2wks.','222':'Bounty Limit Type.','223':'If set to absolute, the bounty limits set for end and spend will be used as is and if set to relative, the bounty limits will be set relative to the state of the network and demand.','224':'Recommended: absolute','225':'Force Exit Enabled','226':'If set to enabled, you as a moderator can force other members of the contract to exit the contract.','227':'Recommended: enabled.','228':'Proposal Expiry Duration Limit.','229':'The minimum amount of time difference that can be used while setting the expiry time for a new proposal sent to your new contract.','230':'Recommended: 1hr - 3hrs.','231':'Default Consensus Majority Limit (optional).','232':'If you prefer the contract to be consensus majority instead of unanimous, set the majority proportion here. By default, 0% and 100% means unanimous consensus.','233':'Recommended: 70% to 80%.','234':'Voter Weight Exchange.','235':'Specify an exchange that will be used to calculate voter weights for all proposals sent to your new contract.','236':'Please put a valid date and time.','237':'Exchange ID.','238':'Add an exchange by its id or name, then the desired amount. The first exchange must be the End or Spend exchange.','239':'Default Minimum End Contract Amount.','240':'Default Minimum Spend Contract Amount.','241':'Price.','242':'Add Price.','243':'Please put a valid exchange id.','244':'Please put a valid amount.','245':'The first exchange must be the End or Spend exchange.','246':'You cant use the same exchange twice.','247':'Added entry fee price.','248':'That End amount is less than the minimum required by the main contract.','249':'That Spend amount is less than the minimum required by the main contract.','250':'Please put a valid voter weight exchange id.','251':'Please add a title for your Contract.','252':'That Contract title is too long.', '252a':'Auto-Wait will be disabled if you opt for this voter weight feature.',
+        
+        /* new contractor page */
+        '253':'contractor','254':'rates','255':'Set a title for your new contractor post. It should be task specific.','256':'Set tags for indexing your new contractor post.','257':'Search an object by its title or id, then tap it to add it to the new Contractor Post.','258':'The link is already in the Contractor Post.','259':'Link added to Contractor Post.','260':'Select an exchange by its ID.','261':'Fee per Hour.','262':'Set your desired fee per hour.','263':'Add fee.','264':'Please put a valid Exchange ID.','265':'Please put a valid amount.','266':'You cant use the same exchange twice.','267':'Added your desired fee.','268':'Account 3','269':'Account 5','270':'Add at least 3 tags first.','271':'Please add a title for your Contractor Post','272':'That title is too long.',
+        
+        /* new job page */
+        '273':'job','274':'targeted-pay','275':'Set a title for your new Job Post.','276':'Enter Title...','277':'Set tags for indexing your new Job Post.','278':'Enter your preferred text, then tap add to add it to the new Job Post.','279':'Search an object by its id or title, the tap it to add it to the new Job Post.','280':'Search.','281':'The link is already in the Job Post.','282':'Link added to Job Post.','283':'Select an exchange by its ID, then the desired price then click add.','284':'Add Pay.',
+        
+        /* new mail page */
+        '285':'mail','286':'Set a title for your new encrypted mail.','287':'Set a recipient for your new Mail (Their account ID).','288':'Account ID','289':'Set tags for indexing your new Mail.','290':'Enter your preferred text, then tap add to add it to the new Mail.','291':'Search an object by its title or ID, then tap it to add it to the new mail.','292':'Enter Object ID...','293':'The link is already in the Mail.','294':'Link added to Mail.','295':'Please add a title for your new Mail.','296':'That recipient account is invalid.',
+        
+        /* new post page */
+        '297':'post','298':'subscription-lock','299':'invisible','300':'visible','301':'Set a title for your new Post.','302':'Set tags for indexing your new Post.','303':'Post Preview (For Subscription Locked Posts).','304':'If set to visible, a preview of your new post will be shown to outsiders if subscription locked.','305':'Subscription Lock (Optional).','306':'Post exclusively to accounts that have paid the subscription you choose below.','307':'Enter your preferred text then tap add to add it.','308':'Search an object by its title or ID, then tap it to add it to the new Post.','309':'The link is already in the Post.','310':'Link added to Post.','311':'Please add a title for your new Post.',
+        
+        /* new proposal page */
+        '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ','345':'Set tags for indexing your new Proposal.','346':'Consensus Type.','347':'Set the type of action you wish to perform with the contract through your new proposal.','348':'Proposal Expiry Time','349':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.','350':'Proposal Expiry Duration Limit.','351':'Time from now.','352':'Modify Target (For Reconfiguration Action)','353':'The target object thats being modified if the consensus type is reconfig.','354':'Object ID...','355':'Consensus Submit Expiry Time.','356':'The time after which you cannot submit your new proposal.','357':'Maximum Proposal Expiry Submit Expiry Time Difference.','358':'You cant use a time before now.','359':'That submit time is invalid','360':'That proposal expiry time is less than the minimum required by the contract.','361':'Contract','362':'This Contract','363':'Main Contract','364':'Contract ID 2','365':'End Exchange','366':'Account ID 3','367':'Spend Exchange','368':'Account ID 5','369':'My Account','370':'Account','371':'End Token','372':'Spend Token','373':'Exchange ID 3','374':'Exchange ID 5','375':'Burn Account','376':'Account ID 0','377':'End Balance.','378':'Spend Balance.','379':'Spend Target.','380':'Set a target for the spend action.','381':'Target ID...','382':'Exchange.','383':'Set the token your spending.','384':'Spend Amount.','385':'Set an amount for the spend action.','386':'Picked Amount.','387':'Please put a valid spend target.','388':'Please put a valid exchange id.','389':'Please put a valid amount.','390':'Spend action added to proposal.','391':'Units','392':'Add Change.','393':'Current ','394':'Current Value','395':'Exchange Ratio X','396':'Exchange Ratio Y','397':'Reconfiguration action added.','398':'Please put a valid account ID.','399':'Position.','400':'Proportion.','401':'Duration.','402':'Value: ','403':'Target ID.','404':'Target Exchange.','405':'Set the exchange id you wish to run the exchange transfer from.','406':'Target Receiver','407':'Target Receiver...','408':'Token Targets','409':'Set the target token ID your transferring from the exchange.','410':'Token Target ID...','411':'Target Amount','412':'Add Transfer Action.','413':'Set the account set to receive the token amounts.','414':'Please put a valid exchange ID.','415':'Please put a valid receiver ID.','416':'Please put a valid token ID.','417':'Please put a valid amount.','418':'Transfer action added.','419':'Receiver ID: ','420':'The first bounty exchange should be the End or Spend Exchange.','421':'Minimum Spend Bounty Amount.','422':'Minimum End Bounty Amount.','423':'Spend Balance.','424':'End Balance.','425':'Target Amount.','426':'Add Bounty.','427':'You cant use the same exchange twice.','428':'Bounty amount added.','429':'Token ID: ','430':'Add some tags first.','431':'Add a title first.','432':'That title is too long.','433':'You need to add bounty for your new proposal.','434':'One of your token balances is insufficient for the bounty amount specified.','435':'The proposal submit expiry time youve set cant be before now.','436':'The proposal submit expiry time youve set is less than the time difference required by the contract.','437':'That proposal expiry time youve set is less than the minimum required by the contract.','438':'The proposal expiry time youve set cant be before now', '438a':'Target Authority', '438b':'Target Beneficiary', '438c':'Minimum Buy Amount', '438d':'Maximum Buy Amount', '438e':'Minimum Cancellable Balance Amount',
+        
+        /* new storefront item page */
+        '439':'storefront-item','440':'configuration','441':'variants','442':'invisible','443':'masked','444':'unmasked','445':'items','446':'grams','447':'kilograms','448':'ounces','449':'pounds','450':'centimeters','451':'meters','452':'inches','453':'feet','454':'mililiters','455':'liters','456':'gallons','457':'listed','458':'delisted','459':'in-stock','460':'out-of-stock','461':'Unit Denomination.','462':'Specify the denomination of the item below.','463':'Unit Denomination.','464':'Specify the denomination of the item from the tag picker below.','465':'Set denomination: ','466':'Target Payment Recipient.','467':'Set the account ID thats set to receive the purchase payments for your new item.','468':'Fulfilment Location.','469':'Set location of the pick up station for your item when its ordered using a bag and contractors.','470':'Location Details...','471':'Direct Purchase Option.','472':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients.','473':'Product Chatroom.','474':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section.','475':'Product Listing.','476':'If set to delisted, the item will not be visible for purchasing.','477':'Product Stock.','478':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.','479':'Fulfilment Accounts.','480':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients.','481':'Direct Purchase Shipping Fee.','482':'The shipping fee you charge for shipping your item when directly purchased by your clients.','483':'tokens','484':'Price','485':'Add Price.','486':'Please put a valid exchange ID.','487':'Please put a valid amount.','488':'You cant use the same exchange twice.','489':'Added shipping price.','490':'Please put a valid account ID.','491':'Added the account.','492':'Account.','493':'My Account.','494':'Set a title for your new Storefront Item.','495':'Enter Title...','496':'Set tags for indexing your new Storefront Item.','497':'Enter your preferred text then tap add to add it to the new Storefront Item.','498':'Search an object by its title or ID, then tap it to add it to the new Storefront Item.','499':'Search.','500':'The link is already in the Storefront Item.','501':'Link added to new Storefront Item.','502':'Price per unit.','503':'Specify the price for one unit of your new items variant.','504':'Exchange ID','505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'nter Account ID',
+        
+        /* new subscription page */
+        '536':'subscription','537':'configuration','538':'authorities','539':'prices','540':'false','541':'true','542':'moderators','543':'interactable','544':'enabled','545':'disabled','546':'Set a name for your new Subscription.','547':'Enter Title...','548':'Set some tags for indexing your new Subscription.','549':'Enter Tag...','550':'Add.','551':'Create a basic E5 Subscription.','552':'Next','553':'Previous','554':'Cancellable.','555':'If set to true, subscription payers can refund their subscription payments.','556':'Recommended: false.','557':'Time Unit','558':'The amount of time thats used as a unit when paying for your new subscription.','559':'Recommended: 1 min.','560':'Minimum Buy Amount.','561':'Minimum amount of time units that can be paid for your new subscription.','562':'units','563':'Recommended: at least 1','564':'Maximum Buy Amount','565':'Maximum amount of time units that can be paid for your new subscription.','566':'Minimum Cancellable Amount(For Cancellable Subscriptions)','567':'The minimum amount of time units that can be left when cancelling your new subscriptions payments.','568':'Minimum Cancellable Amount','569':'Recommended: at least 1','570':'Access Rights','571':'If enabled, access to the subscription will be restricted to moderators and specified accounts.','572':'Set the authority ID for your new subscription.','573':'Set the subscription beneficiary ID for your new subscription.','574':'moderators','575':'interactable','576':'Moderator ID','577':'Set the account id for your targeted moderator','578':'Add Moderator','579':'Account ID','580':'Interactible ID','581':'Set the account id for your targeted account, and expiry time for their interactability','582':'Add Interactible Account.','583':'Please put a valid account ID.','584':'Added interactable account.','585':'Interactible Account ID: ','586':'Until: ','587':'Exchange ID','588':'Type an exchange by its id, then the desired price and click add.','589':'Price','590':'tokens','591':'Add Price','592':'Please put a valid exchange ID.','593':'Please put a valid amount.','594':'You cant use the same exchange twice.','595':'Added price.','596':'My Account','597':'Account','598':'Add some tags first.','599':'Add a name first.','600':'That name is too long.', '600a':'Enter Authority', '600b':'Enter Beneficiary ID...',
+        
+        /* new token page */
+        '601':'token','602':'basic','603':'custom','604':'token-authorities','605':'token-prices','606':'capped','607':'uncapped','608':'locked','609':'unlocked','610':'locked','611':'unlocked','612':'partially-custom','613':'fully-custom','614':'fixed','615':'spread','616':'enabled','617':'disabled','618':'moderators','619':'interactable','620':'Set a name for your new Token. No spaces should be used.','621':'Enter Name..','622':'Set a symbol for your new Token. No spaces should be used.','623':'Enter Symbol...','624':'Set tags for indexing your new Token.','625':'Enter Tag...','626':'Set an image for your new Token. Black picks gif, grey picks image.','627':'Use a smaller image.','628':'Preset the new tokens settings based on common use cases.','629':'📈 Stock Token','630':'A fixed supply token used for managing stake in a workgroup and raising capital inside of E5.','631':'☝️ End Token','632':'A fixed supply token with a very large supply similar to END.','633':'🫰 Spend Token','634':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.','635':'🔧 Utility Token','636':'An uncapped, general purpose token which is bought and sold from its exchange.','637':'Stock token preset has been applied.','638':'End token preset has been applied.','639':'Spend token preset has been applied.','640':'Utility token preset has been applied.','641':'Next.','642':'Previous.','643':'Token Supply(For Capped Tokens)','644':'The supply of a capped token available for buying (for capped tokens)','645':'Token Supply','646':'tokens','647':'Recommended: 100,000,000e2','648':'Buy Limit','649':'The maximum amount of tokens that can be bought in one transaction.','650':'Trust Fee','651':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.','652':'Recommended: 3.5%','653':'Sell Limit','654':'The maximum amount of your new token a sender can sell in a transaction.','655':'Create a custom E5 token.','656':'Set the token type.','657':'Capped token (with limited supply) or uncapped token (with unlimited supply)','658':'Minimum Time Between Swap','659':'The minimum amount of time a sender has to wait between making a swap for a given token.','660':'Trust Fee.','661':'Proportion or percentage fee enforced on all contract spending that takes place using token.','662':'Recommended: 3.5%','663':'Minimum Transactions Between Swap','664':'The minimum number of transactions sender has to make between swaps for your new token.','665':'transactions','666':'Minimum Blocks Between Swap','667':'The minimum number of blocks sender has to wait between making a swap for your new token.','668':'blocks','669':'Minimum Entered Contracts Between Swap','670':'The minimum amount of contracts sender should enter before interacting with your new exchange again.','671':'Minimum Transactions For First Buy','672':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.','673':'contracts','674':'Minimum Entered Contracts For First Buy.','675':'The minimum number of contracts sender should have entered before first buy.','676':'Unlocked Liquidity','677':'If set to unlocked, You have direct access to the token exchanges liquidity','678':'Recommended: unlocked','679':'Unlocked Supply','680':'If set to unlocked, you can mint more of the token outside the exchange.','681':'Recommended: unlocked','682':'Fully Custom','683':'If set to fully-custom, you have full access to the token exchanges configuration','684':'Recommended: fully-custom','685':'Block Limit(For Uncapped Spend Tokens)','686':'The maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.','687':'Block Limit.','688':'Recommended: ','689':'Halving type (for Uncapped Spend Tokens)','690':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.','691':'Recommended: Spread','692':'Maturity Limit(For Uncapped Spend Tokens)','693':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is proportionately less than its default set value.','694':'Maturity Limit','695':'Internal Block Halving(For Uncapped Spend Tokens)','696':'Proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)','697':'Internal Block Halving Proportion','698':'Recommended: 40% - 51%','699':'Block Limit Reduction(For Uncapped Spend Tokens)','700':'Proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)','701':'Block Limit Reduction Proportion','702':'Recommended: 65% - 91%','703':'Block Reset Limit(For Uncapped Spend Tokens)','704':'The maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.','705':'Block Reset Limit','706':'Recommended: 3','707':'Block Limit Sensitivity (for Uncapped Spend Tokens)','708':'The sensitivity of your new exchange to increasing demand','709':'Recommended: 2','710':'Exchange Ratio X','711':'The buy output exchange ratio X for your new token','712':'Exchange Ratio X:Y','713':'Exchange Ratio Y','714':'The buy input exchange ratio Y for your new token','715':'Access Rights','716':'If enabled, access to the exchange will be restricted to moderators and specified accounts','717':'Exchange Authority ID','718':'The account set to control the exchange','719':'Set Exchange Authority ID','720':'Trust Fee Target ID','721':'The account set to receive trust fee when collected from contract spend actions','722':'Set Trust Fee Target ID','723':'My Account','724':'Account','725':'Moderator ID','726':'Moderator ID','727':'Set the account id for your targeted moderator.','728':'Add Moderator','729':'Please put a valid account ID.','730':'Added the account as a moderator.','731':'Account ID','732':'Interactable ID','733':'Set the account id for your targeted account, and expiry time for their interactability','734':'Add Interactable Account','735':'Please put a valid account id','736':'Added interactable account.','737':'Exchange ID','738':'The an exchange by its id, then the desired price and click add.','739':'Price.','740':'Add Price.','741':'Please put a valid exchange ID.','742':'Please put a valid amount.','743':'You cant use the same exchange twice','744':'Added your set price.','745':'Add some tags first.','746':'Please add a name for your token.','747':'Please add a symbol for your token.','748':'That token name is too long.','749':'That token name is invalid.','750':'That token symbol is invalid.','751':'','752':'That token symbol is already in use.','752':'That token symbol is too long.',
+        
+        /* edit pages */
+        '753':'edit-channel','754':'unlocked','755':'locked','756':'tokens','757':'Add some tags first.','758':'Add a title fro your job post.','759':'That title is too long.','760':'job','761':'edit-token','762':'edit-channel','763':'edit-contractor','764':'edit-job','765':'edit-post','766':'edit-storefront-item','767':'edit-token',
+        
+        /* archive proposals page */
+        '768':'archive','769':'object','770':'archive-object','771':'Archive your specified contract or proposal ID:','772':'The number of participants in the proposal /contract.','773':'End Bounty Balance','774':'Spend Bounty Balance','775':'Bounty Exchanges','776':'Specify Bounty Exchange to collect the contracts/proposals remaining balance','777':'Target Exchange ID...','778':'Add Bounty Exchange.','779':'Please put a valid exchange ID.','780':'You cant include the same exchange more than once.','781':'Exchange Added.','782':'Default depth 0',
+        
+        /* submit proposal page */
+        '783':'submit','784':'proposal','785':'submit-proposal','786':'Click finish to submit the proposal.','787':' WAIT votes.','788':' YES votes.','789':' NO votes.','790':'Proposal Expiry time.','791':'Proposal expiry time from now.','792':'Proposal Submit Expiry time.','793':'Proposal submit expiry time from now.','794':'You cant submit this proposal yet.','795':'You cant submit this proposal.',
+        
+        /* vote proposal page */
+        '796':'vote','797':'proposal','798':'vote','799':'bounties','800':'wait','801':'yes','802':'no','803':'Cast your vote in proposal ID: ','804':'Your On-Chain recorded vote.','805':'Voter Weight Exchange.','806':'Voter Weight Balance.','807':'units','808':'None','809':'Yes','810':'Wait','811':'No','812':'End Bounty Balance','813':'Spend Bounty Balance','814':'Targeted Bounty Exchanges','815':'Specify which exchanges you wish to collect bounty from. You can only collect bounty while voting for the very first time.','816':'Target Exchange ID...','817':'Add Bounty Exchange','818':'Please put a valid exchange ID.','819':'You cant include the same exchange more than once.','820':'Bounty Exchange ID: ',
+        
+        /* cancel subscription page */
+        '821':'cancel-subscription','822':'cancel','823':'subscription','824':'Cancel the subscription ID: ','825':'Remaining Subscription Time','826':'Time Units To Cancel','827':'Token ID: ','828':'Please set a valid time unit amount.',
+        
+        /* collect subscription page */
+        '829':'collect-subscription','830':'collect','831':'subscription','832':'payments','833':'Collect token payments for the subscription ID: ','834':'Total Collectible Time','835':'Total Collectible Time Units','836':'Token ID: ','837':'Account ID: ','838':'Collectible time: ','839':'You cant collect no time units.',
+        
+        /* modify subscription page */
+        '840':'modify-subscription','841':'modify','842':'subscription','843':'authority','844':'Make changes to the configuration of the subscription ID: ','845':'units','846':'Add Change','847':'Target ID...','848':'Current ','849':'Current Value','850':'Reconfiguration action added.','851':'Please put a valid account ID.','852':'position','853':'Target ID','854':'My Account','855':'Main Contract','856':'Burn Account','857':'Account','858':'Contract ID 2','859':'Account ID 0','860':'Reconfiguration action removed.','861':'Please add some reconfiguration actions first.',
+        
+        /* pay subscription page */
+        '862':'pay-subscription','863':'pay','864':'subscription','865':'Pay for the subscription ID: ','866':'Time Unit','867':'Time Units','868':'Total Debit Amount','869':'The amount youll pay for the subscription payment is shown below','870':'The amounts you have available for paying the subscription.','871':'Your balances.','872':'Token ID: ','873':'Minimum Buy Amount.','874':'time-units','875':'Maximum Buy Amount','876':'Set a valid time unit amount.','877':'The amount youve set is less than the minimum requirement.','878':'The amount youve set exceeds the maximum that you can pay for.','879':'Your token balance is insufficient for that time unit purchase.',
+        
+        /* authmint page */
+        '880':'authmint','881':'authority','882':'mint','883':'token','884':'Auth-Mint your token ','885':' for a specified target.','886':'Set the recipient of the authmint action.','887':'Account ID','888':'Recipient','889':'Set the amount to authmint.','890':'Action Amount.','891':'Transfer Amount.','892':'Add Action.','893':'Please put a valid account ID.','893a':'Please put a valid amount.','894':'Auth-mint action added.','895':'Target Recipient ID: ','896':'Action removed.','897':'You cant stack no changes.',
+        
+        /* depthmint page */
+        '898':'depthmint','899':'depth','900':'Depth-Mint your token ','901':' for a specified target.','902':'Set the recipient of the depth-mint action.','903':'Recipient','904':'Account ID','905':'Set the amount to depth-mint.','906':'Depth-mint action added.',
+        
+        /* exchange transfer page */
+        '907':'exchange-transfer','908':'exchange','909':'transfer','910':'Run an exchange transfer for: ','911':'Target Receiver','912':'Set the account set to receive the token amounts.','913':'Target Receiver...','914':'Token Targets','915':'Set the targeted token ID your transfering from the exchange.','916':'Token Target ID...','917':'Targeted Amount.','918':'units','919':'Add Transfer Action.','920':'Please put a valid receiver ID.','921':'Please put a valid token ID.','922':'Please put a valid amount.','923':'Transfer action added.','924':'Receiver ID: ','925':'Transfer action removed.','926':'End Token','927':'Spend Token','928':'Exchange ID 3','929':'Exchange ID 5',
+        
+        /* freeze-unfreeze page */
+        '930':'freeze/unfreeze','931':'freeze','932':'unfreeze','933':'account','934':'Freeze or Unfreeze the token ','935':' for a specified set of accounts.','936':'Set the account to be frozen or unfrozen.','937':'Account ID','938':'Set the amount to freeze or unfreeze.','939':'Action Amount.','940':'Transfer Amount','941':'Add Action','942':'Please put a valid account ID.','943':'Please put a valid amount.','944':'Action added.','945':'Action removed.',
+        
+        /* mint-dump token page */
+        '946':'buy-sell','947':'mint','948':'dump','949':'mint-buy','950':'dump-sell','951':'Buy or Sell the specified token','952':'Your Balance','953':'Set the recipient of the mint/dump action','954':'Recipient of action','955':'Recipient ID','956':'Set the amount for the mint/dump action','957':'Amount for action','958':'Amount','959':'Buy Limit','960':'Sell Limit','961':'Set Maximum','962':'The amount you get when selling the token','963':'Receive Amount.','964':'Token ID: ','965':'The amount youll probably get from the buy action','966':'Receive Amount.','967':'Amount set to submit for the buy action.','968':'Fees for Action','969':'The amounts you have available for buying the token.','970':'Your balances','971':'My Account','972':'Account','973':'The transaction will revert if you dont receive your tokens specified in the range set below.','974':'Upper Lower Bounds (optional)','975':'Upper Bound','976':'Lower Bound','977':'Please put a valid account ID.','978':'Please put a valid amount.','979':'That amount is too low.','980':'ou dont have enough tokens for that sell action.','981':'You dont have enough tokens to buy that much.','982':'You cant interact with the same exchange twice in one run.','983':'The amount youve set exceeds the maximum buy amount enforced by the exchange.','984':'The amount youve set exceeds the maximum sell amount enforced by the exchange.','985':'You need to enter ','986':' more contracts first.','987':'You need to make ','988':' more runs first.','989':'You need to wait ','990':' more blocks.','991':'You need to wait about ','992':' first.','993':'You need to make ','994':' more runs first.','995':'You need to enter ','996':' more contracts first',
+        
+        /* modify token page */
+        '997':'modify-token','998':'modify','999':'token','1000':'fixed','1001':'spread','1002':'Make changes to the configuration of the token ID: ','1003':'units','1004':'Add Change','1005':'Target ID...','1006':'Current ','1007':'Current Value','1008':'Halving type','1009':'Block Limit Sensitivity','1010':'Reconfig action added.','1011':'Please put a valid account ID.','1012':'Modify Target','1013':'proportion','1014':'duration','1015':'value: ','1016':'target ID','1017':'Reconfig action removed.',
+        
+        /* transfer token page */
+        '1018':'transfer','1019':'send','1020':'Transfer the specified token.','1021':'Your Balance','1022':'Your Balance after Set Transfers','1023':'Set the recipient of the transfer action.','1024':'Recipient of action.','1025':'Recipient ID','1026':'Amount to transfer to the speicified target account.','1027':'Amount for Transfer.','1028':'Set Maximum','1029':'Add Transaction','1030':'Please put a valid account ID.','1031':'Please put a valid amount.','1032':'You dont have enough tokens to add that transaction.','1033':'','1034':'Transaction added.','1035':'Recipient account: ','1036':'Transaction removed.','1037':'Transfer Amount',
+        
+        /* add comment page */
+        '1038':'Detailed message.','1039':'Enter Message...','1040':'You need to make at least 1 transaction to participate.','1041':'Type something.','1042':'Message added to stack.',
+        
+        /* add to bag page */
+        '1043':'add-to-bag','1044':'add','1045':'bag','1046':'storefront-item','1047':'items','1048':'Item Variants','1049':'Pick the variant you want to purchase','1050':'Amount in ','1051':'Purchase Amounts','1052':'This is the final amount for the price of the items your buying.','1053':'Number of Units','1054':'','1055':'The most you can add is ','1056':'Pick one variant first.','1057':'Please specify an amount of the item your adding.','1058':'Transaction added to stack.',
+        
+        /* clear purchase page */
+        '1059':'verify-signature','1060':'generate-signature','1061':'Generate Fulfilment Signature','1062':'Create a signature to finalize the fulfilment transaction.','1063':'Quantity: ','1064':'Sender Account ID: ','1065':'Signature','1066':'Copy to Clipboard','1067':'Copied signature to clipboard.','1068':'Receive Fulfilment Signature','1069':'Receive a fulfilment signature to verify the items delivery.','1070':'Variant ID: ','1071':'Quantity: ','1072':'Sender Account ID: ','1073':'Paste Signature','1074':'Alternatively, you can paste the signature in the input field below','1075':'Open Scanner','1076':'Scan for the signature using a built in scanner.','1077':'Please paste a signature to finish here.','1078':'The signature you received is invalid.',
+        
+        /* confirm run page */
+        '1079':'Transaction Confirmation','1080':'Are you sure you want to make this run?','1081':'','1082':'','1083':'Transaction Stack Size','1084':'Gas Limit','1085':'gas','1086':'Estimated Gas to be Consumed','1087':'Gas Price in Gwei','1088':'Gas Price in wei','1089':'Wallet Impact','1090':'proportion','1091':'Run Expiry Duration','1092':'Run Transactions','1092a':'confirm-run','1092b':'transactions',
+        
+        /* direct purchase page */
+        '1093':'direct-purchase','1094':'direct','1095':'purchase','1096':'buy','1097':'Fulfilment Location','1098':'Set the delivery location, and be sure to be specific to avoid shipping issues','1099':'Shipping Details...','1100':'Item Variants','1101':'Pick the variant you want to purchase','1102':'Amount in ','1103':'Purchase Amounts','1104':'This is the final amount for the price of the items your buying.','1105':'Your balances','1106':'This is how much you have available for the direct purchase.','1107':'Number of Units','1108':'Number of Units','1109':'Pick one variant first.','1110':'Please specify an amount of the item your adding.','1111':'The most you can add is ','1112':'Please specify a shipping adress.','1113':'Your balance is insufficient to fulfil that direct purchase.','1114':'items',
+        
+        /* filter section */
+        '1115':'search-filter','1116':'You can search an object by its ID or its title.','1117':'Enter Object ID or Title...','1118':'Search','1119':'You can filter objects using their tags.','1120':'Enter tag...','1121':'Add','1122':'','1123':'Clear Search','1124':'Type something.','1125':'Enter one word.',
+        
+        /* fulfil bag page */
+        '1126':'bag-response','1127':'respond','1128':'fulfil','1129':'bag','1130':'contract','1131':'expiry-time','1132':'amount','1133':'prepaid','1134':'postpaid','1135':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1136':'block','1137':'Select an expiry time for your fulfilment application.','1138':'Prepaid or Postpaid','1139':'Set the payment option you prefer for the application','1140':'Estimated Delivery time','1141':'Set the estimated amount of time youll take to deliver the items in the bag','1142':'Estimated Delivery time','1143':'Exchange ID','1144':'Select an exchange by its id, then the desired price and click add.','1145':'Price','1146':'tokens','1147':'Add Price','1148':'Please put a valid exchange ID.','1149':'Please put a valid amount.','1150':'Added price.','1151':'Account 3','1152':'Account 5','1153':'You need to pick a contract first.','1154':'You cant set an expiry time thats less than fifteen minutes from now.',
+        
+        /* give award page */
+        '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
+        
+        /* homepage */
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'Work Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.',
+        
+        /* moderator page */
+        '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.',
+        
+        /* post preview page */
+        '1301':'Subscription Locked','1302':'You need to pay those subscriptions first before you can view the full post.','1303':'Subscriptions to pay.','1304':'Pin the post to your feed','1305':'Pin Post','1306':'Pin/Unpin Post',
+        
+        /* respond to job page */
+        '1307':'job-response','1308':'respond','1309':'job','1310':'ad','1311':'contract','1312':'expiry-time','1313':'amount','1314':'prepaid','1315':'postpaid','1316':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1317':'block','1318':'Select an expiry time for your application','1319':'Prepaid or Postpaid','1320':'Set the payment option you prefer for the application.','1321':'Exchange ID','1322':'Select an exchange by its id, then the desired price and click add.','1323':'','1324':'Price','1325':'tokens','1326':'Add Price','1327':'Please put a valid exchange ID.','1328':'Please put a valid amount.','1329':'You cant use the same exchange twice.','1330':'Added price.','1331':'You need to pick a contract first.','1332':'You cant set an expiry time thats less than fifteen minutes from now.',
+        
+        /* rpc settings page */
+        '1333':'rpc-settings','1334':'Add a RPC provider for making transactions.','1335':'Enter Node Url...','1336':'Add','1337':'Type something.','1338':'Dont use whitespaces','1339':'That url is invalid.','1340':'That provider has already been added.','1341':'RPC url added.','1342':'Speed unkown.',
+        
+        /* scan qr page */
+        '1343':'Finish Scan','1344':'Scan something first.',
+        
+        /* send job request page */
+        '1345':'Set some details for your new Job request. It should be task specific.','1346':'Enter Details...','1347':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1348':'block','1349':'Select an expiry time for your job request.','1350':'Prepaid or Postpaid','1351':'Set the payment option you prefer for the job request.','1352':'Requested Pay','1353':'Select an exchange by its id, then the desired price and click add','1354':'Exchange ID','1355':'Price','1356':'tokens','1357':'Add Pay.','1358':'Please put a valid exchange ID.','1359':'Please put a valid amount.','1360':'Added price.','1361':'Account 3','1362':'Account 5','1363':'job-request','1364':'send','1365':'job','1366':'request','1367':'You cant set an expiry time thats less than fifteen minutes from now.','1368':'You need to set a description for the job request.',
+        
+        /* send receive ether page */
+        '1369':'send','1370':'receive','1371':'Send Ether using the address shown below.','1372':'Sender Wallet Address','1373':'Receiver Wallet Address','1374':'Set Receiver Address Here','1375':'Balance in Wei','1376':'Balance in Ether','1377':'Transactions (2.3M Gas average)','1378':'transactions','1379':'Gas Price','1380':'Gas Price in Gwei.','1381':'Amount to Send.','1382':'Set the amount to send in the number picker below.','1383':'Picked Amount In Ether and Wei.','1384':'Set Maximum','1385':'Transaction Gas Price','1386':'Set the gas price for your transaction below.','1387':'Picked Gas Price in Ether and Gwei.','1388':'Send Ether to Address','1389':'Maximum amount set.','1390':'Open Scanner','1391':'Scan for an address using a built in scanner','1392':'Scan','1393':'Send Ether Confirmation','1394':'Confirm that you want to send Ether to the targeted recipient','1395':'Picked Amount In Ether and Wei','1396':'Sender Wallet Address','1397':'Receiver Wallet Address','1398':'Send Ether','1399':'Value in Ether and Wei ','1400':'Receive Ether using the address shown below','1401':'Wallet Address','1402':'Copy to Clipboard','1403':'Copied to clipboard.','1404':'Your ether balance is insufficient to fulfil that transaction.','1045':'running your sendtransaction...','1406':'Please set a valid amount.','1407':'Please set a valid recipient.',
+        
+        /* stack */
+        '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count','1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.','1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Setting your wallet. This might take a while...','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', 
+        
+        /* synchonizing page */
+        '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust','1598':'Unanimous Consensus',
+        
+        /* view application contract page */
+        '1599':'accept-job-application','1600':'accept','1601':'application','1602':'applications-contract','1603':'The contract they applied with is shown below.','1604':'Expiry time from now: ','1605':'Contract ID: ','1606':'Sender ID: ','1607':'Accept application','1608':'Accept the job application and enter their contract(This action cant be undone)','1609':'Accept and Enter','1610':'Applicants Requested Pay','1611':'Below is the applicants requested pay in their respective token denominations.','1612':'Block ID','1613':'Vote Bounty Split Proportion','1614':'Minimum End Bounty Amount','1615':'Max Enter Contract Duration','1616':'Auto Wait For All Proposals For All Voters','1617':'Proposal Modify Expiry Duration Limit','1618':'Can Modify Contract As Moderator','1619':'Can Extend Enter Contract At Any Time','1620':'Maximum Proposal Expiry Submit Expiry Time Difference','1621':'Bounty Limit Type','1622':'Contract Force Exit','1623':'Entry Fees','1624':' tokens used','1625':'Consensus Majority Proportion','1626':'Voter Weight Exchange','1627':'Your Voter Weight','1628':'units','1629':'Enabled','1630':'Disabled','1631':'Token ID: ','1632':'The application has already expired.',
+        
+        /* view bag application page */
+        '1633':'accept-bag-application','1634':'accept','1635':'fulfilment','1636':'application','1637':'applications-contract','1638':'The contract they applied with is shown below.','1639':'Expiry time from now: ','1640':'Estimated Delivery Time','1641':'Contract ID: ','1642':'Sender ID: ','1643':'Accept application','1644':'Accept the bag fulfilment application and enter their contract(This action cant be undone)','1645':'Applicants Requested Pay','1646':'Below is the applicants requested pay in their respective token denominations.',
+        
+        /* view job request contract page */
+        '1647':'view-job-request-contract','1648':'view','1649':'response','1650':'view-contract','1651':'The contractors contract is shown below.','1652':'Entry Exipry Time','1653':'Time remaining','1654':'Your time in the contract has exipred.','1655':'','1656':'','1657':'','1658':'','1659':'','1660':'','1661':'','1662':'','1663':'Youre not part of the contract','1664':'Enter Contract','1665':'Enter the contract sent from the contractor','1666':'Enter Contract',
+        
+        /* view job request */
+        '1667':'accept-job-request','1668':'accept','1669':'job','1670':'request','1671':'channel-structure','1672':'comment-structure','1673':'contract','1674':'activity','1675':'activity','1676':'contract','1677':'activity','1678':'Expiry time from now: ','1679':'Payment Option','1680':'Job Description','1681':'Sender ID','1682':'Accepted','1683':'Set Pay','1684':'The requested pay for the job','1685':'','1686':'Payment Option','1687':'Sender ID','1688':'Job Description','1689':'Set Pay','1690':'The amounts youll be receiving for the job.','1691':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1692':'Copied message to clipboard.','1693':'responses','1694':'You','1695':'Type something first.','1696':'You need to make at least 1 transaction to participate.','1697':'Message added to stack.','1698':'The contractor Accepted the job request.','1698a':' ago.','1698b':' In ','1698c':'The job request has already expired.',
+        
+        /* view searched account */
+        '1699':'main-data','1700':'subscription-data','1701':'contract-data','1702':'exchange-data','1703':'creations','1704':'withdraws','1705':'pending-withdraws','1706':'runs','1707':'payments','1708':'cancellations','1709':'entries','1710':'exits','1711':'votes','1712':'swaps','1713':'transfers','1714':'Address','1715':'Ether Balance in Ether','1716':'Ether Balance in Wei','1717':'Last Transaction Block','1718':'Last Transaction age','1719':'Number of entered contracts','1720':'Number of E5 runs','1721':'Balance Search','1722':'Search the accounts balance in a specified exchange','1723':'Exchange ID...','1724':'Balance','1725':'Transaction Runs','1726':'hart containing the total number of E5 runs theyve made over time.','1727':'Y-Axis: Total Runs Made','1728':'X-Axis: Time','1729':'job object','1730':'post object','1731':'shadow object','1732':'storefront bag object','1733':'contractor object','1734':'storefront item object','1735':'storefront object','1736':'account object','1737':'contract object','1738':'token exchange object','1739':'consensus object','1740':'subscription object','1741':'custom object','1742':'channel object','1743':'Object ID','1744':'Block Number','1745':'transaction ID','1746':'Amount in Wei','1747':'Amount in Ether','1748':'Age','1749':'Amount Added in Wei','1750':'Transaction ID','1751':'Transaction Stack Size','1752':'Estimated Gas Consumed','1753':'Included Wei','1754':'Gas Price Paid','1755':'Coinbase (Miner)','1756':'Subscription ID','1757':'Time Units: ','1758':'Subscription ID:  ','1759':'Contract ID','1760':'Contract ID: ','1761':'Proposal ID','1762':'Contract ID: ','1763':'Exchange ID','1764':'Amount Swapped','1765':'Updted Token Exchange Liquidity','1766':'Updated Exchange Ratio X','1767':'Updated Exchange Ratio Y','1768':'Updated Exchange Ratios X:Y','1769':'','1770':'Action: ',
+        
+        /* view transaction log */
+        '1771':'Timestamp','1772':'Transaction Age','1773':'Transaction Block','1774':'Transaction Stack Size','1775':'Gas Consumed','1776':'Sender Account ID','1777':'Sender Account Address','1778':'Included Value in Ether','1779':'Included Value in Wei','1780':'Coinbase Address',
+        
+        /* view transaction page */
+        '1781':'view-transaction','1782':'Stack ID: ','1783':'Type:','1784':'Delete the transaction completely','1785':'Delete','1786':'Confirm Delete Action','1787':'Are you sure?','1788':'Make some changes to the transaction.','1789':'Edit','1790':'If set to shown, the transaction will be included during a run','1791':'If set to hidden, the transaction will be ignored when running your transactions','1792':'Show Transaction','1793':'Hide Transaction','1794':'The transaction is Hidden','1795':'The transaction is Shown','1796':'status','1797':'Item deleted from stack.','1798':'transaction shown','1799':'transaction hidden','1800':'The set access rights setting for your new contract.','1801':'Moderator Accounts','1802':'Youve set ','1803':' moderators','1804':'Interactable Accounts','1805':' accounts','1806':'For ','1807':'The set access rights setting for your new token.','1808':'Capped','1809':'Uncapped','1810':'2 (Main Contract)','1811':'Fixed','1812':'Spread','1813':'Token Identifier','1814':'Token Type','1814':'Unlocked Supply','1815':'Unlocked Liquidity','1816':'Fully Custom','1817':'Mint Limit','1818':'Authority: ','1819':'Exchange Authority Identifier','1820':'Target: ','1821':'Trust Fee Target Identifier','1822':'Mint/Burn Token','1823':'Authority Mint Limit (percentage of supply)','1824':'Current Block Mint Total','1825':'Active Block Limit Reduction Proportion','1826':'The set access rights setting for your new contract','1827':'non-cancellable','1828':'cancellable','1829':'Block ID','1830':'Authority ID','1831':'Minimum Buy Amount','1832':'time-units','1833':'Subscription Type','1834':'Maximum Buy Amount','1835':'time-units','1836':'Minimum Cancellable Amount','1837':'Time Unit','1838':'Remaining Subscription Time','1839':'Subscription Beneficiary','1840':'Entry Fees','1841':' tokens used','1842':'Price Amounts','1843':'The amounts you are offering for the job.','1844':'The set access rights setting for your new channel','1845':'The items variant details are shown below','1846':'Number of Units','1847':'Your account ID: ','1848':'Amount','1849':'Your Balance','1850':'Selected Action','1851':'Target Recipient Account','1852':'Enter Contract Until: ','1853':'Entry Exipry Time','1854':'Time remaining','1855':'Below are the individual transfer actions.','1856':'Transfer actions','1857':'recipient account: ','1858':'Extend Stay In Contract Until: ','1859':'New Exipry Time','1860':'Time remaining','1861':'Consensus Type','1862':'Proposal Expiry time','1863':'Proposal expiry time from now','1864':'Proposal Submit Expiry time','1865':'Proposal submit expiry time from now','1866':'','1867':'','1868':'','1869':'','1870':'','1871':'','1872':'','1873':'','1874':'Contract Authority ID','1875':'Modify Target','1876':'target: ','1877':', token ID: ','1878':'Modify Target','1879':'position','1880':'units','1881':'proportion','1882':'duration','1883':'value: ','1884':'target ID','1885':'tokens','1886':'Receiver ID: ','1887':'Your set vote for the proposal','1888':'Bounty Exchange ID: ','1889':'Time Units','1890':'Token ID: ','1891':'Time Unit','1892':'Time Units To Cancel','1893':'Total Collectible Time','1894':'Total Collectible Time Units','1895':'Token ID: ','1896':'Modify Subscription Action','1897':' action added','1898':'Modify Target','1899':'position','1900':'Modify Contract Action','1901':' actions added','1902':'Modify Target','1903':'position','1904':'units','1905':'Modify Token Exchange Action','1906':' actions added','1907':'Modify Target','1908':'position','1909':'Exchange Transfer Action','1910':'Receiver ID:','1911':'Force Exit Action','1912':'Archive Action','1913':' bounty exchanges included','1914':'Bounty Exchange ID: ','1915':'Default     depth 0','1916':'Freeze/Unfreeze Action','1917':' actions included','1918':'Target Account ID: ','1919':'Authmint Actions','1920':'Target Recipient ID: ','1921':'Access Rights Actions','1922':' actions included','1923':'Target: ','1924':'Target: Revoke Moderator Privelages','1925':', time from now: ','1926':' messages included','1927':'Selected Contract','1928':'The contract you picked for the application action','1929':'Selected Expiry Time','1930':'The expiry time you picked for the application action','1931':'Set Prices','1932':'The amounts youre youll be charging for the job','1933':' items','1934':'in your bag.','1935':'items','1936':' units in ','1937':'Edit','1938':'Selected Contract','1939':'The contract you picked for the fulfilment action','1940':'Selected Expiry Time','1941':'The expiry time you picked for the fulfilment action','1942':'Estimated Delivery time','1943':'The payment option you prefer','1944':'The amounts youre youll be charging for the bag fulfilment','1945':'Contract ID: ','1946':'Sender ID: ','1947':'Expiry time from now: ','1948':'Shipping Details','1949':'Number of Units ordered in ','1950':'Number of Units','1951':'Purchase Amounts','1952':'This is the final amount for the price of the item your buying','1953':'Shipping Fee','1954':'The charged shipping fee for buying the items','1955':'Collected Signatures','1956':'Below are the collected signatures from your direct purchases','1957':'Delete','1958':'Variant ID: ','1959':'Received Signature','1960':'The expiry time you picked for the application action','1961':'Set Description','1962':'Set Prices','1963':'The amounts youll be charging for the job','1964':'Selected Contract','1965':'The contract you picked for the job.','1966':'Set Description','1967':'Set Prices','1968':'The amounts youll be receiving for the job','1969':'Reset Alias.','1970':'Price Amounts','1971':'The amounts you are offering for the job.','1972':'Item Variants','1973':'The items variant details are shown below','1974':'Multiplier','1975':'message:','1976':'Total amount of spend','1977':'Custom Amounts','1978':'Your included custom amounts for the award action.','1979':'Depth-mint Actions',
+        
+        /* wiki page */
+        '1980':'One more step.','1981':'You need to set your wallet and fill it with some ether','1982':'The wallet section is in the settings-data...','1983':'Under the Wallet tag...','1984':'Then afterwards fill it with the E5s ether of your choice','1985':'Action Required','1986':'You need to set your wallet first','1987':'The wallet section is in the stack page...','1988':'In the settings-data section...','1989':'Under the Wallet tag...',
+        
+        /* withdraw ether page */
+        '1990':'withdraw-ether','1991':'pending-withdraws','1992':'withdraw-history','1993':'withdraw-ether','1994':'Withdraw','1995':'withdraw-ether','1996':'pending-withdraws','1997':'withdraw-history','1998':'Your withdraw balance is shown below','1999':'Withdraw balance','2000':'Withdraw balance in Wei','2001':'Withdraw balance in Ether','2002':'Impact','2003':'Receiver Wallet Address','2004':'Set Receiver Address Here','2005':'Set My Address','2006':'Withdraw Transaction Expiry Duration','2007':'The duration of time after which your withdrawal transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','2008':'Estimated Time.','2009':'Transaction Gas Price','2010':'The gas price for your next run with E5. The default is set to the amount set by the network.','2011':'Transaction Gas Price in Wei','2012':'Transaction Gas Price in Gwei','2013':'Network Gas Price in Wei','2014':'Network Gas Price in Gwei','2015':'Please set your wallet first.','2016':'Please set a valid receiver','2017':'You cant withdraw 0 ether.','2018':'Withdraw Ether Confirmation','2019':'Confirm that you want to withdraw Ether to the set address','2020':'Withdraw balance in Wei','2021':'Withdraw balance in Ether','2022':'Target Wallet Address','2023':'Withdraw Ether','2024':'Copied address to clipboard','2025':'transaction ID','2026':'target','2027':'Amount Added in Wei',
+        
+        /* bag details section */
+        '2028':'metadata','2029':'responses','2030':'activity','2031':'Pin the bag for future reference.','2032':'Pin the Bag Order.','2033':'','2034':'','2035':'','2036':'','2037':'','2038':'','2039':'','2040':'','2041':'','2042':'Pin/Unpin Bag','2043':'Fulfil the delivery request for the sender account','2044':'Fulfil Bag','2045':'Sender Account','2046':'Bag ID: ','2047':'ago','2048':'Store ID:','2049':' ordered.','2050':'Variant Description','2051':'Pick-up Location','2052':'In ','2053':'Bag Responses','2054':'Expiry time from now: ','2055':'Contract ID: ','2056':'Sender ID: ','2057':'Accepted','2058':'The bag owner picked this fulfilment application','2059':'Expiry time from now: ','2060':'ontract ID: ','2061':'Sender ID: ','2062':'Shopping Bag Acivity','2063':'Copied message to clipboard.','2064':' responses',
+        
+        /* channel details section */
+        '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101':'The channel has been locked by its moderators.','2102':'In Channel','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
+        
+        /* contract details section */
+        '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay','2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account',
+        
+        /* contractor detail section */
+        '2215':'details','2216':'job-requests','2217':'Fees Per Hour','2218':'The amounts they charge per hour for their work.','2219':'Send Job Request.','2220':'Send a job request to the contractor to do a job for you.','2221':'Send Request','2222':'Pin the contractor to your feed.','2223':'Pin Contractor','2224':'Pin/Unpin Contractor','2225':'Edit Contractor Post','2226':'Change the basic details for your Contractor Post','2227':'Perform Action','2228':'Job Requests','2229':'Job Description','2230':'Accepted','2231':'Expiry time from now: ',
+        
+        /* E5 details section */
+        '2232':'details','2233':'End Balance of Burn Account','2234':'E5 Ether balance in Ether','2235':'E5 Ether balance in Wei','2236':'Last Transaction Block','2237':'Last Transaction age','2238':'Number of entered contracts','2239':'Number of E5 runs','2240':'Withdraw balance','2241':'Withdraw your Ether to a specified address','2242':'Withdraw Ether','2243':'Withdraw','2244':'E5','2245':'Main','2246':'E5 Address:','2247':'Vote Bounty Split Proportion','2248':'Minimum End Contract Amount','2249':'E5 block invocation Limit','2250':'E5 time invocation Limit','2251':'Minimum Entered Contracts for Consensus Participation','2252':'','2253':'Tag Indexing Limit','2254':'Minimum Transaction Count for Consensus Particiation','2255':'Gas Anchor Price','2256':'Transaction Gas Reduction Proportion','2257':'Transaction Gas Anchor Price','2258':'Transaction Gas Lower Limit','2259':'Absolute Proposal Expiry Duration Limit','2260':'Primary Transaction Account','2261':'Primary Account Transaction Period','2262':'Subscriptions Created','2263':'Chart containing the total number of subscriptions made over time.','2264':'','2265':'','2266':'','2267':'','2269e':'Y-Axis: Total Subscriptions Made','2269':'X-Axis: Time','2270':'Total Subscriptions','2271':'subscriptions','2272':'Contracts Created','2273':'Chart containing the total number of contracts made over time.','2274':'Y-Axis: Total Contracts Made','2275':'X-Axis: Time','2276':'Total Contracts','2277':'contracts','2278':'Proposals Created','2279':'Chart containing the total number of proposals made over time.','2280':'Y-Axis: Total Proposals Made','2281':'Total Proposals','2282':'proposals','2283':'Exchanges Created','2284':'Chart containing the total number of exchanges made over time.','2285':'Y-Axis: Total Exchanges Made','2286':'Total Exchanges','2287':'exchanges','2288':'Indexed Posts Created','2289':'Chart containing the total number of indexed posts made over time.','2290':'Y-Axis: Total Posts Made','2291':'Total Posts','2292':'posts','2293':'Indexed Channels Created','2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs',
+        
+        /* end detail section */
+        '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Transfer some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy.','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions','2370':'Perform Action','2371':'Edit Token Post','2372':'Change the basic details for your Token Post','2373':'Perform Action','2374':'0 (Burn Account)','2375':'ID: ','2376':'Token Identifier','2377':'Token Type','2378':'Block Number','2379':'Exchanges Liquidity','2380':'Buy/Sell Token','2381':'Tokens Total Supply','2382':'The Market Capitalization of the token in its respective denominations.','2383':'Token Market Cap','2384':'Depth-Mint Tokens','2385':'Mint your token from outside its exchange.','2386':'Depth-Mint','2387':'Y-Aggregate','2388':'Chart containing the y-aggregate of ','2389':' over time.','2390':'Y-Axis: Y-aggregate','2391':'X-Axis: Time','2392':'Total Transactions','2393':'Chart containing the total number of buy/sell transactions over time.','2394':'Y-Axis: Total Transactions','2395':'Total Transactions','2396':'Exchange Liquidity','2397':'Chart containing the total supply of ','2398':' in the exchange over time.','2399':'Y-Axis: Exchange Liquidity','2400':'Action','2401':'Amount Swapped','2402':'Updted Token Exchange Liquidity','2403':'Updated Exchange Ratio X','2404':'Updated Exchange Ratio Y','2405':'Updated Exchange Ratios X:Y','2406':'Set an accounts access rights, moderator privelages or block an account','2407':'In Exchange ','2408':'Updated Exchange Ratio Events','2409':'Buy','2410':'Sell','2411':'Swapping Account ID','2412':'Your Transfer Events','2413':'Action: ','2414':'Exchange Modification Events','2415':'Modifier','2416':'Targeted Modify Item','2417':'target ID','2418':'Exchange Transfer Events','2419':'To: ','2420':'From: ','2421':'Action: ','2422':'New Balance ','2423':'Action: Freeze','2424':'Action: Unfreeze','2425':'Amount, depth: ','2426':'Exchange Modify Moderator Events','2427':'Not Moderator','2428':'Moderator','2429':'Targeted Account','2430':'Moderator Account','2431':'Authority value','2432':'','2432':'Exchange Access Rights Settings Events','2433':'Access Rights Disabled(Public)','2434':'Access Rights Enabled(Private)','2435':'Access Rights Status','2436':'Moderator Account','2437':'Exchange  Account Access Settings Events','2438':'Targeted Account','2439':'Moderator Account','2440':'In Exchange ','2441':'Exchange  Blocked Account Events','2442':'Targeted Account','2443':'Moderator Account','2444':'Exchange  Depth-Mint Events','2445':'Targeted Receiver','2446':'Moderator Sender','2447':'Amount, depth: ',
+        
+        /* ethers details section */
+        '2448':'transactions','2449':'Reload wallet.','2450':'Your Balance in Wei','2451':'Your Balance in Ether','2452':'Transactions (2.3M Gas average)','2453':'Gas Price in Wei','2454':'Gas Price in Gwei','2455':'E5 txs/ether (2.3M Gas average)','2456':'Gas txs/ether (23K Gas average)','2457':'Send/Receive Ether','2458':'Send or receive ether from a specified account.','2459':'Send/Receive','2460':'Node Settings','2461':'Change the remote procedure call (RPC) provider setting for making your transactions.','2462':'Open','2463':'Wallet Status','2464':'Syncronizing wallet, please wait...','2465':'Wallet sync failed. Please reload the wallet.','2466':'Wallet Status','2467':'Syncronized.','2468':'Chain ID','2469':'Gas Limit per Block','2470':'Base Fee in wei','2471':'Base Fee in gwei','2472':'Your Address','2473':'Average block time for the last 5 blocks','2474':'Wallet Address','2475':'copied address to clipboard','2476':' seconds','2477':'Gas Used','2478':'Gas Price Paid in Wei','2479':'Gas Price Paid in Gwei','2480':'Value','2481':'Number of Blocks Mined',
+        
+        /* job details section */
+        '2482':'Price Amounts','2483':'The amounts they are offering for the job.','2484':'Apply for the job','2485':'Respond to the ad with a contract and apply for the job.','2486':'Apply','2487':'Pin the job to your feed.','2488':'Pin Job','2489':'Pin/Unpin Job','2490':'Edit Job Post','2491':'Change the basic details for your Job Post','2492':'Perform Action','2493':'Block Number','2494':'age','2495':'ago','2496':'In ','2497':'Job Responses','2498':'Expiry time from now: ','2499':'Contract ID: ','2500':'Sender ID: ','2501':'Accepted','2502':'The job owner picked this application','2503':'Expiry time from now: ','2504':'Contract ID: ','2505':'Sender ID: ','2506':'Copied message to clipboard','2507':'responses','2507a':'Reply',
+        
+        /* list section */
+        '2508':'That ID is not valid.','2509':'Searching...','2509a':'Enter Name or Symbol...',
+        
+        /* mail details section */
+        '2510':'data','2512':' with ','2513':'Conversation.',
+        
+        /* post detail section */
+        '2514':'awards','2515':'Pin the post to your feed','2516':'Pin Post','2517':'Pin/Unpin Post','2518':'Edit Indexed Post','2519':'Change the basic details for your Indexed Post','2520':'Perform Action','2521':'Give Award','2522':'Send a tip to the posts author','2523':'Send Award','2524':'In ','2525':'Awards.','2526':'Comments.',
+        
+        /* proposal details section */
+        '2527':'proposal-actions','2528':'Consensus Achieved.','2529':'Status','2530':'Consensus Pending.','2531':'Pin the proposal to your feed','2532':'Pin Proposal','2533':'Pin/Unpin Proposal','2534':'Vote in Proposal','2535':'Cast a vote in this proposal and collect some bounty.','2536':'Vote Proposal','2537':'Submit Proposal','2538':'Submit the proposal to perform its actions','2539':'Proposal Submitted','2540':'The proposal has been submitted by its author.','2541':'Proposal Unsubmitted','2542':'The proposal has not been submitted by its author.','2543':'Proposal Archived','2544':'The proposal has been archived by its author.','2545':'Proposal Not Archived','2546':'The proposal has not been archived by its author','2547':'Archive Proposal','2548':'Delete the proposals data to free up space in the blockchain','2549':'Age of Proposal','2550':'Consensus Majority Target Proportion','2551':'Proposal Transfer Events','2552':'In Proposal ','2553':', depth: ','2554':'Proposal Vote Events','2555':'Yes!','2556':'Wait..','2557':'No.','2558':'Contract ID',
+        
+        /* spend details section */
+        '2559':'updated-proportion-ratios','2560':'Mint or Dump the token for a specified account.','2561':'Mint/Dump','2562':'Make a token transfer to a specified account.','2563':'Send/Transfer','2564':'The exchanges balance for each of the tokens used to buy ','2565':'Buy Token Liquidity','2566':'Author Moderator Privelages Disabled','2567':'Author of Object is not a Moderator by default','2568':'Author Moderator Privelages Enabled','2569':'Author of Object is a Moderator by default','2570':'The amount you get when selling one unit of the token.','2571':'Token Price','2572':'Modify Exchanage','2573':'AuthMint Tokens','2574':'Bypass the exchanges restrictions and mint your token as an authority','2575':'AuthMint','2576':'Set an accounts access rights, moderator privelages or block an account','2577':'Chart containing the block limit reduction proportion over time.','2578':'Y-Axis: Proportion','2579':'Circulating Supply','2580':'Total Supply','2581':'Y-Axis: Total Supply','2582':'Total Transactions','2583':'Chart containing the total number of buy/sell transactions over time.','2584':'Y-Axis: Total Transactions','2585':'X-Axis: Time','2586':'Exchange Mint Limit Proportion Ratio Events','2587':'Tokens Received','2588':'Updated Active Limit','2589':'Exchange Modification Events','2590':'Targeted Modify Item','2591':'Exchange Transfer Events','2592':'Update Balance Events','2593':'Receiver Account','2594':'Freeze-Unfreeze Events','2595':'Action: Freeze','2596':'Action: Unfreeze','2597':'Authority Account','2598':'Exchange Modify Moderator Events','2599':'Exchange Account Access Settings Events','2600':'Targeted Account','2601':'Moderator Account','2602':'Exchange Blocked Account Events','2602a':'Active Mint Limit.',
+        
+        /* storefront details section */
+        '2603':'direct-purchases','2604':'unfulfilled','1605':'fulfilled','2606':'Set Denomination','2607':'Author Seller','2608':'Target Payment Recipient','2609':'Fulfilment Accounts','2610':'The accounts involved with shipping and fulfilling direct purchase orders from clients.','2611':'Fulfilment Location','2612':' variants','2613':'To choose from.','2614':'Pin the storefront item to your feed.','2615':'Pin Item','2616':'Pin/Unpin Item','2617':'Activity Section Enabled','2618':'You can leave a product review message in the activity section','2619':'Activity Section Disabled','2620':'The activity section has been disabled by the storefront owner.','2621':'In Stock','2622':'The item is available for purchasing.','2623':'Out of Stock','2624':'The item is not available for purchasing.','2625':'Add the item to your shopping bag.','2626':'Add to Bag','2627':'Purchase the item directly from the seller.','2628':'Direct Purchase','2629':'Purchase','2630':'Edit Storefront Post','2631':'Change the basic details for your Storefront Post','2632':'Edit Item','2633':'Block Number','2634':'Direct Purchases','2635':', Sender Account ID: ','2636':'Fulfilent Signature: ','2637':', Client ID: ','2638':'Clear Purchase','2639':'Fulfilment Signature: ','2640':'Signature Data: ','2641':'Signature Address: ','2642':'The activity section has been disabled.',
+        
+        /* subscription details section */
+        '2643':'search','2644':'payments','2645':'cancellations','2646':'collections','2647':'modifications','2648':'Pay Subscription','2649':'Pay for the subscription for your account','2650':'Pin the subscription to your feed','2651':'Pin Subscription','2652':'Pin/Unpin Subscription','2653':'Author Moderator Privelages Disabled','2654':'Author of Object is not a Moderator by default','2655':'Author Moderator Privelages Enabled','2656':'Author of Object is a Moderator by default','2657':'Cancel Subscription','2658':'Cancel your subscription payment and receive your tokens back','2659':'Collect Subscription','2660':'Collect the subscription payments from the subscription account','2661':'Modify Subscription','2662':'Modify the configuration of the subscription.','2663':'Perform Moderator Actions','2664':'Set an accounts access rights, moderator privelages or block an account','2665':'Perform Action','2666':'In Subscription ','2667':'Subscription Transfer Events','2668':'Pay Subscription Events','2669':'Search account ID...','2670':'Paying Account','2671':'Cancel Subscription Events','2672':'Cancelling Account','2673':'Collect Subscription Events','2674':'Collecting Account','2675':'Total Time Units Collected','2676':'units','2677':'Modify Subscription Events','2678':'Subscription Modify Moderator Events','2679':'Subscription Access Rights Settings Events','2680':'Subscription Account Access Settings Events','2681':'Subscription Blocked Account Events','2682':'Search Subscription Payment','2683':'Remaining Subscription Time','2684':'Remaining Time Units (As of Now)','2685':'time-units','2686':'Latest Payment Time','2687':'Latest Payment Block','2688':'First Payment Time','2689':'First Payment Block','2690':'Highest Time Units Paid For ','2691':'Lowest Time Units Paid For ','2692':'Time Units Paid For','2693':'Chart containing the amount in time units that have been accumulated.','2694':'Y-Axis: Time Units','2695':'X-Axis: Time',
+        
+        /* App page */
+        '2696':'comment','2697':'review','2698':'Stack cleared.','2699':'Your next run might fail with its current stack.','2700':'Run complete.','2701':'Your transaction was reverted.','2702':'Contact Deleted','2703':'You cant do that more than once.','2704':'Transaction added to stack.','2705':'You cant do that more than once.','2706':'unalias','2707':'unreserve','2708':'identification','2709':'Unreserve transaction added to stack','2710':'re-alias','2711':'You cant do that more than once.','2712':'reserve','2713':'Reset transaction added to stack','2714':'Blocked account removed','2715':'Your account was blocked from entering the contract.','2716':'cart','2717':'clear','2718':'finalize','2719':'purchase','2720':'The contract owner hasnt granted you access to their contract yet.','2721':'Your account was blocked from entering the contract','2722':'Withdrawing your ether...','2723':'withdraw complete!','2724':'Withdraw failed. Something went wrong','2725':'milliseconds','2726':'offline','2727':'syncronized.','2728':'Send complete.','2729':'send failed, ','2730':'Reloading your wallet...','2731':'A matching blocked account was found','2732':'You cant block yourself!','2733':'Adding account ID to blocked list...','2734':'A matching contact was found','2735':'You cant add yourself.','2736':'Adding account ID to Contacts...','2737':'Search complete, no account data found','2738':'Not available in your region yet.','2739':'','2740':'','2741':'','2742':'','2743':'','2744':'','2745':'','2746':'','2747':'','2748':'','2749':'','2750':'','2751':'','2752':'','2753':'','2754':'','2755':'','2756':'','2757':'','2758':'','2759':'','2760':'','2761':'','2762':'','2763':'','2764':'','2765':'','2766':'','2767':'','2768':'','2769':'','2770':'','2771':'','2772':'','2773':'','2774':'','2775':'','2776':'','2777':'','2778':'','2779':'','2780':'','2781':'','2782':'','2783':'','2784':'','2785':'','2786':'','2787':'','2788':'','2789':'','2790':'','2791':'','2792':'','2793':'','2794':'','2795':'','2796':'','2797':'','2798':'','2799':'','2800':'','2801':'','2802':'','2803':'','2804':'','2805':'','2806':'','2807':'','2808':'','2809':'','2810':'','2811':'','2812':'','2813':'','2814':'','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+      }
+      //this.props.app_state.loc['']
+    }
+
+    if(!accepted_languages.includes(language)) return obj['en']
+    return obj[language]
+  }
+
 
   constructor(props) {
     super(props);
@@ -880,6 +1118,11 @@ class App extends Component {
     this.resize();
 
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':100_000, 'fast':20_000}
+    obj[this.getLocale()['1421']/* sluggish */] = 1000_000
+    obj[this.getLocale()['1422']/* slow */] = 500_000
+    obj[this.getLocale()['1423']/* average */] = 100_000
+    obj[this.getLocale()['1424']/* fast */] = 20_000
+
     this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
 
     this.get_key()
@@ -899,6 +1142,10 @@ class App extends Component {
   reset_background_sync(){
     clearInterval(this.interval);
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':100_000, 'fast':20_000}
+    obj[this.getLocale()['1421']/* sluggish */] = 1000_000
+    obj[this.getLocale()['1422']/* slow */] = 500_000
+    obj[this.getLocale()['1423']/* average */] = 100_000
+    obj[this.getLocale()['1424']/* fast */] = 20_000
     this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
   }
 
@@ -922,7 +1169,7 @@ class App extends Component {
                 : value // return everything else unchanged));
     )
 
-    if(this.state.storage_permissions =='enabled'){
+    if(this.state.storage_permissions == this.getLocale()['1428']/* 'enabled' */){
       this.update_data_in_db(x)
       this.setState({index_db_size: this.lengthInUtf8Bytes(x)})
     }else{
@@ -1191,6 +1438,8 @@ class App extends Component {
     var userCountry;
     var userTimeZone;
 
+    console.log(timeZoneCityToCountry)
+
     if (Intl) {
       userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       var tzArr = userTimeZone.split("/");
@@ -1273,9 +1522,10 @@ class App extends Component {
         const data = await response.text();
         var e5_address_obj = JSON.parse(data);
         console.log(e5_address_obj)
-      } catch (error) {
-        console.log('Error fetching data: ', error)
-      }
+    } catch (error) {
+      console.log('Error fetching data: ', error)
+    }
+
   }
 
   init_db = async () => {
@@ -1353,6 +1603,21 @@ class App extends Component {
     }
   }
 
+  is_allowed_in_e5(){
+    var obj = ['United States', 'Kenya']
+    var user_country = this.get_country()
+
+    if(!obj.includes(user_country)){
+      var me = this;
+      setTimeout(function() {
+          me.prompt_top_notification(me.getLocale()['2738']/* 'Not available in your region yet.' */, 100000)
+      }, (2 * 1000));
+      
+      return false
+    }
+    return true
+  }
+
 
 
 
@@ -1364,8 +1629,10 @@ class App extends Component {
   background_sync(){
     if(this.state.accounts[this.state.selected_e5] != null){
       // this.get_accounts_data(this.state.account, false, this.state.web3, this.state.e5_address)
-      this.start_get_accounts_data(false)
+      if(this.is_allowed_in_e5()) this.start_get_accounts_data(false)
     }
+
+    this.reset_theme()
   }
 
 
@@ -1417,6 +1684,11 @@ class App extends Component {
     var detail_object_w = 400;
     
     this.setState({height: window.screen.availHeight, width: window.screen.availWidth});
+    
+    var me = this;
+    setTimeout(function() {
+        me.setState({size:me.getScreenSize()})
+    }, (1 * 1000));
   }
 
   /* gets the screensize in three categories, small medium and large */
@@ -1453,9 +1725,9 @@ class App extends Component {
 
   get_theme_data(theme){
     //this.props.theme['']
-    if(theme == 'light'){
+    if(theme == this.getLocale()['1417']/* 'light' */){
       return{
-        'name':'light',
+        'name':this.getLocale()['1417']/* 'light' */,
         'bar_shadow':'#CECDCD','bar_color':'#444444', 'bar_background_color':'#919191','nav_bar_color':'#444444',
         
         'homepage_background_color':'#F1F1F1','syncronizing_page_background_color':'#F1F1F1','send_receive_ether_background_color':'#F1F1F1','send_receive_ether_overlay_background':'#474747','send_receive_ether_overlay_shadow':'#CECDCD',
@@ -1474,9 +1746,9 @@ class App extends Component {
         'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':AlertIcon, 'add_icon':AddIcon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white'
       }
     }
-    else if(theme == 'dark'){
+    else if(theme == this.getLocale()['1418']/* 'dark' */){
       return{
-        'name':'dark',
+        'name':this.getLocale()['1418']/* 'dark' */,
         'bar_shadow':'#919191','bar_color':'white', 'bar_background_color':'#919191','nav_bar_color':'#444444',
         
         'homepage_background_color':'#292929','syncronizing_page_background_color':'#292929','send_receive_ether_background_color':'#292929','send_receive_ether_overlay_background':'#424242','send_receive_ether_overlay_shadow':'#424242',
@@ -1495,6 +1767,25 @@ class App extends Component {
         'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':AlertIconDark, 'add_icon':AddIconDark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black'
       }
     }
+    else if(theme == this.getLocale()['1593a']/* 'auto' */){
+      var obj = this.get_theme_data(this.get_time_of_day_theme())
+      obj['name'] = this.getLocale()['1593a']/* 'auto' */
+
+      return obj
+    }
+  }
+
+  get_time_of_day_theme(){
+    var hour = new Date().getHours() 
+    if(hour >= 18 || hour < 7){
+      return this.getLocale()['1418']/* 'dark' */
+    }else{
+      return this.getLocale()['1417']/* 'light' */
+    }
+  }
+
+  reset_theme(){
+    this.setState({theme: this.get_theme_data(this.state.theme['name'])})
   }
 
 
@@ -1629,13 +1920,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'mail-messages' && stack[i].e5 == message['e5']){
+      if(stack[i].type == this.getLocale()['1509']/* 'mail-messages' */ && stack[i].e5 == message['e5']){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'mail-messages', entered_indexing_tags:['send', 'mail'], messages_to_deliver:[], e5:message['e5']}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1509']/* 'mail-messages' */, entered_indexing_tags:[this.getLocale()['1369']/* 'send' */, this.getLocale()['1201']/* 'mail' */], messages_to_deliver:[], e5:message['e5']}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1649,13 +1940,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'channel-messages' && stack[i].e5 == this.state.selected_e5){
+      if(stack[i].type == this.getLocale()['1510']/* 'channel-messages' */ && stack[i].e5 == this.state.selected_e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'channel-messages', entered_indexing_tags:['send', 'channel','messages'], messages_to_deliver:[], e5:this.state.selected_e5}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1510']/* 'channel-messages' */, entered_indexing_tags:[this.getLocale()['1369']/* 'send' */, this.getLocale()['109']/* 'channel' */,this.getLocale()['2094']/* 'messages' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1669,13 +1960,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'post-messages' && stack[i].e5 == this.state.selected_e5){
+      if(stack[i].type == this.getLocale()['1511']/* 'post-messages' */ && stack[i].e5 == this.state.selected_e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'post-messages', entered_indexing_tags:['send', 'post','comment'], messages_to_deliver:[], e5:this.state.selected_e5}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1511']/* 'post-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['297']/* 'post' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1689,13 +1980,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'job-messages' && stack[i].e5 == this.state.selected_e5){
+      if(stack[i].type == this.getLocale()['1514']/* 'job-messages' */ && stack[i].e5 == this.state.selected_e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'job-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[], e5:this.state.selected_e5}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1514']/* 'job-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1309']/* 'job' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1709,13 +2000,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'proposal-messages' && stack[i].e5 == this.state.selected_e5){
+      if(stack[i].type == this.getLocale()['1515']/* 'proposal-messages' */ && stack[i].e5 == this.state.selected_e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'proposal-messages', entered_indexing_tags:['send', 'job','comment'], messages_to_deliver:[], e5:this.state.selected_e5}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1515']/* 'proposal-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1309']/* 'job' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1729,13 +2020,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'bag-messages' && stack[i].e5 == this.state.selected_e5){
+      if(stack[i].type == this.getLocale()['1501']/* 'bag-messages' */ && stack[i].e5 == this.state.selected_e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'bag-messages', entered_indexing_tags:['send', 'bag','comment'], messages_to_deliver:[], e5:this.state.selected_e5}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1501']/* 'bag-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1045']/* 'bag' */,this.getLocale()['2696']/* 'comment' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1749,13 +2040,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'storefront-messages' && stack[i].e5 == this.state.selected_e5){
+      if(stack[i].type == this.getLocale()['1502']/* 'storefront-messages' */ && stack[i].e5 == this.state.selected_e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'storefront-messages', entered_indexing_tags:['send', 'storefront','message','review'], messages_to_deliver:[], e5:this.state.selected_e5}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1502']/* 'storefront-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */, this.getLocale()['1215']/* 'storefront' */,this.getLocale()['1158']/* 'message' */,this.getLocale()['2697']/* 'review' */], messages_to_deliver:[], e5:this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -1796,7 +2087,7 @@ class App extends Component {
   }
 
   enable_tabs(){
-    this.setState({visible_tabs: 'enabled'})
+    this.setState({visible_tabs: this.getLocale()['1428']/* 'enabled' */})
     var me = this;
     setTimeout(function() {
         me.set_cookies()
@@ -1816,7 +2107,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={50} onChange={this.open_syncronizing_page_bottomsheet.bind(this)} open={this.state.syncronizing_page_bottomsheet} onTransitionEnd={this.keep_syncronizing_page_open()}  style={{'z-index':'3'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'grey'}}>
           <div style={{ height: this.state.height, 'background-color': background_color, 'margin': '0px 0px 0px 0px', 'padding':'10px 10px 0px 10px', 'overflow-y':'auto'}}>
-            <Syncronizing_page sync_progress={this.state.syncronizing_progress} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} />
+            <Syncronizing_page sync_progress={this.state.syncronizing_progress} app_state={this.state} theme={this.state.theme} close_syncronizing_page={this.close_syncronizing_page.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     );
@@ -2004,7 +2295,7 @@ class App extends Component {
 
   clear_transaction_stack(){
     this.setState({stack_items: []})
-    this.prompt_top_notification('stack cleared.', 1700)
+    this.prompt_top_notification(this.getLocale()['2698']/* 'stack cleared.' */, 1700)
   }
 
 
@@ -2045,7 +2336,7 @@ class App extends Component {
         console.log('---------------------calculate_gas_with_e-------------------------')
         console.log(gasAmount)
         if(gasAmount == null){
-          me.prompt_top_notification('Your next run might fail with its current stack', 4000)
+          me.prompt_top_notification(this.getLocale()['2699']/* 'Your next run might fail with its current stack' */, 4000)
         }
         var clone = structuredClone(me.state.calculated_gas_figures)
         clone[me.state.selected_e5] = gasAmount
@@ -2065,7 +2356,7 @@ class App extends Component {
 
     var v5/* t_limits */ = [100000000000000, run_expiry_time];
     var network_gp = await web3.eth.getGasPrice()
-    var run_gas_price = (_run_gas_price == null || _run_gas_price == 0 || _run_gas_price > 100**18) ? network_gp : run_gas_price
+    var run_gas_price = (_run_gas_price == null || _run_gas_price == 0 || _run_gas_price > 100**18) ? network_gp : _run_gas_price
     console.log("gasPrice: "+run_gas_price);
     const gasLimit = run_gas_limit;
 
@@ -2090,13 +2381,13 @@ class App extends Component {
           // this.start_get_accounts_data(false)
           this.start_get_accounts_for_specific_e5(false, this.state.selected_e5)
           me.reset_gas_calculation_figure(me)
-          this.prompt_top_notification('run complete!', 600)
+          this.prompt_top_notification(this.getLocale()['2700']/* 'run complete!' */, 2600)
         }).on('error', (error) => {
           console.error('Transaction error:', error);
           var clone = structuredClone(this.state.is_running)
           clone[this.state.selected_e5] = false
           me.setState({is_running: clone})
-          this.prompt_top_notification('Your transaction was reverted.', 9500)
+          this.prompt_top_notification(this.getLocale()['2701']/* Your transaction was reverted.' */, 9500)
         });
     })
 
@@ -2184,7 +2475,7 @@ class App extends Component {
       clone[this.state.selected_e5].splice(index, 1); // 2nd parameter means remove one item only
     }
     this.setState({contacts: clone, should_update_contacts_onchain: true})
-    this.prompt_top_notification('Contact Deleted', 700)
+    this.prompt_top_notification(this.getLocale()['2702']/* 'Contact Deleted' */, 1700)
 
     var me = this;
     setTimeout(function() {
@@ -2208,14 +2499,14 @@ class App extends Component {
     var existing_alias_transaction = false
     for(var i=0; i<stack_clone.length; i++){
       if(stack_clone[i].type == 'alias'){
-        this.prompt_top_notification('You cant do that more than once.', 1000)
+        this.prompt_top_notification(this.getLocale()['2703']/* 'You cant do that more than once.' */, 4000)
         existing_alias_transaction = true
         break;
       }
     }
     if(!existing_alias_transaction){
       stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'alias', entered_indexing_tags:['alias', 'reserve', 'identification'], alias:id})
-      this.prompt_top_notification('Transaction added to stack', 1000)
+      this.prompt_top_notification(this.getLocale()['2704']/* 'Transaction added to stack.' */, 1600)
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
     }
@@ -2226,14 +2517,14 @@ class App extends Component {
     var existing_alias_transaction = false
     for(var i=0; i<stack_clone.length; i++){
       if(stack_clone[i].type == 'unalias'){
-        this.prompt_top_notification('You cant do that more than once.', 1000)
+        this.prompt_top_notification(this.getLocale()['2705']/* 'You cant do that more than once.' */, 1000)
         existing_alias_transaction = true
         break;
       }
     }
     if(!existing_alias_transaction){
-      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'unalias', entered_indexing_tags:['unalias', 'unreserve', 'identification'], alias:id['alias']})
-      this.prompt_top_notification('Unreserve transaction added to stack', 1000)
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:this.getLocale()['2706']/* 'unalias' */, entered_indexing_tags:[this.getLocale()['2706']/* 'unalias' */, this.getLocale()['2707']/* 'unreserve' */, this.getLocale()['2708']/* identification' */], alias:id['alias']})
+      this.prompt_top_notification(this.getLocale()['2709']/* 'Unreserve transaction added to stack.' */, 2000)
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
     }
@@ -2243,15 +2534,15 @@ class App extends Component {
     var stack_clone = this.state.stack_items.slice()
     var existing_alias_transaction = false
     for(var i=0; i<stack_clone.length; i++){
-      if(stack_clone[i].type == 're-alias'){
-        this.prompt_top_notification('You cant do that more than once.', 1000)
+      if(stack_clone[i].type == this.getLocale()['2710']/* 're-alias' */){
+        this.prompt_top_notification(this.getLocale()['2711']/* 'You cant do that more than once.' */, 4000)
         existing_alias_transaction = true
         break;
       }
     }
     if(!existing_alias_transaction){
-      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:'re-alias', entered_indexing_tags:['re-alias', 'reserve', 'identification'], alias:id['alias']})
-      this.prompt_top_notification('Reset transaction added to stack', 1000)
+      stack_clone.push({id: makeid(8), e5:this.state.selected_e5, type:this.getLocale()['2710']/* 're-alias' */, entered_indexing_tags:[this.getLocale()['2710']/* 're-alias' */, this.getLocale()['2712']/* 'reserve' */, this.getLocale()['2708']/* 'identification' */], alias:id['alias']})
+      this.prompt_top_notification(this.getLocale()['2713']/* 'Reset transaction added to stack' */, 1000)
       this.setState({stack_items: stack_clone})
       this.set_cookies_after_stack_action(stack_clone)
     }
@@ -2264,7 +2555,7 @@ class App extends Component {
       clone[this.state.selected_e5].splice(index, 1); // 2nd parameter means remove one item only
     }
     this.setState({blocked_accounts: clone, should_update_blocked_accounts_onchain: true})
-    this.prompt_top_notification('Blocked account removed', 1700)
+    this.prompt_top_notification(this.getLocale()['2714']/* 'Blocked account removed' */, 1700)
     
     var me = this;
     setTimeout(function() {
@@ -2542,7 +2833,7 @@ class App extends Component {
     this.open_edit_contractor_bottomsheet()
     if(this.edit_contractor_page.current){
       this.edit_contractor_page.current?.setState(object['ipfs'])
-      this.edit_contractor_page.current?.setState({type:'edit-contractor'})
+      this.edit_contractor_page.current?.setState({type:this.getLocale()['763']/* 'edit-contractor' */})
       this.edit_contractor_page.current?.setState({object_id: object['id']})
       this.edit_contractor_page.current?.set()
     }
@@ -2581,7 +2872,7 @@ class App extends Component {
     this.open_edit_job_bottomsheet()
     if(this.edit_job_page.current){
       this.edit_job_page.current?.setState(object['ipfs'])
-      this.edit_job_page.current?.setState({type:'edit-job'})
+      this.edit_job_page.current?.setState({type:this.getLocale()['764']/* 'edit-job' */})
       this.edit_job_page.current?.setState({object_id: object['id']})
       this.edit_job_page.current?.set()
     }
@@ -2620,7 +2911,7 @@ class App extends Component {
     this.open_edit_post_bottomsheet()
     if(this.edit_post_page.current){
       this.edit_post_page.current?.setState(object['ipfs'])
-      this.edit_post_page.current?.setState({type:'edit-post'})
+      this.edit_post_page.current?.setState({type:this.getLocale()['765']/* 'edit-post' */})
       this.edit_post_page.current?.setState({object_id: object['id']})
       this.edit_post_page.current?.set()
     }
@@ -2659,7 +2950,7 @@ class App extends Component {
     this.open_edit_storefront_bottomsheet()
     if(this.edit_storefront_page.current){
       this.edit_storefront_page.current?.setState(object['ipfs'])
-      this.edit_storefront_page.current?.setState({type:'edit-storefront'})
+      this.edit_storefront_page.current?.setState({type:this.getLocale()['766']/* 'edit-storefront' */})
       this.edit_storefront_page.current?.setState({object_id: object['id']})
       this.edit_storefront_page.current?.set()
     }
@@ -3822,7 +4113,7 @@ class App extends Component {
       this.prompt_top_notification('The contract owner hasnt granted you access to their contract yet', 4000)
     }
     else if(contract['my_blocked_time_value'] > Date.now()/1000){
-      this.prompt_top_notification('Your account was blocked from entering the contract', 4000)
+      this.prompt_top_notification(this.getLocale()['2715']/* 'Your account was blocked from entering the contract.' */, 4000)
     }
     else{
       this.show_enter_contract_bottomsheet(state_obj.application_item['contract'], state_obj)
@@ -3880,218 +4171,218 @@ class App extends Component {
 
 
   open_edit_object_uis(tx){
-    if(tx.type == 'contract'){
+    if(tx.type == this.getLocale()['1130']/* 'contract' */){
         this.open_new_object('1')
         if(this.new_contract_page.current){
           this.new_contract_page.current?.set_state(tx)
         }
     }
-    else if(tx.type == 'token'){
+    else if(tx.type == this.getLocale()['601']/* 'token' */){
         this.open_new_object('8')
         if(this.new_token_page.current){
           this.new_token_page.current?.set_state(tx)
         }
     }
-    else if(tx.type == 'subscription'){
+    else if(tx.type == this.getLocale()['823']/* 'subscription' */){
         this.open_new_object('3')
         if(this.new_subscription_page.current){
           this.new_subscription_page.current?.set_state(tx)
         }
     }
-    else if(tx.type == 'post'){
+    else if(tx.type == this.getLocale()['297']/* 'post' */){
         this.open_new_object('6')
         if(this.new_post_page.current){
           this.new_post_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'job'){
+    else if(tx.type == this.getLocale()['760']/* 'job' */){
         this.open_new_object('0')
         if(this.new_job_page.current){
           this.new_job_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'channel'){
+    else if(tx.type == this.getLocale()['109']/* 'channel' */){
         this.open_new_object('7')
         if(this.new_channel_page.current){
           this.new_channel_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'storefront-item'){
+    else if(tx.type == this.getLocale()['439']/* 'storefront-item' */){
         this.open_new_object('4')
         if(this.new_storefront_item_page.current){
           this.new_storefront_item_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'buy-sell'){
+    else if(tx.type == this.getLocale()['946']/* 'buy-sell' */){
       this.open_mint_token_bottomsheet()
       if(this.new_mint_dump_token_page.current){
         this.new_mint_dump_token_page.current?.setState(tx)
       }
     }
-    else if(tx.type == 'transfer'){
+    else if(tx.type == this.getLocale()['1018']/* 'transfer' */){
       this.open_transfer_token_bottomsheet()
       if(this.new_transfer_token_page.current){
         this.new_transfer_token_page.current?.setState(tx)
       }
     }
-    else if(tx.type == 'enter-contract'){
+    else if(tx.type == this.getLocale()['2125']/* 'enter-contract' */){
       this.open_enter_contract_bottomsheet()
       if(this.enter_contract_page.current){
         this.enter_contract_page.current?.setState(tx)
       } 
     }
-    else if(tx.type == 'extend-contract'){
+    else if(tx.type == this.getLocale()['35']/* 'extend-contract' */){
       this.open_extend_contract_bottomsheet()
       if(this.extend_contract_page.current){
         this.extend_contract_page.current?.setState(tx)
       } 
     }
-    else if(tx.type == 'proposal'){
+    else if(tx.type == this.getLocale()['312']/* 'proposal' */){
       this.open_new_proposal_bottomsheet()
       if(this.new_proposal_page.current){
         this.new_proposal_page.current?.setState(tx)
       } 
     }
-    else if(tx.type == 'vote'){
+    else if(tx.type == this.getLocale()['796']/* 'vote' */){
       this.open_vote_proposal_bottomsheet()
       if(this.vote_proposal_page.current){
         this.vote_proposal_page.current?.setState(tx)
       }
     }
-    else if(tx.type == 'pay-subscription'){
+    else if(tx.type == this.getLocale()['862']/* 'pay-subscription' */){
       this.open_pay_subscription_bottomsheet()
       if(this.pay_subscription_page.current){
         this.pay_subscription_page.current?.setState(tx)
       } 
     }
-    else if(tx.type == 'cancel-subscription'){
+    else if(tx.type == this.getLocale()['821']/* 'cancel-subscription' */){
       this.open_cancel_subscription_bottomsheet()
       if(this.cancel_subscription_page.current){
         this.cancel_subscription_page.current?.setState(tx)
       }
     }
-    else if(tx.type == 'modify-subscription'){
+    else if(tx.type == this.getLocale()['840']/* 'modify-subscription' */){
         this.open_modify_subscription_bottomsheet()
         if(this.modify_subscription_page.current){
           this.modify_subscription_page.current?.setState(tx)
         }
     }   
-    else if(tx.type == 'modify-contract'){
+    else if(tx.type == this.getLocale()['2123']/* 'modify-contract' */){
         this.open_modify_contract_bottomsheet()
         if(this.modify_contract_page.current){
           this.modify_contract_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'modify-token'){
+    else if(tx.type == this.getLocale()['997']/* 'modify-token' */){
         this.open_modify_token_bottomsheet()
         if(this.modify_token_page.current){
           this.modify_token_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'exchange-transfer'){
+    else if(tx.type == this.getLocale()['318']/* 'exchange-transfer' */){
         this.open_exchange_transfer_bottomsheet()
         if(this.exchange_transfer_page.current){
           this.exchange_transfer_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'force-exit'){
+    else if(tx.type == this.getLocale()['48']/* 'force-exit' */){
         this.open_force_exit_bottomsheet()
         if(this.force_exit_page.current){
           this.force_exit_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'archive'){
+    else if(tx.type == this.getLocale()['768']/* 'archive' */){
         this.open_archive_proposal_bottomsheet()
         if(this.archive_proposal_page.current){
           this.archive_proposal_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'freeze/unfreeze'){
+    else if(tx.type == this.getLocale()['930']/* 'freeze/unfreeze' */){
         this.open_freeze_unfreeze_bottomsheet()
         if(this.freeze_unfreeze_page.current){
           this.freeze_unfreeze_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'authmint'){
+    else if(tx.type == this.getLocale()['880']/* 'authmint' */){
         this.open_authmint_bottomsheet()
         if(this.authmint_page.current){
           this.authmint_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'access-rights-settings'){
+    else if(tx.type == this.getLocale()['1265']/* 'access-rights-settings' */){
         this.open_moderator_bottomsheet()
         if(this.moderator_page.current){
           this.moderator_page.current?.setState(tx)
         }  
     }
-    else if(tx.type == 'mail'){
+    else if(tx.type == this.getLocale()['285']/* 'mail' */){
         this.open_new_object('5')
         if(this.new_mail_page.current){
           this.new_mail_page.current?.setState(tx)
         } 
     }  
-    else if(tx.type == 'job-response'){
+    else if(tx.type == this.getLocale()['1307']/* 'job-response' */){
         this.open_respond_to_job_bottomsheet()
         if(this.respond_to_job_page.current){
           this.respond_to_job_page.current?.setState(tx)
         }   
     }
-    else if(tx.type == 'direct-purchase'){
+    else if(tx.type == this.getLocale()['1499']/* 'direct-purchase' */){
       this.open_direct_purchase_bottomsheet()
       if(this.direct_purchase_page.current){
         this.direct_purchase_page.current?.setState(tx)
       } 
     }
-    else if(tx.type == 'contractor'){
+    else if(tx.type == this.getLocale()['1503']/* 'contractor' */){
       this.open_new_object('9')
         if(this.new_contractor_page.current){
           this.new_contractor_page.current?.setState(tx)
         }
       
     }
-    else if(tx.type == 'job-request'){
+    else if(tx.type == this.getLocale()['1363']/* 'job-request' */){
         this.open_send_job_request_bottomsheet()
         if(this.send_job_request_page.current){
           this.send_job_request_page.current?.setState(tx)
         } 
     }
-    else if(tx.type == 'edit-channel'){
+    else if(tx.type == this.getLocale()['753']/* 'edit-channel' */){
       this.open_edit_channel_bottomsheet()
       if(this.edit_channel_page.current){
         this.edit_channel_page.current?.setState(tx)
       }
     }
-    else if(tx.type == 'edit-contractor'){
+    else if(tx.type == this.getLocale()['763']/* 'edit-contractor' */){
       this.open_edit_contractor_bottomsheet()
       if(this.edit_contractor_page.current){
         this.edit_contractor_page.current?.setState(tx)
       }
     }
-    else if(tx.type == 'edit-job'){
+    else if(tx.type == this.getLocale()['764']/* 'edit-job' */){
         this.open_edit_job_bottomsheet()
         if(this.edit_job_page.current){
           this.edit_job_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'edit-post'){
+    else if(tx.type == this.getLocale()['765']/* 'edit-post' */){
         this.open_edit_post_bottomsheet()
         if(this.edit_post_page.current){
           this.edit_post_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'edit-storefront'){
+    else if(tx.type == this.getLocale()['766']/* 'edit-storefront' */){
         this.open_edit_storefront_bottomsheet()
         if(this.edit_storefront_page.current){
           this.edit_storefront_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'edit-token'){
+    else if(tx.type == this.getLocale()['761']/* 'edit-token' */){
         this.open_edit_token_bottomsheet()
         if(this.edit_token_page.current){
           this.edit_token_page.current?.setState(tx)
         }
     }
-    else if(tx.type == 'depthmint'){
+    else if(tx.type == this.getLocale()['898']/* 'depthmint' */){
         this.open_depthmint_bottomsheet()
         if(this.depthmint_page.current){
           this.depthmint_page.current?.setState(tx)
@@ -4114,6 +4405,10 @@ class App extends Component {
       if (index > -1) { // only splice array when item is found
         stack[pos].messages_to_deliver.splice(index, 1); // 2nd parameter means remove one item only
       }
+      if(stack[pos].messages_to_deliver.length == 0){
+        stack.splice(pos, 1)
+        this.open_view_transaction_bottomsheet()
+      }
       this.setState({stack_items: stack})
       this.set_cookies_after_stack_action(stack)
     }
@@ -4130,7 +4425,7 @@ class App extends Component {
     var stack = this.state.stack_items.slice() 
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'storefront-bag'){
+      if(stack[i].type == this.getLocale()['1516']/* 'storefront-bag' */){
         pos = i
         break;
       }
@@ -4237,13 +4532,13 @@ class App extends Component {
     var pos = -1
     var storefront_item_content_channeling = state_obj.storefront_item['ipfs'].content_channeling_setting
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'storefront-bag' && stack[i].e5 == state_obj.e5 && stack[i].content_channeling_setting == storefront_item_content_channeling){
+      if(stack[i].type == this.getLocale()['1516']/* 'storefront-bag' */ && stack[i].e5 == state_obj.e5 && stack[i].content_channeling_setting == storefront_item_content_channeling){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'storefront-bag', entered_indexing_tags:['storefront', 'bag', 'cart'], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1516']/* 'storefront-bag' */, entered_indexing_tags:[this.getLocale()['1215']/* 'storefront' */, this.getLocale()['1045']/* 'bag' */, this.getLocale()['2716']/* 'cart' */], items_to_deliver:[], e5: state_obj.e5, content_channeling_setting: this.state.content_channeling, device_language_setting: this.state.device_language, device_country: this.state.device_country}
       
       tx.items_to_deliver.push(state_obj)
       stack.push(tx)
@@ -4474,13 +4769,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'clear-purchase'){
+      if(stack[i].type == this.getLocale()['1500']/* 'clear-purchase' */){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, e5:state_obj.order_storefront['e5'], id: makeid(8), type: 'clear-purchase', entered_indexing_tags:['clear', 'finalize', 'purchase'], items_to_clear:[]}
+      var tx = {selected: 0, e5:state_obj.order_storefront['e5'], id: makeid(8), type: this.getLocale()['1500']/* 'clear-purchase' */, entered_indexing_tags:[this.getLocale()['2717']/* 'clear' */, this.getLocale()['2718']/* 'finalize' */, this.getLocale()['2719']/* 'purchase' */], items_to_clear:[]}
       tx.items_to_clear.push(state_obj)
       stack.push(tx)
     }else{
@@ -4596,13 +4891,13 @@ class App extends Component {
     var stack = this.state.stack_items.slice()
     var pos = -1
     for(var i=0; i<stack.length; i++){
-      if(stack[i].type == 'job-request-messages' && stack[i].e5 == this.state.selected_e5){
+      if(stack[i].type == this.getLocale()['1505']/* 'job-request-messages' */ && stack[i].e5 == this.state.selected_e5){
         pos = i
         break;
       }
     }
     if(pos == -1){
-      var tx = {selected: 0, id: makeid(8), type:'job-request-messages', entered_indexing_tags:['send','job','request','messages'], messages_to_deliver:[], e5: this.state.selected_e5}
+      var tx = {selected: 0, id: makeid(8), type:this.getLocale()['1505']/* 'job-request-messages' */, entered_indexing_tags:[this.getLocale()['1019']/* 'send' */,this.getLocale()['1309']/* 'job' */,this.getLocale()['1366']/* 'request' */], messages_to_deliver:[], e5: this.state.selected_e5}
       tx.messages_to_deliver.push(message)
       stack.push(tx)
     }else{
@@ -4650,10 +4945,10 @@ class App extends Component {
   add_job_request_action_to_stack(state_obj){
     var contract = state_obj.contract_data
     if(contract['access_rights_enabled'] == true && (contract['my_interactable_time_value'] < Date.now()/1000 && !contract['moderators'].includes(this.state.user_account_id[contract['e5']]))){
-      this.prompt_top_notification('The contract owner hasnt granted you access to their contract yet', 4000)
+      this.prompt_top_notification(this.getLocale()['2720']/* The contract owner hasnt granted you access to their contract yet.' */, 5000)
     }
     else if(contract['my_blocked_time_value'] > Date.now()/1000){
-      this.prompt_top_notification('Your account was blocked from entering the contract', 4000)
+      this.prompt_top_notification(this.getLocale()['2721']/* 'Your account was blocked from entering the contract' */, 4000)
     }
     else{
       this.show_enter_contract_bottomsheet(state_obj.contract_data)
@@ -4706,7 +5001,7 @@ class App extends Component {
   }
 
   withdraw_ether_to_address = async (target_recipient_address, e5, run_expiry_duration, _run_gas_price) =>{
-    this.prompt_top_notification('withdrawing your ether...', 600)
+    this.prompt_top_notification(this.getLocale()['2722']/* 'withdrawing your ether...' */, 1000)
 
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
@@ -4736,10 +5031,10 @@ class App extends Component {
           // this.start_get_accounts_data(false)
           this.update_withdraw_balance(e5)
           this.start_get_accounts_for_specific_e5(false, e5)
-          this.prompt_top_notification('withdraw complete!', 600)
+          this.prompt_top_notification(this.getLocale()['2723']/* 'withdraw complete!' */, 600)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
-          this.prompt_top_notification('Withdraw failed. Something went wrong', 1500)
+          this.prompt_top_notification(this.getLocale()['2724']/* 'Withdraw failed. Something went wrong' */, 4500)
         });
     })
 
@@ -5044,11 +5339,11 @@ class App extends Component {
         await web3.eth.getBlockNumber()
         var time = Date.now() - now;
         var clone = structuredClone(this.state.rpc_times)
-        clone[url] = ''+time+' milliseconds'
+        clone[url] = ''+time+' '+this.getLocale()['2725']/* milliseconds */
         this.setState({rpc_times: clone})
       }else{
         var clone = structuredClone(this.state.rpc_times)
-        clone[url] = 'offline'
+        clone[url] = this.getLocale()['2726']/* 'offline' */
         this.setState({rpc_times: clone})
       }
     }
@@ -5334,8 +5629,10 @@ class App extends Component {
     // var data = node.cat(cid)
     // console.log(data)
 
-    this.get_browser_cache_size_limit()
-    this.when_wallet_data_updated(['(32)'], 0, '', true)  
+    if(this.is_allowed_in_e5()){
+      this.get_browser_cache_size_limit()
+      this.when_wallet_data_updated(['(32)'], 0, '', true) 
+    } 
     
   }
 
@@ -5343,7 +5640,7 @@ class App extends Component {
     const steps = this.state.sync_steps;
     const incr_count = 100/steps;
     if(this.state.syncronizing_progress+incr_count >= 99 && this.state.should_keep_synchronizing_bottomsheet_open == true){
-      this.prompt_top_notification('syncronized!', 500);
+      this.prompt_top_notification(this.getLocale()['2727']/* 'syncronized.' */, 1000);
       this.setState({should_keep_synchronizing_bottomsheet_open: false})
     }
     this.setState({syncronizing_progress:this.state.syncronizing_progress+incr_count})
@@ -5365,16 +5662,16 @@ class App extends Component {
       gasPrice: gas_price.toString() // Adjust gas price as needed
     }).on('transactionHash', function (hash) {
       me.start_get_accounts_data(false)
-      me.prompt_top_notification('send complete!', 600)
+      me.prompt_top_notification(this.getLocale()['2728']/* 'Send complete.' */, 1600)
 
     })
     .on('error', function (error) {
       console.error('Failed to send transaction:', error);
       if(error == 'Error: Invalid JSON RPC response: {}'){
         me.start_get_accounts_data(false)
-        me.prompt_top_notification('send complete!', 15600)
+        me.prompt_top_notification(this.getLocale()['2728']/* 'send complete!' */, 15600)
       }else{
-        me.prompt_top_notification('send failed, '+error, 16000)
+        me.prompt_top_notification(this.getLocale()['2729']/* 'send failed, ' */+error, 16000)
       }
     });
   }
@@ -5828,7 +6125,7 @@ class App extends Component {
 
 
   get_wallet_data_for_specific_e5(e5){
-    this.prompt_top_notification('reloading your wallet...', 2000)
+    this.prompt_top_notification(this.getLocale()['2730']/* 'reloading your wallet...' */, 2000)
     var web3_url = this.get_web3_url_from_e5(e5)
     var account_for_e5 = this.state.accounts[e5]
     this.get_wallet_data(account_for_e5, false, web3_url, null, e5)
@@ -7345,7 +7642,7 @@ class App extends Component {
         created_subscription_object_data.push(subscription_object)
       }
 
-      created_subscription_object_mapping[created_subscriptions[i]] = subscription_object
+      created_subscription_object_mapping[created_subscriptions[i]+e5] = subscription_object
 
       if(is_first_time){
         var created_subscription_object_data_clone = structuredClone(this.state.created_subscriptions)
@@ -8576,6 +8873,7 @@ class App extends Component {
         for(var j=0; j<created_channel_data.length; j++){
           var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
           if(ipfs_message != null){
+            ipfs_message['time'] = created_channel_data[j].returnValues.p6
             messages.push(ipfs_message)
 
             if(is_first_time){
@@ -8886,17 +9184,17 @@ class App extends Component {
 
   add_account_to_contacts = async (account) => {
     if(this.check_for_duplicates(account)){
-      this.prompt_top_notification('A matching contact was found', 2600)
+      this.prompt_top_notification(this.getLocale()['2734']/* 'A matching contact was found' */, 3600)
       return
     }
 
     var me = this.state.user_account_id[this.state.selected_e5]
     if(account == me){
-      this.prompt_top_notification('You cant add yourself!', 2600)
+      this.prompt_top_notification(this.getLocale()['2735']/* 'You cant add yourself.' */, 3600)
       return
     }
 
-    this.prompt_top_notification('Adding account ID to Contacts...', 1600)
+    this.prompt_top_notification(this.getLocale()['2736']/* 'Adding account ID to Contacts...' */, 3600)
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
@@ -8932,15 +9230,15 @@ class App extends Component {
  
   add_account_to_blocked_list = async (account) => {
     if(this.check_for_blocked_duplicates(account)){
-      this.prompt_top_notification('A matching blocked account was found', 2600)
+      this.prompt_top_notification(this.getLocale()['2731']/* 'A matching blocked account was found' */, 2600)
       return
     }
     var me = this.state.user_account_id[this.state.selected_e5]
     if(account == me){
-      this.prompt_top_notification('You cant block yourself!', 2600)
+      this.prompt_top_notification(this.getLocale()['2732']/* 'You cant block yourself!' */, 2600)
       return
     }
-    this.prompt_top_notification('Adding account ID to blocked list...', 1600)
+    this.prompt_top_notification(this.getLocale()['2733']/* 'Adding account ID to blocked list...' */, 1600)
     const web3 = new Web3(this.get_selected_web3_url());
     const contractArtifact = require('./contract_abis/E5.json');
     const contractAddress = this.get_selected_E5_contract()
@@ -9279,7 +9577,7 @@ class App extends Component {
     }
 
     if(!data_found){
-      this.prompt_top_notification('Search complete, no account data found', 2000)
+      this.prompt_top_notification(this.getLocale()['2737']/* 'Search complete, no account data found' */, 5000)
       return;
     }
     var clone = structuredClone(this.state.searched_accounts_data)

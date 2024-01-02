@@ -41,47 +41,47 @@ class ViewTransactionLogPage extends Component {
             return(
                 <div>
                     
-                    {this.render_detail_item('3',{'title':''+item.returnValues.p3, 'details':'Transaction ID ','size':'l'})}
+                    {this.render_detail_item('3',{'title':''+item.returnValues.p3, 'details':this.props.app_state.loc['1750']/* 'Transaction ID' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'title':'Timestamp', 'details':''+new Date(item.returnValues.p8*1000),'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1771']/* 'Timestamp' */, 'details':''+new Date(item.returnValues.p8*1000),'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'title':''+this.get_time_difference(item.returnValues.p8), 'details':'Transaction Age ','size':'l'})}
+                    {this.render_detail_item('3',{'title':''+this.get_time_difference(item.returnValues.p8), 'details':this.props.app_state.loc['1772']/* 'Transaction Age ' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'title':''+item.returnValues.p9, 'details':'Transaction Block ','size':'l'})}
+                    {this.render_detail_item('3',{'title':''+item.returnValues.p9, 'details':this.props.app_state.loc['1773']/* 'Transaction Block' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':'Transaction Stack Size','size':'l'})}
+                    {this.render_detail_item('3',{'title':item.returnValues.p4, 'details':this.props.app_state.loc['1774']/* 'Transaction Stack Size' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1775']/* 'Gas Consumed' */, 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
                     </div>
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(item.returnValues.p7/10**9), 'barwidth':this.calculate_bar_width(item.returnValues.p7/10**9), 'number':this.format_account_balance_figure(item.returnValues.p7/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1087']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(item.returnValues.p7/10**9), 'barwidth':this.calculate_bar_width(item.returnValues.p7/10**9), 'number':this.format_account_balance_figure(item.returnValues.p7/10**9), 'barcolor':'', 'relativepower':'gwei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in wei', 'subtitle':this.format_power_figure(item.returnValues.p7), 'barwidth':this.calculate_bar_width(item.returnValues.p7), 'number':this.format_account_balance_figure(item.returnValues.p7), 'barcolor':'', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'subtitle':this.format_power_figure(item.returnValues.p7), 'barwidth':this.calculate_bar_width(item.returnValues.p7), 'number':this.format_account_balance_figure(item.returnValues.p7), 'barcolor':'', 'relativepower':'gwei', })}
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':item.returnValues.p1, 'title':'Sender Account ID','size':'l'})}
+                    {this.render_detail_item('3',{'details':item.returnValues.p1, 'title':this.props.app_state.loc['1776']/* 'Sender Account ID' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':'Sender Account Address','size':'l'})}
+                    {this.render_detail_item('3',{'details':item.returnValues.p2, 'title':this.props.app_state.loc['1777']/* 'Sender Account Address' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Included Value in Ether', 'subtitle':this.format_power_figure(parseInt(item.returnValues.p6)/10**18), 'barwidth':this.calculate_bar_width(parseInt(item.returnValues.p6)/10**18), 'number':(parseInt(item.returnValues.p6)/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1778']/* 'Included Value in Ether' */, 'subtitle':this.format_power_figure(parseInt(item.returnValues.p6)/10**18), 'barwidth':this.calculate_bar_width(parseInt(item.returnValues.p6)/10**18), 'number':(parseInt(item.returnValues.p6)/10**18), 'barcolor':'', 'relativepower':'ether', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Included Value in Wei', 'subtitle':this.format_power_figure(item.returnValues.p6), 'barwidth':this.calculate_bar_width(item.returnValues.p6), 'number':this.format_account_balance_figure(item.returnValues.p6), 'barcolor':'', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1779']/* 'Included Value in Wei' */, 'subtitle':this.format_power_figure(item.returnValues.p6), 'barwidth':this.calculate_bar_width(item.returnValues.p6), 'number':this.format_account_balance_figure(item.returnValues.p6), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
                     
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'details':start_and_end(item.returnValues.p10), 'title':'Coinbase Address','size':'l'})}
+                    {this.render_detail_item('3',{'details':start_and_end(item.returnValues.p10), 'title':this.props.app_state.loc['1780']/* 'Coinbase Address' */,'size':'l'})}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -182,32 +182,32 @@ class ViewTransactionLogPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

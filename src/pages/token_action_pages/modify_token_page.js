@@ -32,7 +32,7 @@ function makeid(length) {
 class ModifyTokenPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8),type:'modify-token', entered_indexing_tags:['modify', 'token', 'auth'],
+        selected: 0,id:makeid(8),type:this.props.app_state.loc['997']/* 'modify-token' */, entered_indexing_tags:[this.props.app_state.loc['998']/* 'modify' */, this.props.app_state.loc['999']/* 'token' */, this.props.app_state.loc['881']/* 'authority' */],
         token_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_token_title_tags_object:this.get_modify_token_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
 
         new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
@@ -48,7 +48,7 @@ class ModifyTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modify-token-exchange'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['997']/* 'modify-token' */], [1]
             ],
         };
     }
@@ -59,7 +59,7 @@ class ModifyTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','Buy Limit','Trust Fee', 'Sell Limit', 'Minimum Time Between Swap', 'Minimum Transactions Between Swap', 'Minimum Blocks Between Swap', 'Minimum Entered Contracts Between Swap', 'Minimum Transactions For First Buy', 'Minimum Entered Contracts For First Buy', 'Block Limit', 'Halving type', 'Maturity Limit', 'Internal Block Halving Proportion', 'Block Limit Reduction Proportion', 'Block Reset Limit', 'Block Limit Sensitivity'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */], [1]
             ],
         };
     }
@@ -70,7 +70,7 @@ class ModifyTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','fixed', 'spread'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1000']/* 'fixed' */, this.props.app_state.loc['1001']/* 'spread' */], [1]
             ],
         };
     }
@@ -97,7 +97,7 @@ class ModifyTokenPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@ class ModifyTokenPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Make changes to the configuration of the token ID: '+this.state.token_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['1002']/* 'Make changes to the configuration of the token ID: ' */+this.state.token_item['id']})}
 
                 {this.render_detail_item('0')}
 
@@ -154,7 +154,7 @@ class ModifyTokenPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':this.props.app_state.loc['1003']/* 'units' */, })}
                     </div>
 
                     <div style={{height:10}}/>
@@ -164,7 +164,7 @@ class ModifyTokenPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1004']/* 'Add Change' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -181,7 +181,7 @@ class ModifyTokenPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1004']/* 'Add Change' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -197,7 +197,7 @@ class ModifyTokenPage extends Component {
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1004']/* 'Add Change' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -211,7 +211,7 @@ class ModifyTokenPage extends Component {
                     {this.render_current_items(properties, selected_item)}
 
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1004']/* 'Add Change' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -219,7 +219,7 @@ class ModifyTokenPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['1005']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}
 
@@ -228,7 +228,7 @@ class ModifyTokenPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1004']/* 'Add Change' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -242,7 +242,7 @@ class ModifyTokenPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1006']/* 'Current ' */+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':this.props.app_state.loc['1003']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -250,28 +250,28 @@ class ModifyTokenPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':'Current '+selected_item, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':this.props.app_state.loc['1006']/* 'Current ' */+selected_item, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':this.props.app_state.loc['1007']/* 'Current Value' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':this.props.app_state.loc['1007']/* 'Current Value' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':current_value, 'details':'Current Value', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':current_value, 'details':this.props.app_state.loc['1007']/* 'Current Value' */, 'size':'l'})}
                 </div>
             )
         } 
@@ -315,6 +315,26 @@ class ModifyTokenPage extends Component {
             'Exchange Ratio Y':{'position':[2,1], 'picker':'number', 'powerlimit':63},
         }
 
+        obj[this.props.app_state.loc['326']]/* 'Buy Limit' */ = {'position':[1,0], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['327']]/* 'Trust Fee' */ = {'position':[1,7], 'picker':'proportion', 'powerlimit':9}
+        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['329']]/* 'Minimum Time Between Swap' */ = {'position':[1,4], 'picker':'time', 'powerlimit':63}
+        obj[this.props.app_state.loc['330']]/* 'Minimum Transactions Between Swap' */ = {'position':[1,2], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['331']]/* 'Minimum Blocks Between Swap' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['332']]/* 'Minimum Entered Contracts Between Swap' */ = {'position':[1,13], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['333']]/* 'Minimum Transactions For First Buy' */ = {'position':[1,17], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['334']]/* 'Minimum Entered Contracts For First Buy' */ = {'position':[1,18], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['335']]/* 'Block Limit' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {'position':[1,15], 'picker':'tag', 'powerlimit':63}
+        obj[this.props.app_state.loc['337']]/* 'Maturity Limit' */ = {'position':[1,16], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['338']]/* 'Internal Block Halving Proportion' */ = {'position':[1,5], 'picker':'proportion', 'powerlimit':9} 
+        obj[this.props.app_state.loc['339']]/* 'Block Limit Reduction Proportion' */ = {'position':[1,6], 'picker':'proportion', 'powerlimit':9} 
+        obj[this.props.app_state.loc['340']]/* 'Block Reset Limit' */ = {'position':[1,8], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {'position':[1,12], 'picker':'tag', 'powerlimit':63} 
+        obj[this.props.app_state.loc['395']]/* 'Exchange Ratio X' */ = {'position':[2,0], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['396']]/* 'Exchange Ratio Y' */ = {'position':[2,1], 'picker':'number', 'powerlimit':63}
+
+
         return obj[property]
     }
 
@@ -322,7 +342,7 @@ class ModifyTokenPage extends Component {
     load_tags_ui(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Halving type'){
+        if(selected_item == this.props.app_state.loc['1008']/* 'Halving type' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -332,7 +352,7 @@ class ModifyTokenPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Block Limit Sensitivity'){
+        else if(selected_item == this.props.app_state.loc['1009']/* 'Block Limit Sensitivity' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -366,35 +386,35 @@ class ModifyTokenPage extends Component {
             var number = this.state.reconfig_number;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_number:0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['1010']/* 'reconfig action added!' */, 600)
         }
         else if(ui == 'proportion'){
             var number = this.state.reconfig_proportion;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_proportion: 0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['1010']/* 'reconfig action added!' */, 600)
         }
         else if(ui == 'time'){
             var number = this.state.reconfig_duration;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['1010']/* 'reconfig action added!' */, 600)
         }
         else if(ui == 'tag'){
             var number = this.get_tag_value()
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['1010']/* 'reconfig action added!' */, 600)
         }
         else if(ui == 'id'){
             var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
-                this.props.notify('please put a valid account id', 600)
+                this.props.notify(this.props.app_state.loc['1011']/* 'please put a valid account id' */, 600)
             }
             else{
                 reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
                 this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
-                this.props.notify('reconfig action added!', 600)
+                this.props.notify(this.props.app_state.loc['1010']/* 'reconfig action added!' */, 600)
             }
         }
     }
@@ -412,12 +432,12 @@ class ModifyTokenPage extends Component {
     get_tag_value(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Halving type'){
+        if(selected_item == this.props.app_state.loc['1008']/* 'Halving type' */){
             var item = this.get_selected_item(this.state.new_token_halving_type_tags_object, this.state.new_token_halving_type_tags_object['i'].active)
             var value = item == 'fixed' ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Block Limit Sensitivity'){
+        else if(selected_item == this.props.app_state.loc['1009']/* 'Block Limit Sensitivity' */){
             var item = this.get_selected_item(this.state.new_token_block_limit_sensitivity_tags_object, this.state.new_token_block_limit_sensitivity_tags_object['i'].active)
             var value = parseInt(item)
             return value;
@@ -456,7 +476,7 @@ class ModifyTokenPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['1012']/* 'Modify Target' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
                                 <div style={{height:5}}/>
@@ -486,14 +506,14 @@ class ModifyTokenPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':this.props.app_state.loc['1013']/* 'proportion' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':this.props.app_state.loc['1014']/* 'duration' */, 'size':'l'})}
 
                 </div>
             )
@@ -501,14 +521,14 @@ class ModifyTokenPage extends Component {
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':this.props.app_state.loc['1015']/* 'value: ' */+number, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['1016']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -516,6 +536,15 @@ class ModifyTokenPage extends Component {
 
     get_tag_selected_item(title, number){
         var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
+
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {0:'no', 1:'yes'}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {1:'modifiable', 0:'non-modifiable'} 
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {0:'relative', 1:'absolute'}
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {0:'fixed', 1:'spread'} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}
+
 
         return obj[title][number]
     }
@@ -528,7 +557,7 @@ class ModifyTokenPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({reconfig_values: cloned_array})
-        this.props.notify('reconfig action removed!', 600)
+        this.props.notify(this.props.app_state.loc['1017']/* 'reconfig action removed!' */, 600)
     }
 
 
@@ -552,9 +581,9 @@ class ModifyTokenPage extends Component {
     get_suggested_accounts(type){
         if(type == 'reconfig_target_id'){
             return[
-                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-                {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+                {'id':'53', 'label':{'title':this.props.app_state.loc['854']/* 'My Account' */, 'details':this.props.app_state.loc['857']/* 'Account' */, 'size':'s'}},
+                {'id':'2', 'label':{'title':this.props.app_state.loc['855']/* 'Main Contract' */, 'details':this.props.app_state.loc['858']/* 'Contract ID 2' */, 'size':'s'}},
+                {'id':'0','label':{'title':this.props.app_state.loc['856']/* 'Burn Account' */, 'details':this.props.app_state.loc['859']/* 'Account ID 0' */, 'size':'s'}},
             ]
         }
         
@@ -573,7 +602,7 @@ class ModifyTokenPage extends Component {
     set_token(token_item){
         if(this.state.token_item['id'] != token_item['id']){
             this.setState({
-                selected: 0,id:makeid(8),type:'modify-token', entered_indexing_tags:['modify', 'token', 'auth'],
+                selected: 0,id:makeid(8),type:this.props.app_state.loc['997']/* 'modify-token' */, entered_indexing_tags:[this.props.app_state.loc['998']/* 'modify' */, this.props.app_state.loc['999']/* 'token' */, this.props.app_state.loc['881']/* 'auth' */],
                 token_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]]}, modify_token_title_tags_object:this.get_modify_token_title_tags_object(), reconfig_items_tags_object: this.get_reconfig_items_tags_object(),
                 new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(),
                 new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(),
@@ -586,11 +615,11 @@ class ModifyTokenPage extends Component {
 
     finish(){
         if(this.state.reconfig_values.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['897']/* 'you cant stack no changes' */, 700)
         }else{
             this.props.add_modify_token_to_stack(this.state)
             this.setState({reconfig_values:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 700);
         }
     }
 
@@ -669,32 +698,32 @@ class ModifyTokenPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

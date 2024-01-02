@@ -39,7 +39,7 @@ function makeid(length) {
 class ModeratorPage extends Component {
     
     state = {
-        selected: 0, id:makeid(8), type: 'access-rights-settings', entered_indexing_tags:['access', 'rights', 'settings'], new_moderator_action_page_tags_object: this.get_new_moderator_action_page_tags_object(), object_item:{'id':0, 'moderators':[]}, all_actions:[],
+        selected: 0, id:makeid(8), type: this.props.app_state.loc['1265']/* 'access-rights-settings' */, entered_indexing_tags:[this.props.app_state.loc['1266']/* 'access' */, this.props.app_state.loc['1267']/* 'rights' */, this.props.app_state.loc['1268']/* 'settings' */], new_moderator_action_page_tags_object: this.get_new_moderator_action_page_tags_object(), object_item:{'id':0, 'moderators':[]}, all_actions:[],
 
         access_rights_enabled_tags_object: this.get_access_rights_enabled_tags_object(),
 
@@ -55,7 +55,7 @@ class ModeratorPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','moderators','access-rights','block-accounts'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1269']/* 'moderators' */,this.props.app_state.loc['1270']/* 'access-rights' */,this.props.app_state.loc['1271']/* 'block-accounts' */], [1]
             ],
         };
     }
@@ -66,7 +66,7 @@ class ModeratorPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','private', 'public'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1272']/* 'private' */, this.props.app_state.loc['1273']/* 'public' */], [1]
             ],
         };
     }
@@ -81,7 +81,7 @@ class ModeratorPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -105,21 +105,21 @@ class ModeratorPage extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.new_moderator_action_page_tags_object, this.state.new_moderator_action_page_tags_object['i'].active)
 
-        if(selected_item == 'moderators'){
+        if(selected_item == this.props.app_state.loc['1269']/* 'moderators' */){
             return(
                 <div>
                     {this.render_moderators_part()}
                 </div>
             )
         }
-        else if(selected_item == 'access-rights'){
+        else if(selected_item == this.props.app_state.loc['1270']/* 'access-rights' */){
             return(
                 <div>
                     {this.render_access_rights_data()}
                 </div>
             )
         }
-        else if(selected_item == 'block-accounts'){
+        else if(selected_item == this.props.app_state.loc['1271']/* 'block-accounts' */){
             return(
                 <div>
                     {this.render_block_accounts_ui()}
@@ -139,42 +139,42 @@ class ModeratorPage extends Component {
     render_moderators_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Moderator', 'details':'Add/Remove a moderator by their account ID', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1274']/* 'Moderator' */, 'details':this.props.app_state.loc['1275']/* 'Add or Remove a moderator by their account ID.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_moderator_text_input_field_changed.bind(this)} text={this.state.entered_moderator_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_moderator_text_input_field_changed.bind(this)} text={this.state.entered_moderator_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.load_account_suggestions()}
 
                 <div style={{height:10}}/>
                 <div onClick={() => this.add_remove_moderator()}>
-                    {this.render_detail_item('5', {'text':'Add/Remove Moderator', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1277']/* 'Add/Remove Moderator' */, 'action':''})}
                 </div>
 
 
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':'Enable/Disable Access Rights', 'details':'Enable or Disable access rights to make the object public or private', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1278']/* 'Enable/Disable Access Rights' */, 'details':this.props.app_state.loc['1279']/* 'Enable or Disable access rights to make the object public or private' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_current_access_rights(), 'details':'Current access rights settings', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_current_access_rights(), 'details':this.props.app_state.loc['1280']/* 'Current access rights settings' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <Tags page_tags_object={this.state.access_rights_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_access_rights_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 <div onClick={() => this.enable_disable_interactible_checker()}>
-                    {this.render_detail_item('5', {'text':'Enable/Disable', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1281']/* 'Enable/Disable' */, 'action':''})}
                 </div>
 
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Revoke Authors Moderator Privelages', 'details':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1282']/* 'Revoke Authors Moderator Privelages' */, 'details':this.props.app_state.loc['1283']/* 'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div onClick={() => this.revoke_author_mod_privelages_checker()}>
-                    {this.render_detail_item('5', {'text':'Revoke', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1284']/* 'Revoke' */, 'action':''})}
                 </div>
 
             </div>
@@ -192,9 +192,9 @@ class ModeratorPage extends Component {
     get_current_access_rights(){
         var value = this.state.object_item['access_rights_enabled']
         if(value == true){
-            return 'Access Rights: Enabled'
+            return this.props.app_state.loc['1285']/* 'Access Rights: Enabled' */
         }else{
-            return 'Access Rights: Disabled'
+            return this.props.app_state.loc['1286']/* 'Access Rights: Disabled' */
         }
     }
 
@@ -203,14 +203,14 @@ class ModeratorPage extends Component {
         var recipient = this.get_typed_alias_id(this.state.entered_moderator_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 2600)
+            this.props.notify(this.props.app_state.loc['1287']/* 'Please put a valid account ID.' */, 4600)
         }else{
             var action = 'Add moderator'
             if(this.state.object_item['moderators'].includes(recipient)) action = 'Remove moderator'
             var tx = {'account':recipient, entered_indexing_tags:['moderator', 'action'], 'action':action, type:'moderator', id:makeid(8), 'object':this.state.object_item}
             clone.push(tx)
             this.setState({all_actions: clone, entered_moderator_text: ''})
-            this.props.notify('action added!', 1600)
+            this.props.notify(this.props.app_state.loc['1288']/* 'Action added.' */, 4600)
         }
     }
 
@@ -230,29 +230,29 @@ class ModeratorPage extends Component {
         
         var value = this.state.object_item['access_rights_enabled']
         if(value == true && setting == 'private'){
-            this.props.notify('the thing is already private', 2600)
+            this.props.notify(this.props.app_state.loc['1289']/* 'The thing is already private.' */, 5600)
             return;
         }
         if(value == false && setting == 'public'){
-            this.props.notify('the thing is already public', 2600)
+            this.props.notify(this.props.app_state.loc['1290']/* 'The thing is already public.' */, 5600)
             return;
         }
         var tx = {'setting':setting, entered_indexing_tags:['access-rights', 'action'], type:'interactable-checkers', id:makeid(8), 'object':this.state.object_item}
         clone.push(tx)
         this.setState({all_actions: clone})
-        this.props.notify('action added!', 1600)
+        this.props.notify(this.props.app_state.loc['1288']/* 'Action added' */, 1600)
     }
 
 
     revoke_author_mod_privelages_checker(){
         if(this.state.has_added_remove_auth_mod_status_tx){
-            this.props.notify('you cant do that twice', 2600)
+            this.props.notify(this.props.app_state.loc['1291']/* 'You cant do that twice.' */, 4600)
         }else{
             var clone = this.state.all_actions.slice()
             var tx = { entered_indexing_tags:['revoke', 'author','moderator','privelages'], type:'author-moderator-privelages', id:makeid(8), 'object':this.state.object_item }
             clone.push(tx)
             this.setState({all_actions: clone, has_added_remove_auth_mod_status_tx: true})
-            this.props.notify('action added!', 1600)
+            this.props.notify(this.props.app_state.loc['1288']/* 'Action added' */, 1600)
         }
     }
 
@@ -264,9 +264,9 @@ class ModeratorPage extends Component {
         var today = new Date()
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Access Rights', 'details':'Add/Remove an interactable account by their account ID', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1292']/* 'Access Rights' */, 'details':this.props.app_state.loc['1293']/* 'Add/Remove an interactable account by their account ID.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_interactable_text_input_field_changed.bind(this)} text={this.state.entered_interactable_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_interactable_text_input_field_changed.bind(this)} text={this.state.entered_interactable_text} theme={this.props.theme}/>
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -277,12 +277,12 @@ class ModeratorPage extends Component {
                 </ThemeProvider>
 
                 <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.interactable_expiry_time), 'details':'Time from now', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.interactable_expiry_time), 'details':this.props.app_state.loc['1294']/* 'Time from now' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
 
                 <div onClick={() => this.add_interactable_account()}>
-                    {this.render_detail_item('5', {'text':'Add account setting', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1295']/* 'Add account setting' */, 'action':''})}
                 </div>
                 <div style={{height:20}}/>
             </div>
@@ -305,12 +305,12 @@ class ModeratorPage extends Component {
         var recipient = this.get_typed_alias_id(this.state.entered_interactable_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 2600)
+            this.props.notify(this.props.app_state.loc['1296']/* 'Please put a valid account ID.' */, 4600)
         }else{
             var tx = {'account':recipient, 'time':this.state.interactable_expiry_time, entered_indexing_tags:['access', 'rights','action'], type:'access-rights', id:makeid(8), 'object':this.state.object_item}
             clone.push(tx)
             this.setState({all_actions: clone, entered_interactable_text: '', interactable_expiry_time: Date.now()/1000})
-            this.props.notify('action added!', 1600)
+            this.props.notify(this.props.app_state.loc['1288']/* 'Action added.' */, 1600)
         }
     }
 
@@ -321,9 +321,9 @@ class ModeratorPage extends Component {
         var today = new Date(0)
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Block Accounts', 'details':'Deny an account access to your object', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1297']/* 'Block Accounts' */, 'details':this.props.app_state.loc['1298']/* 'Deny an account access to your object' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID...'} when_text_input_field_changed={this.when_blocked_text_input_field_changed.bind(this)} text={this.state.entered_blocked_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_blocked_text_input_field_changed.bind(this)} text={this.state.entered_blocked_text} theme={this.props.theme}/>
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -334,12 +334,12 @@ class ModeratorPage extends Component {
                 </ThemeProvider>
 
                 <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.blocked_expiry_time), 'details':'Time from now', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.blocked_expiry_time), 'details':this.props.app_state.loc['1294']/* 'Time from now' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
 
                 <div onClick={() => this.add_blocked_account()}>
-                    {this.render_detail_item('5', {'text':'Add Blocked Account', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1299']/* 'Add Blocked Account' */, 'action':''})}
                 </div>
                 <div style={{height:20}}/>
             </div>
@@ -361,12 +361,12 @@ class ModeratorPage extends Component {
         var recipient = this.get_typed_alias_id(this.state.entered_blocked_text.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 2600)
+            this.props.notify(this.props.app_state.loc['1291e']/* 'Please put a valid account ID.' */, 4600)
         }else{
             var tx = {'account':recipient, 'time':this.state.blocked_expiry_time, entered_indexing_tags:['blocked', 'accounts','action'], type:'blocked-access', id:makeid(8), 'object':this.state.object_item}
             clone.push(tx)
             this.setState({all_actions: clone, entered_blocked_text: '', blocked_expiry_time: Date.now()/1000})
-            this.props.notify('action added!', 1600)
+            this.props.notify(this.props.app_state.loc['1288']/* 'Action added.' */, 1600)
         }
     }
 
@@ -416,35 +416,35 @@ class ModeratorPage extends Component {
         if(action == 'moderator'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action: '+item['action'], 'details':'Target: '+item['account'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+this.props.app_state.loc['1292e']/* ' action: ' */+item['action'], 'details':this.props.app_state.loc['1293e']/* 'Target: ' */+item['account'], 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'interactable-checkers'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['setting'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+this.props.app_state.loc['1294e']/* ' action.' */, 'details':this.props.app_state.loc['1293e']/* 'Target: ' */+item['setting'], 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'author-moderator-privelages'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: Revoke Privelages', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+this.props.app_state.loc['1294e']/* ' action.' */, 'details':this.props.app_state.loc['1295e']/* 'Target: Revoke Privelages' */, 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'access-rights'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['account']+', time from now: '+this.get_time_from_now(item['time']), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+this.props.app_state.loc['1294e']/* ' action.' */, 'details':this.props.app_state.loc['1293e']/* 'Target: ' */+item['account']+this.props.app_state.loc['1296e']/* ', time from now: ' */+this.get_time_from_now(item['time']), 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'blocked-access'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['account']+', time from now: '+this.get_time_from_now(item['time']), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+this.props.app_state.loc['1294e']/* ' action.' */, 'details':this.props.app_state.loc['1293e']/* 'Target: ' */+item['account']+this.props.app_state.loc['1297e']/* ', time from now: ' */+this.get_time_from_now(item['time']), 'size':'s'})}
                 </div>
             )
         }
@@ -461,7 +461,7 @@ class ModeratorPage extends Component {
         if(item.type == 'author-moderator-privelages'){
             this.setState({has_added_remove_auth_mod_status_tx:false})
         }
-        this.props.notify('action removed!', 600)
+        this.props.notify(this.props.app_state.loc['1298e']/* 'Action removed.' */, 1600)
     }
 
 
@@ -488,7 +488,7 @@ class ModeratorPage extends Component {
         var obj = []
         var mods = this.state.object_item['moderators']
         for(var i=0; i<mods.length; i++){
-            obj.push({'id':mods[i], 'label':{'title':mods[i], 'details':'Account', 'size':'s'}})
+            obj.push({'id':mods[i], 'label':{'title':mods[i], 'details':this.props.app_state.loc['1299e']/* 'Account' */, 'size':'s'}})
         }
         return obj
     }
@@ -501,7 +501,7 @@ class ModeratorPage extends Component {
     set_object(item){
         if(this.state.object_item['id'] != item['id']){
             this.setState({
-                selected: 0, id:makeid(8), type: 'access-rights-settings', entered_indexing_tags:['access', 'rights', 'settings'], new_moderator_action_page_tags_object: this.get_new_moderator_action_page_tags_object(), object_item:{'id':0, 'moderators':[]}, all_actions:[],
+                selected: 0, id:makeid(8), type: this.props.app_state.loc['1265']/* 'access-rights-settings' */, entered_indexing_tags:[this.props.app_state.loc['1266']/* 'access' */, this.props.app_state.loc['1267']/* 'rights' */, this.props.app_state.loc['1268']/* 'settings' */], new_moderator_action_page_tags_object: this.get_new_moderator_action_page_tags_object(), object_item:{'id':0, 'moderators':[]}, all_actions:[],
                 access_rights_enabled_tags_object: this.get_access_rights_enabled_tags_object(),
                 entered_moderator_text:'', has_added_remove_auth_mod_status_tx:false,
                 entered_interactable_text:'', interactable_expiry_time: Date.now()/1000,
@@ -514,11 +514,11 @@ class ModeratorPage extends Component {
 
     finish(){
         if(this.state.all_actions.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['1300']/* 'You cant stack no changes.' */, 3700)
         }else{
             this.props.add_moderator_to_stack(this.state)
             this.setState({all_actions:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -591,32 +591,32 @@ class ModeratorPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

@@ -29,7 +29,7 @@ class RPCSettingsPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','rpc-settings'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1333']/* 'rpc-settings' */], [1]
             ],
         };
     }
@@ -59,14 +59,14 @@ class RPCSettingsPage extends Component {
         if(this.state.ether != null){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Add Provider', 'details':'Add a RPC provider for making transactions.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':'Add Provider', 'details':this.props.app_state.loc['1334']/* 'Add a RPC provider for making transactions.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div className="row" style={{width:'103%'}}>
                         <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput height={30} placeholder={'Enter Node Url...'} when_text_input_field_changed={this.when_typed_rpc_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
+                            <TextInput height={30} placeholder={this.props.app_state.loc['1335']/* 'Enter Node Url...' */} when_text_input_field_changed={this.when_typed_rpc_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_rpc()} >
-                            {this.render_detail_item('5',{'text':'Add','action':''})}
+                            {this.render_detail_item('5',{'text':this.props.app_state.loc['1336']/* 'Add' */,'action':''})}
                         </div>
                     </div>
                     <div style={{height:20}}/>
@@ -85,20 +85,20 @@ class RPCSettingsPage extends Component {
         var typed_word = this.state.typed_rpc_url.trim()
 
         if(typed_word == ''){
-            this.props.notify('type something!', 1400)
+            this.props.notify(this.props.app_state.loc['1337']/* 'Type something.' */, 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('Dont use whitespaces', 1400)
+            this.props.notify(this.props.app_state.loc['1338']/* 'Dont use whitespaces' */, 2400)
         }
         else if(!this.isValidHttpUrl(typed_word)){
-            this.props.notify('That url is invalid', 2000)
+            this.props.notify(this.props.app_state.loc['1339']/* 'That url is invalid.' */, 4000)
         }
         else if(this.url_exists(typed_word)){
-            this.props.notify('That provider has already been added', 3000)
+            this.props.notify(this.props.app_state.loc['1340']/* 'That provider has already been added.' */, 5000)
         }
         else{
             this.props.add_rpc_url(typed_word, this.state.ether)
-            this.props.notify('url added', 1400)
+            this.props.notify(this.props.app_state.loc['1341']/* 'RPC url added.' */, 1400)
             this.setState({typed_rpc_url:''})
         }
 
@@ -117,7 +117,7 @@ class RPCSettingsPage extends Component {
             return false;  
         }
 
-        return url.protocol === "http:" || url.protocol === "https:";
+        return url.protocol === "http:" || url.protocol === "https:" || url.protocol === "wss:";
     }
 
     hasWhiteSpace(s) {
@@ -172,7 +172,7 @@ class RPCSettingsPage extends Component {
 
     get_rpc_url_data(item){
         var data = this.props.app_state.rpc_times[item]
-        if(data == null) return 'speed unkown'
+        if(data == null) return this.props.app_state.loc['1342']/* 'speed unkown' */
         else return data
     }
     

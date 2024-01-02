@@ -38,7 +38,7 @@ function makeid(length) {
 class NewProposalPage extends Component {
     
     state = {
-        selected: 0, id: makeid(8), type:'proposal', entered_indexing_tags:['new', 'proposal'], e5:this.props.app_state.selected_e5,
+        selected: 0, id: makeid(8), type:this.props.app_state.loc['312'], e5:this.props.app_state.selected_e5,
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
@@ -80,7 +80,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','proposal-configuration','proposal-data','bounty-data'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['313'],this.props.app_state.loc['314'],this.props.app_state.loc['315']], [0]
             ],
         };
     }
@@ -91,30 +91,42 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','spend','reconfig', 'exchange-transfer'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['316']/* 'spend' */,this.props.app_state.loc['317']/* 'reconfig' */, this.props.app_state.loc['318']/* 'exchange-transfer' */], [1]
             ],
         };
     }
 
 
     get_reconfig_items_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.contract','e.subscription', 'e.exchange'], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3']/* contract */,'e.'+this.props.app_state.loc['319']/* subscription */, 'e.'+this.props.app_state.loc['320']/* exchange */], [0]
             ],
             'contract':[
-                ['xor','',0], ['contract','Vote Bounty Split Proportion','Maximum Extend Enter Contract Limit', 'Minimum End Bounty Amount', 'Proposal Expiry Duration Limit', 'Maximum Enter Contract Duration', 'Auto Wait', 'Proposal Modify Expiry Duration Limit', 'Moderator Modify Privelage', 'Unlimited Extend Contract Time', 'Maximum Proposal Expiry Submit Expiry time difference', 'Bounty Limit Type', 'Force Exit Enabled', 'Minimum Spend Bounty Amount'], [1]
+                ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */], [1]
             ],
             'subscription':[
-                ['xor','',0], ['subscription','Minimum Buy Amount','Target Authority', 'Target Beneficiary', 'Maximum Buy Amount', 'Minimum Cancellable Balance Amount'], [1]
+                ['xor','',0], [this.props.app_state.loc['319']/* 'subscription' */,this.props.app_state.loc['321']/* 'Minimum Buy Amount' */,this.props.app_state.loc['322']/* 'Target Authority' */, this.props.app_state.loc['323']/* 'Target Beneficiary' */, this.props.app_state.loc['324']/* 'Maximum Buy Amount' */, this.props.app_state.loc['325']/* 'Minimum Cancellable Balance Amount' */], [1]
             ],
             'exchange':[
-                ['xor','',0], ['exchange','Buy Limit','Trust Fee', 'Sell Limit', 'Minimum Time Between Swap', 'Minimum Transactions Between Swap', 'Minimum Blocks Between Swap', 'Minimum Entered Contracts Between Swap', 'Minimum Transactions For First Buy', 'Minimum Entered Contracts For First Buy', 'Block Limit', 'Halving type', 'Maturity Limit', 'Internal Block Halving Proportion', 'Block Limit Reduction Proportion', 'Block Reset Limit', 'Block Limit Sensitivity'], [1]
+                ['xor','',0], [this.props.app_state.loc['320']/* 'exchange' */,this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */], [1]
             ],
         };
+
+        obj[this.props.app_state.loc['3']/* contract */] = [
+                ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */], [1]
+            ];
+        obj[this.props.app_state.loc['319']/* 'subscription' */] = [
+                ['xor','',0], [this.props.app_state.loc['319']/* 'subscription' */,this.props.app_state.loc['321']/* 'Minimum Buy Amount' */,this.props.app_state.loc['322']/* 'Target Authority' */, this.props.app_state.loc['323']/* 'Target Beneficiary' */, this.props.app_state.loc['324']/* 'Maximum Buy Amount' */, this.props.app_state.loc['325']/* 'Minimum Cancellable Balance Amount' */], [1]
+            ];
+        obj[this.props.app_state.loc['320']/* 'exchange' */] = [
+                ['xor','',0], [this.props.app_state.loc['320']/* 'exchange' */,this.props.app_state.loc['326']/* 'Buy Limit' */,this.props.app_state.loc['327']/* 'Trust Fee' */, this.props.app_state.loc['328']/* 'Sell Limit' */, this.props.app_state.loc['329']/* 'Minimum Time Between Swap' */, this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, this.props.app_state.loc['335']/* 'Block Limit' */, this.props.app_state.loc['336']/* 'Halving type' */, this.props.app_state.loc['337']/* 'Maturity Limit' */, this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, this.props.app_state.loc['340']/* 'Block Reset Limit' */, this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */], [1]
+            ];
+
+        return obj;
     }
 
     get_auto_wait_tags_object(){
@@ -123,7 +135,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','no', 'yes'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['81']/* 'no' */,this.props.app_state.loc['82'] /* 'yes' */], [1]
             ],
         };
     }
@@ -134,7 +146,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','modifiable', 'non-modifiable'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['83']/* 'modifiable' */, this.props.app_state.loc['84']/* 'non-modifiable' */], [1]
             ],
         };
     }
@@ -145,7 +157,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['89']/* 'enabled' */,this.props.app_state.loc['90'] /* 'disabled' */], [1]
             ],
         };
     }
@@ -156,7 +168,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','relative', 'absolute'], [2]
+                ['xor','',0], ['e',this.props.app_state.loc['87']/* 'relative' */, this.props.app_state.loc['88']/* 'absolute' */], [2]
             ],
         };
     }
@@ -167,7 +179,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['89']/* 'enabled' */, this.props.app_state.loc['90']/* 'disabled' */], [1]
             ],
         };
     }
@@ -178,7 +190,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','fixed', 'spread'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['342']/* 'fixed' */, this.props.app_state.loc['343']/* 'spread' */], [1]
             ],
         };
     }
@@ -204,13 +216,13 @@ class NewProposalPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':''})}
                         </div>
                     </div>
                 </div>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Create your new proposal for contract ID: '+this.state.contract_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['344']+this.state.contract_item['id']})}
 
                 <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
@@ -235,21 +247,21 @@ class NewProposalPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'proposal-configuration'){
+        else if(selected_item == this.props.app_state.loc['313']/* 'proposal-configuration' */){
             return(
                 <div>
                     {this.render_proposal_configuration_data()}
                 </div>
             )
         }
-        else if(selected_item == 'proposal-data'){
+        else if(selected_item == this.props.app_state.loc['314']/* 'proposal-data' */){
             return(
                 <div>
                     {this.render_proposal_data_ui()}
                 </div>
             )
         }
-        else if(selected_item == 'bounty-data'){
+        else if(selected_item == this.props.app_state.loc['315']/* 'bounty-data' */){
             return(
                 <div>
                     {this.render_bounty_data_ui()}
@@ -283,14 +295,14 @@ class NewProposalPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['123']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Proposal'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['345']/* 'Set tags for indexing your new Proposal' */})}
                 <div style={{height:10}}/>
 
                 <div className="row">
@@ -301,7 +313,7 @@ class NewProposalPage extends Component {
                         {this.render_detail_item('5', {'text':'Add', 'action':''})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 
@@ -323,25 +335,25 @@ class NewProposalPage extends Component {
         var typed_word = this.state.entered_tag_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That tag is too long', 400)
+            this.props.notify(this.props.app_state.loc['130']/* 'That tag is too long' */, 400)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That tag is too short', 400)
+            this.props.notify(this.props.app_state.loc['131']/* 'That tag is too short' */, 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify('you cant enter the same word twice', 400)
+            this.props.notify(this.props.app_state.loc['132']/* 'you cant enter the same word twice' */, 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify('tag added!', 200)
+            // this.props.notify('tag added!', 200)
         }
     }
 
@@ -356,7 +368,7 @@ class NewProposalPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
-        this.props.notify('tag removed', 200)
+        // this.props.notify('tag removed', 200)
     }
 
     render_new_job_object(){
@@ -407,7 +419,7 @@ class NewProposalPage extends Component {
         if(page < 3){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.enter_next_page()}>
-                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['186']/* 'Next' */, 'action':''})}
                 </div>
             )
         }
@@ -418,7 +430,7 @@ class NewProposalPage extends Component {
         if(page != 0){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.enter_previous_page()}>
-                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['187']/* 'Previous' */, 'action':''})}
                 </div>
             )
         }
@@ -431,7 +443,7 @@ class NewProposalPage extends Component {
         if(page == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Consensus Type', 'details':'Set the type of action you wish to perform with the contract through your new proposal', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['346']/* 'Consensus Type' */, 'details':this.props.app_state.loc['347']/* 'Set the type of action you wish to perform with the contract through your new proposal' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
                     <Tags page_tags_object={this.state.new_proposal_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_proposal_type_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -442,9 +454,9 @@ class NewProposalPage extends Component {
             var contract_config = this.state.contract_item['data'][1]
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Exipry Time', 'details':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['348']/* 'Proposal Exipry Time' */, 'details':this.props.app_state.loc['349']/* 'Set the time after which youre set to submit the new proposal during which no new votes can be cast.' */, 'size':'l'})}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', { 'title': this.get_time_diff(contract_config[5]), 'details': 'Proposal Expiry Duration Limit', 'size': 'l'})}
+                    {this.render_detail_item('3', { 'title': this.get_time_diff(contract_config[5]), 'details': this.props.app_state.loc['350']/* 'Proposal Expiry Duration Limit' */, 'size': 'l'})}
                     <div style={{height:10}}/>
                     <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
                         <CssBaseline />
@@ -454,17 +466,17 @@ class NewProposalPage extends Component {
                     </ThemeProvider>
 
                     <div style={{height:20}}/>
-                    {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.proposal_expiry_time), 'details':'Time from now', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.proposal_expiry_time), 'details':this.props.app_state.loc['352']/* 'Time from now' */, 'size':'l'})}
                 </div>
             )
         }
         else if(page == 2){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Modify Target', 'details':'The target object thats being modified if the consensus type is reconfig', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['352']/* 'Modify Target' */, 'details':this.props.app_state.loc['353']/* 'The target object thats being modified if the consensus type is reconfig' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <TextInput height={30} placeholder={'Object ID...'} when_text_input_field_changed={this.when_modify_target_text_input_field_changed.bind(this)} text={this.state.modify_target_id} theme={this.props.theme}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['354']/* 'Object ID...' */} when_text_input_field_changed={this.when_modify_target_text_input_field_changed.bind(this)} text={this.state.modify_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('modify_target')}
 
@@ -475,10 +487,10 @@ class NewProposalPage extends Component {
             var contract_config = this.state.contract_item['data'][1]
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Consensus Submit Expiry Time', 'details':'The time after which you cannot sumbit your new proposal.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['355']/* 'Consensus Submit Expiry Time' */, 'details':this.props.app_state.loc['356']/* 'The time after which you cannot sumbit your new proposal.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'title': this.get_time_diff(contract_config[36]), 'details': 'Maximum Proposal Expiry Submit Expiry Time Difference', 'size': 'l'})}
+                    {this.render_detail_item('3', {'title': this.get_time_diff(contract_config[36]), 'details': this.props.app_state.loc['357']/* 'Maximum Proposal Expiry Submit Expiry Time Difference' */, 'size': 'l'})}
                     <div style={{height:10}}/>
 
                     <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -489,7 +501,7 @@ class NewProposalPage extends Component {
                     </ThemeProvider>
 
                     <div style={{height:20}}/>
-                    {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.proposal_submit_expiry_time), 'details':'Time from now', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_from_now(this.state.proposal_submit_expiry_time), 'details':this.props.app_state.loc['351']/* 'Time from now' */, 'size':'l'})}
                 </div>
             )
         }
@@ -511,10 +523,10 @@ class NewProposalPage extends Component {
         var now_in_sec = Date.now()/1000
         
         if(set_submit_timestamp <= now_in_sec){
-            this.props.notify('You cant use a time before now', 1200)
+            this.props.notify(this.props.app_state.loc['358']/* 'You cant use a time before now' */, 3200)
         }
-        else if(set_submit_timestamp - set_timestamp < proposal_submit_expiry_time_difference){
-            this.props.notify('That submit time is invalid', 1200)
+        else if(set_submit_timestamp - set_timestamp > proposal_submit_expiry_time_difference){
+            this.props.notify(this.props.app_state.loc['359']/* 'That submit time is invalid' */, 4200)
         }else{
             this.setState({proposal_submit_expiry_time: timeInSeconds})
         }
@@ -545,11 +557,11 @@ class NewProposalPage extends Component {
             var set_timestamp = this.state.proposal_expiry_time
             var now_in_sec = Date.now()/1000
             if(set_timestamp < parseInt(now_in_sec)+parseInt(proposal_expiry_time)){
-                this.props.notify('That proposal expiry time is less than the minimum required by the contract', 3500)
+                this.props.notify(this.props.app_state.loc['360']/* 'That proposal expiry time is less than the minimum required by the contract' */, 3500)
                 is_valid = false;
             }
             else if(set_timestamp <= now_in_sec){
-                this.props.notify('You cant use a time before now', 1200)
+                this.props.notify(this.props.app_state.loc['358']/* 'You cant use a time before now' */, 4200)
                 is_valid = false;
             }
         }
@@ -592,53 +604,53 @@ class NewProposalPage extends Component {
     get_suggested_accounts(type){
         if(type == 'modify_target'){
             return[
-                {'id':''+this.state.contract_item['id'], 'label':{'title':'This Contract', 'details':'Contract', 'size':'s'}},
-                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-                {'id':'3','label':{'title':'End Exchange', 'details':'Account ID 3', 'size':'s'}},
-                {'id':'5','label':{'title':'Spend Exchange', 'details':'Account ID 5', 'size':'s'}},
+                {'id':''+this.state.contract_item['id'], 'label':{'title':this.props.app_state.loc['362']/* 'This Contract' */, 'details':this.props.app_state.loc['361']/* 'Contract' */, 'size':'s'}},
+                {'id':'2', 'label':{'title':this.props.app_state.loc['363']/* 'Main Contract' */, 'details':this.props.app_state.loc['364']/* 'Contract ID 2' */, 'size':'s'}},
+                {'id':'3','label':{'title':this.props.app_state.loc['365']/* 'End Exchange' */, 'details':this.props.app_state.loc['366']/* 'Account ID 3' */, 'size':'s'}},
+                {'id':'5','label':{'title':this.props.app_state.loc['367']/* 'Spend Exchange' */, 'details':this.props.app_state.loc['368']/* 'Account ID 5' */, 'size':'s'}},
             ]
         }
         else if(type == 'spend_target'){
             return[
-                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+                {'id':'53', 'label':{'title':this.props.app_state.loc['369']/* 'My Account' */, 'details':this.props.app_state.loc['370']/* 'Account' */, 'size':'s'}},
             ].concat(this.get_account_suggestions(type))
         }
         else if(type == 'spend_token'){
             return[
-                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
-                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+                {'id':'3', 'label':{'title':this.props.app_state.loc['371']/* 'End Token' */, 'details':this.props.app_state.loc['373']/* 'Exchange ID 3' */, 'size':'s'}},
+                {'id':'5', 'label':{'title':this.props.app_state.loc['372']/* 'Spend Token' */, 'details':this.props.app_state.loc['374']/* 'Exchange ID 5' */, 'size':'s'}},
             ]
         }
         else if(type == 'reconfig_target_id'){
             return[
-                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-                {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+                {'id':'53', 'label':{'title':this.props.app_state.loc['369']/* 'My Account' */, 'details':this.props.app_state.loc['370']/* 'Account' */, 'size':'s'}},
+                {'id':'2', 'label':{'title':this.props.app_state.loc['363']/* 'Main Contract' */, 'details':this.props.app_state.loc['364']/* 'Contract ID 2' */, 'size':'s'}},
+                {'id':'0','label':{'title':this.props.app_state.loc['375']/* 'Burn Account' */, 'details':this.props.app_state.loc['376']/* 'Account ID 0' */, 'size':'s'}},
             ]
         }
         else if(type == 'exchange_transfer_target'){
             return[
-                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
-                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+                {'id':'3', 'label':{'title':this.props.app_state.loc['371']/* 'End Token' */, 'details':this.props.app_state.loc['373']/* 'Exchange ID 3' */, 'size':'s'}},
+                {'id':'5', 'label':{'title':this.props.app_state.loc['372']/* 'Spend Token' */, 'details':this.props.app_state.loc['374']/* 'Exchange ID 5' */, 'size':'s'}},
             ]
         }
         else if(type =='bounty_exchange_target'){
             return[
-                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
-                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+                {'id':'3', 'label':{'title':this.props.app_state.loc['371']/* 'End Token' */, 'details':this.props.app_state.loc['373']/* 'Exchange ID 3' */, 'size':'s'}},
+                {'id':'5', 'label':{'title':this.props.app_state.loc['372']/* 'Spend Token' */, 'details':this.props.app_state.loc['374']/* 'Exchange ID 5' */, 'size':'s'}},
             ]
         }
         else if(type == 'exchange_transfer_receiver'){
             return[
-                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-                {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+                {'id':'53', 'label':{'title':this.props.app_state.loc['369']/* 'My Account' */, 'details':this.props.app_state.loc['370']/* 'Account' */, 'size':'s'}},
+                {'id':'2', 'label':{'title':this.props.app_state.loc['363']/* 'Main Contract' */, 'details':this.props.app_state.loc['364']/* 'Contract ID 2' */, 'size':'s'}},
+                {'id':'0','label':{'title':this.props.app_state.loc['375']/* 'Burn Account' */, 'details':this.props.app_state.loc['376']/* 'Account ID 0' */, 'size':'s'}},
             ].concat(this.get_account_suggestions(type))
         }
         else if(type == 'token_target'){
             return[
-                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
-                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+                {'id':'3', 'label':{'title':this.props.app_state.loc['371']/* 'End Token' */, 'details':this.props.app_state.loc['373']/* 'Exchange ID 3' */, 'size':'s'}},
+                {'id':'5', 'label':{'title':this.props.app_state.loc['372']/* 'Spend Token' */, 'details':this.props.app_state.loc['374']/* 'Exchange ID 5' */, 'size':'s'}},
             ]
         }
         
@@ -744,21 +756,21 @@ class NewProposalPage extends Component {
     render_proposal_data_ui(){
         var selected_item = this.get_selected_item(this.state.new_proposal_type_tags_object, this.state.new_proposal_type_tags_object['i'].active)
 
-        if(selected_item == 'spend'){
+        if(selected_item == this.props.app_state.loc['316']/* 'spend' */){
             return(
                 <div>
                     {this.render_spend_proposal_ui()}
                 </div>
             )
         }
-        else if(selected_item == 'reconfig'){
+        else if(selected_item == this.props.app_state.loc['317']/* 'reconfig' */){
             return(
                 <div>
                     {this.render_reconfig_proposal_ui()}
                 </div>
             )
         }
-        else if(selected_item == 'exchange-transfer'){
+        else if(selected_item == this.props.app_state.loc['318']/* 'exchange-transfer' */){
             return(
                 <div>
                     {this.render_exchange_transfer_ui()}
@@ -773,18 +785,18 @@ class NewProposalPage extends Component {
             <div>
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'End Balance', 'subtitle':this.format_power_figure(this.state.contract_item['end_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['end_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['end_balance']), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['end_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['end_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['end_balance']), 'barcolor':'', 'relativepower':'END', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Spend Balance', 'subtitle':this.format_power_figure(this.state.contract_item['spend_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['spend_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['spend_balance']), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(this.state.contract_item['spend_balance']), 'barwidth':this.calculate_bar_width(this.state.contract_item['spend_balance']), 'number':this.format_account_balance_figure(this.state.contract_item['spend_balance']), 'barcolor':'', 'relativepower':'SPEND', })}
 
                 </div>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Spend Target', 'details':'Set a target for the spend action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['379']/* 'Spend Target' */, 'details':this.props.app_state.loc['380']/* 'Set a target for the spend action' */, 'size':'l'})}
                 <div style={{height:20}}/>
 
-                <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_spend_target_text_input_field_changed.bind(this)} text={this.state.spend_target_input_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_target_text_input_field_changed.bind(this)} text={this.state.spend_target_input_text} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('spend_target')}
 
@@ -792,28 +804,28 @@ class NewProposalPage extends Component {
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':'Exchange', 'details':'Set the token exchange your spending', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['382']/* 'Exchange' */, 'details':this.props.app_state.loc['383']/* 'Set the token exchange your spending' */, 'size':'l'})}
                 <div style={{height:20}}/>
 
-                <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_spend_token_text_input_field_changed.bind(this)} text={this.state.spend_token_input_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_token_text_input_field_changed.bind(this)} text={this.state.spend_token_input_text} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('spend_token')}
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Spend Amount', 'details':'Set an amount for the spend action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['384']/* 'Spend Amount' */, 'details':this.props.app_state.loc['385']/* 'Set an amount for the spend action' */, 'size':'l'})}
 
                 <div style={{height:20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Picked Amount', 'subtitle':this.format_power_figure(this.state.spend_amount), 'barwidth':this.calculate_bar_width(this.state.spend_amount), 'number':this.format_account_balance_figure(this.state.spend_amount), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['386']/* 'Picked Amount' */, 'subtitle':this.format_power_figure(this.state.spend_amount), 'barwidth':this.calculate_bar_width(this.state.spend_amount), 'number':this.format_account_balance_figure(this.state.spend_amount), 'barcolor':'', 'relativepower':'END', })}
 
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_spend_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_spend_action_to_list()}>
-                    {this.render_detail_item('5', {'text':'Add', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['127']/* 'Add' */, 'action':''})}
                 </div>
 
                 <div style={{height:20}}/>
@@ -845,25 +857,41 @@ class NewProposalPage extends Component {
 
     add_spend_action_to_list(){
         var spend_target = this.state.spend_target_input_text.trim()
-        var spend_token = this.state.spend_token_input_text.trim()
+        var spend_token = this.get_token_id_from_symbol(this.state.spend_token_input_text.trim())
         var amount = this.state.spend_amount;
 
         if(isNaN(spend_target) || parseInt(spend_target) < 0 || spend_target == ''){
-            this.props.notify('please put a valid spend target', 2600)
+            this.props.notify(this.props.app_state.loc['387']/* 'please put a valid spend target' */, 4600)
         }
-        else if(isNaN(spend_token) || parseInt(spend_target) < 0 || spend_token == ''){
-            this.props.notify('please put a valid exchange id', 2600)
+        else if(isNaN(spend_token) || parseInt(spend_token) < 0 || spend_token == '' || !this.does_exchange_exist(spend_token)){
+            this.props.notify(this.props.app_state.loc['388']/* 'please put a valid exchange id' */, 4600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 2600)
+            this.props.notify(this.props.app_state.loc['389']/* 'please put a valid amount' */, 4600)
         }
         else{
             var tx = {'amount': amount, 'spend_token':spend_token, 'spend_target':spend_target}
             var spend_actions_clone = this.state.spend_actions.slice()
             spend_actions_clone.push(tx)
             this.setState({spend_actions: spend_actions_clone, spend_target_input_text:'', spend_token_input_text:'', spend_amount:0})
-            this.props.notify('spend action added to proposal!', 1600)
+            this.props.notify(this.props.app_state.loc['390']/* 'spend action added to proposal!' */, 2600)
         }
+    }
+
+    does_exchange_exist(exchange_id){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
+            return false
+        }
+        return true
+    }
+
+    get_token_id_from_symbol(typed_search){
+        if(!isNaN(typed_search)){
+            return typed_search
+        }
+        var id = this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()] == null ? typed_search : this.props.app_state.token_directory[this.props.app_state.selected_e5][typed_search.toUpperCase()]
+
+        return id
     }
 
 
@@ -915,7 +943,7 @@ class NewProposalPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({spend_actions: cloned_array})
-        this.props.notify('spend action removed!', 1600)
+        // this.props.notify('spend action removed!', 1600)
     }
 
 
@@ -978,7 +1006,7 @@ class NewProposalPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                     </div>
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
@@ -987,7 +1015,7 @@ class NewProposalPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
 
                     
@@ -1006,7 +1034,7 @@ class NewProposalPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
                     
                 </div>
@@ -1023,7 +1051,7 @@ class NewProposalPage extends Component {
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
                     
                 </div>
@@ -1036,7 +1064,7 @@ class NewProposalPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
                     
                 </div>
@@ -1045,7 +1073,7 @@ class NewProposalPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+                    <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}
 
@@ -1054,7 +1082,7 @@ class NewProposalPage extends Component {
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
-                        {this.render_detail_item('5', {'text':'Add Change', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['392']/* 'Add Change' */, 'action':''})}
                     </div>
 
                     
@@ -1075,7 +1103,7 @@ class NewProposalPage extends Component {
                     return(
                         <div>
                             <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':'units', })}
+                                {this.render_detail_item('2', { 'style':'l', 'title':'Current '+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                             </div>
                         </div>
                     )
@@ -1083,28 +1111,28 @@ class NewProposalPage extends Component {
                 else if(ui == 'proportion'){
                     return(
                         <div>
-                            {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':'Current '+selected_item, 'size':'l'})}
+                            {this.render_detail_item('3', {'title':this.format_proportion(current_value), 'details':this.props.app_state.loc['393']/* 'Current ' */+selected_item, 'size':'l'})}
                         </div>
                     )
                 }
                 else if(ui == 'time'){
                     return(
                         <div>
-                            {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':'Current Value', 'size':'l'})}
+                            {this.render_detail_item('3', {'title':this.get_time_diff(current_value), 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
                         </div>
                     )
                 }
                 else if(ui == 'tag'){
                     return(
                         <div>
-                            {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':'Current Value', 'size':'l'})}
+                            {this.render_detail_item('3', {'title':this.get_tag_selected_item(selected_item, current_value), 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
                         </div>
                     )
                 }
                 else if(ui == 'id'){
                     return(
                         <div>
-                            {this.render_detail_item('3', {'title':current_value, 'details':'Current Value', 'size':'l'})}
+                            {this.render_detail_item('3', {'title':current_value, 'details':this.props.app_state.loc['394']/* 'Current Value' */, 'size':'l'})}
                         </div>
                     )
                 }
@@ -1172,6 +1200,49 @@ class NewProposalPage extends Component {
             'Exchange Ratio Y':{'position':[2,1], 'picker':'number', 'powerlimit':63},
         }
 
+        obj[this.props.app_state.loc['68']]/* 'Vote Bounty Split Proportion' */ = {'position':[1,1], 'picker':'proportion', 'powerlimit':9}
+        obj[this.props.app_state.loc['69']]/* 'Maximum Extend Enter Contract Limit' */ = {'position':[1,2], 'picker':'time', 'powerlimit':63} 
+        obj[this.props.app_state.loc['70']]/* 'Minimum End Bounty Amount' */ = {'position':[1,4], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['71']]/* 'Proposal Expiry Duration Limit' */ = {'position':[1,5], 'picker':'time', 'powerlimit':63} 
+        obj[this.props.app_state.loc['72']]/* 'Maximum Enter Contract Duration' */ = {'position':[1,6], 'picker':'time', 'powerlimit':63} 
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {'position':[1,8], 'picker':'tag', 'powerlimit':63}
+        obj[this.props.app_state.loc['74']]/* 'Proposal Modify Expiry Duration Limit' */ = {'position':[1,27], 'picker':'time', 'powerlimit':63}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {'position':[1,28], 'picker':'tag', 'powerlimit':9}
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {'position':[1,29], 'picker':'tag', 'powerlimit':9}
+        obj[this.props.app_state.loc['77']]/* 'Maximum Proposal Expiry Submit Expiry time difference' */ = {'position':[1,36], 'picker':'time', 'powerlimit':63} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {'position':[1,37], 'picker':'tag', 'powerlimit':9} 
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {'position':[1,38], 'picker':'tag', 'powerlimit':9} 
+        obj[this.props.app_state.loc['80']]/* 'Minimum Spend Bounty Amount' */ = {'position':[1,10], 'picker':'number', 'powerlimit':63}
+
+
+
+
+        obj[this.props.app_state.loc['438a']]/* 'Target Authority' */ = {'position':[1,0], 'picker':'id', 'powerlimit':63}
+        obj[this.props.app_state.loc['438b']]/* 'Target Beneficiary' */ = {'position':[1,6], 'picker':'id', 'powerlimit':63}
+        obj[this.props.app_state.loc['438c']]/* 'Minimum Buy Amount' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['438d']]/* 'Maximum Buy Amount' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['438e']]/* 'Minimum Cancellable Balance Amount' */ = {'position':[1,4], 'picker':'number', 'powerlimit':63}
+
+
+        obj[this.props.app_state.loc['326']]/* 'Buy Limit' */ = {'position':[1,0], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['327']]/* 'Trust Fee' */ = {'position':[1,7], 'picker':'proportion', 'powerlimit':9}
+        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['329']]/* 'Minimum Time Between Swap' */ = {'position':[1,4], 'picker':'time', 'powerlimit':63}
+        obj[this.props.app_state.loc['330']]/* 'Minimum Transactions Between Swap' */ = {'position':[1,2], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['331']]/* 'Minimum Blocks Between Swap' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['332']]/* 'Minimum Entered Contracts Between Swap' */ = {'position':[1,13], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['333']]/* 'Minimum Transactions For First Buy' */ = {'position':[1,17], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['334']]/* 'Minimum Entered Contracts For First Buy' */ = {'position':[1,18], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['335']]/* 'Block Limit' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {'position':[1,15], 'picker':'tag', 'powerlimit':63}
+        obj[this.props.app_state.loc['337']]/* 'Maturity Limit' */ = {'position':[1,16], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['338']]/* 'Internal Block Halving Proportion' */ = {'position':[1,5], 'picker':'proportion', 'powerlimit':9} 
+        obj[this.props.app_state.loc['339']]/* 'Block Limit Reduction Proportion' */ = {'position':[1,6], 'picker':'proportion', 'powerlimit':9} 
+        obj[this.props.app_state.loc['340']]/* 'Block Reset Limit' */ = {'position':[1,8], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {'position':[1,12], 'picker':'tag', 'powerlimit':63} 
+        obj[this.props.app_state.loc['395']]/* 'Exchange Ratio X' */ = {'position':[2,0], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['396']]/* 'Exchange Ratio Y' */ = {'position':[2,1], 'picker':'number', 'powerlimit':63}
+
         return obj[property]
     }
 
@@ -1179,7 +1250,7 @@ class NewProposalPage extends Component {
     load_tags_ui(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Auto Wait'){
+        if(selected_item == this.props.app_state.loc['73']/* 'Auto Wait' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -1189,7 +1260,7 @@ class NewProposalPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Moderator Modify Privelage'){
+        else if(selected_item == this.props.app_state.loc['75']/* 'Moderator Modify Privelage' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -1199,7 +1270,7 @@ class NewProposalPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Unlimited Extend Contract Time'){
+        else if(selected_item == this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -1209,7 +1280,7 @@ class NewProposalPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Bounty Limit Type'){
+        else if(selected_item == this.props.app_state.loc['78']/* 'Bounty Limit Type' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -1219,7 +1290,7 @@ class NewProposalPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Force Exit Enabled'){
+        else if(selected_item == this.props.app_state.loc['79']/* 'Force Exit Enabled' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -1229,7 +1300,7 @@ class NewProposalPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Halving type'){
+        else if(selected_item == this.props.app_state.loc['336']/* 'Halving type' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -1239,7 +1310,7 @@ class NewProposalPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'Block Limit Sensitivity'){
+        else if(selected_item == this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */){
             return(
                 <div>
                     {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
@@ -1292,35 +1363,35 @@ class NewProposalPage extends Component {
             var number = this.state.reconfig_number;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_number:0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['397']/* 'reconfig action added!' */, 1600)
         }
         else if(ui == 'proportion'){
             var number = this.state.reconfig_proportion;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_proportion: 0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['397']/* 'reconfig action added!' */, 1600)
         }
         else if(ui == 'time'){
             var number = this.state.reconfig_duration;
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['397']/* 'reconfig action added!' */, 1600)
         }
         else if(ui == 'tag'){
             var number = this.get_tag_value()
             reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
             this.setState({reconfig_values: reconfig_vaules_clone})
-            this.props.notify('reconfig action added!', 600)
+            this.props.notify(this.props.app_state.loc['397']/* 'reconfig action added!' */, 1600)
         }
         else if(ui == 'id'){
             var number = this.get_typed_alias_id(this.state.reconfig_target_id.trim())
             if(isNaN(number) || parseInt(number) < 0 || number == ''){
-                this.props.notify('please put a valid account id', 600)
+                this.props.notify(this.props.app_state.loc['398']/* 'please put a valid account id' */, 3600)
             }
             else{
                 reconfig_vaules_clone.push({'value':number, 'pos':position, 'title': selected_item, 'type':ui})
                 this.setState({reconfig_values: reconfig_vaules_clone, reconfig_duration:0})
-                this.props.notify('reconfig action added!', 600)
+                this.props.notify(this.props.app_state.loc['397']/* 'reconfig action added!' */, 1600)
             }
         }
     }
@@ -1329,37 +1400,37 @@ class NewProposalPage extends Component {
     get_tag_value(){
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
-        if(selected_item == 'Auto Wait'){
+        if(selected_item == this.props.app_state.loc['73']/* 'Auto Wait' */){
             var item = this.get_selected_item(this.state.auto_wait_tags_object, this.state.auto_wait_tags_object['i'].active)
-            var value = item == 'no' ? 0 : 1
+            var value = item == this.props.app_state.loc['81']/* 'no' */ ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Moderator Modify Privelage'){
+        else if(selected_item == this.props.app_state.loc['75']/* 'Moderator Modify Privelage' */){
             var item = this.get_selected_item(this.state.can_modify_contract_as_moderator, this.state.can_modify_contract_as_moderator['i'].active)
-            var value = item == 'non-modifiable' ? 0 : 1
+            var value = item == this.props.app_state.loc['84']/* 'non-modifiable' */ ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Unlimited Extend Contract Time'){
+        else if(selected_item == this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */){
             var item = this.get_selected_item(this.state.can_extend_enter_contract_at_any_time, this.state.can_extend_enter_contract_at_any_time['i'].active)
-            var value = item == 'disabled' ? 0 : 1
+            var value = item == this.props.app_state.loc['86']/* 'disabled' */ ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Bounty Limit Type'){
+        else if(selected_item == this.props.app_state.loc['78']/* 'Bounty Limit Type' */){
             var item = this.get_selected_item(this.state.bounty_limit_type, this.state.bounty_limit_type['i'].active)
-            var value = item == 'relative' ? 0 : 1
+            var value = item == this.props.app_state.loc['87']/* 'relative' */ ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Force Exit Enabled'){
+        else if(selected_item == this.props.app_state.loc['79']/* 'Force Exit Enabled' */){
             var item = this.get_selected_item(this.state.contract_force_exit_enabled, this.state.contract_force_exit_enabled['i'].active)
-            var value = item == 'disabled' ? 0 : 1
+            var value = item == this.props.app_state.loc['90']/* 'disabled' */ ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Halving type'){
+        else if(selected_item == this.props.app_state.loc['336']/* 'Halving type' */){
             var item = this.get_selected_item(this.state.new_token_halving_type_tags_object, this.state.new_token_halving_type_tags_object['i'].active)
-            var value = item == 'fixed' ? 0 : 1
+            var value = item == this.props.app_state.loc['342']/* 'fixed' */ ? 0 : 1
             return value;
         }
-        else if(selected_item == 'Block Limit Sensitivity'){
+        else if(selected_item == this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */){
             var item = this.get_selected_item(this.state.new_token_block_limit_sensitivity_tags_object, this.state.new_token_block_limit_sensitivity_tags_object['i'].active)
             var value = parseInt(item)
             return value;
@@ -1400,7 +1471,7 @@ class NewProposalPage extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
                                 {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['399']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -1421,7 +1492,7 @@ class NewProposalPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -1429,28 +1500,28 @@ class NewProposalPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':this.props.app_state.loc['400']/* 'proportion' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':this.props.app_state.loc['401']/* 'duration' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':this.props.app_state.loc['402']/* 'value: ' */+number, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['403']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -1458,6 +1529,14 @@ class NewProposalPage extends Component {
 
     get_tag_selected_item(title, number){
         var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
+
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {0:'no', 1:'yes'}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {1:'modifiable', 0:'non-modifiable'} 
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {0:'relative', 1:'absolute'}
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {0:'fixed', 1:'spread'} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}
 
         return obj[title][number]
     }
@@ -1470,7 +1549,7 @@ class NewProposalPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({reconfig_values: cloned_array})
-        this.props.notify('reconfig action removed!', 600)
+        // this.props.notify('reconfig action removed!', 600)
     }
 
 
@@ -1484,39 +1563,39 @@ class NewProposalPage extends Component {
     render_exchange_transfer_ui(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Target Exchange', 'details':'Set the exchange id you wish to run the exchange transfer from', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['404']/* 'Target Exchange' */, 'details':this.props.app_state.loc['405']/* 'Set the exchange id you wish to run the exchange transfer from' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_exchange_transfer_target_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_target} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_exchange_transfer_target_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_target} theme={this.props.theme}/>
 
                 {/* {this.load_account_suggestions('exchange_transfer_target')} */}
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':'Target Receiver', 'details':'Set the account set to receive the token amounts', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['406']/* 'Target Receiver' */, 'details':this.props.app_state.loc['413']/* 'Set the account set to receive the token amounts' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={'Target Receiver...'} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['407']/* 'Target Receiver...' */} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('exchange_transfer_receiver')}
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':'Token Targets', 'details':'Set the targeted token ID your transfering from the exchange', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['408']/* 'Token Targets' */, 'details':this.props.app_state.loc['409']/* 'Set the targeted token ID your transfering from the exchange' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={'Token Target ID...'} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['410']/* 'Token Target ID...' */} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('token_target')}
                 {this.render_detail_item('0')}
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Targeted Amount', 'subtitle':this.format_power_figure(this.state.exchange_transfer_amount), 'barwidth':this.calculate_bar_width(this.state.exchange_transfer_amount), 'number':this.format_account_balance_figure(this.state.exchange_transfer_amount), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['411']/* 'Targeted Amount' */, 'subtitle':this.format_power_figure(this.state.exchange_transfer_amount), 'barwidth':this.calculate_bar_width(this.state.exchange_transfer_amount), 'number':this.format_account_balance_figure(this.state.exchange_transfer_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_exchange_transfer_amount_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.add_exchange_transfer_item()}>
-                    {this.render_detail_item('5', {'text':'Add Transfer Action', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['412']/* 'Add Transfer Action' */, 'action':''})}
                 </div>
 
                 {this.load_transfer_actions()}
@@ -1553,22 +1632,22 @@ class NewProposalPage extends Component {
 
 
     add_exchange_transfer_item(){
-        var target_exchange = this.state.exchange_transfer_target.trim()
+        var target_exchange = this.get_token_id_from_symbol(this.state.exchange_transfer_target.trim())
         var target_amount = this.state.exchange_transfer_amount
         var target_receiver = this.get_typed_alias_id(this.state.exchange_transfer_receiver.trim())
-        var targeted_token = this.state.token_target.trim()
+        var targeted_token = this.get_token_id_from_symbol(this.state.token_target.trim())
 
-        if(isNaN(target_exchange)  || parseInt(target_exchange) < 0 || target_exchange == ''){
-            this.props.notify('please put a valid exchange id', 600)
+        if(isNaN(target_exchange)  || parseInt(target_exchange) < 0 || target_exchange == '' || !this.does_exchange_exist(target_exchange)){
+            this.props.notify(this.props.app_state.loc['414']/* 'please put a valid exchange id' */, 3600)
         }
         else if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver == ''){
-            this.props.notify('please put a valid receiver id', 600)
+            this.props.notify(this.props.app_state.loc['415']/* 'please put a valid receiver id' */, 3600)
         }
-        else if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == ''){
-            this.props.notify('please put a valid token id', 600)
+        else if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == '' || !this.does_exchange_exist(targeted_token)){
+            this.props.notify(this.props.app_state.loc['416']/* 'please put a valid token id' */, 3600)
         }
         else if(target_amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify(this.props.app_state.loc['417']/* 'please put a valid amount' */, 3600)
         }
         else{
             var exchange_transfer_values_clone = this.state.exchange_transfer_values.slice()
@@ -1576,9 +1655,10 @@ class NewProposalPage extends Component {
             exchange_transfer_values_clone.push(tx)
             this.setState({exchange_transfer_values: exchange_transfer_values_clone, exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_receiver:'', token_target:''})
 
-            this.props.notify('transfer action added', 600)
+            this.props.notify(this.props.app_state.loc['418']/* 'transfer action added' */, 600)
         }
     }
+
 
     load_transfer_actions(){
         var middle = this.props.height-100;
@@ -1615,7 +1695,7 @@ class NewProposalPage extends Component {
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['token']]+':'+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
                                 </div>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['419']+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
@@ -1632,7 +1712,7 @@ class NewProposalPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({exchange_transfer_values: cloned_array})
-        this.props.notify('transfer action removed!', 600)
+        // this.props.notify('transfer action removed!', 600)
     }
 
 
@@ -1650,45 +1730,45 @@ class NewProposalPage extends Component {
         var spend_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]['balance']
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'The first bounty exchange should be the End or Spend Exchange'})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['420']/* 'The first bounty exchange should be the End or Spend Exchange' */})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(minimum_spend_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_spend_bounty_amount), 'number':this.format_account_balance_figure(minimum_spend_bounty_amount), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['421']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(minimum_spend_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_spend_bounty_amount), 'number':this.format_account_balance_figure(minimum_spend_bounty_amount), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(minimum_end_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_end_bounty_amount), 'number':this.format_account_balance_figure(minimum_end_bounty_amount), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['422']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(minimum_end_bounty_amount), 'barwidth':this.calculate_bar_width(minimum_end_bounty_amount), 'number':this.format_account_balance_figure(minimum_end_bounty_amount), 'barcolor':'', 'relativepower':'END', })}
                 </div>
 
                 <div style={{height:20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Spend Balance', 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['423']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'End Balance', 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['424']/* 'End Balance' */, 'subtitle':this.format_power_figure(end_token_balance), 'barwidth':this.calculate_bar_width(end_token_balance), 'number':this.format_account_balance_figure(end_token_balance), 'barcolor':'', 'relativepower':'END', })}
                 </div>
 
                 {this.render_detail_item('0')}
 
-                <TextInput height={30} placeholder={'Target ID...'} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('bounty_exchange_target')}
                 {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Targeted Amount', 'subtitle':this.format_power_figure(this.state.bounty_amount), 'barwidth':this.calculate_bar_width(this.state.bounty_amount), 'number':this.format_account_balance_figure(this.state.bounty_amount), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['425']/* 'Targeted Amount' */, 'subtitle':this.format_power_figure(this.state.bounty_amount), 'barwidth':this.calculate_bar_width(this.state.bounty_amount), 'number':this.format_account_balance_figure(this.state.bounty_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_bounty_amount_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.add_bounty_item()}>
-                    {this.render_detail_item('5', {'text':'Add Bounty', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['426']/* 'Add Bounty' */, 'action':''})}
                 </div>
 
                 {this.render_bounty_amounts()}
@@ -1709,13 +1789,13 @@ class NewProposalPage extends Component {
         var target_amount = this.state.bounty_amount
 
         if(isNaN(target_exchange) || parseInt(target_exchange) < 0 || target_exchange == '' || !this.does_exchange_exist(target_exchange)){
-            this.props.notify('please put a valid exchange id', 1600)
+            this.props.notify(this.props.app_state.loc['388']/* 'please put a valid exchange id' */, 3600)
         }
         else if(target_amount == 0){
-            this.props.notify('please put a valid amount', 1600)
+            this.props.notify(this.props.app_state.loc['389']/* 'please put a valid amount' */, 3600)
         }
         else if(this.is_exchange_already_added(target_exchange)){
-            this.props.notify('You cant use the same exchange twice', 3600)
+            this.props.notify(this.props.app_state.loc['427']/* 'You cant use the same exchange twice' */, 3600)
         }
         else{
             var bounty_values_clone = this.state.bounty_values.slice()
@@ -1724,7 +1804,7 @@ class NewProposalPage extends Component {
 
             this.setState({bounty_values: bounty_values_clone, bounty_exchange_target:'', bounty_amount:0})
 
-            this.props.notify('bounty amount added', 1000)
+            this.props.notify(this.props.app_state.loc['428']/* 'bounty amount added' */, 1600)
         }
     }
 
@@ -1789,7 +1869,7 @@ class NewProposalPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_bounty_value_clicked(item)}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token ID: '+item['exchange'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['429']/* Token ID:  */+item['exchange'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], })}
                                 </div>
                             </li>
                         ))}
@@ -1806,7 +1886,7 @@ class NewProposalPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({bounty_values: cloned_array})
-        this.props.notify('bounty action removed!', 600)
+        // this.props.notify('bounty action removed!', 600)
     }
 
 
@@ -1840,19 +1920,19 @@ class NewProposalPage extends Component {
         var is_data_valid = this.check_if_sender_has_put_valid_data_for_proposal()
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 1700)
+            this.props.notify(this.props.app_state.loc['430']/* 'add some tags first!' */, 1700)
         }
         else if(title == ''){
-            this.props.notify('add a title first!', 1700)
+            this.props.notify(this.props.app_state.loc['431']/* 'add a title first!' */, 1700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that title is too long', 1700)
+            this.props.notify(this.props.app_state.loc['432']/* 'that title is too long' */, 1700)
         }
         else if(!this.check_if_bounty_is_required()){
-            this.props.notify('You need to specify bounty for your new proposal', 2500)
+            this.props.notify(this.props.app_state.loc['433']/* 'You need to specify bounty for your new proposal' */, 2500)
         }
         else if(!this.check_if_sender_has_enough_balance_for_bounties()){
-            this.props.notify('One of your token balances is insufficient for the bounty amounts specified', 4900)
+            this.props.notify(this.props.app_state.loc['434']/* 'One of your token balances is insufficient for the bounty amounts specified' */, 4900)
         }
         else if(!is_data_valid.is_valid){
             this.props.notify(is_data_valid.message, 5000)
@@ -1868,7 +1948,7 @@ class NewProposalPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_proposal_to_stack(me.state)
 
-                me.setState({selected: 0, id: makeid(32), type:'proposal', entered_indexing_tags:['new', 'proposal'],
+                me.setState({selected: 0, id: makeid(32), type:this.props.app_state.loc['312']/* 'proposal' */,
                 entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
                 new_proposal_title_tags_object:me.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:me.get_new_proposal_type_tags_object(),
@@ -1894,7 +1974,7 @@ class NewProposalPage extends Component {
 
                 bounty_exchange_target:'', bounty_amount:0, bounty_values:[]})
 
-                me.props.notify('transaction added to stack', 700);
+                me.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 700);
             }, (1 * 1000));
         }
     }
@@ -1930,22 +2010,22 @@ class NewProposalPage extends Component {
         
         if(set_submit_timestamp <= now_in_sec){
             is_valid = false
-            message = 'The proposal submit expiry time youve set cant be before now'
+            message = this.props.app_state.loc['435']/* 'The proposal submit expiry time youve set cant be before now' */
         }
-        else if(set_submit_timestamp - set_timestamp < proposal_submit_expiry_time_difference){
+        else if(set_submit_timestamp - set_timestamp > proposal_submit_expiry_time_difference){
             is_valid = false
-            message = 'The proposal submit expiry time youve set is less than time difference required by the contract'
+            message = this.props.app_state.loc['436']/* 'The proposal submit expiry time youve set is less than time difference required by the contract' */
         }
 
         var proposal_expiry_time = this.state.contract_item['data'][1][5]
         var set_timestamp2 = this.state.proposal_expiry_time
         if(set_timestamp2 < parseInt(now_in_sec)+parseInt(proposal_expiry_time)){
             is_valid = false;
-            message = 'That proposal expiry time youve set is less than the minimum required by the contract'
+            message = this.props.app_state.loc['437']/* 'That proposal expiry time youve set is less than the minimum required by the contract' */
         }
         else if(set_timestamp2 <= now_in_sec){
             is_valid = false;
-            message = 'The proposal expiry time youve set cant be before now'
+            message = this.props.app_state.loc['438']/* 'The proposal expiry time youve set cant be before now' */
         }
 
         return {is_valid: is_valid, message: message}
@@ -2028,32 +2108,32 @@ class NewProposalPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
     

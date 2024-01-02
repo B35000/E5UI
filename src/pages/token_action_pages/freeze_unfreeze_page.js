@@ -32,7 +32,7 @@ function makeid(length) {
 class FreezeUnfreezePage extends Component {
     
     state = {
-        selected: 0, id:makeid(8), type: 'freeze/unfreeze', token_item:{'id':0}, entered_indexing_tags:['freeze', 'unfreeze', 'account'], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
+        selected: 0, id:makeid(8), type: this.props.app_state.loc['930']/* 'freeze/unfreeze' */, token_item:{'id':0}, entered_indexing_tags:[this.props.app_state.loc['931']/* 'freeze' */, this.props.app_state.loc['932']/* 'unfreeze' */, this.props.app_state.loc['933']/* 'account' */], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
         recipient_id:'',  freeze_unfreeze_amount:0, freeze_unfreeze_actions:[]
     };
 
@@ -42,7 +42,7 @@ class FreezeUnfreezePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','freeze', 'unfreeze'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['931']/* 'freeze' */, this.props.app_state.loc['932']/* 'unfreeze' */], [1]
             ],
         };
     }
@@ -56,13 +56,13 @@ class FreezeUnfreezePage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':'finish_creating_object'})}
                         </div>
                         
                     </div>
                 </div>
 
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Freeze or Unfreeze the token '+this.state.token_item['id']+' for a specified set of accounts'})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['934']/* 'Freeze or Unfreeze the token ' */+this.state.token_item['id']+this.props.app_state.loc['935']/* ' for a specified set of accounts' */})}
                 <div style={{height:10}}/>
                 {this.render_everything()}
             </div>
@@ -77,18 +77,18 @@ class FreezeUnfreezePage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the account to be frozen or unfroozen', 'title':'Account ID'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['936']/* 'Set the account to be frozen or unfrozen' */, 'title':this.props.app_state.loc['937']/* 'Account ID' */})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID'} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['937']/* 'Account ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the amount to freeze or unfreeze.', 'title':'Action Amount.'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['938']/* 'Set the amount to freeze or unfreeze.' */, 'title':this.props.app_state.loc['939']/* 'Action Amount.' */})}
 
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Transfer Amount', 'subtitle':this.format_power_figure(this.state.freeze_unfreeze_amount), 'barwidth':this.calculate_bar_width(this.state.freeze_unfreeze_amount), 'number':this.format_account_balance_figure(this.state.freeze_unfreeze_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['940']/* 'Transfer Amount' */, 'subtitle':this.format_power_figure(this.state.freeze_unfreeze_amount), 'barwidth':this.calculate_bar_width(this.state.freeze_unfreeze_amount), 'number':this.format_account_balance_figure(this.state.freeze_unfreeze_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
                 <div style={{height:10}}/>
@@ -96,7 +96,7 @@ class FreezeUnfreezePage extends Component {
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
-                    {this.render_detail_item('5', {'text':'Add Action', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['941']/* 'Add Action' */, 'action':''})}
                 </div>
 
                 {this.render_freeze_unfreeze_transactions()}
@@ -124,10 +124,10 @@ class FreezeUnfreezePage extends Component {
         var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 2600)
+            this.props.notify(this.props.app_state.loc['942']/* 'Please put a valid account ID' */, 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 2600)
+            this.props.notify(this.props.app_state.loc['943']/* 'Please put a valid amount.' */, 2600)
         }
         else{
             var action = this.get_selected_item(this.state.freeze_unfreeze_action_page_tags_object, 'e')
@@ -137,7 +137,7 @@ class FreezeUnfreezePage extends Component {
             var tx = {'amount':amount, 'recipient':recipient, 'action':stack_action, 'action-name':action}
             clone.push(tx)
             this.setState({freeze_unfreeze_actions: clone, recipient_id: '', freeze_unfreeze_amount:0})
-            this.props.notify('action added!', 1600)
+            this.props.notify(this.props.app_state.loc['944']/* 'action added!' */, 1600)
         }
     }
 
@@ -236,7 +236,7 @@ class FreezeUnfreezePage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({freeze_unfreeze_actions: cloned_array})
-        this.props.notify('action removed!', 600)
+        this.props.notify(this.props.app_state.loc['945']/* 'action removed!' */, 600)
     }
 
 
@@ -246,7 +246,7 @@ class FreezeUnfreezePage extends Component {
     set_token(token_item){
         if(this.state.token_item['id'] != token_item['id']){
             this.setState({
-                selected: 0, id:makeid(8), type: 'freeze/unfreeze', token_item:{'id':0}, entered_indexing_tags:['freeze', 'unfreeze', 'account'], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
+                selected: 0, id:makeid(8), type: this.props.app_state.loc['930']/* 'freeze/unfreeze' */, token_item:{'id':0}, entered_indexing_tags:[this.props.app_state.loc['931']/* 'freeze' */, this.props.app_state.loc['932']/* 'unfreeze' */, this.props.app_state.loc['933']/* 'account' */], freeze_unfreeze_action_page_tags_object: this.get_freeze_unfreeze_action_page_tags_object(),
                 recipient_id:'',  freeze_unfreeze_amount:0, freeze_unfreeze_actions:[]
             })
         }
@@ -255,11 +255,11 @@ class FreezeUnfreezePage extends Component {
 
     finish(){
         if(this.state.freeze_unfreeze_actions.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['897']/* 'you cant stack no changes' */, 3700)
         }else{
             this.props.add_freeze_unfreeze_to_stack(this.state)
             this.setState({freeze_unfreeze_actions:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -323,32 +323,32 @@ class FreezeUnfreezePage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

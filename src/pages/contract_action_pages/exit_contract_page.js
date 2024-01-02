@@ -31,10 +31,10 @@ function makeid(length) {
 class ExitContractPage extends Component {
     
     state = {
-        selected: 0, type:'exit-contract', id:makeid(8),
+        selected: 0, type:this.props.app_state.loc['19'], id:makeid(8),
         contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0},
         exit_contract_title_tags_object:this.get_exit_contract_title_tags_object(), 
-        entered_indexing_tags:['exit', 'contract']
+        entered_indexing_tags:[this.props.app_state.loc['20'], this.props.app_state.loc['21']]
     };
 
 
@@ -44,7 +44,7 @@ class ExitContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','exit-contract'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['19']], [1]
             ],
         };
     }
@@ -81,7 +81,7 @@ class ExitContractPage extends Component {
         return(
             <div>
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':this.props.app_state.loc['22'], 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{height:'auto', width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+this.props.theme['card_shadow_color']}}>
@@ -103,10 +103,10 @@ class ExitContractPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Exit the specific contract'})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['23']})}
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.finish_exiting_contract_ui()}>
-                    {this.render_detail_item('5', {'text':'Exit Contract', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['24'], 'action':''})}
                 </div>
             </div>
         )
@@ -120,10 +120,10 @@ class ExitContractPage extends Component {
         if(expiry_time_in_seconds != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':this.props.app_state.loc['25']})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':this.props.app_state.loc['26']})}
                 </div>
             )
         }
@@ -138,7 +138,7 @@ class ExitContractPage extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['27'], }
         }
     }
 
@@ -147,10 +147,10 @@ class ExitContractPage extends Component {
     set_contract(contract){
         if(this.state.contract_item['id'] != contract['id']){
             this.setState({
-                selected: 0, type:'exit-contract', id:makeid(8),
+                selected: 0, type:this.props.app_state.loc['19'], id:makeid(8),
                 contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]], 'entry_expiry':0},
                 exit_contract_title_tags_object:this.get_exit_contract_title_tags_object(), 
-                entered_indexing_tags:['exit', 'contract']
+                entered_indexing_tags:[this.props.app_state.loc['20'], this.props.app_state.loc['21']]
             })
         }
         this.setState({contract_item: contract, e5: contract['e5']})
@@ -203,32 +203,32 @@ class ExitContractPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -247,12 +247,12 @@ class ExitContractPage extends Component {
 
     finish_exiting_contract_ui(){
         if(this.state.contract_item['entry_expiry'] == 0){
-            this.props.notify(`You can't exit a contract you haven't entered`, 1500);
+            this.props.notify(this.props.app_state.loc['28'], 1500);
         }else{
             var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
             this.props.exit_contract(clone)
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18'], 700);
         }
         
     }

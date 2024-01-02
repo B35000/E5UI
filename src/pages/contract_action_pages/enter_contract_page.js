@@ -37,9 +37,9 @@ function makeid(length) {
 class EnterContractPage extends Component {
     
     state = {
-        selected: 0, type:'enter-contract', id:makeid(8),
-        contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:0,
-        entered_indexing_tags:['enter', 'contract'], job_acceptance_action_state_object:null
+        selected: 0, type:this.props.app_state.loc['1'], id:makeid(8),
+        contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:(new Date().getTime()/1000),
+        entered_indexing_tags:[this.props.app_state.loc['2'], this.props.app_state.loc['3']], job_acceptance_action_state_object:null
     };
 
     get_enter_contract_title_tags_object(){
@@ -48,7 +48,7 @@ class EnterContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enter-contract'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1']], [1]
             ],
         };
     }
@@ -63,7 +63,7 @@ class EnterContractPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_entering_contract_ui()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':''})}
                         </div>
                         
                     </div>
@@ -84,15 +84,15 @@ class EnterContractPage extends Component {
         return(
             <div>
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':this.props.app_state.loc['5'], 'size':'l'})}
 
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.interactible_timestamp - Date.now()/1000), 'details':'Your entering duration', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.interactible_timestamp - Date.now()/1000), 'details':this.props.app_state.loc['6'], 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Entry exipry time', 'details':'Set the time after which you will not participate in the contract', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['7'], 'details':this.props.app_state.loc['8'], 'size':'l'})}
 
                 <div style={{height:10}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -127,7 +127,7 @@ class EnterContractPage extends Component {
         if(entry_tokens != null && entry_tokens.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The entry fees charged for entering the contract', 'title':'Entry Fees'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['9'], 'title':this.props.app_state.loc['10']})}
                     <div style={{height:10}}/>
                     {this.render_buy_token_uis(entry_tokens, entry_amounts, entry_amount_depths)}
                 </div>
@@ -149,7 +149,7 @@ class EnterContractPage extends Component {
             }
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The amounts you have available for entering the contract.', 'title':'Your balances'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['11'], 'title':this.props.app_state.loc['12']})}
                     <div style={{height:10}}/>
 
                     {this.render_buy_token_uis(entry_tokens, buy_amount_balances, entry_amount_depths)}
@@ -165,7 +165,7 @@ class EnterContractPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['13']+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -190,9 +190,9 @@ class EnterContractPage extends Component {
     set_contract(contract, job_acceptance_action_state_object){
         if(this.state.contract_item['id'] != contract['id']){
             this.setState({
-                selected: 0, type:'enter-contract', id:makeid(8),
-                contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:0,
-                entered_indexing_tags:['enter', 'contract']
+                selected: 0, type:this.props.app_state.loc['1'], id:makeid(8),
+                contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:(new Date().getTime()/1000),
+                entered_indexing_tags:[this.props.app_state.loc['2'], this.props.app_state.loc['3']]
             })
         }
         this.setState({contract_item: contract, e5: contract['e5'], job_acceptance_action_state_object: job_acceptance_action_state_object})
@@ -258,32 +258,32 @@ class EnterContractPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -301,23 +301,23 @@ class EnterContractPage extends Component {
         var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
 
         if(picked_time < now){
-            this.props.notify('you cant pick a time before now', 1700);
+            this.props.notify(this.props.app_state.loc['14'], 3500);
         }
         else if(picked_time - now > contracts_limit){
-            this.props.notify('you cant pick a time beyond the contracts limit', 1700);
+            this.props.notify(this.props.app_state.loc['15'], 3600);
         }
         else if(expiry_time_in_seconds != 0 && time_to_expiry > 0){
-            this.props.notify('youve already entered this contract', 1700);
+            this.props.notify(this.props.app_state.loc['16'], 3700);
         }
         else if(!this.check_if_sender_can_enter_contract()){
-            this.props.notify('You dont have enough tokens to enter this contract', 3700);
+            this.props.notify(this.props.app_state.loc['17'], 5700);
         }
         else{
             // var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
             
             this.props.enter_contract(this.state, this.state.job_acceptance_action_state_object)
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18'], 700);
         }
         
     }

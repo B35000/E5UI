@@ -41,20 +41,29 @@ class ContractDetailsSection extends Component {
     }
 
     get_navigate_view_contract_list_detail_tags() {
-        return {
+        var obj =  {
             'i': {
                 active: 'e',
             },
             'e': [
-                ['xor', '', 0], ['e', 'details', 'e.events', 'e.moderator-events'], [1]
+                ['xor', '', 0], ['e', this.props.app_state.loc['2118']/* 'details' */, 'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */], [1]
             ],
             'events': [
-                ['xor', 'e', 1], ['events', 'transfers', 'create-proposal', 'modify-contract', 'enter-contract', 'extend-contract-stay', 'exit-contract', 'force-exit-accounts'], [1], [1]
+                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
             ],
             'moderator-events': [
-                ['xor', 'e', 1], ['moderator-events', 'modify-moderators', 'interactable-checkers', 'interactable-accounts', 'block-accounts'], [1], [1]
+                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
             ],
         }
+        
+        obj[this.props.app_state.loc['2119']/* events */] = [
+                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2122']/* 'create-proposal' */, this.props.app_state.loc['2123']/* 'modify-contract' */, this.props.app_state.loc['2125']/* 'enter-contract' */, this.props.app_state.loc['2126']/* 'extend-contract-stay' */, this.props.app_state.loc['2127']/* 'exit-contract' */, this.props.app_state.loc['2128']/* 'force-exit-accounts' */], [1], [1]
+            ]
+        obj[this.props.app_state.loc['2120']/* moderator-events */] = [
+                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
+            ]
+
+        return obj
     }
 
     render() {
@@ -110,14 +119,14 @@ class ContractDetailsSection extends Component {
         }
 
         if(object != null){
-            if (selected_item == 'details') {
+            if (selected_item == this.props.app_state.loc['2118']/* 'details' */) {
                 return (
                     <div>
                         {this.render_contracts_main_details_section(object)}
                     </div>
                 )
             }
-            else if (selected_item == 'create-proposal') {
+            else if (selected_item == this.props.app_state.loc['2122']/* 'create-proposal' */) {
                 return (
                     <div>
                         {this.render_create_proposal_logs(object)}
@@ -125,7 +134,7 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if (selected_item == 'modify-contract') {
+            else if (selected_item == this.props.app_state.loc['2123']/* 'modify-contract' */) {
                 return (
                     <div>
                         {this.render_modify_contract_logs(object)}
@@ -133,7 +142,7 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if (selected_item == 'enter-contract') {
+            else if (selected_item == this.props.app_state.loc['2125']/* 'enter-contract' */) {
                 return (
                     <div>
                         {this.render_enter_contract_logs(object)}
@@ -141,7 +150,7 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if (selected_item == 'extend-contract-stay') {
+            else if (selected_item == this.props.app_state.loc['2126']/* 'extend-contract-stay' */) {
                 return (
                     <div>
                         {this.render_extend_contract_logs(object)}
@@ -149,7 +158,7 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if (selected_item == 'exit-contract') {
+            else if (selected_item == this.props.app_state.loc['2127']/* 'exit-contract' */) {
                 return (
                     <div>
                         {this.render_exit_contract_logs(object)}
@@ -157,7 +166,7 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if (selected_item == 'force-exit-accounts') {
+            else if (selected_item == this.props.app_state.loc['2128']/* 'force-exit-accounts' */) {
                 return (
                     <div>
                         {this.force_exit_accounts_logs(object)}
@@ -165,7 +174,7 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if (selected_item == 'transfers') {
+            else if (selected_item == this.props.app_state.loc['1713']/* 'transfers' */) {
                 return (
                     <div>
                         {this.render_transfer_logs(object)}
@@ -173,28 +182,28 @@ class ContractDetailsSection extends Component {
                 )
 
             }
-            else if(selected_item == 'modify-moderators'){
+            else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
                 return(
                     <div>
                         {this.render_modify_moderator_logs(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'interactable-checkers'){
+            else if(selected_item == this.props.app_state.loc['2067']/* 'interactable-checkers' */){
                 return(
                     <div>
                         {this.render_interactable_checker_logs(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'interactable-accounts'){
+            else if(selected_item == this.props.app_state.loc['2068']/* 'interactable-accounts' */){
                 return(
                     <div>
                         {this.render_interactable_accounts_logs(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'block-accounts'){
+            else if(selected_item == this.props.app_state.loc['2069']/* 'block-accounts' */){
                 return(
                     <div>
                         {this.render_blocked_accounts_logs(object)}
@@ -230,7 +239,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ height: 10 }} />
                     {this.render_detail_item('3', item['id'])}
                     <div style={{ height: 10 }} />
-                    {this.render_detail_item('3', { 'title': '' + author, 'details': 'Author', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': '' + author, 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     {this.render_detail_item('3', { 'size': 'l', 'details': 'Access Rights', 'title': this.get_access_rights_status(object['access_rights_enabled']) })}
                     <div style={{ height: 10 }} />
@@ -240,6 +249,15 @@ class ContractDetailsSection extends Component {
                     </div>
                     <div style={{ height: 10 }} />
                     {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
+                    <div style={{ height: 10 }} />
+                    {this.render_detail_item('3', item['default_consensus_majority_limit'])}
+                    <div style={{ height: 10 }} />
+                    {this.render_detail_item('3', item['default_voter_weight_exchange'])}
+
+                    <div style={{ height: 10 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['voter_weight_balance'])}
+                    </div>
 
                     <div style={{ height: 10 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
@@ -316,7 +334,7 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Participant Accounts', 'details':'The accounts that have entered the contract', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2129']/* Participant Accounts' */, 'details':this.props.app_state.loc['2130']/* 'The accounts that have entered the contract.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     {this.render_participant_accounts(object)}
                 </div>
@@ -333,7 +351,7 @@ class ContractDetailsSection extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style':'none'}}>
-                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':'Participant', 'size':'s'})}
+                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.props.app_state.loc['2129']/* 'Participant' */, 'size':'s'})}
                         </li>
                     ))}
                 </ul>
@@ -345,10 +363,10 @@ class ContractDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Pin the contract to your feed', 'title':'Pin Contract'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2131']/* 'Pin the contract to your feed' */, 'title':this.props.app_state.loc['2132']/* 'Pin Contract' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_contract_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin/Unpin Contract', 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2134']/* 'Pin/Unpin Contract' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -380,13 +398,13 @@ class ContractDetailsSection extends Component {
             if(events.length != 0){
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':'Author Moderator Privelages Disabled', 'details':'Author of Object is not a Moderator by default', 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2135']/* 'Author Moderator Privelages Disabled' */, 'details':this.props.app_state.loc['2137']/* 'Author of Object is not a Moderator by default' */, 'size':'l'})}
                     </div>
                 )
             }else{
                 return(
                     <div>
-                        {this.render_detail_item('3', {'title':'Author Moderator Privelages Enabled', 'details':'Author of Object is a Moderator by default', 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2138']/* 'Author Moderator Privelages Enabled' */, 'details':this.props.app_state.loc['2139']/* 'Author of Object is a Moderator by default' */, 'size':'l'})}
                     </div>
                 )
             }
@@ -395,9 +413,9 @@ class ContractDetailsSection extends Component {
 
     get_access_rights_status(value) {
         if (value == true) {
-            return 'Enabled'
+            return this.props.app_state.loc['2140']/* 'Enabled' */
         } else {
-            return 'Disabled'
+            return this.props.app_state.loc['2141']/* 'Disabled' */
         }
     }
 
@@ -427,11 +445,11 @@ class ContractDetailsSection extends Component {
                 {this.show_entered_contract_data(object)}
                 <div style={{ height: 10 }} />
 
-                {this.render_detail_item('3', { 'size': 'l', 'details': 'Enter a contract to participate in its consensus', 'title': 'Enter Contract' })}
+                {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2142']/* 'Enter a contract to participate in its consensus' */, 'title': this.props.app_state.loc['2143']/* 'Enter Contract' */ })}
                 <div style={{ height: 10 }} />
 
                 <div onClick={() => this.open_enter_contract_ui(object)}>
-                    {this.render_detail_item('5', { 'text': 'Enter', 'action': '' },)}
+                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['2144']/* 'Enter' */, 'action': '' },)}
                 </div>
             </div>
         )
@@ -448,14 +466,14 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', { 'size': 'l', 'details': 'Max Extend Enter Contract Limit', 'title': this.get_time_diff(contract_config[2]) })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2145']/* 'Max Extend Enter Contract Limit' */, 'title': this.get_time_diff(contract_config[2]) })}
                     <div style={{ height: 10 }} />
 
-                    {this.render_detail_item('3', { 'size': 'l', 'details': 'Extend your stay in the contract', 'title': 'Extend Stay' })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2146']/* 'Extend your stay in the contract' */, 'title': this.props.app_state.loc['2147']/* 'Extend Stay' */ })}
                     <div style={{ height: 10 }} />
 
                     <div onClick={() => this.open_extend_contract_ui(object)}>
-                        {this.render_detail_item('5', { 'text': 'Extend', 'action': '' },)}
+                        {this.render_detail_item('5', { 'text':this.props.app_state.loc['2148']/*  'Extend' */, 'action': '' },)}
                     </div>
 
                 </div>
@@ -472,10 +490,10 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', { 'size': 'l', 'details': 'Send a proposal to the contract to perform a specified action', 'title': 'Send Proposal' })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2149']/* 'Send a proposal to the contract to perform a specified action' */, 'title': this.props.app_state.loc['2150']/* 'Send Proposal' */ })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_new_proposal_ui(object)}>
-                        {this.render_detail_item('5', { 'text': 'Send', 'action': '' },)}
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2151']/* 'Send' */, 'action': '' },)}
                     </div>
                 </div>
             )
@@ -495,10 +513,10 @@ class ContractDetailsSection extends Component {
                 return (
                     <div>
                         {this.render_detail_item('0')}
-                        {this.render_detail_item('3', { 'size': 'l', 'details': 'Send a proposal to the contract to perform a specified action', 'title': 'Send Proposal' })}
+                        {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2152']/* 'Send a proposal to the contract to perform a specified action.' */, 'title': this.props.app_state.loc['2158']/* 'Send Proposal' */ })}
                         <div style={{ height: 10 }} />
                         <div onClick={() => this.open_new_proposal_ui(object)}>
-                            {this.render_detail_item('5', { 'text': 'Send', 'action': '' },)}
+                            {this.render_detail_item('5', { 'text': this.props.app_state.loc['2151']/* 'Send' */, 'action': '' },)}
                         </div>
                     </div>
                 )
@@ -515,11 +533,11 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', { 'size': 'l', 'details': 'Exit from the contract and no longer participate in its consensus', 'title': 'Exit Contract' })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2159']/* 'Exit from the contract and no longer participate in its consensus' */, 'title': this.props.app_state.loc['2160']/* 'Exit Contract' */ })}
                     <div style={{ height: 10 }} />
 
                     <div onClick={() => this.open_exit_contract_ui(object)}>
-                        {this.render_detail_item('5', { 'text': 'Exit', 'action': '' },)}
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2161']/* 'Exit' */, 'action': '' },)}
                     </div>
                 </div>
             )
@@ -534,23 +552,23 @@ class ContractDetailsSection extends Component {
         if (expiry_time_in_seconds != 0 && time_to_expiry > 0) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'size': 'l', 'details': 'Until: ' + (new Date(expiry_time_in_seconds * 1000)), 'title': 'Entry Exipry Time' })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': 'Until: ' + (new Date(expiry_time_in_seconds * 1000)), 'title': this.props.app_state.loc['2162']/* 'Entry Exipry Time' */ })}
                     <div style={{ height: 10 }} />
 
-                    {this.render_detail_item('3', { 'size': 'l', 'details': '' + (this.get_time_diff(time_to_expiry)), 'title': 'Time remaining' })}
+                    {this.render_detail_item('3', { 'size': 'l', 'details': '' + (this.get_time_diff(time_to_expiry)), 'title': this.props.app_state.loc['2163']/* 'Time remaining' */ })}
                 </div>
             )
         } else if (expiry_time_in_seconds != 0 && time_to_expiry < 0) {
             return (
                 <div>
-                    {this.render_detail_item('4', { 'text': 'Your time in the contract has exipred, you have to enter it again.', 'textsize': '13px', 'font': 'Sans-serif' })}
+                    {this.render_detail_item('4', { 'text': this.props.app_state.loc['2164']/* 'Your time in the contract has exipred, you have to enter it again.' */, 'textsize': '13px', 'font': 'Sans-serif' })}
                 </div>
             )
         }
         else {
             return (
                 <div>
-                    {this.render_detail_item('4', { 'text': 'Youre not part of the contract', 'textsize': '13px', 'font': 'Sans-serif' })}
+                    {this.render_detail_item('4', { 'text': this.props.app_state.loc['2165']/* 'Youre not part of the contract' */, 'textsize': '13px', 'font': 'Sans-serif' })}
                 </div>
             )
         }
@@ -565,10 +583,10 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', { 'title': 'Modify Contract', 'details': 'Modify the configuration of the contract directly.', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2166']/* 'Modify Contract' */, 'details': this.props.app_state.loc['2167']/* 'Modify the configuration of the contract directly.' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_modify_contract_ui(object)}>
-                        {this.render_detail_item('5', { 'text': 'Modify Contract', 'action': '' })}
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2166']/* 'Modify Contract' */, 'action': '' })}
                     </div>
                 </div>
             )
@@ -584,10 +602,10 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', { 'title': 'Force Exit Accounts', 'details': 'Remove an account from the contract directly.', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2168']/* 'Force Exit Accounts' */, 'details': this.props.app_state.loc['2169']/* 'Remove an account from the contract directly.' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_force_exit_ui(object)}>
-                        {this.render_detail_item('5', { 'text': 'Force Exit Accounts', 'action': '' })}
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2168']/* 'Force Exit Accounts' */, 'action': '' })}
                     </div>
                 </div>
             )
@@ -601,10 +619,10 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', { 'title': 'Archive Contract', 'details': 'Delete the contracts data to free up space in the blockchain', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2170']/* 'Archive Contract' */, 'details': this.props.app_state.loc['2171']/* Delete the contracts data to free up space in the blockchain' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_archive_contract_ui(object)}>
-                        {this.render_detail_item('5', { 'text': 'Archive Contract', 'action': '' })}
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2170']/* 'Archive Contract' */, 'action': '' })}
                     </div>
                 </div>
             )
@@ -620,10 +638,10 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', { 'title': 'Perform Moderator Actions', 'details': 'Set an accounts access rights, moderator privelages or block an account', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.props.app_state.loc['2172']/* 'Perform Moderator Actions' */, 'details': this.props.app_state.loc['2173']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size': 'l' })}
                     <div style={{ height: 10 }} />
                     <div onClick={() => this.open_moderator_ui(object)}>
-                        {this.render_detail_item('5', { 'text': 'Perform Action', 'action': '' })}
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2174']/* 'Perform Action' */, 'action': '' })}
                     </div>
                 </div>
             )
@@ -700,46 +718,83 @@ class ContractDetailsSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var contract_config = object['data'][1]
-        var auto_wait = contract_config[8] == 0 ? 'false' : 'true'
-        var can_modify_contract_as_moderator = contract_config[28] == 0 ? 'false' : 'true'
-        var can_extend_enter_contract_at_any_time = contract_config[29] == 0 ? 'false' : 'true'
-        var bounty_limit_type = contract_config[37] == 0 ? 'relative' : 'absolute'
-        var contract_force_exit_enabled = contract_config[38] == 0 ? 'disabled' : 'enabled'
+        var auto_wait = contract_config[8] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var can_modify_contract_as_moderator = contract_config[28] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var can_extend_enter_contract_at_any_time = contract_config[29] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var bounty_limit_type = contract_config[37] == 0 ? this.props.app_state.loc['87']/* relative' */ : this.props.app_state.loc['88']/* 'absolute' */
+        var contract_force_exit_enabled = contract_config[38] == 0 ? this.props.app_state.loc['90']/* 'disabled' */ : this.props.app_state.loc['89']/* 'enabled' */
+        var consensus_majority = contract_config[7] == 0 ? bigInt('1e18') : contract_config[7]
+        var voter_weight_target_name = this.get_exchange_name_from_id(contract_config[33], object)
+        var voter_weight_balance = this.get_voter_weight_balance(contract_config[33], object)
         return {
             'tags': { 'active_tags': tags, 'index_option': 'indexed' },
             'id': { 'title': object['id'], 'details': title, 'size': 'l' },
-            'age': { 'style': 'l', 'title': 'Block Number', 'subtitle': '', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} ago`, },
+            'age': { 'style': 'l', 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle': '', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, },
 
-            'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': 'Vote Bounty Split Proportion', 'size': 'l' },
+            'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */, 'size': 'l' },
 
-            'default_minimum_end_vote_bounty_amount': { 'style': 'l', 'title': 'Minimum End Bounty Amount', 'subtitle': this.format_power_figure(contract_config[4]), 'barwidth': this.calculate_bar_width(contract_config[4]), 'number': this.format_account_balance_figure(contract_config[4]), 'relativepower': 'tokens' },
+            'default_minimum_end_vote_bounty_amount': { 'style': 'l', 'title': this.props.app_state.loc['70']/* 'Minimum End Bounty Amount' */, 'subtitle': this.format_power_figure(contract_config[4]), 'barwidth': this.calculate_bar_width(contract_config[4]), 'number': this.format_account_balance_figure(contract_config[4]), 'relativepower': this.props.app_state.loc['483']/* 'tokens' */ },
 
-            'default_minimum_spend_vote_bounty_amount': { 'style': 'l', 'title': 'Minimum Spend Bounty Amount', 'subtitle': this.format_power_figure(contract_config[10]), 'barwidth': this.calculate_bar_width(contract_config[10]), 'number': this.format_account_balance_figure(contract_config[10]), 'relativepower': 'tokens' },
+            'default_minimum_spend_vote_bounty_amount': { 'style': 'l', 'title': this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, 'subtitle': this.format_power_figure(contract_config[10]), 'barwidth': this.calculate_bar_width(contract_config[10]), 'number': this.format_account_balance_figure(contract_config[10]), 'relativepower': this.props.app_state.loc['483']/* 'tokens' */ },
 
-            'default_proposal_expiry_duration_limit': { 'title': this.get_time_diff(contract_config[5]), 'details': 'Proposal Expiry Duration Limit', 'size': 'l' },
+            'default_proposal_expiry_duration_limit': { 'title': this.get_time_diff(contract_config[5]), 'details': this.props.app_state.loc['228']/* 'Proposal Expiry Duration Limit' */, 'size': 'l' },
 
-            'max_enter_contract_duration': { 'title': this.get_time_diff(contract_config[6]), 'details': 'Max Enter Contract Duration', 'size': 'l' },
+            'max_enter_contract_duration': { 'title': this.get_time_diff(contract_config[6]), 'details': this.props.app_state.loc['1615']/* 'Max Enter Contract Duration' */, 'size': 'l' },
 
-            'auto_wait_for_all_proposals_for_all_voters': { 'title': auto_wait, 'details': 'Auto Wait For All Proposals For All Voters', 'size': 'l' },
+            'auto_wait_for_all_proposals_for_all_voters': { 'title': auto_wait, 'details': this.props.app_state.loc['1616']/* 'Auto Wait For All Proposals For All Voters' */, 'size': 'l' },
 
-            'proposal_modify_expiry_duration_limit': { 'title': this.get_time_diff(contract_config[27]), 'details': 'Proposal Modify Expiry Duration Limit', 'size': 'l' },
+            'proposal_modify_expiry_duration_limit': { 'title': this.get_time_diff(contract_config[27]), 'details': this.props.app_state.loc['1617']/* 'Proposal Modify Expiry Duration Limit' */, 'size': 'l' },
 
-            'can_modify_contract_as_moderator': { 'title': can_modify_contract_as_moderator, 'details': 'Can Modify Contract As Moderator', 'size': 'l' },
+            'can_modify_contract_as_moderator': { 'title': can_modify_contract_as_moderator, 'details':this.props.app_state.loc['1618']/*  'Can Modify Contract As Moderator' */, 'size': 'l' },
 
-            'can_extend_enter_contract_at_any_time': { 'title': can_extend_enter_contract_at_any_time, 'details': 'Can Extend Enter Contract At Any Time', 'size': 'l' },
+            'can_extend_enter_contract_at_any_time': { 'title': can_extend_enter_contract_at_any_time, 'details': this.props.app_state.loc['1619']/* 'Can Extend Enter Contract At Any Time' */, 'size': 'l' },
 
-            'maximum_proposal_expiry_submit_expiry_time_difference': { 'title': this.get_time_diff(contract_config[36]), 'details': 'Maximum Proposal Expiry Submit Expiry Time Difference', 'size': 'l' },
+            'maximum_proposal_expiry_submit_expiry_time_difference': { 'title': this.get_time_diff(contract_config[36]), 'details': this.props.app_state.loc['1620']/* 'Maximum Proposal Expiry Submit Expiry Time Difference' */, 'size': 'l' },
 
-            'bounty_limit_type': { 'title': bounty_limit_type, 'details': 'Bounty Limit Type', 'size': 'l' },
+            'bounty_limit_type': { 'title': bounty_limit_type, 'details': this.props.app_state.loc['1621']/* 'Bounty Limit Type' */, 'size': 'l' },
 
-            'contract_force_exit_enabled': { 'title': contract_force_exit_enabled, 'details': 'Contract Force Exit', 'size': 'l' },
+            'contract_force_exit_enabled': { 'title': contract_force_exit_enabled, 'details': this.props.app_state.loc['1622']/* 'Contract Force Exit' */, 'size': 'l' },
 
-            'entry_fees': { 'title': 'Entry Fees', 'details': object['data'][2].length + ' tokens used', 'size': 'l' },
+            'entry_fees': { 'title': this.props.app_state.loc['1623']/* 'Entry Fees' */, 'details': object['data'][2].length + this.props.app_state.loc['1624']/* ' tokens used' */, 'size': 'l' },
 
-            'end_balance': { 'style': 'l', 'title': 'End Balance', 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${number_with_commas(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, },
+            'end_balance': { 'style': 'l', 'title': this.props.app_state.loc['377'],/* 'End Balance' */ 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${number_with_commas(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, },
 
-            'spend_balance': { 'style': 'l', 'title': 'Spend Balance', 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${number_with_commas(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, },
+            'spend_balance': { 'style': 'l', 'title': this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${number_with_commas(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, },
+
+
+            'default_consensus_majority_limit': { 'title': this.format_proportion(consensus_majority), 'details': this.props.app_state.loc['1625']/* 'Consensus Majority Proportion' */, 'size': 'l' },
+
+            'default_voter_weight_exchange': { 'title': voter_weight_target_name, 'details': this.props.app_state.loc['1626']/* 'Voter Weight Exchange' */, 'size': 'l' },
+
+            'voter_weight_balance': { 'style': 'l', 'title': this.props.app_state.loc['1627']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${number_with_commas(voter_weight_balance)}`, 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* `units` */, },
         }
+    }
+
+    get_exchange_name_from_id(id, object){
+        if(id == 0) return this.props.app_state.loc['808']/* 'None' */
+        return this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+id]
+    }
+
+    get_voter_weight_balance(id, object){
+        if(id == 0) return this.is_sender_part_of_contract(object) ? 1 : 0
+        if(this.props.app_state.created_token_object_mapping[object['e5']] != null){
+            var voter_exchange = this.props.app_state.created_token_object_mapping[object['e5']][id]
+            if(voter_exchange != null){
+                var balance = voter_exchange['balance']
+                return balance
+            }
+        }
+        return this.is_sender_part_of_contract(object) ? 1 : 0
+    }
+
+    is_sender_part_of_contract(object){
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+
+        if ((expiry_time_in_seconds != 0 && time_to_expiry > 0) && object['id'] != 2) {
+            return true
+        }
+        return false;
     }
 
 
@@ -747,14 +802,14 @@ class ContractDetailsSection extends Component {
         return this.props.get_contract_items()
     }
 
-    render_buy_token_uis(buy_tokens, buy_amounts, buy_depths) {
+    render_buy_token_uis(buy_tokens, buy_amounts, buy_depths, object) {
         var bt = [].concat(buy_tokens)
         return (
             <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
                     {bt.map((item, index) => (
                         <li style={{ 'padding': '1px' }}>
-                            {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID: ' + item, 'subtitle': 'depth:' + buy_depths[index], 'barwidth': this.calculate_bar_width(buy_amounts[index]), 'number': this.format_account_balance_figure(buy_amounts[index]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle': this.format_power_figure(buy_amounts[index]), 'barwidth': this.calculate_bar_width(buy_amounts[index]), 'number': this.format_account_balance_figure(buy_amounts[index]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
                         </li>
                     ))}
                 </ul>
@@ -792,7 +847,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Created Proposal Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2176']/* 'Created Proposal Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_created_proposal_item_logs(object)}
@@ -862,22 +917,22 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_proposal_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_consensus_type(item.returnValues.p3), 'details': 'Consensus Type', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_consensus_type(item.returnValues.p3), 'details': this.props.app_state.loc['346']/* 'Consensus Type' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Proposer Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2178']/* 'Proposer Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p2, 'details': 'Proposal ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p2, 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p2, 'details': 'Proposal ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p2, 'details': this.props.app_state.loc['1761']/* 'Proposal ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -885,14 +940,14 @@ class ContractDetailsSection extends Component {
     }
 
     get_consensus_type(type) {
-        var obj = { '0': 'Spend Proposal', '1': 'Reconfig Proposal', '6': 'Exchange-Transfer' }
+        var obj = { '0': this.props.app_state.loc['2180']/* 'Spend Proposal' */, '1': this.props.app_state.loc['2181']/* 'Reconfiguration Proposal' */, '6': this.props.app_state.loc['2182']/* 'Exchange-Transfer' */ }
         return obj[type]
     }
 
 
     get_sender_title_text(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         } else {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -927,7 +982,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Modify Proposal Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2177']/* 'Modify Proposal Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_modify_contract_item_logs(object)}
@@ -989,22 +1044,22 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_modify_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Modifier', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2179']/* 'Modifier' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': 'Targeted Modify Item', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2183']/* 'Targeted Modify Item' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.get_value_ui(item)}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': 'Targeted Modify Item', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2183']/* 'Targeted Modify Item' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1036,14 +1091,14 @@ class ContractDetailsSection extends Component {
         if (type == 'proportion') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.format_proportion(number), 'details': 'proportion', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.format_proportion(number), 'details': this.props.app_state.loc['1013']/* 'proportion' */, 'size': 'l' })}
                 </div>
             )
         }
         else if (type == 'time') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_time_diff(number), 'details': 'duration', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_diff(number), 'details': this.props.app_state.loc['1014']/* 'duration' */, 'size': 'l' })}
                 </div>
             )
         }
@@ -1051,7 +1106,7 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1430']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -1059,14 +1114,14 @@ class ContractDetailsSection extends Component {
         else if (type == 'tag') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_tag_selected_item(identifier, number), 'details': 'value: ' + number, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.get_tag_selected_item(identifier, number), 'details': this.props.app_state.loc['1883']/* 'value: ' */ + number, 'size': 'l' })}
                 </div>
             )
         }
         else if (type == 'id') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': number, 'details': 'target ID', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': number, 'details': this.props.app_state.loc['2184']/* 'target ID' */, 'size': 'l' })}
                 </div>
             )
         }
@@ -1074,6 +1129,15 @@ class ContractDetailsSection extends Component {
 
     get_tag_selected_item(title, number) {
         var obj = { 'Auto Wait': { 0: 'no', 1: 'yes' }, 'Moderator Modify Privelage': { 1: 'modifiable', 0: 'non-modifiable' }, 'Unlimited Extend Contract Time': { 1: 'enabled', 0: 'disabled' }, 'Bounty Limit Type': { 0: 'relative', 1: 'absolute' }, 'Force Exit Enabled': { 1: 'enabled', 0: 'disabled' }, 'Halving type': { 0: 'fixed', 1: 'spread' }, 'Block Limit Sensitivity': { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' } }
+
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {0:'no', 1:'yes'}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {1:'modifiable', 0:'non-modifiable'} 
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {0:'relative', 1:'absolute'}
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {0:'fixed', 1:'spread'} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}
+
 
         return obj[title][number]
     }
@@ -1094,6 +1158,21 @@ class ContractDetailsSection extends Component {
             'Force Exit Enabled': { 'position': [1, 38], 'picker': 'tag', 'powerlimit': 9 },
             'Minimum Spend Bounty Amount': { 'position': [1, 10], 'picker': 'number', 'powerlimit': 63 },
         }
+
+        obj[this.props.app_state.loc['68']] = {'position':[1,1], 'picker':'proportion', 'powerlimit':9};
+        obj[this.props.app_state.loc['69']] = {'position':[1,2], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['70']] = {'position':[1,4], 'picker':'number', 'powerlimit':63};
+        obj[this.props.app_state.loc['71']] = {'position':[1,5], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['72']] = {'position':[1,6], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['73']] = {'position':[1,8], 'picker':'tag', 'powerlimit':63};
+        obj[this.props.app_state.loc['74']] = {'position':[1,27], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['75']] = {'position':[1,28], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['76']] = {'position':[1,29], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['77']] = {'position':[1,36], 'picker':'time', 'powerlimit':63};
+        obj[this.props.app_state.loc['78']] = {'position':[1,37], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['79']] = {'position':[1,38], 'picker':'tag', 'powerlimit':9};
+        obj[this.props.app_state.loc['80']] = {'position':[1,10], 'picker':'number', 'powerlimit':63};
+
         return obj
     }
 
@@ -1113,10 +1192,10 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Enter Contract Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2186']/* 'Enter Contract Events' */, 'size': 'l' })}
                     </div>
                     <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput height={20} placeholder={'Search account ID...'} when_text_input_field_changed={this.when_enter_contract_search_text_input_field_changed.bind(this)} text={this.state.enter_contract_search_text} theme={this.props.theme}/>
+                        <TextInput height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_enter_contract_search_text_input_field_changed.bind(this)} text={this.state.enter_contract_search_text} theme={this.props.theme}/>
                     </div>
                     
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
@@ -1194,20 +1273,20 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_enter_contract_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Entering Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2188']/* 'Entering Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': 'Entry Expiry', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': this.props.app_state.loc['2189']/* 'Entry Expiry' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Entering Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2188']/* 'Entering Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1232,7 +1311,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Extend Contract Stay Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': this.props.app_state.loc['2190']/* 'Extend Contract Stay Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_extend_contract_item_logs(object)}
@@ -1292,20 +1371,20 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_extend_contract_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Extending Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2191']/* 'Extending Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': 'Entry Expiry', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': this.props.app_state.loc['2192']/* 'Entry Expiry' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Extending Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2191']/* 'Extending Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1331,10 +1410,10 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Exit Contract Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2193']/* 'Exit Contract Events' */, 'size': 'l' })}
                     </div>
                     <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput height={20} placeholder={'Search account ID...'} when_text_input_field_changed={this.when_exit_contract_search_text_input_field_changed.bind(this)} text={this.state.exit_contract_search_text} theme={this.props.theme}/>
+                        <TextInput height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_exit_contract_search_text_input_field_changed.bind(this)} text={this.state.exit_contract_search_text} theme={this.props.theme}/>
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_exit_contract_item_logs(object)}
@@ -1412,18 +1491,18 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_exit_contract_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Exiting Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2194']/* 'Exiting Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Exiting Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2194']/* 'Exiting Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1450,7 +1529,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Force Exit Contract Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2195']/* 'Force Exit Contract Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_force_exit_contract_item_logs(object)}
@@ -1512,20 +1591,20 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_force_exit_contract_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Moderator Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2196']/* 'Moderator Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p5, object), 'details': 'Exiting Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p5, object), 'details': this.props.app_state.loc['2197']/* 'Exiting Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p5, object), 'details': 'Exiting Account ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p5, object), 'details': this.props.app_state.loc['2197']/* 'Exiting Account ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1549,7 +1628,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Contract Transfer Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2199']/* 'Contract Transfer Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_contract_transfer_item_logs(object)}
@@ -1616,17 +1695,17 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2200']/* 'Token ID:  ' */+exchange_id+this.props.app_state.loc['2201']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1636,7 +1715,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2200']/* 'Token ID:  ' */+exchange_id+this.props.app_state.loc['2201']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -1664,7 +1743,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Contract Modify Moderator Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2202']/* 'Contract Modify Moderator Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_modify_moderator_item_logs(object)}
@@ -1731,29 +1810,29 @@ class ContractDetailsSection extends Component {
 
 
     render_modify_moderator_event_item(item, object, index){
-        var authority_val_obj = {'0':'Not Moderator', '1':'Moderator'}
+        var authority_val_obj = {'0':this.props.app_state.loc['2211']/* 'Not Moderator' */, '1':this.props.app_state.loc['2212']/* 'Moderator' */}
         var authority_val = authority_val_obj[item.returnValues.p6]
         if (this.state.selected_modify_moderator_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2214']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': authority_val, 'details': this.props.app_state.loc['2203']/* 'Authority value' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', {'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2203']/* 'Authority value' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1780,7 +1859,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Contract Access Rights Settings Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2204']/* 'Contract Access Rights Settings Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_checker_item_logs(object)}
@@ -1845,20 +1924,20 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_interactable_checker_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Access Rights Status', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2205']/* 'Access Rights Status' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2214']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Acces Rights Status', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2205']/* Acces Rights Status' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1884,7 +1963,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Contract  Account Access Settings Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title':this.props.app_state.loc['2185']/*  'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2207']/* 'Contract  Account Access Settings Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_accounts_item_logs(object)}
@@ -1947,25 +2026,25 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_interactable_account_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2214']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2208']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2213']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2208']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1996,7 +2075,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': 'Contract  Blocked Account Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2209']/* 'Contract  Blocked Account Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_blocked_accounts_item_logs(object)}
@@ -2058,26 +2137,26 @@ class ContractDetailsSection extends Component {
         if (this.state.selected_blocked_account_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2107']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -2182,35 +2261,35 @@ class ContractDetailsSection extends Component {
     }
 
     get_time_diff(diff) {
-        if (diff < 60) {//less than 1 min
+        if(diff < 60){//less than 1 min
             var num = diff
-            var s = num > 1 ? 's' : '';
-            return num + ' sec'
+            var s = num > 1 ? 's': '';
+            return num+ this.props.app_state.loc['29']
         }
-        else if (diff < 60 * 60) {//less than 1 hour
-            var num = Math.floor(diff / (60));
-            var s = num > 1 ? 's' : '';
-            return num + ' min'
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['30'] 
         }
-        else if (diff < 60 * 60 * 24) {//less than 24 hours
-            var num = Math.floor(diff / (60 * 60));
-            var s = num > 1 ? 's' : '';
-            return num + ' hr' + s;
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['31'] + s;
         }
-        else if (diff < 60 * 60 * 24 * 7) {//less than 7 days
-            var num = Math.floor(diff / (60 * 60 * 24));
-            var s = num > 1 ? 's' : '';
-            return num + ' dy' + s;
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['32'] + s;
         }
-        else if (diff < 60 * 60 * 24 * 7 * 53) {//less than 1 year
-            var num = Math.floor(diff / (60 * 60 * 24 * 7));
-            var s = num > 1 ? 's' : '';
-            return num + ' wk' + s;
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
-            var num = Math.floor(diff / (60 * 60 * 24 * 7 * 53));
-            var s = num > 1 ? 's' : '';
-            return number_with_commas(num) + ' yr' + s;
+            var num = (Math.floor(diff/(60*60*24*7*53))).toLocaleString('fullwide', {useGrouping:false});
+            var s = num > 1 ? 's': '';
+            return this.format_account_balance_figure(num) + this.props.app_state.loc['34'] + s;
         }
     }
 

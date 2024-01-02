@@ -67,7 +67,7 @@ class ProposalDetailsSection extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e','channel-structure', 'comment-structure'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
             ],
         };
     }
@@ -90,17 +90,23 @@ class ProposalDetailsSection extends Component {
     }
 
     get_navigate_view_proposal_list_detail_tags(){
-        return{
+        var obj = {
           'i':{
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','details', 'proposal-actions','activity', 'e.events'],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */, this.props.app_state.loc['2527']/* 'proposal-actions' */,this.props.app_state.loc['1674']/* 'activity' */, 'e.'+this.props.app_state.loc['1263']/* 'e.events' */],[1]
           ],
           'events': [
-                ['xor', 'e', 1], ['events', 'transfers', 'votes'], [1], [1]
+                ['xor', 'e', 1], [this.props.app_state.loc['1263']/* 'events' */, this.props.app_state.loc['1713']/* 'transfers' */, this.props.app_state.loc['1711']/* 'votes' */], [1], [1]
             ],
         }
+        obj[this.props.app_state.loc['1263']/* events */] = [
+                ['xor', 'e', 1], [this.props.app_state.loc['1263']/* 'events' */, this.props.app_state.loc['1713']/* 'transfers' */, this.props.app_state.loc['1711']/* 'votes' */], [1], [1]
+            ]
+
+
+        return obj
     }
 
     render(){
@@ -157,35 +163,35 @@ class ProposalDetailsSection extends Component {
             )
         }
         
-        if(selected_item == 'details'){
+        if(selected_item == this.props.app_state.loc['2118']/* 'details' */){
             return(
                 <div>
                     {this.render_proposal_main_details_section(object)}
                 </div>
             )
         }
-        else if(selected_item == 'proposal-actions'){
+        else if(selected_item == this.props.app_state.loc['2527']/* 'proposal-actions' */){
             return(
                 <div>
                     {this.render_proposal_actions(object)}
                 </div>
             )
         }
-        else if(selected_item == 'activity'){
+        else if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
             return(
                 <div>
                     {this.render_proposal_message_activity(object)}
                 </div>
             )
         }
-        else if(selected_item == 'transfers'){
+        else if(selected_item == this.props.app_state.loc['1713']/* 'transfers' */){
             return(
                 <div>
                     {this.render_transfer_logs(object)}
                 </div>
             )
         }
-        else if(selected_item == 'votes'){
+        else if(selected_item == this.props.app_state.loc['1711']/* 'votes' */){
             return(
                 <div>
                     {this.render_vote_logs(object)}
@@ -221,7 +227,7 @@ class ProposalDetailsSection extends Component {
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p4, object), 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p4, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
@@ -233,6 +239,12 @@ class ProposalDetailsSection extends Component {
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['consensus_type'])}
+
+                    <div style={{ height: 10 }} />
+                    {this.render_detail_item('3', item['consensus_majority_target_proportion'])}
+
+                    <div style={{ height: 10 }} />
+                    {this.render_detail_item('3', item['default_voter_weight_exchange'])}
                     
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['proposal_expiry_time'])}
@@ -273,6 +285,9 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['vote_no'])}
 
+                    <div style={{height:10}}/>
+                    {this.render_conseusns_status(object)}
+
 
                     {this.render_vote_proposal_button(object)}
 
@@ -293,10 +308,31 @@ class ProposalDetailsSection extends Component {
         )
     }
 
+    render_conseusns_status(object){
+        var target_consensus_value = object['data'][1][6/* consensus_majority_target_proportion */]
+        if(target_consensus_value == 0) target_consensus_value = bigInt('1e18')
+        var target_consensus = target_consensus_value / bigInt('1e18')
+        var achieved_consensus = (this.get_proportion_of_total(object, object['consensus_data'][1])) / 100
+
+        if(achieved_consensus >= target_consensus){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2528']/* 'Consensus Achieved.' */, 'title':this.props.app_state.loc['2529']/* 'Status' */})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2530']/* 'Consensus Pending.' */, 'title':this.props.app_state.loc['2529']/* 'Status' */})}
+                </div>
+            )
+        }
+    }
+
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -307,10 +343,10 @@ class ProposalDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Pin the proposal to your feed', 'title':'Pin Proposal'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2531']/* 'Pin the proposal to your feed' */, 'title':this.props.app_state.loc['2532']/* 'Pin Proposal' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_proposal_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin/Unpin Proposal', 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2533']/* 'Pin/Unpin Proposal' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -341,10 +377,10 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Vote in Proposal', 'details':'Cast a vote in this proposal and collect some bounty', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2534']/* 'Vote in Proposal' */, 'details':this.props.app_state.loc['2535']/* 'Cast a vote in this proposal and collect some bounty.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_vote_proposal_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Vote Proposal', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2536']/* 'Vote Proposal' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -357,14 +393,19 @@ class ProposalDetailsSection extends Component {
         var proposal_exipry_time = object['data'][1][1/* <1>proposal_expiry_time */]
         var proposal_sumbit_expiry_time = object['data'][1][3/* <3>consensus_submit_expiry_time */]
 
-        if(now > proposal_exipry_time && now < proposal_sumbit_expiry_time){
+        var target_consensus_value = object['data'][1][6/* consensus_majority_target_proportion */]
+        if(target_consensus_value == 0) target_consensus_value = bigInt('1e18')
+        var target_consensus = target_consensus_value / bigInt('1e18')
+        var achieved_consensus = (this.get_proportion_of_total(object, object['consensus_data'][1])) / 100
+
+        if(now > proposal_exipry_time && now < proposal_sumbit_expiry_time && achieved_consensus >= target_consensus){
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Submit Proposal', 'details':'Submit the proposal to perform its actions', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2537']/* 'Submit Proposal' */, 'details':this.props.app_state.loc['2538']/* 'Submit the proposal to perform its actions' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_sumbit_proposal_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Submit Proposal', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2537']/* 'Submit Proposal' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -378,13 +419,13 @@ class ProposalDetailsSection extends Component {
         if(events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Submitted', 'details':'The proposal has been submitted by its author.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2539']/* 'Proposal Submitted' */, 'details':this.props.app_state.loc['2540']/* 'The proposal has been submitted by its author.' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Unsubmitted', 'details':'The proposal has not been submitted by its author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2541']/* Proposal Unsubmitted' */, 'details':this.props.app_state.loc['2542']/* 'The proposal has not been submitted by its author.' */, 'size':'l'})}
                 </div>
             )
         }
@@ -397,13 +438,13 @@ class ProposalDetailsSection extends Component {
         if(events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Archived', 'details':'The proposal has been archived by its author.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2543']/* 'Proposal Archived' */, 'details':this.props.app_state.loc['2544']/* 'The proposal has been archived by its author.' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Proposal Not Archived', 'details':'The proposal has not been archived by its author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2545']/* 'Proposal Not Archived' */, 'details':this.props.app_state.loc['2546']/* 'The proposal has not been archived by its author' */, 'size':'l'})}
                 </div>
             )
         }
@@ -428,10 +469,10 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Archive Proposal', 'details':'Delete the proposals data to free up space in the blockchain', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2547']/* 'Archive Proposal' */, 'details':this.props.app_state.loc['2548']/* 'Delete the proposals data to free up space in the blockchain' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_archive_proposal_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Archive Proposal', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2547']/* 'Archive Proposal' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -463,40 +504,51 @@ class ProposalDetailsSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p6
         var time = object['event'] == null ? 0 : object['event'].returnValues.p5
 
-        var consensus_obj = {0:'spend',1:'reconfig', 6:'exchange-transfer'}
+        var consensus_obj = {0:this.props.app_state.loc['316']/* spend' */,1:this.props.app_state.loc['317']/* 'reconfig' */, 6:this.props.app_state.loc['318']/* 'exchange-transfer' */}
         var proposal_config = object['data'][1]
         var consensus_type = consensus_obj[proposal_config[0]]
-
+        var voter_weight_target_name = this.get_exchange_name_from_id(proposal_config[7], object)
+        var consensus_majority = proposal_config[6] == 0 ? bigInt('1e18') : proposal_config[6]
         
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Age of Proposal', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
+            'age':{'style':'l', 'title':this.props.app_state.loc['2549']/* 'Age of Proposal' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
 
             '':{'title':'', 'details':'', 'size':'l'},
 
-            'consensus_type':{'title':consensus_type, 'details':'Consensus Type', 'size':'l'},
-            'proposal_expiry_time':{'title':'Proposal Expiry time', 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'},
-            'proposal_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[1]), 'details':'Proposal expiry time from now', 'size':'l'},
+            'consensus_type':{'title':consensus_type, 'details':this.props.app_state.loc['1861']/* Consensus Type' */, 'size':'l'},
+            'proposal_expiry_time':{'title':this.props.app_state.loc['1862']/* 'Proposal Expiry time' */, 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'},
+            'proposal_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[1]), 'details':this.props.app_state.loc['1863']/* 'Proposal expiry time from now' */, 'size':'l'},
 
-            'consensus_submit_expiry_time':{'title':'Proposal Submit Expiry time', 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'},
-            'proposal_submit_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[3]), 'details':'Proposal submit expiry time from now', 'size':'l'},
+            'consensus_submit_expiry_time':{'title':this.props.app_state.loc['1864']/* 'Proposal Submit Expiry time' */, 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'},
+            'proposal_submit_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[3]), 'details':this.props.app_state.loc['1865']/* 'Proposal submit expiry time from now' */, 'size':'l'},
 
-            'target_contract_authority':{'title':proposal_config[5], 'details':'Contract Authority ID', 'size':'l'},
-            'modify_target':{'title':proposal_config[9], 'details':'Modify Target', 'size':'l'},
-
-
-            'end_balance':{'style':'l', 'title':'End Bounty Balance', 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':`tokens`, },
-
-            'spend_balance':{'style':'l', 'title':'Spend Bounty Balance', 'subtitle':'Spend', 'barwidth':this.get_number_width(object['spend_balance']), 'number':` ${number_with_commas(object['spend_balance'])}`, 'barcolor':'', 'relativepower':`tokens`, },
+            'target_contract_authority':{'title':proposal_config[5], 'details':this.props.app_state.loc['1874']/* Contract Authority ID' */, 'size':'l'},
+            'modify_target':{'title':proposal_config[9], 'details':this.props.app_state.loc['1875']/* 'Modify Target' */, 'size':'l'},
 
 
-            'vote_wait':{'title':''+object['consensus_data'][0]+' WAIT votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'},
+            'end_balance':{'style':'l', 'title':this.props.app_state.loc['773']/* 'End Bounty Balance' */, 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1146']/* `tokens` */, },
 
-            'vote_yes':{'title':''+object['consensus_data'][1]+' YES votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'},
+            'spend_balance':{'style':'l', 'title':this.props.app_state.loc['774']/* Spend Bounty Balance' */, 'subtitle':'Spend', 'barwidth':this.get_number_width(object['spend_balance']), 'number':` ${number_with_commas(object['spend_balance'])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1146']/* `tokens` */, },
 
-            'vote_no':{'title':''+object['consensus_data'][2]+' NO votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'},
+
+            'vote_wait':{'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'},
+
+            'vote_yes':{'title':''+this.format_account_balance_figure(object['consensus_data'][1])+this.props.app_state.loc['788']/* ' YES votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'},
+
+            'vote_no':{'title':''+this.format_account_balance_figure(object['consensus_data'][2])+this.props.app_state.loc['789']/* ' NO votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'},
+
+
+            'default_voter_weight_exchange': { 'title': voter_weight_target_name, 'details': this.props.app_state.loc['1626']/* 'Voter Weight Exchange' */, 'size': 'l' },
+
+            'consensus_majority_target_proportion': { 'title': this.format_proportion(consensus_majority), 'details': this.props.app_state.loc['2550']/* 'Consensus Majority Target Proportion' */, 'size': 'l' },
         }
+    }
+
+    get_exchange_name_from_id(id, object){
+        if(id == 0) return this.props.app_state.loc['808']/* 'None' */
+        return this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+id]
     }
 
     get_proportion_of_total(object, vote_count){
@@ -701,9 +753,9 @@ class ProposalDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['1012']/* 'Modify Target' */, 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1879']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -723,7 +775,7 @@ class ProposalDetailsSection extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['1880']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -731,14 +783,14 @@ class ProposalDetailsSection extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':this.props.app_state.loc['1881']/* 'proportion' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':this.props.app_state.loc['1882']/* 'duration' */, 'size':'l'})}
 
                 </div>
             )
@@ -746,14 +798,14 @@ class ProposalDetailsSection extends Component {
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':this.props.app_state.loc['1883']/* 'value: ' */+number, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['1884']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -761,6 +813,15 @@ class ProposalDetailsSection extends Component {
 
     get_tag_selected_item(title, number){
         var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
+
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {0:'no', 1:'yes'}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {1:'modifiable', 0:'non-modifiable'} 
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {0:'relative', 1:'absolute'}
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {0:'fixed', 1:'spread'} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}
+
 
         return obj[title][number]
     }
@@ -801,10 +862,10 @@ class ProposalDetailsSection extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':'tokens', })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.loc['1885']/* 'tokens' */, })}
                                 </div>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['exchange']], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['1886']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item['exchange']], 'size':'s'})}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
@@ -830,6 +891,7 @@ class ProposalDetailsSection extends Component {
 
     render_proposal_message_activity(object){
         var he = this.props.height-100
+        if(this.get_focused_message(object) != null) he = this.props.height-160
         var size = this.props.screensize
         
         return(
@@ -838,12 +900,12 @@ class ProposalDetailsSection extends Component {
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
-                        {this.render_focus_list(object)}
+                        {/* {this.render_focus_list(object)} */}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
-
+                {this.render_focused_message(object)}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
                     <div style={{'margin':'1px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
@@ -854,15 +916,35 @@ class ProposalDetailsSection extends Component {
                         </div>
                     </div>
                     <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
-                        <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        <TextInput height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
                     <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
-                        {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2151']/* 'Send' */, 'action':'-'})}
                     </div>
                 </div>
             </div> 
         )
+    }
+
+
+    render_focused_message(object){
+        var item = this.get_focused_message(object);
+        if(item != null){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 70px 5px 50px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message(object)}> 
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 41)}</p>
+                </div>
+            )
+        }
     }
 
     when_comment_structure_tags_updated(tag_obj){
@@ -879,13 +961,14 @@ class ProposalDetailsSection extends Component {
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':object['ipfs'].entered_title_text, 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2496']/* 'In ' */+object['id'], 'details':object['ipfs'].entered_title_text, 'size':'l'})} 
             </div>
         )
     }
 
     render_sent_received_messages(object){
         var middle = this.props.height-250;
+        if(this.get_focused_message(object) != null) middle = this.props.height-300
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -913,32 +996,31 @@ class ProposalDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message(object) != null){
-            var focused_message_replies = this.get_focused_message_replies(object)
-            return(
-                <div>
-                    <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message(object),object)}
-                    </div>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-                        <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-                            <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies, object)}
-                                <div ref={this.messagesEnd}/>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+        // else if(this.get_focused_message(object) != null){
+        //     var focused_message_replies = this.get_focused_message_replies(object)
+        //     return(
+        //         <div>
+        //             <div style={{'padding': '2px 5px 2px 5px'}}>
+        //                 {this.render_message_as_focused_if_so(this.get_focused_message(object),object)}
+        //             </div>
+        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
+        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
+        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
+        //                         {this.render_messages(focused_message_replies, object)}
+        //                         <div ref={this.messagesEnd}/>
+        //                     </ul>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     )
+        // }
         else{
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-            if(selected_view_option == 'channel-structure'){
+            if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items, object)}
-                        {this.render_messages(stacked_items, object)}
+                        {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -958,7 +1040,7 @@ class ProposalDetailsSection extends Component {
 
     render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message(object) != null){
+        if(items.length == 0){
             var items = [0,1]
             return(
                 <div>
@@ -1052,6 +1134,19 @@ class ProposalDetailsSection extends Component {
 
 
     render_message_as_focused_if_so(item, object){
+        return(
+            <div>
+                <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            action: () => this.focus_message(item, object)
+                            }}>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+            </div>
+        )
         var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
@@ -1125,7 +1220,7 @@ class ProposalDetailsSection extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied message to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['1692']/* Copied message to clipboard.' */, 600)
     }
 
     render_stack_message_item(item, object){
@@ -1155,7 +1250,7 @@ class ProposalDetailsSection extends Component {
                     <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
                     {this.render_images_if_any(item)}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p>
                 </div>
                 {this.render_response_if_any(item, object)}
             </div>
@@ -1164,16 +1259,16 @@ class ProposalDetailsSection extends Component {
 
     render_response_if_any(_item, object){
         if(_item['focused_message_id'] == 0) return;
-        if(this.get_focused_message(object) != null) return;
+        // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
         if(item == null) return;
         var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-        if(selected_view_option == 'comment-structure') return
+        if(selected_view_option == this.props.app_state.loc['1672']/* 'comment-structure' */) return
         return(
-            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
-                <div className="row" style={{'padding':'0px 0px 10px 10px'}}>
-                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
+                <div className="row" style={{'padding':'0px 0px 1px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                     </div>
                     <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
@@ -1222,7 +1317,7 @@ class ProposalDetailsSection extends Component {
     get_sender_title_text(item, object){
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
@@ -1273,7 +1368,7 @@ class ProposalDetailsSection extends Component {
         var stack = this.props.app_state.stack_items
         var stacked_items = []
         for(var i=0; i<stack.length; i++){
-            if(stack[i].type == 'proposal-messages'){
+            if(stack[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
                 for(var e=0; e<stack[i].messages_to_deliver.length; e++){
                     var message_obj = stack[i].messages_to_deliver[e]
                     if(message_obj['id'] == convo_id){
@@ -1350,10 +1445,10 @@ class ProposalDetailsSection extends Component {
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         if(message == ''){
-            this.props.notify('type something first', 600)
+            this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 600)
         }
         else if(this.props.app_state.user_account_id[object['e5']] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 5200)
         }
         else{
             var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
@@ -1361,7 +1456,7 @@ class ProposalDetailsSection extends Component {
             this.props.add_proposal_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify('message added to stack', 600)
+            this.props.notify(this.props.app_state.loc['1697']/* 'message added to stack' */, 3600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -1535,7 +1630,7 @@ class ProposalDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Proposal ' + object['id'], 'details': 'Proposal Transfer Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2552']/* 'In Proposal '  */+ object['id'], 'details': this.props.app_state.loc['2551']/* 'Proposal Transfer Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_contract_transfer_item_logs(object)}
@@ -1606,27 +1701,27 @@ class ProposalDetailsSection extends Component {
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+this.props.app_state.loc['2553']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+this.props.app_state.loc['2553']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -1652,7 +1747,7 @@ class ProposalDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Proposal ' + object['id'], 'details': 'Proposal Vote Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2552']/* 'In Proposal ' */ + object['id'], 'details': this.props.app_state.loc['2554']/* 'Proposal Vote Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_vote_event_item_logs(object)}
@@ -1712,26 +1807,26 @@ class ProposalDetailsSection extends Component {
 
 
     render_proposal_vote_event_item(item, object, index){
-        var obj = {'1':'Yes!', '2':'Wait..', '3':'No.'}
+        var obj = {'1':this.props.app_state.loc['2555']/* 'Yes!' */, '2':this.props.app_state.loc['2556']/* 'Wait..' */, '3':this.props.app_state.loc['2557']/* 'No.' */}
         var vote = obj[item.returnValues.p4]
 
         if (this.state.selected_proposal_vote_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': 'From: '+this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': 'Contract ID', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p1, 'details': this.props.app_state.loc['2558']/* 'Contract ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['2549']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': vote , 'details': 'From: '+ this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['2420']/* 'From: ' */+ this.get_sender_title_text2(item.returnValues.p3, object), 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1846,32 +1941,32 @@ class ProposalDetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

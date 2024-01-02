@@ -43,8 +43,8 @@ function makeid(length) {
 class SendJobRequestPage extends Component {
     
     state = {
-        selected: 0, contractor_item:{'id':0},  type:'job-request', id:makeid(8),
-        entered_indexing_tags:['send', 'job', 'request'], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
+        selected: 0, contractor_item:{'id':0},  type:this.props.app_state.loc['1363']/* 'job-request' */, id:makeid(8),
+        entered_indexing_tags:[this.props.app_state.loc['1364']/* 'send' */, this.props.app_state.loc['1365']/* 'job' */, this.props.app_state.loc['1366']/* 'request' */], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
         entered_title_text:'', entered_image_objects:[], e5: this.props.app_state.selected_e5
     };
 
@@ -54,7 +54,7 @@ class SendJobRequestPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'expiry-time', 'amount'], [0]
+                ['or','',0], ['e', this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [0]
             ],
         };
     }
@@ -65,7 +65,7 @@ class SendJobRequestPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','prepaid', 'postpaid'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1314']/* 'prepaid' */, this.props.app_state.loc['1315']/* 'postpaid' */], [1]
             ],
         }
     }
@@ -79,7 +79,7 @@ class SendJobRequestPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                         
                     </div>
@@ -106,21 +106,21 @@ class SendJobRequestPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'contract'){
+        else if(selected_item == this.props.app_state.loc['1311']/* 'contract' */){
             return(
                 <div>
                     {this.render_select_contract_parts()}
                 </div>
             )
         }
-        else if(selected_item == 'expiry-time'){
+        else if(selected_item == this.props.app_state.loc['1312']/* 'expiry-time' */){
             return(
                 <div>
                     {this.render_application_expiry_time()}
                 </div>
             )
         }
-        else if(selected_item == 'amount'){
+        else if(selected_item == this.props.app_state.loc['1313']/* 'amount' */){
             return(
                 <div>
                     {this.render_application_prices()}
@@ -134,13 +134,13 @@ class SendJobRequestPage extends Component {
     render_title_details_part(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Set some details for your new job request. It should be task specific'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1345']/* 'Set some details for your new job request. It should be task specific.' */})}
                 <div style={{height:10}}/>
-                <TextInput height={70} placeholder={'Enter Details...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
+                <TextInput height={70} placeholder={this.props.app_state.loc['1346']/* 'Enter Details...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/> 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image and tap to remove.'})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image and tap to remove.' */})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
 
@@ -254,7 +254,7 @@ class SendJobRequestPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1347']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -413,7 +413,7 @@ class SendJobRequestPage extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1348']/* 'block' */, }
         }
     }
 
@@ -435,7 +435,7 @@ class SendJobRequestPage extends Component {
     render_application_expiry_time(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Select an expiry time for your job request'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1349']/* 'Select an expiry time for your job request.' */})}
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -468,28 +468,28 @@ class SendJobRequestPage extends Component {
     render_application_prices(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Prepaid or Postpaid', 'details':'Set the payment option you prefer for the job request', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1350']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1351']/* 'Set the payment option you prefer for the job request.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
                 <Tags page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Requested Pay', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1352']/* 'Requested Pay' */, 'details':this.props.app_state.loc['1353']/* 'Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1354']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1355']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1356']/* 'tokens' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Pay', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1357']/* 'Add Pay' */, 'action':''})}
                 </div>
 
                 {this.render_set_prices_list_part()}
@@ -513,16 +513,16 @@ class SendJobRequestPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 1600)
+            this.props.notify(this.props.app_state.loc['1358']/* 'Please put a valid exchange ID.' */, 1600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 1600)
+            this.props.notify(this.props.app_state.loc['1359']/* 'Please put a valid amount.' */, 1600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 1400)
+            this.props.notify(this.props.app_state.loc['1360']/* 'Added price.' */, 1400)
         }
     }
 
@@ -617,8 +617,8 @@ class SendJobRequestPage extends Component {
 
    get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['1361']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['1362']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         var sorted_token_exchange_data = []
@@ -652,8 +652,8 @@ class SendJobRequestPage extends Component {
     set_object(contractor_item){
         if(this.state.contractor_item['id'] != contractor_item['id']){
             this.setState({
-                selected: 0,  type:'job-request', id:makeid(8),
-                entered_indexing_tags:['send', 'job', 'request'], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
+                selected: 0,  type:this.props.app_state.loc['1363']/* 'job-request' */, id:makeid(8),
+                entered_indexing_tags:[this.props.app_state.loc['1364']/* 'send' */, this.props.app_state.loc['1365']/* 'job' */, this.props.app_state.loc['1366']/* 'request' */], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
                 entered_title_text:'', entered_image_objects:[]
             })
         }
@@ -666,19 +666,19 @@ class SendJobRequestPage extends Component {
         var entered_title_text = this.state.entered_title_text.trim()
 
         if(selected_time-Date.now()/1000 < 900){
-            this.props.notify('you cant set an expiry time thats less than fifteen minutes from now', 600)
+            this.props.notify(this.props.app_state.loc['1367']/* 'You cant set an expiry time thats less than fifteen minutes from now.' */, 600)
         }
         else if(entered_title_text == ''){
-            this.props.notify('you need to set a description for the job request')
+            this.props.notify(this.props.app_state.loc['1368']/* 'You need to set a description for the job request.' */)
         }
         else{
             this.props.add_send_job_request_to_stack(this.state)
             this.setState({
-                selected: 0, type:'job-request', id:makeid(8),
-                entered_indexing_tags:['send', 'job', 'request'], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
+                selected: 0, type:this.props.app_state.loc['1363']/* 'job-request' */, id:makeid(8),
+                entered_indexing_tags:[this.props.app_state.loc['1364']/* 'send' */, this.props.app_state.loc['1365']/* 'job' */, this.props.app_state.loc['1366']/* 'request' */], send_job_request_title_tags_object: this.get_send_job_request_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
                 entered_title_text:'', entered_image_objects:[]
             })
-            this.props.notify('transaction added to stack', 600)
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
         }
     }
 
@@ -770,32 +770,32 @@ class SendJobRequestPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

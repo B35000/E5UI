@@ -67,7 +67,7 @@ class PostsDetailsSection extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e','channel-structure', 'comment-structure'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
             ],
         };
     }
@@ -95,7 +95,7 @@ class PostsDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','metadata','awards','responses'],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2514']/* 'awards' */,this.props.app_state.loc['1693']/* 'responses' */],[1]
           ],
         }
     }
@@ -163,20 +163,20 @@ class PostsDetailsSection extends Component {
             )
         }
 
-        if(selected_item == 'metadata'){
+        if(selected_item ==this.props.app_state.loc['2028']/*  'metadata' */){
             return(
                 <div>
                     {this.render_post_main_details_section(object)}
                 </div>
             )
-        }else if(selected_item == 'responses'){
+        }else if(selected_item == this.props.app_state.loc['1693']/* 'responses' */){
             return(
                 <div>
                     {this.render_post_responses(object)}
                 </div>
             )  
         }
-        else if(selected_item == 'awards'){
+        else if(selected_item == this.props.app_state.loc['2514']/* 'awards' */){
             return(
                 <div>
                     {this.render_post_awards(object)}
@@ -202,7 +202,7 @@ class PostsDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -261,7 +261,7 @@ class PostsDetailsSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -272,10 +272,10 @@ class PostsDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Pin the post to your feed', 'title':'Pin Post'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2515']/* Pin the post to your feed' */, 'title':this.props.app_state.loc['2516']/* 'Pin Post' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_post_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin/Unpin Post', 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2517']/* 'Pin/Unpin Post' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -346,7 +346,7 @@ class PostsDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
         }
     }
 
@@ -360,10 +360,10 @@ class PostsDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Edit Indexed Post', 'details':'Change the basic details for your Indexed Post', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2518']/* Edit Indexed Post' */, 'details':this.props.app_state.loc['2519']/* 'Change the basic details for your Indexed Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_object_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2520']/* 'Perform Action' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -385,10 +385,10 @@ class PostsDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Give Award', 'details':`Send a tip to the post's author`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2521']/* 'Give Award' */, 'details':this.props.app_state.loc['2522']/* `Send a tip to the post's author` */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_award_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Send Award', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2523']/* 'Send Award' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -428,7 +428,7 @@ class PostsDetailsSection extends Component {
         // var object = this.get_post_items()[this.props.selected_post_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Awards.', 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2525']/* 'Awards.' */, 'size':'l'})} 
             </div>
         )
     }
@@ -490,8 +490,12 @@ class PostsDetailsSection extends Component {
 
 
 
+
+
+
     render_post_responses(object){
         var he = this.props.height-100
+        if(this.get_focused_message(object) != null) he = this.props.height-160
         var size = this.props.screensize
 
         return(
@@ -500,12 +504,12 @@ class PostsDetailsSection extends Component {
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
-                        {this.render_focus_list(object)}
+                        {/* {this.render_focus_list(object)} */}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
-
+                {this.render_focused_message(object)}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
                     <div style={{'margin':'1px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
@@ -527,6 +531,25 @@ class PostsDetailsSection extends Component {
         )
     }
 
+    render_focused_message(object){
+        var item = this.get_focused_message(object);
+        if(item != null){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 70px 5px 50px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message(object)}> 
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 41)}</p>
+                </div>
+            )
+        }
+    }
+
     when_comment_structure_tags_updated(tag_obj){
         this.setState({comment_structure_tags: tag_obj})
     }
@@ -541,7 +564,7 @@ class PostsDetailsSection extends Component {
         // var object = this.get_post_items()[this.props.selected_post_item];
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['id'], 'details':'Comments.', 'size':'l'})} 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2524']/* 'In ' */+object['id'], 'details':this.props.app_state.loc['2526']/* 'Comments.' */, 'size':'l'})} 
             </div>
         )
     }
@@ -554,6 +577,7 @@ class PostsDetailsSection extends Component {
 
     render_sent_received_messages(object){
         var middle = this.props.height-250;
+        if(this.get_focused_message(object) != null) middle = this.props.height-300
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object))
 
@@ -577,32 +601,31 @@ class PostsDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message(object) != null){
-            var focused_message_replies = this.get_focused_message_replies(object)
-            return(
-                <div>
-                    <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
-                    </div>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-                        <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-                            <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies, object)}
-                                <div ref={this.messagesEnd}/>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+        // else if(this.get_focused_message(object) != null){
+        //     var focused_message_replies = this.get_focused_message_replies(object)
+        //     return(
+        //         <div>
+        //             <div style={{'padding': '2px 5px 2px 5px'}}>
+        //                 {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
+        //             </div>
+        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
+        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
+        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
+        //                         {this.render_messages(focused_message_replies, object)}
+        //                         <div ref={this.messagesEnd}/>
+        //                     </ul>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     )
+        // }
         else{
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-            if(selected_view_option == 'channel-structure'){
+            if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items, object)}
-                        {this.render_messages(stacked_items, object)}
+                        {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -622,7 +645,7 @@ class PostsDetailsSection extends Component {
 
     render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message(object) != null){
+        if(items.length == 0){
             var items = [0,1]
             return(
                 <div>
@@ -715,6 +738,20 @@ class PostsDetailsSection extends Component {
     }
 
     render_message_as_focused_if_so(item, object){
+        return(
+            <div>
+                <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            action: () => this.focus_message(item, object)
+                            }}>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+            </div>
+        )
+
         var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
@@ -788,7 +825,7 @@ class PostsDetailsSection extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied message to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['1692']/* 'Copied message to clipboard.' */, 1600)
     }
 
     render_stack_message_item(item, object){
@@ -817,7 +854,7 @@ class PostsDetailsSection extends Component {
                     <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} onClick={(e) => this.when_message_clicked(e, item)}><Linkify options={{target: '_blank'}}>{this.format_message(item['message'], object)}</Linkify></p>
 
                     {this.render_images_if_any(item)}
-                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} response(s)</p>
+                    <p style={{'font-size': '8px','color': this.props.theme['primary_text_color'],'margin': '1px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}} className="fw-bold">{this.get_message_replies(item, object).length} {this.props.app_state.loc['1693']}</p>
                 </div>
                 {this.render_response_if_any(item, object)}
             </div>
@@ -827,16 +864,16 @@ class PostsDetailsSection extends Component {
 
     render_response_if_any(_item, object){
         if(_item['focused_message_id'] == 0) return;
-        if(this.get_focused_message(object) != null) return;
+        // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
         if(item == null) return;
         var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-        if(selected_view_option == 'comment-structure') return
+        if(selected_view_option == this.props.app_state.loc['1672']/* 'comment-structure' */) return
         return(
-            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
-                <div className="row" style={{'padding':'0px 0px 10px 10px'}}>
-                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
+                <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                     </div>
                     <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
@@ -885,7 +922,7 @@ class PostsDetailsSection extends Component {
     get_sender_title_text(item, object){
         // var object = this.get_post_items()[this.props.selected_post_item];
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
@@ -970,7 +1007,7 @@ class PostsDetailsSection extends Component {
         var stack = this.props.app_state.stack_items
         var stacked_items = []
         for(var i=0; i<stack.length; i++){
-            if(stack[i].type == 'post-messages'){
+            if(stack[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
                 for(var e=0; e<stack[i].messages_to_deliver.length; e++){
                     var message_obj = stack[i].messages_to_deliver[e]
                     if(message_obj['id'] == convo_id){
@@ -1045,10 +1082,10 @@ class PostsDetailsSection extends Component {
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         if(message == ''){
-            this.props.notify('type something first', 600)
+            this.props.notify(this.props.app_state.loc['1695']/* 'type something first' */, 600)
         }
         else if(this.props.app_state.user_account_id[object['e5']] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else{
             var tx = {'id':object['id'], type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[object['e5']], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':object['e5']}
@@ -1056,7 +1093,7 @@ class PostsDetailsSection extends Component {
             this.props.add_post_reply_to_stack(tx)
 
             this.setState({entered_text:''})
-            this.props.notify('message added to stack', 600)
+            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -1254,32 +1291,32 @@ class PostsDetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

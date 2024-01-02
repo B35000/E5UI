@@ -34,7 +34,7 @@ class MailDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','data','activity'],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2510']/* 'data' */,this.props.app_state.loc['1674']/* 'activity' */],[1]
           ],
         }
     }
@@ -103,13 +103,13 @@ class MailDetailsSection extends Component {
         }
 
         if(object!=null){
-            if(selected_item == 'data'){
+            if(selected_item == this.props.app_state.loc['2510']/* 'data' */){
                 return(
                     <div>
                         {this.render_mail_main_details_section(object)}
                     </div>
                 )
-            }else if(selected_item == 'activity'){
+            }else if(selected_item == this.props.app_state.loc['1674']/* 'activity' */){
                 return(
                     <div>
                         {this.render_mail_responses(object)}
@@ -137,9 +137,9 @@ class MailDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('4', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p2, object)), 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p2, object)), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p1,object)), 'details':'Recipient', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+(this.get_senders_name(object['event'].returnValues.p1,object)), 'details':this.props.app_state.loc['888']/* 'Recipient' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -191,7 +191,7 @@ class MailDetailsSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -264,7 +264,7 @@ class MailDetailsSection extends Component {
         return {
             'tags':{'active_tags':final_tags, 'index_option':'indexed'},
             'id':{'textsize':'14px', 'text':title, 'font':'Sans-serif'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
         }
     }
 
@@ -272,8 +272,18 @@ class MailDetailsSection extends Component {
 
 
 
+
+
+
+
+
+
+
+
+
     render_mail_responses(object){
         var he = this.props.height-100
+        if(this.get_focused_message(object) != null) he = this.props.height-160
         var size = this.props.screensize
         
         if(object != null){
@@ -282,12 +292,12 @@ class MailDetailsSection extends Component {
                     <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                         <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                             {this.render_top_title(object)}
-                            {this.render_focus_list(object)}
+                            {/* {this.render_focus_list(object)} */}
                             <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                             {this.render_sent_received_messages(object)}
                         </div>
                     </div>
-
+                    {this.render_focused_message(object)}
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
                         <div style={{'margin':'1px 0px 0px 0px'}}>
                             {/* {this.render_image_picker()} */}
@@ -298,17 +308,36 @@ class MailDetailsSection extends Component {
                             </div>
                         </div>
                         <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
-                            <TextInput height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                            <TextInput height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                         </div>
 
                         <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
-                            {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['2151']/* 'Send' */, 'action':'-'})}
                         </div>
                     </div>
                 </div> 
             )
         }
         
+    }
+
+    render_focused_message(object){
+        var item = this.get_focused_message(object);
+        if(item != null){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 70px 5px 50px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message(object)}> 
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 41)}</p>
+                </div>
+            )
+        }
     }
 
     show_add_comment_bottomsheet(object){
@@ -323,7 +352,7 @@ class MailDetailsSection extends Component {
         var recipient = this.get_account_alias(mail['recipient'], mail)
         return(
             <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':sender+' with '+recipient, 'details':'conversation', 'size':'l'})} 
+                {this.render_detail_item('3', {'title':sender+this.props.app_state.loc['2512']/* ' with ' */+recipient, 'details':this.props.app_state.loc['2513']/* 'conversation' */, 'size':'l'})} 
             </div>
         )
     }
@@ -345,6 +374,7 @@ class MailDetailsSection extends Component {
 
     render_sent_received_messages(object){
         var middle = this.props.height-200;
+        if(this.get_focused_message(object) != null) middle = this.props.height-300
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -372,24 +402,24 @@ class MailDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message(object) != null){
-            var focused_message_replies = this.get_focused_message_replies(object)
-            return(
-                <div>
-                    <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
-                    </div>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-                        <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-                            <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies, object)}
-                                <div ref={this.messagesEnd}/>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+        // else if(this.get_focused_message(object) != null){
+        //     var focused_message_replies = this.get_focused_message_replies(object)
+        //     return(
+        //         <div>
+        //             <div style={{'padding': '2px 5px 2px 5px'}}>
+        //                 {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
+        //             </div>
+        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
+        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
+        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
+        //                         {this.render_messages(focused_message_replies, object)}
+        //                         <div ref={this.messagesEnd}/>
+        //                     </ul>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     )
+        // }
         else{
             return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
@@ -404,7 +434,7 @@ class MailDetailsSection extends Component {
 
     render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message(object) != null){
+        if(items.length == 0){
             var items = [0,1]
             return(
                 <div>
@@ -498,6 +528,19 @@ class MailDetailsSection extends Component {
     }
 
     render_message_as_focused_if_so(item, object){
+        return(
+            <div>
+                <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            action: () => this.focus_message(item, object)
+                            }}>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+            </div>
+        )
         var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
@@ -570,7 +613,7 @@ class MailDetailsSection extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied message to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['1692']/* 'Copied message to clipboard.' */, 600)
     }
 
     render_stack_message_item(item_arg, object){
@@ -605,14 +648,14 @@ class MailDetailsSection extends Component {
 
     render_response_if_any(_item, object){
         if(_item['focused_message_id'] == 0) return;
-        if(this.get_focused_message(object) != null) return;
+        // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
         if(item == null) return;
         return(
-            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
-                <div className="row" style={{'padding':'0px 0px 10px 10px'}}>
-                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
+                <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
                     </div>
                     <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
@@ -646,7 +689,7 @@ class MailDetailsSection extends Component {
     get_sender_title_text(item, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(item['sender'] == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']] == null ? item['sender'] : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[item['sender']])
             return alias
@@ -868,14 +911,14 @@ class MailDetailsSection extends Component {
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(mail) != null ? this.get_focused_message_id(mail) : 0
         if(message == ''){
-            this.props.notify('type something first', 600)
+            this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 3600)
         }else{
             var convo_id = mail['convo_id']
             var tx = {convo_id: convo_id, type:'message', entered_indexing_tags:['send', 'message'], 'message':message, 'sender':this.props.app_state.user_account_id[mail['e5']], 'recipient':mail['convo_with'], 'time':Date.now()/1000, 'message_id':message_id, 'focused_message_id':focused_message_id, 'e5':mail['e5']}
             this.props.add_mail_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify('message added to stack', 600)
+            this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
 
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -997,32 +1040,32 @@ class MailDetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

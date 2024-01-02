@@ -32,7 +32,7 @@ function makeid(length) {
 class AuthMintPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8), type: 'authmint', entered_indexing_tags:['auth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
+        selected: 0,id:makeid(8), type: this.props.app_state.loc['880']/* 'authmint' */, entered_indexing_tags:[this.props.app_state.loc['881']/* 'auth' */, this.props.app_state.loc['882']/* 'mint' */, this.props.app_state.loc['883']/* 'token' */], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
 
         recipient_id:'', amount:0, authmint_actions:[]
     };
@@ -44,7 +44,7 @@ class AuthMintPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','authmint'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['880']/* 'authmint' */], [1]
             ],
         };
     }
@@ -59,13 +59,13 @@ class AuthMintPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                         
                     </div>
                 </div>
 
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Auth-Mint your token '+this.state.token_item['id']+' for a specified target'})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['884']/* 'Auth-Mint your token ' */+this.state.token_item['id']+this.props.app_state.loc['885']/* ' for a specified target' */})}
                 <div style={{height:10}}/>
                 {this.render_everything()}
 
@@ -80,20 +80,20 @@ class AuthMintPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the recipient of the authmint action', 'title':'Recipient'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['886']/* 'Set the recipient of the authmint action' */, 'title':this.props.app_state.loc['888']/* 'Recipient' */})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Account ID'} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['887']/* 'Account ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions()}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the amount to authmint', 'title':'Action Amount.'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['889']/* 'Set the amount to authmint' */, 'title':this.props.app_state.loc['890']/* 'Action Amount.' */})}
 
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Transfer Amount', 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['891']/* 'Transfer Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
                 <div style={{height:10}}/>
@@ -101,7 +101,7 @@ class AuthMintPage extends Component {
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
-                    {this.render_detail_item('5', {'text':'Add Action', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['892']/* 'Add Action' */, 'action':''})}
                 </div>
 
                 {this.render_authmint_transactions()}
@@ -124,16 +124,16 @@ class AuthMintPage extends Component {
         var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify(this.props.app_state.loc['893']/* 'Please put a valid account ID.' */, 600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify(this.props.app_state.loc['893a']/* 'Please put a valid amount.' */, 600)
         }
         else{
             var tx = {'amount':amount, 'recipient':recipient}
             clone.push(tx)
             this.setState({authmint_actions: clone, recipient_id: '', amount:0})
-            this.props.notify('auth-mint action added!', 600)
+            this.props.notify(this.props.app_state.loc['894']/* 'auth-mint action added!' */, 600)
         }
     }
 
@@ -181,7 +181,7 @@ class AuthMintPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':'Target Recipient ID: '+item['recipient'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':this.props.app_state.loc['895']/* 'Target Recipient ID: ' */+item['recipient'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -198,7 +198,7 @@ class AuthMintPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({authmint_actions: cloned_array})
-        this.props.notify('action removed!', 600)
+        this.props.notify(this.props.app_state.loc['896']/* 'action removed!' */, 600)
     }
 
 
@@ -223,9 +223,9 @@ class AuthMintPage extends Component {
 
     get_suggested_accounts(){
         return[
-            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-            {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-            {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+            {'id':'53', 'label':{'title':this.props.app_state.loc['854']/* 'My Account' */, 'details':this.props.app_state.loc['857']/* 'Account' */, 'size':'s'}},
+            {'id':'2', 'label':{'title':this.props.app_state.loc['855']/* 'Main Contract' */, 'details':this.props.app_state.loc['858']/* 'Contract ID 2' */, 'size':'s'}},
+            {'id':'0','label':{'title':this.props.app_state.loc['856']/* 'Burn Account' */, 'details':this.props.app_state.loc['859']/* 'Account ID 0' */, 'size':'s'}},
         ].concat(this.get_account_suggestions())
     }
 
@@ -289,7 +289,7 @@ class AuthMintPage extends Component {
     set_token(token_item){
         if(this.state.token_item['id'] != token_item['id']){
             this.setState({
-                selected: 0,id:makeid(8), type: 'authmint', entered_indexing_tags:['auth', 'mint', 'token'], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
+                selected: 0,id:makeid(8), type: this.props.app_state.loc['880']/* 'authmint' */, entered_indexing_tags:[this.props.app_state.loc['881']/* 'auth' */, this.props.app_state.loc['882']/* 'mint' */, this.props.app_state.loc['883']/* 'token' */], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, new_authmint_action_page_tags_object: this.get_new_authmint_action_page_tags_object(),
                 recipient_id:'', amount:0, authmint_actions:[]
             })
         }
@@ -299,11 +299,11 @@ class AuthMintPage extends Component {
 
     finish(){
         if(this.state.authmint_actions.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['897']/* 'You cant stack no changes.' */, 3700)
         }else{
             this.props.add_authmint_to_stack(this.state)
             this.setState({authmint_actions:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -371,32 +371,32 @@ class AuthMintPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

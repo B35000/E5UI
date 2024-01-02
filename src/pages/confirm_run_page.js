@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
+import Letter from './../assets/letter.png';
+
 var bigInt = require("big-integer");
 
 function bgN(number, power) {
@@ -13,21 +15,37 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-class template extends Component {
+class ConfirmRunPage extends Component {
     
     state = {
-        selected: 0, run_data:null
+        selected: 0, run_data:null, get_confirm_run_tags_object:this.get_confirm_run_tags_object(),
     };
+
+
+    get_confirm_run_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1092a']/* 'confirm-run' */, this.props.app_state.loc['1092b']/* 'transactions' */], [1]
+            ],
+        };
+    }
 
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
-                {this.render_detail_item('3',{'title':'Transaction Confirmation', 'details':'Are you sure you want to make this run?','size':'l'})}
+                <Tags page_tags_object={this.state.get_confirm_run_tags_object} tag_size={'l'} when_tags_updated={this.when_get_confirm_run_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
 
-                {this.render_detail_item('0')}
                 {this.render_everything()}
             </div>
         )
+    }
+
+    when_get_confirm_run_tags_object_updated(tag_obj){
+        this.setState({get_confirm_run_tags_object: tag_obj})
     }
 
     set_data(run_data){
@@ -36,6 +54,33 @@ class template extends Component {
 
 
     render_everything(){
+        var selected_page = this.get_selected_item(this.state.get_confirm_run_tags_object, 'e')
+
+        if(selected_page == this.props.app_state.loc['1092a']/* 'confirm-run' */){
+            return(
+                <div>
+                    {this.render_confirm_run()}
+                </div>
+            )
+        }
+        else if(selected_page == this.props.app_state.loc['1092b']/* 'transactions' */){
+            return(
+                <div>
+                    {this.render_stacked_transactions()}
+                </div>
+            )
+        }
+    }
+
+
+    get_selected_item(object, option){
+        var selected_item = object[option][2][0]
+        var picked_item = object[option][1][selected_item];
+        return picked_item
+    }
+
+
+    render_confirm_run(){
         if(this.state.run_data != null){
             var txs = this.props.app_state.stack_items
             var gas_limit = this.state.run_data['run_gas_limit']
@@ -45,40 +90,44 @@ class template extends Component {
 
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':txs.length, 'details':'Transaction Stack Size','size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1079']/* 'Transaction Confirmation' */, 'details':this.props.app_state.loc['1080']/* 'Are you sure you want to make this run?' */,'size':'l'})}
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3',{'title':txs.length, 'details':this.props.app_state.loc['1083']/* 'Transaction Stack Size' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Limit', 'subtitle':this.format_power_figure(gas_limit), 'barwidth':this.calculate_bar_width(gas_limit), 'number':this.format_account_balance_figure(gas_limit), 'barcolor':'', 'relativepower':'gas', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1084']/* 'Gas Limit' */, 'subtitle':this.format_power_figure(gas_limit), 'barwidth':this.calculate_bar_width(gas_limit), 'number':this.format_account_balance_figure(gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['1085']/* 'gas' */, })}
                     </div>
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas to be Consumed', 'subtitle':this.format_power_figure(estimated_gas_to_be_consumed), 'barwidth':this.calculate_bar_width(estimated_gas_to_be_consumed), 'number':this.format_account_balance_figure(estimated_gas_to_be_consumed), 'barcolor':'', 'relativepower':'gas', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1086']/* 'Estimated Gas to be Consumed' */, 'subtitle':this.format_power_figure(estimated_gas_to_be_consumed), 'barwidth':this.calculate_bar_width(estimated_gas_to_be_consumed), 'number':this.format_account_balance_figure(estimated_gas_to_be_consumed), 'barcolor':'', 'relativepower':this.props.app_state.loc['1085']/* 'gas' */, })}
                     </div>
                     <div style={{height: 10}}/>
 
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1087']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in wei', 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'', 'relativepower':'gwei', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={()=> this.fetch_gas_figures()}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Wallet Impact', 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1089']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1090']/* 'proportion' */, })}
                     </div>
 
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':this.get_time_diff(run_expiry_duration), 'details':'Run Expiry Duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(run_expiry_duration), 'details':this.props.app_state.loc['1091']/* 'Run Expiry Duration' */, 'size':'l'})}
                     
                     <div style={{height: 10}}/>
 
                     <div style={{'padding': '5px'}} onClick={()=> this.props.start_run()}>
-                        {this.render_detail_item('5', {'text':'Run Transactions', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1092']/* 'Run Transactions' */, 'action':''})}
                     </div>
 
                     {this.render_detail_item('0')}
@@ -99,6 +148,87 @@ class template extends Component {
 
         var x = (total_ether_to_be_spent / my_balance) * 100
         return Math.round(x * 1000) / 1000
+    }
+
+
+
+    render_stacked_transactions(){
+        var items = [].concat(this.get_stacked_transactions())
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-130;
+        var size = this.props.app_state.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+
+        if(items.length == 0){
+            items = [0,3,0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <div style={{height: 10}}/>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 2px 2px 2px'}}>
+                                    {this.render_stack_item(item, index)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+                
+            )
+        }
+
+    }
+
+    get_stacked_transactions(){
+        var items = [].concat(this.props.app_state.stack_items)
+        var return_items = []
+
+        items.forEach(tx => {
+            if(!this.props.app_state.hidden.includes(tx) && tx.e5 == this.props.app_state.selected_e5){
+                return_items.push(tx)
+            }
+        });
+
+        return return_items
+    }
+
+    render_stack_item(item, index){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var op = this.props.app_state.hidden.includes(item) ? 0.5 : 1.0
+        var txt = this.props.app_state.hidden.includes(item) ? 'show' : 'hide'
+        return(
+            <div style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
+                <div style={{'padding': '5px 0px 5px 5px'}}>
+                    {this.render_detail_item('1',{'active_tags':[item.e5].concat(item.entered_indexing_tags), 'indexed_option':'indexed', 'when_tapped':''})}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3',{'details':this.props.app_state.loc['1446']/* 'Stack ID ' */, 'title':item.id,'size':'s'})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1447']/* 'Type' */,'size':'s'})}
+                </div>         
+            </div>
+        )
     }
 
 
@@ -190,32 +320,32 @@ class template extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -224,4 +354,4 @@ class template extends Component {
 
 
 
-export default template;
+export default ConfirmRunPage;

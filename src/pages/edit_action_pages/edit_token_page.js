@@ -46,7 +46,7 @@ function makeid(length) {
 class NewTokenPage extends Component {
     
     state = {
-        id: makeid(8), type:'edit-token',
+        id: makeid(8), type:this.props.app_state.loc['767']/* 'edit-token' */,
         new_token_page_tags_object: this.get_new_token_page_tags_object(),
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',entered_symbol_text:'', token_image:null,
 
@@ -76,7 +76,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', 'edit-token'], [0]
+                ['or','',0], ['e', this.props.app_state.loc['761']/* 'edit-token' */], [0]
             ],
         };
     }
@@ -87,7 +87,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','capped', 'uncapped'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [1]
             ],
         };
     }
@@ -99,7 +99,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','locked', 'unlocked'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [1]
             ],
         };
     }
@@ -110,7 +110,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','locked', 'unlocked'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['610']/* 'locked' */, this.props.app_state.loc['611']/* 'unlocked' */], [1]
             ],
         };
     }
@@ -122,7 +122,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','partially-custom', 'fully-custom'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['612']/* 'partially-custom' */, this.props.app_state.loc['613']/* 'fully-custom' */], [1]
             ],
         };
     }
@@ -145,7 +145,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','fixed', 'spread'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['614']/* 'fixed' */, this.props.app_state.loc['615']/* 'spread' */], [1]
             ],
         };
     }
@@ -156,7 +156,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [2]
+                ['xor','',0], ['e',this.props.app_state.loc['616']/* 'enabled' */, this.props.app_state.loc['617']/* 'disabled' */], [2]
             ],
         };
     }
@@ -167,7 +167,7 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','moderators', 'interactible'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['618']/* 'moderators' */, this.props.app_state.loc['619']/* 'interactible' */], [1]
             ],
         };
     }
@@ -189,7 +189,7 @@ class NewTokenPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                         
                     </div>
@@ -221,48 +221,12 @@ class NewTokenPage extends Component {
         //     selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'custom')
         // }
 
-        if(selected_item == 'e' || selected_item == 'edit-token'){
+        if(selected_item == 'e' || selected_item == this.props.app_state.loc['761']/* 'edit-token' */){
             return(
                 <div>
                     {this.render_enter_tags_part()}
                 </div>
             )    
-        }
-        // else
-        // if(selected_item == 'basic-configuration'){
-        //     return(
-        //         <div>
-        //             {this.render_basic_configuration_token_part()}
-        //         </div>
-        //     )    
-        // }
-        else if(selected_item == 'custom'){
-            return(
-                <div>
-                    {this.render_custom_configuration_token_part()}
-                </div>
-            ) 
-        }
-        else if(selected_item == 'token-authorities'){
-            return(
-                <div>
-                    {this.render_token_authorities_part()}
-                </div>
-            )
-        }
-        else if(selected_item == 'token-prices'){
-            return(
-                <div>
-                    {this.render_set_token_prices_list()}
-                </div>
-            )
-        }
-        else if(selected_item == 'basic'){
-            return(
-                <div>
-                    {this.render_simple_token_list()}
-                </div>
-            )
         }
     }
 
@@ -305,41 +269,43 @@ class NewTokenPage extends Component {
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Token'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['620']/* 'Set a name for your new Token. No spaces should be used.' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Name...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['621']/* 'Enter Name...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(10 - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a symbol for your new Token'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['622']/* 'Set a symbol for your new Token. No spaces should be used.' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Symbol...'} when_text_input_field_changed={this.when_symbol_text_input_field_changed.bind(this)} text={this.state.entered_symbol_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['623']/* 'Enter Symbol...' */} when_text_input_field_changed={this.when_symbol_text_input_field_changed.bind(this)} text={this.state.entered_symbol_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Token'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['624']/* 'Set tags for indexing your new Token' */})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['625']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set an image for your new Token.Black picks gif, grey picks image.'})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['626']/* 'Set an image for your new Token. Black picks gif, grey picks image.' */})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part()}
+
+                {this.render_detail_item('0')}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -363,22 +329,25 @@ class NewTokenPage extends Component {
         var typed_word = this.state.entered_tag_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That tag is too long', 400)
+            this.props.notify(this.props.app_state.loc['130']/* 'That tag is too long' */, 400)
+        }
+        else if(typed_word.length < 3){
+            this.props.notify(this.props.app_state.loc['131']/* 'That tag is too short' */, 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify('you cant enter the same word twice', 400)
+            this.props.notify(this.props.app_state.loc['132']/* 'you cant enter the same word twice' */, 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify('tag added!', 200)
+            // this.props.notify('tag added!', 200)
         }
     }
 
@@ -393,14 +362,14 @@ class NewTokenPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
-        this.props.notify('tag removed', 200)
+        // this.props.notify('tag removed', 200)
     }
 
 
     /* renders the buttons for pick images, set images and clear images */
     render_create_image_ui_buttons_part(){
         var token_type = this.get_selected_item(this.state.new_token_type_tags_object, 'e')
-        var default_image = token_type == 'capped' ? EndImg: SpendImg
+        var default_image = token_type == this.props.app_state.loc['606']/* 'capped' */ ? EndImg: SpendImg
         var image = this.state.token_image == null ? default_image : this.state.token_image
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin':'5px 0px 0px 0px','padding': '0px 5px 0px 10px', width: '99%'}}>
@@ -430,7 +399,7 @@ class NewTokenPage extends Component {
                     if(ev.total < this.props.app_state.image_size_limit){
                         this.setState({token_image: ev.target.result});
                     }else{
-                        this.props.notify('Use a smaller image!', 1000);
+                        this.props.notify(this.props.app_state.loc['627']/* 'Use a smaller image!' */, 1000);
                     }
                 }.bind(this);
                 reader.readAsDataURL(e.target.files[i]);
@@ -1815,32 +1784,32 @@ class NewTokenPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -1855,38 +1824,35 @@ class NewTokenPage extends Component {
         var symbol = this.state.entered_symbol_text;
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify(this.props.app_state.loc['745']/* 'add some tags first!' */, 3700)
         }
         else if(title == ''){
-            this.props.notify('add a name first!', 700)
-        }
-        else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that name is too long', 700)
+            this.props.notify(this.props.app_state.loc['746']/* 'add a name first!' */, 3700)
         }
         else if(symbol == ''){
-            this.props.notify('add a symbol first!', 700)
+            this.props.notify(this.props.app_state.loc['747']/* 'add a symbol first!' */, 3700)
         }
         else if(title.length > 10){
-            this.props.notify('that name is too long', 700)
+            this.props.notify(this.props.app_state.loc['748']/* 'that name is too long' */, 3700)
         }
         else if(title.includes(' ') || title == 'END' || title == 'SPEND'){
-            this.props.notify('that name is invalid', 700)
+            this.props.notify(this.props.app_state.loc['749']/* 'that name is invalid' */, 3700)
         }
         else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND'){
-            this.props.notify('that symbol is invalid', 700)
+            this.props.notify(this.props.app_state.loc['750']/* 'that symbol is invalid' */, 3700)
         }
         else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null){
-            this.props.notify('that symbol is already in use', 700)
+            this.props.notify(this.props.app_state.loc['752']/* 'that symbol is already in use' */, 3700)
         }
         else if(symbol.length > 6){
-            this.props.notify('that symbol is too long', 700)
+            this.props.notify(this.props.app_state.loc['752']/* 'that symbol is too long' */, 3700)
         }
         else{
             this.props.when_add_edit_object_to_stack(this.state)
 
             // this.setState({ id: makeid(32), type:'token', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_token_page_tags_object: this.get_new_token_page_tags_object(), new_token_type_tags_object: this.get_new_token_type_tags_object(), token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, default_exchange_amount_sell_limit:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, trust_fee_proportion:bigInt('1e16'), block_limit:0, new_token_unlocked_liquidity_tags_object:this.get_new_token_unlocked_liquidity_tags_object(), new_token_unlocked_supply_tags_object:this.get_new_token_unlocked_supply_tags_object(), new_token_fully_custom_tags_object:this.get_new_token_fully_custom_tags_object(), internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: this.get_new_token_block_limit_sensitivity_tags_object(), default_authority_mint_limit:0, new_token_halving_type_tags_object: this.get_new_token_halving_type_tags_object(), maturity_limit:0, token_exchange_ratio_x:0, token_exchange_ratio_y:0, exchange_authority:'', trust_fee_target:'', exchange_id:'', price_amount:0, price_data:[], new_token_access_rights_tags_object: this.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: this.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[] })
 
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18'], 1700);
         }
 
     }

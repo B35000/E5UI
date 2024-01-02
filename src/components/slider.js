@@ -30,7 +30,7 @@ class Slider extends React.Component {
     render(){
         return(
             <div style={{'display': 'flex','flex-direction': 'row','margin': '20px 0px 0px 0px'}}>
-                <div style={{ height: 30, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '15px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'] }} onClick={(e) => this.when_button_clicked(e)}></div>
+                <div style={{ height: 28, width: 30, 'background-color': this.props.theme['bar_background_color'], 'border-radius': '18px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin':'2px 0px 0px 0px' }} onClick={(e) => this.when_button_clicked(e)}></div>
 
                 <div style={{ height: 30, width: '100%', 'border-radius': '17px', 'box-shadow': '0px 0px 1px 1px #CECDCD', 'margin': '0px 0px 0px 10px' , 'position': 'relative'}}>
 

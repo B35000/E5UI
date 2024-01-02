@@ -12,6 +12,9 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Draggable } from "react-drag-reorder";
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 var bigInt = require("big-integer");
 
 function number_with_commas(x) {
@@ -37,7 +40,7 @@ function makeid(length) {
 class NewJobPage extends Component {
     
     state = {
-        id: makeid(8), type:'job', action:'create', e5:this.props.app_state.selected_e5,
+        id: makeid(8), type:this.props.app_state.loc['273'], action:'create', e5:this.props.app_state.selected_e5,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
         // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
@@ -48,28 +51,41 @@ class NewJobPage extends Component {
         device_language_setting: this.props.app_state.device_language, 
         device_country: this.props.app_state.device_country,
 
-        typed_link_text:'', link_search_results:[], added_links:[]
+        typed_link_text:'', link_search_results:[], added_links:[], 
+        edit_text_item_pos:-1,
     };
     
 
     get_new_job_page_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.text','links', 'images', 'targeted-pay'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110'],this.props.app_state.loc['111'], this.props.app_state.loc['112'], this.props.app_state.loc['274']], [0]
             ],
             'text':[
-                ['or','',0], ['text','e.font', 'e.size'], [0]
+                ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
             ],
             'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
             ],
             'size':[
-                ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
             ],
         };
+
+        obj[this.props.app_state.loc['115']] = [
+                ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
+            ];
+        obj[this.props.app_state.loc['116']] = [
+                ['xor','e',1], [this.props.app_state.loc['116'],'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+            ];
+        obj[this.props.app_state.loc['117']] = [
+                ['xor','e',1], [this.props.app_state.loc['117'],'15px','11px','25px','40px'], [1],[1]
+            ];
+        
+        return obj
     }
 
     get_new_job_text_tags_object(){
@@ -101,7 +117,7 @@ class NewJobPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':'finish_creating_object'})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':'finish_creating_object'})}
                         </div>
                         
                     </div>
@@ -138,21 +154,21 @@ class NewJobPage extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == 'links'){
+        else if(selected_item == this.props.app_state.loc['111']){
             return(
                 <div>
                     {this.render_enter_links_part()}
                 </div>
             )
         }
-        else if(selected_item == 'images'){
+        else if(selected_item == this.props.app_state.loc['112']){
             return(
                 <div>
                     {this.render_enter_image_part()}
                 </div>
             ) 
         }
-        else if(selected_item == 'targeted-pay'){
+        else if(selected_item == this.props.app_state.loc['274']){
             return(
                 <div>
                     {this.render_enter_item_price_part()}
@@ -162,7 +178,7 @@ class NewJobPage extends Component {
     }
 
     is_text_selected_item(selected_item){
-        var obj = ['text','font','size','Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
+        var obj = [this.props.app_state.loc['115'],this.props.app_state.loc['116'],this.props.app_state.loc['117'],'Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
         if(obj.includes(selected_item)){
             return true
         }
@@ -206,26 +222,26 @@ class NewJobPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new job'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['275']})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['276']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Job'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['277']})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 
@@ -247,25 +263,25 @@ class NewJobPage extends Component {
         var typed_word = this.state.entered_tag_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128'], 400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify(this.props.app_state.loc['129'], 400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That tag is too long', 400)
+            this.props.notify(this.props.app_state.loc['130'], 400)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That tag is too short', 400)
+            this.props.notify(this.props.app_state.loc['131'], 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify('you cant enter the same word twice', 400)
+            this.props.notify(this.props.app_state.loc['132'], 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify('tag added!', 200)
+            // this.props.notify('tag added!', 200)
         }
     }
 
@@ -280,7 +296,7 @@ class NewJobPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
-        this.props.notify('tag removed', 200)
+        // this.props.notify('tag removed', 200)
     }
 
    
@@ -327,7 +343,6 @@ class NewJobPage extends Component {
             return(
                 <div style={{'padding': '0px 10px 0px 0px'}}>
                     {this.render_text_part()}
-                    {this.render_detail_item('0')}
                     {this.render_entered_texts()}
                 </div>
             )
@@ -348,16 +363,17 @@ class NewJobPage extends Component {
     }
 
     render_text_part(){
+        var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Enter your preferred text then tap add to add it'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['278']})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
                 {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
-                <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                <TextInput height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
@@ -371,7 +387,7 @@ class NewJobPage extends Component {
                     </div>
 
                     <div style={{'padding': '5px', width:205}}>
-                        {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
+                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
                     </div>
                 </div>
             </div>
@@ -398,21 +414,26 @@ class NewJobPage extends Component {
         var typed_word = this.state.entered_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128'], 1400)
         }else{
             var entered_text = this.get_edited_text_object()
-            var cloned_entered_text_array = this.state.entered_text_objects.slice()
-            cloned_entered_text_array.push(entered_text);
-            this.setState({entered_text_objects: cloned_entered_text_array, entered_text:''})
+            if(this.state.edit_text_item_pos != -1){
+                this.finish_editing_text_item(entered_text)
+            }else{
+                var cloned_entered_text_array = this.state.entered_text_objects.slice()
+                cloned_entered_text_array.push(entered_text);
+                this.setState({entered_text_objects: cloned_entered_text_array, entered_text:''})
 
-            var cloned_array = this.state.entered_objects.slice()
-            cloned_array.push({'data':entered_text, 'type':'4' })
-            this.setState({entered_objects: cloned_array})
+                var cloned_array = this.state.entered_objects.slice()
+                cloned_array.push({'data':entered_text, 'type':'4' })
+                this.setState({entered_objects: cloned_array})
+            }
+            
         }
     }
 
     render_entered_texts(){
-        var middle = this.props.height-500;
+        var middle = this.props.height-420;
         var size = this.props.size;
         if(size == 'm'){
             middle = this.props.height-100;
@@ -421,34 +442,62 @@ class NewJobPage extends Component {
         return ( 
             <div style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                    {items.reverse().map((item, index) => (
-                        <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>
-                            {this.render_text_or_banner_if_any(item)}
-                        </li>
+                    {items.map((item, index) => (
+                        <SwipeableList>
+                            <SwipeableListItem
+                                swipeLeft={{
+                                content: <div>Delete</div>,
+                                action: () => this.delete_text_item(item)
+                                }}
+                                swipeRight={{
+                                content: <div></div>,
+                                action: () => console.log() }}>
+                                <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}><li style={{'padding': '5px'}} onClick={()=>this.edit_text_item(item)}>
+                                    {this.render_text_or_banner_if_any(item, index)}
+                                </li></div>
+                            </SwipeableListItem>
+                        </SwipeableList>
+                        
                     ))}
                 </ul>
             </div>
         );
     }
 
-    render_text_or_banner_if_any(item){
-        if(item['type'] == '4'){
+    render_text_or_banner_if_any(item, index){
+        if(item['type'] == '11'){
             return(
                 <div>
-                    {this.render_detail_item('4',item['data'])}
+                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
+                        <div>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                                <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
+                            </div>
+
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                                <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
+                                <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={(e) => this.when_banner_image_updated(e, index)} />
+                            </div>
+                        </div>
+                        <div style={{width:2}}/>
+                        {this.render_detail_item('11',item['data'])}
+                    </div>
                 </div>
             )
         }
-        else if(item['type'] == '11'){
+        else if(item['type'] == '4'){
+            var object = structuredClone(item['data'])
+            if(this.state.edit_text_item_pos == index) object['text'] = ''
             return(
                 <div>
-                    {this.render_detail_item('11',item['data'])}
+                    {this.render_detail_item('4', object)}
                 </div>
             )
         }
     }
 
-    when_text_clicked(item){
+    delete_text_item(item){
         var cloned_array = this.state.entered_text_objects.slice()
         const index = cloned_array.indexOf(item);
         if (index > -1) { // only splice array when item is found
@@ -469,7 +518,7 @@ class NewJobPage extends Component {
         }
         this.setState({entered_objects: cloned_array})
 
-        this.props.notify('item removed!', 600)
+        // this.props.notify('item removed!', 600)
     }
 
     when_banner_image_picked = (e) => {
@@ -489,16 +538,67 @@ class NewJobPage extends Component {
         }
     }
 
-    add_banner_to_object(image){
-        var typed_word = this.state.entered_text.trim();
+    when_banner_image_updated = (e, index) => {
+        if(e.target.files && e.target.files[0]){
+            for(var i = 0; i < e.target.files.length; i++){ 
+                let reader = new FileReader();
+                reader.onload = function(ev){
+                    if(ev.total < this.props.app_state.image_size_limit){
+                        this.update_banner_in_object(ev.target.result, index)
+                        // this.setState({selected_banner_image: ev.target.result});
+                    }
+                }.bind(this);
+                reader.readAsDataURL(e.target.files[i]);
+            }
+            var image = e.target.files.length == 1 ? 'image has' : 'images have';
+            // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
+        }
+    }
 
+    add_banner_to_object(image){
         var entered_text = this.get_edited_text_object()
         entered_text['textsize'] = '10px'
         var obj = {'image':image, 'caption':entered_text}
-
         var cloned_array = this.state.entered_objects.slice()
-        cloned_array.push({'data':obj, 'type':'11' })
+        cloned_array.push({'data':obj, 'type':'11' }) 
         this.setState({entered_objects: cloned_array, entered_text:''})
+    }
+
+
+    update_banner_in_object(image, index){
+        var entered_text = this.get_edited_text_object()
+        entered_text['textsize'] = '10px'
+        var obj = {'image':image, 'caption':entered_text}
+        var cloned_array = this.state.entered_objects.slice()
+        var pos = index
+        cloned_array[pos] = {'data':obj, 'type':'11' }
+        this.setState({entered_objects: cloned_array, entered_text:''})
+    }
+
+
+    edit_text_item(item){
+        var entered_objects_pos = -1;
+        for(var i=0; i<this.state.entered_objects.length; i++){
+            if(this.state.entered_objects[i]['data'] == item['data']){
+                entered_objects_pos = i;
+            }
+        }
+        if(item['type'] == '11'){
+            return;
+        }else{
+            var text = item['data']['text']
+            this.setState({edit_text_item_pos: entered_objects_pos, entered_text:text})
+        }
+        // this.props.notify('editing item', 600)
+    }
+
+
+    finish_editing_text_item(item){
+        var cloned_array = this.state.entered_objects.slice()
+        var pos = this.state.edit_text_item_pos
+        cloned_array[pos] = {'data':item, 'type':'4' }
+        console.log(cloned_array)
+        this.setState({entered_objects: cloned_array, entered_text:'', edit_text_item_pos: -1})
     }
 
 
@@ -512,14 +612,14 @@ class NewJobPage extends Component {
     render_enter_links_part(){
         return(
             <div style={{'margin':'10px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Search an object by its title or id, then tap it to add it to the new channel'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['279']})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Object ID...'} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':'Search','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['140'],'action':''})}
                     </div>
                 </div>
                 <div style={{height:10}}/>
@@ -541,9 +641,9 @@ class NewJobPage extends Component {
         var typed_text = this.state.typed_link_text
 
         if(typed_text == ''){
-            this.props.notify('Type something', 1800)
+            this.props.notify(this.props.app_state.loc['128'], 1800)
         }else{
-            this.props.notify('Searching...', 600)
+            this.props.notify(this.props.app_state.loc['141'], 600)
             var return_data = this.search_for_object(typed_text)
             this.setState({link_search_results: return_data})
         }
@@ -720,7 +820,7 @@ class NewJobPage extends Component {
             clone.splice(pos, 1)
         }
         this.setState({added_links: clone})
-        this.props.notify('Link removed from object', 700)
+        // this.props.notify('Link removed from object', 700)
     }
 
 
@@ -770,11 +870,11 @@ class NewJobPage extends Component {
         var pos = clone.indexOf(item)
 
         if(pos > -1){
-            this.props.notify('the link is already in the object', 1700)
+            this.props.notify(this.props.app_state.loc['281'], 3700)
         }else{
             clone.push(item)
             this.setState({added_links: clone})
-            this.props.notify('link added to object', 1400)
+            this.props.notify(this.props.app_state.loc['282'], 1400)
         }
     }
 
@@ -793,8 +893,8 @@ class NewJobPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove.'})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'Images larger than 500Kb will be ignored.'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['145']})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -979,22 +1079,22 @@ class NewJobPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['237'], 'details':this.props.app_state.loc['283'], 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['237']} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['241'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['756'], })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Pay', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['284'], 'action':''})}
                 </div>
             </div>
         )
@@ -1012,19 +1112,19 @@ class NewJobPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 2600)
+            this.props.notify(this.props.app_state.loc['264'], 2600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 2600)
+            this.props.notify(265, 2600)
         }
         else if(this.is_exchange_already_added(exchange_id)){
-            this.props.notify('You cant use the same exchange twice', 3600)
+            this.props.notify(this.props.app_state.loc['266'], 3600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added amount!', 1000)
+            this.props.notify(this.props.app_state.loc['267'], 1000)
         }
     }
 
@@ -1140,8 +1240,8 @@ class NewJobPage extends Component {
 
    get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['268'], 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['269'], 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         var sorted_token_exchange_data = []
@@ -1265,32 +1365,32 @@ class NewJobPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -1305,13 +1405,13 @@ class NewJobPage extends Component {
         var title = this.state.entered_title_text
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify(this.props.app_state.loc['757']/* 'add some tags first!' */, 2700)
         }
         else if(title == ''){
-            this.props.notify('add a title for your post', 700)
+            this.props.notify(this.props.app_state.loc['758']/* 'add a title for your post' */, 2700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that title is too long', 700)
+            this.props.notify(this.props.app_state.loc['759']/* 'that title is too long' */, 2700)
         }
         else{
             // var images_to_add = this.state.entered_image_objects
@@ -1330,10 +1430,10 @@ class NewJobPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
 
-                me.setState({ id: makeid(32), type:'job', get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], price_data:[], typed_link_text:'', link_search_results:[], added_links:[], })
+                me.setState({ id: makeid(32), type:this.props.app_state.loc['760']/* 'job' */, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], price_data:[], typed_link_text:'', link_search_results:[], added_links:[], })
             }, (1 * 1000));
             
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* transaction added to stack' */, 1700);
             
         }
     }

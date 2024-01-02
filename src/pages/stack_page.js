@@ -67,23 +67,35 @@ class StackPage extends Component {
     };
 
     get_stack_page_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.stack-data','e.settings-data', 'e.account-data'], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */], [0]
             ],
             'stack-data':[
-              ['xor','e',1], ['stack-data','stack 📥','history 📜'], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
             ],
             'settings-data':[
-              ['xor','e',1], ['settings-data','settings ⚙️','wallet 👛'], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */], [1],[1]
             ],
             'account-data':[
-              ['xor','e',1], ['account-data','alias 🏷️','contacts 👤', 'blacklisted 🚫'], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
             ],
         };
+
+        obj[this.props.app_state.loc['1260']/* 'stack-data' */] = [
+              ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
+            ]
+        obj[this.props.app_state.loc['1261']/* 'settings-data' */] = [
+              ['xor','e',1], [this.props.app_state.loc['1261']/* 'settings-data' */,this.props.app_state.loc['1410']/* settings ⚙️' */,this.props.app_state.loc['1411']/* 'wallet 👛' */], [1],[1]
+            ]
+        obj[this.props.app_state.loc['1262']/* 'account-data' */] = [
+              ['xor','e',1], [this.props.app_state.loc['1262']/* 'account-data' */,this.props.app_state.loc['1412']/* 'alias 🏷️' */,this.props.app_state.loc['1413']/* 'contacts 👤' */, this.props.app_state.loc['1414']/* 'blacklisted 🚫' */], [1],[1]
+            ]
+
+        return obj
         
     }
 
@@ -93,7 +105,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', 'all-time'], [4]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
             ],
         };
     }
@@ -119,18 +131,21 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','light','dark'], [this.get_light_dark_option()]
+                ['xor','',0], ['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['1593a']/* 'auto' */], [this.get_light_dark_option()]
             ],
         };
         
     }
 
     get_light_dark_option(){
-        if(this.props.app_state.theme['name'] == 'light'){
+        if(this.props.app_state.theme['name'] == this.props.app_state.loc['1417']/* 'light' */){
             return 1
         }
-        else if(this.props.app_state.theme['name'] == 'dark'){
+        else if(this.props.app_state.theme['name'] == this.props.app_state.loc['1418']/* 'dark' */){
             return 2
+        }
+        else if(this.props.app_state.theme['name'] == this.props.app_state.loc['1593a']/* 'auto' */){
+            return 3
         }
         return 1
     }
@@ -149,7 +164,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','right','left'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1419']/* 'right' */,this.props.app_state.loc['1420']/* 'left' */], [1]
             ],
         };
         
@@ -219,22 +234,22 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','sluggish', 'slow','average', 'fast'], [this.get_selected_refresh_speed_option()]
+                ['xor','',0], ['e',this.props.app_state.loc['1421']/* 'sluggish' */,this.props.app_state.loc['1422'] /* 'slow' */,this.props.app_state.loc['1423']/* 'average' */, this.props.app_state.loc['1424']/* 'fast' */], [this.get_selected_refresh_speed_option()]
             ],
         };
     }
 
     get_selected_refresh_speed_option(){
-        if(this.props.app_state.refresh_speed == 'sluggish'){
+        if(this.props.app_state.refresh_speed == this.props.app_state.loc['1421']/* 'sluggish' */){
             return 1
         }
-        else if(this.props.app_state.refresh_speed == 'slow'){
+        else if(this.props.app_state.refresh_speed == this.props.app_state.loc['1422']/* 'slow' */){
             return 2
         }
-        else if(this.props.app_state.refresh_speed == 'average'){
+        else if(this.props.app_state.refresh_speed == this.props.app_state.loc['1423']/* 'average' */){
             return 3
         }
-        else if(this.props.app_state.refresh_speed == 'fast'){
+        else if(this.props.app_state.refresh_speed == this.props.app_state.loc['fast']/* 'fast' */){
             return 4
         }
         return 1;
@@ -253,7 +268,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','hide'], [this.get_selected_masked_data_option()]
+                ['or','',0], ['e',this.props.app_state.loc['1425']/* 'hide' */], [this.get_selected_masked_data_option()]
             ],
         };
     }
@@ -262,7 +277,7 @@ class StackPage extends Component {
         if(this.props.app_state.masked_content == 'e'){
             return 0
         }
-        else if(this.props.app_state.masked_content == 'hide'){
+        else if(this.props.app_state.masked_content == this.props.app_state.loc['1425']/* 'hide' */){
             return 1
         }
         return 0;
@@ -281,19 +296,19 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','local','language','international'], [this.get_content_channeling_option()]
+                ['xor','',0], ['e',this.props.app_state.loc['1231']/* 'local' */,this.props.app_state.loc['1232']/* 'language' */,this.props.app_state.loc['1233']/* 'international' */], [this.get_content_channeling_option()]
             ],
         };
     }
 
     get_content_channeling_option(){
-        if(this.props.app_state.content_channeling == 'local'){
+        if(this.props.app_state.content_channeling == this.props.app_state.loc['1231']/* 'local' */){
             return 1
         }
-        else if(this.props.app_state.content_channeling == 'language'){
+        else if(this.props.app_state.content_channeling == this.props.app_state.loc['1232']/* 'language' */){
             return 2
         }
-        else if(this.props.app_state.content_channeling == 'international'){
+        else if(this.props.app_state.content_channeling == this.props.app_state.loc['1233']/* 'international' */){
             return 3
         }
         return 1;
@@ -380,16 +395,16 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','all', 'filtered'], [this.get_content_filter_settings_option()]
+                ['xor','',0], ['e',this.props.app_state.loc['1426']/* 'all' */, this.props.app_state.loc['1427'] /* 'filtered' */], [this.get_content_filter_settings_option()]
             ],
         };
     }
 
     get_content_filter_settings_option(){
-        if(this.props.app_state.section_tags_setting == 'all'){
+        if(this.props.app_state.section_tags_setting == this.props.app_state.loc['1426']/* 'all' */){
             return 1
         }
-        else if(this.props.app_state.section_tags_setting == 'filtered'){
+        else if(this.props.app_state.section_tags_setting == this.props.app_state.loc['1427']/* 'filtered' */){
             return 2
         }
         return 1
@@ -411,7 +426,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','enabled'], [this.get_selected_tabs_data_option()]
+                ['or','',0], ['e',this.props.app_state.loc['1428']/* 'enabled' */], [this.get_selected_tabs_data_option()]
             ],
         };
     }
@@ -420,7 +435,7 @@ class StackPage extends Component {
         if(this.props.app_state.visible_tabs == 'e'){
             return 0
         }
-        else if(this.props.app_state.visible_tabs == 'enabled'){
+        else if(this.props.app_state.visible_tabs == this.props.app_state.loc['1428']/* 'enabled' */){
             return 1
         }
         return 0;
@@ -443,7 +458,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','enabled'], [this.get_selected_storage_permissions_option()]
+                ['or','',0], ['e',this.props.app_state.loc['1428']/* 'enabled' */], [this.get_selected_storage_permissions_option()]
             ],
         };
     }
@@ -452,7 +467,7 @@ class StackPage extends Component {
         if(this.props.app_state.storage_permissions == 'e'){
             return 0
         }
-        else if(this.props.app_state.storage_permissions == 'enabled'){
+        else if(this.props.app_state.storage_permissions == this.props.app_state.loc['1428']/* 'enabled' */){
             return 1
         }
         return 0;
@@ -477,7 +492,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','enabled'], [this.get_selected_stack_optimizer_option()]
+                ['or','',0], ['e',this.props.app_state.loc['1428']/* 'enabled' */], [this.get_selected_stack_optimizer_option()]
             ],
         };
     }
@@ -486,7 +501,7 @@ class StackPage extends Component {
         if(this.props.app_state.stack_optimizer == 'e'){
             return 0
         }
-        else if(this.props.app_state.stack_optimizer == 'enabled'){
+        else if(this.props.app_state.stack_optimizer == this.props.app_state.loc['1428']/* 'enabled' */){
             return 1
         }
         return 0;
@@ -518,7 +533,7 @@ class StackPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
-                <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme}/>
+                <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
                 <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
@@ -543,49 +558,49 @@ class StackPage extends Component {
                 </div>
             )    
         }else 
-        if(selected_item == 'stack 📥'){
+        if(selected_item == this.props.app_state.loc['1408']/* 'stack 📥' */){
             return(
                 <div>
                     {this.render_stack_transactions_part()}
                 </div>
             )    
         }
-        if(selected_item == 'history 📜'){
+        if(selected_item == this.props.app_state.loc['1409']/* 'history 📜' */){
             return(
                 <div>
                     {this.render_run_history_items()}
                 </div>
             )    
         }
-        else if(selected_item == 'settings ⚙️'){
+        else if(selected_item == this.props.app_state.loc['1410']/* 'settings ⚙️' */){
             return(
                 <div>
                     {this.render_settings_section()}
                 </div>
             ) 
         }
-        else if(selected_item == 'wallet 👛'){
+        else if(selected_item == this.props.app_state.loc['1411']/* 'wallet 👛' */){
             return(
                 <div>
                     {this.render_wallet_settings_section()}
                 </div>
             ) 
         }
-        else if(selected_item == 'contacts 👤'){
+        else if(selected_item == this.props.app_state.loc['1413']/* 'contacts 👤' */){
             return(
                 <div>
                     {this.render_contacts_section()}
                 </div>
             )
         }
-        else if(selected_item == 'alias 🏷️'){
+        else if(selected_item == this.props.app_state.loc['1412']/* 'alias 🏷️' */){
             return(
                 <div>
                     {this.render_alias_stuff()}
                 </div>
             )
         }
-        else if(selected_item == 'blacklisted 🚫'){
+        else if(selected_item == this.props.app_state.loc['1414']/* 'blacklisted 🚫' */){
             return(
                 <div>
                     {this.render_blacklisted_section()}
@@ -605,37 +620,37 @@ class StackPage extends Component {
         var height = this.props.height-150
         return(
             <div style={{}}>
-                {this.render_detail_item('3', {'title':'Transaction Gas Limit', 'details':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'details':this.props.app_state.loc['1431']/* 'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Transaction Gas Limit', 'subtitle':this.format_power_figure(this.state.run_gas_limit), 'barwidth':this.calculate_bar_width(this.state.run_gas_limit), 'number':this.format_account_balance_figure(this.state.run_gas_limit), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'subtitle':this.format_power_figure(this.state.run_gas_limit), 'barwidth':this.calculate_bar_width(this.state.run_gas_limit), 'number':this.format_account_balance_figure(this.state.run_gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['1430']/* 'units' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.set_tx_gas_limit()}>
-                    {this.render_detail_item('5', {'text':'Auto-Set Gas Limit', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1432']/* 'Auto-Set Gas Limit' */, 'action':''})}
                 </div>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Transaction Gas Price', 'details':'The gas price for your next run with E5. The default is set to the amount set by the network.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['1434']/* 'The gas price for your next run with E5. The default is set to the amount set by the network.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Transaction Gas Price', 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Run Expiry Duration', 'details':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1437']/* 'Run Expiry Duration' */, 'details':this.props.app_state.loc['1438']/* 'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.' */, 'size':'l'})}
                 <div style={{height:20}}/>
                 
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':'Estimated Time.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l'})}
 
                 <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
 
@@ -697,10 +712,10 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div onClick={() => this.props.show_view_transaction_log_bottomsheet(item)} style={{height:'auto', 'background-color': background_color, 'border-radius': '13px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 5px 0px'}}>
                                     <div style={{'padding': '5px 0px 0px 5px'}}>
-                                        {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':'Age: '+this.get_time_difference(item.returnValues.p8),'size':'s'})}
+                                        {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':this.props.app_state.loc['1440']/* 'Age: ' */+this.get_time_difference(item.returnValues.p8),'size':'s'})}
             
                                         <div style={{height: 10}}/>
-                                        {this.render_detail_item('2', { 'style':'s', 'title':'Gas Consumed', 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
+                                        {this.render_detail_item('2', { 'style':'s', 'title':this.props.app_state.loc['1441']/* 'Gas Consumed' */, 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
                                     </div>         
                                 </div>
                             </li>
@@ -799,7 +814,7 @@ class StackPage extends Component {
             return(
                 <div>
                     <div style={{'padding': '5px'}} onClick={()=> this.open_confirm_clear_stack_dialog()}>
-                        {this.render_detail_item('5', {'text':'Clear Transactions', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1442']/* 'Clear Transactions' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -815,14 +830,14 @@ class StackPage extends Component {
             <Dialog onClose = {() => this.cancel_clear_transactions_dialog_box()} open = {this.state.confirm_clear_stack_dialog}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     
-                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirm Action</h4>
+                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1443']/* Confirm Action */}</h4>
 
-                    {this.render_detail_item('3', {'title':'Confirm Clear Stack Action', 'details':'This action cannot be undone.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1445']/* 'Confirm Clear Stack Action' */, 'details':'This action cannot be undone.', 'size':'l'})}
 
                     <div style={{height: 5, width: 300}}/>
 
                     <div style={{'padding': '5px'}} onClick={()=> this.clear_stack()}>
-                        {this.render_detail_item('5', {'text':'Confirm', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1444']/* 'Confirm' */, 'action':''})}
                     </div>
 
                 </div>
@@ -875,10 +890,9 @@ class StackPage extends Component {
                     {this.render_detail_item('1',{'active_tags':[item.e5].concat(item.entered_indexing_tags), 'indexed_option':'indexed', 'when_tapped':''})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':'Stack ID ', 'title':item.id,'size':'s'})}
+                    {this.render_detail_item('3',{'details':this.props.app_state.loc['1446']/* 'Stack ID ' */, 'title':item.id,'size':'s'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':item.type, 'details':'Type','size':'s'})}
-                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1447']/* 'Type' */,'size':'s'})}
 
                 </div>         
             </div>
@@ -931,43 +945,43 @@ class StackPage extends Component {
         return(
             <div>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1448']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1449']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'number':(this.props.app_state.account_balance[this.props.app_state.selected_e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Stacked Transactions', 'subtitle':this.format_power_figure(this.props.app_state.stack_items.length), 'barwidth':this.calculate_bar_width(this.props.app_state.stack_items.length), 'number':this.format_account_balance_figure(this.props.app_state.stack_items.length), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1450']/* 'Number of Stacked Transactions' */, 'subtitle':this.format_power_figure(this.props.app_state.stack_items.length), 'barwidth':this.calculate_bar_width(this.props.app_state.stack_items.length), 'number':this.format_account_balance_figure(this.props.app_state.stack_items.length), 'barcolor':'', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                     {/* <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Local Storage Size limit and Amount Used</p>
                      */}
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Storage Space Utilized', 'subtitle':this.format_power_figure(formatted_data_size['size']), 'barwidth':this.calculate_bar_width(formatted_data_size['size']), 'number':this.format_account_balance_figure(formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':formatted_data_size['unit'], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1451']/* 'Storage Space Utilized' */, 'subtitle':this.format_power_figure(formatted_data_size['size']), 'barwidth':this.calculate_bar_width(formatted_data_size['size']), 'number':this.format_account_balance_figure(formatted_data_size['size']), 'barcolor':'#606060', 'relativepower':formatted_data_size['unit'], })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={()=> this.fetch_gas_figures()}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Estimated Gas To Be Consumed', 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Wallet Impact', 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
                 </div>
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price', 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1454']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1455']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
                 
 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>/* this.run_transactions(false) */ this.open_confirmation_bottomsheet()}>
-                    {this.render_detail_item('5', {'text':'Run '+this.props.app_state.selected_e5+' Transactions', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1456']/* 'Run ' */+this.props.app_state.selected_e5+this.props.app_state.loc['1457']/* ' Transactions' */, 'action':''})}
                 </div>
             </div>
         )
@@ -1017,14 +1031,14 @@ class StackPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Gas Prices', 'details':`The gas price data recorded on your selected E5 over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1458']/* Gas Prices' */, 'details':this.props.app_state.loc['1459']/* `The gas price data recorded on your selected E5 over time.` */, 'size':'l'})}
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_gas_history_data_points(events), 'interval':this.get_gas_history_interval_figure(events)})}
                     <div style={{height: 10}}/>
                     <Tags page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Gas Prices in Gwei', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1460']/* 'Y-Axis: Gas Prices in Gwei' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
             )
         }
@@ -1090,7 +1104,7 @@ class StackPage extends Component {
         else if(selected_item == '6mo'){
             filter_value = 60*60*24*30*6
         }
-        else if(selected_item == 'all-time'){
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
             filter_value = 10**10
         }
         var data = []
@@ -1132,7 +1146,7 @@ class StackPage extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.props.show_view_transaction_log_bottomsheet(item)}>
-                            {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+' ago','size':'s'})}
+                            {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+this.props.app_state.loc['1462']/* ' ago' */,'size':'s'})}
                         </li>
                     ))}
                 </ul>
@@ -1230,85 +1244,85 @@ class StackPage extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Mempool Metrics', 'details':'Below is some useful information about the state of the mempool for your selected E5s ether.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1463']/* 'Mempool Metrics' */, 'details':this.props.app_state.loc['1464']/* 'Below is some useful information about the state of the mempool for your selected E5s ether.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Mempool size', 'subtitle':this.format_power_figure(data['mempool_size']), 'barwidth':this.calculate_bar_width(data['mempool_size']), 'number':this.format_account_balance_figure(data['mempool_size']), 'barcolor':'', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1465']/* 'Mempool size' */, 'subtitle':this.format_power_figure(data['mempool_size']), 'barwidth':this.calculate_bar_width(data['mempool_size']), 'number':this.format_account_balance_figure(data['mempool_size']), 'barcolor':'', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
                 <div style={{height:10}}/>
 
 
 
-                {this.render_detail_item('3', {'title':'Top 20% Average', 'details':'The average gas price offered for the top 20% transactions set to be included in the next blocks.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1466']/* 'Top 20% Average' */, 'details':this.props.app_state.loc['1467']/* 'The average gas price offered for the top 20% transactions set to be included in the next blocks.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in wei', 'subtitle':this.format_power_figure(data['top_av']), 'barwidth':this.calculate_bar_width(data['top_av']), 'number':this.format_account_balance_figure(data['top_av']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['top_av']), 'barwidth':this.calculate_bar_width(data['top_av']), 'number':this.format_account_balance_figure(data['top_av']), 'barcolor':'', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in gwei', 'subtitle':this.format_power_figure(data['top_av']/10**9), 'barwidth':this.calculate_bar_width(data['top_av']/10**9), 'number':(data['top_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1469']/* 'Gas prices in gwei' */, 'subtitle':this.format_power_figure(data['top_av']/10**9), 'barwidth':this.calculate_bar_width(data['top_av']/10**9), 'number':(data['top_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                 </div>
                 <div style={{height:10}}/>
 
 
 
-                {this.render_detail_item('3', {'title':'Bottom 20% Average', 'details':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1470']/* 'Bottom 20% Average' */, 'details':this.props.app_state.loc['1471']/* 'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in wei', 'subtitle':this.format_power_figure(data['bottom_av']), 'barwidth':this.calculate_bar_width(data['bottom_av']), 'number':this.format_account_balance_figure(data['bottom_av']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['bottom_av']), 'barwidth':this.calculate_bar_width(data['bottom_av']), 'number':this.format_account_balance_figure(data['bottom_av']), 'barcolor':'', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in gwei', 'subtitle':this.format_power_figure(data['bottom_av']/10**9), 'barwidth':this.calculate_bar_width(data['bottom_av']/10**9), 'number':(data['bottom_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1469']/* 'Gas prices in gwei' */, 'subtitle':this.format_power_figure(data['bottom_av']/10**9), 'barwidth':this.calculate_bar_width(data['bottom_av']/10**9), 'number':(data['bottom_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                 </div>
                 <div style={{height:10}}/>
 
 
 
-                {this.render_detail_item('3', {'title':'Gas Price Average', 'details':'The average gas price offered for all transactions in the mempool.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1472']/* 'Gas Price Average' */, 'details':this.props.app_state.loc['1473']/* 'The average gas price offered for all transactions in the mempool.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in wei', 'subtitle':this.format_power_figure(data['all_av']), 'barwidth':this.calculate_bar_width(data['all_av']), 'number':this.format_account_balance_figure(data['all_av']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1468']/* 'Gas prices in wei' */, 'subtitle':this.format_power_figure(data['all_av']), 'barwidth':this.calculate_bar_width(data['all_av']), 'number':this.format_account_balance_figure(data['all_av']), 'barcolor':'', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas prices in gwei', 'subtitle':this.format_power_figure(data['all_av']/10**9), 'barwidth':this.calculate_bar_width(data['all_av']/10**9), 'number':(data['all_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1469']/* 'Gas prices in gwei' */, 'subtitle':this.format_power_figure(data['all_av']/10**9), 'barwidth':this.calculate_bar_width(data['all_av']/10**9), 'number':(data['all_av']/10**9), 'barcolor':'', 'relativepower':'gwei', })}
                 </div>
                 <div style={{height:10}}/>
 
 
 
-                {this.render_detail_item('3', {'title':'E5 Transactions Count', 'details':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1474']/* 'E5 Transactions Count' */, 'details':this.props.app_state.loc['1475']/* 'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Total E5 Transaction Count', 'subtitle':this.format_power_figure(data['e5_txs_count']), 'barwidth':this.calculate_bar_width(data['e5_txs_count']), 'number':this.format_account_balance_figure(data['e5_txs_count'])+'/'+this.format_account_balance_figure(data['mempool_size']), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1476']/* 'Total E5 Transaction Count' */, 'subtitle':this.format_power_figure(data['e5_txs_count']), 'barwidth':this.calculate_bar_width(data['e5_txs_count']), 'number':this.format_account_balance_figure(data['e5_txs_count'])+'/'+this.format_account_balance_figure(data['mempool_size']), 'barcolor':'', 'relativepower':'units', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Top 20% Transaction Count', 'subtitle':this.format_power_figure(data['top_twenty_e5_txs_count']), 'barwidth':this.calculate_bar_width(data['top_twenty_e5_txs_count']), 'number':this.format_account_balance_figure(data['top_twenty_e5_txs_count'])+'/'+this.format_account_balance_figure(data['top_20_size']), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1477']/* 'Top 20% Transaction Count' */, 'subtitle':this.format_power_figure(data['top_twenty_e5_txs_count']), 'barwidth':this.calculate_bar_width(data['top_twenty_e5_txs_count']), 'number':this.format_account_balance_figure(data['top_twenty_e5_txs_count'])+'/'+this.format_account_balance_figure(data['top_20_size']), 'barcolor':'', 'relativepower':'units', })}
                 </div>
                 <div style={{height:10}}/>
 
 
 
-                {this.render_detail_item('3', {'title':'E5 Mempool Dominance', 'details':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1478']/* 'E5 Mempool Dominance' */, 'details':this.props.app_state.loc['1479']/* 'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'E5 Dominance', 'subtitle':this.format_power_figure(data['dominance_percentage']), 'barwidth':this.calculate_bar_width(data['dominance_percentage']), 'number':this.format_account_balance_figure(data['dominance_percentage'])+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1480']/* 'E5 Dominance' */, 'subtitle':this.format_power_figure(data['dominance_percentage']), 'barwidth':this.calculate_bar_width(data['dominance_percentage']), 'number':this.format_account_balance_figure(data['dominance_percentage'])+'%', 'barcolor':'', 'relativepower':'proportion', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'E5 Top 20% Dominance', 'subtitle':this.format_power_figure(data['top_twenty_dominance_percentage']), 'barwidth':this.calculate_bar_width(data['top_twenty_dominance_percentage']), 'number':this.format_account_balance_figure(data['top_twenty_dominance_percentage'])+'%', 'barcolor':'', 'relativepower':'proportion', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1481']/* 'E5 Top 20% Dominance' */, 'subtitle':this.format_power_figure(data['top_twenty_dominance_percentage']), 'barwidth':this.calculate_bar_width(data['top_twenty_dominance_percentage']), 'number':this.format_account_balance_figure(data['top_twenty_dominance_percentage'])+'%', 'barcolor':'', 'relativepower':this.props.app_state.loc['1482']/* 'proportion' */, })}
                 </div>
                 <div style={{height:10}}/>
                 
 
-                {this.render_detail_item('3', {'title':'Value Transfer', 'details':'The total amount of value transfer thats pending in the mempool.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1483']/* 'Value Transfer' */, 'details':this.props.app_state.loc['1484']/* 'The total amount of value transfer thats pending in the mempool.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in wei', 'subtitle':this.format_power_figure(data['total_value_transfer']), 'barwidth':this.calculate_bar_width(data['total_value_transfer']), 'number':this.format_account_balance_figure(data['total_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1485']/* 'Value in wei' */, 'subtitle':this.format_power_figure(data['total_value_transfer']), 'barwidth':this.calculate_bar_width(data['total_value_transfer']), 'number':this.format_account_balance_figure(data['total_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in ether', 'subtitle':this.format_power_figure(data['total_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['total_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['total_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1486']/* 'Value in ether' */, 'subtitle':this.format_power_figure(data['total_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['total_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['total_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
                 </div>
                 <div style={{height:10}}/>
 
 
-                {this.render_detail_item('3', {'title':'Value Transfer into E5', 'details':'The total amount of ether going into E5 thats pending in the mempool.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1488']/* 'Value Transfer into E5' */, 'details':this.props.app_state.loc['1489']/* 'The total amount of ether going into E5 thats pending in the mempool.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in wei', 'subtitle':this.format_power_figure(data['e5_value_transfer']), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']), 'number':this.format_account_balance_figure(data['e5_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1485']/* 'Value in wei' */, 'subtitle':this.format_power_figure(data['e5_value_transfer']), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']), 'number':this.format_account_balance_figure(data['e5_value_transfer']), 'barcolor':'', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Value in ether', 'subtitle':this.format_power_figure(data['e5_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['e5_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1486']/* 'Value in ether' */, 'subtitle':this.format_power_figure(data['e5_value_transfer']/10**18), 'barwidth':this.calculate_bar_width(data['e5_value_transfer']/10**18), 'number':this.format_account_balance_figure(data['e5_value_transfer']/10**18), 'barcolor':'', 'relativepower':'ether', })}
                 </div>
                 <div style={{height:10}}/>
             </div>
@@ -1341,7 +1355,7 @@ class StackPage extends Component {
         var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
 
         if(pushed_txs.length == 0){
-            this.props.notify('add some transactions first',1600)
+            this.props.notify(this.props.app_state.loc['1487']/* 'Add some transactions first.' */,3600)
         }
         else if(account_balance == 0){
             this.props.open_wallet_guide_bottomsheet('one')
@@ -1350,13 +1364,13 @@ class StackPage extends Component {
             this.setState({invalid_ether_amount_dialog_box: true})
         }
         else if(run_gas_limit < 35000){
-            this.props.notify('That transaction gas limit is too low',3900)
+            this.props.notify(this.props.app_state.loc['1490']/* 'That transaction gas limit is too low.' */,3900)
         }
         else if(estimated_gas_to_be_consumed > gas_limit){
-            this.props.notify('That transaction is too large, please reduce your stack size',4900)
+            this.props.notify(this.props.app_state.loc['1491']/* 'That transaction is too large, please reduce your stack size.' */,4900)
         }
         else if(estimated_gas_to_be_consumed > run_gas_limit){
-            this.props.notify('Set a gas limit above '+estimated_gas_to_be_consumed+' gas',3900)
+            this.props.notify(this.props.app_state.loc['1492']/* 'Set a gas limit above ' */+estimated_gas_to_be_consumed+this.props.app_state.loc['1493']/* ' gas' */,5900)
         }
         else{
             this.props.show_confirm_run_bottomsheet(run_data)
@@ -1365,7 +1379,7 @@ class StackPage extends Component {
 
 
     fetch_gas_figures(){
-        this.props.notify('calculating your stacks gas figure...', 2200)
+        this.props.notify(this.props.app_state.loc['1494']/* 'calculating your stacks gas figure...' */, 2200)
         this.run_transactions(true)
     }
 
@@ -1375,13 +1389,13 @@ class StackPage extends Component {
             var is_running = this.props.app_state.is_running[this.props.app_state.selected_e5]
             if(is_running == null) is_running = false
             if(is_running){
-                this.props.notify('e is already running a transaction for you', 2200)
+                this.props.notify(this.props.app_state.loc['1495']/* 'e is already running a transaction for you.' */, 5200)
                 return;
             }
             this.props.lock_run(true)
             
             if(txs.length > 0){
-                this.props.notify('running your transactions...', 600)
+                this.props.notify(this.props.app_state.loc['1496']/* 'Running your transactions...' */, 3600)
             }
         }
         var strs = []
@@ -1392,7 +1406,7 @@ class StackPage extends Component {
         var pushed_txs = []
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
-                if(txs[i].type == 'contract'){
+                if(txs[i].type == this.props.app_state.loc['1311']/* 'contract' */){
                     var contract_obj = this.format_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -1401,7 +1415,7 @@ class StackPage extends Component {
                     var contract_type = this.get_selected_item(txs[i].new_contract_type_tags_object, txs[i].new_contract_type_tags_object['i'].active)
 
                     var contract_stack_id = ints.length-1
-                    if(contract_type == 'private'){
+                    if(contract_type == this.props.app_state.loc['165']/* 'private' */){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
                             [contract_stack_id], [35]/* target objects */
@@ -1453,7 +1467,7 @@ class StackPage extends Component {
 
                     var include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
 
-                    if(include_enter_value == 'enter-contract'){
+                    if(include_enter_value == this.props.app_state.loc['1']/* 'enter-contract' */){
                         var t = txs[i];
                         var max_enter_contract_duration = t.max_enter_contract_duration == 0 ? bgN(1, 16) : t.max_enter_contract_duration.toString().toLocaleString('fullwide', {useGrouping:false})
 
@@ -1464,17 +1478,18 @@ class StackPage extends Component {
                         ];
 
                         var expiry_time = Math.floor(Date.now()/1000) + bigInt(max_enter_contract_duration)
+                        var ex = expiry_time.toString().toLocaleString('fullwide', {useGrouping:false})
 
                         obj[1].push(contract_stack_id)
                         obj[2].push(35)
-                        obj[3].push(expiry_time)
+                        obj[3].push(ex)
 
                         strs.push([])
                         adds.push([])
                         ints.push(obj)
                     }
                 }
-                else if(txs[i].type == 'token'){
+                else if(txs[i].type == this.props.app_state.loc['601']/* 'token' */){
                     var token_obj = this.format_token_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -1484,7 +1499,7 @@ class StackPage extends Component {
                     
                     var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
-                    if(access_rights_setting == 'enabled'){
+                    if(access_rights_setting == this.props.app_state.loc['616']/* 'enabled' */){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
                             [token_stack_id], [35]/* target objects */
@@ -1534,7 +1549,7 @@ class StackPage extends Component {
                         ints.push(add_moderator_accounts)
                     }
                 }
-                else if(txs[i].type == 'subscription'){
+                else if(txs[i].type == this.props.app_state.loc['823']/* 'subscription' */){
                     var subscription_obj = this.format_subscription_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -1544,7 +1559,7 @@ class StackPage extends Component {
 
                     var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
-                    if(access_rights_setting == 'enabled'){
+                    if(access_rights_setting == this.props.app_state.loc['1428']/* 'enabled' */){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
                             [subscription_stack_id], [35]/* target objects */
@@ -1596,19 +1611,19 @@ class StackPage extends Component {
                         ints.push(add_moderator_accounts)
                     }
                 }
-                else if(txs[i].type == 'post'){
+                else if(txs[i].type == this.props.app_state.loc['297']/* 'post' */){
                     var post_obj = this.format_post_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(post_obj)
                 }
-                else if(txs[i].type == 'job'){
+                else if(txs[i].type == this.props.app_state.loc['760']/* 'job' */){
                     var job_obj = this.format_job_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(job_obj)
                 }
-                else if(txs[i].type == 'channel'){
+                else if(txs[i].type == this.props.app_state.loc['109']/* 'channel' */){
                     var channel_obj = this.format_channel_object(txs[i])
                     strs.push([['']])
                     adds.push([])
@@ -1618,7 +1633,7 @@ class StackPage extends Component {
                     
                     var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
 
-                    if(access_rights_setting == 'enabled'){
+                    if(access_rights_setting == this.props.app_state.loc['544']/* 'enabled' */){
                         var enable_interactibles_checker = [ /* enable interactible checkers */
                             [20000, 5, 0],
                             [channel_stack_id], [35]/* target objects */
@@ -1668,13 +1683,13 @@ class StackPage extends Component {
                         ints.push(add_moderator_accounts)
                     }
                 }
-                else if(txs[i].type == 'storefront-item'){
+                else if(txs[i].type == this.props.app_state.loc['1046']/* 'storefront-item' */){
                     var storefront_data = this.format_storefront_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(storefront_data)
                 }
-                else if(txs[i].type == 'buy-sell'){
+                else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
                     var buy_sell_obj = this.format_buy_sell_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -1684,115 +1699,115 @@ class StackPage extends Component {
                         wei = (bigInt(txs[i].token_item['data'][4][0]).multiply(txs[i].amount).add(35)).toString()
                     }
                 }
-                else if(txs[i].type == 'transfer'){
+                else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
                     var transfer_object = this.format_transfer_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(transfer_object)
                 }
-                else if(txs[i].type == 'enter-contract'){
+                else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
                     var enter_object = this.format_enter_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(enter_object)
                 }
-                else if(txs[i].type == 'extend-contract'){
+                else if(txs[i].type == this.props.app_state.loc['35']/* 'extend-contract' */){
                     var extend_object = this.format_extend_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(extend_object)
                 }
-                else if(txs[i].type == 'exit-contract'){
+                else if(txs[i].type == this.props.app_state.loc['19']/* 'exit-contract' */){
                     var exit_object = this.format_exit_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(exit_object)
                 }
-                else if(txs[i].type == 'proposal'){
+                else if(txs[i].type == this.props.app_state.loc['312']/* 'proposal' */){
                     var proposal_obj = this.format_proposal_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(proposal_obj)
                 }
-                else if(txs[i].type == 'vote'){
+                else if(txs[i].type == this.props.app_state.loc['796']/* 'vote' */){
                     var vote_obj = this.format_vote_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(vote_obj)
                 }
-                else if(txs[i].type == 'submit'){
+                else if(txs[i].type == this.props.app_state.loc['783']/* 'submit' */){
                     var submit_obj = this.format_submit_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(submit_obj)
                 }
-                else if(txs[i].type == 'pay-subscription'){
+                else if(txs[i].type == this.props.app_state.loc['862']/* 'pay-subscription' */){
                     var pay_subscription = this.format_pay_subscription_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(pay_subscription)
                 }
-                else if(txs[i].type == 'cancel-subscription'){
+                else if(txs[i].type == this.props.app_state.loc['821']/* 'cancel-subscription' */){
                     var cancel_subscription = this.format_cancel_subscription_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(cancel_subscription)
                 } 
-                else if(txs[i].type == 'collect-subscription'){
+                else if(txs[i].type == this.props.app_state.loc['829']/* 'collect-subscription' */){
                     var collect_subscription = this.format_collect_subscription_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(collect_subscription)
                 }
-                else if(txs[i].type == 'modify-subscription'){
+                else if(txs[i].type == this.props.app_state.loc['840']/* 'modify-subscription' */){
                     var modify_subscription = this.format_modify_subscription_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(modify_subscription)
                 }   
-                else if(txs[i].type == 'modify-contract'){
+                else if(txs[i].type == this.props.app_state.loc['64']/* 'modify-contract' */){
                     var modify_contract = this.format_modify_contract_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(modify_contract)
                 }
-                else if(txs[i].type == 'modify-token'){
+                else if(txs[i].type == this.props.app_state.loc['997']/* 'modify-token' */){
                     var modify_token = this.format_modify_token_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(modify_token)
                 }
-                else if(txs[i].type == 'exchange-transfer'){
+                else if(txs[i].type == this.props.app_state.loc['907']/* 'exchange-transfer' */){
                     var exchange_transfer_obj = this.format_exchange_transfer_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(exchange_transfer_obj)
                 }
-                else if(txs[i].type == 'force-exit'){
+                else if(txs[i].type == this.props.app_state.loc['48']/* 'force-exit' */){
                     var force_exit_obj = this.format_force_exit_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(force_exit_obj)
                 }
-                else if(txs[i].type == 'archive'){
+                else if(txs[i].type == this.props.app_state.loc['768']/* 'archive' */){
                     var archive_obj = this.format_archive_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(archive_obj)
                 }
-                else if(txs[i].type == 'freeze/unfreeze'){
+                else if(txs[i].type == this.props.app_state.loc['930']/* 'freeze/unfreeze' */){
                     var freeze_unfreeze_obj = this.format_freeze_unfreeze_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(freeze_unfreeze_obj)
                 }
-                else if(txs[i].type == 'authmint'){
+                else if(txs[i].type == this.props.app_state.loc['880']/* 'authmint' */){
                     var authmint_obj = this.format_authmint_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(authmint_obj)
                 }
-                else if(txs[i].type == 'access-rights-settings'){
+                else if(txs[i].type == this.props.app_state.loc['1265']/* 'access-rights-settings' */){
                     var access_rights_obj = this.format_access_rights_object(txs[i])
                     
                     for(var t=0; t<access_rights_obj.length; t++){
@@ -1801,63 +1816,63 @@ class StackPage extends Component {
                         ints.push(access_rights_obj[t])
                     }    
                 }
-                else if(txs[i].type == 'mail'){
+                else if(txs[i].type == this.props.app_state.loc['285']/* 'mail' */){
                     var mail_obj = await this.format_mail_object(txs[i], calculate_gas)
                     
                     strs.push(mail_obj.str)
                     adds.push([])
                     ints.push(mail_obj.int)    
                 }
-                else if(txs[i].type == 'mail-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */){
                     var message_obj = await this.format_message_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'channel-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1510']/* 'channel-messages' */){
                     var message_obj = await this.format_channel_message_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'post-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
                     var message_obj = await this.format_post_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'job-response'){
+                else if(txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
                     var message_obj = await this.format_job_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'accept-job-application'){
+                else if(txs[i].type == this.props.app_state.loc['1513']/* 'accept-job-application' */){
                     var message_obj = await this.format_accept_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
-                else if(txs[i].type == 'job-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1514']/* 'job-messages' */){
                     var message_obj = await this.format_job_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'proposal-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
                     var message_obj = await this.format_proposal_message_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'storefront-bag'){
+                else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
                     var storefront_bag_obj = this.format_storefront_bag_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -1888,90 +1903,90 @@ class StackPage extends Component {
                     strs.push(metadata_strings)
                     adds.push([])
                 }
-                else if(txs[i].type == 'bag-response'){
+                else if(txs[i].type == this.props.app_state.loc['1497']/* 'bag-response' */){
                     var message_obj = await this.format_bag_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'accept-bag-application'){
+                else if(txs[i].type == this.props.app_state.loc['1498']/* 'accept-bag-application' */){
                     var message_obj = await this.format_accept_bag_application_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
-                else if(txs[i].type == 'direct-purchase'){
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                     var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
-                else if(txs[i].type == 'clear-purchase'){
+                else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
                     var clear_obj = await this.format_clear_purchase_object(txs[i], calculate_gas)
                     
                     strs.push(clear_obj.str)
                     adds.push([])
                     ints.push(clear_obj.int)    
                 }
-                else if(txs[i].type == 'bag-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */){
                     var message_obj = await this.format_bag_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'storefront-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                     var message_obj = await this.format_storefront_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'contractor'){
+                else if(txs[i].type == this.props.app_state.loc['1503']/* 'contractor' */){
                     var contractor_obj = this.format_contractor_object(txs[i])
                     strs.push([])
                     adds.push([])
                     ints.push(contractor_obj)
                 }
-                else if(txs[i].type == 'job-request'){
+                else if(txs[i].type == this.props.app_state.loc['253']/* 'job-request' */){
                     var message_obj = await this.format_job_request_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
-                else if(txs[i].type == 'accept-job-request'){
+                else if(txs[i].type == this.props.app_state.loc['1504']/* 'accept-job-request' */){
                     var message_obj = await this.format_accept_job_request_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }  
-                else if(txs[i].type == 'job-request-messages'){
+                else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
                     var message_obj = await this.format_job_request_comment_object(txs[i], calculate_gas)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
-                else if(txs[i].type == 'alias'){
+                else if(txs[i].type == this.props.app_state.loc['1506']/* 'alias' */){
                     var alias_obj = await this.format_alias_object(txs[i], calculate_gas)
                     
                     strs.push(alias_obj.str)
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == 'unalias'){
+                else if(txs[i].type == this.props.app_state.loc['1507']/* 'unalias' */){
                     var alias_obj = await this.format_unalias_object(txs[i], calculate_gas)
                     
                     strs.push(alias_obj.str)
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == 're-alias'){
+                else if(txs[i].type == this.props.app_state.loc['1508']/* 're-alias' */){
                     var alias_obj = await this.format_realias_object(txs[i], calculate_gas)
                     
                     strs.push(alias_obj.str)
@@ -1982,19 +1997,19 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == 'edit-channel' || txs[i].type == 'edit-contractor' || txs[i].type == 'edit-job' || txs[i].type == 'edit-post' || txs[i].type == 'edit-storefront' || txs[i].type == 'edit-token'){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
                     ints.push(format_edit_object.metadata_action)
                 }
-                else if(txs[i].type == 'award'){
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
                     var format_object = await this.format_award_object(txs[i], calculate_gas)
                     strs.push(format_object.str)
                     adds.push([])
                     ints.push(format_object.int)
                 }
-                else if(txs[i].type == 'depthmint'){
+                else if(txs[i].type == this.props.app_state.loc['898']/* 'depthmint' */){
                     var depthmint_obj = this.format_depthmint_object(txs[i])
                     strs.push([])
                     adds.push([])
@@ -2019,7 +2034,7 @@ class StackPage extends Component {
         var metadata_strings = [ [] ]
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == 'contract' || pushed_txs[i].type == 'token' || pushed_txs[i].type == 'subscription' || pushed_txs[i].type == 'post' || pushed_txs[i].type == 'job' || pushed_txs[i].type == 'channel' || pushed_txs[i].type == 'storefront-item'|| pushed_txs[i].type == 'proposal' || pushed_txs[i].type == 'contractor'){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */){
                 metadata_action[1].push(i)
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
@@ -2049,7 +2064,7 @@ class StackPage extends Component {
         var index_data_strings = [ [], [] ]
 
         for(var i=0; i<pushed_txs.length; i++){
-            if(pushed_txs[i].type == 'contract' || pushed_txs[i].type == 'token' || pushed_txs[i].type == 'subscription' || pushed_txs[i].type == 'post' || pushed_txs[i].type == 'job' || pushed_txs[i].type == 'channel' || pushed_txs[i].type == 'storefront-item' || pushed_txs[i].type == 'proposal' || pushed_txs[i].type == 'contractor'){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == 'job' || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */ || pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */){
                 var tx_tags = pushed_txs[i].entered_indexing_tags
                 index_data_in_tags[1].push(i)
                 index_data_in_tags[2].push(35)
@@ -2185,15 +2200,15 @@ class StackPage extends Component {
                     this.props.lock_run(false)
                 }
                 else if(run_gas_limit < 35000){
-                    this.props.notify('That transaction gas limit is too low',3900)
+                    this.props.notify(this.props.app_state.loc['1517']/* 'That transaction gas limit is too low.' */,5900)
                     this.props.lock_run(false)
                 }
                 else if(estimated_gas_to_be_consumed > gas_limit){
-                    this.props.notify('That transaction is too large, please reduce your stack size',4900)
+                    this.props.notify(this.props.app_state.loc['1518']/* 'That transaction is too large, please reduce your stack size.' */,6900)
                     this.props.lock_run(false)
                 }
                 else if(estimated_gas_to_be_consumed > run_gas_limit){
-                    this.props.notify('Set a gas limit above '+estimated_gas_to_be_consumed+' gas',3900)
+                    this.props.notify(this.props.app_state.loc['1519']/* 'Set a gas limit above ' */+estimated_gas_to_be_consumed+this.props.app_state.loc['1520']/* ' gas' */,3900)
                     this.props.lock_run(false)
                 }
                 else{
@@ -2202,7 +2217,7 @@ class StackPage extends Component {
                 }
             }else{
                 this.props.lock_run(false)
-                this.props.notify('add some transactions first',1600)
+                this.props.notify(this.props.app_state.loc['1521']/* 'Add some transactions first.' */,1600)
             }
         }else{
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2243,13 +2258,13 @@ class StackPage extends Component {
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.invalid_ether_amount_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     
-                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Issue With Run</h4>
+                    <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1522']/* Issue With Run */}</h4>
 
-                    {this.render_detail_item('3', {'title':'Theres an issue with your Balance', 'details':'You need ether to run your transactions', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1523']/* 'Theres an issue with your Balance' */, 'details':this.props.app_state.loc['1524']/* 'You need more ether to run your transactions' */, 'size':'s'})}
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1525']/* Wallet Balance in Ether and Wei */}</p>
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
                     </div>
@@ -2257,7 +2272,7 @@ class StackPage extends Component {
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Required Balance in Ether and Wei</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1526']/* Required Balance in Ether and Wei */}</p>
                         
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(required_ether), 'number':this.format_account_balance_figure(required_ether), 'barcolor':'#606060', 'relativepower':'wei', })}
 
@@ -2276,23 +2291,31 @@ class StackPage extends Component {
 
     format_contract_object(t){
         var default_vote_bounty_split_proportion = t.default_vote_bounty_split_proportion == 0 ? bgN(1,16) : t.default_vote_bounty_split_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
-        var max_extend_enter_contract_limit = t.max_extend_enter_contract_limit == 0 ? 36_000_000 : t.max_extend_enter_contract_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        var max_extend_enter_contract_limit = t.max_extend_enter_contract_limit == 0 ? '36000000' : t.max_extend_enter_contract_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         var default_minimum_end_vote_bounty_amount = t.default_minimum_end_vote_bounty_amount == 0 ? 0 : t.default_minimum_end_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var default_proposal_expiry_duration_limit = t.default_proposal_expiry_duration_limit == 0 ? 30_000 : t.default_proposal_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         var max_enter_contract_duration = t.max_enter_contract_duration == 0 ? bgN(1, 16) : t.max_enter_contract_duration.toString().toLocaleString('fullwide', {useGrouping:false})
-        var auto_wait_for_all_proposals_for_all_voters = this.get_selected_item(t.auto_wait_tags_object, t.auto_wait_tags_object['i'].active) == 'no' ? 0 : 1
+        var auto_wait_for_all_proposals_for_all_voters = this.get_selected_item(t.auto_wait_tags_object, t.auto_wait_tags_object['i'].active) == this.props.app_state.loc['802']/* 'no' */ ? 0 : 1
         var default_minimum_spend_vote_bounty_amount = t.default_minimum_spend_vote_bounty_amount == 0 ? 0 : t.default_minimum_spend_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var proposal_modify_expiry_duration_limit = t.proposal_modify_expiry_duration_limit == 0 ? 3600 : t.proposal_modify_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-        var can_modify_contract_as_moderator = this.get_selected_item(t.can_modify_contract_as_moderator, t.can_modify_contract_as_moderator['i'].active) == 'modifiable' ? 1 : 0
-        var can_extend_enter_contract_at_any_time = this.get_selected_item(t.can_extend_enter_contract_at_any_time, t.can_extend_enter_contract_at_any_time['i'].active) == 'enabled' ? 1 : 0
+        var can_modify_contract_as_moderator = this.get_selected_item(t.can_modify_contract_as_moderator, t.can_modify_contract_as_moderator['i'].active) == this.props.app_state.loc['83']/* 'modifiable' */ ? 1 : 0
+        var can_extend_enter_contract_at_any_time = this.get_selected_item(t.can_extend_enter_contract_at_any_time, t.can_extend_enter_contract_at_any_time['i'].active) == this.props.app_state.loc['85']/* 'enabled' */ ? 1 : 0
         var maximum_proposal_expiry_submit_expiry_time_difference = t.maximum_proposal_expiry_submit_expiry_time_difference == 0 ? bgN(1,16).toString().toLocaleString('fullwide', {useGrouping:false}) : t.maximum_proposal_expiry_submit_expiry_time_difference.toString().toLocaleString('fullwide', {useGrouping:false})
         var bounty_limit_type = this.get_selected_item(t.bounty_limit_type, t.bounty_limit_type['i'].active) == 'relative' ? 0 : 1
-        var contract_force_exit_enabled = this.get_selected_item(t.contract_force_exit_enabled, t.contract_force_exit_enabled['i'].active) == 'enabled' ? 1 : 0
+        var contract_force_exit_enabled = this.get_selected_item(t.contract_force_exit_enabled, t.contract_force_exit_enabled['i'].active) == this.props.app_state.loc['85']/* 'enabled' */ ? 1 : 0
+
+        var default_consensus_majority_limit = t.default_consensus_majority_limit.toString().toLocaleString('fullwide', {useGrouping:false});
+
+        var voter_weight_exchange_target = '0'
+        if(t.voter_weight_exchange_id != ''){
+            voter_weight_exchange_target = t.voter_weight_exchange_id 
+            auto_wait_for_all_proposals_for_all_voters = 0
+        }
 
         var obj = [/* create contract */
         [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 30, 0],
         [30], [23],
-        [0, default_vote_bounty_split_proportion, max_extend_enter_contract_limit/* 2 */, 0, default_minimum_end_vote_bounty_amount, default_proposal_expiry_duration_limit, max_enter_contract_duration/* 6 */, 0, auto_wait_for_all_proposals_for_all_voters, 0, default_minimum_spend_vote_bounty_amount, 0, 0, 0/* 13 */, 0, bgN(1, 63), 0,0,0,0,0/* 20 */,0,0,0,0,0,0,proposal_modify_expiry_duration_limit/* 27 */,can_modify_contract_as_moderator,can_extend_enter_contract_at_any_time,0,0,0,0,0/* 34 */,0,maximum_proposal_expiry_submit_expiry_time_difference,bounty_limit_type,contract_force_exit_enabled,0,0], 
+        [0, default_vote_bounty_split_proportion, max_extend_enter_contract_limit/* 2 */, 0, default_minimum_end_vote_bounty_amount, default_proposal_expiry_duration_limit, max_enter_contract_duration/* 6 */, default_consensus_majority_limit, auto_wait_for_all_proposals_for_all_voters, 0, default_minimum_spend_vote_bounty_amount, 0, 0, 0/* 13 */, 0, bgN(1, 63), 0,0,0,0,0/* 20 */,0,0,0,0,0,0,proposal_modify_expiry_duration_limit/* 27 */,can_modify_contract_as_moderator,can_extend_enter_contract_at_any_time,0,0,0,voter_weight_exchange_target,0/* 34 */,0,maximum_proposal_expiry_submit_expiry_time_difference,bounty_limit_type,contract_force_exit_enabled,0,0], 
         [23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
         [], [],
         [], [],
@@ -2315,12 +2338,14 @@ class StackPage extends Component {
         for(var i=0; i<t.price_data.length; i++){
             obj[5].push(parseInt(t.price_data[i]['id']))
             obj[6].push(23)
-            obj[7].push(parseInt(t.price_data[i]['amount']))
+            obj[7].push((t.price_data[i]['amount']).toString().toLocaleString('fullwide', {useGrouping:false}))
             obj[8].push(23)
             obj[9].push(0)
             obj[10].push(23)
         }
       }
+
+      console.log(obj)
 
       return obj
     }
@@ -2328,9 +2353,9 @@ class StackPage extends Component {
     format_token_object(t){
         //.toString().toLocaleString('fullwide', {useGrouping:false})
         var type = this.get_selected_item(t.new_token_type_tags_object, t.new_token_type_tags_object['i'].active);
-        var new_token_type_tags_object = type == 'capped' ? 3 : 5
+        var new_token_type_tags_object = type == this.props.app_state.loc['606']/* 'capped' */ ? 3 : 5
         var token_exchange_liquidity_total_supply = t.token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : t.token_exchange_liquidity_total_supply.toString().toLocaleString('fullwide', {useGrouping:false})
-        if(type == 'uncapped'){
+        if(type == this.props.app_state.loc['607']/* 'uncapped' */){
             token_exchange_liquidity_total_supply = 0
         }
         var default_exchange_amount_buy_limit = t.default_exchange_amount_buy_limit == 0 ? 100_000_000 : 
@@ -2346,9 +2371,9 @@ class StackPage extends Component {
         
         var block_limit = t.block_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
-        var new_token_unlocked_liquidity_tags_object = this.get_selected_item(t.new_token_unlocked_liquidity_tags_object, t.new_token_unlocked_liquidity_tags_object['i'].active) == 'unlocked' ? 1 : 0
-        var new_token_unlocked_supply_tags_object = this.get_selected_item(t.new_token_unlocked_supply_tags_object, t.new_token_unlocked_supply_tags_object['i'].active) == 'unlocked' ? 1 : 0
-        var new_token_fully_custom_tags_object = this.get_selected_item(t.new_token_fully_custom_tags_object, t.new_token_fully_custom_tags_object['i'].active) == 'fully-custom' ? 1 : 0
+        var new_token_unlocked_liquidity_tags_object = this.get_selected_item(t.new_token_unlocked_liquidity_tags_object, t.new_token_unlocked_liquidity_tags_object['i'].active) == this.props.app_state.loc['609']/* 'unlocked' */ ? 1 : 0
+        var new_token_unlocked_supply_tags_object = this.get_selected_item(t.new_token_unlocked_supply_tags_object, t.new_token_unlocked_supply_tags_object['i'].active) == this.props.app_state.loc['609']/* 'unlocked' */ ? 1 : 0
+        var new_token_fully_custom_tags_object = this.get_selected_item(t.new_token_fully_custom_tags_object, t.new_token_fully_custom_tags_object['i'].active) == this.props.app_state.loc['613']/* 'fully-custom' */ ? 1 : 0
         var internal_block_halfing_proportion = t.internal_block_halfing_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
         var block_limit_reduction_proportion = t.block_limit_reduction_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
         var block_reset_limit = t.block_reset_limit.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2356,22 +2381,22 @@ class StackPage extends Component {
         var new_token_block_limit_sensitivity_tags_object = parseInt(this.get_selected_item(t.new_token_block_limit_sensitivity_tags_object, t.new_token_block_limit_sensitivity_tags_object['i'].active)).toString().toLocaleString('fullwide', {useGrouping:false})
         var default_authority_mint_limit = t.default_authority_mint_limit == 0 ? bgN(1,16).toString().toLocaleString('fullwide', {useGrouping:false}) : t.default_authority_mint_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
-        var new_token_halving_type_tags_object = (this.get_selected_item(t.new_token_halving_type_tags_object, t.new_token_halving_type_tags_object['i'].active) == 'spread' ? 1 : 0).toString().toLocaleString('fullwide', {useGrouping:false})
+        var new_token_halving_type_tags_object = (this.get_selected_item(t.new_token_halving_type_tags_object, t.new_token_halving_type_tags_object['i'].active) == this.props.app_state.loc['615']/* 'spread' */ ? 1 : 0).toString().toLocaleString('fullwide', {useGrouping:false})
         var maturity_limit = t.maturity_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
         var minimum_entered_contracts_for_first_buy = t.minimum_entered_contracts_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
 
         var default_exchange_ratio_value = '1000';
-        if(type == 'capped'){
+        if(type == this.props.app_state.loc['606']/* 'capped' */){
             default_exchange_ratio_value = token_exchange_liquidity_total_supply;
         }
 
-        var active_block_limit_reduction_proportion = type == 'capped' ? 0 : bgN(100,16)
+        var active_block_limit_reduction_proportion = type == this.props.app_state.loc['606']/* 'capped' */ ? 0 : bgN(100,16)
         var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? default_exchange_ratio_value: t.token_exchange_ratio_x.toString().toLocaleString('fullwide', {useGrouping:false})
 
         var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? default_exchange_ratio_value : t.token_exchange_ratio_y.toString().toLocaleString('fullwide', {useGrouping:false})
 
-        if(type == 'capped' && token_exchange_ratio_x != token_exchange_liquidity_total_supply){
+        if(type == this.props.app_state.loc['606']/* 'capped' */ && token_exchange_ratio_x != token_exchange_liquidity_total_supply){
             token_exchange_ratio_x = token_exchange_liquidity_total_supply;
         }
         
@@ -2441,7 +2466,7 @@ class StackPage extends Component {
             exchange_authority_type = 53
         }
         var minimum_buy_amount = t.minimum_buy_amount == 0 ? 1 : t.minimum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
-        var cancellable_tags_object = this.get_selected_item(t.cancellable_tags_object, t.cancellable_tags_object['i'].active) == 'true' ? 1 : 0
+        var cancellable_tags_object = this.get_selected_item(t.cancellable_tags_object, t.cancellable_tags_object['i'].active) == this.props.app_state.loc['541']/* 'true' */ ? 1 : 0
         var maximum_buy_amount = t.maximum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         if(t.maximum_buy_amount == 0) maximum_buy_amount = (bigInt('1e72')).toString().toLocaleString('fullwide', {useGrouping:false})
         var minimum_cancellable_balance_amount = t.minimum_cancellable_balance_amount.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2545,7 +2570,7 @@ class StackPage extends Component {
     get_action(t){
         var action = this.get_selected_item(t.new_mint_dump_action_page_tags_object, 'e')
         var stack_action = 1
-        if(action == 'mint-buy') stack_action = 0
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
         return stack_action
     }
 
@@ -2619,6 +2644,10 @@ class StackPage extends Component {
 
     format_proposal_object(t){
         var consensus_obj = {'spend':0,'reconfig':1, 'exchange-transfer':6}
+        consensus_obj[this.props.app_state.loc['316']/* spend */] = 0
+        consensus_obj[this.props.app_state.loc['317']/* reconfig */] = 1
+        consensus_obj[this.props.app_state.loc['318']/* exchange-transfer */] = 6
+
         var consensus_type_tag = this.get_selected_item(t.new_proposal_type_tags_object, t.new_proposal_type_tags_object['i'].active)
         var consensus_type = consensus_obj[consensus_type_tag]
         var proposal_expiry_time = t.proposal_expiry_time.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2628,11 +2657,16 @@ class StackPage extends Component {
         if(modify_target == ''){
             modify_target = '0'
         }
+        var consensus_majority_target_proportion = t.contract_item['data'][1][7/* <7>default_consensus_majority_limit */].toString().toLocaleString('fullwide', {useGrouping:false})
+
+        var voter_weight_exchange_id = t.contract_item['data'][1][33/* <33>default_voter_weight_exchange */].toString().toLocaleString('fullwide', {useGrouping:false})
+
+        var voter_weight_exchange_id_depth = t.contract_item['data'][1][34/* <34>default_voter_weight_exchange_depth */].toString().toLocaleString('fullwide', {useGrouping:false})
 
         var obj = [/* create proposal */
             [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 32, 0],
             [0], [23],
-            [consensus_type, proposal_expiry_time, 0/* 2 */, consensus_submit_expiry_time, 0, target_contract_authority, 0/* 6 */, 0, 0, modify_target], 
+            [consensus_type, proposal_expiry_time, 0/* 2 */, consensus_submit_expiry_time, 0, target_contract_authority, consensus_majority_target_proportion/* 6 */, voter_weight_exchange_id, voter_weight_exchange_id_depth, modify_target], 
             [23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
             [], [],
             [], [],/* 8 */
@@ -2657,7 +2691,7 @@ class StackPage extends Component {
             obj[22].push(23)
         }
 
-        if(consensus_type_tag == 'spend'){
+        if(consensus_type_tag == this.props.app_state.loc['316']/* 'spend' */){
             for(var i=0; i<t.spend_actions.length; i++){
                 obj[9].push(t.spend_actions[i]['spend_token'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[10].push(23)
@@ -2684,7 +2718,7 @@ class StackPage extends Component {
                 obj[20].push(23)
             }
         }
-        else if(consensus_type_tag == 'reconfig'){
+        else if(consensus_type_tag == this.props.app_state.loc['317']/* 'reconfig' */){
             for(var i=0; i<t.reconfig_values.length; i++){
                 obj[9].push(t.reconfig_values[i]['pos'][0])
                 obj[10].push(23)
@@ -2706,7 +2740,7 @@ class StackPage extends Component {
 
             }
         }
-        else if(consensus_type_tag == 'exchange-transfer'){
+        else if(consensus_type_tag == this.props.app_state.loc['318']/* 'exchange-transfer' */){
             for(var i=0; i<t.exchange_transfer_values.length; i++){
                 obj[9].push(t.exchange_transfer_values[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[10].push(23)
@@ -2740,6 +2774,9 @@ class StackPage extends Component {
     format_vote_object(t){
         var vote = this.get_selected_item(t.new_vote_tags_object, t.new_vote_tags_object['i'].active)
         var votes_obj = {'yes':1, 'wait':2, 'no':3}
+        votes_obj[this.props.app_state.loc['801']/* yes */] = 1
+        votes_obj[this.props.app_state.loc['800']/* wait */] = 2
+        votes_obj[this.props.app_state.loc['802']/* no */] = 3
         var obj = [/* vote proposal */
             [30000, 4, 0],
             [t.proposal_item['id'].toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* proposal ids */
@@ -3860,12 +3897,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -3896,12 +3933,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -3930,12 +3967,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -3963,12 +4000,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4034,12 +4071,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4146,12 +4183,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4182,12 +4219,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4216,12 +4253,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4252,12 +4289,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4293,12 +4330,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4327,12 +4364,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4361,12 +4398,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4398,12 +4435,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4431,12 +4468,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4469,12 +4506,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4507,12 +4544,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4544,12 +4581,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4580,12 +4617,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4614,12 +4651,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4649,12 +4686,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4685,12 +4722,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4720,12 +4757,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4757,12 +4794,12 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4794,12 +4831,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4830,12 +4867,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4865,12 +4902,12 @@ class StackPage extends Component {
                             });
                         }
 
-                        strs[i][0].forEach(element => {
-                            str_obj[0].push(element)
-                        });
-                        adds[i].forEach(element => {
-                            add_obj.push(element)
-                        });
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -4925,7 +4962,7 @@ class StackPage extends Component {
                 <div style={{height: 10}}/>
                 <div style={{'padding': '0px 0px 0px 0px'}}>
 
-                    {this.render_detail_item('3',{'title':'App Theme', 'details':'Set the look and feel of E5.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme}/>
@@ -4941,7 +4978,7 @@ class StackPage extends Component {
                     {this.render_detail_item('0')} */}
 
                     
-                    {this.render_detail_item('3',{'title':'Preferred E5', 'details':'Set the E5 you prefer to use', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1530']/* 'Preferred E5' */, 'details':this.props.app_state.loc['1531']/* Set the E5 you prefer to use' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     {/* <Tags page_tags_object={this.state.get_selected_e5_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_e5_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
@@ -4963,11 +5000,11 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Clear Browser Cache', 'details':'Delete browser data such as your pins and viewed history.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1532']/* 'Clear Browser Cache' */, 'details':this.props.app_state.loc['1533']/* 'Delete browser data such as your pins and viewed history.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
-                        {this.render_detail_item('5', {'text':'Clear Cache', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1534']/* 'Clear Cache' */, 'action':''},)}
                     </div>
 
                     {this.render_detail_item('0')}
@@ -4975,7 +5012,7 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Preferred Refresh Speed', 'details':'Set the background refresh speed for E5. Fast consumes more data.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -4987,7 +5024,7 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Hide Masked Content', 'details':'Hide masked content sent from your blocked accounts', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -4999,7 +5036,7 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Content Channeling', 'details':'Set which channeling option your content and feed is directed to.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
@@ -5024,7 +5061,7 @@ class StackPage extends Component {
 
 
                     
-                    {this.render_detail_item('3',{'title':'Content Filter', 'details':'If set to filtered, the content including the tags you follow will be prioritized in your feed.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1541']/* 'Content Filter' */, 'details':this.props.app_state.loc['1542']/* 'If set to filtered, the content including the tags you follow will be prioritized in your feed.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme}/>
@@ -5033,7 +5070,7 @@ class StackPage extends Component {
 
 
                     
-                    {this.render_detail_item('3',{'title':'Content Tabs', 'details':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -5043,7 +5080,7 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Preserve State (cookies)', 'details':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme}/>
@@ -5054,7 +5091,7 @@ class StackPage extends Component {
 
 
 
-                    {this.render_detail_item('3',{'title':'Stack Optimizer (Experimental)', 'details':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.', 'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <Tags page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme}/>
@@ -5072,7 +5109,7 @@ class StackPage extends Component {
         var selected_item = this.get_selected_item(this.state.get_themes_tags_object, this.state.get_themes_tags_object['i'].active)
 
         if(selected_item == 'e'){
-            selected_item = 'light'
+            selected_item = this.props.app_state.loc['1417']/* 'light' */
         }
 
         this.props.when_device_theme_changed(selected_item)
@@ -5083,7 +5120,7 @@ class StackPage extends Component {
         var selected_item = this.get_selected_item(this.state.get_orientation_tags_object, this.state.get_orientation_tags_object['i'].active)
 
         if(selected_item == 'e'){
-            selected_item = 'right'
+            selected_item = this.props.app_state.loc['1419']/* 'right' */
         }
 
         this.props.when_details_orientation_changed(selected_item)
@@ -5106,7 +5143,7 @@ class StackPage extends Component {
     when_clear_cache_clicked(){
         this.props.clear_cache()
         localStorage.setItem("viewed", "");
-        this.props.notify('Cache cleared!', 900)
+        this.props.notify(this.props.app_state.loc['1549']/* 'Cache cleared.' */, 1900)
     }
 
     when_get_refresh_speed_tags_object_updated(tag_group){
@@ -5272,15 +5309,27 @@ class StackPage extends Component {
         return(
             <div>
                 {this.render_wallet_address()}
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Wallet Balance in Ether and Wei</p>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1593b']/* Wallet Balance in Ether and Wei */}</p>
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
                 </div>
+                <div style={{height: 10}}/>
                 
+                {this.render_reload_wallet_if_wallet_is_set()}
                 
             </div>
         )
+    }
+
+    render_reload_wallet_if_wallet_is_set(){
+        if(this.props.app_state.has_wallet_been_set){
+            return(
+                <div onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
+                </div>
+            )
+        }
     }
 
     render_wallet_address(){
@@ -5288,7 +5337,7 @@ class StackPage extends Component {
             return(
                 <div>
                     <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>
-                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -5297,7 +5346,7 @@ class StackPage extends Component {
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -5310,15 +5359,15 @@ class StackPage extends Component {
         return(
             <div>
                 
-                {this.render_detail_item('3',{'title':'Wallet Seed', 'details':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove', 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter word...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
-                        {this.render_detail_item('5',{'text':'Add','action':'when_add_word_button_tapped'})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'when_add_word_button_tapped'})}
                     </div>
                 </div>
 
@@ -5327,16 +5376,16 @@ class StackPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3',{'title':'Wallet Salt', 'details':'Set the preferred salt for your wallet', 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1554']/* 'Wallet Salt' */, 'details':this.props.app_state.loc['1555']/* 'Set the preferred salt for your wallet' */, 'size':'l'})}
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_salt_figure_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3',{'title':'Wallet Thyme', 'details':'Set the preferred thyme for your wallet', 'size':'l'})}
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1556']/* 'Wallet Thyme' */, 'details':this.props.app_state.loc['1557']/* 'Set the preferred thyme for your wallet' */, 'size':'l'})}
                 <Tags page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('5',{'text':'Set Wallet','action':'when_set_wallet_button_tapped'})}
+                {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -5359,14 +5408,14 @@ class StackPage extends Component {
         }
 
         if(this.state.added_tags.length == 0){
-            this.props.notify('set your wallets seed', 600)
+            this.props.notify(this.props.app_state.loc['1559']/* 'Set your wallets seed.' */, 4600)
         }
         else if(this.state.set_salt == 0){
-            this.props.notify('set a salt', 200)
+            this.props.notify(this.props.app_state.loc['1560']/* 'Please set a salt.' */, 4200)
         }
         else{
             this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item, false)
-            this.props.notify('Setting your wallet. This might take a while...', 3500)
+            this.props.notify(this.props.app_state.loc['1561']/* 'Setting your wallet. This might take a while...' */, 5500)
         }
         
     }
@@ -5380,10 +5429,10 @@ class StackPage extends Component {
         var typed_word = this.state.typed_word.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something', 1400)
+            this.props.notify(this.props.app_state.loc['1562']/* 'Type something.' */, 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word', 1400)
+            this.props.notify(this.props.app_state.loc['1563']/* 'Enter one word.' */, 1400)
         }
         else{
             var cloned_seed_array = this.state.added_tags.slice()
@@ -5409,7 +5458,7 @@ class StackPage extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied address to clipboard', 600)
+        this.props.notify(this.props.app_state.loc['1564']/* 'Copied address to clipboard.' */, 3600)
     }
 
     get_account_address(){
@@ -5483,15 +5532,15 @@ class StackPage extends Component {
     render_contacts_section(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Add Contact', 'details':'You can add a contact manually using their Contact ID.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1565']/* 'Add Contact' */, 'details':this.props.app_state.loc['1566']/* 'You can add a contact manually using their Contact ID.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Account ID...'} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['1567']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_cotact_to_list()} >
-                        {this.render_detail_item('5',{'text':'Add','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1568']/* 'Add' */,'action':''})}
                     </div>
                 </div>
                 <div style={{height: 10}}/>
@@ -5508,10 +5557,10 @@ class StackPage extends Component {
         var typed_contact = this.get_typed_alias_id(this.state.typed_contact_word.trim())
 
         if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
-            this.props.notify('That ID is not valid', 800)
+            this.props.notify(this.props.app_state.loc['1569']/* 'That ID is not valid' */, 800)
         }
         else if(!this.props.app_state.has_wallet_been_set){
-            this.props.notify('please set your wallet first', 1200);
+            this.props.notify(this.props.app_state.loc['1571']/* 'Please set your wallet first.' */, 1200);
         }
         else{
             this.props.add_account_to_contacts(parseInt(typed_contact))
@@ -5600,12 +5649,12 @@ class StackPage extends Component {
 
     copy_address_to_clipboard(text){
         navigator.clipboard.writeText(text)
-        this.props.notify('copied address to clipboard!', 600)
+        this.props.notify(this.props.app_state.loc['1564']/* 'Copied address to clipboard.' */, 1600)
     }
 
     copy_id_to_clipboard(text){
         navigator.clipboard.writeText(text)
-        this.props.notify('copied id to clipboard!', 600)
+        this.props.notify(this.props.app_state.loc['1572']/* 'Copied ID to clipboard.' */, 1600)
     }
 
 
@@ -5619,15 +5668,15 @@ class StackPage extends Component {
     render_blacklisted_section(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Add Blocked Account', 'details':'Block an accounts content from being visible in your feed.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1573']/* 'Add Blocked Account' */, 'details':this.props.app_state.loc['1574']/* 'Block an accounts content from being visible in your feed.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Account ID...'} when_text_input_field_changed={this.when_add_blocked_account_changed.bind(this)} text={this.state.typed_blocked_account_word} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['1575']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_blocked_account_changed.bind(this)} text={this.state.typed_blocked_account_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_blocked_account_to_list()} >
-                        {this.render_detail_item('5',{'text':'Add','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1568']/* 'Add' */,'action':''})}
                     </div>
                 </div>
                 <div style={{height: 10}}/>
@@ -5644,10 +5693,10 @@ class StackPage extends Component {
         var typed_contact = this.get_typed_alias_id(this.state.typed_blocked_account_word.trim())
 
         if(isNaN(typed_contact) || typed_contact =='' || parseInt(typed_contact)<1001){
-            this.props.notify('That ID is not valid', 1800)
+            this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
         }
         else if(!this.props.app_state.has_wallet_been_set){
-            this.props.notify('please set your wallet first', 2200);
+            this.props.notify(this.props.app_state.loc['1577']/* 'Please set your wallet first.' */, 3200);
         }
         else{
             this.props.add_account_to_blocked_list(parseInt(typed_contact))
@@ -5733,20 +5782,20 @@ class StackPage extends Component {
     render_alias_stuff(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Reserve Alias', 'details':'Reserve an alias for your account ID', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1578']/* 'Reserve Alias' */, 'details':this.props.app_state.loc['1579']/* 'Reserve an alias for your account ID' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter New Alias Name...'} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['1580']/* 'Enter New Alias Name...' */} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias_list()} >
-                        {this.render_detail_item('5',{'text':'Reserve','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1581']/* 'Reserve' */,'action':''})}
                     </div>
                 </div>
 
                 <div style={{height:10}}/>
                 {/* {this.render_detail_item('3', {'title':this.state.typed_alias_word, 'details':'Typed Alias', 'size':'l'})} */}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.typed_alias_word.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.typed_alias_word.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_my_account_id()}
@@ -5764,7 +5813,7 @@ class StackPage extends Component {
         var stack = this.props.app_state.stack_items
         var picked_alias = ''
         for(var i=0; i<stack.length; i++){
-            if(stack[i].type == 'alias'){
+            if(stack[i].type == this.props.app_state.loc['1582']/* 'alias' */){
                 picked_alias = stack[i].alias
                 break;
             }
@@ -5773,7 +5822,7 @@ class StackPage extends Component {
         if(picked_alias != ''){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':picked_alias, 'details':'Stacked Alias', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':picked_alias, 'details':this.props.app_state.loc['1583']/* 'Stacked Alias' */, 'size':'l'})}
                 </div>
             )
         }
@@ -5786,14 +5835,14 @@ class StackPage extends Component {
     render_my_account_id(){
         var display = this.props.app_state.user_account_id[this.props.app_state.selected_e5] == 1 ? '0000' : this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         
-        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? 'Alias Unknown' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
+        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]] == null ? this.props.app_state.loc['1584']/* 'Alias Unknown' */ : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[this.props.app_state.user_account_id[this.props.app_state.selected_e5]])
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                     {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':'Sans-serif'})}
                     <div style={{'padding':'0px 0px 0px 5px'}}>
-                        {this.render_detail_item('10', {'text':'Alias: '+alias, 'textsize':'12px', 'font':'Sans-serif'})} 
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1585']/* 'Alias: ' */+alias, 'textsize':'12px', 'font':'Sans-serif'})} 
                     </div>
                 </div>
             </div>
@@ -5818,25 +5867,25 @@ class StackPage extends Component {
         var typed_word = this.state.typed_alias_word.trim()
         
         if(typed_word == ''){
-            this.props.notify('type something!', 1400)
+            this.props.notify(this.props.app_state.loc['128']/* 'Type something.' */, 3400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 1400)
+            this.props.notify(this.props.app_state.loc['129']/* 'Enter one word.' */, 3400)
         }
         else if(typed_word.length > 23){
-            this.props.notify('That alias is too long', 1900)
+            this.props.notify(this.props.app_state.loc['1586']/* 'That alias is too long.' */, 3900)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That alias is too short', 1900)
+            this.props.notify(this.props.app_state.loc['1587']/* 'That alias is too short.' */, 3900)
         }
         else if(this.props.app_state.user_account_id[this.props.app_state.selected_e5] < 1000){
-            this.props.notify('you need to make at least 1 transaction to reserve an alias', 3200)
+            this.props.notify(this.props.app_state.loc['1588']/* 'You need to make at least 1 transaction to reserve an alias.' */, 6200)
         }
         else if(this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[typed_word] != null){
-            this.props.notify('That alias has already been reserved', 1400)
+            this.props.notify(this.props.app_state.loc['1589']/* 'That alias has already been reserved.' */, 4400)
         }
         else if(this.is_word_reserved(typed_word)){
-            this.props.notify('That word is reserved', 2000)
+            this.props.notify(this.props.app_state.loc['1590']/* 'That word is reserved, you cant use it.' */, 5000)
         }
         else{
             this.props.add_alias_transaction_to_stack(this.state.typed_alias_word)
@@ -5845,7 +5894,7 @@ class StackPage extends Component {
     }
 
     is_word_reserved(typed_word){
-        var obj = ['Unknown', 'Alias Unknown']
+        var obj = [this.props.app_state.loc['1591']/* 'Unknown' */, this.props.app_state.loc['1592']/* 'Alias Unknown' */]
         if(obj.includes(typed_word)){
             return true
         }
@@ -5900,7 +5949,7 @@ class StackPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '2px'}} onClick={()=> console.log()}>
-                                            {this.render_detail_item('3', {'title':''+item['alias'], 'details':'Reserved '+this.get_time_difference(item['event'].returnValues.p6)+' ago', 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':''+item['alias'], 'details':this.props.app_state.loc['1593']/* 'Reserved ' */+this.get_time_difference(item['event'].returnValues.p6)+' ago', 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -5991,32 +6040,32 @@ class StackPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

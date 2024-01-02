@@ -32,7 +32,7 @@ function makeid(length) {
 class ExchangeTransferPage extends Component {
     
     state = {
-        selected: 0,id: makeid(8), type:'exchange-transfer', entered_indexing_tags:['exchange', 'transfer'],
+        selected: 0,id: makeid(8), type:this.props.app_state.loc['907']/* 'exchange-transfer' */, entered_indexing_tags:[this.props.app_state.loc['908']/* 'exchange' */, this.props.app_state.loc['909']/* 'transfer' */],
         token_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
         new_transfer_title_tags_object:this.get_new_transfer_title_tags_object(),
 
@@ -46,7 +46,7 @@ class ExchangeTransferPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','exchange-transfer'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['907']/* 'exchange-transfer' */], [0]
             ],
         };
     }
@@ -60,13 +60,13 @@ class ExchangeTransferPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Run an exchange transfer for : '+this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+this.state.token_item['id']]})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['910']/* 'Run an exchange transfer for : ' */+this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+this.state.token_item['id']]})}
 
                 <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
@@ -84,31 +84,31 @@ class ExchangeTransferPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Target Receiver', 'details':'Set the account set to receive the token amounts', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['911']/* 'Target Receiver' */, 'details':this.props.app_state.loc['912']/* 'Set the account set to receive the token amounts' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={'Target Receiver...'} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['913']/* 'Target Receiver...' */} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('exchange_transfer_receiver')}
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':'Token Targets', 'details':'Set the targeted token ID your transfering from the exchange', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['914']/* 'Token Targets' */, 'details':this.props.app_state.loc['915']/* 'Set the targeted token ID your transfering from the exchange' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={'Token Target ID...'} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['916']/* 'Token Target ID...' */} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('token_target')}
                 {this.render_detail_item('0')}
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Targeted Amount', 'subtitle':this.format_power_figure(this.state.exchange_transfer_amount), 'barwidth':this.calculate_bar_width(this.state.exchange_transfer_amount), 'number':this.format_account_balance_figure(this.state.exchange_transfer_amount), 'barcolor':'', 'relativepower':'units', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['917']/* 'Targeted Amount' */, 'subtitle':this.format_power_figure(this.state.exchange_transfer_amount), 'barwidth':this.calculate_bar_width(this.state.exchange_transfer_amount), 'number':this.format_account_balance_figure(this.state.exchange_transfer_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['918']/* 'units' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_exchange_transfer_amount_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.add_exchange_transfer_item()}>
-                    {this.render_detail_item('5', {'text':'Add Transfer Action', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['919']/* 'Add Transfer Action' */, 'action':''})}
                 </div>
 
                 {this.load_transfer_actions()}
@@ -152,13 +152,13 @@ class ExchangeTransferPage extends Component {
         var targeted_token = this.state.token_target.trim()
 
         if(isNaN(target_receiver) || parseInt(target_receiver) < 0 || target_receiver == ''){
-            this.props.notify('please put a valid receiver id', 2600)
+            this.props.notify(this.props.app_state.loc['920']/* 'Please put a valid receiver ID.' */, 2600)
         }
         else if(isNaN(targeted_token) || parseInt(targeted_token) < 0 || targeted_token == '' || !this.does_exchange_exist(targeted_token)){
-            this.props.notify('please put a valid token id', 2600)
+            this.props.notify(this.props.app_state.loc['921']/* 'Please put a valid token ID.' */, 2600)
         }
         else if(target_amount == 0){
-            this.props.notify('please put a valid amount', 2600)
+            this.props.notify(this.props.app_state.loc['922']/* 'Please put a valid amount.' */, 2600)
         }
         else{
             var exchange_transfer_values_clone = this.state.exchange_transfer_values.slice()
@@ -166,7 +166,7 @@ class ExchangeTransferPage extends Component {
             exchange_transfer_values_clone.push(tx)
             this.setState({exchange_transfer_values: exchange_transfer_values_clone, exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_receiver:'', token_target:''})
 
-            this.props.notify('transfer action added', 1600)
+            this.props.notify(this.props.app_state.loc['923']/* 'transfer action added' */, 1600)
         }
     }
 
@@ -221,7 +221,7 @@ class ExchangeTransferPage extends Component {
                                     {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']]+':'+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
                                 </div>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['924']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
@@ -274,7 +274,7 @@ class ExchangeTransferPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({exchange_transfer_values: cloned_array})
-        this.props.notify('transfer action removed!', 600)
+        this.props.notify(this.props.app_state.loc['925']/* 'transfer action removed!' */, 1600)
     }
 
 
@@ -298,21 +298,21 @@ class ExchangeTransferPage extends Component {
     get_suggested_accounts(type){
         if(type == 'exchange_transfer_target'){
             return[
-                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
-                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+                {'id':'3', 'label':{'title':this.props.app_state.loc['926']/* 'End Token' */, 'details':this.props.app_state.loc['928']/* 'Exchange ID 3' */, 'size':'s'}},
+                {'id':'5', 'label':{'title':this.props.app_state.loc['927']/* 'Spend Token' */, 'details':this.props.app_state.loc['929']/* 'Exchange ID 5' */, 'size':'s'}},
             ]
         }
         else if(type == 'exchange_transfer_receiver'){
             return[
-                {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
-                {'id':'2', 'label':{'title':'Main Contract', 'details':'Contract ID 2', 'size':'s'}},
-                {'id':'0','label':{'title':'Burn Account', 'details':'Account ID 0', 'size':'s'}},
+                {'id':'53', 'label':{'title':this.props.app_state.loc['854']/* 'My Account' */, 'details':this.props.app_state.loc['857']/* 'Account' */, 'size':'s'}},
+                {'id':'2', 'label':{'title':this.props.app_state.loc['855']/* 'Main Contract' */, 'details':this.props.app_state.loc['858']/* 'Contract ID 2' */, 'size':'s'}},
+                {'id':'0','label':{'title':this.props.app_state.loc['856']/* 'Burn Account' */, 'details':this.props.app_state.loc['859']/* 'Account ID 0' */, 'size':'s'}},
             ].concat(this.get_account_suggestions())
         }
         else if(type == 'token_target'){
             return[
-                {'id':'3', 'label':{'title':'End Token', 'details':'Exchange ID 3', 'size':'s'}},
-                {'id':'5', 'label':{'title':'Spend Token', 'details':'Exchange ID 5', 'size':'s'}},
+                {'id':'3', 'label':{'title':this.props.app_state.loc['926']/* 'End Token' */, 'details':this.props.app_state.loc['928']/* 'Exchange ID 3' */, 'size':'s'}},
+                {'id':'5', 'label':{'title':this.props.app_state.loc['927']/* 'Spend Token' */, 'details':this.props.app_state.loc['929']/* 'Exchange ID 5' */, 'size':'s'}},
             ]
         }
         
@@ -352,7 +352,7 @@ class ExchangeTransferPage extends Component {
     set_token(token_item){
         if(this.state.token_item['id'] != token_item['id']){
             this.setState({
-                selected: 0,id: makeid(8), type:'exchange-transfer', entered_indexing_tags:['exchange', 'transfer'],
+                selected: 0,id: makeid(8), type:this.props.app_state.loc['907']/* 'exchange-transfer' */, entered_indexing_tags:[this.props.app_state.loc['908']/* 'exchange' */, this.props.app_state.loc['909']/* 'transfer' */],
                 token_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
                 new_transfer_title_tags_object:this.get_new_transfer_title_tags_object(),
                 exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
@@ -363,11 +363,11 @@ class ExchangeTransferPage extends Component {
 
     finish(){
         if(this.state.exchange_transfer_values.length == 0){
-            this.props.notify('you cant stack no changes', 700)
+            this.props.notify(this.props.app_state.loc['897']/* 'you cant stack no changes' */, 3700)
         }else{
             this.props.add_exchange_transfer_to_stack(this.state)
             this.setState({exchange_transfer_values:[]})
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -451,32 +451,32 @@ class ExchangeTransferPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

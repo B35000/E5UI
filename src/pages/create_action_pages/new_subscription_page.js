@@ -40,7 +40,7 @@ function makeid(length) {
 class NewSubscriptionPage extends Component {
     
     state = {
-        id: makeid(8), type:'subscription', e5:this.props.app_state.selected_e5,
+        id: makeid(8), type:this.props.app_state.loc['536']/* 'subscription' */, e5:this.props.app_state.selected_e5,
         entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
         new_subscription_tags_object: this.get_new_subscription_tags_object(),
         authority_id:'', minimum_buy_amount:0, cancellable_tags_object:this.get_cancellable_tags_object(),
@@ -70,7 +70,7 @@ class NewSubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','configuration', 'authorities', 'prices'], [0]
+                ['or','',0], ['e',this.props.app_state.loc['537']/* 'configuration' */, this.props.app_state.loc['538']/* 'authorities' */, this.props.app_state.loc['539']/* 'prices' */], [0]
             ],
         };
     }
@@ -82,7 +82,7 @@ class NewSubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','false', 'true'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['540']/* 'false' */,this.props.app_state.loc['541'] /* 'true' */], [1]
             ],
         };
     }
@@ -93,7 +93,7 @@ class NewSubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','moderators', 'interactible'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['542']/* 'moderators' */, this.props.app_state.loc['543']/* 'interactible' */], [1]
             ],
         };
     }
@@ -104,7 +104,7 @@ class NewSubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','enabled', 'disabled'], [2]
+                ['xor','',0], ['e',this.props.app_state.loc['544']/* 'enabled' */, this.props.app_state.loc['545']/* 'disabled' */], [2]
             ],
         };
     }
@@ -119,7 +119,7 @@ class NewSubscriptionPage extends Component {
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                                {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                             </div>
                             
                         </div>
@@ -154,21 +154,21 @@ class NewSubscriptionPage extends Component {
                 </div>
             )    
         }else
-        if(selected_item == 'configuration'){
+        if(selected_item == this.props.app_state.loc['537']/* 'configuration' */){
             return(
                 <div>
                     {this.render_subscription_list()}
                 </div>
             ) 
         }
-        else if(selected_item == 'authorities'){
+        else if(selected_item == this.props.app_state.loc['538']/* 'authorities' */){
             return(
                 <div>
                     {this.render_authorities_part()}
                 </div>
             ) 
         }
-        else if(selected_item == 'prices'){
+        else if(selected_item == this.props.app_state.loc['539']/* 'prices' */){
             return(
                 <div>
                     {this.render_prices_part()}
@@ -213,27 +213,27 @@ class NewSubscriptionPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a name for your new Subscription'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['546']/* 'Set a name for your new Subscription' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['547']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Subscription'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['548']/* 'Set tags for indexing your new Subscription' */})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['549']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 
@@ -255,25 +255,25 @@ class NewSubscriptionPage extends Component {
         var typed_word = this.state.entered_tag_text.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something!', 400)
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word!', 400)
+            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify('That tag is too long', 400)
+            this.props.notify(this.props.app_state.loc['130']/* 'That tag is too long' */, 400)
         }
         else if(typed_word.length < 3){
-            this.props.notify('That tag is too short', 400)
+            this.props.notify(this.props.app_state.loc['131']/* 'That tag is too short' */, 400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify('you cant enter the same word twice', 400)
+            this.props.notify(this.props.app_state.loc['132']/* 'you cant enter the same word twice' */, 400)
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({entered_indexing_tags: cloned_seed_array, entered_tag_text:''})
-            this.props.notify('tag added!', 200)
+            // this.props.notify('tag added!', 200)
         }
     }
 
@@ -288,7 +288,7 @@ class NewSubscriptionPage extends Component {
             cloned_seed_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({entered_indexing_tags: cloned_seed_array})
-        this.props.notify('tag removed', 200)
+        // this.props.notify('tag removed', 200)
     }
 
 
@@ -424,7 +424,7 @@ class NewSubscriptionPage extends Component {
     render_subscription_list(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':'Create a basic E5 subscription'})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['551']/* 'Create a basic E5 subscription' */})}
                 <div style={{height:20}}/>
                 {this.render_subscription_section_parts()}
 
@@ -448,7 +448,7 @@ class NewSubscriptionPage extends Component {
         if(page < 4){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.enter_next_page()}>
-                    {this.render_detail_item('5', {'text':'Next', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['552']/* 'Next' */, 'action':''})}
                 </div>
             )
         }
@@ -459,7 +459,7 @@ class NewSubscriptionPage extends Component {
         if(page != 0){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.enter_previous_page()}>
-                    {this.render_detail_item('5', {'text':'Previous', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['553']/* 'Previous' */, 'action':''})}
                 </div>
             )
         }
@@ -471,13 +471,13 @@ class NewSubscriptionPage extends Component {
         if(page == 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Cancellable', 'details':'If set to true, subscription payers can refund their subscription payments', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['554']/* 'Cancellable' */, 'details':this.props.app_state.loc['555']/* 'If set to true, subscription payers can refund their subscription payments' */, 'size':'l'})}
 
                     <div style={{height:20}}/>
                     <Tags page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: false', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['556']/* 'Recommended: false' */, 'textsize':'10px', 'font':'Sans-serif'})}
                     
                 </div>
             )
@@ -485,13 +485,13 @@ class NewSubscriptionPage extends Component {
         else if(page == 1){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Time Unit', 'details':'the amount of time thats used as a unit when paying for your new subscription', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['557']/* 'Time Unit' */, 'details':this.props.app_state.loc['558']/* 'the amount of time thats used as a unit when paying for your new subscription' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.time_unit), 'details':'Time Unit', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(this.state.time_unit), 'details':this.props.app_state.loc['557']/* 'Time Unit' */, 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: 1 min', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['559']/* 'Recommended: 1 min' */, 'textsize':'10px', 'font':'Sans-serif'})}
 
                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
                 </div>
@@ -500,15 +500,15 @@ class NewSubscriptionPage extends Component {
         else if(page == 2){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum Buy Amount', 'details':'Minimum amount of time units that can be paid for your new subscription.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['560']/* 'Minimum Buy Amount' */, 'details':this.props.app_state.loc['561']/* 'Minimum amount of time units that can be paid for your new subscription.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['560']/* 'Minimum Buy Amount' */, 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['562']/* 'units' */, })}
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['563']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -517,11 +517,11 @@ class NewSubscriptionPage extends Component {
         else if(page == 3){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Maximum Buy Amount', 'details':'Maximum amount of time units that can be paid for your new subscription.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['564']/* 'Maximum Buy Amount' */, 'details':this.props.app_state.loc['565']/* 'Maximum amount of time units that can be paid for your new subscription.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':this.format_power_figure(this.state.maximum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.maximum_buy_amount), 'number':this.format_account_balance_figure(this.state.maximum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['564']/* 'Maximum Buy Amount' */, 'subtitle':this.format_power_figure(this.state.maximum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.maximum_buy_amount), 'number':this.format_account_balance_figure(this.state.maximum_buy_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['562']/* 'units' */, })}
                     </div>
 
 
@@ -532,15 +532,15 @@ class NewSubscriptionPage extends Component {
         else if(page == 4){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Minimum Cancellable Amount(For Cancellable Subscriptions)', 'details':'the minimum amount of time units that can be left when cancelling your new subscriptions payments', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['566']/* 'Minimum Cancellable Amount(For Cancellable Subscriptions)' */, 'details':this.props.app_state.loc['567']/* 'the minimum amount of time units that can be left when cancelling your new subscriptions payments' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Cancellable Amount', 'subtitle':this.format_power_figure(this.state.minimum_cancellable_balance_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_cancellable_balance_amount), 'number':this.format_account_balance_figure(this.state.minimum_cancellable_balance_amount), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['568']/* 'Minimum Cancellable Amount' */, 'subtitle':this.format_power_figure(this.state.minimum_cancellable_balance_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_cancellable_balance_amount), 'number':this.format_account_balance_figure(this.state.minimum_cancellable_balance_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['562']/* 'units' */, })}
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'Recommended: at least 1', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['569']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':'Sans-serif'})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -608,23 +608,23 @@ class NewSubscriptionPage extends Component {
     render_subscription_authority_target(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Access Rights', 'details':'If enabled, access to the subscription will be restricted to moderators and specified accounts', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['570']/* 'Access Rights' */, 'details':this.props.app_state.loc['571']/* 'If enabled, access to the subscription will be restricted to moderators and specified accounts' */, 'size':'l'})}
 
                 <div style={{height:20}}/>
                 <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set the authority ID for your new subscription'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['572']/* 'Set the authority ID for your new subscription' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Authority...'} when_text_input_field_changed={this.when_authority_text_input_field_changed.bind(this)} text={this.state.authority_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['600a']/* 'Enter Authority...' */} when_text_input_field_changed={this.when_authority_text_input_field_changed.bind(this)} text={this.state.authority_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('authority_id')}
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set the subscription beneficiary ID for your new subscription'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['573']/* 'Set the subscription beneficiary ID for your new subscription' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Beneficiary ID...'} when_text_input_field_changed={this.when_subscription_beneficiary.bind(this)} text={this.state.subscription_beneficiary} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['600b']/* 'Enter Beneficiary ID...' */} when_text_input_field_changed={this.when_subscription_beneficiary.bind(this)} text={this.state.subscription_beneficiary} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('subscription_beneficiary')}
 
@@ -665,14 +665,14 @@ class NewSubscriptionPage extends Component {
     render_moderator_or_interactible_setting(){
         var selected_item = this.get_selected_item(this.state.new_token_interactible_moderator_tags_object, this.state.new_token_interactible_moderator_tags_object['i'].active)
 
-        if(selected_item == 'moderators' || selected_item == 'e'){
+        if(selected_item == this.props.app_state.loc['574']/* 'moderators' */ || selected_item == 'e'){
             return(
                 <div>
                     {this.render_moderator_settings()}
                 </div>
             )    
         }
-        else if(selected_item == 'interactible'){
+        else if(selected_item == this.props.app_state.loc['575']/* 'interactible' */){
             return(
                 <div>
                     {this.render_interactible_settings()}
@@ -686,16 +686,16 @@ class NewSubscriptionPage extends Component {
         return(
             <div style={{'overflow-x':'hidden'}}>
                 <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':'Moderator ID', 'details':'Set the account id for your targeted moderator', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['576']/* 'Moderator ID' */, 'details':this.props.app_state.loc['577']/* 'Set the account id for your targeted moderator' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Moderator ID'} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['576']/* 'Moderator ID' */} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('moderator_id')}
 
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_moderator_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Moderator', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['578']/* 'Add Moderator' */, 'action':''})}
                 </div>
 
                 {this.render_added_moderators()}
@@ -710,13 +710,13 @@ class NewSubscriptionPage extends Component {
     when_add_moderator_button_tapped(){
         var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
         if(isNaN(moderator_id)  || parseInt(moderator_id) < 0 || moderator_id == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify(this.props.app_state.loc['729']/* 'please put a valid account id' */, 600)
         }
         else{
             var moderators_clone = this.state.moderators.slice()
             moderators_clone.push(parseInt(moderator_id))
             this.setState({moderators: moderators_clone});
-            this.props.notify('added moderator!', 400)
+            this.props.notify(this.props.app_state.loc['730']/* 'added moderator!' */, 400)
         }
     }
 
@@ -761,7 +761,7 @@ class NewSubscriptionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item, 'details':'Account ID', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item, 'details':this.props.app_state.loc['579']/* 'Account ID' */, 'size':'l'})}
                             </li>
                         ))}
                     </ul>
@@ -783,10 +783,10 @@ class NewSubscriptionPage extends Component {
         return(
             <div style={{'overflow-x':'hidden'}}>
                 <div style={{height:20}}/>
-                {this.render_detail_item('3', {'title':'Interactible ID', 'details':'Set the account id for your targeted account, and expiry time for their interactibility', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['580']/* 'Interactible ID' */, 'details':this.props.app_state.loc['581']/* 'Set the account id for your targeted account, and expiry time for their interactibility' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Interactible ID'} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['580']/* 'Interactible ID' */} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('interactible_id')}
 
@@ -801,7 +801,7 @@ class NewSubscriptionPage extends Component {
 
                 <div style={{height:20}}/>
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>
-                    {this.render_detail_item('5', {'text':'Add Interactible Account', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['582']/* 'Add Interactible Account' */, 'action':''})}
                 </div>
                 
                 <div style={{height:20}}/>
@@ -823,13 +823,13 @@ class NewSubscriptionPage extends Component {
     when_add_interactible_button_tapped(){
         var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0 || interactible_id == ''){
-            this.props.notify('please put a valid account id', 2600)
+            this.props.notify(this.props.app_state.loc['583']/* 'please put a valid account id' */, 2600)
         }
         else{
             var interactibles_clone = this.state.interactibles.slice()
             interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
             this.setState({interactibles: interactibles_clone});
-            this.props.notify('added interactible account!', 1400)
+            this.props.notify(this.props.app_state.loc['584']/* 'added interactible account!' */, 1400)
         }
     }
 
@@ -864,7 +864,7 @@ class NewSubscriptionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
-                                {this.render_detail_item('3', {'title':'Interactible Account ID: '+item['id'], 'details':'Until: '+(new Date(item['timestamp']*1000)), 'size':'l'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['585']/* 'Interactible Account ID: ' */+item['id'], 'details':this.props.app_state.loc['586']/* 'Until: ' */+(new Date(item['timestamp']*1000)), 'size':'l'})}
                             </li>
                         ))}
                     </ul>
@@ -916,16 +916,16 @@ class NewSubscriptionPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'An exchange by its id, then the desired price and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['587']/* 'Exchange ID' */, 'details':this.props.app_state.loc['588']/* 'Type an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['587']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Price', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['589']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['590']/* 'tokens' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -933,7 +933,7 @@ class NewSubscriptionPage extends Component {
                 {this.render_detail_item('0')}
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Price', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['591']/* 'Add Price' */, 'action':''})}
                 </div>
             </div>
         )
@@ -951,19 +951,19 @@ class NewSubscriptionPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id=='' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 2600)
+            this.props.notify(this.props.app_state.loc['592']/* 'please put a valid exchange id' */, 3600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 2600)
+            this.props.notify(this.props.app_state.loc['593']/* 'please put a valid amount' */, 3600)
         }
         else if(this.is_exchange_already_added(exchange_id)){
-            this.props.notify('You cant use the same exchange twice', 3600)
+            this.props.notify(this.props.app_state.loc['594']/* 'You cant use the same exchange twice' */, 3600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone});
-            this.props.notify('added price!', 1400)
+            this.props.notify(this.props.app_state.loc['595']/* 'added price!' */, 1400)
         }
     }
 
@@ -1083,8 +1083,8 @@ class NewSubscriptionPage extends Component {
 
    get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['527']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['528']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
         var sorted_token_exchange_data = []
@@ -1161,7 +1161,7 @@ class NewSubscriptionPage extends Component {
 
     get_suggested_accounts(target_type){
         return[
-            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+            {'id':'53', 'label':{'title':this.props.app_state.loc['596']/* 'My Account' */, 'details':this.props.app_state.loc['597']/* 'Account' */, 'size':'s'}},
         ].concat(this.get_account_suggestions(target_type))
     }
 
@@ -1279,32 +1279,32 @@ class NewSubscriptionPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -1318,13 +1318,13 @@ class NewSubscriptionPage extends Component {
         var title = this.state.entered_title_text
 
         if(index_tags.length == 0){
-            this.props.notify('add some tags first!', 700)
+            this.props.notify(this.props.app_state.loc['598']/* 'add some tags first!' */, 2700)
         }
         else if(title == ''){
-            this.props.notify('add a name first!', 700)
+            this.props.notify(this.props.app_state.loc['599']/* 'add a name first!' */, 2700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify('that name is too long', 700)
+            this.props.notify(this.props.app_state.loc['600']/* 'that name is too long' */, 2700)
         }
         else{
             var me = this;
@@ -1336,9 +1336,9 @@ class NewSubscriptionPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
 
-                me.setState({ id: makeid(32), type:'subscription', entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: me.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:me.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
+                me.setState({ id: makeid(32), type:this.props.app_state.loc['536']/* 'subscription' */, entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: me.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:me.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
 
-                me.props.notify('transaction added to stack', 700);
+                me.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
             }, (1 * 1000));
         }
     }

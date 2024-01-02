@@ -43,20 +43,29 @@ class SpendDetailSection extends Component {
     }
 
     get_navigate_view_spend_list_detail_tags(){
-        return{
+        var obj = {
           'i':{
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e','details','e.events', 'e.moderator-events'],[0]
+              ['or','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[0]
           ],
           'events': [
-                ['xor', 'e', 1], ['events', 'transfers', 'exchange-transfers', 'updated-balances', 'updated-proportion-ratios', 'modify-exchange','freeze-unfreeze'], [1], [1]
+                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */], [1], [1]
            ],
            'moderator-events': [
-                ['xor', 'e', 1], ['moderator-events', 'modify-moderators', 'interactable-checkers', 'interactable-accounts', 'block-accounts'], [1], [1]
+                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
             ],
         }
+
+        obj[this.props.app_state.loc['2119']/* events */] = [
+                ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2121']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */], [1], [1]
+           ]
+        obj[this.props.app_state.loc['2120']/* moderator-events */] = [
+                ['xor', 'e', 1], [this.props.app_state.loc['2120']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
+            ]
+
+        return obj
     }
 
     block_limit_chart_tags_object(){
@@ -65,7 +74,7 @@ class SpendDetailSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', 'all-time'], [4]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
             ],
         };
     }
@@ -76,7 +85,7 @@ class SpendDetailSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', 'all-time'], [4]
+                ['xor','',0], ['e','1h','24h', '7d', '30d', '6mo', this.props.app_state.loc['1416']/* 'all-time' */], [4]
             ],
         };
     }
@@ -141,78 +150,77 @@ class SpendDetailSection extends Component {
             )
         }
         
-        if(selected_item == 'details' || selected_item == 'e'){
+        if(selected_item ==this.props.app_state.loc['2118']/* 'details' */ || selected_item == 'e'){
             return(
                 <div>
                     {this.render_spend_main_details_section(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'transfers'){
+        else if(selected_item == this.props.app_state.loc['2121']/* 'transfers' */){
             return(
                 <div>
                     {this.render_transfer_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'updated-proportion-ratios'){
+        else if(selected_item == this.props.app_state.loc['2559']/* 'updated-proportion-ratios' */){
             return(
                 <div>
                     {this.render_updated_proportion_ratio_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'modify-exchange'){
+        else if(selected_item == this.props.app_state.loc['2341']/* 'modify-exchange' */){
             return(
                 <div>
                     {this.render_modify_exchange_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'exchange-transfers'){
+        else if(selected_item == this.props.app_state.loc['2338']/* 'exchange-transfers' */){
             return(
                 <div>
                     {this.render_exchange_transfers_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'updated-balances'){
+        else if(selected_item == this.props.app_state.loc['2339']/* 'updated-balances' */){
             return(
                 <div>
                     {this.render_update_balance_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'freeze-unfreeze'){
+        else if(selected_item == this.props.app_state.loc['2342']/* 'freeze-unfreeze' */){
             return(
                 <div>
                     {this.render_freeze_unfreeze_logs(selected_object)}
                 </div>
             )
         }
-
-        else if(selected_item == 'modify-moderators'){
+        else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
             return(
                 <div>
                     {this.render_modify_moderator_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'interactable-checkers'){
+        else if(selected_item == this.props.app_state.loc['2067']/* 'interactable-checkers' */){
             return(
                 <div>
                     {this.render_interactable_checker_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'interactable-accounts'){
+        else if(selected_item == this.props.app_state.loc['2068']/* 'interactable-accounts' */){
             return(
                 <div>
                     {this.render_interactable_accounts_logs(selected_object)}
                 </div>
             )
         }
-        else if(selected_item == 'block-accounts'){
+        else if(selected_item == this.props.app_state.loc['2069']/* 'block-accounts' */){
             return(
                 <div>
                     {this.render_blocked_accounts_logs(selected_object)}
@@ -228,7 +236,7 @@ class SpendDetailSection extends Component {
     get_senders_name(sender, object){
         // var object = this.get_mail_items()[this.props.selected_mail_item];
         if(sender == this.props.app_state.user_account_id[object['e5']]){
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         }else{
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -246,7 +254,7 @@ class SpendDetailSection extends Component {
         // var selected_object = this.get_exchange_tokens(5)[this.props.selected_spend_item]
         var item = this.get_spend_data(selected_object);
         var symbol = selected_object['ipfs'] == null ? this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_object['id']] : selected_object['ipfs'].entered_symbol_text
-        var author = selected_object['event'] != null ? this.get_senders_name(selected_object['event'].returnValues.p3, selected_object) :'Unknown'
+        var author = selected_object['event'] != null ? this.get_senders_name(selected_object['event'].returnValues.p3, selected_object) :this.props.app_state.loc['1591']/* 'Unknown' */
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
@@ -364,36 +372,39 @@ class SpendDetailSection extends Component {
 
                     <div style={{height:10}}/>
                     {this.render_proportion_ratio_chart(selected_object)}
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['active_mint_limit'])}
+                    </div>
                     
                     {this.render_detail_item('0')}
 
                     {this.render_token_liquidity_balance(selected_object, symbol)}
-
-                    {this.render_detail_item('0')}
+      
 
                     {this.render_last_swap_block(selected_object)}
                     {this.render_last_swap_timestamp(selected_object)}
                     {this.render_last_swap_transaction_count(selected_object)}
                     {this.render_last_entered_contracts_count(selected_object)}
 
-                    {this.render_detail_item('3', {'size':'l', 'details':'Mint or Dump the token for a specified account', 'title':'Mint/Dump'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2560']/* 'Mint or Dump the token for a specified account' */, 'title':this.props.app_state.loc['2561']/* 'Mint/Dump' */})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_mint_burn_spend_token_ui(selected_object)}>
                         {this.render_detail_item('5', item['mint_burn_button'])}
                     </div>
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'size':'l', 'details':'Make a token transfer to a specified account', 'title':'Send/Transfer'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2562']/* 'Make a token transfer to a specified account' */, 'title':this.props.app_state.loc['2563']/* 'Send/Transfer' */})}
 
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1849']/* 'Your Balance' */, 'subtitle':this.format_power_figure(selected_object['balance']), 'barwidth':this.calculate_bar_width(selected_object['balance']), 'number':this.format_account_balance_figure(selected_object['balance']), 'barcolor':'', 'relativepower':symbol, })}
                     </div>
 
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_transfer_ui(selected_object)}>
-                        {this.render_detail_item('5', {'text':'Transfer', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2347']/* 'Transfer' */, 'action':''},)}
                     </div>
                     
                     {this.render_auth_modify_button(selected_object)}
@@ -438,7 +449,9 @@ class SpendDetailSection extends Component {
         if(selected_object['id'] != 5 && !is_type_spend){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The exchanges balance for each of the tokens used to buy '+symbol, 'title':'Buy Token Liquidity'})}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2564']/* 'The exchanges balance for each of the tokens used to buy ' */+symbol, 'title':this.props.app_state.loc['2565']/* 'Buy Token Liquidity' */})}
                     <div style={{height:10}}/>
                     {this.render_buy_token_uis(selected_object)}
 
@@ -465,13 +478,13 @@ class SpendDetailSection extends Component {
         if(events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Disabled', 'details':'Author of Object is not a Moderator by default', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2566']/* 'Author Moderator Privelages Disabled' */, 'details':this.props.app_state.loc['2567']/* 'Author of Object is not a Moderator by default' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Enabled', 'details':'Author of Object is a Moderator by default', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2568']/* 'Author Moderator Privelages Enabled' */, 'details':this.props.app_state.loc['2569']/* 'Author of Object is a Moderator by default' */, 'size':'l'})}
                 </div>
             )
         }
@@ -490,14 +503,14 @@ class SpendDetailSection extends Component {
         var buy_depths = [].concat(selected_object['data'][5])
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling one unit of the token', 'title':'Token Price'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2570']/* 'The amount you get when selling one unit of the token.' */, 'title':this.props.app_state.loc['2571']/* 'Token Price' */})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                         {buy_tokens.map((item, index) => (
                             <li style={{'padding': '1px'}}>
-                                {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_price(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_price(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                             </li>
                         ))}
                     </ul>
@@ -545,9 +558,9 @@ class SpendDetailSection extends Component {
 
     get_access_rights_status(value){
         if(value == true){
-            return 'Enabled'
+            return this.props.app_state.loc['2140']/* 'Enabled' */
         }else{
-            return 'Disabled'
+            return this.props.app_state.loc['2141']/* 'Disabled' */
         }
     }
 
@@ -587,7 +600,7 @@ class SpendDetailSection extends Component {
         if(selected_object['account_data'][0] != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Block', 'title':selected_object['account_data'][0]})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2357']/* 'Last Swap Block' */, 'title':selected_object['account_data'][0]})}
                     <div style={{height:10}}/>
                 </div>
             )
@@ -601,7 +614,7 @@ class SpendDetailSection extends Component {
         if(selected_object['account_data'][1] != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Age', 'title': this.get_time_difference(selected_object['account_data'][1]) })}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2358']/* 'Last Swap Age' */, 'title': this.get_time_difference(selected_object['account_data'][1]) })}
                     <div style={{height:10}}/>
                 </div>
             )
@@ -615,7 +628,7 @@ class SpendDetailSection extends Component {
         if(selected_object['account_data'][2] != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Swap Transactions Count', 'title':selected_object['account_data'][2]})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2359']/* 'Last Swap Transactions Count' */, 'title':selected_object['account_data'][2]})}
                     <div style={{height:10}}/>
                 </div>
             )
@@ -629,7 +642,7 @@ class SpendDetailSection extends Component {
         if(selected_object['account_data'][3] !=0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Last Entered Contracts Count', 'title':selected_object['account_data'][3]})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2360']/* 'Last Entered Contracts Count' */, 'title':selected_object['account_data'][3]})}
                     <div style={{height:10}}/>
                 </div>
             )
@@ -645,10 +658,10 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Modify Token', 'details':'Modify the configuration of the exchange directly.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2361']/* 'Modify Token' */, 'details':this.props.app_state.loc['2362']/* 'Modify the configuration of the exchange directly.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_modify_token_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Modify Exchanage', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2572']/* 'Modify Exchanage' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -664,13 +677,13 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}         
                     
-                    {this.render_detail_item('3', {'title':'Exchange Transfer', 'details':'Transfer tokens from the exchanges account to a specified target.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2363']/* 'Exchange Transfer' */, 'details':this.props.app_state.loc['2364']/* 'Transfer tokens from the exchanges account to a specified target.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_buy_token_uis(object)}
                     <div style={{height:10}}/>
                     
                     <div onClick={()=>this.open_exchange_transfers_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Run Transfers', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2365']/* 'Run Transfers' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -686,10 +699,10 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Freeze/Unfreeze Tokens', 'details':'Freeze or unfreeze a given accounts balance.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2366']/* 'Freeze/Unfreeze Tokens' */, 'details':this.props.app_state.loc['2367']/* 'Freeze or unfreeze a given accounts balance.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_freeze_unfreeze_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Freeze/Unfreeze', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2368']/* 'Freeze/Unfreeze' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -706,10 +719,10 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'AuthMint Tokens', 'details':'Bypass the exchanges restrictions and mint your token as an authority', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2573']/* 'AuthMint Tokens' */, 'details':this.props.app_state.loc['2574']/* 'Bypass the exchanges restrictions and mint your token as an authority' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_authmint_ui(object)}>
-                        {this.render_detail_item('5', {'text':'AuthMint', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2575']/* 'AuthMint' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -724,10 +737,10 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2369']/* 'Perform Moderator Actions' */, 'details':this.props.app_state.loc['2576']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_moderator_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2370']/* 'Perform Action' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -743,10 +756,10 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Edit Token Post', 'details':'Change the basic details for your Token Post', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2371']/* 'Edit Token Post' */, 'details':this.props.app_state.loc['2372']/* 'Change the basic details for your Token Post' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_basic_edit_token_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2373']/* 'Perform Action' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -771,11 +784,11 @@ class SpendDetailSection extends Component {
         var selected_obj_config = selected_object['data'][1];
         var selected_obj_ratio_config = selected_object['data'][2];
 
-        var type = selected_obj_root_config[3] == 3 ? 'Capped' : 'Uncapped'
+        var type = selected_obj_root_config[3] == 3 ? this.props.app_state.loc['1808']/* 'Capped' */ : this.props.app_state.loc['1809']/* 'Uncapped' */
         var spend_type = selected_object['data'][0][3/* <3>token_type */] == 3 ? 'END': 'SPEND'
-        var is_auth_main_contract = selected_obj_config[9] == 2 ? '2 (Main Contract)': selected_obj_config[9]
-        var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
-        var halfing_type = selected_obj_config[15] == 0 ? 'Fixed' : 'Spread'
+        var is_auth_main_contract = selected_obj_config[9] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: selected_obj_config[9]
+        var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: (selected_obj_config[10] == 0 ? this.props.app_state.loc['2374']/* '0 (Burn Account)' */: selected_obj_config[10])
+        var halfing_type = selected_obj_config[15] == 0 ? this.props.app_state.loc['1811']/* 'Fixed'  */: this.props.app_state.loc['1812']/* 'Spread' */
 
         if(title == 5){
             title = selected_object['e5'].replace('E', '3')
@@ -791,55 +804,66 @@ class SpendDetailSection extends Component {
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
-            'token_id': {'title':'ID: '+selected_object['id'], 'details':'Token Identifier', 'size':'l'},
-            'token_type': {'title':'Token Type', 'details':type, 'size':'l'},
-            'age': { 'style': 'l', 'title': 'Block Number', 'subtitle': 'age', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} ago`, },
+            'token_id': {'title':this.props.app_state.loc['2375']/* 'ID: ' */+selected_object['id'], 'details':this.props.app_state.loc['2376']/* 'Token Identifier' */, 'size':'l'},
+            'token_type': {'title':this.props.app_state.loc['2377']/* 'Token Type' */, 'details':type, 'size':'l'},
+            'age': { 'style': 'l', 'title': this.props.app_state.loc['2378']/* 'Block Number' */, 'subtitle': this.props.app_state.loc['2494']/* 'age' */, 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
 
-            'unlocked_supply': {'title':'Unlocked Supply', 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
-            'unlocked_liquidity': {'title':'Unlocked Liquidity', 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
-            'fully_custom': {'title':'Fully Custom', 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
+            'unlocked_supply': {'title':this.props.app_state.loc['679']/* 'Unlocked Supply' */, 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
+            'unlocked_liquidity': {'title':this.props.app_state.loc['1815']/* 'Unlocked Liquidity' */, 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
+            'fully_custom': {'title':this.props.app_state.loc['1816']/* 'Fully Custom' */, 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
 
-            'buy_limit':{'style':'l','title':'Mint Limit', 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':symbol},
+            'buy_limit':{'style':'l','title':this.props.app_state.loc['1817']/* Mint Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':symbol},
             
-            'minimum_transactions_between_swap': {'title':selected_obj_config[2], 'details':'Minimum Transactions Between Swap', 'size':'l'},
-            'minimum_blocks_between_swap': {'title':selected_obj_config[3], 'details':'Minimum Blocks Between Swap', 'size':'l'},
-            'minimum_time_between_swap': {'title':this.get_time_diff(selected_obj_config[4]), 'details':'Minimum Time Between Swap', 'size':'l'},
+            'minimum_transactions_between_swap': {'title':selected_obj_config[2], 'details':this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, 'size':'l'},
+            'minimum_blocks_between_swap': {'title':selected_obj_config[3], 'details':this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, 'size':'l'},
+            'minimum_time_between_swap': {'title':this.get_time_diff(selected_obj_config[4]), 'details':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'size':'l'},
             
-            'trust_fee_proportion': {'title':this.format_proportion(selected_obj_config[7]), 'details':'Trust Fee', 'size':'l'},
-            'exchange_authority': {'title':'Authority: '+is_auth_main_contract, 'details':'Exchange Authority Identifier', 'size':'l'},
-            'trust_fee_target': {'title':'Target: '+is_trust_fee_target_main_contract, 'details':'Trust Fee Target Identifier', 'size':'l'},
+            'trust_fee_proportion': {'title':this.format_proportion(selected_obj_config[7]), 'details':this.props.app_state.loc['660']/* 'Trust Fee' */, 'size':'l'},
+            'exchange_authority': {'title':'Authority: '+is_auth_main_contract, 'details':this.props.app_state.loc['1819']/* 'Exchange Authority Identifier' */, 'size':'l'},
+            'trust_fee_target': {'title':this.props.app_state.loc['1293e']/* 'Target: ' */+is_trust_fee_target_main_contract, 'details':this.props.app_state.loc['1821']/* 'Trust Fee Target Identifier' */, 'size':'l'},
 
-            'sell_limit':{'style':'l','title':'Sell Limit', 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':symbol},
+            'sell_limit':{'style':'l','title':this.props.app_state.loc['328']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':symbol},
 
-            'minimum_entered_contracts_between_swap': {'title':selected_obj_config[13], 'details':'Minimum Entered Contracts Between Swap', 'size':'l'},
-            'minimum_transactions_for_first_buy': {'title':selected_obj_config[17], 'details':'Minimum Transactions For First Buy', 'size':'l'},
-            'minimum_entered_contracts_for_first_buy': {'title':selected_obj_config[18], 'details':'Minimum Entered Contracts For First Buy', 'size':'l'},
+            'minimum_entered_contracts_between_swap': {'title':selected_obj_config[13], 'details':this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, 'size':'l'},
+            'minimum_transactions_for_first_buy': {'title':selected_obj_config[17], 'details':this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, 'size':'l'},
+            'minimum_entered_contracts_for_first_buy': {'title':selected_obj_config[18], 'details':this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, 'size':'l'},
 
-            'ratio_x':{'style':'l','title':'Exchange Ratio X', 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':''},
-            'ratio_y':{'style':'l','title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':''},
-            'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':'Exchange Ratio X:Y', 'size':'l'},
+            'ratio_x':{'style':'l','title':this.props.app_state.loc['395']/* 'Exchange Ratio X' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':''},
+            'ratio_y':{'style':'l','title':this.props.app_state.loc['396']/* 'Exchange Ratio Y' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':''},
+            'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':this.props.app_state.loc['712']/* 'Exchange Ratio X:Y' */, 'size':'l'},
 
-            'exchanges_liquidity':{'style':'l','title':'Circulating Supply', 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':symbol},
-            'mint_burn_button':{'text':'Mint/Burn Token', 'action':''},
+            'exchanges_liquidity':{'style':'l','title':this.props.app_state.loc['2579']/* 'Circulating Supply' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':symbol},
+            'mint_burn_button':{'text':this.props.app_state.loc['1822']/* 'Mint/Burn Token' */, 'action':''},
 
-            'block_limit':{'style':'l','title':'Block Limit', 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':symbol},
-            'internal_block_halfing_proportion': {'title':this.format_proportion(selected_obj_config[5]), 'details':'Internal Block Halving Proportion', 'size':'l'},
-            'block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_config[6]), 'details':'Block Limit Reduction Proportion', 'size':'l'},
+            'block_limit':{'style':'l','title':this.props.app_state.loc['335']/* 'Block Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':symbol},
+            'internal_block_halfing_proportion': {'title':this.format_proportion(selected_obj_config[5]), 'details':this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, 'size':'l'},
+            'block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_config[6]), 'details':this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, 'size':'l'},
             
-            'block_reset_limit': {'title':selected_obj_config[8], 'details':'Block Reset Limit', 'size':'l'},
-            'block_limit_sensitivity': {'title':selected_obj_config[12], 'details':'Block Limit Sensitivity', 'size':'l'},
-            'default_authority_mint_limit': {'title':this.format_proportion(selected_obj_config[14]), 'details':'Authority Mint Limit (percentage of supply)', 'size':'l'},
-            'block_halfing_type': {'title':halfing_type, 'details':'Halving Type', 'size':'l'},
-            'maturity_limit':{'style':'l','title':'Maturity Limit', 'subtitle':this.format_power_figure(selected_obj_config[16]), 'barwidth':this.calculate_bar_width(selected_obj_config[16]), 'number':this.format_account_balance_figure(selected_obj_config[16]), 'relativepower':symbol},
+            'block_reset_limit': {'title':selected_obj_config[8], 'details':this.props.app_state.loc['340']/* 'Block Reset Limit' */, 'size':'l'},
+            'block_limit_sensitivity': {'title':selected_obj_config[12], 'details':this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */, 'size':'l'},
+            'default_authority_mint_limit': {'title':this.format_proportion(selected_obj_config[14]), 'details':this.props.app_state.loc['1823']/* 'Authority Mint Limit (percentage of supply)' */, 'size':'l'},
+            'block_halfing_type': {'title':halfing_type, 'details':this.props.app_state.loc['336']/* 'Halving Type' */, 'size':'l'},
+            'maturity_limit':{'style':'l','title':this.props.app_state.loc['337']/* 'Maturity Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[16]), 'barwidth':this.calculate_bar_width(selected_obj_config[16]), 'number':this.format_account_balance_figure(selected_obj_config[16]), 'relativepower':symbol},
 
-            'current_block_mint_total':{'style':'l','title':'Current Block Mint Total', 'subtitle':this.format_power_figure(selected_obj_ratio_config[4]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[4]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[4]), 'relativepower':symbol},
-            'active_block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_ratio_config[6]), 'details':'Active Block Limit Reduction Proportion', 'size':'l'},
+            'current_block_mint_total':{'style':'l','title':this.props.app_state.loc['1824']/* 'Current Block Mint Total' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[4]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[4]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[4]), 'relativepower':symbol},
+            'active_block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_ratio_config[6]), 'details':this.props.app_state.loc['1825']/* 'Active Block Limit Reduction Proportion' */, 'size':'l'},
             
-            '':{},
+            'active_mint_limit':{'style':'l','title':this.props.app_state.loc['2602a']/* 'Active Mint Limit.' */, 'subtitle':this.format_power_figure(this.calculate_active_mint_limit(selected_object)), 'barwidth':this.calculate_bar_width(this.calculate_active_mint_limit(selected_object)), 'number':this.format_account_balance_figure(this.calculate_active_mint_limit(selected_object)), 'relativepower':symbol},
             '':{},
             '':{},
             '':{},
         }
+    }
+
+    calculate_active_mint_limit(selected_object){
+        var selected_obj_config = selected_object['data'][1];
+        var selected_obj_ratio_config = selected_object['data'][2];
+        var mint_limit = selected_obj_config[0]
+        var active_block_limit_reduction_proportion = selected_obj_ratio_config[6]
+
+        var active_mint_limit =  ((active_block_limit_reduction_proportion / 10**18) * mint_limit).toLocaleString('fullwide', {useGrouping:false})
+        return bigInt(active_mint_limit)
+
     }
 
     render_buy_token_uis(selected_object){
@@ -853,7 +877,7 @@ class SpendDetailSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {buy_tokens.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -881,12 +905,12 @@ class SpendDetailSection extends Component {
         if(proportion_ratio_events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Block Limit Reduction Proportion', 'details':'Chart containing the block limit reduction proportion over time.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(proportion_ratio_events), 'interval':110})}
                     <div style={{height: 10}}/>
                     <Tags page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Proportion', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2578']/* Y-Axis: Proportion' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
             )
         }
@@ -974,7 +998,7 @@ class SpendDetailSection extends Component {
         else if(selected_item == '6mo'){
             filter_value = 60*60*24*30*6
         }
-        else if(selected_item == 'all-time'){
+        else if(selected_item == this.props.app_state.loc['1416']/* 'all-time' */){
             filter_value = 10**10
         }
         var data = []
@@ -1001,12 +1025,12 @@ class SpendDetailSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Total Supply', 'details':`Chart containing the total supply of ${symbol} over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2389']/* ` over time.` */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_total_supply_data_points(proportion_ratio_events), 'interval':110, 'hide_label':true})}
                     <div style={{height: 10}}/>
                     {/* <Tags page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Supply', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
             )
         }
@@ -1093,10 +1117,10 @@ class SpendDetailSection extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Total Transactions', 'details':`Chart containing the total number of buy/sell transactions over time.`, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2582']/* Total Transactions' */, 'details':this.props.app_state.loc['2583']/* `Chart containing the total number of buy/sell transactions over time.` */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(exchange_ratio_events), 'interval':this.get_transaction_count_interval_figure(exchange_ratio_events)})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Y-Axis: Total Transactions', 'details':'X-Axis: Time', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2584']/* 'Y-Axis: Total Transactions' */, 'details':this.props.app_state.loc['2585']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
             )
         }
@@ -1185,7 +1209,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Your Transfer Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2412']/* 'Your Transfer Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_contract_transfer_item_logs(object)}
@@ -1255,31 +1279,31 @@ class SpendDetailSection extends Component {
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
-        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3, object) : 'From: '+this.get_sender_title_text(item['event'].returnValues.p2, object)
+        var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+this.props.app_state.loc['2201']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['2206']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2413']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+this.props.app_state.loc['2201']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -1289,7 +1313,7 @@ class SpendDetailSection extends Component {
 
     get_sender_title_text(sender, object) {
         if (sender == this.props.app_state.user_account_id[object['e5']]) {
-            return 'You'
+            return this.props.app_state.loc['1694']/* 'You' */
         } else {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
@@ -1314,7 +1338,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Mint Limit Proportion Ratio Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2586']/* 'Exchange Mint Limit Proportion Ratio Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_proportion_ratio_item_logs(object)}
@@ -1381,23 +1405,23 @@ class SpendDetailSection extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Tokens Received', 'subtitle': this.format_power_figure(tokens_to_receive), 'barwidth': this.calculate_bar_width(tokens_to_receive), 'number': this.format_account_balance_figure(tokens_to_receive), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2587']/* 'Tokens Received' */, 'subtitle': this.format_power_figure(tokens_to_receive), 'barwidth': this.calculate_bar_width(tokens_to_receive), 'number': this.format_account_balance_figure(tokens_to_receive), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': 'Updated Active Limit', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': this.props.app_state.loc['2588']/* 'Updated Active Limit' */, 'size': 'l' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }}/>
-                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': 'Updated Active Limit', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.format_proportion(new_active_limit), 'details': this.props.app_state.loc['2588']/* 'Updated Active Limit' */, 'size': 'l' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1425,7 +1449,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Modification Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2589']/* 'Exchange Modification Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_exchange_modification_item_logs(object)}
@@ -1485,22 +1509,22 @@ class SpendDetailSection extends Component {
         if (this.state.selected_modify_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Modifier', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2415']/* 'Modifier' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': 'Targeted Modify Item', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2590']/* 'Targeted Modify Item' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.get_value_ui(item)}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p7, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': 'Targeted Modify Item', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2590']/* 'Targeted Modify Item' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1531,14 +1555,14 @@ class SpendDetailSection extends Component {
         if (type == 'proportion') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.format_proportion(number), 'details': 'proportion', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.format_proportion(number), 'details': this.props.app_state.loc['1881']/* 'proportion' */, 'size': 'l' })}
                 </div>
             )
         }
         else if (type == 'time') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_time_diff(number), 'details': 'duration', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_diff(number), 'details': this.props.app_state.loc['1882']/* 'duration' */, 'size': 'l' })}
                 </div>
             )
         }
@@ -1546,7 +1570,7 @@ class SpendDetailSection extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1880']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -1554,14 +1578,14 @@ class SpendDetailSection extends Component {
         else if (type == 'tag') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_tag_selected_item(identifier, number), 'details': 'value: ' + number, 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': this.get_tag_selected_item(identifier, number), 'details': this.props.app_state.loc['1883']/* 'value: ' */ + number, 'size': 'l' })}
                 </div>
             )
         }
         else if (type == 'id') {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': number, 'details': 'target ID', 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': number, 'details': this.props.app_state.loc['1884']/* 'target ID' */, 'size': 'l' })}
                 </div>
             )
         }
@@ -1569,6 +1593,15 @@ class SpendDetailSection extends Component {
 
     get_tag_selected_item(title, number) {
         var obj = { 'Auto Wait': { 0: 'no', 1: 'yes' }, 'Moderator Modify Privelage': { 1: 'modifiable', 0: 'non-modifiable' }, 'Unlimited Extend Contract Time': { 1: 'enabled', 0: 'disabled' }, 'Bounty Limit Type': { 0: 'relative', 1: 'absolute' }, 'Force Exit Enabled': { 1: 'enabled', 0: 'disabled' }, 'Halving type': { 0: 'fixed', 1: 'spread' }, 'Block Limit Sensitivity': { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' } }
+        
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {0:'no', 1:'yes'}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {1:'modifiable', 0:'non-modifiable'} 
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {0:'relative', 1:'absolute'}
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {0:'fixed', 1:'spread'} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}
+
 
         return obj[title][number]
     }
@@ -1594,6 +1627,26 @@ class SpendDetailSection extends Component {
             'Exchange Ratio X':{'position':[2,0], 'picker':'number', 'powerlimit':63}, 
             'Exchange Ratio Y':{'position':[2,1], 'picker':'number', 'powerlimit':63},
         }
+
+        obj[this.props.app_state.loc['326']]/* 'Buy Limit' */ = {'position':[1,0], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['327']]/* 'Trust Fee' */ = {'position':[1,7], 'picker':'proportion', 'powerlimit':9}
+        obj[this.props.app_state.loc['328']]/* 'Sell Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['329']]/* 'Minimum Time Between Swap' */ = {'position':[1,4], 'picker':'time', 'powerlimit':63}
+        obj[this.props.app_state.loc['330']]/* 'Minimum Transactions Between Swap' */ = {'position':[1,2], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['331']]/* 'Minimum Blocks Between Swap' */ = {'position':[1,3], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['332']]/* 'Minimum Entered Contracts Between Swap' */ = {'position':[1,13], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['333']]/* 'Minimum Transactions For First Buy' */ = {'position':[1,17], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['334']]/* 'Minimum Entered Contracts For First Buy' */ = {'position':[1,18], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['335']]/* 'Block Limit' */ = {'position':[1,1], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {'position':[1,15], 'picker':'tag', 'powerlimit':63}
+        obj[this.props.app_state.loc['337']]/* 'Maturity Limit' */ = {'position':[1,16], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['338']]/* 'Internal Block Halving Proportion' */ = {'position':[1,5], 'picker':'proportion', 'powerlimit':9} 
+        obj[this.props.app_state.loc['339']]/* 'Block Limit Reduction Proportion' */ = {'position':[1,6], 'picker':'proportion', 'powerlimit':9} 
+        obj[this.props.app_state.loc['340']]/* 'Block Reset Limit' */ = {'position':[1,8], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {'position':[1,12], 'picker':'tag', 'powerlimit':63} 
+        obj[this.props.app_state.loc['395']]/* 'Exchange Ratio X' */ = {'position':[2,0], 'picker':'number', 'powerlimit':63} 
+        obj[this.props.app_state.loc['396']]/* 'Exchange Ratio Y' */ = {'position':[2,1], 'picker':'number', 'powerlimit':63}
+
         return obj
     }
 
@@ -1617,7 +1670,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Transfer Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2591']/* 'Exchange Transfer Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_exchange_transfer_item_logs(object)}
@@ -1680,31 +1733,31 @@ class SpendDetailSection extends Component {
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
-        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3, object) : 'From: '+this.get_sender_title_text(item['event'].returnValues.p2, object)
+        var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2421']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Token ID:  '+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -1731,7 +1784,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Update Balance Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2592']/* 'Update Balance Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_update_balance_item_logs(object)}
@@ -1795,26 +1848,26 @@ class SpendDetailSection extends Component {
         if (this.state.selected_update_balance_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Receiver Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2593']/* 'Receiver Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'New Balance ', 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2422']/* 'New Balance ' */, 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p4), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p5, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Receiver Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2593']/* 'Receiver Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'New Balance ', 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2422']/* 'New Balance ' */, 'subtitle': this.format_power_figure(new_balance), 'barwidth': this.calculate_bar_width(new_balance), 'number': this.format_account_balance_figure(new_balance), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -1842,7 +1895,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Freeze-Unfreeze Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2594']/* 'Freeze-Unfreeze Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_freeze_unfreeze_item_logs(object)}
@@ -1902,7 +1955,7 @@ class SpendDetailSection extends Component {
 
 
     render_freeze_unfreeze_event_item(item, object, index){
-        var freeze_unfreeze_obj = {'1':'Action: Freeze','0':'Action: Unfreeze'}
+        var freeze_unfreeze_obj = {'1':this.props.app_state.loc['2595']/* 'Action: Freeze' */,'0':this.props.app_state.loc['2596']/* Action: Unfreeze' */}
         var amount = item.returnValues.p5
         var action = freeze_unfreeze_obj[item.returnValues.p2]
         var depth = item.returnValues.p6
@@ -1912,14 +1965,14 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': action, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount, depth: '+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2425']/* 'Amount, depth: ' */+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Authority Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2597']/* 'Authority Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1929,7 +1982,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': action, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': 'Amount, depth: '+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2425']/* 'Amount, depth: ' */+depth, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -1956,7 +2009,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Modify Moderator Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2440']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2598']/* 'Exchange Modify Moderator Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_modify_moderator_item_logs(object)}
@@ -2020,29 +2073,29 @@ class SpendDetailSection extends Component {
     }
 
     render_modify_moderator_event_item(item, object, index){
-        var authority_val_obj = {'0':'Not Moderator', '1':'Moderator'}
+        var authority_val_obj = {'0':this.props.app_state.loc['2104']/* 'Not Moderator' */, '1':this.props.app_state.loc['2105']/* 'Moderator' */}
         var authority_val = authority_val_obj[item.returnValues.p6]
         if (this.state.selected_modify_moderator_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2107']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': authority_val, 'details': this.props.app_state.loc['2108']/* 'Authority value' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', {'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2108']/* 'Authority value' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -2069,7 +2122,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange Access Rights Settings Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2432']/* 'Exchange Access Rights Settings Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_checker_item_logs(object)}
@@ -2126,25 +2179,25 @@ class SpendDetailSection extends Component {
     }
 
     render_interactable_checker_event_item(item, object, index){
-        var interactable_checker_obj = {'0':'Access Rights Disabled(Public)','1':'Access Rights Enabled(Private)'}
+        var interactable_checker_obj = {'0':this.props.app_state.loc['2433']/* 'Access Rights Disabled(Public)' */,'1':this.props.app_state.loc['2434']/* Access Rights Enabled(Private)' */}
         var interactable_checker = interactable_checker_obj[item.returnValues.p6]
         if (this.state.selected_interactable_checker_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Access Rights Status', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Access Rights Status' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2436']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Acces Rights Status', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2435']/* 'Acces Rights Status' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -2168,7 +2221,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange  Account Access Settings Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2599']/* 'Exchange Account Access Settings Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_accounts_item_logs(object)}
@@ -2228,25 +2281,25 @@ class SpendDetailSection extends Component {
         if (this.state.selected_interactable_account_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2600']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2601']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2600']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -2270,7 +2323,7 @@ class SpendDetailSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Exchange  Blocked Account Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2602']/* 'Exchange  Blocked Account Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_blocked_accounts_item_logs(object)}
@@ -2330,26 +2383,26 @@ class SpendDetailSection extends Component {
         if (this.state.selected_blocked_account_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2429']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2430']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2429']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['159']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -2490,32 +2543,32 @@ class SpendDetailSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

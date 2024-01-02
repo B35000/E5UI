@@ -29,7 +29,7 @@ function makeid(length) {
 class CancelSubscriptionPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8), type:'cancel-subscription', entered_indexing_tags:['cancel', 'subscription'],
+        selected: 0,id:makeid(8), type:this.props.app_state.loc['821']/* 'cancel-subscription' */, entered_indexing_tags:[this.props.app_state.loc['822']/* 'cancel' */, this.props.app_state.loc['823']/* 'subscription' */],
         subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'payment':0}, cancel_subscription_title_tags_object:this.get_cancel_subscription_title_tags_object(), time_units:0
     };
 
@@ -39,7 +39,7 @@ class CancelSubscriptionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','cancel-subscription'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['821']/* 'cancel-subscription' */], [1]
             ],
         };
     }
@@ -54,7 +54,7 @@ class CancelSubscriptionPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
@@ -75,18 +75,18 @@ class CancelSubscriptionPage extends Component {
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':'Cancel the subscription ID: '+this.state.subscription_item['id']})}
+                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['824']/* 'Cancel the subscription ID: ' */+this.state.subscription_item['id']})}
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'s'})}
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.subscription_item['payment']), 'details':'Remaining Subscription Time', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(this.state.subscription_item['payment']), 'details':this.props.app_state.loc['825']/* 'Remaining Subscription Time' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Time Units To Cancel', 'subtitle':this.format_power_figure(this.state.time_units), 'barwidth':this.calculate_bar_width(this.state.time_units), 'number':this.format_account_balance_figure(this.state.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['826']/* 'Time Units To Cancel' */, 'subtitle':this.format_power_figure(this.state.time_units), 'barwidth':this.calculate_bar_width(this.state.time_units), 'number':this.format_account_balance_figure(this.state.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_units_set.bind(this)} theme={this.props.theme} power_limit={27}/>
@@ -118,7 +118,7 @@ class CancelSubscriptionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth: '+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['827']/* 'Token ID: ' */+item, 'subtitle':'depth: '+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -148,7 +148,7 @@ class CancelSubscriptionPage extends Component {
     set_subscription(subscription_item){
         if(this.state.subscription_item['id'] != subscription_item['id']){
             this.setState({
-                selected: 0,id:makeid(8), type:'cancel-subscription', entered_indexing_tags:['cancel', 'subscription'],
+                selected: 0,id:makeid(8), type:this.props.app_state.loc['821']/* 'cancel-subscription' */, entered_indexing_tags:[this.props.app_state.loc['822']/* 'cancel' */, this.props.app_state.loc['823']/* 'subscription' */],
                 subscription_item:{'data':[[],[0,0,0,0,0,0,0], [],[],[]], 'payment':0}, cancel_subscription_title_tags_object:this.get_cancel_subscription_title_tags_object(), time_units:0
             })
         }
@@ -158,12 +158,12 @@ class CancelSubscriptionPage extends Component {
     finish(){
         var time_units_picked = this.state.time_units
         if(time_units_picked == 0){
-            this.props.notify('set a valid time unit amount!', 700)
+            this.props.notify(this.props.app_state.loc['828']/* 'set a valid time unit amount!' */, 1700)
         }else{
             var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
             this.props.add_cancel_subscription_to_stack(clone)
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
@@ -236,32 +236,32 @@ class CancelSubscriptionPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

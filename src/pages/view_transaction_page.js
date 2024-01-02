@@ -40,7 +40,7 @@ class ViewTransactionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','view-transaction'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1781']/* 'view-transaction' */], [1]
             ],
         };
     }
@@ -72,21 +72,21 @@ class ViewTransactionPage extends Component {
         if(item != null){
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':'Stack ID: ', 'details':item.id,'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1782']/* 'Stack ID: ' */, 'details':item.id,'size':'l'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':'Type:', 'details':''+item.type,'size':'l'})}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1783']/* 'Type:' */, 'details':''+item.type,'size':'l'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':'Estimated Gas: ', 'details':number_with_commas(this.get_estimated_gas(item))+' - '+number_with_commas(Math.floor(this.get_estimated_gas(item)*1.6)),'size':'l'})}
+                    {/* {this.render_detail_item('3',{'title':'Estimated Gas: ', 'details':number_with_commas(this.get_estimated_gas(item))+' - '+number_with_commas(Math.floor(this.get_estimated_gas(item)*1.6)),'size':'l'})} */}
                     
                     {this.render_detail_item('0')}
                     {this.render_edit_button()}
 
                     <div style={{height:20}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Delete the transaction completely', 'title':'Delete'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1784']/* 'Delete the transaction completely' */, 'title':this.props.app_state.loc['1785']/* 'Delete' */})}
                     <div style={{height:20}}/>
 
                     <div onClick={()=> this.open_dialog_ui()}>
-                        {this.render_detail_item('5', {'text':'Delete', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1785']/* 'Delete' */, 'action':''},)}
                     </div>
 
                     <div style={{height:20}}/>
@@ -111,13 +111,13 @@ class ViewTransactionPage extends Component {
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirm_delete_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     
-                    <h5 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirm Delete Action</h5>
+                    <h5 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1786']/* Confirm Delete Action */}</h5>
 
-                    {this.render_detail_item('3', {'title':'Are you sure?', 'details':'You cannot undo this action', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1787']/* 'Are you sure?' */, 'details':'You cannot undo this action', 'size':'s'})}
                     <div style={{height:20}}/>
 
                     <div onClick={()=> this.open_delete_action()}>
-                        {this.render_detail_item('5', {'text':'Delete', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1785']/* 'Delete' */, 'action':''},)}
                     </div>
 
                 </div>
@@ -132,14 +132,14 @@ class ViewTransactionPage extends Component {
 
     render_edit_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
-        if(item != null && item.type != 'mail-messages' && item.type != 'channel-messages' && item.type != 'post-messages' && item.type != 'job-messages' && item.type != 'proposal-messages' && item.type != 'exit-contract' && item.type != 'submit' && item.type != 'collect-subscription' && item.type != 'accept-job-application' && item.type != 'storefront-bag' && item.type != 'bag-response' && item.type != 'accept-bag-application' && item.type != 'clear-purchase' && item.type != 'job-request-messages' && item.type != 'alias' && item.type != 'unalias' && item.type != 're-alias'){
+        if(item != null && item.type != this.props.app_state.loc['1509']/* 'mail-messages' */ && item.type != this.props.app_state.loc['1510']/* 'channel-messages' */ && item.type != this.props.app_state.loc['1511']/* 'post-messages' */ && item.type != this.props.app_state.loc['1514']/* 'job-messages' */ && item.type != this.props.app_state.loc['1515']/* 'proposal-messages' */ && item.type != this.props.app_state.loc['19']/* 'exit-contract' */ && item.type != this.props.app_state.loc['783']/* 'submit' */ && item.type != this.props.app_state.loc['829']/* 'collect-subscription' */ && item.type != this.props.app_state.loc['1513']/* 'accept-job-application' */ && item.type != this.props.app_state.loc['1516']/* 'storefront-bag' */ && item.type != this.props.app_state.loc['1126']/* 'bag-response' */ && item.type != this.props.app_state.loc['1498']/* 'accept-bag-application' */ && item.type != this.props.app_state.loc['1500']/* 'clear-purchase' */ && item.type != this.props.app_state.loc['1505']/* 'job-request-messages' */ && item.type != this.props.app_state.loc['1506']/* 'alias' */ && item.type != this.props.app_state.loc['1507']/* 'unalias' */ && item.type != this.props.app_state.loc['1508']/* 're-alias' */){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Make some changes to the transaction', 'title':'Edit'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1788']/* 'Make some changes to the transaction' */, 'title':this.props.app_state.loc['1789']/* 'Edit' */})}
                     <div style={{height:10}}/>
 
                     <div onClick={()=> this.open_edit_object_uis()}>
-                        {this.render_detail_item('5', {'text':'Edit', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1789']/* 'Edit' */, 'action':''},)}
                     </div>
                 </div>
             )
@@ -149,16 +149,16 @@ class ViewTransactionPage extends Component {
     render_hide_transaction_button(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
 
-        var op = this.props.app_state.hidden.includes(item) ? 'If set to shown, the transaction will be included during a run' : 'If set to hidden, the transaction will be ignored when running your transactions'
-        var txt = this.props.app_state.hidden.includes(item) ? 'Show Transaction' : 'Hide Transaction'
-        var status = this.props.app_state.hidden.includes(item) ? 'The transaction is Hidden' : 'The transaction is Shown'
+        var op = this.props.app_state.hidden.includes(item) ? this.props.app_state.loc['1790']/* 'If set to shown, the transaction will be included during a run' */ : this.props.app_state.loc['1791']/* 'If set to hidden, the transaction will be ignored when running your transactions' */
+        var txt = this.props.app_state.hidden.includes(item) ? this.props.app_state.loc['1792']/* 'Show Transaction' */ : this.props.app_state.loc['1793']/* 'Hide Transaction' */
+        var status = this.props.app_state.hidden.includes(item) ? this.props.app_state.loc['1794']/* 'The transaction is Hidden' */ : this.props.app_state.loc['1795']/* 'The transaction is Shown' */
         return(
                 <div style={{}}>
                     {this.render_detail_item('3', {'size':'l', 'details':op, 'title':txt})}
                     <div style={{height:10}}/>
 
                     
-                    {this.render_detail_item('3', {'size':'s', 'details':'status', 'title':status})}
+                    {this.render_detail_item('3', {'size':'s', 'details':this.props.app_state.loc['1796']/* 'status' */, 'title':status})}
 
                     <div style={{height:10}}/>
                     <div onClick={()=> this.hide_transaction()}>
@@ -176,136 +176,15 @@ class ViewTransactionPage extends Component {
     open_delete_action(){
         this.cancel_dialog_box()
         this.props.delete_transaction(this.props.app_state.stack_items[this.state.transaction_index])
-        this.props.notify('item deleted from stack',600)
+        this.props.notify(this.props.app_state.loc['1797']/* 'item deleted from stack' */,600)
     }
 
     hide_transaction(){
         var item = this.props.app_state.stack_items[this.state.transaction_index]
 
-        var message = this.props.app_state.hidden.includes(item) ? 'transaction shown' : 'transaction hidden'
+        var message = this.props.app_state.hidden.includes(item) ? this.props.app_state.loc['1798']/* 'transaction shown' */ : this.props.app_state.loc['1799']/* 'transaction hidden' */
         this.props.show_hide_stack_item(item)
         this.props.notify(message,600)
-    }
-
-    get_estimated_gas(t){
-        if(t.type == 'channel' || t.type == 'job' || t.type == 'post' || t.type == 'contractor'){
-            return 344622
-        }
-        else if(t.type == 'mail'){
-            return 279695
-        }
-        else if(t.type == 'contract'){
-            return 964043 + (60_000 * t.price_data.length)
-        }
-        else if(t.type == 'storefront-item'){
-            return 261200 
-        }
-        else if(t.type == 'subscription'){
-            return 630605 + (60_000 * t.price_data.length)
-        }
-        else if(t.type == 'token'){
-            return 976263 + (50_000 * t.price_data.length)
-        }
-        else if(t.type == 'buy-sell'){
-            return 793469
-        }
-        else if(t.type == 'transfer'){
-            return 100_132 +(32_000 * t.stack_items.length)
-        }
-        else if(t.type == 'enter-contract'){
-            return 563061
-        }
-        else if(t.type == 'extend-contract'){
-            return 426227
-        }
-        else if(t.type == 'exit-contract'){
-            return 481612
-        }
-        else if(t.type == 'proposal'){
-            return 809949 + (98_818 * t.bounty_values.length)
-        }
-        else if(t.type == 'vote'){
-            return 485179
-        }
-        else if(t.type == 'submit'){
-            return 562392
-        }
-        else if(t.type == 'pay-subscription'){
-            return 351891
-        }
-        else if(t.type == 'cancel-subscription'){
-            return 276496
-        }
-        else if(t.type == 'collect-subscription'){
-            return 273441
-        }
-        else if(t.type == 'modify-subscription'){
-            return 234392
-        }
-        else if(t.type == 'modify-contract'){
-            return 630599
-        }
-        else if(t.type == 'modify-token'){
-            return 376037
-        }
-        else if(t.type == 'exchange-transfer'){
-            return 240068
-        }
-        else if(t.type == 'force-exit'){
-            return 438394
-        }
-        else if(t.type == 'archive'){
-            return 1037673
-        }
-        else if(t.type == 'freeze/unfreeze'){
-            return 405717
-        }
-        else if(t.type == 'authmint'){
-            return 493989
-        }
-        else if(t.type == 'access-rights-settings'){
-            return 170897
-        }
-        else if(t.type == 'mail-messages' || t.type == 'channel-messages' || t.type == 'post-messages' || t.type == 'job-messages' || t.type == 'proposal-messages' || t.type == 'bag-messages' || t.type == 'storefront-messages' || t.type == 'job-request-messages'){
-            return 279695 +(18000 * t.messages_to_deliver.length)
-        }
-        else if(t.type == 'job-response'){
-            return 279695
-        }
-        else if(t.type == 'accept-job-application'){
-            return 279695
-        }
-        else if(t.type == 'storefront-bag'){
-            return 300622
-        }
-        else if(t.type == 'bag-response'){
-            return 279695
-        }
-        else if(t.type == 'accept-bag-application'){
-            return 279695
-        }
-        else if(t.type == 'direct-purchase'){
-            return 279695
-        }
-        else if(t.type == 'clear-purchase'){
-            return 279695
-        }
-        else if(t.type == 'job-request'){
-            return 279695
-        }
-        else if(t.type == 'accept-job-request'){
-            return 279695
-        }
-        else if(t.type == 'alias' || t.type == 'unalias' || t.type == 're-alias'){
-            return 279695
-        }
-        else if(t.type == 'edit-channel' || t.type == 'edit-contractor' || t.type == 'edit-job' || t.type == 'edit-post' || t.type == 'edit-storefront' || t.type == 'edit-token'){
-            return 276073
-        }
-        else if(t.type == 'depthmint'){
-            return 623115
-        }
-
     }
 
 
@@ -319,91 +198,91 @@ class ViewTransactionPage extends Component {
     render_everything(){
         var tx = this.props.app_state.stack_items[this.state.transaction_index]
         if(tx != null){
-            if(tx.type == 'contract'){
+            if(tx.type == this.props.app_state.loc['3']/* 'contract' */){
                 return(
                     <div>
                         {this.render_contract_data()}
                     </div>
                 )  
             }
-            else if(tx.type == 'token'){
+            else if(tx.type == this.props.app_state.loc['601']/* 'token' */){
                 return(
                     <div>
                         {this.render_token_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'subscription'){
+            else if(tx.type == this.props.app_state.loc['823']/* 'subscription' */){
                 return(
                     <div>
                         {this.render_subscription_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'post'){
+            else if(tx.type == this.props.app_state.loc['297']/* 'post' */){
                 return(
                     <div>
                         {this.render_post_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'job'){
+            else if(tx.type == this.props.app_state.loc['760']/* 'job' */){
                 return(
                     <div>
                         {this.render_job_post_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'channel'){
+            else if(tx.type == this.props.app_state.loc['109']/* 'channel' */){
                 return(
                     <div>
                         {this.render_channel_post_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'storefront-item'){
+            else if(tx.type == this.props.app_state.loc['439']/* 'storefront-item' */){
                 return(
                     <div>
                         {this.render_storefront_post_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'buy-sell'){
+            else if(tx.type == this.props.app_state.loc['946']/* 'buy-sell' */){
                 return(
                     <div>
                         {this.render_buy_sell_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'transfer'){
+            else if(tx.type == this.props.app_state.loc['1018']/* 'transfer' */){
                 return(
                     <div>
                         {this.render_transfer_token_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'enter-contract'){
+            else if(tx.type == this.props.app_state.loc['1']/* 'enter-contract' */){
                 return(
                     <div>
                         {this.render_enter_contract_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'extend-contract'){
+            else if(tx.type == this.props.app_state.loc['35']/* 'extend-contract' */){
                 return(
                     <div>
                         {this.render_extend_contract_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'exit-contract'){
+            else if(tx.type == this.props.app_state.loc['19']/* 'exit-contract' */){
                 return(
                     <div>
                         {this.render_exit_contract_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'proposal'){
+            else if(tx.type == this.props.app_state.loc['312']/* 'proposal' */){
                 return(
                     <div>
                         {this.render_proposal_data()}                        
@@ -411,301 +290,301 @@ class ViewTransactionPage extends Component {
                     </div>
                 )
             }
-            else if(tx.type == 'vote'){
+            else if(tx.type == this.props.app_state.loc['796']/* 'vote' */){
                 return(
                     <div>
                         {this.render_vote_object_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'pay-subscription'){
+            else if(tx.type == this.props.app_state.loc['862']/* 'pay-subscription' */){
                 return(
                     <div>
                         {this.render_pay_subscription_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'cancel-subscription'){
+            else if(tx.type == this.props.app_state.loc['821']/* 'cancel-subscription' */){
                 return(
                     <div>
                         {this.render_cancel_subscription_data()}
                     </div>
                 )
             } 
-            else if(tx.type == 'collect-subscription'){
+            else if(tx.type == this.props.app_state.loc['829']/* 'collect-subscription' */){
                 return(
                     <div>
                         {this.render_collect_subscription_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'modify-subscription'){
+            else if(tx.type == this.props.app_state.loc['840']/* 'modify-subscription' */){
                 return(
                     <div>
                         {this.render_modify_subscription_data()}
                     </div>
                 )
             }   
-            else if(tx.type == 'modify-contract'){
+            else if(tx.type == this.props.app_state.loc['64']/* 'modify-contract' */){
                 return(
                     <div>
                         {this.render_modify_contract_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'modify-token'){
+            else if(tx.type == this.props.app_state.loc['997']/* 'modify-token' */){
                 return(
                     <div>
                         {this.render_modify_token_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'exchange-transfer'){
+            else if(tx.type == this.props.app_state.loc['318']/* 'exchange-transfer' */){
                 return(
                     <div>
                         {this.render_exchange_transfer_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'force-exit'){
+            else if(tx.type == this.props.app_state.loc['48']/* 'force-exit' */){
                 return(
                     <div>
                         {this.render_force_exit_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'archive'){
+            else if(tx.type == this.props.app_state.loc['768']/* 'archive' */){
                 return(
                     <div>
                         {this.render_archive_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'freeze/unfreeze'){
+            else if(tx.type == this.props.app_state.loc['930']/* 'freeze/unfreeze' */){
                 return(
                     <div>
                         {this.render_freeze_unfreeze_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'authmint'){
+            else if(tx.type == this.props.app_state.loc['880']/* 'authmint' */){
                 return(
                     <div>
                         {this.render_authmint_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'access-rights-settings'){
+            else if(tx.type == this.props.app_state.loc['1265']/* 'access-rights-settings' */){
                 return(
                     <div>
                         {this.render_access_right_setting_data()}
                     </div>
                 )   
             }
-            else if(tx.type == 'mail'){
+            else if(tx.type == this.props.app_state.loc['1201']/* 'mail' */){
                 return(
                     <div>
                         {this.render_mail_data()}
                     </div>
                 )    
             }
-            else if(tx.type == 'mail-messages'){
+            else if(tx.type == this.props.app_state.loc['1509']/* 'mail-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Mail Messages')}
                     </div>
                 ) 
             }
-            else if(tx.type == 'channel-messages'){
+            else if(tx.type == this.props.app_state.loc['1510']/* 'channel-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Channel Messages')}
                     </div>
                 )   
             }
-            else if(tx.type == 'post-messages'){
+            else if(tx.type == this.props.app_state.loc['1511']/* 'post-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Post Messages')}
                     </div>
                 )   
             }  
-            else if(tx.type == 'job-response'){
+            else if(tx.type == this.props.app_state.loc['1512']/* 'job-response' */){
                 return(
                     <div>
                         {this.render_job_response_data()}
                     </div>
                 )   
             }
-            else if(tx.type == 'accept-job-application'){
+            else if(tx.type == this.props.app_state.loc['1513']/* 'accept-job-application' */){
                 return(
                     <div>
                         {this.render_accept_job_application_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'job-messages'){
+            else if(tx.type == this.props.app_state.loc['1514']/* 'job-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Job Messages')}
                     </div>
                 )    
             }
-            else if(tx.type == 'proposal-messages'){
+            else if(tx.type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Proposal Messages')}
                     </div>
                 )    
             }
-            else if(tx.type == 'storefront-bag'){
+            else if(tx.type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
                 return(
                     <div>
                         {this.render_storefront_bag_data()}
                     </div>
                 )    
             }
-            else if(tx.type == 'bag-response'){
+            else if(tx.type == this.props.app_state.loc['1126']/* 'bag-response' */){
                 return(
                     <div>
                         {this.render_bag_response_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'accept-bag-application'){
+            else if(tx.type == this.props.app_state.loc['1498']/* 'accept-bag-application' */){
                 return(
                     <div>
                         {this.render_accept_bag_application_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'direct-purchase'){
+            else if(tx.type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                 return(
                     <div>
                         {this.render_direct_purchase_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'clear-purchase'){
+            else if(tx.type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
                 return(
                     <div>
                         {this.render_clear_purchase_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'bag-messages'){
+            else if(tx.type == this.props.app_state.loc['1501']/* 'bag-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Bag Messages')}
                     </div>
                 )
             }
-            else if(tx.type == 'storefront-messages'){
+            else if(tx.type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Storefront Messages')}
                     </div>
                 )
             }
-            else if(tx.type == 'contractor'){
+            else if(tx.type == this.props.app_state.loc['1503']/* 'contractor' */){
                 return(
                     <div>
                         {this.render_contractor_post_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'job-request'){
+            else if(tx.type == this.props.app_state.loc['1363']/* 'job-request' */){
                 return(
                     <div>
                         {this.render_job_request_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'accept-job-request'){
+            else if(tx.type == this.props.app_state.loc['1504']/* 'accept-job-request' */){
                 return(
                     <div>
                         {this.render_accept_job_request_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'job-request-messages'){
+            else if(tx.type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
                 return(
                     <div>
                         {this.render_mail_message_data('Job Request Messages')}
                     </div>
                 )
             }
-            else if(tx.type == 'alias'){
+            else if(tx.type == this.props.app_state.loc['1506']/* 'alias' */){
                 return(
                     <div>
                         {this.render_alias_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'unalias'){
+            else if(tx.type == this.props.app_state.loc['1507']/* 'unalias' */){
                 return(
                     <div>
                         {this.render_unalias_data()}
                     </div>
                 )
             }
-            else if(tx.type == 're-alias'){
+            else if(tx.type == this.props.app_state.loc['1508']/* 're-alias' */){
                 return(
                     <div>
                         {this.render_realias_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'edit-channel'){
+            else if(tx.type == this.props.app_state.loc['753']/* 'edit-channel' */){
                 return(
                     <div>
                         {this.render_edit_channel()}
                     </div>
                 )
             }
-            else if(tx.type == 'edit-contractor'){
+            else if(tx.type == this.props.app_state.loc['763']/* 'edit-contractor' */){
                 return(
                     <div>
                         {this.render_edit_contractor()}
                     </div>
                 )
             }
-            else if(tx.type == 'edit-job'){
+            else if(tx.type == this.props.app_state.loc['764']/* 'edit-job' */){
                 return(
                     <div>
                         {this.render_edit_job()}
                     </div>
                 )
             }
-            else if(tx.type == 'edit-post'){
+            else if(tx.type == this.props.app_state.loc['765']/* 'edit-post' */){
                 return(
                     <div>
                         {this.render_edit_post()}
                     </div>
                 )
             }
-            else if(tx.type == 'edit-storefront'){
+            else if(tx.type == this.props.app_state.loc['766']/* 'edit-storefront' */){
                 return(
                     <div>
                         {this.render_edit_storefront()}
                     </div>
                 )
             }
-            else if(tx.type == 'edit-token'){
+            else if(tx.type == this.props.app_state.loc['767']/* 'edit-token' */){
                 return(
                     <div>
                         {this.render_edit_token()}
                     </div>
                 )
             }
-            else if(tx.type == 'award'){
+            else if(tx.type == this.props.app_state.loc['1155']/* 'award' */){
                 return(
                     <div>
                         {this.render_award_data()}
                     </div>
                 )
             }
-            else if(tx.type == 'depthmint'){
+            else if(tx.type == this.props.app_state.loc['898']/* 'depthmint' */){
                 return(
                     <div>
                         {this.render_depthmint_data()}
@@ -724,12 +603,12 @@ class ViewTransactionPage extends Component {
         var object = this.format_contract()
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 10px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The set access rights setting for your new contract', 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_contract_type_tags_object, 'e')})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1800']/* 'The set access rights setting for your new contract' */, 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_contract_type_tags_object, 'e')})}
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', item['default_vote_bounty_split_proportion'])}
@@ -781,7 +660,7 @@ class ViewTransactionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':'tokens'})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['13']/* 'Token ID: ' */+item, 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */})}
                         </li>
                     ))}
                 </ul>
@@ -799,40 +678,40 @@ class ViewTransactionPage extends Component {
         var tags = object['ipfs'] == null ? ['Contract'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var contract_config = object['data'][1]
-        var auto_wait = contract_config[8] == 0 ? 'false' : 'true'
-        var can_modify_contract_as_moderator = contract_config[28] == 0 ? 'false' : 'true'
-        var can_extend_enter_contract_at_any_time = contract_config[29] == 0 ? 'false' : 'true'
-        var bounty_limit_type = contract_config[37] == 0 ? 'relative' : 'absolute'
-        var contract_force_exit_enabled = contract_config[38] == 0 ? 'disabled': 'enabled'
+        var auto_wait = contract_config[8] == 0 ? this.props.app_state.loc['540']/* 'false' */ :this.props.app_state.loc['541'] /* 'true' */
+        var can_modify_contract_as_moderator = contract_config[28] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var can_extend_enter_contract_at_any_time = contract_config[29] == 0 ? this.props.app_state.loc['540']/* 'false' */ : this.props.app_state.loc['541']/* 'true' */
+        var bounty_limit_type = contract_config[37] == 0 ? this.props.app_state.loc['87']/* 'relative'  */: this.props.app_state.loc['88']/* 'absolute' */
+        var contract_force_exit_enabled = contract_config[38] == 0 ? this.props.app_state.loc['90']/* 'disabled' */:this.props.app_state.loc['89'] /* 'enabled' */
         return{
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
 
-            'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':'Vote Bounty Split Proportion', 'size':'l'},
+            'default_vote_bounty_split_proportion': {'title':this.format_proportion(contract_config[1]), 'details':this.props.app_state.loc['193']/* 'Vote Bounty Split Proportion' */, 'size':'l'},
 
-            'default_minimum_end_vote_bounty_amount':{'style':'l','title':'Minimum End Bounty Amount', 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':'tokens'},
+            'default_minimum_end_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['200']/* 'Minimum End Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[4]), 'barwidth':this.calculate_bar_width(contract_config[4]), 'number':this.format_account_balance_figure(contract_config[4]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */},
 
-            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':'Minimum Spend Bounty Amount', 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':'tokens'},
+            'default_minimum_spend_vote_bounty_amount':{'style':'l','title':this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, 'subtitle':this.format_power_figure(contract_config[10]), 'barwidth':this.calculate_bar_width(contract_config[10]), 'number':this.format_account_balance_figure(contract_config[10]), 'relativepower':this.props.app_state.loc['483']/* 'tokens' */},
 
-            'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':'Proposal Expiry Duration Limit', 'size':'l'},
+            'default_proposal_expiry_duration_limit': {'title':this.get_time_diff(contract_config[5]), 'details':this.props.app_state.loc['228']/* 'Proposal Expiry Duration Limit' */, 'size':'l'},
 
-            'max_enter_contract_duration': {'title':this.get_time_diff(contract_config[6]), 'details':'Max Enter Contract Duration', 'size':'l'},
+            'max_enter_contract_duration': {'title':this.get_time_diff(contract_config[6]), 'details':this.props.app_state.loc['1615']/* 'Max Enter Contract Duration' */, 'size':'l'},
 
-            'auto_wait_for_all_proposals_for_all_voters': {'title':auto_wait, 'details':'Auto Wait For All Proposals For All Voters', 'size':'l'},
+            'auto_wait_for_all_proposals_for_all_voters': {'title':auto_wait, 'details':this.props.app_state.loc['1616']/* 'Auto Wait For All Proposals For All Voters' */, 'size':'l'},
 
-            'proposal_modify_expiry_duration_limit': {'title':this.get_time_diff(contract_config[27]), 'details':'Proposal Modify Expiry Duration Limit', 'size':'l'},
+            'proposal_modify_expiry_duration_limit': {'title':this.get_time_diff(contract_config[27]), 'details':this.props.app_state.loc['1617']/* 'Proposal Modify Expiry Duration Limit' */, 'size':'l'},
 
-            'can_modify_contract_as_moderator': {'title':can_modify_contract_as_moderator, 'details':'Can Modify Contract As Moderator', 'size':'l'},
+            'can_modify_contract_as_moderator': {'title':can_modify_contract_as_moderator, 'details':this.props.app_state.loc['1618']/* 'Can Modify Contract As Moderator' */, 'size':'l'},
 
-            'can_extend_enter_contract_at_any_time': {'title':can_extend_enter_contract_at_any_time, 'details':'Can Extend Enter Contract At Any Time', 'size':'l'},
+            'can_extend_enter_contract_at_any_time': {'title':can_extend_enter_contract_at_any_time, 'details':this.props.app_state.loc['1619']/* 'Can Extend Enter Contract At Any Time' */, 'size':'l'},
 
-            'maximum_proposal_expiry_submit_expiry_time_difference': {'title':this.get_time_diff(contract_config[36]), 'details':'Maximum Proposal Expiry Submit Expiry Time Difference', 'size':'l'},
+            'maximum_proposal_expiry_submit_expiry_time_difference': {'title':this.get_time_diff(contract_config[36]), 'details':this.props.app_state.loc['1620']/* 'Maximum Proposal Expiry Submit Expiry Time Difference' */, 'size':'l'},
 
-            'bounty_limit_type': {'title':bounty_limit_type, 'details':'Bounty Limit Type', 'size':'l'},
+            'bounty_limit_type': {'title':bounty_limit_type, 'details':this.props.app_state.loc['1621']/* 'Bounty Limit Type' */, 'size':'l'},
 
-            'contract_force_exit_enabled': {'title':contract_force_exit_enabled, 'details':'Contract Force Exit', 'size':'l'},
+            'contract_force_exit_enabled': {'title':contract_force_exit_enabled, 'details':this.props.app_state.loc['1622']/* 'Contract Force Exit' */, 'size':'l'},
 
-            'entry_fees': {'title':'Entry Fees', 'details':object['data'][2].length+' tokens used', 'size':'l'},
+            'entry_fees': {'title':this.props.app_state.loc['1623']/* 'Entry Fees' */, 'details':object['data'][2].length+this.props.app_state.loc['1624']/* ' tokens used' */, 'size':'l'},
 
         }
     }
@@ -843,14 +722,14 @@ class ViewTransactionPage extends Component {
         var default_minimum_end_vote_bounty_amount = t.default_minimum_end_vote_bounty_amount == 0 ? 0 : t.default_minimum_end_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var default_proposal_expiry_duration_limit = t.default_proposal_expiry_duration_limit == 0 ? 30_000 : t.default_proposal_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         var max_enter_contract_duration = t.max_enter_contract_duration == 0 ? bgN(1, 16) : t.max_enter_contract_duration.toString().toLocaleString('fullwide', {useGrouping:false})
-        var auto_wait_for_all_proposals_for_all_voters = this.get_selected_item(t.auto_wait_tags_object, t.auto_wait_tags_object['i'].active) == 'no' ? 0 : 1
+        var auto_wait_for_all_proposals_for_all_voters = this.get_selected_item(t.auto_wait_tags_object, t.auto_wait_tags_object['i'].active) == this.props.app_state.loc['802']/* 'no' */ ? 0 : 1
         var default_minimum_spend_vote_bounty_amount = t.default_minimum_spend_vote_bounty_amount == 0 ? 0 : t.default_minimum_spend_vote_bounty_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var proposal_modify_expiry_duration_limit = t.proposal_modify_expiry_duration_limit == 0 ? 3600 : t.proposal_modify_expiry_duration_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-        var can_modify_contract_as_moderator = this.get_selected_item(t.can_modify_contract_as_moderator, t.can_modify_contract_as_moderator['i'].active) == 'modifiable' ? 1 : 0
-        var can_extend_enter_contract_at_any_time = this.get_selected_item(t.can_extend_enter_contract_at_any_time, t.can_extend_enter_contract_at_any_time['i'].active) == 'enabled' ? 1 : 0
+        var can_modify_contract_as_moderator = this.get_selected_item(t.can_modify_contract_as_moderator, t.can_modify_contract_as_moderator['i'].active) == this.props.app_state.loc['83']/* 'modifiable' */ ? 1 : 0
+        var can_extend_enter_contract_at_any_time = this.get_selected_item(t.can_extend_enter_contract_at_any_time, t.can_extend_enter_contract_at_any_time['i'].active) == this.props.app_state.loc['89']/* 'enabled' */ ? 1 : 0
         var maximum_proposal_expiry_submit_expiry_time_difference = t.maximum_proposal_expiry_submit_expiry_time_difference == 0 ? bgN(1,16).toString().toLocaleString('fullwide', {useGrouping:false}) : t.maximum_proposal_expiry_submit_expiry_time_difference.toString().toLocaleString('fullwide', {useGrouping:false})
         var bounty_limit_type = this.get_selected_item(t.bounty_limit_type, t.bounty_limit_type['i'].active) == 'relative' ? 0 : 1
-        var contract_force_exit_enabled = this.get_selected_item(t.contract_force_exit_enabled, t.contract_force_exit_enabled['i'].active) == 'enabled' ? 1 : 0
+        var contract_force_exit_enabled = this.get_selected_item(t.contract_force_exit_enabled, t.contract_force_exit_enabled['i'].active) == this.props.app_state.loc['89']/* 'enabled' */ ? 1 : 0
 
         var obj = [/* create contract */
         [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 30, 0],
@@ -902,7 +781,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Moderator Accounts', 'details':'Youve set '+items.length+' moderator(s)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1801']/* 'Moderator Accounts' */, 'details':this.props.app_state.loc['1802']/* 'Youve set ' */+items.length+this.props.app_state.loc['1803']/* ' moderators' */, 'size':'l'})}
                     {/* <div style={{height: 10}}/>
                     <div style={{'margin':'0px 0px 0px 5px','padding': '0px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                         <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
@@ -923,7 +802,7 @@ class ViewTransactionPage extends Component {
         var obj = []
         var mods = this.props.app_state.stack_items[this.state.transaction_index].moderators;
         for(var i=0; i<mods.length; i++){
-            obj.push({'id':mods[i], 'label':{'title':mods[i], 'details':'Account', 'size':'s'}})
+            obj.push({'id':mods[i], 'label':{'title':mods[i], 'details':this.props.app_state.loc['62']/* 'Account' */, 'size':'s'}})
         }
         return obj
     }
@@ -935,7 +814,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':'Interactable Accounts', 'details':'Youve set '+items.length+' accounts(s)', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1804']/* 'Interactable Accounts' */, 'details':this.props.app_state.loc['1802']/* 'Youve set ' */+items.length+this.props.app_state.loc['1805']/* ' accounts' */, 'size':'l'})}
                     {/* <div style={{height: 10}}/>
                     <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
                         <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
@@ -956,7 +835,7 @@ class ViewTransactionPage extends Component {
         var obj = []
         var interactibles = this.props.app_state.stack_items[this.state.transaction_index].interactibles;
         for(var i=0; i<interactibles.length; i++){
-            obj.push({'id':interactibles[i], 'label':{'title':interactibles[i]['id'], 'details':'For '+this.get_time_difference(interactibles[i]['timestamp']), 'size':'s'}})
+            obj.push({'id':interactibles[i], 'label':{'title':interactibles[i]['id'], 'details':this.props.app_state.loc['1806']/* 'For ' */+this.get_time_difference(interactibles[i]['timestamp']), 'size':'s'}})
         }
         return obj
     }
@@ -981,7 +860,7 @@ class ViewTransactionPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['token_id'])}
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The set access rights setting for your new token', 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_token_access_rights_tags_object, 'e')})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1807']/* 'The set access rights setting for your new token.' */, 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_token_access_rights_tags_object, 'e')})}
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['token_type'])}
                     <div style={{height:10}}/>
@@ -1091,10 +970,10 @@ class ViewTransactionPage extends Component {
         var selected_obj_config = selected_object['data'][1];
         var selected_obj_ratio_config = selected_object['data'][2];
 
-        var type = selected_obj_root_config[3] == 3 ? 'Capped' : 'Uncapped'
-        var is_auth_main_contract = selected_obj_config[9] == 2 ? '2 (Main Contract)': selected_obj_config[9]
-        var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? '2 (Main Contract)': (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
-        var halfing_type = selected_obj_config[15] == 0 ? 'Fixed' : 'Spread'
+        var type = selected_obj_root_config[3] == 3 ? this.props.app_state.loc['1808']/* 'Capped' */ : this.props.app_state.loc['1809']/* 'Uncapped' */
+        var is_auth_main_contract = selected_obj_config[9] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: selected_obj_config[9]
+        var is_trust_fee_target_main_contract = selected_obj_config[10] == 2 ? this.props.app_state.loc['1810']/* '2 (Main Contract)' */: (selected_obj_config[10] == 0 ? '0 (Burn Account)': selected_obj_config[10])
+        var halfing_type = selected_obj_config[15] == 0 ? this.props.app_state.loc['1811']/* 'Fixed' */ : this.props.app_state.loc['1812']/* 'Spread' */
 
         if(title == 5){
             title = 'SPEND'
@@ -1109,49 +988,49 @@ class ViewTransactionPage extends Component {
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
-            'token_id': {'title':'ID: '+selected_object['id'], 'details':'Token Identifier', 'size':'l'},
-            'token_type': {'title':'Token Type', 'details':type, 'size':'l'},
+            'token_id': {'title':'ID: '+selected_object['id'], 'details':this.props.app_state.loc['1813']/* 'Token Identifier' */, 'size':'l'},
+            'token_type': {'title':this.props.app_state.loc['1814']/* 'Token Type' */, 'details':type, 'size':'l'},
 
-            'unlocked_supply': {'title':'Unlocked Supply', 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
-            'unlocked_liquidity': {'title':'Unlocked Liquidity', 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
-            'fully_custom': {'title':'Fully Custom', 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
+            'unlocked_supply': {'title':this.props.app_state.loc['1814']/* 'Unlocked Supply' */, 'details':this.enabled_disabled(selected_obj_root_config[0]), 'size':'l'},
+            'unlocked_liquidity': {'title':this.props.app_state.loc['1815']/* 'Unlocked Liquidity' */, 'details':this.enabled_disabled(selected_obj_root_config[1]), 'size':'l'},
+            'fully_custom': {'title':this.props.app_state.loc['1816']/* 'Fully Custom' */, 'details':this.enabled_disabled(selected_obj_root_config[2]), 'size':'l'},
 
-            'buy_limit':{'style':'l','title':'Mint Limit', 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':symbol},
+            'buy_limit':{'style':'l','title':this.props.app_state.loc['1817']/* 'Mint Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_config[0]), 'number':this.format_account_balance_figure(selected_obj_config[0]), 'relativepower':symbol},
             
-            'minimum_transactions_between_swap': {'title':selected_obj_config[2], 'details':'Minimum Transactions Between Swap', 'size':'l'},
-            'minimum_blocks_between_swap': {'title':selected_obj_config[3], 'details':'Minimum Blocks Between Swap', 'size':'l'},
-            'minimum_time_between_swap': {'title':this.get_time_diff(selected_obj_config[4]), 'details':'Minimum Time Between Swap', 'size':'l'},
+            'minimum_transactions_between_swap': {'title':selected_obj_config[2], 'details':this.props.app_state.loc['330']/* 'Minimum Transactions Between Swap' */, 'size':'l'},
+            'minimum_blocks_between_swap': {'title':selected_obj_config[3], 'details':this.props.app_state.loc['331']/* 'Minimum Blocks Between Swap' */, 'size':'l'},
+            'minimum_time_between_swap': {'title':this.get_time_diff(selected_obj_config[4]), 'details':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'size':'l'},
             
-            'trust_fee_proportion': {'title':this.format_proportion(selected_obj_config[7]), 'details':'Trust Fee', 'size':'l'},
-            'exchange_authority': {'title':'Authority: '+is_auth_main_contract, 'details':'Exchange Authority Identifier', 'size':'l'},
-            'trust_fee_target': {'title':'Target: '+is_trust_fee_target_main_contract, 'details':'Trust Fee Target Identifier', 'size':'l'},
+            'trust_fee_proportion': {'title':this.format_proportion(selected_obj_config[7]), 'details':this.props.app_state.loc['660']/* 'Trust Fee' */, 'size':'l'},
+            'exchange_authority': {'title':this.props.app_state.loc['1818']/* 'Authority: ' */+is_auth_main_contract, 'details':this.props.app_state.loc['1819']/* 'Exchange Authority Identifier' */, 'size':'l'},
+            'trust_fee_target': {'title':this.props.app_state.loc['1820']/* 'Target: ' */+is_trust_fee_target_main_contract, 'details':this.props.app_state.loc['1821']/* 'Trust Fee Target Identifier' */, 'size':'l'},
 
-            'sell_limit':{'style':'l','title':'Sell Limit', 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':symbol},
+            'sell_limit':{'style':'l','title':this.props.app_state.loc['328']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[11]), 'barwidth':this.calculate_bar_width(selected_obj_config[11]), 'number':this.format_account_balance_figure(selected_obj_config[11]), 'relativepower':symbol},
 
-            'minimum_entered_contracts_between_swap': {'title':selected_obj_config[13], 'details':'Minimum Entered Contracts Between Swap', 'size':'l'},
-            'minimum_transactions_for_first_buy': {'title':selected_obj_config[17], 'details':'Minimum Transactions For First Buy', 'size':'l'},
-            'minimum_entered_contracts_for_first_buy': {'title':selected_obj_config[18], 'details':'Minimum Entered Contracts For First Buy', 'size':'l'},
+            'minimum_entered_contracts_between_swap': {'title':selected_obj_config[13], 'details':this.props.app_state.loc['332']/* 'Minimum Entered Contracts Between Swap' */, 'size':'l'},
+            'minimum_transactions_for_first_buy': {'title':selected_obj_config[17], 'details':this.props.app_state.loc['333']/* 'Minimum Transactions For First Buy' */, 'size':'l'},
+            'minimum_entered_contracts_for_first_buy': {'title':selected_obj_config[18], 'details':this.props.app_state.loc['334']/* 'Minimum Entered Contracts For First Buy' */, 'size':'l'},
 
-            'ratio_x':{'style':'l','title':'Exchange Ratio X', 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':''},
-            'ratio_y':{'style':'l','title':'Exchange Ratio Y', 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':''},
-            'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':'Exchange Ratio X:Y', 'size':'l'},
+            'ratio_x':{'style':'l','title':this.props.app_state.loc['395']/* 'Exchange Ratio X' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[0]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[0]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[0]), 'relativepower':''},
+            'ratio_y':{'style':'l','title':this.props.app_state.loc['396']/* 'Exchange Ratio Y' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':''},
+            'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':this.props.app_state.loc['712']/* 'Exchange Ratio X:Y' */, 'size':'l'},
 
-            'exchanges_liquidity':{'style':'l','title':'Circulating Supply', 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':symbol},
-            'mint_burn_button':{'text':'Mint/Burn Token', 'action':''},
+            'exchanges_liquidity':{'style':'l','title':this.props.app_state.loc['712']/* 'Circulating Supply' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':symbol},
+            'mint_burn_button':{'text':this.props.app_state.loc['1822']/* 'Mint/Burn Token' */, 'action':''},
 
-            'block_limit':{'style':'l','title':'Block Limit', 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':symbol},
-            'internal_block_halfing_proportion': {'title':this.format_proportion(selected_obj_config[5]), 'details':'Internal Block Halving Proportion', 'size':'l'},
-            'block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_config[6]), 'details':'Block Limit Reduction Proportion', 'size':'l'},
+            'block_limit':{'style':'l','title':this.props.app_state.loc['335']/* 'Block Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':symbol},
+            'internal_block_halfing_proportion': {'title':this.format_proportion(selected_obj_config[5]), 'details':this.props.app_state.loc['338']/* 'Internal Block Halving Proportion' */, 'size':'l'},
+            'block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_config[6]), 'details':this.props.app_state.loc['339']/* 'Block Limit Reduction Proportion' */, 'size':'l'},
             
-            'block_reset_limit': {'title':selected_obj_config[8], 'details':'Block Reset Limit', 'size':'l'},
-            'block_limit_sensitivity': {'title':selected_obj_config[12], 'details':'Block Limit Sensitivity', 'size':'l'},
-            'default_authority_mint_limit': {'title':this.format_proportion(selected_obj_config[14]), 'details':'Authority Mint Limit (percentage of supply)', 'size':'l'},
-            'block_halfing_type': {'title':halfing_type, 'details':'Halving Type', 'size':'l'},
-            'maturity_limit':{'style':'l','title':'Maturity Limit', 'subtitle':this.format_power_figure(selected_obj_config[16]), 'barwidth':this.calculate_bar_width(selected_obj_config[16]), 'number':this.format_account_balance_figure(selected_obj_config[16]), 'relativepower':symbol},
+            'block_reset_limit': {'title':selected_obj_config[8], 'details':this.props.app_state.loc['340']/* 'Block Reset Limit' */, 'size':'l'},
+            'block_limit_sensitivity': {'title':selected_obj_config[12], 'details':this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */, 'size':'l'},
+            'default_authority_mint_limit': {'title':this.format_proportion(selected_obj_config[14]), 'details':this.props.app_state.loc['1823']/* 'Authority Mint Limit (percentage of supply)' */, 'size':'l'},
+            'block_halfing_type': {'title':halfing_type, 'details':this.props.app_state.loc['336']/* 'Halving Type' */, 'size':'l'},
+            'maturity_limit':{'style':'l','title':this.props.app_state.loc['337']/* 'Maturity Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[16]), 'barwidth':this.calculate_bar_width(selected_obj_config[16]), 'number':this.format_account_balance_figure(selected_obj_config[16]), 'relativepower':symbol},
 
-            'current_block_mint_total':{'style':'l','title':'Current Block Mint Total', 'subtitle':this.format_power_figure(selected_obj_ratio_config[4]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[4]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[4]), 'relativepower':symbol},
-            'active_block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_ratio_config[6]), 'details':'Active Block Limit Reduction Proportion', 'size':'l'},
-            'buy_amounts':{'title':'Entry Fees', 'details':selected_object['data'][3].length+' tokens used', 'size':'l'},
+            'current_block_mint_total':{'style':'l','title':this.props.app_state.loc['1824']/* 'Current Block Mint Total' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[4]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[4]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[4]), 'relativepower':symbol},
+            'active_block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_ratio_config[6]), 'details':this.props.app_state.loc['1825']/* 'Active Block Limit Reduction Proportion' */, 'size':'l'},
+            'buy_amounts':{'title':this.props.app_state.loc['1623']/* 'Entry Fees' */, 'details':selected_object['data'][3].length+this.props.app_state.loc['1624']/* ' tokens used' */, 'size':'l'},
             '':{},
             '':{},
             '':{},
@@ -1162,9 +1041,9 @@ class ViewTransactionPage extends Component {
 
     enabled_disabled(value){
         if(value == 1){
-            return 'enabled'
+            return this.props.app_state.loc['85']/* 'enabled' */
         }
-        return 'disabled'
+        return this.props.app_state.loc['86']/* 'disabled' */
     }
 
     format_exchange_ratio(ratio_x, ratio_y){
@@ -1188,9 +1067,9 @@ class ViewTransactionPage extends Component {
     format_token_object(t){
         //.toString().toLocaleString('fullwide', {useGrouping:false})
         var type = this.get_selected_item(t.new_token_type_tags_object, t.new_token_type_tags_object['i'].active);
-        var new_token_type_tags_object = type == 'capped' ? 3 : 5
+        var new_token_type_tags_object = type == this.props.app_state.loc['606']/* 'capped' */ ? 3 : 5
         var token_exchange_liquidity_total_supply = t.token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : t.token_exchange_liquidity_total_supply.toString().toLocaleString('fullwide', {useGrouping:false})
-        if(type == 'uncapped'){
+        if(type == this.props.app_state.loc['607']/* 'uncapped' */){
             token_exchange_liquidity_total_supply = 0
         }
         var default_exchange_amount_buy_limit = t.default_exchange_amount_buy_limit == 0 ? 100_000_000 : 
@@ -1206,9 +1085,9 @@ class ViewTransactionPage extends Component {
         
         var block_limit = t.block_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
-        var new_token_unlocked_liquidity_tags_object = this.get_selected_item(t.new_token_unlocked_liquidity_tags_object, t.new_token_unlocked_liquidity_tags_object['i'].active) == 'unlocked' ? 1 : 0
-        var new_token_unlocked_supply_tags_object = this.get_selected_item(t.new_token_unlocked_supply_tags_object, t.new_token_unlocked_supply_tags_object['i'].active) == 'unlocked' ? 1 : 0
-        var new_token_fully_custom_tags_object = this.get_selected_item(t.new_token_fully_custom_tags_object, t.new_token_fully_custom_tags_object['i'].active) == 'fully-custom' ? 1 : 0
+        var new_token_unlocked_liquidity_tags_object = this.get_selected_item(t.new_token_unlocked_liquidity_tags_object, t.new_token_unlocked_liquidity_tags_object['i'].active) == this.props.app_state.loc['611']/* 'unlocked' */ ? 1 : 0
+        var new_token_unlocked_supply_tags_object = this.get_selected_item(t.new_token_unlocked_supply_tags_object, t.new_token_unlocked_supply_tags_object['i'].active) == this.props.app_state.loc['611']/* 'unlocked' */ ? 1 : 0
+        var new_token_fully_custom_tags_object = this.get_selected_item(t.new_token_fully_custom_tags_object, t.new_token_fully_custom_tags_object['i'].active) == this.props.app_state.loc['613']/* 'fully-custom' */ ? 1 : 0
         var internal_block_halfing_proportion = t.internal_block_halfing_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
         var block_limit_reduction_proportion = t.block_limit_reduction_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
         var block_reset_limit = t.block_reset_limit.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -1216,22 +1095,22 @@ class ViewTransactionPage extends Component {
         var new_token_block_limit_sensitivity_tags_object = parseInt(this.get_selected_item(t.new_token_block_limit_sensitivity_tags_object, t.new_token_block_limit_sensitivity_tags_object['i'].active)).toString().toLocaleString('fullwide', {useGrouping:false})
         var default_authority_mint_limit = t.default_authority_mint_limit == 0 ? bgN(1,16).toString().toLocaleString('fullwide', {useGrouping:false}) : t.default_authority_mint_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
-        var new_token_halving_type_tags_object = (this.get_selected_item(t.new_token_halving_type_tags_object, t.new_token_halving_type_tags_object['i'].active) == 'spread' ? 1 : 0).toString().toLocaleString('fullwide', {useGrouping:false})
+        var new_token_halving_type_tags_object = (this.get_selected_item(t.new_token_halving_type_tags_object, t.new_token_halving_type_tags_object['i'].active) == this.props.app_state.loc['615']/* 'spread' */ ? 1 : 0).toString().toLocaleString('fullwide', {useGrouping:false})
         var maturity_limit = t.maturity_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
         var minimum_entered_contracts_for_first_buy = t.minimum_entered_contracts_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
 
         var default_exchange_ratio_value = '1000';
-        if(type == 'capped'){
+        if(type == this.props.app_state.loc['606']/* 'capped' */){
             default_exchange_ratio_value = token_exchange_liquidity_total_supply;
         }
 
-        var active_block_limit_reduction_proportion = type == 'capped' ? 0 : bgN(100,16)
+        var active_block_limit_reduction_proportion = type == this.props.app_state.loc['606']/* 'capped' */ ? 0 : bgN(100,16)
         var token_exchange_ratio_x = t.token_exchange_ratio_x == 0 ? default_exchange_ratio_value: t.token_exchange_ratio_x.toString().toLocaleString('fullwide', {useGrouping:false})
 
         var token_exchange_ratio_y = t.token_exchange_ratio_y == 0 ? default_exchange_ratio_value : t.token_exchange_ratio_y.toString().toLocaleString('fullwide', {useGrouping:false})
 
-        if(type == 'capped' && token_exchange_ratio_x != token_exchange_liquidity_total_supply){
+        if(type == this.props.app_state.loc['606']/* 'capped' */ && token_exchange_ratio_x != token_exchange_liquidity_total_supply){
             token_exchange_ratio_x = token_exchange_liquidity_total_supply;
         }
         
@@ -1320,7 +1199,7 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
 
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The set access rights setting for your new contract', 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_token_access_rights_tags_object, 'e')})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1826']/* 'The set access rights setting for your new contract' */, 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_token_access_rights_tags_object, 'e')})}
 
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -1366,32 +1245,32 @@ class ViewTransactionPage extends Component {
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var subscription_config = object['data'][1]
-        var can_cancel_subscription = subscription_config[2] == 0 ? 'non-cancellable': 'cancellable'
+        var can_cancel_subscription = subscription_config[2] == 0 ? this.props.app_state.loc['1827']/* 'non-cancellable' */: this.props.app_state.loc['1828']/* 'cancellable' */
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         var subscription_beneficiary = subscription_config[6] == 0 ? subscription_config[0] : subscription_config[6]
         return{
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
             
-            'age':{ 'style':'l', 'title':'Block ID', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', },
+            'age':{ 'style':'l', 'title':this.props.app_state.loc['1829']/* 'Block ID' */, 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['27']/* 'block' */, },
             
-            'target_authority_id': {'title':subscription_config[0], 'details':'Authority ID', 'size':'l'},
+            'target_authority_id': {'title':subscription_config[0], 'details':this.props.app_state.loc['1830']/* 'Authority ID' */, 'size':'l'},
             
-            'minimum_buy_amount':{ 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${number_with_commas(subscription_config[1])}`, 'barcolor':'', 'relativepower':'time-units', },
+            'minimum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1831']/* 'Minimum Buy Amount' */, 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${number_with_commas(subscription_config[1])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
 
-            'can_cancel_subscription': {'title':can_cancel_subscription, 'details':'Subscription Type', 'size':'l'},
+            'can_cancel_subscription': {'title':can_cancel_subscription, 'details':this.props.app_state.loc['1833']/* 'Subscription Type' */, 'size':'l'},
 
-            'maximum_buy_amount':{ 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${number_with_commas(subscription_config[3])}`, 'barcolor':'', 'relativepower':'time-units', },
+            'maximum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1834']/* 'Maximum Buy Amount' */, 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${number_with_commas(subscription_config[3])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1835']/* time-units' */, },
 
-            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':'Minimum Cancellable Amount', 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${number_with_commas(subscription_config[4])}`, 'barcolor':'', 'relativepower':'time-units', },
+            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':this.props.app_state.loc['1836']/* 'Minimum Cancellable Amount' */, 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${number_with_commas(subscription_config[4])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1835']/* 'time-units' */, },
 
-            'time_unit': {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'l'},
+            'time_unit': {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['1837']/* 'Time Unit' */, 'size':'l'},
 
-            'payment_amount': {'title':this.get_time_diff(object['payment']), 'details':'Remaining Subscription Time', 'size':'l'},
+            'payment_amount': {'title':this.get_time_diff(object['payment']), 'details':this.props.app_state.loc['1838']/* 'Remaining Subscription Time' */, 'size':'l'},
 
-            'subscription_beneficiary': {'title':subscription_beneficiary, 'details':'Subscription Beneficiary', 'size':'l'},
+            'subscription_beneficiary': {'title':subscription_beneficiary, 'details':this.props.app_state.loc['1839']/* 'Subscription Beneficiary' */, 'size':'l'},
 
-            'entry_fees': {'title':'Entry Fees', 'details':object['data'][2].length+' tokens used', 'size':'l'},
+            'entry_fees': {'title':this.props.app_state.loc['1840']/* 'Entry Fees' */, 'details':object['data'][2].length+this.props.app_state.loc['1841']/* ' tokens used' */, 'size':'l'},
         }
     }
 
@@ -1406,7 +1285,7 @@ class ViewTransactionPage extends Component {
             exchange_authority_type = 53
         }
         var minimum_buy_amount = t.minimum_buy_amount == 0 ? 1 : t.minimum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
-        var cancellable_tags_object = this.get_selected_item(t.cancellable_tags_object, t.cancellable_tags_object['i'].active) == 'true' ? 1 : 0
+        var cancellable_tags_object = this.get_selected_item(t.cancellable_tags_object, t.cancellable_tags_object['i'].active) == this.props.app_state.loc['541']/* 'true' */ ? 1 : 0
         var maximum_buy_amount = t.maximum_buy_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var minimum_cancellable_balance_amount = t.minimum_cancellable_balance_amount.toString().toLocaleString('fullwide', {useGrouping:false})
         var time_unit = t.time_unit.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -1566,7 +1445,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_images()}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts you are offering for the job.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1842']/* 'Price Amounts' */, 'details':this.props.app_state.loc['1843']/* 'The amounts you are offering for the job.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_price_amounts()}
 
@@ -1654,7 +1533,7 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
 
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The set access rights setting for your new channel', 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_token_access_rights_tags_object, 'e')})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1844']/* 'The set access rights setting for your new channel' */, 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_token_access_rights_tags_object, 'e')})}
 
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
@@ -1716,7 +1595,7 @@ class ViewTransactionPage extends Component {
                     </div>
                 </div>
 
-                {this.render_detail_item('3', {'title':'Item Variants', 'details':'The items variant details are shown below', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Item Variants', 'details':this.props.app_state.loc['1845']/* 'The items variant details are shown below' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.render_set_storefront_variant_list_part()}
                 {this.render_detail_item('0')}
@@ -1777,7 +1656,7 @@ class ViewTransactionPage extends Component {
                                         {this.render_detail_item('9', item['image_data']['data'])}
                                     </div>
                                     <div style={{height:5}}/>
-                                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1846']/* 'Number of Units' */, 'size':'l'})}
                                     <div style={{height:15}}/>
                                     {this.render_variant_price_data(item)}
 
@@ -1814,23 +1693,23 @@ class ViewTransactionPage extends Component {
     render_buy_sell_data(){
         var item = this.props.app_state.stack_items[this.state.transaction_index];
         var action = this.get_selected_item(item.new_mint_dump_action_page_tags_object, 'e')
-        var recipient = item.recipient_id == '53' ? 'Your account ID: '+this.props.app_state.user_account_id[this.props.app_state.selected_e5] : item.recipient_id
+        var recipient = item.recipient_id == '53' ? this.props.app_state.loc['1847']/* 'Your account ID: ' */+this.props.app_state.user_account_id[this.props.app_state.selected_e5] : item.recipient_id
         return(
             <div>
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Amount', 'subtitle':this.format_power_figure(item.amount), 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1848']/* Amount */, 'subtitle':this.format_power_figure(item.amount), 'barwidth':this.calculate_bar_width(item.amount), 'number':this.format_account_balance_figure(item.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
                 </div>
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(item.token_item['balance']), 'barwidth':this.calculate_bar_width(item.token_item['balance']), 'number':this.format_account_balance_figure(item.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1849']/* 'Your Balance' */, 'subtitle':this.format_power_figure(item.token_item['balance']), 'barwidth':this.calculate_bar_width(item.token_item['balance']), 'number':this.format_account_balance_figure(item.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
                 </div>
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'size':'l', 'details':'Selected Action', 'title':action})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1850']/* 'Selected Action' */, 'title':action})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'size':'l', 'details':'Target Recipient Account', 'title':''+recipient})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1851']/* 'Target Recipient Account' */, 'title':''+recipient})}
                 {this.render_detail_item('0')}
             </div>
         )
@@ -1845,10 +1724,10 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':'Enter Contract Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1852']/* 'Enter Contract Until: ' */+(new Date(expiry_time_in_seconds*1000)), 'title':this.props.app_state.loc['1853']/* 'Entry Exipry Time' */})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':this.props.app_state.loc['1854']/* 'Time remaining' */})}
 
                 {this.render_detail_item('0')}
             </div>
@@ -1863,13 +1742,13 @@ class ViewTransactionPage extends Component {
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(item.token_item['balance']), 'barwidth':this.calculate_bar_width(item.token_item['balance']), 'number':this.format_account_balance_figure(item.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(item.token_item['balance']), 'barwidth':this.calculate_bar_width(item.token_item['balance']), 'number':this.format_account_balance_figure(item.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance after Set Transfers', 'subtitle':this.format_power_figure(item.token_item['balance'] - item.debit_balance), 'barwidth':this.calculate_bar_width(item.token_item['balance'] - item.debit_balance), 'number':this.format_account_balance_figure(item.token_item['balance'] - item.debit_balance), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'subtitle':this.format_power_figure(item.token_item['balance'] - item.debit_balance), 'barwidth':this.calculate_bar_width(item.token_item['balance'] - item.debit_balance), 'number':this.format_account_balance_figure(item.token_item['balance'] - item.debit_balance), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.token_item['id']], })}
                 </div>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Below are the individual transfer actions.', 'title':'Transfer actions'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1855']/* 'Below are the individual transfer actions.' */, 'title':this.props.app_state.loc['1856']/* 'Transfer actions' */})}
                 <div style={{height:10}}/>
                 {this.render_stack_transactions()}
                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 10px 20px'}}/>
@@ -1910,7 +1789,7 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[state_item.token_item['id']], 'details':'recipient account: '+item['recipient'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[state_item.token_item['id']], 'details':this.props.app_state.loc['1857']/* 'recipient account: ' */+item['recipient'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -1928,10 +1807,10 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':'Extend Stay In Contract Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'New Exipry Time'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1858']/* 'Extend Stay In Contract Until: ' */+(new Date(expiry_time_in_seconds*1000)), 'title':this.props.app_state.loc['1859']/* 'New Exipry Time' */})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'title':''+(this.get_time_diff(time_to_expiry)), 'details':'Time remaining'})}
+                {this.render_detail_item('3', {'size':'l', 'title':''+(this.get_time_diff(time_to_expiry)), 'details':this.props.app_state.loc['1860']/* 'Time remaining' */})}
 
                 {this.render_detail_item('0')}
             </div>
@@ -1994,7 +1873,7 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', {'size':'l', 'details':'Until: '+(new Date(expiry_time_in_seconds*1000)), 'title':'Entry Exipry Time'})}
                     <div style={{height:10}}/>
 
-                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':'Time remaining'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':''+(this.get_time_diff(time_to_expiry)), 'title':this.props.app_state.loc['1860']/* 'Time remaining' */})}
                 </div>
             )
         }
@@ -2067,7 +1946,7 @@ class ViewTransactionPage extends Component {
         var object = this.format_proposal_post()
         var tags = object['ipfs'] == null ? ['Proposal'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
-        var consensus_obj = {0:'spend',1:'reconfig', 6:'exchange-transfer'}
+        var consensus_obj = {0:this.props.app_state.loc['316']/* spend' */,1:this.props.app_state.loc['317']/* 'reconfig' */, 6:this.props.app_state.loc['318']/* 'exchange-transfer' */}
         var proposal_config = object['data'][1]
         var consensus_type = consensus_obj[proposal_config[0]]
 
@@ -2075,20 +1954,23 @@ class ViewTransactionPage extends Component {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
 
-            'consensus_type':{'title':consensus_type, 'details':'Consensus Type', 'size':'l'},
-            'proposal_expiry_time':{'title':'Proposal Expiry time', 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'},
-            'proposal_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[1]), 'details':'Proposal expiry time from now', 'size':'l'},
+            'consensus_type':{'title':consensus_type, 'details':this.props.app_state.loc['1861']/* 'Consensus Type' */, 'size':'l'},
+            'proposal_expiry_time':{'title':this.props.app_state.loc['1862']/* 'Proposal Expiry time' */, 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'},
+            'proposal_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[1]), 'details':this.props.app_state.loc['1863']/* 'Proposal expiry time from now' */, 'size':'l'},
 
-            'consensus_submit_expiry_time':{'title':'Proposal Submit Expiry time', 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'},
-            'proposal_submit_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[3]), 'details':'Proposal submit expiry time from now', 'size':'l'},
+            'consensus_submit_expiry_time':{'title':this.props.app_state.loc['1864']/* 'Proposal Submit Expiry time' */, 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'},
+            'proposal_submit_expiry_time_from_now':{'title':this.get_time_from_now(proposal_config[3]), 'details':this.props.app_state.loc['1865']/* 'Proposal submit expiry time from now' */, 'size':'l'},
 
-            'target_contract_authority':{'title':proposal_config[5], 'details':'Contract Authority ID', 'size':'l'},
-            'modify_target':{'title':proposal_config[9], 'details':'Modify Target', 'size':'l'},
+            'target_contract_authority':{'title':proposal_config[5], 'details':this.props.app_state.loc['1874']/* 'Contract Authority ID' */, 'size':'l'},
+            'modify_target':{'title':proposal_config[9], 'details':this.props.app_state.loc['1875']/* 'Modify Target' */, 'size':'l'},
         }
     }
 
     format_proposal(t){
         var consensus_obj = {'spend':0,'reconfig':1, 'exchange-transfer':6}
+        consensus_obj[this.props.app_state.loc['316']/* spend */] = 0
+        consensus_obj[this.props.app_state.loc['317']/* reconfig */] = 1
+        consensus_obj[this.props.app_state.loc['318']/* exchange-transfer */] = 6
         var consensus_type_tag = this.get_selected_item(t.new_proposal_type_tags_object, t.new_proposal_type_tags_object['i'].active)
         var consensus_type = consensus_obj[consensus_type_tag]
         var proposal_expiry_time = t.proposal_expiry_time.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2127,7 +2009,7 @@ class ViewTransactionPage extends Component {
             obj[22].push(23)
         }
 
-        if(consensus_type_tag == 'spend'){
+        if(consensus_type_tag == this.props.app_state.loc['316']/* 'spend' */){
             for(var i=0; i<t.spend_actions.length; i++){
                 obj[9].push(t.spend_actions[i]['spend_token'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[10].push(23)
@@ -2154,7 +2036,7 @@ class ViewTransactionPage extends Component {
                 obj[20].push(23)
             }
         }
-        else if(consensus_type_tag == 'reconfig'){
+        else if(consensus_type_tag == this.props.app_state.loc['317']/* 'reconfig' */){
             for(var i=0; i<t.reconfig_values.length; i++){
                 obj[9].push(t.reconfig_values[i]['pos'][0])
                 obj[10].push(23)
@@ -2176,7 +2058,7 @@ class ViewTransactionPage extends Component {
 
             }
         }
-        else if(consensus_type_tag == 'exchange-transfer'){
+        else if(consensus_type_tag == this.props.app_state.loc['318']/* 'exchange-transfer' */){
             for(var i=0; i<t.exchange_transfer_values.length; i++){
                 obj[9].push(t.exchange_transfer_values[i]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
                 obj[10].push(23)
@@ -2304,7 +2186,7 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['spend_token']], 'details':'target: '+item['spend_target']+', token ID: '+item['spend_token'], 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['spend_token']], 'details':this.props.app_state.loc['1876']/* 'target: ' */+item['spend_target']+this.props.app_state.loc['1877']/* ', token ID: ' */+item['spend_token'], 'size':'l'})}
                             </li>
                         ))}
                     </ul>
@@ -2354,9 +2236,9 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['1878']/* 'Modify Target' */, 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1879']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -2376,7 +2258,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['1880']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -2384,14 +2266,14 @@ class ViewTransactionPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':this.props.app_state.loc['1881']/* 'proportion' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':this.props.app_state.loc['1882']/* 'duration' */, 'size':'l'})}
 
                 </div>
             )
@@ -2399,14 +2281,14 @@ class ViewTransactionPage extends Component {
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_tag_selected_item(title, number), 'details':this.props.app_state.loc['1883']/* 'value: ' */+number, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['1884']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -2414,6 +2296,15 @@ class ViewTransactionPage extends Component {
 
     get_tag_selected_item(title, number){
         var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
+
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {0:'no', 1:'yes'}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {1:'modifiable', 0:'non-modifiable'} 
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {0:'relative', 1:'absolute'}
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {0:'fixed', 1:'spread'} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}
+
 
         return obj[title][number]
     }
@@ -2450,10 +2341,10 @@ class ViewTransactionPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':'tokens', })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.props.app_state.loc['1885']/* 'tokens' */, })}
                                 </div>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['1886']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
@@ -2478,7 +2369,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'size':'l', 'details':'Your set vote for the proposal', 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_vote_tags_object, 'e')})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1887']/* 'Your set vote for the proposal' */, 'title':this.get_selected_item(this.props.app_state.stack_items[this.state.transaction_index].new_vote_tags_object, 'e')})}
                 <div style={{height: 10}}/>
                 {this.render_bounty_exchanges()}
                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 20px 20px 20px'}}/>
@@ -2518,7 +2409,7 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']], 'details':'Bounty Exchange ID: '+item['exchange'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']], 'details':this.props.app_state.loc['1888']/* 'Bounty Exchange ID: ' */+item['exchange'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -2538,7 +2429,7 @@ class ViewTransactionPage extends Component {
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Time Units', 'subtitle':this.format_power_figure(item.time_units), 'barwidth':this.calculate_bar_width(item.time_units), 'number':this.format_account_balance_figure(item.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1889']/* 'Time Units' */, 'subtitle':this.format_power_figure(item.time_units), 'barwidth':this.calculate_bar_width(item.time_units), 'number':this.format_account_balance_figure(item.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
                 </div>
                 <div style={{height: 10}}/>
                 {this.render_subscription_buy_token_uis(item.subscription_item['data'][2], item.subscription_item['data'][3], item.subscription_item['data'][4])}
@@ -2569,7 +2460,7 @@ class ViewTransactionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['1890']/* 'Token ID: ' */+item, 'subtitle':this.format_power_figure(this.calculate_final_amount(buy_amounts[index])), 'barwidth':this.calculate_bar_width(this.calculate_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -2591,11 +2482,11 @@ class ViewTransactionPage extends Component {
             <div>
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['1891']/* 'Time Unit' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Time Units To Cancel', 'subtitle':this.format_power_figure(item.time_units), 'barwidth':this.calculate_bar_width(item.time_units), 'number':this.format_account_balance_figure(item.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1892']/* 'Time Units To Cancel' */, 'subtitle':this.format_power_figure(item.time_units), 'barwidth':this.calculate_bar_width(item.time_units), 'number':this.format_account_balance_figure(item.time_units), 'barcolor':'', 'relativepower':this.get_time_units_time(), })}
                 </div>
                 <div style={{height: 10}}/>
                 {this.render_subscription_buy_token_uis(item.subscription_item['data'][2], item.subscription_item['data'][3], item.subscription_item['data'][4])}
@@ -2615,10 +2506,10 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':''+this.get_time_diff(this.get_total_subscription_collectible_time()), 'details':'Total Collectible Time', 'size':'s'})}
+                {this.render_detail_item('3', {'title':''+this.get_time_diff(this.get_total_subscription_collectible_time()), 'details':this.props.app_state.loc['1893']/* 'Total Collectible Time' */, 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':''+this.get_total_subscription_collectible_timeunits(), 'details':'Total Collectible Time Units', 'size':'s'})}
+                {this.render_detail_item('3', {'title':''+this.get_total_subscription_collectible_timeunits(), 'details':this.props.app_state.loc['1894']/* 'Total Collectible Time Units' */, 'size':'s'})}
                 <div style={{height: 10}}/>
 
                 {this.render_collect_subscription_buy_token_uis(item.subscription_item['data'][2], item.subscription_item['data'][3], item.subscription_item['data'][4])}
@@ -2653,7 +2544,7 @@ class ViewTransactionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['1895']/* 'Token ID: ' */+item, 'subtitle':this.format_power_figure(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'barwidth':this.calculate_bar_width(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'number':this.format_account_balance_figure(this.calculate_collect_subscription_final_amount(buy_amounts[index])), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -2689,7 +2580,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Modify Subscription Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1896']/* 'Modify Subscription Action' */, 'details':items.length+this.props.app_state.loc['1897']/* ' action added' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.load_reconfig_items()}
@@ -2729,9 +2620,9 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['1898']/* 'Modify Target' */, 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1899']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -2751,7 +2642,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['92']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -2759,7 +2650,7 @@ class ViewTransactionPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['1016']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -2780,7 +2671,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Modify Contract Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1900']/* 'Modify Contract Action' */, 'details':items.length+this.props.app_state.loc['1901']/* ' action(s) added' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.load_contract_reconfig_items()}
@@ -2820,9 +2711,9 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['1902']/* 'Modify Target' */, 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1903']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_contract_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -2842,7 +2733,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['1904']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -2850,14 +2741,14 @@ class ViewTransactionPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':this.props.app_state.loc['1013']/* 'proportion' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':this.props.app_state.loc['1014']/* 'duration' */, 'size':'l'})}
 
                 </div>
             )
@@ -2865,14 +2756,14 @@ class ViewTransactionPage extends Component {
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_contract_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_contract_tag_selected_item(title, number), 'details':this.props.app_state.loc['1015']/* 'value: ' */+number, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['1016']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -2880,6 +2771,12 @@ class ViewTransactionPage extends Component {
 
     get_contract_tag_selected_item(title, number){
         var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}}
+
+        obj[this.props.app_state.loc['73']] = {0:'no', 1:'yes'};
+        obj[this.props.app_state.loc['75']] = {1:'modifiable', 0:'non-modifiable'};
+        obj[this.props.app_state.loc['76']] = {1:'enabled', 0:'disabled'};
+        obj[this.props.app_state.loc['78']] = {0:'relative', 1:'absolute'};
+        obj[this.props.app_state.loc['79']] = {1:'enabled', 0:'disabled'};
 
         return obj[title][number]
     }
@@ -2899,7 +2796,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Modify Token Exchange Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1905']/* 'Modify Token Exchange Action' */, 'details':items.length+this.props.app_state.loc['1906']/* ' actions added' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.load_token_reconfig_items()}
@@ -2939,9 +2836,9 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['1907']/* 'Modify Target' */, 'size':'l'})}
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':'position', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['1908']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_token_reconfig_value(item)}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
@@ -2961,7 +2858,7 @@ class ViewTransactionPage extends Component {
             return(
                 <div>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':'units', })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['92']/* 'units' */, })}
                     </div>
                 </div>
             )
@@ -2969,14 +2866,14 @@ class ViewTransactionPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':'proportion', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_proportion(number), 'details':this.props.app_state.loc['1013']/* 'proportion' */, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'time'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':'duration', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_time_diff(number), 'details':this.props.app_state.loc['1014']/* 'duration' */, 'size':'l'})}
 
                 </div>
             )
@@ -2984,14 +2881,14 @@ class ViewTransactionPage extends Component {
         else if(ui == 'tag'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':this.get_token_tag_selected_item(title, number), 'details':'value: '+number, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.get_token_tag_selected_item(title, number), 'details':this.props.app_state.loc['1015']/* 'value: ' */+number, 'size':'l'})}
                 </div>
             )
         }
         else if(ui == 'id'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':number, 'details':'target ID', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':number, 'details':this.props.app_state.loc['1016']/* 'target ID' */, 'size':'l'})}
                 </div>
             )
         }
@@ -2999,6 +2896,14 @@ class ViewTransactionPage extends Component {
 
     get_token_tag_selected_item(title, number){
         var obj = {'Auto Wait':{0:'no', 1:'yes'}, 'Moderator Modify Privelage':{1:'modifiable', 0:'non-modifiable'}, 'Unlimited Extend Contract Time':{1:'enabled', 0:'disabled'}, 'Bounty Limit Type':{0:'relative', 1:'absolute'}, 'Force Exit Enabled':{1:'enabled', 0:'disabled'}, 'Halving type':{0:'fixed', 1:'spread'}, 'Block Limit Sensitivity':{1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}}
+
+        obj[this.props.app_state.loc['73']]/* 'Auto Wait' */ = {0:'no', 1:'yes'}
+        obj[this.props.app_state.loc['75']]/* 'Moderator Modify Privelage' */ = {1:'modifiable', 0:'non-modifiable'} 
+        obj[this.props.app_state.loc['76']]/* 'Unlimited Extend Contract Time' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {0:'relative', 1:'absolute'}
+        obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {1:'enabled', 0:'disabled'} 
+        obj[this.props.app_state.loc['336']]/* 'Halving type' */ = {0:'fixed', 1:'spread'} 
+        obj[this.props.app_state.loc['341']]/* 'Block Limit Sensitivity' */ = {1:'1', 2:'2', 3:'3', 4:'4', 5:'5'}
 
         return obj[title][number]
     }
@@ -3019,7 +2924,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Exchange Transfer Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1909']/* 'Exchange Transfer Action' */, 'details':items.length+this.props.app_state.loc['1906']/* ' actions added' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.load_transfer_actions()}
@@ -3060,10 +2965,10 @@ class ViewTransactionPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':'Token: '+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1895']/* Token: ' */+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
                                 </div>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Receiver ID: '+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['1910']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
                                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
                             </li>
                         ))}
@@ -3085,7 +2990,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Force Exit Action', 'details':items.length+' action(s) added', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1911']/* 'Force Exit Action' */, 'details':items.length+this.props.app_state.loc['1906']/* ' actions added' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.load_force_exit_actions()}
@@ -3127,7 +3032,7 @@ class ViewTransactionPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':'Account ID: '+item, 'details':'Contract ID: '+transaction_item.contract_item['id'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['837']/* 'Account ID: ' */+item, 'details':this.props.app_state.loc['1605']/* 'Contract ID: ' */+transaction_item.contract_item['id'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -3146,7 +3051,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Archive Action', 'details':items.length+' bounty exchange(s) included', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1912']/* 'Archive Action' */, 'details':items.length+this.props.app_state.loc['1913']/* ' bounty exchanges included' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_bounty_exchanges()}
@@ -3186,7 +3091,7 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':'Bounty Exchange ID: '+item['exchange'], 'details':'Default depth 0', 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.props.app_state.loc['1914']/* 'Bounty Exchange ID: ' */+item['exchange'], 'details':this.props.app_state.loc['1915']/* 'Default depth 0' */, 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -3208,7 +3113,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Freeze/Unfreeze Action', 'details':items.length+' action(s) included', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1916']/* 'Freeze/Unfreeze Action' */, 'details':items.length+this.props.app_state.loc['1917']/* ' actions included' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_freeze_unfreeze_transactions()}
@@ -3249,7 +3154,7 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transaction_item.token_item['id']], 'details':'Target Account ID: '+item['recipient'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[transaction_item.token_item['id']], 'details':this.props.app_state.loc['1918']/* 'Target Account ID: ' */+item['recipient'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -3270,7 +3175,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Authmint Actions', 'details':items.length+' action(s) included', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1919']/* 'Authmint Actions' */, 'details':items.length+this.props.app_state.loc['1917']/* ' actions included' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_authmint_transactions()}
@@ -3311,7 +3216,7 @@ class ViewTransactionPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':'Target Recipient ID: '+item['recipient'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':this.props.app_state.loc['1920']/* 'Target Recipient ID: ' */+item['recipient'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -3330,7 +3235,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Access Rights Actions', 'details':items.length+' action(s) included', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1921']/* 'Access Rights Actions' */, 'details':items.length+this.props.app_state.loc['1922']/* ' actions included' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_access_rights_transactions()}
@@ -3384,35 +3289,35 @@ class ViewTransactionPage extends Component {
         if(action == 'moderator'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action: '+item['action'], 'details':'Target: '+item['account'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+' action: '+item['action'], 'details':this.props.app_state.loc['1923']/* 'Target: ' */+item['account'], 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'interactable-checkers'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['setting'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':this.props.app_state.loc['1923']/* 'Target: ' */+item['setting'], 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'author-moderator-privelages'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: Revoke Privelages', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':this.props.app_state.loc['1924']/* 'Target: Revoke Privelages' */, 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'access-rights'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['account']+', time from now: '+this.get_time_from_now(item['time']), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':this.props.app_state.loc['1923']/* 'Target: ' */+item['account']+this.props.app_state.loc['1925']/* ', time from now: ' */+this.get_time_from_now(item['time']), 'size':'s'})}
                 </div>
             )
         }
         else if(action == 'blocked-access'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':action+' action.', 'details':'Target: '+item['account']+', time from now: '+this.get_time_from_now(item['time']), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':action+' action.', 'details':this.props.app_state.loc['1923']/* 'Target: ' */+item['account']+this.props.app_state.loc['1925']/* ', time from now: ' */+this.get_time_from_now(item['time']), 'size':'s'})}
                 </div>
             )
         }
@@ -3477,7 +3382,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':title, 'details':stacked_items.length+' message(s) included', 'size':'l'})}
+                {this.render_detail_item('3', {'title':title, 'details':stacked_items.length+this.props.app_state.loc['1926']/* ' messages included' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_sent_received_messages()}
@@ -3602,18 +3507,18 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Selected Contract', 'details':'The contract you picked for the application action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1927']/* 'Selected Contract' */, 'details':this.props.app_state.loc['1928']/* 'The contract you picked for the application action' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_contract_item(transaction_item.picked_contract)}
                 {this.render_detail_item('0')}
                 
-                {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':'The expiry time you picked for the application action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1929']/* 'Selected Expiry Time' */, 'details':this.props.app_state.loc['1930']/* 'The expiry time you picked for the application action' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(transaction_item.application_expiry_time * 1000)), 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youre youll be charging for the job', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1931']/* 'Set Prices' */, 'details':this.props.app_state.loc['1932']/* 'The amounts youre youll be charging for the job' */, 'size':'l'})}
                 {this.render_set_prices_list_part()}
             </div>
         )
@@ -3647,7 +3552,7 @@ class ViewTransactionPage extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':'block', }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1348']/* 'block' */, }
         }
     }
 
@@ -3710,10 +3615,10 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1605']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['1606']/* 'Sender ID: ' */+item['applicant_id'], 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1639']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
@@ -3734,7 +3639,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':''+transaction_item.items_to_deliver.length+' item(s)', 'details':'in your bag.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+transaction_item.items_to_deliver.length+this.props.app_state.loc['1933']/* ' items' */, 'details':this.props.app_state.loc['1934']/* 'in your bag.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_all_items()}
@@ -3775,12 +3680,12 @@ class ViewTransactionPage extends Component {
         var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
         var selected_variant = item.selected_variant   
         var storefront_item = item.storefront_item
-        var composition_type = storefront_item['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront_item['ipfs'].composition_type, 'e') 
+        var composition_type = storefront_item['ipfs'].composition_type == null ? this.props.app_state.loc['1935']/* 'items' */ : this.get_selected_item(storefront_item['ipfs'].composition_type, 'e') 
         var items = selected_variant['price_data']
         return(
             <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                 
-                {this.render_detail_item('3', {'title':storefront_item['ipfs'].entered_title_text+'; '+selected_variant['variant_description'], 'details':this.format_account_balance_figure(item.purchase_unit_count)+' units in '+composition_type, 'size':'s'})} 
+                {this.render_detail_item('3', {'title':storefront_item['ipfs'].entered_title_text+'; '+selected_variant['variant_description'], 'details':this.format_account_balance_figure(item.purchase_unit_count)+this.props.app_state.loc['1936']/* ' units in ' */+composition_type, 'size':'s'})} 
                 <div style={{height:10}}/>
                 
                 {items.map((units, index) => (
@@ -3790,7 +3695,7 @@ class ViewTransactionPage extends Component {
                 ))}
 
                 <div style={{'margin':'0px 10px 0px 10px'}} onClick={()=> this.props.when_edit_bag_item_tapped(item)}>
-                    {this.render_detail_item('5', {'text':'Edit', 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1937']/* 'Edit' */, 'action':''},)}
                 </div>
                 <div style={{height:10}}/>
             </div>
@@ -3814,24 +3719,24 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Selected Contract', 'details':'The contract you picked for the fulfilment action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1938']/* 'Selected Contract' */, 'details':this.props.app_state.loc['1939']/* 'The contract you picked for the fulfilment action' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_contract_item(transaction_item.picked_contract)}
                 {this.render_detail_item('0')}
                 
-                {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':'The expiry time you picked for the fulfilment action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1940']/* 'Selected Expiry Time' */, 'details':this.props.app_state.loc['1941']/* 'The expiry time you picked for the fulfilment action' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(transaction_item.application_expiry_time * 1000)), 'size':'l'})}
                 
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.estimated_delivery_time), 'details':'Estimated Delivery time', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.estimated_delivery_time), 'details':this.props.app_state.loc['1942']/* 'Estimated Delivery time' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.get_selected_item(transaction_item.pre_post_paid_option, 'e'), 'details':'The payment option you prefer', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_selected_item(transaction_item.pre_post_paid_option, 'e'), 'details':this.props.app_state.loc['1943']/* 'The payment option you prefer' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youre youll be charging for the bag fulfilment', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Set Prices', 'details':this.props.app_state.loc['1944']/* 'The amounts youre youll be charging for the bag fulfilment' */, 'size':'l'})}
                 {this.render_set_prices_list_part()}
             </div>
         )
@@ -3846,10 +3751,10 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Contract ID: '+item['picked_contract_id'], 'details':'Sender ID: '+item['applicant_id'], 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1945']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['1946']/* 'Sender ID: ' */+item['applicant_id'], 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':'Expiry time from now: '+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1947']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
@@ -3872,14 +3777,14 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Shipping Details', 'details':transaction_item.fulfilment_location, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1948']/* 'Shipping Details' */, 'details':transaction_item.fulfilment_location, 'size':'l'})}
                 <div style={{height: 10}}/>
 
                 {this.render_selected_variant(transaction_item.selected_variant)}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Number of Units ordered in '+composition_type, 'subtitle':this.format_power_figure(transaction_item.purchase_unit_count), 'barwidth':this.calculate_bar_width(transaction_item.purchase_unit_count), 'number':this.format_account_balance_figure(transaction_item.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1949']/* 'Number of Units ordered in ' */+composition_type, 'subtitle':this.format_power_figure(transaction_item.purchase_unit_count), 'barwidth':this.calculate_bar_width(transaction_item.purchase_unit_count), 'number':this.format_account_balance_figure(transaction_item.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
                 </div>
 
                 <div style={{height: 10}}/>
@@ -3900,7 +3805,7 @@ class ViewTransactionPage extends Component {
                         {this.render_detail_item('9', item['image_data']['data'])}
                     </div>
                     <div style={{height:5}}/>
-                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1950']/* 'Number of Units' */, 'size':'l'})}
                     <div style={{height:15}}/>
                     {this.render_variant_price_data(item)}
                 </div>
@@ -3917,7 +3822,7 @@ class ViewTransactionPage extends Component {
             var shipping_items = [].concat(transaction_item.storefront_item['ipfs'].shipping_price_data)
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_detail_item('3', {'title':'Purchase Amounts', 'details':'This is the final amount for the price of the item your buying', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1951']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1952']/* 'This is the final amount for the price of the item your buying' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
@@ -3930,7 +3835,7 @@ class ViewTransactionPage extends Component {
                         ))}
                     </ul>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':'Shipping Fee', 'details':'The charged shipping fee for buying the items', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1953']/* 'Shipping Fee' */, 'details':this.props.app_state.loc['1954']/* 'The charged shipping fee for buying the items' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {shipping_items.map((item, index) => (
@@ -3970,7 +3875,7 @@ class ViewTransactionPage extends Component {
         var items = [].concat(transaction_item.items_to_clear)
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_detail_item('3', {'title':'Collected Signatures', 'details':'Below are the collected signatures from your direct purchases', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1955']/* 'Collected Signatures' */, 'details':this.props.app_state.loc['1956']/* 'Below are the collected signatures from your direct purchases' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
@@ -3978,7 +3883,7 @@ class ViewTransactionPage extends Component {
                                 <SwipeableList>
                                         <SwipeableListItem
                                             swipeLeft={{
-                                            content: <div>Delete</div>,
+                                            content: <div>{this.props.app_state.loc['1957']/* Delete */}</div>,
                                             action: () => this.delete_collected_signature(item)
                                             }}>
                                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_fulfilment_item(item)}</div>
@@ -3996,9 +3901,9 @@ class ViewTransactionPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item.order_data['variant_id'], 'details':variant_description})}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+item.order_data['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
-                {this.render_detail_item('3', {'size':'s', 'title':'Received Signature', 'details':start_and_end(item.received_signature) })}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1959']/* 'Received Signature' */, 'details':start_and_end(item.received_signature) })}
                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
             </div>
         )
@@ -4118,18 +4023,18 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':'The expiry time you picked for the application action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'Selected Expiry Time', 'details':this.props.app_state.loc['1960']/* 'The expiry time you picked for the application action' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(transaction_item.application_expiry_time - (Date.now()/1000)), 'details':''+(new Date(transaction_item.application_expiry_time * 1000)), 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':'Set Description', 'details':transaction_item.entered_title_text, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1961']/* 'Set Description' */, 'details':transaction_item.entered_title_text, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_image_part()}
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youll be charging for the job', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1962']/* 'Set Prices' */, 'details':this.props.app_state.loc['1963']/* 'The amounts youll be charging for the job' */, 'size':'l'})}
                 {this.render_set_prices_list_part()}
             </div>
         )
@@ -4192,15 +4097,15 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Selected Contract', 'details':'The contract you picked for the job.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1964']/* 'Selected Contract' */, 'details':this.props.app_state.loc['1965']/* 'The contract you picked for the job.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 {this.render_contract_item(transaction_item.picked_contract)}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':'Set Description', 'details':transaction_item.request_item['title_description'], 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1966']/* 'Set Description' */, 'details':transaction_item.request_item['title_description'], 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('3', {'title':'Set Prices', 'details':'The amounts youll be receiving for the job', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1967']/* 'Set Prices' */, 'details':this.props.app_state.loc['1968']/* 'The amounts youll be receiving for the job' */, 'size':'l'})}
                 {this.render_job_request_set_prices_list_part(transaction_item.request_item)}
             </div>
         )
@@ -4291,7 +4196,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':transaction_item.alias, 'details':'Reset Alias.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':transaction_item.alias, 'details':this.props.app_state.loc['1969']/* 'Reset Alias.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 
             </div>
@@ -4370,7 +4275,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_data(items)}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':'Price Amounts', 'details':'The amounts you are offering for the job.', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1970']/* 'Price Amounts' */, 'details':this.props.app_state.loc['1971']/* 'The amounts you are offering for the job.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_price_amounts()}
 
@@ -4426,7 +4331,7 @@ class ViewTransactionPage extends Component {
                     </div>
                 </div>
 
-                {this.render_detail_item('3', {'title':'Item Variants', 'details':'The items variant details are shown below', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1972']/* 'Item Variants' */, 'details':this.props.app_state.loc['1973']/* 'The items variant details are shown below' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.render_set_storefront_variant_list_part()}
                 {this.render_detail_item('0')}
@@ -4481,19 +4386,19 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('3', transaction_item.selected_tier_object['label'])}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'x'+multiplier, 'details':'Multiplier', 'size':'l'})}
+                {this.render_detail_item('3', {'title':'x'+multiplier, 'details':this.props.app_state.loc['1974']/* 'Multiplier' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
 
-                {this.render_detail_item('3', {'title':'message:', 'details':''+transaction_item.entered_message_text, 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1975']/* 'message:' */, 'details':''+transaction_item.entered_message_text, 'size':'l'})}
                 {this.render_detail_item('0')}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':'Total amount of SPEND', 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'spend', })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1976']/* 'Total amount of spend' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('3', {'title':'Custom Amounts', 'details':'Your included custom amounts for the award action', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1977']/* 'Custom Amounts' */, 'details':this.props.app_state.loc['1978']/* 'Your included custom amounts for the award action' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.render_set_prices_list_part()}
                 {this.render_detail_item('0')}
@@ -4599,7 +4504,7 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Depth-mint Actions', 'details':items.length+' action(s) included', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1979']/* 'Depth-mint Actions' */, 'details':items.length+this.props.app_state.loc['1917']/* ' actions included' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.render_authmint_transactions()}
             </div>
@@ -4710,32 +4615,32 @@ class ViewTransactionPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

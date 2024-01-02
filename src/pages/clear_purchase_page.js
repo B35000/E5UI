@@ -48,7 +48,7 @@ class ClearPurchasePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','verify-signature'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1059']/* 'verify-signature' */], [1]
             ],
         };
     }
@@ -60,7 +60,7 @@ class ClearPurchasePage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','generate-signature'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1060']/* 'generate-signature' */], [1]
             ],
         };
     }
@@ -90,7 +90,7 @@ class ClearPurchasePage extends Component {
         if(this.state.client_type == 'storefront_owner'){
             return(
                 <div style={{'padding': '5px'}} onClick={()=>this.finish_clearing_purchase_action()}>
-                    {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                 </div>
             )
         }
@@ -105,14 +105,14 @@ class ClearPurchasePage extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.clear_purchase_title_tags_object, this.state.clear_purchase_title_tags_object['i'].active)
 
-        if(selected_item == 'generate-signature'){
+        if(selected_item == this.props.app_state.loc['1060']/* 'generate-signature' */){
             return(
                 <div>
                     {this.render_generate_signature_part()}
                 </div>
             )
         }
-        else if(selected_item == 'verify-signature'){
+        else if(selected_item == this.props.app_state.loc['1059']/* 'verify-signature' */){
             return(
                 <div>
                     {this.verify_signature_part()}
@@ -141,13 +141,13 @@ class ClearPurchasePage extends Component {
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'title':'Generate Fulfilment Signature', 'details':'create a signature to finalize the fulfilment transaction' })}
+                {this.render_detail_item('3', {'size':'l', 'title':this.props.app_state.loc['1061']/* 'Generate Fulfilment Signature' */, 'details':this.props.app_state.loc['1062']/* 'Create a signature to finalize the fulfilment transaction.' */ })}
                 <div style={{height:5}}/>
 
                 {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'s', 'details':'Quantity: '+this.format_account_balance_figure(item['purchase_unit_count']), 'title': 'Sender Account ID: '+item['sender_account']})}
+                {this.render_detail_item('3', {'size':'s', 'details':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account']})}
                 
                 {this.render_detail_item('0')}
 
@@ -161,10 +161,10 @@ class ClearPurchasePage extends Component {
                 <div style={{height:5}}/>
                 <p style={{'margin':'5% 0% 0% 44%', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
                 <div style={{height:5}}/>
-                {this.render_detail_item('3', {'size':'s', 'title':'Signature', 'details':start_and_end(this.state.signature_data) })}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1065']/* 'Signature' */, 'details':start_and_end(this.state.signature_data) })}
                 
                 <div style={{'padding': '5px'}} onClick={()=>this.copy_to_clipboard(this.state.signature_data)}>
-                    {this.render_detail_item('5',{'text':'Copy to Clipboard', 'action':''})}
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1066']/* 'Copy to Clipboard' */, 'action':''})}
                 </div>
                 <div style={{height:10}}/>
             </div>
@@ -173,7 +173,7 @@ class ClearPurchasePage extends Component {
 
     copy_to_clipboard(signature_data){
         navigator.clipboard.writeText(signature_data)
-        this.props.notify('copied signature to clipboard!', 600)
+        this.props.notify(this.props.app_state.loc['1067']/* 'copied signature to clipboard!' */, 600)
     }
 
     get_variant_from_id(variant_id){
@@ -197,23 +197,23 @@ class ClearPurchasePage extends Component {
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
         return(
             <div>
-                {this.render_detail_item('3', {'size':'s', 'title':'Receive Fulfilment Signature', 'details':'receive a fulfilment signature to verify the items delivery' })}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1068']/* 'Receive Fulfilment Signature' */, 'details':this.props.app_state.loc['1069']/* 'receive a fulfilment signature to verify the items delivery' */ })}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'s', 'title':'Variant ID: '+item['variant_id'], 'details':variant_description})}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1070']/* 'Variant ID: ' */+item['variant_id'], 'details':variant_description})}
                 <div style={{height:5}}/>
 
-                {this.render_detail_item('3', {'size':'s', 'details':'Quantity: '+this.format_account_balance_figure(item['purchase_unit_count']), 'title': 'Sender Account ID: '+item['sender_account']})}
+                {this.render_detail_item('3', {'size':'s', 'details':this.props.app_state.loc['1071']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'title': this.props.app_state.loc['1072']/* 'Sender Account ID: ' */+item['sender_account']})}
                 <div style={{height:5}}/>
                 
                 {this.render_detail_item('0')}
                 {this.render_qr_code_scanner()}
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'size':'s', 'title':'Paste Signature', 'details':'Alternatively, you can paste the signature in the input field below' })}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1073']/* 'Paste Signature' */, 'details':this.props.app_state.loc['1074']/* 'Alternatively, you can paste the signature in the input field below' */ })}
                 <div style={{height:5}}/>
 
-                <TextInput height={70} placeholder={'Paste Signature'} when_text_input_field_changed={this.when_received_signature_changed.bind(this)} text={this.state.received_signature} theme={this.props.theme}/>
+                <TextInput height={70} placeholder={this.props.app_state.loc['1073']/* 'Paste Signature' */} when_text_input_field_changed={this.when_received_signature_changed.bind(this)} text={this.state.received_signature} theme={this.props.theme}/>
                 <div style={{height: 10}} theme={this.props.theme}/>
 
                 {this.render_detail_item('4', {'text':start_and_end(this.state.received_signature), 'textsize':'13px', 'font':'Sans-serif'})}
@@ -230,10 +230,10 @@ class ClearPurchasePage extends Component {
     render_qr_code_scanner(){
         return(
             <div>
-                {this.render_detail_item('3', {'size':'s', 'title':'Open Scanner', 'details':'Scan for the signature using a built in scanner'})}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1075']/* 'Open Scanner' */, 'details':this.props.app_state.loc['1076']/* 'Scan for the signature using a built in scanner' */})}
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.start_scan()}>
-                    {this.render_detail_item('5',{'text':'Scan', 'action':''})}
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1075']/* 'Scan' */, 'action':''})}
                 </div>
             </div>
         )
@@ -275,14 +275,14 @@ class ClearPurchasePage extends Component {
         
         var valid_signature = await this.props.confirm_signature(scanned_signature, signature_data, client_address)
         if(scanned_signature == ''){
-            this.props.notify('Please paste a signature to finish here', 800)
+            this.props.notify(this.props.app_state.loc['1077']/* 'Please paste a signature to finish here.' */, 3800)
         }
         else if(!valid_signature){
-            this.props.notify('The signature you received is invalid', 800)
+            this.props.notify(this.props.app_state.loc['1078']/* 'The signature you received is invalid.' */, 4800)
         }else{
             this.props.add_clearing_purchase_action_to_stack(this.state)
             this.setState({received_signature: ''})
-            this.props.notify('Transaction added to stack', 800)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack.' */, 800)
         }
     }
 
@@ -362,32 +362,32 @@ class ClearPurchasePage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

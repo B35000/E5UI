@@ -33,7 +33,7 @@ class FilterSection extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','search-filter'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1115']/* 'search-filter' */], [1]
             ],
         };
     }
@@ -67,20 +67,13 @@ class FilterSection extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.filter_section_title_tags_obj, this.state.filter_section_title_tags_obj['i'].active)
 
-        if(selected_item == 'search-filter'){
+        if(selected_item == this.props.app_state.loc['1115']/* 'search-filter' */){
             return(
                 <div>
                     {this.render_search_part()}
                 </div>
             )    
         }
-        // else if(selected_item == 'filter'){
-        //     return(
-        //         <div>
-        //             {this.render_filter_part()}
-        //         </div>
-        //     ) 
-        // }
     }
 
 
@@ -88,15 +81,15 @@ class FilterSection extends Component {
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':'Search Object', 'details':'You can search an object by its ID or its title.', 'size':'l'})} */}
-                {this.render_detail_item('4', {'text':'You can search an object by its ID or its title.', 'textsize':'13px', 'font':'Sans-serif'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1116']/* 'You can search an object by its ID or its title.' */, 'textsize':'13px', 'font':'Sans-serif'})}
                 <div style={{height: 10}}/>
 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Object ID or Title...'} when_text_input_field_changed={this.when_search_input_field_changed.bind(this)} text={this.state.typed_searched_word} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['1117']/* 'Enter Object ID or Title...' */} when_text_input_field_changed={this.when_search_input_field_changed.bind(this)} text={this.state.typed_searched_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':'Search','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1118']/* 'Search' */,'action':''})}
                     </div>
                 </div>
                 <div style={{height: 10}}/>
@@ -105,15 +98,15 @@ class FilterSection extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4', {'text':'You can filter objects using their tags.', 'textsize':'13px', 'font':'Sans-serif'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1119']/* 'You can filter objects using their tags.' */, 'textsize':'13px', 'font':'Sans-serif'})}
                 <div style={{height: 10}}/>
                 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter tag...'} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['1120']/* 'Enter tag...' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
-                        {this.render_detail_item('5',{'text':'Add','action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':''})}
                     </div>
                 </div>
 
@@ -122,7 +115,7 @@ class FilterSection extends Component {
                 <div style={{height: 20}}/>
 
                 <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.clear_search()} >
-                    {this.render_detail_item('5',{'text':'Clear Search','action':''})}
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1123']/* 'Clear Search' */,'action':''})}
                 </div>
             </div>
         )
@@ -140,7 +133,7 @@ class FilterSection extends Component {
         var typed_word = this.state.typed_searched_word.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something', 1400)
+            this.props.notify(this.props.app_state.loc['1124']/* 'Type something.' */, 1400)
         }else{
             this.props.when_search_button_tapped(typed_word)
         }
@@ -160,10 +153,10 @@ class FilterSection extends Component {
         var typed_word = this.state.typed_tag.trim();
 
         if(typed_word == ''){
-            this.props.notify('type something', 1400)
+            this.props.notify(this.props.app_state.loc['1124']/* 'Type something.' */, 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify('enter one word', 1400)
+            this.props.notify(this.props.app_state.loc['1125']/* 'Enter one word.' */, 1400)
         }
         else{
             var cloned_seed_array = this.state.added_tags.slice()

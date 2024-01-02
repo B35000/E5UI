@@ -28,7 +28,7 @@ function makeid(length) {
 class SubmitProposalPage extends Component {
     
     state = {
-        selected: 0,id:makeid(8), type:'submit', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['submit', 'proposal'],
+        selected: 0,id:makeid(8), type:this.props.app_state.loc['783']/* 'submit' */, proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:[this.props.app_state.loc['783']/* 'submit' */, this.props.app_state.loc['784']/* 'proposal' */],
         submit_proposal_title_tags_object: this.get_submit_proposal_title_tags_object()
     };
 
@@ -38,7 +38,7 @@ class SubmitProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','submit-proposal'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['785']/* 'submit-proposal' */], [1]
             ],
         };
     }
@@ -53,12 +53,12 @@ class SubmitProposalPage extends Component {
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                                {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                             </div>
                         </div>
                     </div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':'Click finish to submit the proposal. You can only submit the proposal if the proposal expiry time has passed', 'textsize':'13px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['786']/* 'Click finish to submit the proposal.' */, 'textsize':'13px', 'font':'Sans-serif'})}
                     <div style={{height:10}}/>
                     {this.render_everything()}
                 </div>
@@ -97,26 +97,26 @@ class SubmitProposalPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':''+object['consensus_data'][0]+' WAIT votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
 
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':''+object['consensus_data'][1]+' YES votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][1])+this.props.app_state.loc['788']/* ' YES votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'})}
 
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':''+object['consensus_data'][2]+' NO votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][2])+this.props.app_state.loc['789']/* ' NO votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'})}
 
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':'Proposal Expiry time', 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['790']/* 'Proposal Expiry time' */, 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'})}
                     
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[1]), 'details':'Proposal expiry time from now', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[1]), 'details':this.props.app_state.loc['791']/* 'Proposal expiry time from now' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':'Proposal Submit Expiry time', 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['792']/* 'Proposal Submit Expiry time' */, 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'})}
 
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[3]), 'details':'Proposal submit expiry time from now', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[3]), 'details':this.props.app_state.loc['793']/* 'Proposal submit expiry time from now' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -156,7 +156,7 @@ class SubmitProposalPage extends Component {
     set_proposal(proposal){
         if(this.state.proposal_item['id'] != proposal['id']){
             this.setState({
-                selected: 0,id:makeid(8), type:'submit', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:['submit', 'proposal'],
+                selected: 0,id:makeid(8), type:this.props.app_state.loc['783']/* 'submit' */, proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:[this.props.app_state.loc['783']/* 'submit' */, this.props.app_state.loc['784']/* 'proposal' */],
                 submit_proposal_title_tags_object: this.get_submit_proposal_title_tags_object()
             })
         }
@@ -170,16 +170,16 @@ class SubmitProposalPage extends Component {
         var current_time_in_seconds = Math.floor(new Date() / 1000)
 
         if(current_time_in_seconds < proposal_config[1] ){
-            this.props.notify('You cant submit this proposal yet', 700);
+            this.props.notify(this.props.app_state.loc['794']/* 'You cant submit this proposal yet.' */, 700);
         }
         else if(current_time_in_seconds > proposal_config[3]){
-            this.props.notify('You cant submit this proposal', 700);
+            this.props.notify(this.props.app_state.loc['795']/* 'You cant submit this proposal.' */, 700);
         }
         else{
             var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
             this.props.add_submit_proposal_action_to_stack(clone)
-            this.props.notify('transaction added to stack', 700);
+            this.props.notify(this.props.app_state.loc['18']/* transaction added to stack' */, 1700);
         }
     }
 
@@ -270,32 +270,32 @@ class SubmitProposalPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

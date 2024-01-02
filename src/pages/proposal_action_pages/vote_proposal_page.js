@@ -32,7 +32,7 @@ function makeid(length) {
 class VoteProposalPage extends Component {
     
     state = {
-        selected: 0, id:makeid(8), type:'vote', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:['vote', 'proposal'],
+        selected: 0, id:makeid(8), type:this.props.app_state.loc['796']/* 'vote' */, proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:[this.props.app_state.loc['796']/* 'vote' */, this.props.app_state.loc['797']/* 'proposal' */],
         vote_proposal_title_tags_object: this.get_vote_proposal_title_tags_object(),
         new_vote_tags_object: this.get_new_vote_tags_object(), 
         bounty_exchange_target:'', bounty_exchanges:[]
@@ -44,7 +44,7 @@ class VoteProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','vote', 'bounties'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['798']/* 'vote' */, this.props.app_state.loc['799']/* 'bounties' */], [1]
             ],
         };
     }
@@ -56,7 +56,7 @@ class VoteProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','wait', 'yes', 'no'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['800']/* 'wait' */, this.props.app_state.loc['801']/* 'yes' */, this.props.app_state.loc['802']/* 'no' */], [1]
             ],
         };
     }
@@ -71,12 +71,12 @@ class VoteProposalPage extends Component {
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                                {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                             </div>
                         </div>
                     </div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':'Cast your vote in proposal ID: '+this.state.proposal_item['id'], 'textsize':'14px', 'font':'Sans-serif'})} 
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['803']/* 'Cast your vote in proposal ID: ' */+this.state.proposal_item['id'], 'textsize':'14px', 'font':'Sans-serif'})} 
                     <div style={{height:10}}/>
 
                     {this.render_everything()}
@@ -94,14 +94,14 @@ class VoteProposalPage extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.vote_proposal_title_tags_object, this.state.vote_proposal_title_tags_object['i'].active)
 
-        if(selected_item == 'vote'){
+        if(selected_item == this.props.app_state.loc['798']/* 'vote' */){
             return(
                 <div>
                     {this.render_cast_vote_part()}
                 </div>
             )    
         }else
-        if(selected_item == 'bounties'){
+        if(selected_item == this.props.app_state.loc['799']/* 'bounties' */){
             return(
                 <div>
                     {this.render_collect_bounties_part()}
@@ -119,25 +119,57 @@ class VoteProposalPage extends Component {
 
     render_cast_vote_part(){
         var object = this.state.proposal_item
+        if(object['data'] == null) return;
+        var contract_config = object['data'][1]
+        var voter_weight_target_name = this.get_exchange_name_from_id(contract_config[7], object)
+        var voter_weight_balance = this.get_voter_weight_balance(contract_config[7], object)
         return(
             <div>
                 <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+object['consensus_data'][0]+' WAIT votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
 
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+object['consensus_data'][1]+' YES votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][1])+this.props.app_state.loc['788']/* ' YES votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'})}
 
                     <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+object['consensus_data'][2]+' NO votes', 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][2])+this.props.app_state.loc['789']/* ' NO votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'})}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':''+this.get_vote_title(object['account_vote']), 'details':'Your On-Chain recorded vote', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_vote_title(object['account_vote']), 'details':this.props.app_state.loc['804']/* 'Your On-Chain recorded vote' */, 'size':'l'})}
+                    <div style={{ height: 10 }} />
+
+                    {this.render_detail_item('3', { 'title': voter_weight_target_name, 'details': this.props.app_state.loc['805']/* 'Voter Weight Exchange' */, 'size': 'l' })}
+                    <div style={{ height: 10 }} />
+
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['806']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${number_with_commas(voter_weight_balance)}`, 'barcolor': '', 'relativepower':this.props.app_state.loc['807'] /* `units` */, })}
+                    </div>
+
 
                     <div style={{height:10}}/>
                     <Tags page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
             </div>
         )
     }
+
+    get_exchange_name_from_id(id, object){
+        if(id == 0) return this.props.app_state.loc['808']/* 'None' */
+        return this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+id]
+    }
+
+    get_voter_weight_balance(id, object){
+        if(id == 0) return 1
+        if(this.props.app_state.created_token_object_mapping[object['e5']] != null){
+            var voter_exchange = this.props.app_state.created_token_object_mapping[object['e5']][id]
+            if(voter_exchange != null){
+                var balance = voter_exchange['balance']
+                return balance
+            }
+        }
+        return 1
+    }
+
+
 
     when_new_vote_tags_object_updated(tag_obj){
         this.setState({new_vote_tags_object: tag_obj})
@@ -159,7 +191,7 @@ class VoteProposalPage extends Component {
     }
 
     get_vote_title(vote){
-        var obj = {1:'Yes', 2:'Wait', 3:'No', 0:'None'}
+        var obj = {1:this.props.app_state.loc['809']/* 'Yes' */, 2:this.props.app_state.loc['810']/* 'Wait' */, 3:this.props.app_state.loc['811']/* 'No' */, 0:this.props.app_state.loc['808']/* 'None' */}
         return obj[vote]
     }
 
@@ -172,27 +204,27 @@ class VoteProposalPage extends Component {
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':'End Bounty Balance', 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':'END', })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['812']/* 'End Bounty Balance' */, 'subtitle':'End', 'barwidth':this.get_number_width(object['end_balance']), 'number':`${number_with_commas(object['end_balance'])}`, 'barcolor':'', 'relativepower':'END', })}
                 </div>
 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':'Spend Bounty Balance', 'subtitle':'Spend', 'barwidth':this.get_number_width(object['spend_balance']), 'number':` ${number_with_commas(object['spend_balance'])}`, 'barcolor':'', 'relativepower':`SPEND`, })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['813']/* 'Spend Bounty Balance' */, 'subtitle':'Spend', 'barwidth':this.get_number_width(object['spend_balance']), 'number':` ${number_with_commas(object['spend_balance'])}`, 'barcolor':'', 'relativepower':`SPEND`, })}
                 </div>
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':'Targeted Bounty Exchanges', 'details':'Specify which exchanges you wish to collect bounty from. You can only collect bounty while voting for the very first time.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['814']/* 'Targeted Bounty Exchanges' */, 'details':this.props.app_state.loc['815']/* 'Specify which exchanges you wish to collect bounty from. You can only collect bounty while voting for the very first time.' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Target Exchange ID...'} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['816']/* 'Target Exchange ID...' */} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.load_token_suggestions('bounty_exchange_target')}
 
                 <div style={{height:10}}/>
                 <div onClick={()=>this.add_bounty_exchange_item()}>
-                    {this.render_detail_item('5', {'text':'Add Bounty Exchange', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['817']/* 'Add Bounty Exchange' */, 'action':''})}
                 </div>
 
                 {this.render_detail_item('0')}
@@ -209,17 +241,17 @@ class VoteProposalPage extends Component {
         var exchange = this.get_token_id_from_symbol(this.state.bounty_exchange_target.trim())
 
         if(isNaN(exchange) || parseInt(exchange) < 0 || exchange == '' || !this.does_exchange_exist(exchange)){
-            this.props.notify('please put a valid exchange id', 1600)
+            this.props.notify(this.props.app_state.loc['818']/* 'Please put a valid exchange ID.' */, 1600)
         }
         else if(this.includes_function(exchange)){
-            this.props.notify('you cant include the same exchange more than once', 3600)
+            this.props.notify(this.props.app_state.loc['819']/* 'You cant include the same exchange more than once.' */, 3600)
         }
         else{
             var tx = {'exchange': exchange}
             var bounty_exchanges_clone = this.state.bounty_exchanges.slice()
             bounty_exchanges_clone.push(tx)
             this.setState({bounty_exchanges: bounty_exchanges_clone, bounty_exchange_target:''})
-            this.props.notify('bounty exchange added!', 1600)
+            this.props.notify(this.props.app_state.loc['778']/* 'bounty exchange added!' */, 1600)
         }
     }
 
@@ -281,13 +313,25 @@ class VoteProposalPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_when_exchange_clicked(item)}>
-                                {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']], 'details':'Bounty Exchange ID: '+item['exchange'], 'size':'s'})}
+                                {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']], 'details':this.props.app_state.loc['820']/* 'Bounty Exchange ID: ' */+item['exchange'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
                 </div>
             )
         }
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
     }
 
     when_when_exchange_clicked(item){
@@ -297,7 +341,6 @@ class VoteProposalPage extends Component {
             cloned_array.splice(index, 1); // 2nd parameter means remove one item only
         }
         this.setState({bounty_exchanges: cloned_array})
-        this.props.notify('bounty exchange removed!', 600)
     }
 
 
@@ -320,8 +363,8 @@ class VoteProposalPage extends Component {
 
     get_suggested_exchange_accounts(type){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['268']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['269']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.proposal_item['e5']]
         var sorted_token_exchange_data = []
@@ -366,7 +409,7 @@ class VoteProposalPage extends Component {
     set_proposal(proposal){
         if(this.state.proposal_item['id'] != proposal['id']){
             this.setState({
-                selected: 0, id:makeid(8), type:'vote', proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:['vote', 'proposal'],
+                selected: 0, id:makeid(8), type:this.props.app_state.loc['796']/* 'vote' */, proposal_item:{'id':'', 'consensus_data':[0,0,0], 'account_vote':0, 'end_balance':0, 'spend_balance':0}, entered_indexing_tags:[this.props.app_state.loc['796']/* 'vote' */, this.props.app_state.loc['797']/* 'proposal' */],
                 vote_proposal_title_tags_object: this.get_vote_proposal_title_tags_object(),
                 new_vote_tags_object: this.get_new_vote_tags_object(), 
                 bounty_exchange_target:'', bounty_exchanges:[]
@@ -380,7 +423,7 @@ class VoteProposalPage extends Component {
         var clone = structuredClone(this.state)
         // clone.e5 = this.props.app_state.selected_e5
         this.props.add_vote_proposal_action_to_stack(clone)
-        this.props.notify('transaction added to stack', 700);
+        this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
     }
 
 
@@ -398,7 +441,6 @@ class VoteProposalPage extends Component {
         )
 
     }
-
     format_proportion(proportion){
         return ((proportion/10**18) * 100)+'%';
     }

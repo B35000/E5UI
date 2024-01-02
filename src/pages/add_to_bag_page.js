@@ -33,8 +33,8 @@ function makeid(length) {
 class AddToBagPage extends Component {
     
     state = {
-        selected: 0, storefront_item:{},  type:'add-to-bag', id:makeid(8),
-        entered_indexing_tags:['add', 'bag', 'storefront-item'], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
+        selected: 0, storefront_item:{},  type:this.props.app_state.loc['1043']/* 'add-to-bag' */, id:makeid(8),
+        entered_indexing_tags:[this.props.app_state.loc['1044']/* 'add' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1046']/* 'storefront-item' */], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
         purchase_unit_count:1, selected_variant:null
     };
 
@@ -44,7 +44,7 @@ class AddToBagPage extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e','add-to-bag'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1043']/* 'add-to-bag' */], [1]
             ],
         };
     }
@@ -58,7 +58,7 @@ class AddToBagPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_bag_item()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                         
                     </div>
@@ -86,16 +86,16 @@ class AddToBagPage extends Component {
         var object = this.state.storefront_item
 
         if(object['ipfs'] != null){
-            var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
+            var composition_type = object['ipfs'].composition_type == null ? this.props.app_state.loc['1047']/* 'items' */ : this.get_selected_item(object['ipfs'].composition_type, 'e')
 
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Item Variants', 'details':'Pick the variant you want to purchase', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1048']/* 'Item Variants' */, 'details':this.props.app_state.loc['1049']/* 'Pick the variant you want to purchase' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_item_variants()}
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Amount in '+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1050']/* 'Amount in ' */+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
                     </div>
 
                     <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/>
@@ -128,7 +128,7 @@ class AddToBagPage extends Component {
             var items = [].concat(this.state.selected_variant['price_data'])
             return(
                 <div style={{overflow: 'auto', maxHeight: middle}}>
-                    {this.render_detail_item('3', {'title':'Purchase Amounts', 'details':'This is the final amount for the price of the items your buying', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1051']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1052']/* 'This is the final amount for the price of the items your buying' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -194,7 +194,7 @@ class AddToBagPage extends Component {
                             {this.render_detail_item('9', item['image_data']['data'])}
                         </div>
                         <div style={{height:5}}/>
-                        {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1053']/* 'Number of Units' */, 'size':'l'})}
                         <div style={{height:15}}/>
                         {this.render_variant_price_data(item)}
 
@@ -214,7 +214,7 @@ class AddToBagPage extends Component {
                             {this.render_detail_item('9', item['image_data']['data'])}
                         </div>
                         <div style={{height:5}}/>
-                        {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':'Number of Units', 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1053']/* 'Number of Units' */, 'size':'l'})}
                         <div style={{height:15}}/>
                         {this.render_variant_price_data(item)}
                     </div>
@@ -280,8 +280,8 @@ class AddToBagPage extends Component {
     set_transaction(item){
         if(this.state.storefront_item['id'] != item['id']){
             this.setState({
-                selected: 0, storefront_item:{},  type:'add-to-bag', id:makeid(8),
-                entered_indexing_tags:['add', 'bag', 'storefront-item'], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
+                selected: 0, storefront_item:{},  type:this.props.app_state.loc['1043']/* 'add-to-bag' */, id:makeid(8),
+                entered_indexing_tags:[this.props.app_state.loc['1044']/* 'add' */, this.props.app_state.loc['1045']/* 'bag' */, this.props.app_state.loc['1046']/* 'storefront-item' */], add_to_bag_tags_object: this.get_add_to_bag_tags_object(),
                 purchase_unit_count:1, selected_variant:null
             })
         }
@@ -291,23 +291,23 @@ class AddToBagPage extends Component {
 
     finish_creating_bag_item(){
         if(this.state.selected_variant == null){
-            this.props.notify('pick one variant first', 1500)
+            this.props.notify(this.props.app_state.loc['1056']/* 'Pick one variant first.' */, 1500)
         }
         else if(this.state.purchase_unit_count == 0){
-            this.props.notify('please specify an amount of the item your adding', 2400)
+            this.props.notify(this.props.app_state.loc['1057']/* 'Please specify an amount of the item your adding.' */, 2400)
         }
         else if(this.state.purchase_unit_count > this.get_variant_supply()){
-            this.props.notify('the most you can add is '+this.format_account_balance_figure(this.get_variant_supply())+' '+this.get_composition_type())
+            this.props.notify(this.props.app_state.loc['1055']/* 'The most you can add is ' */+this.format_account_balance_figure(this.get_variant_supply())+' '+this.get_composition_type())
         }
         else{
             this.props.add_bag_item_to_bag_in_stack(this.state)
-            this.props.notify('Transaction added to Stack', 700)
+            this.props.notify(this.props.app_state.loc['1058']/* 'Transaction added to Stack' */, 700)
         }
     }
 
     get_composition_type(){
         var object = this.state.storefront_item
-        var composition_type = object['ipfs'].composition_type == null ? 'items' : this.get_selected_item(object['ipfs'].composition_type, 'e')
+        var composition_type = object['ipfs'].composition_type == null ? this.props.app_state.loc['1047']/* 'items' */ : this.get_selected_item(object['ipfs'].composition_type, 'e')
 
         return composition_type
     }
@@ -384,32 +384,32 @@ class AddToBagPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

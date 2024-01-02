@@ -34,7 +34,7 @@ function makeid(length) {
 class NewMintActionPage extends Component {
     
     state = {
-        selected: 0, id:makeid(8), type:'buy-sell', entered_indexing_tags:['mint', 'dump', 'token'],
+        selected: 0, id:makeid(8), type:this.props.app_state.loc['946']/* 'buy-sell' */, entered_indexing_tags:[this.props.app_state.loc['947']/* 'mint' */, this.props.app_state.loc['948']/* 'dump' */, this.props.app_state.loc['883']/* 'token' */],
         new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
         recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, 
         upper_bound:0, lower_bound:0, e5:this.props.app_state.selected_e5
@@ -47,7 +47,7 @@ class NewMintActionPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','mint-buy', 'dump-sell'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['949']/* 'mint-buy' */, this.props.app_state.loc['950']/* 'dump-sell' */], [1]
             ],
         };
     }
@@ -62,18 +62,18 @@ class NewMintActionPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                     </div>
                 </div>
                 
                 <div style={{'margin':'10px 0px 0px 0px'}}>
-                    {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':'Buy or Sell the specified token'})}
+                    {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['951']/* 'Buy or Sell the specified token' */})}
 
                     <div style={{height:10}}/> 
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':'Your Balance', 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                     </div>
 
                     {this.render_everything()}
@@ -91,28 +91,28 @@ class NewMintActionPage extends Component {
         return(
             <div>
                 <div style={{height:10}}/>
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the recipient of the mint/dump action', 'title':'Recipient of action'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['953']/* 'Set the recipient of the mint/dump action' */, 'title':this.props.app_state.loc['954']/* 'Recipient of action' */})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Recipient ID'} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['955']/* 'Recipient ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
                 {this.load_account_suggestions()}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Set the amount for the mint/dump action', 'title':'Amount for action'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['956']/* 'Set the amount for the mint/dump action' */, 'title':this.props.app_state.loc['957']/* 'Amount for action' */})}
 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Amount', 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['958']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Buy Limit', 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Sell Limit', 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
 
                 </div>
 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
-                    {this.render_detail_item('5', {'text':'Set Maximum', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['961']/* 'Set Maximum' */, 'action':''})}
                 </div>
 
                 <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -139,7 +139,7 @@ class NewMintActionPage extends Component {
 
     set_maximum(){
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
-        if(action == 'mint-buy'){
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
             var max = this.get_token_buy_limit()
             this.setState({amount: max})
         }else{
@@ -158,7 +158,7 @@ class NewMintActionPage extends Component {
         if(this.state.token_item['id'] != 0){
             var selected_object = this.state.token_item
             var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
-            if(action == 'dump-sell'){
+            if(action == this.props.app_state.loc['950']/* 'dump-sell' */){
                 var input_amount = this.state.amount
                 var input_reserve_ratio = selected_object['data'][2][0]
                 var output_reserve_ratio = selected_object['data'][2][1]
@@ -169,13 +169,13 @@ class NewMintActionPage extends Component {
                 return(
                     <div>
                         <div style={{height:20}}/>
-                        {this.render_detail_item('3', {'size':'l', 'details':'The amount you get when selling the token', 'title':'Receive Amount'})}
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['962']/* 'The amount you get when selling the token' */, 'title':this.props.app_state.loc['963']/* 'Receive Amount' */})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                             <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                                 {buy_tokens.map((item, index) => (
                                     <li style={{'padding': '1px'}}>
-                                        {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['964']/* 'Token ID: ' */+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                                     </li>
                                 ))}
                             </ul>
@@ -193,10 +193,10 @@ class NewMintActionPage extends Component {
                 return(
                     <div>
                         <div style={{height:20}}/>
-                        {this.render_detail_item('3', {'size':'l', 'details':'The amount youll probably get from the buy action', 'title':'Receive Amount'})}
+                        {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['965']/* 'The amount youll probably get from the buy action' */, 'title':this.props.app_state.loc['966']/* 'Receive Amount' */})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+this.state.token_item['id'], 'subtitle':'depth:'+selected_object['data'][2][7], 'barwidth':this.calculate_bar_width(price), 'number':''+this.format_account_balance_figure(price), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['964']/* 'Token ID: ' */+this.state.token_item['id'], 'subtitle':'depth:'+selected_object['data'][2][7], 'barwidth':this.calculate_bar_width(price), 'number':''+this.format_account_balance_figure(price), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}
                         </div>
                     </div>
                     
@@ -237,10 +237,10 @@ class NewMintActionPage extends Component {
 
     render_fees_for_action_title(){
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
-        if(action == 'mint-buy'){
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
             return(
                 <div>
-                    {this.render_detail_item('3', {'size':'l', 'details':'Amount set to submit for the buy action', 'title':'Fees for Action'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['967']/* 'Amount set to submit for the buy action' */, 'title':this.props.app_state.loc['968']/* 'Fees for Action' */})}
 
                     <div style={{height:10}}/>
                     {this.render_buy_token_uis(this.state.token_item['data'][3], this.calculate_token_prices(this.state.token_item['data'][4]), this.state.token_item['data'][5])}
@@ -265,7 +265,7 @@ class NewMintActionPage extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':'Token ID: '+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['964']/* 'Token ID: ' */+item, 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>
@@ -318,11 +318,11 @@ class NewMintActionPage extends Component {
             buy_amount_balances.push(token_balance)
         }
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
-        if(action == 'mint-buy'){
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
             return(
                 <div>
                     <div style={{height:20}}/>
-                    {this.render_detail_item('3', {'size':'l', 'details':'The amounts you have available for buying the token', 'title':'Your balances'})}
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['969']/* 'The amounts you have available for buying the token' */, 'title':this.props.app_state.loc['970']/* 'Your balances' */})}
                     <div style={{height:10}}/>
 
                     {this.render_buy_token_uis(buy_tokens, buy_amount_balances, buy_depths)}
@@ -424,7 +424,7 @@ class NewMintActionPage extends Component {
 
     get_suggested_accounts(){
         return[
-            {'id':'53', 'label':{'title':'My Account', 'details':'Account', 'size':'s'}},
+            {'id':'53', 'label':{'title':this.props.app_state.loc['971']/* 'My Account' */, 'details':this.props.app_state.loc['972']/* 'Account' */, 'size':'s'}},
         ].concat(this.get_account_suggestions())
     }
 
@@ -545,32 +545,32 @@ class NewMintActionPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 
@@ -586,12 +586,12 @@ class NewMintActionPage extends Component {
     set_upper_lower_bounds(){
         return(
             <div>
-                {this.render_detail_item('3', {'size':'l', 'details':'The transaction will revert if you dont receive your tokens specified in the range set below. This is useful in avoiding MEV sandwitch attacks while making large transactions', 'title':'Upper Lower Bounds (optional)'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['973']/* 'The transaction will revert if you dont receive your tokens specified in the range set below.' */, 'title':this.props.app_state.loc['974']/* 'Upper Lower Bounds (optional)' */})}
 
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Upper Bound', 'subtitle':this.format_power_figure(this.state.upper_bound), 'barwidth':this.calculate_bar_width(this.state.upper_bound), 'number':this.format_account_balance_figure(this.state.upper_bound), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['975']/* 'Upper Bound' */, 'subtitle':this.format_power_figure(this.state.upper_bound), 'barwidth':this.calculate_bar_width(this.state.upper_bound), 'number':this.format_account_balance_figure(this.state.upper_bound), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_upper_bound_set.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -599,7 +599,7 @@ class NewMintActionPage extends Component {
                 <div style={{height:20}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Lower Bound', 'subtitle':this.format_power_figure(this.state.lower_bound), 'barwidth':this.calculate_bar_width(this.state.lower_bound), 'number':this.format_account_balance_figure(this.state.lower_bound), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['976']/* 'Lower Bound' */, 'subtitle':this.format_power_figure(this.state.lower_bound), 'barwidth':this.calculate_bar_width(this.state.lower_bound), 'number':this.format_account_balance_figure(this.state.lower_bound), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_lower_bound_set.bind(this)} theme={this.props.theme} power_limit={63}/>
@@ -625,13 +625,13 @@ class NewMintActionPage extends Component {
         var recipient = this.state.recipient_id.trim()
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
         var stack_action = 1
-        if(action == 'mint-buy') stack_action = 0
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */) stack_action = 0
 
         var selected_object = this.state.token_item
         var input_amount = amount
         var input_reserve_ratio = selected_object['data'][2][0]
         var output_reserve_ratio = selected_object['data'][2][1]
-        if(action == 'mint-buy'){
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
             input_reserve_ratio = selected_object['data'][2][1]
             output_reserve_ratio = selected_object['data'][2][0]
         }
@@ -642,40 +642,40 @@ class NewMintActionPage extends Component {
         var reason = can_make_swap_obj.reason
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify('please put a valid account id', 600)
+            this.props.notify(this.props.app_state.loc['977']/* 'Please put a valid account ID.' */, 3600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 600)
+            this.props.notify(this.props.app_state.loc['978']/* 'Please put a valid amount.' */, 3600)
         }
         else if(price < 1){
-            this.props.notify('that amount is too low', 600)
+            this.props.notify(this.props.app_state.loc['979']/* 'That amount is too low.' */, 3600)
         }
         else{
-            if(!this.check_if_sender_has_tokens_for_sell() && action == 'dump-sell'){
-                this.props.notify('you dont have enough tokens for that sell action', 3500)
+            if(!this.check_if_sender_has_tokens_for_sell() && action == this.props.app_state.loc['950']/* 'dump-sell' */){
+                this.props.notify(this.props.app_state.loc['980']/* 'You dont have enough tokens for that sell action.' */, 4500)
             }
-            else if(!this.check_if_sender_has_tokens_for_buy() && action == 'mint-buy'){
-                this.props.notify('you dont have enough tokens to buy that much', 3500)
+            else if(!this.check_if_sender_has_tokens_for_buy() && action == this.props.app_state.loc['949']/* 'mint-buy' */){
+                this.props.notify(this.props.app_state.loc['981']/* 'You dont have enough tokens to buy that much.' */, 4500)
             }
             else if(!this.check_if_sender_can_interact_with_exchange()){
-                this.props.notify('you cant interact with the same exchange twice in one run', 3200)
+                this.props.notify(this.props.app_state.loc['982']/* 'You cant interact with the same exchange twice in one run.' */, 4200)
             }
             else if(amount > this.get_token_buy_limit() && action == 'mint-buy'){
-                this.props.notify('the amount youve set exceeds the maximum buy amount enforced by the exchange', 6500)
+                this.props.notify(this.props.app_state.loc['983']/* 'The amount youve set exceeds the maximum buy amount enforced by the exchange.' */, 7500)
             }
             else if(amount > this.get_token_sell_limit() && action == 'dump-sell'){
-                this.props.notify('the amount youve set exceeds the maximum sell amount enforced by the exchange', 6500)
+                this.props.notify(this.props.app_state.loc['984']/* 'The amount youve set exceeds the maximum sell amount enforced by the exchange.' */, 7500)
             }
             else if(!can_make_swap){
-                this.props.notify(reason, 1500)
+                this.props.notify(reason, 5500)
             }
-            else if(!this.check_if_sender_can_sell_end_tokens()){
-                this.props.notify('You cant sell end while having a withdraw balance. Withdraw your ether first.',7500)
-            }
+            // else if(!this.check_if_sender_can_sell_end_tokens()){
+            //     this.props.notify(this.props.app_state.loc['']/* 'You cant sell end while having a withdraw balance. Withdraw your ether first.' */,7500)
+            // }
             else{
                 this.props.add_buy_sell_transaction_to_stack(this.state)
                 this.setState({amount:0, recipient_id:''})
-                this.props.notify('transaction added to stack', 600)
+                this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1600)
             }
         }
     }
@@ -683,7 +683,7 @@ class NewMintActionPage extends Component {
     check_if_sender_can_interact_with_exchange(){
         var stack_transactions = this.props.app_state.stack_items
         for(var i=0; i<stack_transactions.length; i++){
-            if(stack_transactions[i].type == 'buy-sell' && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id && stack_transactions[i].e5 == this.props.app_state.selected_e5){
+            if(stack_transactions[i].type == this.props.app_state.loc['946']/* 'buy-sell' */ && stack_transactions[i].token_item['id'] == this.state.token_item['id'] && stack_transactions[i].id != this.state.id && stack_transactions[i].e5 == this.props.app_state.selected_e5){
                 return false
             }
         }
@@ -726,7 +726,7 @@ class NewMintActionPage extends Component {
                 // console.log('minimum_entered_contracts_between_swap: ', minimum_entered_contracts_between_swap)
                 if(diff < minimum_entered_contracts_between_swap){
                     can_make_swap = false;
-                    reason = 'You need to enter '+(minimum_entered_contracts_between_swap-diff)+' more contracts first'
+                    reason = this.props.app_state.loc['985']/* 'You need to enter ' */+(minimum_entered_contracts_between_swap-diff)+this.props.app_state.loc['986']/* ' more contracts first' */
                 }
             }
             if(minimum_transactions_between_swap != 0){
@@ -736,21 +736,21 @@ class NewMintActionPage extends Component {
                 console.log('minimum_transactions_between_swap: ', minimum_transactions_between_swap)
                 if(diff < minimum_transactions_between_swap){
                     can_make_swap = false;
-                    reason = 'You need to make '+(minimum_transactions_between_swap-diff)+' more runs first'
+                    reason = this.props.app_state.loc['987']/* 'You need to make ' */+(minimum_transactions_between_swap-diff)+this.props.app_state.loc['988']/* ' more runs first' */
                 }
             }
             if(minimum_blocks_between_swap != 0){
                 var diff = current_block - last_swap_block
                 if(diff < minimum_blocks_between_swap){
                     can_make_swap = false
-                    reason = 'You need to wait '+(minimum_blocks_between_swap-diff)+' more blocks'
+                    reason = this.props.app_state.loc['989']/* 'You need to wait ' */+(minimum_blocks_between_swap-diff)+this.props.app_state.loc['990']/* ' more blocks' */
                 }
             }
             if(minimum_time_between_swap != 0){
                 var diff = timestamp - last_swap_timestamp
                 if(diff < minimum_time_between_swap){
                     can_make_swap = false
-                    reason = 'You need to wait about '+(this.get_time_diff(minimum_time_between_swap-diff))+' first'
+                    reason = this.props.app_state.loc['991']/* 'You need to wait about ' */+(this.get_time_diff(minimum_time_between_swap-diff))+this.props.app_state.loc['992']/* ' first' */
                 }
             }
         }
@@ -761,13 +761,13 @@ class NewMintActionPage extends Component {
             console.log('minimum_transactions_for_first_buy: ', minimum_transactions_for_first_buy)
             if(current_transaction_count < minimum_transactions_for_first_buy){
                 can_make_swap = false
-                reason = 'You need to make '+(minimum_transactions_for_first_buy-current_transaction_count)+' more runs first'
+                reason = this.props.app_state.loc['993']/* 'You need to make ' */+(minimum_transactions_for_first_buy-current_transaction_count)+this.props.app_state.loc['994']/* ' more runs first' */
             }
         }
         if(minimum_entered_contracts_for_first_buy != 0){
             if(current_entered_contracts_count<minimum_entered_contracts_for_first_buy){
                 can_make_swap = false
-                reason = 'You need to enter '+(minimum_entered_contracts_for_first_buy-current_entered_contracts_count)+' more contracts first'
+                reason = this.props.app_state.loc['995']/* 'You need to enter ' */+(minimum_entered_contracts_for_first_buy-current_entered_contracts_count)+this.props.app_state.loc['996']/* ' more contracts first' */
             }
         }
         
@@ -778,7 +778,7 @@ class NewMintActionPage extends Component {
 
     check_if_sender_can_sell_end_tokens(){
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
-        if(action == 'dump-sell' && this.state.token_item['id'].toString() == '3'){
+        if(action == this.props.app_state.loc['950']/* 'dump-sell' */ && this.state.token_item['id'].toString() == '3'){
             var e5 = this.state.token_item['e5']
             var withdraw_balance = this.props.app_state.withdraw_balance[e5]
             if(withdraw_balance != 0){
@@ -793,7 +793,7 @@ class NewMintActionPage extends Component {
     set_token(item){
         if(this.state.token_item['id'] != item['id']){
             this.setState({
-                selected: 0, id:makeid(8), type:'buy-sell', entered_indexing_tags:['buy', 'mint', 'token'],
+                selected: 0, id:makeid(8), type:this.props.app_state.loc['946']/* 'buy-sell' */, entered_indexing_tags:[this.props.app_state.loc['948']/* 'dump' */, this.props.app_state.loc['947']/* 'mint' */,this.props.app_state.loc['883']/* 'token' */],
                 new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
                 recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}
             })

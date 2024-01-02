@@ -32,9 +32,9 @@ function makeid(length) {
 class GiveAwardPage extends Component {
     
     state = {
-        selected: 0,type:'award', id:makeid(8),
+        selected: 0,type:this.props.app_state.loc['1155']/* 'award' */, id:makeid(8),
         post_item: null, give_award_title_tags_object:this.get_give_award_title_tags_object(),
-        entered_indexing_tags:['give', 'award', 'reward'], entered_message_text: '', selected_tier:null, selected_tier_object: null, multiplier:1,
+        entered_indexing_tags:[this.props.app_state.loc['1156']/* 'give' */, this.props.app_state.loc['1155']/* 'award' */, this.props.app_state.loc['1157']/* 'reward' */], entered_message_text: '', selected_tier:null, selected_tier_object: null, multiplier:1,
         exchange_id:'', price_amount:0, price_data:[], e5: this.props.app_state.selected_e5
     };
 
@@ -44,7 +44,7 @@ class GiveAwardPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e','message', 'award-tier', 'custom-amounts'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1158']/* 'message' */, this.props.app_state.loc['1159']/* 'award-tier' */, this.props.app_state.loc['1160']/* 'custom-amounts' */], [1]
             ],
         };
     }
@@ -63,7 +63,7 @@ class GiveAwardPage extends Component {
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                            {this.render_detail_item('5', {'text':'Finish', 'action':''})}
+                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4']/* 'Finish' */, 'action':''})}
                         </div>
                         
                     </div>
@@ -85,21 +85,21 @@ class GiveAwardPage extends Component {
         if(this.state.post_item != null){
             var selected_item = this.get_selected_item(this.state.give_award_title_tags_object, this.state.give_award_title_tags_object['i'].active)
 
-            if(selected_item == 'message'){
+            if(selected_item == this.props.app_state.loc['1158']/* 'message' */){
                 return(
                     <div>
                         {this.render_post_part()}
                     </div>
                 )
             }
-            else if(selected_item == 'award-tier'){
+            else if(selected_item == this.props.app_state.loc['1159']/* 'award-tier' */){
                 return(
                     <div>
                         {this.render_amounts()}
                     </div>
                 )
             }
-            else if(selected_item == 'custom-amounts'){
+            else if(selected_item == this.props.app_state.loc['1160']/* 'custom-amounts' */){
                 return(
                     <div>
                         {this.render_custom_amounts()}
@@ -119,10 +119,10 @@ class GiveAwardPage extends Component {
     render_post_part(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Message', 'details':'Add a award message for your new award. Mind the character limit.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1158']/* 'Message' */, 'details':this.props.app_state.loc['1161']/* 'Add a award message for your new award. Mind the character limit.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={60} placeholder={'This post is awesome blah blah blah...'} when_text_input_field_changed={this.when_message_input_filed_changed.bind(this)} text={this.state.entered_message_text} theme={this.props.theme}/>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(250 - this.state.entered_message_text.length)})}
+                <TextInput height={60} placeholder={this.props.app_state.loc['1163']/* 'This post is awesome blah blah blah...' */} when_text_input_field_changed={this.when_message_input_filed_changed.bind(this)} text={this.state.entered_message_text} theme={this.props.theme}/>
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(250 - this.state.entered_message_text.length)})}
                 
                 {this.render_detail_item('0')}
                 {this.render_post_object(this.state.post_item)}
@@ -178,26 +178,26 @@ class GiveAwardPage extends Component {
         var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Award Tiers', 'details':'Pick an award tier you wish to send to the post author', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1164']/* 'Award Tiers' */, 'details':this.props.app_state.loc['1165']/* 'Pick an award tier you wish to send to the post author' */, 'size':'l'})}
                 {this.load_award_tiers()}
 
-                {this.render_detail_item('3', {'title':'Total Amount', 'details':'The total amount of SPEND youll be including in the award', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1166']/* 'Total Amount' */, 'details':this.props.app_state.loc['1167']/* 'The total amount of SPEND youll be including in the award' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l', 'title':'Total amount of SPEND', 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'spend', })}
+                    {this.render_detail_item('2', {'style':'l', 'title':this.props.app_state.loc['1168']/* 'Total amount of SPEND' */, 'subtitle':this.format_power_figure(award_amount), 'barwidth':this.calculate_bar_width(award_amount), 'number':this.format_account_balance_figure(award_amount), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
 
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Your Spend Balance', 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1169']/* 'Your Spend Balance' */, 'subtitle':this.format_power_figure(spend_token_balance), 'barwidth':this.calculate_bar_width(spend_token_balance), 'number':this.format_account_balance_figure(spend_token_balance), 'barcolor':'', 'relativepower':'SPEND', })}
                 </div>
 
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('3', {'title':'Multiplier', 'details':'Multiply the award your sending to the post author', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1170']/* 'Multiplier' */, 'details':this.props.app_state.loc['1162']/* 'Multiply the award your sending to the post author.' */, 'size':'l'})}
 
                 <NumberPicker number_limit={999} when_number_picker_value_changed={this.when_multiplier.bind(this)} theme={this.props.theme} power_limit={3}/>
 
@@ -237,15 +237,15 @@ class GiveAwardPage extends Component {
 
     get_award_tiers(){
         var tiers = [
-            {'id':'1', 'label':{'title':'🌕🌕🌕', 'details':'Gold', 'size':'l'}},
-            {'id':'2', 'label':{'title':'💎💎💎', 'details':'Diamond', 'size':'l'}},
-            {'id':'3', 'label':{'title':'🪙🪙🪙', 'details':'Silver', 'size':'l'}},
-            {'id':'4', 'label':{'title':'🛢️🛢️🛢️', 'details':'Oil', 'size':'l'}},
-            {'id':'5', 'label':{'title':'🪵🪵🪵', 'details':'Wood', 'size':'l'}},
-            {'id':'6', 'label':{'title':'🍺🍺🍺', 'details':'Beer', 'size':'l'}},
-            {'id':'7', 'label':{'title':'🌽🌽🌽', 'details':'Corn', 'size':'l'}},
-            {'id':'8', 'label':{'title':'🥩🥩🥩', 'details':'Beef', 'size':'l'}},
-            {'id':'9', 'label':{'title':'🍫🍫🍫', 'details':'Chocolate', 'size':'l'}},
+            {'id':'1', 'label':{'title':'🌕🌕🌕', 'details':this.props.app_state.loc['1171']/* 'Gold' */, 'size':'l'}},
+            {'id':'2', 'label':{'title':'💎💎💎', 'details':this.props.app_state.loc['1172']/* 'Diamond' */, 'size':'l'}},
+            {'id':'3', 'label':{'title':'🪙🪙🪙', 'details':this.props.app_state.loc['1173']/* 'Silver' */, 'size':'l'}},
+            {'id':'4', 'label':{'title':'🛢️🛢️🛢️', 'details':this.props.app_state.loc['1174']/* 'Oil' */, 'size':'l'}},
+            {'id':'5', 'label':{'title':'🪵🪵🪵', 'details':this.props.app_state.loc['1175']/* 'Wood' */, 'size':'l'}},
+            {'id':'6', 'label':{'title':'🍺🍺🍺', 'details':this.props.app_state.loc['1176']/* 'Beer' */, 'size':'l'}},
+            {'id':'7', 'label':{'title':'🌽🌽🌽', 'details':this.props.app_state.loc['1177']/* 'Corn' */, 'size':'l'}},
+            {'id':'8', 'label':{'title':'🥩🥩🥩', 'details':this.props.app_state.loc['1178']/* 'Beef' */, 'size':'l'}},
+            {'id':'9', 'label':{'title':'🍫🍫🍫', 'details':this.props.app_state.loc['1179']/* 'Chocolate' */, 'size':'l'}},
         ]
 
         return tiers
@@ -299,21 +299,21 @@ class GiveAwardPage extends Component {
     render_custom_amounts(){
         return(
             <div>
-                {this.render_detail_item('3', {'title':'Exchange ID', 'details':'Select an exchange by its id, then the desired amount and click add', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1180']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1181']/* 'Select an exchange by its id, then the desired amount and click add.' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Exchange ID'} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1180']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Amount', 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1182']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */, })}
                 </div>
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
-                    {this.render_detail_item('5', {'text':'Add Amount', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1184']/* Add Amount' */, 'action':''})}
                 </div>
 
                 <div style={{height: 10}}/>
@@ -336,16 +336,16 @@ class GiveAwardPage extends Component {
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
-            this.props.notify('please put a valid exchange id', 2600)
+            this.props.notify(this.props.app_state.loc['1185']/* 'Please put a valid exchange ID.' */, 3600)
         }
         else if(amount == 0){
-            this.props.notify('please put a valid amount', 2600)
+            this.props.notify(this.props.app_state.loc['1186']/* 'Please put a valid amount.' */, 3600)
         }
         else{
             var price_data_clone = this.state.price_data.slice()
             price_data_clone.push({'id':exchange_id, 'amount':amount})
             this.setState({price_data: price_data_clone, exchange_id:'', price_amount:0});
-            this.props.notify('added amount!', 1400)
+            this.props.notify(this.props.app_state.loc['1187']/* 'Added amount.' */, 1400)
         }
     }
 
@@ -475,8 +475,8 @@ class GiveAwardPage extends Component {
 
    get_suggested_tokens(){
         var items = [
-            {'id':'3', 'label':{'title':'END', 'details':'Account 3', 'size':'s'}},
-            {'id':'5', 'label':{'title':'SPEND', 'details':'Account 5', 'size':'s'}},
+            {'id':'3', 'label':{'title':'END', 'details':this.props.app_state.loc['1188']/* 'Account 3' */, 'size':'s'}},
+            {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['1189']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.state.e5]
         var sorted_token_exchange_data = []
@@ -515,26 +515,26 @@ class GiveAwardPage extends Component {
         var selected_tier = this.state.selected_tier
         var message = this.state.entered_message_text.trim()
         if(selected_tier == null){
-            this.props.notify('please pick an award tier', 1700);
+            this.props.notify(this.props.app_state.loc['1190']/* 'Please pick an award tier.' */, 3700);
         }
         else if(message == '') {
-            this.props.notify('You have to leave a message', 1700);
+            this.props.notify(this.props.app_state.loc['1191']/* 'You have to leave a message.' */, 3700);
         }
         else if(message.length < 5){
-            this.props.notify('that message is too short', 1700);
+            this.props.notify(this.props.app_state.loc['1192']/* 'That message is too short.' */, 3700);
         }
         else if(message.length > 250){
-            this.props.notify('that message is too long', 1700);
+            this.props.notify(this.props.app_state.loc['1193']/* 'That message is too long.' */, 3700);
         }
         else if(!this.check_if_sender_has_enough_for_award()){
-            this.props.notify('You dont have enough Spend to give that award', 3700);
+            this.props.notify(this.props.app_state.loc['1194']/* 'You dont have enough Spend to give that award.' */, 4700);
         }
         else if(!this.check_if_sender_has_enough_balance_for_awards()){
-            this.props.notify('One of your token balances is insufficient for the award amounts specified', 4900)
+            this.props.notify(this.props.app_state.loc['1195']/* 'One of your token balances is insufficient for the award amounts specified.' */, 5900)
         }
         else{
             this.props.add_award_transaction_to_stack(this.state)
-            this.props.notify('Transaction added to stack', 700)
+            this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to stack' */, 700)
         }
     }
 
@@ -615,32 +615,32 @@ class GiveAwardPage extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return num + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

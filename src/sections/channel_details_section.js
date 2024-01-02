@@ -67,7 +67,7 @@ class ChannelDetailsSection extends Component {
                 active:'e',
             },
             'e':[
-                ['xor','',0], ['e','channel-structure', 'comment-structure'], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['1671']/* 'channel-structure' */, this.props.app_state.loc['1672']/* 'comment-structure' */], [1]
             ],
         };
     }
@@ -91,17 +91,23 @@ class ChannelDetailsSection extends Component {
     }
 
     get_navigate_view_channel_list_detail_tags(){
-        return{
+        var obj = {
           'i':{
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e','metadata','activity', 'e.moderator-events'],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2065']/* 'e.moderator-events' */],[1]
           ],
           'moderator-events': [
-                ['xor', 'e', 1], ['moderator-events', 'modify-moderators', 'interactable-checkers', 'interactable-accounts', 'block-accounts'], [1], [1]
+                ['xor', 'e', 1], [this.props.app_state.loc['2065']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
             ],
         }
+
+        obj[this.props.app_state.loc['2065']/* moderator-events */] = [
+                ['xor', 'e', 1], [this.props.app_state.loc['2065']/* 'moderator-events' */, this.props.app_state.loc['2066']/* 'modify-moderators' */, this.props.app_state.loc['2067']/* 'interactable-checkers' */, this.props.app_state.loc['2068']/* 'interactable-accounts' */, this.props.app_state.loc['2069']/* 'block-accounts' */], [1], [1]
+            ]
+
+        return obj
     }
 
     render(){
@@ -166,14 +172,14 @@ class ChannelDetailsSection extends Component {
         }
 
         if(object != null){
-            if(selected_item == 'metadata'){
+            if(selected_item == this.props.app_state.loc['2028']/* 'metadata' */){
                 return(
                     <div>
                         {this.render_channel_main_details_section(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'activity'){
+            else if(selected_item == this.props.app_state.loc['2030']/* 'activity' */){
                 return(
                     <div>
                         {this.render_channel_activity(object)}
@@ -181,28 +187,28 @@ class ChannelDetailsSection extends Component {
                 )
                 
             }
-            else if(selected_item == 'modify-moderators'){
+            else if(selected_item == this.props.app_state.loc['2066']/* 'modify-moderators' */){
                 return(
                     <div>
                         {this.render_modify_moderator_logs(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'interactable-checkers'){
+            else if(selected_item == this.props.app_state.loc['2067']/* 'interactable-checkers' */){
                 return(
                     <div>
                         {this.render_interactable_checker_logs(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'interactable-accounts'){
+            else if(selected_item == this.props.app_state.loc['2068']/* 'interactable-accounts' */){
                 return(
                     <div>
                         {this.render_interactable_accounts_logs(object)}
                     </div>
                 )
             }
-            else if(selected_item == 'block-accounts'){
+            else if(selected_item == this.props.app_state.loc['2069']/* 'block-accounts' */){
                 return(
                     <div>
                         {this.render_blocked_accounts_logs(object)}
@@ -230,7 +236,7 @@ class ChannelDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':'Author', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -300,13 +306,13 @@ class ChannelDetailsSection extends Component {
         if(channel_lock == 'locked'){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Channel Locked', 'details':'Channel activity has been restricted to existing participants', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2071']/* 'Channel Locked' */, 'details':this.props.app_state.loc['2072']/* 'Channel activity has been restricted to existing participants' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Channel Unlocked', 'details':'Channel activity is not restricted to existing participants', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2073']/* 'Channel Unlocked' */, 'details':this.props.app_state.loc['2075']/* 'Channel activity is not restricted to existing participants' */, 'size':'l'})}
                 </div>
             )
         }
@@ -326,10 +332,10 @@ class ChannelDetailsSection extends Component {
         return(
             <div>
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':'Pin the channel to your feed', 'title':'Pin Channel'})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2076']/* 'Pin the channel to your feed' */, 'title':this.props.app_state.loc['2077']/* 'Pin Channel' */})}
                 <div style={{height:10}}/>
                 <div onClick={()=> this.when_pin_channel_clicked(object)}>
-                    {this.render_detail_item('5', {'text':'Pin/Unpin Channel', 'action':''},)}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['2078']/* 'Pin/Unpin Channel' */, 'action':''},)}
                 </div>
             </div>
         )
@@ -397,10 +403,10 @@ class ChannelDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Perform Moderator Actions', 'details':'Set an accounts access rights, moderator privelages or block an account', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2079']/* 'Perform Moderator Actions' */, 'details':this.props.app_state.loc['2080']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_moderator_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Perform Action', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2081']/* 'Perform Action' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -417,10 +423,10 @@ class ChannelDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':'Edit Channel Post', 'details':'Change the basic details for your Channel', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2082']/* 'Edit Channel Post' */, 'details':this.props.app_state.loc['2083']/* 'Change the basic details for your Channel' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_edit_channel_ui(object)}>
-                        {this.render_detail_item('5', {'text':'Edit', 'action':''})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2084']/* 'Edit' */, 'action':''})}
                     </div>
                 </div>
             )
@@ -450,7 +456,7 @@ class ChannelDetailsSection extends Component {
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':'Block Number', 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, }
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
     }
 
@@ -462,13 +468,13 @@ class ChannelDetailsSection extends Component {
         if(events.length != 0){
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Disabled', 'details':'Author of Object is not a Moderator by default', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2085']/* 'Author Moderator Privelages Disabled' */, 'details':this.props.app_state.loc['2086']/* 'Author of Object is not a Moderator by default' */, 'size':'l'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3', {'title':'Author Moderator Privelages Enabled', 'details':'Author of Object is a Moderator by default', 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2087']/* 'Author Moderator Privelages Enabled' */, 'details':this.props.app_state.loc['2088']/* 'Author of Object is a Moderator by default' */, 'size':'l'})}
                 </div>
             )
         }
@@ -487,14 +493,14 @@ class ChannelDetailsSection extends Component {
                 return(
                     <div>
                         <div style={{height: 10}}/>
-                        {this.render_detail_item('3', {'title':'Channel Traffic', 'details':`Chart containing the total number of messages made over time.`, 'size':'l'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2089']/* 'Channel Traffic' */, 'details':this.props.app_state.loc['2090']/* `Chart containing the total number of messages made over time.` */, 'size':'l'})}
                         
                         {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
                         <div style={{height: 10}}/>
-                        {this.render_detail_item('3', {'title':'Y-Axis: Total Messages Made', 'details':'X-Axis: Time', 'size':'s'})}
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['2091']/* 'Y-Axis: Total Messages Made' */, 'details':this.props.app_state.loc['2092']/* 'X-Axis: Time' */, 'size':'s'})}
                         <div style={{height: 10}}/>
                         <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                            {this.render_detail_item('2', { 'style': 'l', 'title': 'Total Channel Messages', 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': 'messages', })}
+                            {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2093']/* 'Total Channel Messages' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2094']/* 'messages' */, })}
                         </div>
                         {this.render_detail_item('0')}
                     </div>
@@ -580,6 +586,7 @@ class ChannelDetailsSection extends Component {
     
     render_channel_activity(object){
         var he = this.props.height-100
+        if(this.get_focused_message(object) != null) he = this.props.height-160
         var size = this.props.screensize
         return(
             <div>
@@ -588,12 +595,12 @@ class ChannelDetailsSection extends Component {
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
 
                         {this.render_top_title(object)}
-                        {this.render_focus_list(object)}
+                        {/* {this.render_focus_list(object)} */}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                         {this.render_sent_received_messages(object)}
                     </div>
                 </div>
-
+                {this.render_focused_message(object)}
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px', width: '99%'}}>
                     <div style={{'margin':'0px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
@@ -613,6 +620,26 @@ class ChannelDetailsSection extends Component {
                 </div>
             </div> 
         )
+    }
+
+
+    render_focused_message(object){
+        var item = this.get_focused_message(object);
+        if(item != null){
+            return(
+                <div style={{'padding': '7px 15px 10px 15px','margin':'0px 70px 5px 50px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message(object)}> 
+                    <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
+                        <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} >{this.get_sender_title_text2(item, object)}</p>
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
+                            <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
+                        </div>
+                    </div>
+                    <p style={{'font-size': '11px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line'}}>{this.truncate(item['message'], 45)}</p>
+                </div>
+            )
+        }
     }
 
     when_comment_structure_tags_updated(tag_obj){
@@ -643,6 +670,7 @@ class ChannelDetailsSection extends Component {
 
     render_sent_received_messages(object){
         var middle = this.props.height-250;
+        if(this.get_focused_message(object) != null) middle = this.props.height-300
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object))
 
@@ -666,32 +694,31 @@ class ChannelDetailsSection extends Component {
                 </div>
             )
         }
-        else if(this.get_focused_message(object) != null){
-            var focused_message_replies = this.get_focused_message_replies(object)
-            return(
-                <div>
-                    <div style={{'padding': '2px 5px 2px 5px'}}>
-                        {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
-                    </div>
-                    <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
-                        <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
-                            <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
-                                {this.render_messages(focused_message_replies, object)}
-                                <div ref={this.messagesEnd}/>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            )
-        }
+        // else if(this.get_focused_message(object) != null){
+        //     var focused_message_replies = this.get_focused_message_replies(object)
+        //     return(
+        //         <div>
+        //             <div style={{'padding': '2px 5px 2px 5px'}}>
+        //                 {this.render_message_as_focused_if_so(this.get_focused_message(object), object)}
+        //             </div>
+        //             <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 5px 5px'}}>
+        //                 <div style={{overflow: 'auto', 'width':'100%', maxHeight: middle}}>
+        //                     <ul style={{ 'padding': '0px 0px 0px 20px', 'listStyle':'none'}}>
+        //                         {this.render_messages(focused_message_replies, object)}
+        //                         <div ref={this.messagesEnd}/>
+        //                     </ul>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     )
+        // }
         else{
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-            if(selected_view_option == 'channel-structure'){
+            if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
                 <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items, object)}
-                        {this.render_messages(stacked_items, object)}
+                        {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
                     </ul>
                 </div>
@@ -712,7 +739,7 @@ class ChannelDetailsSection extends Component {
 
     render_messages(items, object){
         var middle = this.props.height-200;        
-        if(items.length == 0 && this.get_focused_message(object) != null){
+        if(items.length == 0){
             var items = [0,1]
             return(
                 <div>
@@ -804,6 +831,19 @@ class ChannelDetailsSection extends Component {
 
 
     render_message_as_focused_if_so(item, object){
+        return(
+            <div>
+                <SwipeableList>
+                        <SwipeableListItem
+                            swipeLeft={{
+                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            action: () => this.focus_message(item, object)
+                            }}>
+                            <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>
+                        </SwipeableListItem>
+                    </SwipeableList>
+            </div>
+        )
         var focused_message = this.get_focused_message(object)
 
         if(item == focused_message){
@@ -919,17 +959,17 @@ class ChannelDetailsSection extends Component {
 
     render_response_if_any(_item, object){
         if(_item['focused_message_id'] == 0) return;
-        if(this.get_focused_message(object) != null) return;
+        // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
         if(item == null) return;
         var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
-        if(selected_view_option == 'comment-structure') return
+        if(selected_view_option == this.props.app_state.loc['1672']/* 'comment-structure' */) return;
         return(
-            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 0px 0px'}}> 
-                <div className="row" style={{'padding':'0px 0px 10px 10px'}}>
-                    <div className="col-9" style={{'padding': '0px 0px 0px 14px', 'height':'20px' }}> 
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text(item, object)}</p>
+            <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
+                <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
+                    <div className="col-9" style={{'padding': '0px 0px 0px 0px', 'height':'20px' }}> 
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '14px', 'margin':'0px'}} onClick={()=>this.props.add_id_to_contacts(item['sender'], item, object)} >{this.get_sender_title_text2(item, object)}</p>
                     </div>
                     <div className="col-3" style={{'padding': '0px 15px 0px 0px','height':'20px'}}>
                         <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', 'margin': '3px 0px 0px 0px'}} className="text-end">{this.get_time_difference(item['time'], object)}</p>
@@ -1138,10 +1178,10 @@ class ChannelDetailsSection extends Component {
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         if(message == ''){
-            this.props.notify('type something first', 600)
+            this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 1600)
         }
         else if(this.props.app_state.user_account_id[object['e5']] == 1){
-            this.props.notify('you need to make at least 1 transaction to participate', 1200)
+            this.props.notify(this.props.app_state.loc['1696']/* 'You need to make at least 1 transaction to participate.' */, 1200)
         }
         else if(!this.is_object_interactable(object)){
             return
@@ -1152,7 +1192,7 @@ class ChannelDetailsSection extends Component {
             this.props.add_channel_message_to_stack_object(tx)
 
             this.setState({entered_text:''})
-            this.props.notify('message added to stack', 600)
+            this.props.notify(this.props.app_state.loc['1697']/* 'message added to stack' */, 1600)
             
             if (this.messagesEnd.current){
                 this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -1191,11 +1231,11 @@ class ChannelDetailsSection extends Component {
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
         if(access_rights_setting == true && (object['my_interactible_time_value'] < Date.now()/1000 && !object['moderators'].includes(my_account)) ){
-            this.props.notify('You cant do that. The channel is access restricted', 3600)
+            this.props.notify(this.props.app_state.loc['2100']/* 'You cant do that. The channel is access restricted.' */, 6600)
             return false
         }
         else if(object['my_blocked_time_value'] > Date.now()/1000){
-            this.props.notify('You cant do that. Youve been blocked from the channel for '+(this.get_time_diff(object['my_blocked_time_value'] - Date.now()/1000)), 3600)
+            this.props.notify(this.props.app_state.loc['2101']/* 'You cant do that. Youve been blocked from the channel for ' */+(this.get_time_diff(object['my_blocked_time_value'] - Date.now()/1000)), 3600)
             return false
         }
         
@@ -1206,7 +1246,7 @@ class ChannelDetailsSection extends Component {
             var me = this.props.app_state.user_account_id[object['e5']]
             if(me == null) me = 1
             if(!participants.includes(me)){
-                this.props.notify('The channel has been locked by its moderators', 3500)
+                this.props.notify(this.props.app_state.loc['2101']/* 'The channel has been locked by its moderators' */, 6500)
                 return false
             }
         }
@@ -1379,7 +1419,7 @@ class ChannelDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel Modify Moderator Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2102']/* 'In Channel ' */ + object['id'], 'details': this.props.app_state.loc['2103']/* 'Channel Modify Moderator Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_modify_moderator_item_logs(object)}
@@ -1443,29 +1483,29 @@ class ChannelDetailsSection extends Component {
     }
 
     render_modify_moderator_event_item(item, object, index){
-        var authority_val_obj = {'0':'Not Moderator', '1':'Moderator'}
+        var authority_val_obj = {'0':this.props.app_state.loc['2104']/* 'Not Moderator' */, '1':this.props.app_state.loc['2105']/* 'Moderator' */}
         var authority_val = authority_val_obj[item.returnValues.p6]
         if (this.state.selected_modify_moderator_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2107']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': authority_val, 'details': this.props.app_state.loc['2108']/* 'Authority value' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', {'title': authority_val, 'details': 'Authority value', 'size': 's' })}
+                    {this.render_detail_item('3', {'title': authority_val, 'details': this.props.app_state.loc['2108']/* 'Authority value' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1500,7 +1540,7 @@ class ChannelDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel Access Rights Settings Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2102']/* 'In Channel ' */ + object['id'], 'details': this.props.app_state.loc['2109']/* 'Channel Access Rights Settings Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_checker_item_logs(object)}
@@ -1557,25 +1597,25 @@ class ChannelDetailsSection extends Component {
     }
 
     render_interactable_checker_event_item(item, object, index){
-        var interactable_checker_obj = {'0':'Access Rights Disabled(Public)','1':'Access Rights Enabled(Private)'}
+        var interactable_checker_obj = {'0':this.props.app_state.loc['2110']/* 'Access Rights Disabled(Public)' */,'1':this.props.app_state.loc['2111']/* 'Access Rights Enabled(Private)' */}
         var interactable_checker = interactable_checker_obj[item.returnValues.p6]
         if (this.state.selected_interactable_checker_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Access Rights Status', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2112']/* 'Access Rights Status' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2113']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': 'Acces Rights Status', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': interactable_checker, 'details': this.props.app_state.loc['2112']/* 'Acces Rights Status' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                 </div>
             )
@@ -1599,7 +1639,7 @@ class ChannelDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel  Account Access Settings Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': this.props.app_state.loc['2114']/* 'Channel Account Access Settings Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_interactable_accounts_item_logs(object)}
@@ -1659,23 +1699,23 @@ class ChannelDetailsSection extends Component {
         if (this.state.selected_interactable_account_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2115']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2116']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
@@ -1701,7 +1741,7 @@ class ChannelDetailsSection extends Component {
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
-                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': 'Channel  Blocked Account Events', 'size': 'l' })}
+                        {this.render_detail_item('3', { 'title': 'In Channel ' + object['id'], 'details': this.props.app_state.loc['2124']/* 'Channel Blocked Account Events' */, 'size': 'l' })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_blocked_accounts_item_logs(object)}
@@ -1761,26 +1801,26 @@ class ChannelDetailsSection extends Component {
         if (this.state.selected_blocked_account_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': 'Moderator Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p4, object), 'details': this.props.app_state.loc['2116']/* 'Moderator Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     
-                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': 'Block Number', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': item.returnValues.p8, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': 'Targeted Account', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p3, object), 'details': this.props.app_state.loc['2106']/* 'Targeted Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': 'Until: '+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_future_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2117']/* 'Until: ' */+(new Date(item.returnValues.p6*1000)), 'size': 's' })}
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
             )
@@ -1863,32 +1903,32 @@ class ChannelDetailsSection extends Component {
         if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
-            return num+ ' sec'
+            return num+ this.props.app_state.loc['29']
         }
         else if(diff < 60*60){//less than 1 hour
             var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
-            return num + ' min' 
+            return num + this.props.app_state.loc['30'] 
         }
         else if(diff < 60*60*24){//less than 24 hours
             var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
-            return num + ' hr' + s;
+            return num + this.props.app_state.loc['31'] + s;
         }
         else if(diff < 60*60*24*7){//less than 7 days
             var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
-            return num + ' dy' + s;
+            return num + this.props.app_state.loc['32'] + s;
         }
         else if(diff < 60*60*24*7*53){//less than 1 year
             var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
-            return num + ' wk' + s;
+            return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
             var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
-            return number_with_commas(num) + ' yr' + s;
+            return num + this.props.app_state.loc['34'] + s;
         }
     }
 

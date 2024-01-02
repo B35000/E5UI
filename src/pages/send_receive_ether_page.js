@@ -61,7 +61,7 @@ class SendReceiveEtherPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['xor','',0], ['e','send', 'receive'], [1]
+                    ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */], [1]
                 ],
             };
         }else{
@@ -70,7 +70,7 @@ class SendReceiveEtherPage extends Component {
                     active:'e', 
                 },
                 'e':[
-                    ['xor','',0], ['e','send', 'receive'], [1]
+                    ['xor','',0], ['e',this.props.app_state.loc['1369']/* 'send' */, this.props.app_state.loc['1370']/* 'receive' */], [1]
                 ],
             };
         }
@@ -80,7 +80,7 @@ class SendReceiveEtherPage extends Component {
     render(){
         var selected_item = this.get_selected_item(this.state.send_receive_ether_page_tags_object, this.state.send_receive_ether_page_tags_object['i'].active)
 
-        if(selected_item == 'send' || selected_item == 'e'){
+        if(selected_item == this.props.app_state.loc['1369']/* 'send' */ || selected_item == 'e'){
             return(
                 <div>
                     <div style={{'margin':'10px 0px 0px 10px', 'overflow-x':'hidden'}}>
@@ -90,16 +90,16 @@ class SendReceiveEtherPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == 'logs'){
-            return(
-                <div>
-                    <div style={{'margin':'10px 0px 0px 20px', 'overflow-x':'hidden'}}>
-                        {this.render_top_tag_bar_group()}
-                        {this.render_transaction_history()}
-                    </div>
-                </div>
-            )
-        }
+        // else if(selected_item == this.props.app_state.loc['']/* 'logs' */){
+        //     return(
+        //         <div>
+        //             <div style={{'margin':'10px 0px 0px 20px', 'overflow-x':'hidden'}}>
+        //                 {this.render_top_tag_bar_group()}
+        //                 {this.render_transaction_history()}
+        //             </div>
+        //         </div>
+        //     )
+        // }
         else{
             return(
                 <div>
@@ -139,7 +139,7 @@ class SendReceiveEtherPage extends Component {
     render_send_ether_ui(){
         return(
             <div style={{'padding':'10px 10px 0px 0px', width:'100%', overflow: 'auto', maxHeight: this.props.height-120}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Send Ether using the address shown below', 'color':'dark-grey'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['1371']/* 'Send Ether using the address shown below.' */, 'color':'dark-grey'})}
                 {this.render_medium_screen_ui()}
                 {this.render_dialog_ui()}
             </div>
@@ -184,13 +184,13 @@ class SendReceiveEtherPage extends Component {
         return(
             <div>
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':'Sender Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':this.get_account_address(), 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':'Receiver Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':this.state.recipient_address, 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                <TextInput height={30} placeholder={'Set Receiver Address Here'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
                 <div style={{height: 10}} theme={this.props.theme}/>
 
                 
@@ -205,46 +205,46 @@ class SendReceiveEtherPage extends Component {
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(e5)}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Wei', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1375']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Balance in Ether', 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1376']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(balance_gas_transactions), 'barwidth':this.calculate_bar_width(balance_gas_transactions), 'number':this.format_account_balance_figure(balance_gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(balance_gas_transactions), 'barwidth':this.calculate_bar_width(balance_gas_transactions), 'number':this.format_account_balance_figure(balance_gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
 
                 <div style={{height: 30}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price', 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1379']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
 
-                    {this.render_detail_item('2', { 'style':'l', 'title':'Gas Price in Gwei', 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1380']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
 
                 <div style={{height: 30}}/>
-                {this.render_detail_item('3', {'title':'Amount to Send', 'details':'Set the amount to send in the number picker below.', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1381']/* 'Amount to Send' */, 'details':this.props.app_state.loc['1382']/* 'Set the amount to send in the number picker below.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1383']/* Picked Amount In Ether and Wei */}</p>
 
                     {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                     {this.render_detail_item('2', this.get_picked_amount_in_ether())}
 
-                    {this.render_detail_item('2', { 'style':'s', 'title':'Transactions (2.3M Gas average)', 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':'transactions', })}
+                    {this.render_detail_item('2', { 'style':'s', 'title':this.props.app_state.loc['1377']/* 'Transactions (2.3M Gas average)' */, 'subtitle':this.format_power_figure(gas_transactions), 'barwidth':this.calculate_bar_width(gas_transactions), 'number':this.format_account_balance_figure(gas_transactions), 'barcolor':'#606060', 'relativepower':this.props.app_state.loc['1378']/* 'transactions' */, })}
                 </div>
                 
                 {this.render_amount_number_picker()}
 
                 <div style={{'padding': '5px'}} onClick={()=>this.set_maximum(gas_price, e5)}>
-                    {this.render_detail_item('5', {'text':'Set Maximum', 'action':''})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1384']/* 'Set Maximum' */, 'action':''})}
                 </div>
 
                 {this.render_detail_item('0')}
                 
                 {/* <div style={{height: 10}}/> */}
-                {this.render_detail_item('3', {'title':'Transaction Gas Price', 'details':'Set the gas price for your transaction below', 'size':'l'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1385']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['1386']/* 'Set the gas price for your transaction below.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Gas Price in Ether and Gwei.</p>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1387']/* Picked Gas Price in Ether and Gwei. */}</p>
                     {this.render_detail_item('2', this.get_picked_gas_price_in_wei())}
                     {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**9), 'number':(this.state.picked_wei_gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                     {/* {this.render_detail_item('2', this.get_picked_gas_price_in_ether())} */}
@@ -254,7 +254,7 @@ class SendReceiveEtherPage extends Component {
 
                 {this.render_detail_item('0')}
                 
-                {this.render_detail_item('5', {'text':'Send Ether to Address', 'action':'send_ether'})}
+                {this.render_detail_item('5', {'text':this.props.app_state.loc['1388']/* 'Send Ether to Address' */, 'action':'send_ether'})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
@@ -273,7 +273,7 @@ class SendReceiveEtherPage extends Component {
         if(maximum < 0) maximum = 0
 
         this.setState({picked_wei_amount: maximum})
-        this.props.notify('Maximum amount set.', 1000)
+        this.props.notify(this.props.app_state.loc['1389']/* 'Maximum amount set.' */, 1000)
     }
 
     get_gas_price_from_runs(){
@@ -293,10 +293,10 @@ class SendReceiveEtherPage extends Component {
     render_qr_code_scanner(){
         return(
             <div>
-                {this.render_detail_item('3', {'size':'s', 'title':'Open Scanner', 'details':'Scan for an address using a built in scanner'})}
+                {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1390']/* 'Open Scanner' */, 'details':this.props.app_state.loc['1391']/* 'Scan for an address using a built in scanner' */})}
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.start_scan()}>
-                    {this.render_detail_item('5',{'text':'Scan', 'action':''})}
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1392']/* 'Scan' */, 'action':''})}
                 </div>
             </div>
         )
@@ -315,22 +315,22 @@ class SendReceiveEtherPage extends Component {
             <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
-                    {this.render_detail_item('3', {'title':'Send Ether Confirmation', 'details':'Confirm that you want to send Ether to the targeted recipient', 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1393']/* 'Send Ether Confirmation' */, 'details':this.props.app_state.loc['1394']/* 'Confirm that you want to send Ether to the targeted recipient' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">Picked Amount In Ether and Wei</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1395']/* Picked Amount In Ether and Wei */}</p>
                         {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                         {this.render_detail_item('2', this.get_picked_amount_in_ether())}
                     </div>
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':'Sender Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1396']/* 'Sender Wallet Address' */, 'details':this.get_account_address(), 'size':'s'})}
                     <div style={{height: 10}}/>
                     
-                    {this.render_detail_item('3', {'title':'Receiver Wallet Address', 'details':this.state.recipient_address, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1397']/* 'Receiver Wallet Address' */, 'details':this.state.recipient_address, 'size':'s'})}
 
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('5', {'text':'Send Ether', 'action':'confirm_send_ether'})}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1398']/* 'Send Ether' */, 'action':'confirm_send_ether'})}
                 </div>
                 
             </Dialog>
@@ -410,7 +410,7 @@ class SendReceiveEtherPage extends Component {
                     <div style={{height: 10}}/>
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 10px 0px 10px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">Value in Ether and Wei</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 20px'}} className="fw-bold">{this.props.app_state.loc['1399']/* Value in Ether and Wei */}</p>
                         {this.render_detail_item('2', item_object['value_in_wei'])}
                         {this.render_detail_item('2', item_object['value_in_ether'])}
                     </div>
@@ -641,11 +641,11 @@ class SendReceiveEtherPage extends Component {
     render_scan_qr_code_ui(){
         return(
             <div style={{'padding':'10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Receive Ether using the address shown below', 'color':'dark-grey'})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['1400']/* 'Receive Ether using the address shown below' */, 'color':'dark-grey'})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('3', {'title':'Wallet Address', 'details':this.get_account_address(), 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1401']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'s'})}
                 <div style={{height: 10}}/>
-                {this.render_detail_item('5',{'text':'Copy to Clipboard', 'action':'copy_to_clipboard'})}
+                {this.render_detail_item('5',{'text':this.props.app_state.loc['1402']/* 'Copy to Clipboard' */, 'action':'copy_to_clipboard'})}
                 <div style={{height: 200, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'30px 0px 0px 0px'}}>
                     <QRCode
                         size={150}
@@ -677,7 +677,7 @@ class SendReceiveEtherPage extends Component {
     copy_address_to_clipboard(){
         var e5 = this.state.ether['e5']
         navigator.clipboard.writeText(this.format_address(this.props.app_state.accounts[e5].address, e5))
-        this.props.notify('copied to clipboard!', 600)
+        this.props.notify(this.props.app_state.loc['1403']/* 'copied to clipboard!' */, 600)
     }
 
 
@@ -686,10 +686,10 @@ class SendReceiveEtherPage extends Component {
         var picked_amount = this.state.picked_wei_amount
         var my_balance = this.props.app_state.account_balance[e5]
         
-        var gas_price_picked = 35_000 * this.state.picked_wei_gas_price
+        var gas_price_picked = 30_000 * this.state.picked_wei_gas_price
         
         if((picked_amount+gas_price_picked) > my_balance){
-            this.props.notify('Your ether balance is insufficient to fulfil that transaction', 4200)
+            this.props.notify(this.props.app_state.loc['1404']/* 'Your ether balance is insufficient to fulfil that transaction.' */, 7200)
             return;
         }
 
@@ -715,7 +715,7 @@ class SendReceiveEtherPage extends Component {
     when_send_ether_confirmation_received = () => {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
-        this.props.notify('running transaction...', 600)
+        this.props.notify(this.props.app_state.loc['1045']/* 'running your sendtransaction...' */, 600)
         this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5);
         
     };
@@ -776,13 +776,13 @@ class SendReceiveEtherPage extends Component {
 
     open_confirmation_dialog_box = () => {
         if(this.state.picked_wei_amount == 0){
-            this.props.notify('please set a valid amount', 500)
+            this.props.notify(this.props.app_state.loc['1406']/* 'Please set a valid amount.' */, 4500)
         }
         // else if(this.state.picked_wei_gas_price == 0){
         //     this.props.notify('please set a valid gas price', 500)
         // }
         else if(!this.isValidAddress(this.state.recipient_address)){
-            this.props.notify('please set a valid recipient', 500)
+            this.props.notify(this.props.app_state.loc['1407']/* 'Please set a valid recipient.' */, 4500)
         }
         else{
             this.setState({confirmation_dialog_box: true}) 
@@ -792,7 +792,7 @@ class SendReceiveEtherPage extends Component {
 
     copy_text_to_clipboard(text){
         navigator.clipboard.writeText(text)
-        this.props.notify('copied to clipboard!', 600)
+        this.props.notify(this.props.app_state.loc['1403']/* 'copied to clipboard!' */, 600)
     }
 
 }

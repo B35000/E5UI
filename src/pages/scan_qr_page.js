@@ -45,7 +45,7 @@ class ScanQrPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.finish_scan()}>
-                    {this.render_detail_item('5',{'text':'Finish Scan', 'action':''})}
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1343']/* 'Finish Scan' */, 'action':''})}
                 </div>
             </div>
         )
@@ -59,7 +59,7 @@ class ScanQrPage extends Component {
 
     finish_scan(){
         if(this.state.received_data == ''){
-            this.props.notify('scan something first', 500)
+            this.props.notify(this.props.app_state.loc['1344']/* 'Scan something first.' */, 3500)
             return;
         }
         this.props.finish_scan(this.state.received_data, this.state.page)
