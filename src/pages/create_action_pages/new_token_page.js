@@ -301,7 +301,7 @@ class NewTokenPage extends Component {
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(10 - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(20 - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['622']/* 'Set a symbol for your new Token. No spaces should be used.' */})}
@@ -2068,7 +2068,7 @@ class NewTokenPage extends Component {
         else if(symbol == ''){
             this.props.notify(this.props.app_state.loc['747']/* 'add a symbol first!' */, 3700)
         }
-        else if(title.length > 10){
+        else if(title.length > 20){
             this.props.notify(this.props.app_state.loc['748']/* 'that name is too long' */, 3700)
         }
         else if(title.includes(' ') || title == 'END' || title == 'SPEND'){
@@ -2093,9 +2093,9 @@ class NewTokenPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
 
-                me.setState({ id: makeid(32), type:this.props.app_state.loc['601']/* 'token' */, entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_token_page_tags_object: me.get_new_token_page_tags_object(), new_token_type_tags_object: me.get_new_token_type_tags_object(), token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, default_exchange_amount_sell_limit:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, trust_fee_proportion:bigInt('1e16'), block_limit:0, new_token_unlocked_liquidity_tags_object:me.get_new_token_unlocked_liquidity_tags_object(), new_token_unlocked_supply_tags_object:me.get_new_token_unlocked_supply_tags_object(), new_token_fully_custom_tags_object:me.get_new_token_fully_custom_tags_object(), internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: me.get_new_token_block_limit_sensitivity_tags_object(), default_authority_mint_limit:0, new_token_halving_type_tags_object: me.get_new_token_halving_type_tags_object(), maturity_limit:0, token_exchange_ratio_x:0, token_exchange_ratio_y:0, exchange_authority:'', trust_fee_target:'', exchange_id:'', price_amount:0, price_data:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[] })
+                me.setState({ id: makeid(32), type:me.props.app_state.loc['601']/* 'token' */, entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_token_page_tags_object: me.get_new_token_page_tags_object(), new_token_type_tags_object: me.get_new_token_type_tags_object(), token_exchange_liquidity_total_supply:0, default_exchange_amount_buy_limit:0, minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, default_exchange_amount_sell_limit:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, trust_fee_proportion:bigInt('1e16'), block_limit:0, new_token_unlocked_liquidity_tags_object:me.get_new_token_unlocked_liquidity_tags_object(), new_token_unlocked_supply_tags_object:me.get_new_token_unlocked_supply_tags_object(), new_token_fully_custom_tags_object:me.get_new_token_fully_custom_tags_object(), internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: me.get_new_token_block_limit_sensitivity_tags_object(), default_authority_mint_limit:0, new_token_halving_type_tags_object: me.get_new_token_halving_type_tags_object(), maturity_limit:0, token_exchange_ratio_x:0, token_exchange_ratio_y:0, exchange_authority:'', trust_fee_target:'', exchange_id:'', price_amount:0, price_data:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[] })
 
-                me.props.notify(this.props.app_state.loc['18'], 1700);
+                me.props.notify(me.props.app_state.loc['18'], 1700);
             }, (1 * 1000));
         }
 

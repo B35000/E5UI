@@ -2865,12 +2865,16 @@ class home_page extends Component {
     }
 
 
-    open_e5_link(item){
+    open_e5_link(item, object){
         this.props.enable_tabs()
         var me = this;
         setTimeout(function() {
-            me.check_if_link_is_visible(item)
+            me.add_to_tab(object['e5_id'], object['id'])
         }, (1 * 500));
+
+        setTimeout(function() {
+            me.check_if_link_is_visible(item)
+        }, (1 * 900));
     }
 
     check_if_link_is_visible(item){
@@ -2909,6 +2913,7 @@ class home_page extends Component {
     }
 
     open_link(item){
+        console.log('opening link')
         var obj = {'contract':['?','contracts'],'channel':['e','channels'],'contractor':['?','contractors'],'job':['?','jobs'],'post':['e','posts'],'proposal':['?','proposals'],'storefront':['e','storefront'],'subscription':['?','subscriptions'],'token':['w',this.get_token_type_if_token(item)],}
 
         var selected_page = obj[item['type']][0]

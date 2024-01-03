@@ -80,7 +80,7 @@ class NewStorefrontItemPage extends Component {
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
             ];
         obj[this.props.app_state.loc['116']] = [
-                ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
+                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
             ];
         obj[this.props.app_state.loc['117']] = [
                 ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
@@ -1106,7 +1106,7 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Object ID...'} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
+                        <TextInput height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':''})}
@@ -1126,7 +1126,6 @@ class NewStorefrontItemPage extends Component {
         this.setState({typed_link_text: text})
     }
 
-
     search_object(){
         var typed_text = this.state.typed_link_text
 
@@ -1138,7 +1137,6 @@ class NewStorefrontItemPage extends Component {
             this.setState({link_search_results: return_data})
         }
     }
-
 
     search_for_object(typed_text){
         var contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
@@ -1256,7 +1254,6 @@ class NewStorefrontItemPage extends Component {
       });
     }
 
-
     render_selected_links(){
         var items = [].concat(this.state.added_links).reverse()
         var background_color = this.props.theme['card_background_color']
@@ -1302,7 +1299,6 @@ class NewStorefrontItemPage extends Component {
         return `${obj[item['type']]} ${item_id}`
     }
 
-
     when_link_item_clicked(item){
         var clone = this.state.added_links.slice()
         var pos = clone.indexOf(item)
@@ -1312,7 +1308,6 @@ class NewStorefrontItemPage extends Component {
         this.setState({added_links: clone})
         // this.props.notify('Link removed from object', 700)
     }
-
 
     render_searched_link_results(){
         var middle = this.props.height-400;
@@ -1353,7 +1348,6 @@ class NewStorefrontItemPage extends Component {
             )
         }
     }
-
 
     when_searched_link_tapped(item){
         var clone = this.state.added_links.slice()
@@ -2159,7 +2153,7 @@ class NewStorefrontItemPage extends Component {
                 me.props.when_add_new_object_to_stack(me.state)
 
                 me.setState({
-                    id: makeid(8), type:this.props.app_state.loc['439']/* 'storefront-item' */,
+                    id: makeid(8), type:me.props.app_state.loc['439']/* 'storefront-item' */,
                     get_new_job_page_tags_object: me.get_new_job_page_tags_object(),
                     get_new_job_text_tags_object: me.get_new_job_text_tags_object(),
                     entered_tag_text: '', entered_title_text:'', entered_text:'', fulfilment_location:'',
@@ -2167,7 +2161,7 @@ class NewStorefrontItemPage extends Component {
                     entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
                     purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:'', typed_link_text:'', link_search_results:[], added_links:[],
                 })
-                me.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1600)
+                me.props.notify(me.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1600)
             }, (1 * 1000));
         }
     }

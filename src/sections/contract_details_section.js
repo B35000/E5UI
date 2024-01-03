@@ -217,13 +217,12 @@ class ContractDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         return(
-            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                <div style={{'margin':'10px 20px 0px 0px'}}>
+            <div>
+                <div style={{height:this.props.height-70, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'10px 10px 10px 10px'}}>
                     <img src={Letter} style={{height:70 ,width:'auto'}} />
-                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
-        );
+        )
     }
 
     render_contracts_main_details_section(object) {

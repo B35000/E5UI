@@ -1686,7 +1686,7 @@ class PostListSection extends Component {
                     <TextInput height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
                 </div>
 
-                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-50}}>
+                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-45}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '1px 5px 1px 5px'}}>

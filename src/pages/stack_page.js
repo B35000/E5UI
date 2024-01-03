@@ -1404,6 +1404,7 @@ class StackPage extends Component {
         var wei = 0;
         var delete_pos_array = []
         var pushed_txs = []
+        var should_optimize_run = true;
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 if(txs[i].type == this.props.app_state.loc['1311']/* 'contract' */){
@@ -1423,6 +1424,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
+                        should_optimize_run = false
                     }
 
                     if(txs[i].interactibles.length != 0){
@@ -1444,6 +1446,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_interactibles_accounts)
+                        should_optimize_run = false
         
                     }
                     if(txs[i].moderators.length != 0){
@@ -1463,6 +1466,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
+                        should_optimize_run = false
                     }
 
                     var include_enter_value = this.get_selected_item(txs[i].include_enter_contract_action_tags_object, txs[i].include_enter_contract_action_tags_object['i'].active)
@@ -1487,6 +1491,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(obj)
+                        should_optimize_run = false
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['601']/* 'token' */){
@@ -1507,6 +1512,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
+                        should_optimize_run = false
                     }
                     
                     if(txs[i].interactibles.length != 0){
@@ -1528,6 +1534,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_interactibles_accounts)
+                        should_optimize_run = false
         
                     }
                     if(txs[i].moderators.length != 0){
@@ -1547,6 +1554,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
+                        should_optimize_run = false
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['823']/* 'subscription' */){
@@ -1567,6 +1575,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
+                        should_optimize_run = false
                     }
                     
                     if(txs[i].interactibles.length != 0){
@@ -1590,6 +1599,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_interactibles_accounts)
+                        should_optimize_run = false
         
                     }
                     if(txs[i].moderators.length != 0){
@@ -1609,6 +1619,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
+                        should_optimize_run = false
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['297']/* 'post' */){
@@ -1641,6 +1652,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(enable_interactibles_checker)
+                        should_optimize_run = false
                     }
 
                     if(txs[i].interactibles.length != 0){
@@ -1662,6 +1674,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_interactibles_accounts)
+                        should_optimize_run = false
         
                     }
                     if(txs[i].moderators.length != 0){
@@ -1681,6 +1694,7 @@ class StackPage extends Component {
                         strs.push([])
                         adds.push([])
                         ints.push(add_moderator_accounts)
+                        should_optimize_run = false
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1046']/* 'storefront-item' */){
@@ -1997,7 +2011,7 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(alias_obj.int)
                 }
-                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */){
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */){
                     var format_edit_object = await this.format_edit_object(txs[i], calculate_gas)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
@@ -2165,7 +2179,7 @@ class StackPage extends Component {
         }
 
 
-        var optimized_run = this.optimize_run_if_enabled(ints, strs, adds)
+        var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
         console.log(optimized_run)
         ints = optimized_run['ints']
         strs = optimized_run['strs']
@@ -3822,11 +3836,15 @@ class StackPage extends Component {
         return obj
     }
 
-    optimize_run_if_enabled(ints, strs, adds){
+    optimize_run_if_enabled(ints, strs, adds, should_optimize_run){
         var selected_item = this.get_selected_item(this.state.get_stack_optimizer_tags_object, 'e')
         if(selected_item == 'e'){
             return {'ints':ints, 'strs':strs, 'adds':adds}
-        }else{
+        }
+        else if(!should_optimize_run){
+            return {'ints':ints, 'strs':strs, 'adds':adds}
+        }
+        else{
             var new_ints = []
             var new_adds = []
             var new_strs = []

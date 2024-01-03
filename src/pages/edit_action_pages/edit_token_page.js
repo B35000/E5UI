@@ -175,7 +175,7 @@ class NewTokenPage extends Component {
 
 
     set_edit_data(){
-        this.setState({new_token_page_tags_object: this.get_new_token_page_tags_object(), type:'edit-token'})
+        this.setState({new_token_page_tags_object: this.get_new_token_page_tags_object(), type:this.getLocale()['761']/* 'edit-token' */})
     }
 
 
@@ -275,7 +275,7 @@ class NewTokenPage extends Component {
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(10 - this.state.entered_title_text.length)})}
+                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(20 - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['622']/* 'Set a symbol for your new Token. No spaces should be used.' */})}
@@ -1832,7 +1832,7 @@ class NewTokenPage extends Component {
         else if(symbol == ''){
             this.props.notify(this.props.app_state.loc['747']/* 'add a symbol first!' */, 3700)
         }
-        else if(title.length > 10){
+        else if(title.length > 20){
             this.props.notify(this.props.app_state.loc['748']/* 'that name is too long' */, 3700)
         }
         else if(title.includes(' ') || title == 'END' || title == 'SPEND'){

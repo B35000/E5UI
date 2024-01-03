@@ -129,17 +129,29 @@ class JobDetailsSection extends Component {
         this.setState({navigate_view_jobs_list_detail_tags_object: tag_group})
     }
 
-    render_empty_detail_object(){
+    render_empty_detail_object2(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         return(
-            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
+            <div style={{height:this.props.height-445, width:'50%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'110px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'20px 0px 20px 0px'}}>
                 <div style={{'margin':'10px 20px 0px 0px'}}>
                     <img src={Letter} style={{height:70 ,width:'auto'}} />
                     <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
         );
+    }
+
+    render_empty_detail_object(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height
+        return(
+            <div>
+                <div style={{height:this.props.height-70, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'10px 10px 10px 10px'}}>
+                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                </div>
+            </div>
+        )
     }
 
     get_selected_item(object, option){
@@ -251,7 +263,7 @@ class JobDetailsSection extends Component {
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item)}>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item, object)}>
                             {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
                         </li>
                     ))}
@@ -271,8 +283,8 @@ class JobDetailsSection extends Component {
     }
 
 
-    when_link_item_clicked(item){
-        this.props.open_e5_link(item)
+    when_link_item_clicked(item, object){
+        this.props.open_e5_link(item, object)
     }
 
     get_senders_name(sender, object){
@@ -633,7 +645,7 @@ class JobDetailsSection extends Component {
         if(is_application_accepted){
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2498']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2498']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2499']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2500']/* 'Sender ID: ' */+item['applicant_id'], 'size':'s'})}
@@ -647,7 +659,7 @@ class JobDetailsSection extends Component {
         }else{
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2503']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2503']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2504']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2505']/* 'Sender ID: ' */+item['applicant_id'], 'size':'s'})}
@@ -656,6 +668,18 @@ class JobDetailsSection extends Component {
             )
         }
         
+    }
+
+    get_expiry_time(item){
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
+        var t = ''
+        if(time_diff < 0){
+            t = this.get_time_diff(time_diff*-1) +this.props.app_state.loc['1698a']/* ' ago.' */
+        }else{
+            t = this.props.app_state.loc['1698b']/* 'In ' */+this.get_time_diff(time_diff)
+        }
+
+        return t
     }
 
     view_contract(item, object){
@@ -1411,24 +1435,6 @@ class JobDetailsSection extends Component {
 
 
 
-
-    render_empty_detail_object(){
-        var background_color = this.props.theme['card_background_color']
-        var he = this.props.height
-        var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
-        return(
-            <div style={{height:he, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
-                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                    </div>
-                    
-                </div>
-        );
-    }
 
 
     /* renders the specific element in the post or detail object */

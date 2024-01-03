@@ -1336,9 +1336,9 @@ class NewSubscriptionPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
 
-                me.setState({ id: makeid(32), type:this.props.app_state.loc['536']/* 'subscription' */, entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: me.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:me.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
+                me.setState({ id: makeid(32), type:me.props.app_state.loc['536']/* 'subscription' */, entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'', new_subscription_tags_object: me.get_new_subscription_tags_object(), authority_id:'', minimum_buy_amount:0, cancellable_tags_object:me.get_cancellable_tags_object(), maximum_buy_amount:0, minimum_cancellable_balance_amount:0, time_unit:0, subscription_beneficiary:'', new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(), moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[], exchange_id:'', price_amount:0, price_data:[], })
 
-                me.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
+                me.props.notify(me.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
             }, (1 * 1000));
         }
     }

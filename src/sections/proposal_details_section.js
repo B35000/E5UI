@@ -204,13 +204,12 @@ class ProposalDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         return(
-            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                <div style={{'margin':'10px 20px 0px 0px'}}>
+            <div>
+                <div style={{height:this.props.height-70, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'10px 10px 10px 10px'}}>
                     <img src={Letter} style={{height:70 ,width:'auto'}} />
-                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
-        );
+        )
     }
 
     render_proposal_main_details_section(object){
@@ -221,7 +220,8 @@ class ProposalDetailsSection extends Component {
             he = this.props.height-190;
         }
         var item = this.get_proposal_details_data(object)
-        // var object = this.get_proposal_items()[this.props.selected_proposal_item]
+        // var object = this.get_proposal_items()[this.props.selected_proposal_item]]
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
@@ -236,6 +236,12 @@ class ProposalDetailsSection extends Component {
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
+
+                    {this.render_detail_item('0')}
+
+                    {this.render_item_data(items, object)}
+                    {this.render_item_images(object)}
+                    {this.render_selected_links(object)}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['consensus_type'])}
@@ -288,6 +294,10 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_conseusns_status(object)}
 
+                    <div style={{height:10}}/>
+                    {this.render_submitted_proposal_event(object)}
+                    <div style={{height:10}}/>
+                    {this.render_archived_proposal_event(object)}
 
                     {this.render_vote_proposal_button(object)}
 
@@ -295,10 +305,9 @@ class ProposalDetailsSection extends Component {
 
                     {this.render_archive_button_if_author(object)}
 
-                    {this.render_detail_item('0')}
-                    {this.render_submitted_proposal_event(object)}
-                    <div style={{height:10}}/>
-                    {this.render_archived_proposal_event(object)}
+                    
+
+                    {this.render_edit_object_button(object)}
 
                     {this.render_pin_proposal_button(object)}
                     {this.render_detail_item('0')}
@@ -307,6 +316,110 @@ class ProposalDetailsSection extends Component {
             </div>
         )
     }
+
+    render_edit_object_button(object){
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(object['event'].returnValues.p4 == my_account){//<--------issue! should be p3
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2258a']/* 'Edit Token Post' */, 'details':this.props.app_state.loc['2258b']/* 'Change the basic details for your Token Post' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_basic_edit_object_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2373']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    open_basic_edit_object_ui(object){
+        this.props.open_edit_object('2', object)
+    }
+
+    render_item_data(items, object){
+        if(items == null) items = []
+        var middle = this.props.height-200;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        if(items.length == 0){
+            items = [0, 1, 2]
+            return(
+                <div>
+                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            {this.render_detail_item(item['type'], item['data'])} 
+                            <div style={{height:2}}/>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+    render_item_images(object){
+        var images_to_add = object['ipfs'].entered_image_objects
+        if(images_to_add == null || images_to_add.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('9', {'images':images_to_add, 'pos':0})}
+            </div>
+        )
+    }
+
+    render_selected_links(object){
+        if(object['ipfs'].added_links == null) return;
+        var items = [].concat(object['ipfs'].added_links).reverse()
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item, object)}>
+                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_title(item){
+        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
+        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        return `${obj[item['type']]} ${item_id}`
+    }
+
+
+    when_link_item_clicked(item, object){
+        this.props.open_e5_link(item, object)
+    }
+
 
     render_conseusns_status(object){
         var target_consensus_value = object['data'][1][6/* consensus_majority_target_proportion */]

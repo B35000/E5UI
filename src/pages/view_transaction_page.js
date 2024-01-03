@@ -156,9 +156,8 @@ class ViewTransactionPage extends Component {
                 <div style={{}}>
                     {this.render_detail_item('3', {'size':'l', 'details':op, 'title':txt})}
                     <div style={{height:10}}/>
-
-                    
-                    {this.render_detail_item('3', {'size':'s', 'details':this.props.app_state.loc['1796']/* 'status' */, 'title':status})}
+ 
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1796']/* 'status' */, 'title':status})}
 
                     <div style={{height:10}}/>
                     <div onClick={()=> this.hide_transaction()}>
@@ -567,6 +566,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_edit_storefront()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['2739']/* edit-proposal */){
+                return(
+                    <div>
+                        {this.render_edit_proposal()}
                     </div>
                 )
             }
@@ -1352,6 +1358,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_data(items)}
 
                     {this.render_item_images()}
+                    {this.render_selected_links()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -1423,6 +1430,34 @@ class ViewTransactionPage extends Component {
         )
     }
 
+    render_selected_links(){
+        var object = this.props.app_state.stack_items[this.state.transaction_index]
+        if(object.added_links == null) return;
+        var items = [].concat(object.added_links).reverse()
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_title(item){
+        var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
+        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        return `${obj[item['type']]} ${item_id}`
+    }
+
 
 
 
@@ -1443,6 +1478,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_data(items)}
 
                     {this.render_item_images()}
+                    {this.render_selected_links()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1842']/* 'Price Amounts' */, 'details':this.props.app_state.loc['1843']/* 'The amounts you are offering for the job.' */, 'size':'l'})}
@@ -1539,6 +1575,7 @@ class ViewTransactionPage extends Component {
                     {this.render_item_data(items)}
 
                     {this.render_item_images()}
+                    {this.render_selected_links()}
 
                     {this.load_moderator_accounts()}
                     {this.load_interactable_accounts()}
@@ -1589,6 +1626,7 @@ class ViewTransactionPage extends Component {
                         {this.render_detail_item('0')}
                         {this.render_item_data(items)}
                         {this.render_item_images()}
+                        {this.render_selected_links()}
 
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -1916,6 +1954,9 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['target_contract_authority'])}
 
                     {this.render_modify_target_if_any(item)}
+
+                    {this.render_item_images()}
+                    {this.render_selected_links()}
 
                     <div style={{height:10}}/>
 
@@ -3348,6 +3389,8 @@ class ViewTransactionPage extends Component {
                     {this.render_item_data(items)}
                     {this.render_item_images()}
 
+                    {this.render_selected_links()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -4229,6 +4272,8 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
 
                     {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_selected_links()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4251,6 +4296,8 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_selected_links()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4273,6 +4320,8 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_selected_links()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1970']/* 'Price Amounts' */, 'details':this.props.app_state.loc['1971']/* 'The amounts you are offering for the job.' */, 'size':'l'})}
@@ -4301,6 +4350,8 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3', item['id'])}
                     {this.render_detail_item('0')}
                     {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_selected_links()}
                     
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -4325,6 +4376,8 @@ class ViewTransactionPage extends Component {
 
                         {this.render_detail_item('0')}
                         {this.render_item_data(items)}
+                        {this.render_item_images()}
+                        {this.render_selected_links()}
 
                         {this.render_detail_item('0')}
                         {this.render_detail_item('0')}
@@ -4365,6 +4418,45 @@ class ViewTransactionPage extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_edit_proposal(){
+        var background_color = this.props.theme['card_background_color']
+        var he = this.props.height-150
+        var object = this.format_post();
+        var item = this.get_post_details_data(object)
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
+
+        return(
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('1', item['tags'])}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['id'])}
+                    {this.render_detail_item('0')}
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_selected_links()}
+                    
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
+                </div>
+            </div>
+        )
+    }
+
+
+    format_proposal(){
+        return{'ipfs':this.props.app_state.stack_items[this.state.transaction_index]}
+    }
+
+    get_proposal_details_data(object){
+        var tags = object['ipfs'] == null ? ['Proposal'] : object['ipfs'].entered_indexing_tags
+        var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed'},
+            'id':{'title':object['id'], 'details':title, 'size':'l'},
+        }
     }
 
 

@@ -132,13 +132,12 @@ class PostsDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         return(
-            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                <div style={{'margin':'10px 20px 0px 0px'}}>
+            <div>
+                <div style={{height:this.props.height-70, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'10px 10px 10px 10px'}}>
                     <img src={Letter} style={{height:70 ,width:'auto'}} />
-                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
-        );
+        )
     }
 
 
@@ -234,7 +233,7 @@ class PostsDetailsSection extends Component {
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item)}>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item, object)}>
                             {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
                         </li>
                     ))}
@@ -254,8 +253,8 @@ class PostsDetailsSection extends Component {
     }
 
 
-    when_link_item_clicked(item){
-        this.props.open_e5_link(item)
+    when_link_item_clicked(item, object){
+        this.props.open_e5_link(item, object)
     }
 
     get_senders_name(sender, object){

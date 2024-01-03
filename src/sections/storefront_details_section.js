@@ -88,12 +88,12 @@ class StorefrontDetailsSection extends Component {
               ['xor','',0], ['e',this.props.app_state.loc['2028']/* 'metadata' */,this.props.app_state.loc['2030']/* 'activity' */, 'e.'+this.props.app_state.loc['2603']/* 'e.direct-purchases' */],[1]
           ],
           'direct-purchases':[
-              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['1605']/* 'fulfilled' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
           ],
         }
 
         obj[this.props.app_state.loc['2603']] = [
-              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['1605']/* 'fulfilled' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['2603']/* 'direct-purchases' */,this.props.app_state.loc['1426']/* 'all' */,this.props.app_state.loc['2604']/* 'unfulfilled' */,this.props.app_state.loc['2605']/* 'fulfilled' */], [1],[1]
           ]
 
         return obj
@@ -129,13 +129,12 @@ class StorefrontDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         return(
-            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                <div style={{'margin':'10px 20px 0px 0px'}}>
+            <div>
+                <div style={{height:this.props.height-70, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'10px 10px 10px 10px'}}>
                     <img src={Letter} style={{height:70 ,width:'auto'}} />
-                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
-        );
+        )
     }
 
     when_navigate_view_storefront_list_detail_tags_object_updated(tag_obj){
@@ -172,7 +171,7 @@ class StorefrontDetailsSection extends Component {
                 </div>
             ) 
         }
-        else if(selected_item == this.props.app_state.loc['1426']/* 'all' */ || selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */ || selected_item == this.props.app_state.loc['1605']/* 'fulfilled' */){
+        else if(selected_item == this.props.app_state.loc['1426']/* 'all' */ || selected_item == this.props.app_state.loc['2604']/* 'unfulfilled' */ || selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
             return(
                 <div>
                     {this.render_direct_purchases(object)}
@@ -256,7 +255,7 @@ class StorefrontDetailsSection extends Component {
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item)}>
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_link_item_clicked(item, object)}>
                             {this.render_detail_item('3', {'title':this.get_title(item), 'details':this.truncate(item['title'], 15), 'size':'s', 'padding':'7px 12px 7px 12px'})}
                         </li>
                     ))}
@@ -276,8 +275,8 @@ class StorefrontDetailsSection extends Component {
     }
 
 
-    when_link_item_clicked(item){
-        this.props.open_e5_link(item)
+    when_link_item_clicked(item, object){
+        this.props.open_e5_link(item, object)
     }
 
     render_fulfilment_accounts(object){
@@ -672,7 +671,7 @@ class StorefrontDetailsSection extends Component {
             });
             return unfulfilled_items
         }
-        else if(selected_item == this.props.app_state.loc['1605']/* 'fulfilled' */){
+        else if(selected_item == this.props.app_state.loc['2605']/* 'fulfilled' */){
             var fulfilled_items = []
             filtered_purchases.forEach(item => {
                 var signature = this.props.app_state.direct_purchase_fulfilments[object['id']][item['signature_data']]

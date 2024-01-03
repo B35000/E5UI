@@ -43,7 +43,8 @@ function makeid(length) {
     return result;
 }
 
-class NewProposalPage extends Component {
+
+class EditProposalPage extends Component {
     
     state = {
         selected: 0, id: makeid(8), type:this.props.app_state.loc['312'], e5:this.props.app_state.selected_e5,
@@ -94,7 +95,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['313'],this.props.app_state.loc['110']/* 'e.text' */,this.props.app_state.loc['111']/* 'links' */, this.props.app_state.loc['112']/* 'images' */,this.props.app_state.loc['314'],this.props.app_state.loc['315']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* 'e.text' */,this.props.app_state.loc['111']/* 'links' */, this.props.app_state.loc['112']/* 'images' */,], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
@@ -119,6 +120,12 @@ class NewProposalPage extends Component {
 
         return obj
     }
+
+    set_edit_data(){
+        this.setState({new_proposal_title_tags_object:this.get_new_proposal_title_tags_object(), type:this.props.app_state.loc['2739']/* 'edit-proposal' */})
+    }
+
+
 
     get_new_proposal_type_tags_object(){
         return{
@@ -256,10 +263,7 @@ class NewProposalPage extends Component {
                     </div>
                 </div>
 
-                <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['344']+this.state.contract_item['id']})}
-
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -2699,60 +2703,10 @@ class NewProposalPage extends Component {
         else if(title.length > this.props.app_state.title_size){
             this.props.notify(this.props.app_state.loc['432']/* 'that title is too long' */, 1700)
         }
-        else if(!this.check_if_bounty_is_required()){
-            this.props.notify(this.props.app_state.loc['433']/* 'You need to specify bounty for your new proposal' */, 2500)
-        }
-        else if(!this.check_if_sender_has_enough_balance_for_bounties()){
-            this.props.notify(this.props.app_state.loc['434']/* 'One of your token balances is insufficient for the bounty amounts specified' */, 4900)
-        }
-        else if(!is_data_valid.is_valid){
-            this.props.notify(is_data_valid.message, 5000)
-        }
-
         else{
             var me = this
-            this.setState({content_channeling_setting: me.props.app_state.content_channeling,
-                device_language_setting :me.props.app_state.device_language,
-                device_country :me.props.app_state.device_country,
-                e5 :me.props.app_state.selected_e5,})
-            
-            setTimeout(function() {
-                me.props.when_add_new_proposal_to_stack(me.state)
-
-                me.setState({selected: 0, id: makeid(32), type:this.props.app_state.loc['312']/* 'proposal' */,
-                entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
-
-                new_proposal_title_tags_object:me.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:me.get_new_proposal_type_tags_object(),
-                reconfig_items_tags_object:me.get_reconfig_items_tags_object(),
-
-                auto_wait_tags_object:me.get_auto_wait_tags_object(),
-                can_modify_contract_as_moderator: me.get_can_modify_contract_as_moderator(),
-                can_extend_enter_contract_at_any_time: me.get_can_extend_enter_contract_at_any_time(),
-                bounty_limit_type: me.get_bounty_limit_type(),
-                contract_force_exit_enabled: me.get_contract_force_exit_enabled(),
-                new_token_halving_type_tags_object: me.get_new_token_halving_type_tags_object(),
-                new_token_block_limit_sensitivity_tags_object: me.get_new_token_block_limit_sensitivity_tags_object(),
-
-                page:0, proposal_expiry_time:Math.round(new Date().getTime()/1000), 
-                proposal_submit_expiry_time:Math.round(new Date().getTime()/1000), 
-                modify_target_id:'', modify_target_data:null, spend_target_input_text:'', spend_token_input_text:'', 
-                spend_amount:0, spend_actions:[], 
-                
-                reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
-                reconfig_values:[],
-
-                exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
-
-                entered_text_objects:[], entered_image_objects:[],
-                entered_objects:[], entered_text:'',
-
-                typed_link_text:'', link_search_results:[], added_links:[], 
-                edit_text_item_pos:-1,
-
-                bounty_exchange_target:'', bounty_amount:0, bounty_values:[]})
-
-                me.props.notify(me.props.app_state.loc['18']/* 'transaction added to stack' */, 700);
-            }, (1 * 1000));
+            this.props.when_add_edit_object_to_stack(this.state)
+            me.props.notify(me.props.app_state.loc['18']/* 'transaction added to stack' */, 700);
         }
     }
 
@@ -2923,4 +2877,4 @@ class NewProposalPage extends Component {
 
 
 
-export default NewProposalPage;
+export default EditProposalPage;

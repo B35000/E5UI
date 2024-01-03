@@ -74,7 +74,7 @@ class ViewApplicationContractPage extends Component {
                     {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':this.props.app_state.loc['1603']/* 'The contract they applied with is shown below.' */})}
                     {this.render_contracts_data()}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1604']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1604']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
                 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1605']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['1606']/* 'Sender ID: ' */+item['applicant_id'], 'size':'l'})}
@@ -91,6 +91,18 @@ class ViewApplicationContractPage extends Component {
             )
         }
         
+    }
+
+    get_expiry_time(item){
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
+        var t = ''
+        if(time_diff < 0){
+            t = this.get_time_diff(time_diff*-1) +this.props.app_state.loc['1698a']/* ' ago.' */
+        }else{
+            t = this.props.app_state.loc['1698b']/* 'In ' */+this.get_time_diff(time_diff)
+        }
+
+        return t
     }
 
     render_accept_enter_button(item){
