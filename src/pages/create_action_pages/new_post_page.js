@@ -1336,7 +1336,7 @@ class NewPostPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({ id: makeid(8), type:this.props.app_state.loc['297'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[],typed_link_text:'', link_search_results:[], added_links:[], })
+                me.setState({ id: makeid(8), type:me.props.app_state.loc['297'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[],typed_link_text:'', link_search_results:[], added_links:[], })
             }, (1 * 1000));
 
             

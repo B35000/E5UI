@@ -965,10 +965,11 @@ class StackPage extends Component {
                 </div>
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={()=> this.fetch_gas_figures()}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}  onClick={()=>this.fetch_gas_figures()}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
+
                 </div>
                 <div style={{height:10}}/>
 
@@ -2383,7 +2384,7 @@ class StackPage extends Component {
         var minimum_transactions_for_first_buy = t.minimum_transactions_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
         var trust_fee_proportion = t.trust_fee_proportion == 0 ? bgN(1,16) : t.trust_fee_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
         
-        var block_limit = t.block_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        var block_limit = t.block_limit == 0 ? default_exchange_amount_buy_limit : t.block_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
         var new_token_unlocked_liquidity_tags_object = this.get_selected_item(t.new_token_unlocked_liquidity_tags_object, t.new_token_unlocked_liquidity_tags_object['i'].active) == this.props.app_state.loc['609']/* 'unlocked' */ ? 1 : 0
         var new_token_unlocked_supply_tags_object = this.get_selected_item(t.new_token_unlocked_supply_tags_object, t.new_token_unlocked_supply_tags_object['i'].active) == this.props.app_state.loc['609']/* 'unlocked' */ ? 1 : 0
@@ -5432,8 +5433,12 @@ class StackPage extends Component {
             this.props.notify(this.props.app_state.loc['1560']/* 'Please set a salt.' */, 4200)
         }
         else{
-            this.props.when_wallet_data_updated(this.state.added_tags, this.state.set_salt, selected_item, false)
             this.props.notify(this.props.app_state.loc['1561']/* 'Setting your wallet. This might take a while...' */, 5500)
+
+            var me = this;
+            setTimeout(function() {
+                me.props.when_wallet_data_updated2(me.state.added_tags, me.state.set_salt, selected_item, false)
+            }, (1 * 900));
         }
         
     }

@@ -38,7 +38,11 @@ class synchronizing_page extends Component {
     get_sync_text(){
         if(this.props.sync_progress >= 99){
             return this.props.app_state.loc['1594']/* 'Synchronized.' */
-        }else if(this.props.sync_progress == 0){
+        }
+        else if(this.props.sync_progress == 0){
+            if(this.props.app_state.is_allowed == true){
+                return this.props.app_state.loc['1598a']/* 'Initializing...' */
+            }
             return this.props.app_state.loc['1595']/* 'Unsynchronized.' */
         }
         else{

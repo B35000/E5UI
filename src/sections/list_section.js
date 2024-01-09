@@ -311,7 +311,7 @@ class PostListSection extends Component {
     }
 
     get_job_items(){
-        return this.props.get_job_items()
+        return this.remove_duplicates(this.props.get_job_items())
     }
 
     render_job_object(object, index){
@@ -357,6 +357,18 @@ class PostListSection extends Component {
 
     when_job_item_clicked(index, object){
         this.props.when_job_post_item_clicked(index, object['id'], object['e5'])
+    }
+
+    remove_duplicates(list){
+        var filtered = []
+        var item_mapping = {}
+        list.forEach(element => {
+            if(!filtered.includes(element) && item_mapping[element['e5_id']] == null){
+                filtered.push(element)
+                item_mapping[element['e5_id']] = element['e5_id']
+            }
+        });
+        return filtered
     }
 
 
@@ -408,7 +420,7 @@ class PostListSection extends Component {
     }
 
     get_contract_items(){
-        return this.props.get_contract_items()
+        return this.remove_duplicates(this.props.get_contract_items())
     }
 
     render_contract_item(object, index){
@@ -534,7 +546,7 @@ class PostListSection extends Component {
     }
 
     get_my_proposals(){
-        return this.props.get_proposal_items()
+        return this.remove_duplicates(this.props.get_proposal_items())
     }
 
     format_proposal_item(object){
@@ -604,7 +616,7 @@ class PostListSection extends Component {
     }
 
     get_subscription_items(){
-        return this.props.get_subscription_items()
+        return this.remove_duplicates(this.props.get_subscription_items())
     }
 
 
@@ -701,7 +713,7 @@ class PostListSection extends Component {
     }
 
     get_mail_items(){
-        return this.props.get_mail_items()
+        return this.remove_duplicates(this.props.get_mail_items())
     }
 
     render_mail_object_or_null(object, index){
@@ -837,7 +849,7 @@ class PostListSection extends Component {
 
 
     get_contractor_items(){
-        return this.props.get_contractor_items()
+        return this.remove_duplicates(this.props.get_contractor_items())
     }
 
     render_contractor_object(object, index){
@@ -929,7 +941,7 @@ class PostListSection extends Component {
     }
 
     get_e5_data(){
-        return this.props.get_e5_data()
+        return this.remove_duplicates(this.props.get_e5_data())
     }
 
     render_E5s_object(item_data, index, name){
@@ -1043,7 +1055,7 @@ class PostListSection extends Component {
     get_search_results(){
         var data = this.props.app_state.searched_accounts_data[this.state.searched_account]
         if(data == null) return []
-        return data
+        return this.remove_duplicates(data)
     }
 
     render_search_results(){
@@ -1053,6 +1065,7 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_search_results()
+        console.log(items)
         if(items.length == 0){
             items = ['0','1'];
             return (
@@ -1085,7 +1098,7 @@ class PostListSection extends Component {
         var address = item['address']
         var ether_balance = item['ether_balance']
         var e5 = item['e5']
-        var e5_img = this.props.app_state.e5s[e5].end_image
+        var e5_img = this.props.app_state.e5s[e5].e5_img
         var alias = item['alias']
         
         return(
@@ -1170,7 +1183,7 @@ class PostListSection extends Component {
     }
 
     get_post_items(){
-        return this.props.get_post_items()
+        return this.remove_duplicates(this.props.get_post_items())
     }
 
 
@@ -1352,7 +1365,7 @@ class PostListSection extends Component {
     }
 
     get_channel_items(){
-        return this.props.get_channel_items()
+        return this.remove_duplicates(this.props.get_channel_items())
     }
 
     format_channel_item(object){
@@ -1421,7 +1434,7 @@ class PostListSection extends Component {
     }
 
     get_storefront_items(){
-        return this.props.get_storefront_items()
+        return this.remove_duplicates(this.props.get_storefront_items())
     }
 
     render_storefront_object(object, index){
@@ -1554,7 +1567,7 @@ class PostListSection extends Component {
     }
 
     get_bag_items(){
-        return this.props.get_bag_items()
+        return this.remove_duplicates(this.props.get_bag_items())
     }
 
     render_bag_object(object, index){
@@ -1654,7 +1667,7 @@ class PostListSection extends Component {
 
 
     render_ethers_list_group(){
-        var middle = this.props.height-123;
+        var middle = this.props.height-125;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1945,7 +1958,7 @@ class PostListSection extends Component {
     }
 
     get_exchange_tokens(exchange_type){
-        return this.props.get_exchange_tokens(exchange_type)
+        return this.remove_duplicates(this.props.get_exchange_tokens(exchange_type))
     }
 
     render_ends_object(object_array, index, token_id, img, object){
@@ -2001,7 +2014,14 @@ class PostListSection extends Component {
             name = item['e5'].replace('E','3')
         }
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
-        var image = item['ipfs'] == null ? img : item['ipfs'].token_image
+        // var image = item['ipfs'] == null ? img : item['ipfs'].token_image
+        var image = img
+        if(item['ipfs']!= null){
+            if(item['ipfs'].token_image!= null){
+                image = item['ipfs'].token_image
+            }
+        }
+
         var balance = item['balance']
         return{
             'tags':{'active_tags':[item['e5'], token_id].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},

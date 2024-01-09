@@ -141,7 +141,7 @@ class NewProposalPage extends Component {
                 ['or','',0], ['e','e.'+this.props.app_state.loc['3']/* contract */,'e.'+this.props.app_state.loc['319']/* subscription */, 'e.'+this.props.app_state.loc['320']/* exchange */], [0]
             ],
             'contract':[
-                ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */], [1]
+                ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, this.props.app_state.loc['438h']/* Transaction Gas Limit */], [1]
             ],
             'subscription':[
                 ['xor','',0], [this.props.app_state.loc['319']/* 'subscription' */,this.props.app_state.loc['321']/* 'Minimum Buy Amount' */,this.props.app_state.loc['322']/* 'Target Authority' */, this.props.app_state.loc['323']/* 'Target Beneficiary' */, this.props.app_state.loc['324']/* 'Maximum Buy Amount' */, this.props.app_state.loc['325']/* 'Minimum Cancellable Balance Amount' */], [1]
@@ -152,7 +152,7 @@ class NewProposalPage extends Component {
         };
 
         obj[this.props.app_state.loc['3']/* contract */] = [
-                ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */], [1]
+                ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, this.props.app_state.loc['438h']/* Transaction Gas Limit */], [1]
             ];
         obj[this.props.app_state.loc['319']/* 'subscription' */] = [
                 ['xor','',0], [this.props.app_state.loc['319']/* 'subscription' */,this.props.app_state.loc['321']/* 'Minimum Buy Amount' */,this.props.app_state.loc['322']/* 'Target Authority' */, this.props.app_state.loc['323']/* 'Target Beneficiary' */, this.props.app_state.loc['324']/* 'Maximum Buy Amount' */, this.props.app_state.loc['325']/* 'Minimum Cancellable Balance Amount' */], [1]
@@ -485,7 +485,7 @@ class NewProposalPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136']/* 'Add Text' */ : this.props.app_state.loc['137']/* 'Edit Text' */
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['497']/* 'Enter your preferred text then tap add to add it' */})}
+                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['438i']/* 'Enter your preferred text then tap add to add it' */})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
@@ -1296,7 +1296,7 @@ class NewProposalPage extends Component {
         if(set_submit_timestamp <= now_in_sec){
             this.props.notify(this.props.app_state.loc['358']/* 'You cant use a time before now' */, 3200)
         }
-        else if(set_submit_timestamp - set_timestamp > proposal_submit_expiry_time_difference){
+        else if(set_submit_timestamp - set_timestamp > proposal_submit_expiry_time_difference && proposal_submit_expiry_time_difference != 0){
             this.props.notify(this.props.app_state.loc['359']/* 'That submit time is invalid' */, 4200)
         }else{
             this.setState({proposal_submit_expiry_time: timeInSeconds})
@@ -1942,6 +1942,7 @@ class NewProposalPage extends Component {
             'Bounty Limit Type':{'position':[1,37], 'picker':'tag', 'powerlimit':9}, 
             'Force Exit Enabled':{'position':[1,38], 'picker':'tag', 'powerlimit':9}, 
             'Minimum Spend Bounty Amount':{'position':[1,10], 'picker':'number', 'powerlimit':63},
+            'Transaction Gas Limit':{'position':[1,11], 'picker':'number', 'powerlimit':63},
 
 
             'Target Authority':{'position':[1,0], 'picker':'id', 'powerlimit':63},
@@ -1984,6 +1985,7 @@ class NewProposalPage extends Component {
         obj[this.props.app_state.loc['78']]/* 'Bounty Limit Type' */ = {'position':[1,37], 'picker':'tag', 'powerlimit':9} 
         obj[this.props.app_state.loc['79']]/* 'Force Exit Enabled' */ = {'position':[1,38], 'picker':'tag', 'powerlimit':9} 
         obj[this.props.app_state.loc['80']]/* 'Minimum Spend Bounty Amount' */ = {'position':[1,10], 'picker':'number', 'powerlimit':63}
+        obj[this.props.app_state.loc['438h']]/* 'Transaction Gas Limit' */ = {'position':[1,11], 'picker':'number', 'powerlimit':63}
 
 
 
@@ -2719,7 +2721,7 @@ class NewProposalPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_proposal_to_stack(me.state)
 
-                me.setState({selected: 0, id: makeid(32), type:this.props.app_state.loc['312']/* 'proposal' */,
+                me.setState({selected: 0, id: makeid(32), type:me.props.app_state.loc['312']/* 'proposal' */,
                 entered_tag_text: '',entered_indexing_tags:[],entered_title_text:'',
 
                 new_proposal_title_tags_object:me.get_new_proposal_title_tags_object(), new_proposal_type_tags_object:me.get_new_proposal_type_tags_object(),
@@ -2789,7 +2791,7 @@ class NewProposalPage extends Component {
             is_valid = false
             message = this.props.app_state.loc['435']/* 'The proposal submit expiry time youve set cant be before now' */
         }
-        else if(set_submit_timestamp - set_timestamp > proposal_submit_expiry_time_difference){
+        else if(set_submit_timestamp - set_timestamp > proposal_submit_expiry_time_difference && proposal_submit_expiry_time_difference != 0){
             is_valid = false
             message = this.props.app_state.loc['436']/* 'The proposal submit expiry time youve set is less than time difference required by the contract' */
         }

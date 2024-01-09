@@ -420,7 +420,7 @@ class NewContractPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
-        var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
+        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
@@ -488,7 +488,7 @@ class NewContractPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
 
-        var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
+        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
@@ -525,7 +525,7 @@ class NewContractPage extends Component {
         var end_mint_limit = this.get_mint_limit(3)
         var spend_mint_limit = this.get_mint_limit(5)
         
-        var end_price = bigInt((Math.round(end_mint_limit * 0.1)).toString())
+        var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
         var spend_price = bigInt((Math.round(spend_mint_limit * 0.01)).toString())
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [2] ], };

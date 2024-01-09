@@ -282,7 +282,7 @@ class App extends Component {
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
-    account:null, size:'s',
+    account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'nft-storage',
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1423']/* 'average' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e',
@@ -302,7 +302,7 @@ class App extends Component {
 
     web3:'https://etc.etcdesktop.com', e5_address:'0x24d7436eC90392f20AfeD800523E0d995Ec4310d',
     
-    sync_steps:(50), qr_code_scanning_page:'clear_purchaase', tag_size:13, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
+    sync_steps:(60), qr_code_scanning_page:'clear_purchaase', tag_size:23, title_size:65, image_size_limit:500_000, ipfs_delay:90, web3_delay:400,
 
     token_directory:{}, object_messages:{}, job_responses:{}, contractor_applications:{}, my_applications:[], my_contract_applications:{}, hidden:[], direct_purchases:{}, direct_purchase_fulfilments:{}, my_contractor_applications:{}, award_data:{},
     
@@ -330,12 +330,12 @@ class App extends Component {
   get_e5s(){
     var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765']
     return{
-      'data':[/* 'E15', */ 'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
+      'data':[/* 'E15', */'E25', 'E35', 'E45', 'E55', 'E65', 'E75', 'E85', 'E95', 'E105', 'E115', 'E125', 'E135','E145', 'E155', 'E165', 'E175',].concat(others),
       'E15':{
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
         e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0', 
-        first_block:20, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:19, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img
       },
       'E25':{
         web3:['https://etc.etcdesktop.com'], 
@@ -849,7 +849,7 @@ class App extends Component {
         '297':'post','298':'subscription-lock','299':'invisible','300':'visible','301':'Set a title for your new Post.','302':'Set tags for indexing your new Post.','303':'Post Preview (For Subscription Locked Posts).','304':'If set to visible, a preview of your new post will be shown to outsiders if subscription locked.','305':'Subscription Lock (Optional).','306':'Post exclusively to accounts that have paid the subscription you choose below.','307':'Enter your preferred text then tap add to add it.','308':'Search an object by its title or ID, then tap it to add it to the new Post.','309':'The link is already in the Post.','310':'Link added to Post.','311':'Please add a title for your new Post.',
         
         /* new proposal page */
-        '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ','345':'Set tags for indexing your new Proposal.','346':'Consensus Type.','347':'Set the type of action you wish to perform with the contract through your new proposal.','348':'Proposal Expiry Time','349':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.','350':'Proposal Expiry Duration Limit.','351':'Time from now.','352':'Modify Target (For Reconfiguration Action)','353':'The target object thats being modified if the consensus type is reconfig.','354':'Object ID...','355':'Consensus Submit Expiry Time.','356':'The time after which you cannot submit your new proposal.','357':'Maximum Proposal Expiry Submit Expiry Time Difference.','358':'You cant use a time before now.','359':'That submit time is invalid','360':'That proposal expiry time is less than the minimum required by the contract.','361':'Contract','362':'This Contract','363':'Main Contract','364':'Contract ID 2','365':'End Exchange','366':'Account ID 3','367':'Spend Exchange','368':'Account ID 5','369':'My Account','370':'Account','371':'End Token','372':'Spend Token','373':'Exchange ID 3','374':'Exchange ID 5','375':'Burn Account','376':'Account ID 0','377':'End Balance.','378':'Spend Balance.','379':'Spend Target.','380':'Set a target for the spend action.','381':'Target ID...','382':'Exchange.','383':'Set the token your spending.','384':'Spend Amount.','385':'Set an amount for the spend action.','386':'Picked Amount.','387':'Please put a valid spend target.','388':'Please put a valid exchange id.','389':'Please put a valid amount.','390':'Spend action added to proposal.','391':'Units','392':'Add Change.','393':'Current ','394':'Current Value','395':'Exchange Ratio X','396':'Exchange Ratio Y','397':'Reconfiguration action added.','398':'Please put a valid account ID.','399':'Position.','400':'Proportion.','401':'Duration.','402':'Value: ','403':'Target ID.','404':'Target Exchange.','405':'Set the exchange id you wish to run the exchange transfer from.','406':'Target Receiver','407':'Target Receiver...','408':'Token Targets','409':'Set the target token ID your transferring from the exchange.','410':'Token Target ID...','411':'Target Amount','412':'Add Transfer Action.','413':'Set the account set to receive the token amounts.','414':'Please put a valid exchange ID.','415':'Please put a valid receiver ID.','416':'Please put a valid token ID.','417':'Please put a valid amount.','418':'Transfer action added.','419':'Receiver ID: ','420':'The first bounty exchange should be the End or Spend Exchange.','421':'Minimum Spend Bounty Amount.','422':'Minimum End Bounty Amount.','423':'Spend Balance.','424':'End Balance.','425':'Target Amount.','426':'Add Bounty.','427':'You cant use the same exchange twice.','428':'Bounty amount added.','429':'Token ID: ','430':'Add some tags first.','431':'Add a title first.','432':'That title is too long.','433':'You need to add bounty for your new proposal.','434':'One of your token balances is insufficient for the bounty amount specified.','435':'The proposal submit expiry time youve set cant be before now.','436':'The proposal submit expiry time youve set is less than the time difference required by the contract.','437':'That proposal expiry time youve set is less than the minimum required by the contract.','438':'The proposal expiry time youve set cant be before now', '438a':'Target Authority', '438b':'Target Beneficiary', '438c':'Minimum Buy Amount', '438d':'Maximum Buy Amount', '438e':'Minimum Cancellable Balance Amount','438f':'Search an object by its title or id, then tap it to add it to the new Proposal','438g':'Link added to new Proposal Item.',
+        '312':'proposal','313':'proposal-configuration','314':'proposal-data','315':'bounty-data','316':'spend','317':'reconfig','318':'exchange-transfer','319':'subscription','320':'exchange','321':'Minimum Buy Amount','322':'Target Authority','323':'Target Beneficiary','324':'Maximum Buy Amount','325':'Minimum Cancellable Balance Amount','326':'Buy Limit','327':'Trust Fee','328':'Sell Limit','329':'Minimum Time Between Swap','330':'Minimum Transactions Between Swap','331':'Minimum Blocks Between Swap','332':'Minimum Entered Contracts Between Swap','333':'Minimum Transactions For First Buy','334':'Minimum Entered Contracts For First Buy','335':'Block Limit','336':'Halving Type','337':'Maturity Limit','338':'Internal Block Halving Proportion','339':'Block Limit Reduction Proportion','340':'Block Reset Limit','341':'Block Limit Sensitivity','342':'fixed','343':'spread','344':'Create your new proposal for contract ID: ','345':'Set tags for indexing your new Proposal.','346':'Consensus Type.','347':'Set the type of action you wish to perform with the contract through your new proposal.','348':'Proposal Expiry Time','349':'Set the time after which youre set to submit the new proposal during which no new votes can be cast.','350':'Proposal Expiry Duration Limit.','351':'Time from now.','352':'Modify Target (For Reconfiguration Action)','353':'The target object thats being modified if the consensus type is reconfig.','354':'Object ID...','355':'Consensus Submit Expiry Time.','356':'The time after which you cannot submit your new proposal.','357':'Maximum Proposal Expiry Submit Expiry Time Difference.','358':'You cant use a time before now.','359':'That submit time is invalid','360':'That proposal expiry time is less than the minimum required by the contract.','361':'Contract','362':'This Contract','363':'Main Contract','364':'Contract ID 2','365':'End Exchange','366':'Account ID 3','367':'Spend Exchange','368':'Account ID 5','369':'My Account','370':'Account','371':'End Token','372':'Spend Token','373':'Exchange ID 3','374':'Exchange ID 5','375':'Burn Account','376':'Account ID 0','377':'End Balance.','378':'Spend Balance.','379':'Spend Target.','380':'Set a target for the spend action.','381':'Target ID...','382':'Exchange.','383':'Set the token your spending.','384':'Spend Amount.','385':'Set an amount for the spend action.','386':'Picked Amount.','387':'Please put a valid spend target.','388':'Please put a valid exchange id.','389':'Please put a valid amount.','390':'Spend action added to proposal.','391':'Units','392':'Add Change.','393':'Current ','394':'Current Value','395':'Exchange Ratio X','396':'Exchange Ratio Y','397':'Reconfiguration action added.','398':'Please put a valid account ID.','399':'Position.','400':'Proportion.','401':'Duration.','402':'Value: ','403':'Target ID.','404':'Target Exchange.','405':'Set the exchange id you wish to run the exchange transfer from.','406':'Target Receiver','407':'Target Receiver...','408':'Token Targets','409':'Set the target token ID your transferring from the exchange.','410':'Token Target ID...','411':'Target Amount','412':'Add Transfer Action.','413':'Set the account set to receive the token amounts.','414':'Please put a valid exchange ID.','415':'Please put a valid receiver ID.','416':'Please put a valid token ID.','417':'Please put a valid amount.','418':'Transfer action added.','419':'Receiver ID: ','420':'The first bounty exchange should be the End or Spend Exchange.','421':'Minimum Spend Bounty Amount.','422':'Minimum End Bounty Amount.','423':'Spend Balance.','424':'End Balance.','425':'Target Amount.','426':'Add Bounty.','427':'You cant use the same exchange twice.','428':'Bounty amount added.','429':'Token ID: ','430':'Add some tags first.','431':'Add a title first.','432':'That title is too long.','433':'You need to add bounty for your new proposal.','434':'One of your token balances is insufficient for the bounty amount specified.','435':'The proposal submit expiry time youve set cant be before now.','436':'The proposal submit expiry time youve set is less than the time difference required by the contract.','437':'That proposal expiry time youve set is less than the minimum required by the contract.','438':'The proposal expiry time youve set cant be before now', '438a':'Target Authority', '438b':'Target Beneficiary', '438c':'Minimum Buy Amount', '438d':'Maximum Buy Amount', '438e':'Minimum Cancellable Balance Amount','438f':'Search an object by its title or id, then tap it to add it to the new Proposal','438g':'Link added to new Proposal Item.','438h':'Transaction Gas Limit','438i':'Enter your preferred text then tap add to add it to the new Proposal.',
         
         /* new storefront item page */
         '439':'storefront-item','440':'configuration','441':'variants','442':'invisible','443':'masked','444':'unmasked','445':'items','446':'grams','447':'kilograms','448':'ounces','449':'pounds','450':'centimeters','451':'meters','452':'inches','453':'feet','454':'mililiters','455':'liters','456':'gallons','457':'listed','458':'delisted','459':'in-stock','460':'out-of-stock','461':'Unit Denomination.','462':'Specify the denomination of the item below.','463':'Unit Denomination.','464':'Specify the denomination of the item from the tag picker below.','465':'Set denomination: ','466':'Target Payment Recipient.','467':'Set the account ID thats set to receive the purchase payments for your new item.','468':'Fulfilment Location.','469':'Set location of the pick up station for your item when its ordered using a bag and contractors.','470':'Location Details...','471':'Direct Purchase Option.','472':'If set to enabled, youll handle the shipping for the item when purchased directly by your clients.','473':'Product Chatroom.','474':'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section.','475':'Product Listing.','476':'If set to delisted, the item will not be visible for purchasing.','477':'Product Stock.','478':'If set to out-of-stock, users will not be able to direct purchase or add to their bags.','479':'Fulfilment Accounts.','480':'Set the accounts involved with shipping and fulfilling direct purchase orders from clients.','481':'Direct Purchase Shipping Fee.','482':'The shipping fee you charge for shipping your item when directly purchased by your clients.','483':'tokens','484':'Price','485':'Add Price.','486':'Please put a valid exchange ID.','487':'Please put a valid amount.','488':'You cant use the same exchange twice.','489':'Added shipping price.','490':'Please put a valid account ID.','491':'Added the account.','492':'Account.','493':'My Account.','494':'Set a title for your new Storefront Item.','495':'Enter Title...','496':'Set tags for indexing your new Storefront Item.','497':'Enter your preferred text then tap add to add it to the new Storefront Item.','498':'Search an object by its title or ID, then tap it to add it to the new Storefront Item.','499':'Search.','500':'The link is already in the Storefront Item.','501':'Link added to new Storefront Item.','502':'Price per unit.','503':'Specify the price for one unit of your new items variant.','504':'Exchange ID','505':'Price','506':'tokens','507':'Add Price.','508':'Please put a valid exchange ID.','509':'Please put a valid amount.','510':'You cant use the same exchange twice.','511':'Added price.','512':'Variant Title.','513':'Set a basic description of the variant of the item your selling like a color or size option.','514':'Variant Images.','515':'You can set some images for your variant','516':'Number of Units in ','517':'You can specify the number of units of the variant that are available for sale','518':'Number of ','519':'Units','520':'Add Variant','521':'That variant description is not valid.','522':'Set a price for your variant first.','523':'You need to specify how many units are available first.','524':'Added the variant to the Storefront Item.','525':'Number of Units.','526':'Variant removed.','527':'Exchange 3','528':'Exchange 5','529':'Add some tags first.','530':'Add a title for your new Storefront Item.','531':'That title is too long.','532':'You should add some variants for your new item first.','533':'Set a valid receiver target for your Item first.','534':'Set a valid fulfilment location for your Storefront Item.','535':'You should set some fulfilment accounts for your Storefront Item.', '535a':'Exchange ID', '535b':'nter Account ID',
@@ -954,10 +954,10 @@ class App extends Component {
         '1369':'send','1370':'receive','1371':'Send Ether using the address shown below.','1372':'Sender Wallet Address','1373':'Receiver Wallet Address','1374':'Set Receiver Address Here','1375':'Balance in Wei','1376':'Balance in Ether','1377':'Transactions (2.3M Gas average)','1378':'transactions','1379':'Gas Price','1380':'Gas Price in Gwei.','1381':'Amount to Send.','1382':'Set the amount to send in the number picker below.','1383':'Picked Amount In Ether and Wei.','1384':'Set Maximum','1385':'Transaction Gas Price','1386':'Set the gas price for your transaction below.','1387':'Picked Gas Price in Ether and Gwei.','1388':'Send Ether to Address','1389':'Maximum amount set.','1390':'Open Scanner','1391':'Scan for an address using a built in scanner','1392':'Scan','1393':'Send Ether Confirmation','1394':'Confirm that you want to send Ether to the targeted recipient','1395':'Picked Amount In Ether and Wei','1396':'Sender Wallet Address','1397':'Receiver Wallet Address','1398':'Send Ether','1399':'Value in Ether and Wei ','1400':'Receive Ether using the address shown below','1401':'Wallet Address','1402':'Copy to Clipboard','1403':'Copied to clipboard.','1404':'Your ether balance is insufficient to fulfil that transaction.','1405':'running your send transaction...','1406':'Please set a valid amount.','1407':'Please set a valid recipient.',
         
         /* stack */
-        '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count','1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.','1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Setting your wallet. This might take a while...','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', 
+        '1408':'stack 📥','1409':'history 📜','1410':'settings ⚙️','1411':'wallet 👛','1412':'alias 🏷️','1413':'contacts 👤','1414':'blacklisted 🚫','1415':'','1416':'all-time','1417':'light','1418':'dark','1419':'right','1420':'left','1421':'sluggish','1422':'slow','1423':'average','1424':'fast','1425':'hide','1426':'all','1427':'filtered','1428':'enabled','1429':'Transaction Gas Limit','1430':'units','1431':'The gas budget for your next run with E5. The default is set to 5.3 million gas. You can auto-set the value to be the estimated gas to be comsumed.','1432':'Auto-Set Gas Limit','1433':'Transaction Gas Price','1434':'The gas price for your next run with E5. The default is set to the amount set by the network.','1435':'','1436':'','1437':'Run Expiry Duration','1438':'The duration of time after which your transaction will be reverted if it stays too long in the mempool. The default duration used is 1 hour.','1439':'Estimated Time.','1440':'Age: ','1441':'Gas Consumed.','1442':'Clear Transactions.','1443':'Confirm Action.','1444':'Confirm.','1445':'Confirm Clear Stack Action.','1446':'Stack ID ','1447':'Type','1448':'Balance in Wei','1449':'Balance in Ether','1450':'Number of Stacked Transactions','1451':'Storage Space Utilized','1452':'Estimated Gas To Be Consumed','1453':'Wallet Impact','1454':'Gas Price','1455':'Gas Price in Gwei','1456':'Run ','1457':' Transactions','1458':'Gas Prices','1459':'The gas price data recorded on your selected E5 over time.','1460':'Y-Axis: Gas Prices in Gwei','1461':'X-Axis: Time','1462':' ago','1463':'Mempool Metrics','1464':'Below is some useful information about the state of the mempool for your selected E5s ether.','1465':'Mempool size','1466':'Top 20% Average','1467':'The average gas price offered for the top 20% transactions set to be included in the next blocks.','1468':'Gas prices in wei','1469':'Gas prices in gwei','1470':'Bottom 20% Average','1471':'The average gas price offered for the bottom 20% transactions least likely to be included in the next blocks.','1472':'Gas Price Average','1473':'The average gas price offered for all transactions in the mempool.','1474':'E5 Transactions Count','1475':'The total number of E5 transactions in the mempool and in the top 20% transactions set for the next set of blocks.','1476':'Total E5 Transaction Count','1477':'Top 20% Transaction Count','1478':'E5 Mempool Dominance','1479':'Percentage of E5 transactions in the mempool, and in the top 20% transactions set for the next set of blocks.','1480':'E5 Dominance','1481':'E5 Top 20% Dominance','1482':'proportion','1483':'Value Transfer','1484':'The total amount of value transfer thats pending in the mempool.','1485':'Value in wei','1486':'Value in ether','1487':'Add some transactions first.','1488':'Value Transfer into E5','1489':'The total amount of ether going into E5 thats pending in the mempool.','1490':'That transaction gas limit is too low.','1491':'That transcaction is too large, please reduce your stack size.','1492':'Set a gas limit above ','1493':' gas','1494':'Calculating your stacks gas figure...','1495':'e is already running a transaction for you.','1496':'Running your transactions...','1497':'bag-response','1498':'accept-bag-application','1499':'direct-purchase','1500':'clear-purchase','1501':'bag-messages','1502':'storefront-messages','1503':'contractor','1504':'accept-job-request','1505':'job-request-messages','1506':'alias','1507':'unalias','1508':'re-alias','1509':'mail-messages','1510':'channel-messages','1511':'post-messages','1512':'job-response','1513':'accept-job-application','1514':'job-messages','1515':'proposal-messages','1516':'storefront-bag','1517':'That transaction gas limit is too low.','1518':'That transaction is too large, please reduce your stack size.','1519':'Set a gas limit above ','1520':' gas','1521':'Add some transactions first.','1522':'Issue With Run','1523':'Theres an issue with your Balance.','1524':'You need more ether to run your transactions.','1525':'Wallet Balance in Ether and Wei','1526':'Required Balance in Ether and Wei','1527':'','1528':'App Theme','1529':'Set the look and feel of E5.','1530':'Preferred E5','1531':'Set the E5 you prefer to use','1532':'Clear Browser Cache','1533':'Delete browser data such as your pins and viewed history.','1534':'Clear Cache','1535':'Preferred Refresh Speed','1536':'Set the background refresh speed for E5. Fast consumes more data.','1537':'Hide Masked Content','1538':'Hide masked content sent from your blocked accounts','1539':'Content Channeling','1540':'Set which channeling option your content and feed is directed to.','1541':'Content Filter','1542':'If set to filtered, the content including the tags you follow will be prioritized in your feed.','1543':'Content Tabs','1544':'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.','1545':'Preserve State (cookies)','1546':'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.','1547':'Stack Optimizer (Experimental)','1548':'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.','1549':'Cache cleared.','1550':'Wallet Address','1551':'Wallet Seed','1552':'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove','1553':'Enter word...','1554':'Wallet Salt','1555':'Set the preferred salt for your wallet','1556':'Wallet Thyme','1557':'Set the preferred thyme for your wallet','1558':'Set Wallet','1559':'Set your wallets seed.','1560':'Please set a salt.','1561':'Setting your wallet. This might take a while...','1562':'Type something.','1563':'Enter one word.','1564':'Copied address to clipboard.','1565':'Add Contact','1566':'You can add a contact manually using their Contact ID.','1567':'Enter Account ID...','1568':'Add','1569':'That ID is not valid','1570':'','1571':'Please set your wallet first.','1572':'Copied ID to clipboard.','1573':'Add Blocked Account','1574':'Block an accounts content from being visible in your feed.','1575':'Enter Account ID...','1576':'That ID is not valid.','1577':'Please set your wallet first.','1578':'Reserve Alias','1579':'Reserve an alias for your account ID','1580':'Enter New Alias Name...','1581':'Reserve','1582':'alias','1583':'Stacked Alias','1584':'Alias Unknown','1585':'Alias: ','1586':'That alias is too long.','1587':'That alias is too short.','1588':'You need to make at least 1 transaction to reserve an alias.','1589':'That alias has already been reserved.','1590':'That word is reserved, you cant use it.','1591':'Unknown','1592':'Alias Unknown','1593':'Reserved ', '1593a':'auto', '1593b':'Wallet Balance in Ether and Wei.', '1593c':'Estimate Transaction Gas.',
         
         /* synchonizing page */
-        '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust','1598':'Unanimous Consensus',
+        '1594':'Synchronized.','1595':'Unsynchronized.','1596':'Synchronizing...','1597':'Peer to Peer Trust','1598':'Unanimous Consensus', '1598a':'Initializing...',
         
         /* view application contract page */
         '1599':'accept-job-application','1600':'accept','1601':'application','1602':'applications-contract','1603':'The contract they applied with is shown below.','1604':'Expiry time from now: ','1605':'Contract ID: ','1606':'Sender ID: ','1607':'Accept application','1608':'Accept the job application and enter their contract(This action cant be undone)','1609':'Accept and Enter','1610':'Applicants Requested Pay','1611':'Below is the applicants requested pay in their respective token denominations.','1612':'Block ID','1613':'Vote Bounty Split Proportion','1614':'Minimum End Bounty Amount','1615':'Max Enter Contract Duration','1616':'Auto Wait For All Proposals For All Voters','1617':'Proposal Modify Expiry Duration Limit','1618':'Can Modify Contract As Moderator','1619':'Can Extend Enter Contract At Any Time','1620':'Maximum Proposal Expiry Submit Expiry Time Difference','1621':'Bounty Limit Type','1622':'Contract Force Exit','1623':'Entry Fees','1624':' tokens used','1625':'Consensus Majority Proportion','1626':'Voter Weight Exchange','1627':'Your Voter Weight','1628':'units','1629':'Enabled','1630':'Disabled','1631':'Token ID: ','1632':'The application has already expired.',
@@ -1115,23 +1115,30 @@ class App extends Component {
   componentDidMount() {
     console.log("mounted");
     
-    this.load_cookies();
-    this.load_e5_data();
-     
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
 
-    var obj = {'sluggish':1000_000, 'slow':500_000, 'average':100_000, 'fast':20_000}
-    obj[this.getLocale()['1421']/* sluggish */] = 1000_000
-    obj[this.getLocale()['1422']/* slow */] = 500_000
-    obj[this.getLocale()['1423']/* average */] = 100_000
-    obj[this.getLocale()['1424']/* fast */] = 20_000
+    /* var me = this;
+    setTimeout(function() {
+  
+    }, (1 * 500)); */
 
-    this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
+    var me = this;
+    setTimeout(function() {
+      me.load_cookies();
+    }, (1 * 500));
+    
 
-    this.get_key()
-    this.init_db()
+    var me = this;
+    setTimeout(function() {
+      me.load_e5_data();
+      me.reset_background_sync()
+
+      me.get_key()
+      me.init_db()
+    }, (1 * 2000));
+    
   }
 
   /* called when the component is unmounted or closed */
@@ -1145,13 +1152,18 @@ class App extends Component {
   }
 
   reset_background_sync(){
-    clearInterval(this.interval);
+    if(this.interval != null)clearInterval(this.interval);
     var obj = {'sluggish':1000_000, 'slow':500_000, 'average':100_000, 'fast':20_000}
     obj[this.getLocale()['1421']/* sluggish */] = 1000_000
     obj[this.getLocale()['1422']/* slow */] = 500_000
     obj[this.getLocale()['1423']/* average */] = 100_000
     obj[this.getLocale()['1424']/* fast */] = 20_000
-    this.interval = setInterval(() => this.background_sync(), obj[this.state.refresh_speed]);
+
+    var me = this;
+    setTimeout(function() {
+      me.interval = setInterval(() => me.background_sync(), obj[me.state.refresh_speed]);
+    }, (1 * 100));
+    
   }
 
 
@@ -1235,6 +1247,7 @@ class App extends Component {
   load_cookies = async () =>{
     // var cupcake_state = localStorage.getItem("state");
     var cupcake_state = await this.load_data_from_indexdb()
+
     if(cupcake_state != null){
       this.setState({index_db_size: this.lengthInUtf8Bytes(cupcake_state)})
       cupcake_state = this.fetch_data(cupcake_state)
@@ -1390,6 +1403,7 @@ class App extends Component {
         this.setState({stack_optimizer: cupcake_stack_optimizer})
       }
 
+
     }
 
     var me = this;
@@ -1406,6 +1420,8 @@ class App extends Component {
         me.stack_page.current?.set_storage_permissions_tag()
         me.stack_page.current?.set_stack_optimizer_tag()
     }, (1 * 1000));
+
+    
   }
 
 
@@ -1688,7 +1704,10 @@ class App extends Component {
     var post_object_w = 300;
     var detail_object_w = 400;
     
-    this.setState({height: window.screen.availHeight, width: window.screen.availWidth});
+    this.setState({height: window.innerHeight, width: window.innerWidth});
+    console.log('------------------------------resize--------------------------------')
+    console.log('width: ',window.innerWidth, ' height: ', window.innerHeight)
+
     
     var me = this;
     setTimeout(function() {
@@ -1702,9 +1721,8 @@ class App extends Component {
       var height = this.state.height;
 
       if(width<350 || height <550){
-          return 'e';
+          return 's';
       }
-
       else if(width == 1366 && height == 1024){
           return 'e';//l
       }
@@ -1712,7 +1730,6 @@ class App extends Component {
       else if(width > 1250){
           return 'e';
       }
-
       if(width > 1020){
           return 'e';//l
       }
@@ -1720,7 +1737,7 @@ class App extends Component {
           return 'e'; //m
       }else{
           if(width < 280){
-              return 'e';
+              return 's';
           }
           return 's';
           
@@ -1912,13 +1929,19 @@ class App extends Component {
     )
   }
 
-  set_cookies_after_stack_action(stack_items){
+  set_cookies_after_stack_action(stack_items, should_keep_stack_open){
     var me = this;
+    var is_stack_open = this.state.stack_bottomsheet2
+    this.setState({stack_bottomsheet2: true});
     setTimeout(function() { 
       if(me.stack_page.current!= null){
         me.stack_page.current?.run_transactions(true)
       } 
       me.set_cookies()
+
+      setTimeout(function() {
+        if(!is_stack_open) me.setState({stack_bottomsheet2: false});
+      }, (1 * 1500));
     }, (1 * 1000));
   }
 
@@ -2146,6 +2169,7 @@ class App extends Component {
 
 
   render_send_receive_ether_bottomsheet(){
+    if(this.state.send_receive_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var overlay_background = this.state.theme['send_receive_ether_overlay_background'];
     var overlay_shadow_color = this.state.theme['send_receive_ether_overlay_shadow'];
@@ -2161,16 +2185,39 @@ class App extends Component {
   }
 
   open_send_receive_ether_bottomsheet(){
-    if(this.state != null){
-        this.setState({send_receive_bottomsheet: !this.state.send_receive_bottomsheet});
-      }
+    if(this.state.send_receive_bottomsheet == true){
+      //closing
+      this.send_receive_bottomsheet = this.send_receive_ether_page.current?.state;
+     
+      this.setState({send_receive_bottomsheet: !this.state.send_receive_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({send_receive_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({send_receive_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        me.setState({send_receive_bottomsheet: !me.state.send_receive_bottomsheet});
+        
+        if(me.send_receive_bottomsheet != null){
+          me.send_receive_ether_page.current?.setState(me.send_receive_bottomsheet)
+        }
+      }, (1 * 100));
+    }
+    
   }
 
   start_send_receive_ether_bottomsheet(item){
-    if(this.send_receive_ether_page.current != null){
-      this.send_receive_ether_page.current.set_object(item)
-    }
     this.open_send_receive_ether_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.send_receive_ether_page.current != null){
+        me.send_receive_ether_page.current.set_object(item)
+      } 
+    }, (1 * 500));
+    
   }
 
 
@@ -2178,22 +2225,44 @@ class App extends Component {
 
 
   render_stack_bottomsheet(){
+    if(this.state.stack_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_stack_bottomsheet.bind(this)} open={this.state.stack_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated={this.when_wallet_data_updated.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)}/>
+              <StackPage ref={this.stack_page} app_state={this.state} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
   }
 
 
+
   open_stack_bottomsheet(){
-    if(this.state != null){
-        this.setState({stack_bottomsheet: !this.state.stack_bottomsheet});
-      }
+    if(this.state.stack_bottomsheet == true){
+      //closing
+      this.stack_bottomsheet = this.stack_page.current?.state;
+
+      this.setState({stack_bottomsheet: !this.state.stack_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({stack_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({stack_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({stack_bottomsheet: !me.state.stack_bottomsheet});
+
+          if(me.stack_bottomsheet != null){
+            me.stack_page.current?.setState(me.stack_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
 
@@ -2342,7 +2411,7 @@ class App extends Component {
         console.log('---------------------calculate_gas_with_e-------------------------')
         console.log(gasAmount)
         if(gasAmount == null){
-          me.prompt_top_notification(this.getLocale()['2699']/* 'Your next run might fail with its current stack' */, 4000)
+          me.prompt_top_notification(me.getLocale()['2699']/* 'Your next run might fail with its current stack' */, 4000)
         }
         var clone = structuredClone(me.state.calculated_gas_figures)
         clone[me.state.selected_e5] = gasAmount
@@ -2580,6 +2649,7 @@ class App extends Component {
 
 
   render_wiki_bottomsheet(){
+    if(this.state.wiki_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2593,23 +2663,48 @@ class App extends Component {
 
 
   open_wiki_bottomsheet(){
-    if(this.state != null){
-        this.setState({wiki_bottomsheet: !this.state.wiki_bottomsheet});
-      }
+    if(this.state.wiki_bottomsheet == true){
+      //closing
+      this.wiki_bottomsheet = this.wiki_page.current?.state;
+
+      this.setState({wiki_bottomsheet: !this.state.wiki_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({wiki_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({wiki_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({wiki_bottomsheet: !me.state.wiki_bottomsheet});
+
+          if(me.wiki_bottomsheet != null){
+            me.wiki_page.current?.setState(me.wiki_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
 
   open_wallet_guide_bottomsheet(option){
-    if(this.wiki_page.current != null){
-      this.wiki_page.current?.set(option)
-    }
     this.open_wiki_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.wiki_page.current != null){
+      me.wiki_page.current?.set(option)
+    }
+    }, (1 * 500));
+    
   }
 
 
 
 
   render_new_object_bottomsheet(){
+    if(this.state.new_object_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_object_bottomsheet.bind(this)} open={this.state.new_object_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
@@ -2621,14 +2716,67 @@ class App extends Component {
   }
 
   open_new_object_bottomsheet(){
-    if(this.state != null){
+    if(this.state.new_object_bottomsheet == true){
+      //closing
+      
+      this.new_object_bottomsheet_new_job_page = this.new_job_page.current?.state;
+      this.new_object_bottomsheet_new_token_page = this.new_token_page.current?.state;
+      this.new_object_bottomsheet_new_subscription_page = this.new_subscription_page.current?.state;
+      this.new_object_bottomsheet_new_contract_page = this.new_contract_page.current?.state;
+      this.new_object_bottomsheet_new_post_page = this.new_post_page.current?.state;
+      this.new_object_bottomsheet_new_channel_page = this.new_channel_page.current?.state;
+      this.new_object_bottomsheet_new_storefront_item_page = this.new_storefront_item_page.current?.state;
+      this.new_object_bottomsheet_new_mail_page = this.new_mail_page.current?.state;
+      this.new_object_bottomsheet_new_contractor_page = this.new_contractor_page.current?.state;
+
       this.setState({new_object_bottomsheet: !this.state.new_object_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({new_object_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({new_object_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({new_object_bottomsheet: !me.state.new_object_bottomsheet});
+
+          if(me.new_object_bottomsheet_new_job_page != null){
+            me.new_job_page.current?.setState(me.new_object_bottomsheet_new_job_page)
+          }
+          if(me.new_object_bottomsheet_new_token_page != null){
+            me.new_token_page.current?.setState(me.new_object_bottomsheet_new_token_page)
+          }
+          if(me.new_object_bottomsheet_new_subscription_page != null){
+            me.new_subscription_page.current?.setState(me.new_object_bottomsheet_new_subscription_page)
+          }
+          if(me.new_object_bottomsheet_new_contract_page != null){
+            me.new_contract_page.current?.setState(me.new_object_bottomsheet_new_contract_page)
+          }
+          if(me.new_object_bottomsheet_new_post_page != null){
+            me.new_post_page.current?.setState(me.new_object_bottomsheet_new_post_page)
+          }
+          if(me.new_object_bottomsheet_new_channel_page != null){
+            me.new_channel_page.current?.setState(me.new_object_bottomsheet_new_channel_page)
+          }
+          if(me.new_object_bottomsheet_new_storefront_item_page != null){
+            me.new_storefront_item_page.current?.setState(me.new_object_bottomsheet_new_storefront_item_page)
+          }
+          if(me.new_object_bottomsheet_new_mail_page != null){
+            me.new_mail_page.current?.setState(me.new_object_bottomsheet_new_mail_page)
+          }
+          if(me.new_object_bottomsheet_new_contractor_page != null){
+            me.new_contractor_page.current?.setState(me.new_object_bottomsheet_new_contractor_page)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_new_object(target){
-    this.setState({new_object_target: target});
     this.open_new_object_bottomsheet()
+    this.setState({new_object_target: target});
   }
 
   render_create_object_ui(){
@@ -2687,9 +2835,13 @@ class App extends Component {
   }
 
   when_edit_created_job_tapped(obj){
-    this.new_job_page.current.set_fileds_for_edit_action(obj)
-    this.new_job_page.current.set_action('edit')
     this.open_new_object_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      me.new_job_page.current.set_fileds_for_edit_action(obj)
+      me.new_job_page.current.set_action('edit')
+    }, (1 * 500));
+    
   }
 
 
@@ -2739,6 +2891,7 @@ class App extends Component {
 
 
   render_edit_token_object_bottomsheet(){
+    if(this.state.edit_token_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2753,18 +2906,42 @@ class App extends Component {
   }
 
   open_edit_token_bottomsheet(){
-    if(this.state != null){
+    if(this.state.edit_token_bottomsheet == true){
+      //closing
+      this.edit_token_bottomsheet = this.edit_token_page.current?.state;
+
       this.setState({edit_token_bottomsheet: !this.state.edit_token_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_token_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_token_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_token_bottomsheet: !me.state.edit_token_bottomsheet});
+
+          if(me.edit_token_bottomsheet != null){
+            me.edit_token_page.current?.setState(me.edit_token_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_edit_token_object(target, object){
     this.open_edit_token_bottomsheet()
-    if(this.edit_token_page.current){
-      this.edit_token_page.current?.setState(object['ipfs'])
-      this.edit_token_page.current?.set_edit_data()
-      this.edit_token_page.current?.setState({object_id: object['id']})
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_token_page.current){
+      me.edit_token_page.current?.setState(object['ipfs'])
+      me.edit_token_page.current?.set_edit_data()
+      me.edit_token_page.current?.setState({object_id: object['id']})
     }
+    }, (1 * 500));
+    
   }
 
 
@@ -2775,6 +2952,7 @@ class App extends Component {
 
 
   render_edit_channel_object_bottomsheet(){
+    if(this.state.edit_channel_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2789,18 +2967,42 @@ class App extends Component {
   }
 
   open_edit_channel_bottomsheet(){
-    if(this.state != null){
+    if(this.state.edit_channel_bottomsheet == true){
+      //closing
+      this.edit_channel_bottomsheet = this.edit_channel_page.current?.state;
+
       this.setState({edit_channel_bottomsheet: !this.state.edit_channel_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_channel_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_channel_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_channel_bottomsheet: !me.state.edit_channel_bottomsheet});
+          
+          if(me.edit_channel_bottomsheet != null){
+            me.edit_channel_page.current?.setState(me.edit_channel_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_edit_channel_object(target, object){
     this.open_edit_channel_bottomsheet()
-    if(this.edit_channel_page.current){
-      this.edit_channel_page.current?.setState(object['ipfs'])
-      this.edit_channel_page.current?.set_edit_data()
-      this.edit_channel_page.current?.setState({object_id: object['id']})
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_channel_page.current){
+      me.edit_channel_page.current?.setState(object['ipfs'])
+      me.edit_channel_page.current?.set_edit_data()
+      me.edit_channel_page.current?.setState({object_id: object['id']})
     }
+    }, (1 * 500));
+    
   }
 
 
@@ -2816,6 +3018,7 @@ class App extends Component {
 
 
   render_edit_contractor_object_bottomsheet(){
+    if(this.state.edit_contractor_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2830,19 +3033,43 @@ class App extends Component {
   }
 
   open_edit_contractor_bottomsheet(){
-    if(this.state != null){
+    if(this.state.edit_contractor_bottomsheet == true){
+      //closing
+      this.edit_contractor_bottomsheet = this.edit_contractor_page.current?.state;
+
       this.setState({edit_contractor_bottomsheet: !this.state.edit_contractor_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_contractor_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_contractor_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_contractor_bottomsheet: !me.state.edit_contractor_bottomsheet});
+
+          if(me.edit_contractor_bottomsheet != null){
+            me.edit_contractor_page.current?.setState(me.edit_contractor_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_edit_contractor_object(target, object){
     this.open_edit_contractor_bottomsheet()
-    if(this.edit_contractor_page.current){
-      this.edit_contractor_page.current?.setState(object['ipfs'])
-      this.edit_contractor_page.current?.setState({type:this.getLocale()['763']/* 'edit-contractor' */})
-      this.edit_contractor_page.current?.setState({object_id: object['id']})
-      this.edit_contractor_page.current?.set()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_contractor_page.current){
+      me.edit_contractor_page.current?.setState(object['ipfs'])
+      me.edit_contractor_page.current?.setState({type:me.getLocale()['763']/* 'edit-contractor' */})
+      me.edit_contractor_page.current?.setState({object_id: object['id']})
+      me.edit_contractor_page.current?.set()
     }
+    }, (1 * 500));
+    
   }
 
 
@@ -2855,6 +3082,7 @@ class App extends Component {
 
 
   render_edit_job_object_bottomsheet(){
+    if(this.state.edit_job_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2869,19 +3097,43 @@ class App extends Component {
   }
 
   open_edit_job_bottomsheet(){
-    if(this.state != null){
+    if(this.state.edit_job_bottomsheet == true){
+      //closing
+      this.edit_job_bottomsheet = this.edit_job_page.current?.state;
+
       this.setState({edit_job_bottomsheet: !this.state.edit_job_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_job_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_job_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_job_bottomsheet: !me.state.edit_job_bottomsheet});
+
+          if(me.edit_job_bottomsheet != null){
+            me.edit_job_page.current?.setState(me.edit_job_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_edit_job_object(target, object){
     this.open_edit_job_bottomsheet()
-    if(this.edit_job_page.current){
-      this.edit_job_page.current?.setState(object['ipfs'])
-      this.edit_job_page.current?.setState({type:this.getLocale()['764']/* 'edit-job' */})
-      this.edit_job_page.current?.setState({object_id: object['id']})
-      this.edit_job_page.current?.set()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_job_page.current){
+      me.edit_job_page.current?.setState(object['ipfs'])
+      me.edit_job_page.current?.setState({type:me.getLocale()['764']/* 'edit-job' */})
+      me.edit_job_page.current?.setState({object_id: object['id']})
+      me.edit_job_page.current?.set()
     }
+    }, (1 * 500));
+    
   }
 
 
@@ -2894,6 +3146,7 @@ class App extends Component {
 
 
   render_edit_post_object_bottomsheet(){
+    if(this.state.edit_post_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2908,19 +3161,42 @@ class App extends Component {
   }
 
   open_edit_post_bottomsheet(){
-    if(this.state != null){
+    if(this.state.edit_post_bottomsheet == true){
+      //closing
+      this.edit_post_bottomsheet = this.edit_post_page.current?.state;
+
       this.setState({edit_post_bottomsheet: !this.state.edit_post_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_post_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_post_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_post_bottomsheet: !me.state.edit_post_bottomsheet});
+          if(me.edit_post_bottomsheet != null){
+            me.edit_post_page.current?.setState(me.edit_post_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_edit_post_object(target, object){
     this.open_edit_post_bottomsheet()
-    if(this.edit_post_page.current){
-      this.edit_post_page.current?.setState(object['ipfs'])
-      this.edit_post_page.current?.setState({type:this.getLocale()['765']/* 'edit-post' */})
-      this.edit_post_page.current?.setState({object_id: object['id']})
-      this.edit_post_page.current?.set()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_post_page.current){
+      me.edit_post_page.current?.setState(object['ipfs'])
+      me.edit_post_page.current?.setState({type:me.getLocale()['765']/* 'edit-post' */})
+      me.edit_post_page.current?.setState({object_id: object['id']})
+      me.edit_post_page.current?.set()
     }
+    }, (1 * 500));
+    
   }
 
 
@@ -2933,6 +3209,7 @@ class App extends Component {
 
 
   render_edit_storefront_object_bottomsheet(){
+    if(this.state.edit_storefront_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2947,19 +3224,43 @@ class App extends Component {
   }
 
   open_edit_storefront_bottomsheet(){
-    if(this.state != null){
+    if(this.state.edit_storefront_bottomsheet == true){
+      //closing
+      this.edit_storefront_bottomsheet = this.edit_storefront_page.current?.state;
+
       this.setState({edit_storefront_bottomsheet: !this.state.edit_storefront_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_storefront_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_storefront_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_storefront_bottomsheet: !me.state.edit_storefront_bottomsheet});
+          
+          if(me.edit_storefront_bottomsheet != null){
+            me.edit_storefront_page.current?.setState(me.edit_storefront_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_edit_storefront_object(target, object){
     this.open_edit_storefront_bottomsheet()
-    if(this.edit_storefront_page.current){
-      this.edit_storefront_page.current?.setState(object['ipfs'])
-      this.edit_storefront_page.current?.setState({type:this.getLocale()['766']/* 'edit-storefront' */})
-      this.edit_storefront_page.current?.setState({object_id: object['id']})
-      this.edit_storefront_page.current?.set()
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_storefront_page.current){
+      me.edit_storefront_page.current?.setState(object['ipfs'])
+      me.edit_storefront_page.current?.setState({type:me.getLocale()['766']/* 'edit-storefront' */})
+      me.edit_storefront_page.current?.setState({object_id: object['id']})
+      me.edit_storefront_page.current?.set()
     }
+    }, (1 * 500));
+    
   }
 
 
@@ -2973,6 +3274,7 @@ class App extends Component {
 
 
   render_edit_proposal_object_bottomsheet(){
+    if(this.state.edit_proposal_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -2987,19 +3289,42 @@ class App extends Component {
   }
 
   open_edit_proposal_bottomsheet(){
-    if(this.state != null){
+    if(this.state.edit_proposal_bottomsheet == true){
+      //closing
+      this.edit_proposal_bottomsheet = this.edit_proposal_page.current?.state;
+
       this.setState({edit_proposal_bottomsheet: !this.state.edit_proposal_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({edit_proposal_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({edit_proposal_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({edit_proposal_bottomsheet: !me.state.edit_proposal_bottomsheet});
+          if(me.edit_proposal_bottomsheet != null){
+            me.edit_proposal_page.current?.setState(me.edit_proposal_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_edit_proposal_object(target, object){
     this.open_edit_proposal_bottomsheet()
-    if(this.edit_proposal_page.current){
-      this.edit_proposal_page.current?.setState(object['ipfs'])
-      this.edit_proposal_page.current?.setState({type:this.getLocale()['2739']/* 'edit-proposal' */})
-      this.edit_proposal_page.current?.setState({object_id: object['id']})
-      this.edit_proposal_page.current?.set_edit_data()
-    }
+    var me = this;
+    setTimeout(function() {
+      if(me.edit_proposal_page.current){
+        me.edit_proposal_page.current?.setState(object['ipfs'])
+        me.edit_proposal_page.current?.setState({type:me.getLocale()['2739']/* 'edit-proposal' */})
+        me.edit_proposal_page.current?.setState({object_id: object['id']})
+        me.edit_proposal_page.current?.set_edit_data()
+      }
+    }, (1 * 500));
+    
   }
 
 
@@ -3073,6 +3398,7 @@ class App extends Component {
 
 
   render_mint_token_bottomsheet(){
+    if(this.state.mint_token_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3086,17 +3412,41 @@ class App extends Component {
 
 
   open_mint_token_bottomsheet(){
-    if(this.state != null){
-        this.setState({mint_token_bottomsheet: !this.state.mint_token_bottomsheet});
-      }
+    if(this.state.mint_token_bottomsheet == true){
+      //closing
+      this.mint_token_bottomsheet = this.new_mint_dump_token_page.current?.state;
+
+      this.setState({mint_token_bottomsheet: !this.state.mint_token_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({mint_token_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({mint_token_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({mint_token_bottomsheet: !me.state.mint_token_bottomsheet});
+          
+          if(me.mint_token_bottomsheet != null){
+            me.new_mint_dump_token_page.current?.setState(me.mint_token_bottomsheet)
+          }
+        }
+        
+      }, (1 * 200));
+    }
   }
 
   show_mint_token_bottomsheet(mint_burn_token_item){
-    if(this.new_mint_dump_token_page.current != null){
-      this.new_mint_dump_token_page.current.set_token(mint_burn_token_item)
-    }
-
     this.open_mint_token_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.new_mint_dump_token_page.current != null){
+      me.new_mint_dump_token_page.current.set_token(mint_burn_token_item)
+    }
+    }, (1 * 500));
+      
   }
 
 
@@ -3124,6 +3474,7 @@ class App extends Component {
 
 
   render_transfer_token_bottomsheet(){
+    if(this.state.transfer_token_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3137,17 +3488,40 @@ class App extends Component {
 
 
   open_transfer_token_bottomsheet(){
-    if(this.state != null){
-        this.setState({transfer_token_bottomsheet: !this.state.transfer_token_bottomsheet});
-      }
+    if(this.state.transfer_token_bottomsheet == true){
+      //closing
+      this.transfer_token_bottomsheet = this.new_transfer_token_page.current?.state;
+
+      this.setState({transfer_token_bottomsheet: !this.state.transfer_token_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({transfer_token_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({transfer_token_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({transfer_token_bottomsheet: !me.state.transfer_token_bottomsheet});
+          if(me.transfer_token_bottomsheet != null){
+            me.new_transfer_token_page.current?.setState(me.transfer_token_bottomsheet)
+          }
+
+        }
+      }, (1 * 200));
+    }
   }
 
   show_transfer_bottomsheet(token_item){
-    if(this.new_transfer_token_page.current != null){
-      this.new_transfer_token_page.current.set_token(token_item)
-    }
-
     this.open_transfer_token_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.new_transfer_token_page.current != null){
+      me.new_transfer_token_page.current.set_token(token_item)
+    }
+    }, (1 * 500));
+    
   }
 
   add_transfer_transactions_to_stack(state_obj){
@@ -3174,6 +3548,7 @@ class App extends Component {
 
 
   render_enter_contract_bottomsheet(){
+    if(this.state.enter_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3186,17 +3561,40 @@ class App extends Component {
   }
 
   open_enter_contract_bottomsheet(){
-    if(this.state != null){
-        this.setState({enter_contract_bottomsheet: !this.state.enter_contract_bottomsheet});
-      }
+    if(this.state.enter_contract_bottomsheet == true){
+      //closing
+      this.enter_contract_bottomsheet = this.enter_contract_page.current?.state;
+
+      this.setState({enter_contract_bottomsheet: !this.state.enter_contract_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({enter_contract_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({enter_contract_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({enter_contract_bottomsheet: !me.state.enter_contract_bottomsheet});
+
+          if(me.enter_contract_bottomsheet != null){
+            me.enter_contract_page.current?.setState(me.enter_contract_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_enter_contract_bottomsheet(contract_item, job_acceptance_action_state_object){
-    if(this.enter_contract_page.current != null){
-      this.enter_contract_page.current.set_contract(contract_item, job_acceptance_action_state_object)
-    }
-
     this.open_enter_contract_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.enter_contract_page.current != null){
+      me.enter_contract_page.current.set_contract(contract_item, job_acceptance_action_state_object)
+    }
+    }, (1 * 500));
+    
   }
 
   enter_contract(state_obj, job_acceptance_action_state_object){
@@ -3228,6 +3626,7 @@ class App extends Component {
 
 
   render_extend_contract_bottomsheet(){
+    if(this.state.extend_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3240,17 +3639,40 @@ class App extends Component {
   }
 
   open_extend_contract_bottomsheet(){
-    if(this.state != null){
-        this.setState({extend_contract_bottomsheet: !this.state.extend_contract_bottomsheet});
-      }
+    if(this.state.extend_contract_bottomsheet == true){
+      //closing
+      this.extend_contract_bottomsheet = this.extend_contract_page.current?.state;
+
+      this.setState({extend_contract_bottomsheet: !this.state.extend_contract_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({extend_contract_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({extend_contract_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({extend_contract_bottomsheet: !me.state.extend_contract_bottomsheet});
+
+          if(me.extend_contract_bottomsheet != null){
+            me.extend_contract_page.current?.setState(me.extend_contract_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_extend_contract_bottomsheet(contract_item){
-    if(this.extend_contract_page.current != null){
-      this.extend_contract_page.current.set_contract(contract_item)
-    }
-
     this.open_extend_contract_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.extend_contract_page.current != null){
+      me.extend_contract_page.current.set_contract(contract_item)
+    }
+    }, (1 * 500));
+    
   }
 
   extend_contract(state_obj){
@@ -3274,6 +3696,7 @@ class App extends Component {
 
 
   render_exit_contract_bottomsheet(){
+    if(this.state.exit_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3286,17 +3709,40 @@ class App extends Component {
   }
 
   open_exit_contract_bottomsheet(){
-    if(this.state != null){
-        this.setState({exit_contract_bottomsheet: !this.state.exit_contract_bottomsheet});
-      }
+    if(this.state.exit_contract_bottomsheet == true){
+      //closing
+      this.exit_contract_bottomsheet = this.exit_contract_page.current?.state;
+
+      this.setState({exit_contract_bottomsheet: !this.state.exit_contract_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({exit_contract_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({exit_contract_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({exit_contract_bottomsheet: !me.state.exit_contract_bottomsheet});
+
+          if(me.exit_contract_bottomsheet != null){
+            me.exit_contract_page.current?.setState(me.exit_contract_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_exit_contract_bottomsheet(contract_item){
-    if(this.exit_contract_page.current != null){
-      this.exit_contract_page.current.set_contract(contract_item)
-    }
-
     this.open_exit_contract_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.exit_contract_page.current != null){
+      me.exit_contract_page.current.set_contract(contract_item)
+    }
+    }, (1 * 500));
+    
   }
 
   exit_contract(state){
@@ -3312,6 +3758,7 @@ class App extends Component {
 
   //new proposal
   render_new_proposal_bottomsheet(){
+    if(this.state.new_proposal_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3324,18 +3771,43 @@ class App extends Component {
   }
 
   open_new_proposal_bottomsheet(){
-    if(this.state != null){
-        this.setState({new_proposal_bottomsheet: !this.state.new_proposal_bottomsheet});
-      }
+    if(this.state.new_proposal_bottomsheet == true){
+      //closing
+      this.new_proposal_bottomsheet = this.new_proposal_page.current?.state;
+
+      this.setState({new_proposal_bottomsheet: !this.state.new_proposal_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({new_proposal_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({new_proposal_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({new_proposal_bottomsheet: !me.state.new_proposal_bottomsheet});
+
+          if(me.new_proposal_bottomsheet != null){
+            me.new_proposal_page.current?.setState(me.new_proposal_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_new_proposal_bottomsheet(contract_item){
-    if(this.new_proposal_page.current != null){
-      this.new_proposal_page.current.reset_state()
-      this.new_proposal_page.current.set_contract(contract_item)
-    }
-
     this.open_new_proposal_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.new_proposal_page.current != null){
+        me.new_proposal_page.current.reset_state()
+        me.new_proposal_page.current.set_contract(contract_item)
+      }
+    }, (1 * 500));
+    
+
+    
   }
 
   when_add_new_proposal_to_stack(state_obj){
@@ -3362,6 +3834,7 @@ class App extends Component {
 
 
   render_vote_proposal_bottomsheet(){
+    if(this.state.vote_proposal_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3374,18 +3847,41 @@ class App extends Component {
   }
 
   open_vote_proposal_bottomsheet(){
-    if(this.state != null){
-        this.setState({vote_proposal_bottomsheet: !this.state.vote_proposal_bottomsheet});
-      }
+    if(this.state.vote_proposal_bottomsheet == true){
+      //closing
+      this.vote_proposal_bottomsheet = this.vote_proposal_page.current?.state;
+
+      this.setState({vote_proposal_bottomsheet: !this.state.vote_proposal_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({vote_proposal_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({vote_proposal_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({vote_proposal_bottomsheet: !me.state.vote_proposal_bottomsheet});
+          
+          if(me.vote_proposal_bottomsheet != null){
+            me.vote_proposal_page.current?.setState(me.vote_proposal_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
 
   show_vote_proposal_bottomsheet(proposal_item){
-    if(this.vote_proposal_page.current != null){
-      this.vote_proposal_page.current.set_proposal(proposal_item)
-    }
-
     this.open_vote_proposal_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.vote_proposal_page.current != null){
+      me.vote_proposal_page.current.set_proposal(proposal_item)
+    }
+    }, (1 * 500));
+    
   }
 
 
@@ -3411,6 +3907,7 @@ class App extends Component {
 
 
   render_submit_proposal_bottomsheet(){
+    if(this.state.submit_proposal_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3423,17 +3920,41 @@ class App extends Component {
   }
 
   open_submit_proposal_bottomsheet(){
-    if(this.state != null){
-        this.setState({submit_proposal_bottomsheet: !this.state.submit_proposal_bottomsheet});
-      }
+    if(this.state.submit_proposal_bottomsheet == true){
+      //closing
+      this.submit_proposal_bottomsheet = this.submit_proposal_page.current?.state;
+
+      this.setState({submit_proposal_bottomsheet: !this.state.submit_proposal_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({submit_proposal_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({submit_proposal_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({submit_proposal_bottomsheet: !me.state.submit_proposal_bottomsheet});
+
+          if(me.submit_proposal_bottomsheet != null){
+            me.submit_proposal_page.current?.setState(me.submit_proposal_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_submit_proposal_bottomsheet(proposal_item){
-    if(this.submit_proposal_page.current != null){
-      this.submit_proposal_page.current.set_proposal(proposal_item)
-    }
-
     this.open_submit_proposal_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.submit_proposal_page.current != null){
+      me.submit_proposal_page.current.set_proposal(proposal_item)
+    }
+    }, (1 * 500));
+    
+
   }
 
 
@@ -3458,6 +3979,7 @@ class App extends Component {
 
 
   render_pay_subscription_bottomsheet(){
+    if(this.state.pay_subscription_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3470,17 +3992,40 @@ class App extends Component {
   }
 
   open_pay_subscription_bottomsheet(){
-    if(this.state != null){
-        this.setState({pay_subscription_bottomsheet: !this.state.pay_subscription_bottomsheet});
-      }
+    if(this.state.pay_subscription_bottomsheet == true){
+      //closing
+      this.pay_subscription_bottomsheet = this.pay_subscription_page.current?.state;
+
+      this.setState({pay_subscription_bottomsheet: !this.state.pay_subscription_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({pay_subscription_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({pay_subscription_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({pay_subscription_bottomsheet: !me.state.pay_subscription_bottomsheet});
+
+          if(me.pay_subscription_bottomsheet != null){
+            me.pay_subscription_page.current?.setState(me.pay_subscription_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_pay_subscription_bottomsheet(subscription_item){
-    if(this.pay_subscription_page.current != null){
-      this.pay_subscription_page.current.set_subscription(subscription_item)
-    }
-
     this.open_pay_subscription_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.pay_subscription_page.current != null){
+      me.pay_subscription_page.current.set_subscription(subscription_item)
+    }
+    }, (1 * 500));
+    
   }
 
   add_pay_subscription_to_stack(state_obj){
@@ -3509,6 +4054,7 @@ class App extends Component {
 
 
   render_cancel_subscription_bottomsheet(){
+    if(this.state.cancel_subscription_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3521,17 +4067,40 @@ class App extends Component {
   }
 
   open_cancel_subscription_bottomsheet(){
-    if(this.state != null){
-        this.setState({cancel_subscription_bottomsheet: !this.state.cancel_subscription_bottomsheet});
-      }
+    if(this.state.cancel_subscription_bottomsheet == true){
+      //closing
+      this.cancel_subscription_bottomsheet = this.cancel_subscription_page.current?.state;
+
+      this.setState({cancel_subscription_bottomsheet: !this.state.cancel_subscription_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({cancel_subscription_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({cancel_subscription_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({cancel_subscription_bottomsheet: !me.state.cancel_subscription_bottomsheet});
+
+          if(me.cancel_subscription_bottomsheet != null){
+            me.cancel_subscription_page.current?.setState(me.cancel_subscription_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_cancel_subscription_bottomsheet(subscription_item){
-    if(this.cancel_subscription_page.current != null){
-      this.cancel_subscription_page.current.set_subscription(subscription_item)
-    }
-
     this.open_cancel_subscription_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.cancel_subscription_page.current != null){
+      me.cancel_subscription_page.current.set_subscription(subscription_item)
+    }
+    }, (1 * 500));
+    
   }
 
   add_cancel_subscription_to_stack(state_obj){
@@ -3563,6 +4132,7 @@ class App extends Component {
 
 
   render_collect_subscription_bottomsheet(){
+    if(this.state.collect_subscription_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3575,17 +4145,40 @@ class App extends Component {
   }
 
   open_collect_subscription_bottomsheet(){
-    if(this.state != null){
-        this.setState({collect_subscription_bottomsheet: !this.state.collect_subscription_bottomsheet});
-      }
+    if(this.state.collect_subscription_bottomsheet == true){
+      //closing
+      this.collect_subscription_bottomsheet = this.collect_subscription_page.current?.state;
+
+      this.setState({collect_subscription_bottomsheet: !this.state.collect_subscription_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({collect_subscription_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({collect_subscription_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({collect_subscription_bottomsheet: !me.state.collect_subscription_bottomsheet});
+
+          if(me.collect_subscription_bottomsheet != null){
+            me.collect_subscription_page.current?.setState(me.collect_subscription_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_collect_subscription_bottomsheet(subscription_item){
-    if(this.collect_subscription_page.current != null){
-      this.collect_subscription_page.current.set_subscription(subscription_item)
-    }
-
     this.open_collect_subscription_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.collect_subscription_page.current != null){
+      me.collect_subscription_page.current.set_subscription(subscription_item)
+    }
+    }, (1 * 500));
+    
   }
 
   add_collect_subscription_to_stack(state_obj){
@@ -3616,6 +4209,7 @@ class App extends Component {
 
 
   render_modify_subscription_bottomsheet(){
+    if(this.state.modify_subscription_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3628,17 +4222,40 @@ class App extends Component {
   }
 
   open_modify_subscription_bottomsheet(){
-    if(this.state != null){
-        this.setState({modify_subscription_bottomsheet: !this.state.modify_subscription_bottomsheet});
-      }
+    if(this.state.modify_subscription_bottomsheet == true){
+      //closing
+      this.modify_subscription_bottomsheet = this.modify_subscription_page.current?.state;
+
+      this.setState({modify_subscription_bottomsheet: !this.state.modify_subscription_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({modify_subscription_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({modify_subscription_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({modify_subscription_bottomsheet: !me.state.modify_subscription_bottomsheet});
+
+          if(me.modify_subscription_bottomsheet != null){
+            me.modify_subscription_page.current?.setState(me.modify_subscription_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_modify_subscription_bottomsheet(subscription_item){
-    if(this.modify_subscription_page.current != null){
-      this.modify_subscription_page.current.set_subscription(subscription_item)
-    }
-
     this.open_modify_subscription_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.modify_subscription_page.current != null){
+      me.modify_subscription_page.current.set_subscription(subscription_item)
+    }
+    }, (1 * 500));
+    
   }
 
   add_modify_subscription_to_stack(state_obj){
@@ -3668,6 +4285,7 @@ class App extends Component {
 
 
   render_modify_contract_bottomsheet(){
+    if(this.state.modify_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3680,17 +4298,40 @@ class App extends Component {
   }
 
   open_modify_contract_bottomsheet(){
-    if(this.state != null){
-        this.setState({modify_contract_bottomsheet: !this.state.modify_contract_bottomsheet});
-      }
+    if(this.state.modify_contract_bottomsheet == true){
+      //closing
+      this.modify_contract_bottomsheet = this.modify_contract_page.current?.state;
+
+      this.setState({modify_contract_bottomsheet: !this.state.modify_contract_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({modify_contract_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({modify_contract_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({modify_contract_bottomsheet: !me.state.modify_contract_bottomsheet});
+
+          if(me.modify_contract_bottomsheet != null){
+            me.modify_contract_page.current?.setState(me.modify_contract_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_modify_contract_bottomsheet(contract_item){
-    if(this.modify_contract_page.current != null){
-      this.modify_contract_page.current.set_contract(contract_item)
-    }
-
     this.open_modify_contract_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.modify_contract_page.current != null){
+      me.modify_contract_page.current.set_contract(contract_item)
+    }
+    }, (1 * 500));
+    
   }
 
   add_modify_contract_to_stack(state_obj){
@@ -3720,6 +4361,7 @@ class App extends Component {
 
 
   render_modify_token_bottomsheet(){
+    if(this.state.modify_token_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3732,17 +4374,41 @@ class App extends Component {
   }
 
   open_modify_token_bottomsheet(){
-    if(this.state != null){
-        this.setState({modify_token_bottomsheet: !this.state.modify_token_bottomsheet});
-      }
+    if(this.state.modify_token_bottomsheet == true){
+      //closing
+      this.modify_token_bottomsheet = this.modify_token_page.current?.state;
+
+      this.setState({modify_token_bottomsheet: !this.state.modify_token_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({modify_token_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({modify_token_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({modify_token_bottomsheet: !me.state.modify_token_bottomsheet});
+
+          if(me.modify_token_bottomsheet != null){
+            me.modify_token_page.current?.setState(me.modify_token_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_modify_token_bottomsheet(token_item){
-    if(this.modify_token_page.current != null){
-      this.modify_token_page.current.set_token(token_item)
-    }
-
     this.open_modify_token_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.modify_token_page.current != null){
+      me.modify_token_page.current.set_token(token_item)
+    }
+    }, (1 * 500));
+    
+
   }
 
   add_modify_token_to_stack(state_obj){
@@ -3771,6 +4437,7 @@ class App extends Component {
 
 
   render_exchange_transfer_bottomsheet(){
+    if(this.state.exchange_transfer_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3783,17 +4450,41 @@ class App extends Component {
   }
 
   open_exchange_transfer_bottomsheet(){
-    if(this.state != null){
-        this.setState({exchange_transfer_bottomsheet: !this.state.exchange_transfer_bottomsheet});
-      }
+    if(this.state.exchange_transfer_bottomsheet == true){
+      //closing
+      this.exchange_transfer_bottomsheet = this.exchange_transfer_page.current?.state;
+
+      this.setState({exchange_transfer_bottomsheet: !this.state.exchange_transfer_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({exchange_transfer_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({exchange_transfer_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({exchange_transfer_bottomsheet: !me.state.exchange_transfer_bottomsheet});
+
+          if(me.exchange_transfer_bottomsheet != null){
+            me.exchange_transfer_page.current?.setState(me.exchange_transfer_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_exchange_transfer_bottomsheet(token_item){
-    if(this.exchange_transfer_page.current != null){
-      this.exchange_transfer_page.current.set_token(token_item)
-    }
-
     this.open_exchange_transfer_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.exchange_transfer_page.current != null){
+      me.exchange_transfer_page.current.set_token(token_item)
+    }
+    }, (1 * 500));
+    
+
   }
 
   add_exchange_transfer_to_stack(state_obj){
@@ -3819,6 +4510,7 @@ class App extends Component {
 
 
   render_force_exit_bottomsheet(){
+    if(this.state.force_exit_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3831,17 +4523,41 @@ class App extends Component {
   }
 
   open_force_exit_bottomsheet(){
-    if(this.state != null){
-        this.setState({force_exit_bottomsheet: !this.state.force_exit_bottomsheet});
-      }
+    if(this.state.force_exit_bottomsheet == true){
+      //closing
+      this.force_exit_bottomsheet = this.force_exit_page.current?.state;
+
+      this.setState({force_exit_bottomsheet: !this.state.force_exit_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({force_exit_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({force_exit_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({force_exit_bottomsheet: !me.state.force_exit_bottomsheet});
+
+          if(me.force_exit_bottomsheet != null){
+            me.force_exit_page.current?.setState(me.force_exit_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_force_exit_bottomsheet(contract_item){
-    if(this.force_exit_page.current != null){
-      this.force_exit_page.current.set_contract(contract_item)
-    }
-
     this.open_force_exit_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.force_exit_page.current != null){
+      me.force_exit_page.current.set_contract(contract_item)
+    }
+    }, (1 * 500));
+    
+
   }
 
   add_force_exit_to_stack(state_obj){
@@ -3871,6 +4587,7 @@ class App extends Component {
 
 
   render_archive_proposal_bottomsheet(){
+    if(this.state.archive_proposal_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3883,17 +4600,41 @@ class App extends Component {
   }
 
   open_archive_proposal_bottomsheet(){
-    if(this.state != null){
-        this.setState({archive_proposal_bottomsheet: !this.state.archive_proposal_bottomsheet});
-      }
+    if(this.state.archive_proposal_bottomsheet == true){
+      //closing
+      this.archive_proposal_bottomsheet = this.archive_proposal_page.current?.state;
+
+      this.setState({archive_proposal_bottomsheet: !this.state.archive_proposal_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({archive_proposal_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({archive_proposal_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({archive_proposal_bottomsheet: !me.state.archive_proposal_bottomsheet});
+
+          if(me.archive_proposal_bottomsheet != null){
+            me.archive_proposal_page.current?.setState(me.archive_proposal_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_archive_proposal_bottomsheet(proposal_item){
-    if(this.archive_proposal_page.current != null){
-      this.archive_proposal_page.current.set_object(proposal_item)
-    }
-
     this.open_archive_proposal_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.archive_proposal_page.current != null){
+      me.archive_proposal_page.current.set_object(proposal_item)
+    }
+    }, (1 * 500));
+    
+
   }
 
 
@@ -3921,6 +4662,7 @@ class App extends Component {
 
 
   render_freeze_unfreeze_bottomsheet(){
+    if(this.state.freeze_unfreeze_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3933,17 +4675,41 @@ class App extends Component {
   }
 
   open_freeze_unfreeze_bottomsheet(){
-    if(this.state != null){
-        this.setState({freeze_unfreeze_bottomsheet: !this.state.freeze_unfreeze_bottomsheet});
-      }
+     if(this.state.freeze_unfreeze_bottomsheet == true){
+      //closing
+      this.freeze_unfreeze_bottomsheet = this.freeze_unfreeze_page.current?.state;
+
+      this.setState({freeze_unfreeze_bottomsheet: !this.state.freeze_unfreeze_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({freeze_unfreeze_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({freeze_unfreeze_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({freeze_unfreeze_bottomsheet: !me.state.freeze_unfreeze_bottomsheet});
+
+          if(me.freeze_unfreeze_bottomsheet != null){
+            me.freeze_unfreeze_page.current?.setState(me.freeze_unfreeze_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_freeze_unfreeze_bottomsheet(token_item){
-    if(this.freeze_unfreeze_page.current != null){
-      this.freeze_unfreeze_page.current.set_token(token_item)
-    }
-
     this.open_freeze_unfreeze_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.freeze_unfreeze_page.current != null){
+      me.freeze_unfreeze_page.current.set_token(token_item)
+    }
+    }, (1 * 500));
+    
+
   }
 
   add_freeze_unfreeze_to_stack(state_obj){
@@ -3973,6 +4739,7 @@ class App extends Component {
 
 
   render_authmint_bottomsheet(){
+    if(this.state.authmint_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -3985,17 +4752,41 @@ class App extends Component {
   }
 
   open_authmint_bottomsheet(){
-    if(this.state != null){
-        this.setState({authmint_bottomsheet: !this.state.authmint_bottomsheet});
-      }
+    if(this.state.authmint_bottomsheet == true){
+      //closing
+      this.authmint_bottomsheet = this.authmint_page.current?.state;
+
+      this.setState({authmint_bottomsheet: !this.state.authmint_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({authmint_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({authmint_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({authmint_bottomsheet: !me.state.authmint_bottomsheet});
+
+          if(me.authmint_bottomsheet != null){
+            me.authmint_page.current?.setState(me.authmint_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_authmint_bottomsheet(token_item){
-    if(this.authmint_page.current != null){
-      this.authmint_page.current.set_token(token_item)
-    }
-
     this.open_authmint_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.authmint_page.current != null){
+      me.authmint_page.current.set_token(token_item)
+    }
+    }, (1 * 500));
+    
+
   }
 
   add_authmint_to_stack(state_obj){
@@ -4024,6 +4815,7 @@ class App extends Component {
 
 
   render_moderator_bottomsheet(){
+    if(this.state.moderator_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4036,17 +4828,41 @@ class App extends Component {
   }
 
   open_moderator_bottomsheet(){
-    if(this.state != null){
-        this.setState({moderator_bottomsheet: !this.state.moderator_bottomsheet});
-      }
+    if(this.state.moderator_bottomsheet == true){
+      //closing
+      this.moderator_bottomsheet = this.moderator_page.current?.state;
+
+      this.setState({moderator_bottomsheet: !this.state.moderator_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({moderator_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({moderator_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({moderator_bottomsheet: !me.state.moderator_bottomsheet});
+
+          if(me.moderator_bottomsheet != null){
+            me.moderator_page.current?.setState(me.moderator_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_moderator_bottomsheet(item){
-    if(this.moderator_page.current != null){
-      this.moderator_page.current.set_object(item)
-    }
-
     this.open_moderator_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.moderator_page.current != null){
+      me.moderator_page.current.set_object(item)
+    }
+    }, (1 * 500));
+    
+
   }
 
   add_moderator_to_stack(state_obj){
@@ -4074,6 +4890,7 @@ class App extends Component {
 
 
   render_respond_to_job_bottomsheet(){
+    if(this.state.respond_to_job_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4086,17 +4903,41 @@ class App extends Component {
   }
 
   open_respond_to_job_bottomsheet(){
-    if(this.state != null){
+    if(this.state.respond_to_job_bottomsheet == true){
+      //closing
+      this.respond_to_job_bottomsheet = this.respond_to_job_page.current?.state;
+
       this.setState({respond_to_job_bottomsheet: !this.state.respond_to_job_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({respond_to_job_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({respond_to_job_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({respond_to_job_bottomsheet: !me.state.respond_to_job_bottomsheet});
+
+          if(me.respond_to_job_bottomsheet != null){
+            me.respond_to_job_page.current?.setState(me.respond_to_job_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_respond_to_job_bottomsheet(item){
-    if(this.respond_to_job_page.current != null){
-      this.respond_to_job_page.current.set_object(item)
-    }
-
     this.open_respond_to_job_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.respond_to_job_page.current != null){
+      me.respond_to_job_page.current.set_object(item)
+    }
+    }, (1 * 500));
+    
+
   }
 
   add_respond_to_job_to_stack(state_obj){
@@ -4130,6 +4971,7 @@ class App extends Component {
 
 
   render_view_application_contract_bottomsheet(){
+    if(this.state.view_application_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4142,17 +4984,41 @@ class App extends Component {
   }
 
   open_view_application_contract_bottomsheet(){
-    if(this.state != null){
+    if(this.state.view_application_contract_bottomsheet == true){
+      //closing
+      this.view_application_contract_bottomsheet = this.view_application_contract_page.current?.state;
+
       this.setState({view_application_contract_bottomsheet: !this.state.view_application_contract_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_application_contract_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_application_contract_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_application_contract_bottomsheet: !me.state.view_application_contract_bottomsheet});
+
+          if(me.view_application_contract_bottomsheet != null){
+            me.view_application_contract_page.current?.setState(me.view_application_contract_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_view_application_contract_bottomsheet(item){
-    if(this.view_application_contract_page.current != null){
-      this.view_application_contract_page.current.set_object(item)
-    }
-
     this.open_view_application_contract_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_application_contract_page.current != null){
+      me.view_application_contract_page.current.set_object(item)
+    }
+    }, (1 * 500));
+    
+
   }
 
 
@@ -4181,6 +5047,7 @@ class App extends Component {
 
 
   render_view_transaction_bottomsheet(){
+    if(this.state.view_transaction_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4193,17 +5060,41 @@ class App extends Component {
   }
 
   open_view_transaction_bottomsheet(){
-    if(this.state != null){
+    if(this.state.view_transaction_bottomsheet == true){
+      //closing
+      this.view_transaction_bottomsheet = this.view_transaction_page.current?.state;
+
       this.setState({view_transaction_bottomsheet: !this.state.view_transaction_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_transaction_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_transaction_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_transaction_bottomsheet: !me.state.view_transaction_bottomsheet});
+
+          if(me.view_transaction_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.view_transaction_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_view_transaction_bottomsheet(item, index){
-    if(this.view_transaction_page.current != null){
-      this.view_transaction_page.current.set_transaction(item, index)
-    }
-
     this.open_view_transaction_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_transaction_page.current != null){
+      me.view_transaction_page.current.set_transaction(item, index)
+    }
+    }, (1 * 500));
+    
+
   }
 
 
@@ -4222,226 +5113,374 @@ class App extends Component {
   open_edit_object_uis(tx){
     if(tx.type == this.getLocale()['1130']/* 'contract' */){
         this.open_new_object('1')
-        if(this.new_contract_page.current){
-          this.new_contract_page.current?.set_state(tx)
-        }
+        var me = this;
+        setTimeout(function() {
+          if(me.new_contract_page.current){
+            me.new_contract_page.current?.set_state(tx)
+          }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['601']/* 'token' */){
         this.open_new_object('8')
-        if(this.new_token_page.current){
-          this.new_token_page.current?.set_state(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.new_token_page.current){
+          me.new_token_page.current?.set_state(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['823']/* 'subscription' */){
         this.open_new_object('3')
-        if(this.new_subscription_page.current){
-          this.new_subscription_page.current?.set_state(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.new_subscription_page.current){
+          me.new_subscription_page.current?.set_state(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['297']/* 'post' */){
         this.open_new_object('6')
-        if(this.new_post_page.current){
-          this.new_post_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.new_post_page.current){
+          me.new_post_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['760']/* 'job' */){
         this.open_new_object('0')
-        if(this.new_job_page.current){
-          this.new_job_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.new_job_page.current){
+          me.new_job_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['109']/* 'channel' */){
         this.open_new_object('7')
-        if(this.new_channel_page.current){
-          this.new_channel_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.new_channel_page.current){
+          me.new_channel_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['439']/* 'storefront-item' */){
         this.open_new_object('4')
-        if(this.new_storefront_item_page.current){
-          this.new_storefront_item_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.new_storefront_item_page.current){
+          me.new_storefront_item_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['946']/* 'buy-sell' */){
       this.open_mint_token_bottomsheet()
-      if(this.new_mint_dump_token_page.current){
-        this.new_mint_dump_token_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.new_mint_dump_token_page.current){
+        me.new_mint_dump_token_page.current?.setState(tx)
       }
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['1018']/* 'transfer' */){
       this.open_transfer_token_bottomsheet()
-      if(this.new_transfer_token_page.current){
-        this.new_transfer_token_page.current?.setState(tx)
-      }
+      var me = this;
+        setTimeout(function() {
+          if(me.new_transfer_token_page.current){
+            me.new_transfer_token_page.current?.setState(tx)
+          }
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['2125']/* 'enter-contract' */){
       this.open_enter_contract_bottomsheet()
-      if(this.enter_contract_page.current){
-        this.enter_contract_page.current?.setState(tx)
-      } 
+      var me = this;
+        setTimeout(function() {
+          if(me.enter_contract_page.current){
+            me.enter_contract_page.current?.setState(tx)
+          }
+        }, (1 * 500));
+       
     }
     else if(tx.type == this.getLocale()['35']/* 'extend-contract' */){
       this.open_extend_contract_bottomsheet()
-      if(this.extend_contract_page.current){
-        this.extend_contract_page.current?.setState(tx)
-      } 
+      var me = this;
+        setTimeout(function() {
+          if(me.extend_contract_page.current){
+        me.extend_contract_page.current?.setState(tx)
+      }
+        }, (1 * 500));
+       
     }
     else if(tx.type == this.getLocale()['312']/* 'proposal' */){
       this.open_new_proposal_bottomsheet()
-      if(this.new_proposal_page.current){
-        this.new_proposal_page.current?.setState(tx)
-      } 
+      var me = this;
+        setTimeout(function() {
+          if(me.new_proposal_page.current){
+        me.new_proposal_page.current?.setState(tx)
+      }
+        }, (1 * 500));
+       
     }
     else if(tx.type == this.getLocale()['796']/* 'vote' */){
       this.open_vote_proposal_bottomsheet()
-      if(this.vote_proposal_page.current){
-        this.vote_proposal_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.vote_proposal_page.current){
+        me.vote_proposal_page.current?.setState(tx)
       }
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['862']/* 'pay-subscription' */){
       this.open_pay_subscription_bottomsheet()
-      if(this.pay_subscription_page.current){
-        this.pay_subscription_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.pay_subscription_page.current){
+        me.pay_subscription_page.current?.setState(tx)
       } 
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['821']/* 'cancel-subscription' */){
       this.open_cancel_subscription_bottomsheet()
-      if(this.cancel_subscription_page.current){
-        this.cancel_subscription_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.cancel_subscription_page.current){
+        me.cancel_subscription_page.current?.setState(tx)
       }
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['840']/* 'modify-subscription' */){
         this.open_modify_subscription_bottomsheet()
-        if(this.modify_subscription_page.current){
-          this.modify_subscription_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.modify_subscription_page.current){
+          me.modify_subscription_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }   
     else if(tx.type == this.getLocale()['2123']/* 'modify-contract' */){
         this.open_modify_contract_bottomsheet()
-        if(this.modify_contract_page.current){
-          this.modify_contract_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.modify_contract_page.current){
+          me.modify_contract_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['997']/* 'modify-token' */){
         this.open_modify_token_bottomsheet()
-        if(this.modify_token_page.current){
-          this.modify_token_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.modify_token_page.current){
+          me.modify_token_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['318']/* 'exchange-transfer' */){
         this.open_exchange_transfer_bottomsheet()
-        if(this.exchange_transfer_page.current){
-          this.exchange_transfer_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.exchange_transfer_page.current){
+          me.exchange_transfer_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['48']/* 'force-exit' */){
         this.open_force_exit_bottomsheet()
-        if(this.force_exit_page.current){
-          this.force_exit_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.force_exit_page.current){
+          me.force_exit_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['768']/* 'archive' */){
         this.open_archive_proposal_bottomsheet()
-        if(this.archive_proposal_page.current){
-          this.archive_proposal_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.archive_proposal_page.current){
+          me.archive_proposal_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['930']/* 'freeze/unfreeze' */){
         this.open_freeze_unfreeze_bottomsheet()
-        if(this.freeze_unfreeze_page.current){
-          this.freeze_unfreeze_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.freeze_unfreeze_page.current){
+          me.freeze_unfreeze_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['880']/* 'authmint' */){
         this.open_authmint_bottomsheet()
-        if(this.authmint_page.current){
-          this.authmint_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.authmint_page.current){
+          me.authmint_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['1265']/* 'access-rights-settings' */){
         this.open_moderator_bottomsheet()
-        if(this.moderator_page.current){
-          this.moderator_page.current?.setState(tx)
-        }  
+        var me = this;
+        setTimeout(function() {
+          if(me.moderator_page.current){
+          me.moderator_page.current?.setState(tx)
+        }
+        }, (1 * 500));
+          
     }
     else if(tx.type == this.getLocale()['285']/* 'mail' */){
         this.open_new_object('5')
-        if(this.new_mail_page.current){
-          this.new_mail_page.current?.setState(tx)
-        } 
+        var me = this;
+        setTimeout(function() {
+          if(me.new_mail_page.current){
+          me.new_mail_page.current?.setState(tx)
+        }
+        }, (1 * 500));
+         
     }  
     else if(tx.type == this.getLocale()['1307']/* 'job-response' */){
         this.open_respond_to_job_bottomsheet()
-        if(this.respond_to_job_page.current){
-          this.respond_to_job_page.current?.setState(tx)
-        }   
+        var me = this;
+        setTimeout(function() {
+          if(me.respond_to_job_page.current){
+          me.respond_to_job_page.current?.setState(tx)
+        }
+        }, (1 * 500));
+           
     }
     else if(tx.type == this.getLocale()['1499']/* 'direct-purchase' */){
       this.open_direct_purchase_bottomsheet()
-      if(this.direct_purchase_page.current){
-        this.direct_purchase_page.current?.setState(tx)
-      } 
+      var me = this;
+        setTimeout(function() {
+          if(me.direct_purchase_page.current){
+        me.direct_purchase_page.current?.setState(tx)
+      }
+        }, (1 * 500));
+       
     }
     else if(tx.type == this.getLocale()['1503']/* 'contractor' */){
       this.open_new_object('9')
-        if(this.new_contractor_page.current){
-          this.new_contractor_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.new_contractor_page.current){
+          me.new_contractor_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
       
     }
     else if(tx.type == this.getLocale()['1363']/* 'job-request' */){
         this.open_send_job_request_bottomsheet()
-        if(this.send_job_request_page.current){
-          this.send_job_request_page.current?.setState(tx)
-        } 
+        var me = this;
+        setTimeout(function() {
+          if(me.send_job_request_page.current){
+          me.send_job_request_page.current?.setState(tx)
+        }
+        }, (1 * 500));
+         
     }
     else if(tx.type == this.getLocale()['753']/* 'edit-channel' */){
       this.open_edit_channel_bottomsheet()
-      if(this.edit_channel_page.current){
-        this.edit_channel_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.edit_channel_page.current){
+        me.edit_channel_page.current?.setState(tx)
       }
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['763']/* 'edit-contractor' */){
       this.open_edit_contractor_bottomsheet()
-      if(this.edit_contractor_page.current){
-        this.edit_contractor_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.edit_contractor_page.current){
+        me.edit_contractor_page.current?.setState(tx)
       }
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['764']/* 'edit-job' */){
         this.open_edit_job_bottomsheet()
-        if(this.edit_job_page.current){
-          this.edit_job_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.edit_job_page.current){
+          me.edit_job_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['765']/* 'edit-post' */){
         this.open_edit_post_bottomsheet()
-        if(this.edit_post_page.current){
-          this.edit_post_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.edit_post_page.current){
+          me.edit_post_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['766']/* 'edit-storefront' */){
         this.open_edit_storefront_bottomsheet()
-        if(this.edit_storefront_page.current){
-          this.edit_storefront_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.edit_storefront_page.current){
+          me.edit_storefront_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['761']/* 'edit-token' */){
         this.open_edit_token_bottomsheet()
-        if(this.edit_token_page.current){
-          this.edit_token_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.edit_token_page.current){
+          me.edit_token_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
     else if(tx.type == this.getLocale()['2739']/* 'edit-proposal' */){
       this.open_edit_proposal_bottomsheet()
-      if(this.edit_proposal_page.current){
-        this.edit_proposal_page.current?.setState(tx)
+      var me = this;
+        setTimeout(function() {
+          if(me.edit_proposal_page.current){
+        me.edit_proposal_page.current?.setState(tx)
       }
+        }, (1 * 500));
+      
     }
     else if(tx.type == this.getLocale()['898']/* 'depthmint' */){
         this.open_depthmint_bottomsheet()
-        if(this.depthmint_page.current){
-          this.depthmint_page.current?.setState(tx)
+        var me = this;
+        setTimeout(function() {
+          if(me.depthmint_page.current){
+          me.depthmint_page.current?.setState(tx)
         }
+        }, (1 * 500));
+        
     }
         
   }
@@ -4470,10 +5509,14 @@ class App extends Component {
   }
 
   when_edit_bag_item_tapped(item){
-    if(this.add_to_bag_page.current != null){
-      this.add_to_bag_page.current.setState(item)
-    }
     this.open_add_to_bag_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.add_to_bag_page.current != null){
+        me.add_to_bag_page.current.setState(item)
+      }
+    }, (1 * 500));
+    
   }
 
   delete_bag_item(item){
@@ -4524,6 +5567,7 @@ class App extends Component {
 
 
   render_view_transaction_log_bottomsheet(){
+    if(this.state.view_transaction_log_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4536,16 +5580,40 @@ class App extends Component {
   }
 
   open_view_transaction_log_bottomsheet(){
-    if(this.state != null){
+    if(this.state.view_transaction_log_bottomsheet == true){
+      //closing
+      this.view_transaction_log_bottomsheet = this.view_transaction_page.current?.state;
+
       this.setState({view_transaction_log_bottomsheet: !this.state.view_transaction_log_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_transaction_log_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_transaction_log_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_transaction_log_bottomsheet: !me.state.view_transaction_log_bottomsheet});
+
+          if(me.view_transaction_log_bottomsheet != null){
+            me.view_transaction_page.current?.setState(me.view_transaction_log_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_view_transaction_log_bottomsheet(item){
-    if(this.view_transaction_log_page.current != null){
-      this.view_transaction_log_page.current.set_transaction(item)
-    }
     this.open_view_transaction_log_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_transaction_log_page.current != null){
+        me.view_transaction_log_page.current.set_transaction(item)
+      }
+    }, (1 * 500));
+    
   }
 
 
@@ -4558,6 +5626,7 @@ class App extends Component {
 
 
   render_add_to_bag_bottomsheet(){
+    if(this.state.add_to_bag_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4570,16 +5639,40 @@ class App extends Component {
   }
 
   open_add_to_bag_bottomsheet(){
-    if(this.state != null){
+    if(this.state.add_to_bag_bottomsheet == true){
+      //closing
+      this.add_to_bag_bottomsheet = this.add_to_bag_page.current?.state;
+
       this.setState({add_to_bag_bottomsheet: !this.state.add_to_bag_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({add_to_bag_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({add_to_bag_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({add_to_bag_bottomsheet: !me.state.add_to_bag_bottomsheet});
+
+          if(me.add_to_bag_bottomsheet != null){
+            me.add_to_bag_page.current?.setState(me.add_to_bag_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_add_to_bag_bottomsheet(item){
-    if(this.add_to_bag_page.current != null){
-      this.add_to_bag_page.current.set_transaction(item)
-    }
     this.open_add_to_bag_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.add_to_bag_page.current != null){
+        me.add_to_bag_page.current.set_transaction(item)
+      }
+    }, (1 * 500));
+    
   }
 
   add_bag_item_to_bag_in_stack(state_obj){
@@ -4624,6 +5717,7 @@ class App extends Component {
 
 
   render_fulfil_bag_bottomsheet(){
+    if(this.state.fulfil_bag_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4636,16 +5730,39 @@ class App extends Component {
   }
 
   open_fulfil_bag_bottomsheet(){
-    if(this.state != null){
+    if(this.state.fulfil_bag_bottomsheet == true){
+      //closing
+      this.fulfil_bag_bottomsheet = this.fulfil_bag_page.current?.state;
+  
       this.setState({fulfil_bag_bottomsheet: !this.state.fulfil_bag_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({fulfil_bag_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({fulfil_bag_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({fulfil_bag_bottomsheet: !me.state.fulfil_bag_bottomsheet});
+
+          if(me.fulfil_bag_bottomsheet != null){
+            me.fulfil_bag_page.current?.setState(me.fulfil_bag_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_fulfil_bag_bottomsheet(item){
-    if(this.fulfil_bag_page.current != null){
-      this.fulfil_bag_page.current.set_bag(item)
-    }
     this.open_fulfil_bag_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.fulfil_bag_page.current != null){
+        me.fulfil_bag_page.current.set_bag(item)
+      }
+    }, (1 * 500));
   }
 
   add_respond_to_bag_to_stack(state_obj){
@@ -4675,6 +5792,7 @@ class App extends Component {
 
 
   render_view_bag_application_contract_bottomsheet(){
+    if(this.state.view_bag_application_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4687,16 +5805,40 @@ class App extends Component {
   }
 
   open_view_bag_application_contract_bottomsheet(){
-    if(this.state != null){
+    if(this.state.view_bag_application_contract_bottomsheet == true){
+      //closing
+      this.view_bag_application_contract_bottomsheet = this.view_bag_application_contract_page.current?.state;
+
       this.setState({view_bag_application_contract_bottomsheet: !this.state.view_bag_application_contract_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_bag_application_contract_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_bag_application_contract_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_bag_application_contract_bottomsheet: !me.state.view_bag_application_contract_bottomsheet});
+
+          if(me.view_bag_application_contract_bottomsheet != null){
+            me.view_bag_application_contract_page.current?.setState(me.view_bag_application_contract_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_view_bag_application_contract_bottomsheet(item){
-    if(this.view_bag_application_contract_page.current != null){
-      this.view_bag_application_contract_page.current.set_object(item)
-    }
     this.open_view_bag_application_contract_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_bag_application_contract_page.current != null){
+        me.view_bag_application_contract_page.current.set_object(item)
+      }
+    }, (1 * 500));
+    
   }
 
   add_bag_acceptance_action_to_stack(state_obj){
@@ -4720,6 +5862,7 @@ class App extends Component {
 
 
   render_direct_purchase_bottomsheet(){
+    if(this.state.direct_purchase_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4732,17 +5875,40 @@ class App extends Component {
   }
 
   open_direct_purchase_bottomsheet(){
-    if(this.state != null){
+    if(this.state.direct_purchase_bottomsheet == true){
+      //closing
+      this.direct_purchase_bottomsheet = this.direct_purchase_page.current?.state;
+
       this.setState({direct_purchase_bottomsheet: !this.state.direct_purchase_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({direct_purchase_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({direct_purchase_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({direct_purchase_bottomsheet: !me.state.direct_purchase_bottomsheet});
+
+          if(me.direct_purchase_bottomsheet != null){
+            me.direct_purchase_page.current?.setState(me.direct_purchase_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_direct_purchase_bottomsheet(item){
-    if(this.direct_purchase_page.current != null){
-      this.direct_purchase_page.current.set_object(item)
-    }
-
     this.open_direct_purchase_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.direct_purchase_page.current != null){
+        me.direct_purchase_page.current.set_object(item)
+      }
+    }, (1 * 500));
+
   }
 
   add_direct_purchase_to_stack(state_obj){
@@ -4769,6 +5935,7 @@ class App extends Component {
 
 
   render_clear_purchase_bottomsheet(){
+    if(this.state.clear_purchase_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4781,17 +5948,40 @@ class App extends Component {
   }
 
   open_clear_purchase_bottomsheet(){
-    if(this.state != null){
+    if(this.state.clear_purchase_bottomsheet == true){
+      //closing
+      this.clear_purchase_bottomsheet = this.clear_purchase_page.current?.state;
+
       this.setState({clear_purchase_bottomsheet: !this.state.clear_purchase_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({clear_purchase_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({clear_purchase_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({clear_purchase_bottomsheet: !me.state.clear_purchase_bottomsheet});
+
+          if(me.clear_purchase_bottomsheet != null){
+            me.clear_purchase_page.current?.setState(me.clear_purchase_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_clear_purchase_bottomsheet(item, client_type, storefront){
-    if(this.clear_purchase_page.current != null){
-      this.clear_purchase_page.current.set_object(item, client_type, storefront)
-    }
-
     this.open_clear_purchase_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.clear_purchase_page.current != null){
+        me.clear_purchase_page.current.set_object(item, client_type, storefront)
+      }
+    }, (1 * 500));
+
   }
 
 
@@ -4848,6 +6038,7 @@ class App extends Component {
 
 
   render_send_job_request_bottomsheet(){
+    if(this.state.send_job_request_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4860,17 +6051,41 @@ class App extends Component {
   }
 
   open_send_job_request_bottomsheet(){
-    if(this.state != null){
+    if(this.state.send_job_request_bottomsheet == true){
+      //closing
+      this.send_job_request_bottomsheet = this.send_job_request_page.current?.state;
+
       this.setState({send_job_request_bottomsheet: !this.state.send_job_request_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({send_job_request_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({send_job_request_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({send_job_request_bottomsheet: !me.state.send_job_request_bottomsheet});
+
+          if(me.send_job_request_bottomsheet != null){
+            me.send_job_request_page.current?.setState(me.send_job_request_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_send_job_request_ui(item){
-    if(this.send_job_request_page.current != null){
-      this.send_job_request_page.current.set_object(item)
-    }
-
     this.open_send_job_request_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.send_job_request_page.current != null){
+        me.send_job_request_page.current.set_object(item)
+      }
+    }, (1 * 500));
+    
+
   }
 
   add_send_job_request_to_stack(state_obj){
@@ -4899,6 +6114,7 @@ class App extends Component {
 
 
   render_view_job_request_bottomsheet(){
+    if(this.state.view_job_request_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4911,17 +6127,40 @@ class App extends Component {
   }
 
   open_view_job_request_bottomsheet(){
-    if(this.state != null){
+    if(this.state.view_job_request_bottomsheet == true){
+      //closing
+      this.view_job_request_bottomsheet = this.view_job_request_page.current?.state;
+
       this.setState({view_job_request_bottomsheet: !this.state.view_job_request_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_job_request_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_job_request_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_job_request_bottomsheet: !me.state.view_job_request_bottomsheet});
+
+          if(me.view_job_request_bottomsheet != null){
+            me.view_job_request_page.current?.setState(me.view_job_request_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   open_view_job_request_ui(item, object){
-    if(this.view_job_request_page.current != null){
-      this.view_job_request_page.current.set_object(item, object)
-    }
-
     this.open_view_job_request_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_job_request_page.current != null){
+        me.view_job_request_page.current.set_object(item, object)
+      }
+    }, (1 * 500));
+    
   }
 
 
@@ -4973,6 +6212,7 @@ class App extends Component {
 
 
   render_view_job_request_contract_bottomsheet(){
+    if(this.state.view_job_request_contract_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -4985,16 +6225,40 @@ class App extends Component {
   }
 
   open_view_job_request_contract_bottomsheet(){
-    if(this.state != null){
+    if(this.state.view_job_request_contract_bottomsheet == true){
+      //closing
+      this.view_job_request_contract_bottomsheet = this.view_job_request_page.current?.state;
+
       this.setState({view_job_request_contract_bottomsheet: !this.state.view_job_request_contract_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_job_request_contract_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_job_request_contract_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_job_request_contract_bottomsheet: !me.state.view_job_request_contract_bottomsheet});
+
+          if(me.view_job_request_contract_bottomsheet != null){
+            me.view_job_request_page.current?.setState(me.view_job_request_contract_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_view_job_request_contract_bottomsheet(item){
-    if(this.view_job_request_contract_page.current != null){
-      this.view_job_request_contract_page.current.set_object(item)
-    }
     this.open_view_job_request_contract_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_job_request_contract_page.current != null){
+        me.view_job_request_contract_page.current.set_object(item)
+      }
+    }, (1 * 500));
+    
   }
 
   add_job_request_action_to_stack(state_obj){
@@ -5031,6 +6295,7 @@ class App extends Component {
 
 
   render_withdraw_ether_bottomsheet(){
+    if(this.state.withdraw_ether_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5043,16 +6308,40 @@ class App extends Component {
   }
 
   open_withdraw_ether_bottomsheet(){
-    if(this.state != null){
+    if(this.state.withdraw_ether_bottomsheet == true){
+      //closing
+      this.withdraw_ether_bottomsheet = this.withdraw_ether_page.current?.state;
+
       this.setState({withdraw_ether_bottomsheet: !this.state.withdraw_ether_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({withdraw_ether_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({withdraw_ether_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({withdraw_ether_bottomsheet: !me.state.withdraw_ether_bottomsheet});
+
+          if(me.withdraw_ether_bottomsheet != null){
+            me.withdraw_ether_page.current?.setState(me.withdraw_ether_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_withdraw_ether_bottomsheet(item){
-    if(this.withdraw_ether_page.current != null){
-      this.withdraw_ether_page.current.set_object(item)
-    }
     this.open_withdraw_ether_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.withdraw_ether_page.current != null){
+        me.withdraw_ether_page.current.set_object(item)
+      }
+    }, (1 * 500)); 
+    
   }
 
   withdraw_ether_to_address = async (target_recipient_address, e5, run_expiry_duration, _run_gas_price) =>{
@@ -5114,6 +6403,7 @@ class App extends Component {
 
 
   render_give_award_bottomsheet(){
+    if(this.state.give_award_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5126,16 +6416,40 @@ class App extends Component {
   }
 
   open_give_award_bottomsheet(){
-    if(this.state != null){
+    if(this.state.give_award_bottomsheet == true){
+      //closing
+      this.give_award_bottomsheet = this.give_award_page.current?.state;
+
       this.setState({give_award_bottomsheet: !this.state.give_award_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({give_award_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({give_award_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({give_award_bottomsheet: !me.state.give_award_bottomsheet});
+
+          if(me.give_award_bottomsheet != null){
+            me.give_award_page.current?.setState(me.give_award_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_give_award_bottomsheet(item){
-    if(this.give_award_page.current != null){
-      this.give_award_page.current?.set_post(item)
-    }
     this.open_give_award_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.give_award_page.current != null){
+        me.give_award_page.current?.set_post(item)
+      }
+    }, (1 * 500));
+    
   }
 
   add_award_transaction_to_stack(state_obj){
@@ -5173,6 +6487,7 @@ class App extends Component {
 
 
   render_add_comment_bottomsheet(){
+    if(this.state.add_comment_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5185,16 +6500,40 @@ class App extends Component {
   }
 
   open_add_comment_bottomsheet(){
-    if(this.state != null){
+    if(this.state.add_comment_bottomsheet == true){
+      //closing
+      this.add_comment_bottomsheet = this.add_comment_page.current?.state;
+
       this.setState({add_comment_bottomsheet: !this.state.add_comment_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({add_comment_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({add_comment_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({add_comment_bottomsheet: !me.state.add_comment_bottomsheet});
+
+          if(me.add_comment_bottomsheet != null){
+            me.add_comment_page.current?.setState(me.add_comment_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_add_comment_bottomsheet(object, focused_message_id, page, contractor_object){
-    if(this.add_comment_page.current != null){
-      this.add_comment_page.current.set_comment_data(object, focused_message_id, page, contractor_object)
-    }
     this.open_add_comment_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.add_comment_page.current != null){
+        me.add_comment_page.current.set_comment_data(object, focused_message_id, page, contractor_object)
+      }
+    }, (1 * 500));
+    
   }
 
   add_comment_to_respective_forum_page(tx, page){
@@ -5236,6 +6575,7 @@ class App extends Component {
 
 
   render_depthmint_bottomsheet(){
+    if(this.state.depthmint_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5248,17 +6588,41 @@ class App extends Component {
   }
 
   open_depthmint_bottomsheet(){
-    if(this.state != null){
-        this.setState({depthmint_bottomsheet: !this.state.depthmint_bottomsheet});
-      }
+    if(this.state.depthmint_bottomsheet == true){
+      //closing
+      this.depthmint_bottomsheet = this.depthmint_page.current?.state;
+
+      this.setState({depthmint_bottomsheet: !this.state.depthmint_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({depthmint_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({depthmint_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({depthmint_bottomsheet: !me.state.depthmint_bottomsheet});
+
+          if(me.depthmint_bottomsheet != null){
+            me.depthmint_page.current?.setState(me.depthmint_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_depthmint_bottomsheet(token_item){
-    if(this.depthmint_page.current != null){
-      this.depthmint_page.current.set_token(token_item)
-    }
-
     this.open_depthmint_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.depthmint_page.current != null){
+        me.depthmint_page.current.set_token(token_item)
+      }
+    }, (1 * 500));
+    
+
   }
 
   add_depthmint_to_stack(state_obj){
@@ -5289,6 +6653,7 @@ class App extends Component {
 
 
   render_searched_account_bottomsheet(){
+    if(this.state.searched_account_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5301,17 +6666,42 @@ class App extends Component {
   }
 
   open_searched_account_bottomsheet(){
-    if(this.state != null){
-        this.setState({searched_account_bottomsheet: !this.state.searched_account_bottomsheet});
-      }
+    if(this.state.searched_account_bottomsheet == true){
+      //closing
+      this.searched_account_bottomsheet = this.searched_account_page.current?.state;
+      
+      this.setState({searched_account_bottomsheet: !this.state.searched_account_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({searched_account_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({searched_account_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({searched_account_bottomsheet: !me.state.searched_account_bottomsheet});
+
+          if(me.searched_account_bottomsheet != null){
+            me.searched_account_page.current?.setState(me.searched_account_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   when_searched_account_clicked(item, searched_id){
-    if(this.searched_account_page.current != null){
-      this.searched_account_page.current?.set_searched_item(item, searched_id)
-    }
-
     this.open_searched_account_bottomsheet()
+
+    var me = this;
+    setTimeout(function() {
+      if(me.searched_account_page.current != null){
+        me.searched_account_page.current?.set_searched_item(item, searched_id)
+      }
+    }, (1 * 500));
+    
+
   }
 
   perform_searched_account_balance_search = async (exchange_id, id, e5) => {
@@ -5330,6 +6720,7 @@ class App extends Component {
 
 
   render_rpc_settings_bottomsheet(){
+    if(this.state.rpc_settings_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5342,17 +6733,41 @@ class App extends Component {
   }
 
   open_rpc_settings_bottomsheet(){
-    if(this.state != null){
-        this.setState({rpc_settings_bottomsheet: !this.state.rpc_settings_bottomsheet});
-      }
+    if(this.state.rpc_settings_bottomsheet == true){
+      //closing
+      this.rpc_settings_bottomsheet = this.rpc_settings_page.current?.state;
+
+      this.setState({rpc_settings_bottomsheet: !this.state.rpc_settings_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({rpc_settings_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({rpc_settings_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({rpc_settings_bottomsheet: !me.state.rpc_settings_bottomsheet});
+
+          if(me.rpc_settings_bottomsheet != null){
+            me.rpc_settings_page.current?.setState(me.rpc_settings_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
   }
 
   show_rpc_settings_bottomsheet(ether){
-    if(this.rpc_settings_page.current != null){
-      this.rpc_settings_page.current.set_ether(ether)
-    }
-
     this.open_rpc_settings_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.rpc_settings_page.current != null){
+        me.rpc_settings_page.current.set_ether(ether)
+      }
+    }, (1 * 500));
+    
+
   }
 
 
@@ -5418,6 +6833,7 @@ class App extends Component {
 
 
   render_confirm_run_bottomsheet(){
+    if(this.state.confirm_run_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5430,17 +6846,41 @@ class App extends Component {
   }
 
   open_confirm_run_bottomsheet(){
-    if(this.state != null){
-        this.setState({confirm_run_bottomsheet: !this.state.confirm_run_bottomsheet});
+    if(this.state.confirm_run_bottomsheet == true){
+      //closing
+      this.confirm_run_bottomsheet = this.confirm_run_page.current?.state;
+
+      this.setState({confirm_run_bottomsheet: !this.state.confirm_run_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({confirm_run_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({confirm_run_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({confirm_run_bottomsheet: !me.state.confirm_run_bottomsheet});
+
+          if(me.confirm_run_bottomsheet != null){
+            me.confirm_run_page.current?.setState(me.confirm_run_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_confirm_run_bottomsheet(data){
-    if(this.confirm_run_page.current != null){
-      this.confirm_run_page.current.set_data(data)
-    }
-
     this.open_confirm_run_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.confirm_run_page.current != null){
+        me.confirm_run_page.current.set_data(data)
+      }
+    }, (1 * 500));
+    
+
   }
 
   start_run(){
@@ -5464,6 +6904,7 @@ class App extends Component {
 
 
   render_scan_code_bottomsheet(){
+    if(this.state.scan_code_bottomsheet2 != true) return;
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     return(
@@ -5476,16 +6917,40 @@ class App extends Component {
   }
 
   open_scan_code_bottomsheet(){
-    if(this.state != null){
+    if(this.state.scan_code_bottomsheet == true){
+      //closing
+      this.scan_code_bottomsheet = this.scan_code_page.current?.state;
+
       this.setState({scan_code_bottomsheet: !this.state.scan_code_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({scan_code_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({scan_code_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({scan_code_bottomsheet: !me.state.scan_code_bottomsheet});
+
+          if(me.scan_code_bottomsheet != null){
+            me.scan_code_page.current?.setState(me.scan_code_bottomsheet)
+          }
+        }
+      }, (1 * 200));
     }
   }
 
   show_scan_code_bottomsheet(option){
-    if(this.scan_code_page.current != null){
-      this.scan_code_page.current.set_page(option)
-    }
     this.open_scan_code_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.scan_code_page.current != null){
+        me.scan_code_page.current.set_page(option)
+      }
+    }, (1 * 500));
+    
   }
 
   start_scan(page){
@@ -5515,20 +6980,35 @@ class App extends Component {
 
 
   render_view_image_bottomsheet(){
-      var background_color = 'transparent';
-      return(
-        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_image_bottomsheet.bind(this)} open={this.state.view_image_bottomsheet} style={{'z-index':'6'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'transparent','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
-            <div style={{ height: this.state.height, width: this.state.width, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'black', 'border-radius': '0px 0px 0px 0px', 'border-width': '0px','margin': '0px 0px 0px 0px'}}>
-                {this.render_view_image()}
-            </div>
-        </SwipeableBottomSheet>
-      )
+    if(this.state.view_image_bottomsheet2 != true) return;
+    var background_color = 'transparent';
+    return(
+      <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_image_bottomsheet.bind(this)} open={this.state.view_image_bottomsheet} style={{'z-index':'6'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': 'transparent','box-shadow': '0px 0px 0px 0px #CECDCD'}}>
+          <div style={{ height: this.state.height, width: this.state.width, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'black', 'border-radius': '0px 0px 0px 0px', 'border-width': '0px','margin': '0px 0px 0px 0px'}}>
+              {this.render_view_image()}
+          </div>
+      </SwipeableBottomSheet>
+    )
   }
 
   open_view_image_bottomsheet(){
-      if(this.state != null){
-          this.setState({view_image_bottomsheet: !this.state.view_image_bottomsheet});
-      }
+      if(this.state.view_image_bottomsheet == true){
+      //closing
+      this.setState({view_image_bottomsheet: !this.state.view_image_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_image_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_image_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_image_bottomsheet: !me.state.view_image_bottomsheet});
+        }
+      }, (1 * 200));
+    }
   }
 
   show_images(images, pos){
@@ -5685,7 +7165,7 @@ class App extends Component {
     // console.log(data)
 
     if(this.is_allowed_in_e5()){
-      this.get_browser_cache_size_limit()
+      // this.get_browser_cache_size_limit()
       this.when_wallet_data_updated(['(32)'], 0, '', true) 
     } 
     
@@ -5736,17 +7216,37 @@ class App extends Component {
 
 
 
-
-
-
-  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
+  when_wallet_data_updated2(added_tags, set_salt, selected_item, is_synching){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
+    // this.generate_account_for_each_e5(seed)
+    this.generate_one_account_for_all_e5s(seed)
 
-    // const account = this.get_account_from_seed(seed, this.state.web3);
-    // this.setState({account: account});
-    // this.get_accounts_data(account, true, this.state.web3, this.state.e5_address)
+    var me = this
+    setTimeout(function() {
+        me.start_get_accounts_data(is_synching)
+    }, (3 * 1000));
 
-    this.generate_account_for_each_e5(seed)
+    this.setState({has_wallet_been_set: true})
+  }
+
+  generate_one_account_for_all_e5s(seed){
+    var _accounts = {}
+    var e5 = this.state.e5s['data'][0]
+    var web3_url = this.get_web3_url_from_e5(e5)
+    var account = this.get_account_from_seed(seed, web3_url)
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var focused_e5 = this.state.e5s['data'][i];
+      _accounts[focused_e5] = {privateKey:account.privateKey, address: account.address}
+    }
+    console.log(_accounts)
+    this.setState({accounts: _accounts})
+  }
+
+
+  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){   
+    var seed = added_tags.join(' | ') + set_salt + selected_item;
+    // this.generate_account_for_each_e5(seed)
+    this.generate_one_account_for_all_e5s(seed)
     var me = this
     setTimeout(function() {
         me.start_get_accounts_data(is_synching)
@@ -5755,7 +7255,6 @@ class App extends Component {
     if(selected_item != ''){
       this.setState({has_wallet_been_set: true})
     }
-    
   }
 
   generate_account_for_each_e5(seed){
@@ -5966,9 +7465,9 @@ class App extends Component {
     var e5_address = this.state.e5s[e5].e5_address;
     var account_for_e5 = this.state.accounts[e5]
     if(web3_url != ''){
-      await this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
+       this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
       if(this.get_contract_from_e5(e5) != ''){
-        await this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5)
+         this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5)
       }
     }else{
       console.log(e5, ' e5 missing web3_url')
@@ -6195,7 +7694,7 @@ class App extends Component {
     this.setState({wallet_status: wallet_status_clone})
 
 
-    await this.load_rpc_times(e5)
+    this.load_rpc_times(e5)
 
     var clone = structuredClone(this.state.account_balance)
     clone[e5] = 0
@@ -6205,8 +7704,8 @@ class App extends Component {
     var clone = structuredClone(this.state.account_balance)
     clone[e5] = parseInt(balance)
     this.setState({account_balance: clone});
-    // console.log('-----------------get_wallet_data------------------------')
-    // console.log(e5,' account ether balance: ',balance)
+    if(is_syncing)this.inc_synch_progress()
+   
 
     this.load_ether_history(e5, address_account.address)
 
@@ -6214,8 +7713,7 @@ class App extends Component {
     var clone = structuredClone(this.state.gas_price)
     clone[e5] = parseInt(gasPrice)
     this.setState({gas_price: clone})
-    // console.log('-----------------get_wallet_data------------------------')
-    // console.log(e5,' gas price: ',gasPrice)
+    if(is_syncing)this.inc_synch_progress()
 
     var id = await web3.eth.net.getId()
     var clone = structuredClone(this.state.chain_id)
@@ -9561,73 +11059,76 @@ class App extends Component {
     var data_found = false;
     for(var i=0; i<this.state.e5s['data'].length; i++){
       var e5 = this.state.e5s['data'][i]
-      const web3 = new Web3(this.get_web3_url_from_e5(e5));
-      const contractArtifact = require('./contract_abis/E5.json');
-      const contractAddress = this.get_contract_from_e5(e5)
-      const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
+      if(this.state.e5s[e5].active == true){
+        const web3 = new Web3(this.get_web3_url_from_e5(e5));
+        const contractArtifact = require('./contract_abis/E5.json');
+        const contractAddress = this.get_contract_from_e5(e5)
+        const contractInstance = new web3.eth.Contract(contractArtifact.abi, contractAddress);
 
-      const F5contractArtifact = require('./contract_abis/F5.json');
-      const F5_address = this.state.addresses[e5][2];
-      const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
+        const F5contractArtifact = require('./contract_abis/F5.json');
+        const F5_address = this.state.addresses[e5][2];
+        const F5contractInstance = new web3.eth.Contract(F5contractArtifact.abi, F5_address);
 
-      const G52contractArtifact = require('./contract_abis/G52.json');
-      const G52_address = this.state.addresses[e5][4];
-      const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
+        const G52contractArtifact = require('./contract_abis/G52.json');
+        const G52_address = this.state.addresses[e5][4];
+        const G52contractInstance = new web3.eth.Contract(G52contractArtifact.abi, G52_address);
 
-      const H5contractArtifact = require('./contract_abis/H5.json');
-      const H5_address = this.state.addresses[e5][5];
-      const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
+        const H5contractArtifact = require('./contract_abis/H5.json');
+        const H5_address = this.state.addresses[e5][5];
+        const H5contractInstance = new web3.eth.Contract(H5contractArtifact.abi, H5_address);
 
-      const H52contractArtifact = require('./contract_abis/H52.json');
-      const H52_address = this.state.addresses[e5][6];
-      const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
+        const H52contractArtifact = require('./contract_abis/H52.json');
+        const H52_address = this.state.addresses[e5][6];
+        const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-      var account_address = await contractInstance.methods.f289(id).call((error, result) => {});
+        var account_address = await contractInstance.methods.f289(id).call((error, result) => {});
 
-      var alias = this.state.alias_bucket[e5][id] == null ? 'Unknown' : this.state.alias_bucket[e5][id]
-      var should_include_id = true;
-      if(id != typed_search){
-        if(alias != typed_search){
-          should_include_id = false
+        var alias = this.state.alias_bucket[e5][id] == null ? 'Unknown' : this.state.alias_bucket[e5][id]
+        var should_include_id = true;
+        if(id != typed_search){
+          if(alias != typed_search){
+            should_include_id = false
+          }
         }
-      }
 
-      if(account_address.toString() != '0x0000000000000000000000000000000000000000' && should_include_id){
-        data_found = true
-        var pending_withdraw_balance = await contractInstance.methods.f167([id], [], 1).call((error, result) => {});
+        if(account_address.toString() != '0x0000000000000000000000000000000000000000' && should_include_id){
+          console.log('searched account found!')
+          data_found = true
+          var pending_withdraw_balance = await contractInstance.methods.f167([id], [], 1).call((error, result) => {});
 
-        var run_data = await contractInstance.methods.f287([id]).call((error, result) => {});
+          var run_data = await contractInstance.methods.f287([id]).call((error, result) => {});
 
-        var make_object_event_data = await this.load_event_data(web3, contractInstance, 'e1', e5, {p3/* sender_account_id */: id})
+          var make_object_event_data = await this.load_event_data(web3, contractInstance, 'e1', e5, {p3/* sender_account_id */: id})
 
-        var withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: id})
+          var withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e2', e5, {p1/* sender_account_id */: id})
 
-        var pending_withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: id})
+          var pending_withdraw_event_data = await this.load_event_data(web3, contractInstance, 'e3', e5, {p1/* receiver_account_id */: id})
 
-        var transaction_event_data = await this.load_event_data(web3, contractInstance, 'e4', e5, {p1/* sender_account_id */: id})
+          var transaction_event_data = await this.load_event_data(web3, contractInstance, 'e4', e5, {p1/* sender_account_id */: id})
 
-        var pay_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */: id})
+          var pay_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e1', e5, {p2/* sender_acc_id */: id})
 
-        var cancel_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e2', e5, {p2/* sender_acc_id */: id})
+          var cancel_subscription_event_data = await this.load_event_data(web3, F5contractInstance, 'e2', e5, {p2/* sender_acc_id */: id})
 
-        var enter_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 3})
+          var enter_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 3})
 
-        var exit_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 11})
+          var exit_contract_event_data = await this.load_event_data(web3, G52contractInstance, 'e2', e5, {p2/* sender_acc */: id , p3/* action */: 11})
 
-        var record_proposal_vote_event_data = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p3/* voter_account_id */: id})
+          var record_proposal_vote_event_data = await this.load_event_data(web3, G52contractInstance, 'e1', e5, {p3/* voter_account_id */: id})
 
-        var update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id })
+          var update_exchange_ratio_event_data = await this.load_event_data(web3, H5contractInstance, 'e1', e5, {p3/* sender_account */: id })
 
-        var contract_token_event_data = await this.get_token_event_data(id, e5);
+          var contract_token_event_data = await this.get_token_event_data(id, e5);
 
-        var ether_balance = await web3.eth.getBalance(account_address)
+          var ether_balance = await web3.eth.getBalance(account_address)
 
-        var end_spend_balance = await H52contractInstance.methods.f140e([3,5], id, [0,0]).call((error, result) => {});
+          var end_spend_balance = await H52contractInstance.methods.f140e([3,5], id, [0,0]).call((error, result) => {});
 
-        var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1]}
+          var obj = {'e5':e5,'id':id,'address':account_address,'alias':alias, 'ether_balance':ether_balance, 'withdraw_balance':pending_withdraw_balance, 'run_data':run_data[0], 'make_object':make_object_event_data.reverse(), 'withdraw':withdraw_event_data.reverse(), 'pending_withdraw':pending_withdraw_event_data.reverse(),'transactions':transaction_event_data.reverse(), 'pay_subscription':pay_subscription_event_data.reverse(), 'cancel_subscription':cancel_subscription_event_data.reverse(), 'enter_contract':enter_contract_event_data.reverse(), 'exit_contract':exit_contract_event_data.reverse(),'vote':record_proposal_vote_event_data.reverse(), 'exchange_ratio':update_exchange_ratio_event_data.reverse(), 'tokens':contract_token_event_data, 'end_balance':end_spend_balance[0], 'spend_balance':end_spend_balance[1]}
 
-
-        data.push(obj)
+          console.log('loaded obj data: ', obj)
+          data.push(obj)
+        }
       }
     }
 
@@ -9635,9 +11136,16 @@ class App extends Component {
       this.prompt_top_notification(this.getLocale()['2737']/* 'Search complete, no account data found' */, 5000)
       return;
     }
+    console.log('data: ,', this.state.searched_accounts_data)
     var clone = structuredClone(this.state.searched_accounts_data)
     clone[id] = data
     this.setState({searched_accounts_data: clone})
+
+    var me = this;
+    setTimeout(function() {
+      console.log('data: ,', me.state.searched_accounts_data)
+    }, (1 * 1000));
+    
   }
 
 

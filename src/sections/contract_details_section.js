@@ -232,7 +232,7 @@ class ContractDetailsSection extends Component {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         var author = object['event'] != null ? this.get_senders_name(object['event'].returnValues.p3, object) : 'Unknown'
         return (
-            <div style={{ 'background-color': background_color, 'border-radius': '15px', 'margin': '5px 10px 2px 10px', 'padding': '0px 10px 0px 10px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px', 'margin': '5px 10px 2px 10px', 'padding': '0px 10px 0px 10px' }}>
                 <div style={{ 'overflow-y': 'auto', width: '100%', height: he, padding: '0px 10px 0px 10px' }}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{ height: 10 }} />
@@ -350,7 +350,7 @@ class ContractDetailsSection extends Component {
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style':'none'}}>
-                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.props.app_state.loc['2129']/* 'Participant' */, 'size':'s'})}
+                            {this.render_detail_item('3', {'title':this.get_senders_name(item, object), 'details':this.props.app_state.loc['62']/* 'Account' */, 'size':'s'})}
                         </li>
                     ))}
                 </ul>
@@ -503,8 +503,9 @@ class ContractDetailsSection extends Component {
     show_send_main_contract_proposal(object){
         if(object['id'] == 2){
             var e5 = object['e5']
-            var entered_contracts_count = this.props.app_state.basic_transaction_data[e5][2]
-            var e5_runs_count = this.props.app_state.basic_transaction_data[e5][3]
+            
+            var entered_contracts_count = this.props.app_state.basic_transaction_data[e5] == null ? 0 : this.props.app_state.basic_transaction_data[e5][2]
+            var e5_runs_count = this.props.app_state.basic_transaction_data[e5] == null ? 0 : this.props.app_state.basic_transaction_data[e5][3]
             var minimum_entered_contracts = object['data'][1][14 /* minimum_entered_contracts */]
             var minimum_transaction_count = object['data'][1][19 /* minimum_transaction_count */]
 

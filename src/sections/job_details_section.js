@@ -216,7 +216,7 @@ class JobDetailsSection extends Component {
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
 
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -428,7 +428,7 @@ class JobDetailsSection extends Component {
             )
         }
         return(
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '3px 0px 3px 0px'}}>

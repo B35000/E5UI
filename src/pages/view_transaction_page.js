@@ -1355,8 +1355,8 @@ class ViewTransactionPage extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
                     {this.render_detail_item('0')}
-                    {this.render_item_data(items)}
 
+                    {this.render_item_data(items)}
                     {this.render_item_images()}
                     {this.render_selected_links()}
                     
@@ -1925,7 +1925,9 @@ class ViewTransactionPage extends Component {
 
     render_proposal_data(){
         var background_color = this.props.theme['card_background_color']
+        var object = this.format_proposal_post()
         var item = this.get_proposal_details_data()
+        var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
             <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', padding:'0px 0px 0px 0px'}}>
@@ -1934,6 +1936,10 @@ class ViewTransactionPage extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
+                    <div style={{height: 10}}/>
+                    {this.render_item_data(items)}
+                    {this.render_item_images()}
+                    {this.render_selected_links()}
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', item['consensus_type'])}
@@ -2394,6 +2400,7 @@ class ViewTransactionPage extends Component {
             )
         }
     }
+
 
 
 
@@ -4423,8 +4430,8 @@ class ViewTransactionPage extends Component {
     render_edit_proposal(){
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-150
-        var object = this.format_post();
-        var item = this.get_post_details_data(object)
+        var object = this.format_proposal2();
+        var item = this.get_proposal_details_data2(object)
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
 
         return(
@@ -4446,11 +4453,11 @@ class ViewTransactionPage extends Component {
     }
 
 
-    format_proposal(){
+    format_proposal2(){
         return{'ipfs':this.props.app_state.stack_items[this.state.transaction_index]}
     }
 
-    get_proposal_details_data(object){
+    get_proposal_details_data2(object){
         var tags = object['ipfs'] == null ? ['Proposal'] : object['ipfs'].entered_indexing_tags
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
         return {

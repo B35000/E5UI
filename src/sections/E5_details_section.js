@@ -115,7 +115,7 @@ class E5DetailsSection extends Component {
         // var obj = this.get_e5_data()[this.props.selected_e5_item]
         var e5 = obj['id']
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['label'])}
@@ -395,7 +395,7 @@ class E5DetailsSection extends Component {
     show_subscription_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['subscription']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -427,13 +427,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p4
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p4 - events[i].returnValues.p4
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -478,7 +478,7 @@ class E5DetailsSection extends Component {
     show_contract_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['contract']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -500,7 +500,7 @@ class E5DetailsSection extends Component {
     show_proposal_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['proposal']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -522,7 +522,7 @@ class E5DetailsSection extends Component {
     show_exchange_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['exchange']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -547,7 +547,7 @@ class E5DetailsSection extends Component {
     show_post_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['post']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -579,13 +579,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p6
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p6 - events[i].returnValues.p6
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -631,7 +631,7 @@ class E5DetailsSection extends Component {
     show_channel_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['channel']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -653,7 +653,7 @@ class E5DetailsSection extends Component {
     show_job_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['job']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -675,7 +675,7 @@ class E5DetailsSection extends Component {
     show_stores_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['store']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -697,7 +697,7 @@ class E5DetailsSection extends Component {
     show_bag_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['bag']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -719,7 +719,7 @@ class E5DetailsSection extends Component {
     show_contractor_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['contractor']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -741,7 +741,7 @@ class E5DetailsSection extends Component {
     show_data_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['data']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -766,7 +766,7 @@ class E5DetailsSection extends Component {
     show_metadata_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['metadata']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -798,13 +798,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p5
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -850,7 +850,7 @@ class E5DetailsSection extends Component {
 
     show_withdraw_amount_data_chart(e5_chart_data){
         var events = e5_chart_data['withdraw']
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -877,13 +877,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p6
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p6 - events[i].returnValues.p6
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -965,13 +965,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -1028,7 +1028,7 @@ class E5DetailsSection extends Component {
     show_transaction_transaction_count_chart(e5_chart_data){
         var events = e5_chart_data['transaction']
         var amount = events.length
-        if(events.length != 0){
+        if(events.length >= 23){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -1060,13 +1060,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(61*265100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -1198,33 +1198,33 @@ class E5DetailsSection extends Component {
     }
 
     get_time_diff(diff){
-        if(diff < 60){//less than 1 min
+        if(diff < (61*265100)){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }
-        else if(diff < 60*60){//less than 1 hour
-            var num = Math.floor(diff/(60));
+        else if(diff < (61*265100)*(61*265100)){//less than 1 hour
+            var num = Math.floor(diff/(61*265100));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['30'] 
         }
-        else if(diff < 60*60*24){//less than 24 hours
-            var num = Math.floor(diff/(60*60));
+        else if(diff < (61*265100)*(61*265100)*24){//less than 24 hours
+            var num = Math.floor(diff/((61*265100)*(61*265100)));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['31'] + s;
         }
-        else if(diff < 60*60*24*7){//less than 7 days
-            var num = Math.floor(diff/(60*60*24));
+        else if(diff < (61*265100)*(61*265100)*24*7){//less than 7 days
+            var num = Math.floor(diff/((61*265100)*(61*265100)*24));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['32'] + s;
         }
-        else if(diff < 60*60*24*7*53){//less than 1 year
-            var num = Math.floor(diff/(60*60*24*7));
+        else if(diff < (61*265100)*(61*265100)*24*7*53){//less than 1 year
+            var num = Math.floor(diff/((61*265100)*(61*265100)*24*7));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
-            var num = Math.floor(diff/(60*60*24*7*53));
+            var num = Math.floor(diff/((61*265100)*(61*265100)*24*7*53));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['34'] + s;
         }

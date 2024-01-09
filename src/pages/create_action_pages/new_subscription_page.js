@@ -968,19 +968,19 @@ class NewSubscriptionPage extends Component {
     }
 
     is_exchange_already_added(exchange_id){
-        if(this.get_item_in_array(exchange_id, this.state.bounty_values) == null){
+        if(this.get_item_in_array(exchange_id, this.state.price_data) == null){
             return false
         }
         return true
     }
 
     get_item_in_array(exchange_id, object_array){
-        var object = object_array.find(x => x['exchange'] === exchange_id);
+        var object = object_array.find(x => x['id'] === exchange_id);
         return object
     }
 
     does_exchange_exist(exchange_id){
-        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
+        if(this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5] != null && this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange_id)] == null){
             return false
         }
         return true
@@ -1087,6 +1087,7 @@ class NewSubscriptionPage extends Component {
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['528']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        if(exchanges_from_sync == null) exchanges_from_sync = []
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {

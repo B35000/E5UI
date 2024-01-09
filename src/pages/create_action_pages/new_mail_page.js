@@ -1165,7 +1165,7 @@ class NewMailPage extends Component {
     }
 
     get_account_suggestions(){
-        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5]
+        var contacts = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5]
         var return_array = []
         contacts.forEach(contact => {
             if(contact['id'].toString().includes(this.state.target_recipient)){
@@ -1245,7 +1245,7 @@ class NewMailPage extends Component {
         var title = this.state.entered_title_text
         var recipient = this.state.target_recipient.trim()
 
-        if(index_tags.length < 3){
+        if(index_tags.length < 1){
             this.props.notify(this.props.app_state.loc['160'], 2700)
         }
         else if(title == ''){
@@ -1277,7 +1277,7 @@ class NewMailPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_mail_to_stack(me.state)
         
-                me.setState({ selected: 0, id: makeid(8), type:this.props.app_state.loc['285'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[], typed_link_text:'', link_search_results:[], added_links:[],})
+                me.setState({ selected: 0, id: makeid(8), type:me.props.app_state.loc['285'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(),get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', target_recipient:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], recipients:[], typed_link_text:'', link_search_results:[], added_links:[],})
             }, (1 * 1000));
 
             this.props.notify(this.props.app_state.loc['18'], 1700);

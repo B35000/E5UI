@@ -1430,7 +1430,7 @@ class NewJobPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
 
-                me.setState({ id: makeid(32), type:this.props.app_state.loc['760']/* 'job' */, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], price_data:[], typed_link_text:'', link_search_results:[], added_links:[], })
+                me.setState({ id: makeid(32), type:me.props.app_state.loc['760']/* 'job' */, get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], price_data:[], typed_link_text:'', link_search_results:[], added_links:[], })
             }, (1 * 1000));
             
             this.props.notify(this.props.app_state.loc['18']/* transaction added to stack' */, 1700);

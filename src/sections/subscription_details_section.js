@@ -215,7 +215,7 @@ class SubscriptionDetailsSection extends Component {
         var item = this.get_subscription_details_data(object)
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -394,7 +394,7 @@ class SubscriptionDetailsSection extends Component {
         var subscription_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
 
-        if(subscription_config[0] == my_account){
+        if(subscription_config[0] == my_account && subscription_config[2] == 1){
             return(
                 <div>
                     {this.render_detail_item('0')}

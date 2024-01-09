@@ -223,7 +223,7 @@ class ProposalDetailsSection extends Component {
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]]
         var items = object['ipfs'] == null ? [] : object['ipfs'].entered_objects
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 2px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -511,7 +511,9 @@ class ProposalDetailsSection extends Component {
         var target_consensus = target_consensus_value / bigInt('1e18')
         var achieved_consensus = (this.get_proportion_of_total(object, object['consensus_data'][1])) / 100
 
-        if(now > proposal_exipry_time && now < proposal_sumbit_expiry_time && achieved_consensus >= target_consensus){
+        var events = this.get_item_logs(object, 'submit')
+
+        if(now > proposal_exipry_time && now < proposal_sumbit_expiry_time && achieved_consensus >= target_consensus && events.length == 0){
             return(
                 <div>
                     {this.render_detail_item('0')}

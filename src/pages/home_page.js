@@ -280,7 +280,7 @@ class home_page extends Component {
         var size = this.props.screensize;
         var top_bar = 50;
         var middle = this.props.height-126;
-        var bottom_bar = 70;
+        var bottom_bar = 75;
         var width = this.props.width;
         var navbar_color = this.props.theme['nav_bar_color'];
         var background_color = this.props.theme['homepage_background_color'];
@@ -315,7 +315,7 @@ class home_page extends Component {
                         {this.render_top_tag_bar(size)}
                     </div>
                     
-                    <div style={{height:this.props.height-123, width:width, 'padding':'0px 5px 0px 5px'}}  >
+                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
                         {this.render_post_list_group(size)}
                     </div>
                     
@@ -374,6 +374,7 @@ class home_page extends Component {
     }
 
     render_view_object_bottomsheet(){
+        if(this.state.view_post_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
         var overlay_shadow_color = this.props.theme['send_receive_ether_overlay_shadow'];
@@ -381,17 +382,29 @@ class home_page extends Component {
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
             <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                <div style={{}}>
-                    {this.render_post_detail_object(size)}
-                </div>
+                {this.render_post_detail_object(size)}
             </div>
         </SwipeableBottomSheet>
         )
     }
 
     open_view_object_bottomsheet(){
-        if(this.state != null){
+        if(this.state.view_post_bottomsheet == true){
+            //closing
             this.setState({view_post_bottomsheet: !this.state.view_post_bottomsheet});
+            var me = this;
+            setTimeout(function() {
+                me.setState({view_post_bottomsheet2: false});
+            }, (1 * 1000));
+        }else{
+            //opening
+            this.setState({view_post_bottomsheet2: true});
+            var me = this;
+            setTimeout(function() {
+                if(me.state != null){
+                me.setState({view_post_bottomsheet: !me.state.view_post_bottomsheet});
+                }
+            }, (1 * 200));
         }
     }
 
@@ -640,6 +653,7 @@ class home_page extends Component {
     }
 
     render_filter_section_bottomsheet(){
+        if(this.state.filter_section_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var size = this.props.size
         return(
@@ -652,8 +666,22 @@ class home_page extends Component {
     }
 
     open_filter_section_bottomsheet(){
-        if(this.state != null){
-        this.setState({filter_section_bottomsheet: !this.state.filter_section_bottomsheet});
+        if(this.state.filter_section_bottomsheet == true){
+            //closing
+            this.setState({filter_section_bottomsheet: !this.state.filter_section_bottomsheet});
+            var me = this;
+            setTimeout(function() {
+                me.setState({filter_section_bottomsheet2: false});
+            }, (1 * 1000));
+        }else{
+            //opening
+            this.setState({filter_section_bottomsheet2: true});
+            var me = this;
+            setTimeout(function() {
+                if(me.state != null){
+                me.setState({filter_section_bottomsheet: !me.state.filter_section_bottomsheet});
+                }
+            }, (1 * 200));
         }
     }
 
@@ -719,11 +747,12 @@ class home_page extends Component {
 
 
     render_post_preview_bottomsheet(){
+        if(this.state.post_preview_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var size = this.props.size
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_post_preview_bottomsheet.bind(this)} open={this.state.post_preview_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
-            <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
                 <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
@@ -731,16 +760,36 @@ class home_page extends Component {
     }
 
     open_post_preview_bottomsheet(){
-        if(this.state != null){
+        if(this.state.post_preview_bottomsheet == true){
+            //closing
             this.setState({post_preview_bottomsheet: !this.state.post_preview_bottomsheet});
+            var me = this;
+            setTimeout(function() {
+                me.setState({post_preview_bottomsheet2: false});
+            }, (1 * 1000));
+        }else{
+            //opening
+            this.setState({post_preview_bottomsheet2: true});
+            var me = this;
+            setTimeout(function() {
+                if(me.state != null){
+                me.setState({post_preview_bottomsheet: !me.state.post_preview_bottomsheet});
+                }
+            }, (1 * 200));
         }
     }
 
     open_post_preview_section(post){
-        if(this.post_preview_page.current != null){
-           this.post_preview_page.current?.set_post(post) 
-        }
         this.open_post_preview_bottomsheet()
+
+        var me = this;
+        setTimeout(function() {
+            if(me.post_preview_page.current != null){
+                me.post_preview_page.current?.set_post(post) 
+            }
+        }, (1 * 500));
+        
+        
     }
 
 

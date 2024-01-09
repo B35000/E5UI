@@ -150,8 +150,8 @@ class EthersDetailsSection extends Component {
         var gas_transactions_per_ether =  Math.floor((10**18/gas_price)/23_000)
 
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
+                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
@@ -588,6 +588,9 @@ class EthersDetailsSection extends Component {
         //     )
         // }
 
+        console.log('-----------------------render_block_history_logs---------------------------')
+        console.log(tx_history)
+
         if(tx_history == null || this.get_txs_history_txs(tx_history, object['e5']) == null || this.get_txs_history_txs(tx_history, object['e5']).length == 0){
             var items = [0, 1]
             return(
@@ -611,12 +614,12 @@ class EthersDetailsSection extends Component {
         var items = [].concat(this.get_txs_history_txs(tx_history, object['e5']))
         var middle = this.props.height-45;
         return ( 
-            <div style={{overflow: 'auto',height: middle, 'margin':'0px 0px 0px 0px'}}>
+            <div style={{overflow: 'auto',height: middle, 'margin':'10px 5px 5px 0px'}}>
                 <ul style={{ 'padding': '0px 5px 0px 5px', 'list-style': 'none'}}>
                     {items.map((item, index) => (
-                        <li style={{'padding': '5px'}} onClick={()=> this.when_tx_history_item_clicked(index)}>
+                        <div onClick={()=> this.when_tx_history_item_clicked(index)}>
                             {this.render_block_history_log_item(item, index, object['e5'])}
-                        </li>
+                        </div>
                     ))}
                 </ul>
             </div>
@@ -651,10 +654,16 @@ class EthersDetailsSection extends Component {
 
     render_block_history_log_item(item, index, e5){
         var item_object = this.get_block_history_log_item_object(item, e5)
+        var to = this.get_from_value(item, e5)['to']
+        var e5_address = this.props.app_state.e5s[e5].e5_address
+        if(e5 == 'E35') e5_address = this.props.app_state.e5s['E25'].e5_address
+        if(to == e5_address){
+            return;
+        }
         if(this.state.selected_tx_history_event_item == index){
             return ( 
                 <div>
-                    <div style={{}}>
+                    <div style={{'padding': '1px'}}>
                         {this.from_to_filter(item, e5)}
                         {this.render_gas_used_value(item_object, e5)}
                         <div style={{height: 2}}/>
@@ -678,7 +687,7 @@ class EthersDetailsSection extends Component {
         }else{
             return ( 
                 <div>
-                    <div style={{}}>
+                    <div style={{'padding': '1px'}}>
                         {this.from_to_filter(item, e5)}
                         <div style={{height: 2}}/>
                         <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
@@ -691,6 +700,13 @@ class EthersDetailsSection extends Component {
             );
         }
         
+    }
+
+    get_gas_used(item_object, e5){
+        if(e5 != 'E45'){
+            return parseInt(item_object['gas_used'])
+        }
+        return 0
     }
 
     render_gas_used_value(item_object, e5){

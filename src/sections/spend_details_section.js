@@ -256,7 +256,7 @@ class SpendDetailSection extends Component {
         var symbol = selected_object['ipfs'] == null ? this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_object['id']] : selected_object['ipfs'].entered_symbol_text
         var author = selected_object['event'] != null ? this.get_senders_name(selected_object['event'].returnValues.p3, selected_object) :this.props.app_state.loc['1591']/* 'Unknown' */
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
                     
                     {this.render_detail_item('7', item['banner-icon'])}
@@ -799,7 +799,13 @@ class SpendDetailSection extends Component {
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
         
-        var image = item['ipfs'] == null ? img : item['ipfs'].token_image
+        // var image = item['ipfs'] == null ? img : item['ipfs'].token_image
+        var image = img
+        if(item['ipfs']!= null){
+            if(item['ipfs'].token_image!= null){
+                image = item['ipfs'].token_image
+            }
+        }
         var proportion_ratio_events = selected_object['proportion_ratio_data']
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},

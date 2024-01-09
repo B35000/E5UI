@@ -196,7 +196,7 @@ class BagDetailsSection extends Component {
         var item = this.get_bag_details_data(object)
         
         return(
-            <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', this.get_senders_name(item['sender_account'], object))}

@@ -2161,8 +2161,9 @@ class NewStorefrontItemPage extends Component {
                     entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
                     purchase_option_tags_object:me.get_purchase_option_tags_object(), available_unit_count:0, composition_type:me.get_composition_tags_object(), composition:'', variants:[], variant_images:[], variant_description:'', fulfilment_accounts:[], fulfilment_account:'', typed_link_text:'', link_search_results:[], added_links:[],
                 })
-                me.props.notify(me.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1600)
+                
             }, (1 * 1000));
+            me.props.notify(me.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1600)
         }
     }
 

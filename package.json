@@ -1,5 +1,6 @@
 {
   "name": "old_e5",
+  "homepage":"https://b35000.github.io/E5UI/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -29,6 +30,7 @@
     "ethers": "^5.7.2",
     "filecoin.js": "^0.0.5-alpha",
     "framer-motion": "^10.16.5",
+    "gh-pages": "^6.1.1",
     "helia": "^2.0.3",
     "ipfs-http-client": "^60.0.1",
     "linkify-react": "^4.1.2",
@@ -56,6 +58,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

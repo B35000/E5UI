@@ -1498,7 +1498,7 @@ class NewChannelPage extends Component {
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
         
-                me.setState({ id: makeid(32), type:this.props.app_state.loc['109'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), 
+                me.setState({ id: makeid(32), type:me.props.app_state.loc['109'], get_new_job_page_tags_object: me.get_new_job_page_tags_object(), get_new_job_text_tags_object: me.get_new_job_text_tags_object(), entered_tag_text: '', entered_title_text:'', entered_text:'', entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[], entered_objects:[], new_token_access_rights_tags_object: me.get_new_token_access_rights_tags_object(), 
                 new_token_interactible_moderator_tags_object: me.get_new_token_interactible_moderator_tags_object(),
                 moderator_id:'', moderators:[], interactible_id:'', interactible_timestamp:0, interactibles:[],typed_link_text:'', link_search_results:[], added_links:[],})
             }, (1 * 1000));

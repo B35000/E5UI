@@ -203,6 +203,18 @@ class ArchiveProposalPage extends Component {
         }
     }
 
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
     when_when_exchange_clicked(item){
         var cloned_array = this.state.bounty_exchanges.slice()
         const index = cloned_array.indexOf(item);
