@@ -19,6 +19,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import imageCompression from 'browser-image-compression';
 
 var bigInt = require("big-integer");
 
@@ -396,7 +397,7 @@ class NewProposalPage extends Component {
     }
 
     add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim();
+        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
@@ -485,20 +486,19 @@ class NewProposalPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136']/* 'Add Text' */ : this.props.app_state.loc['137']/* 'Edit Text' */
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['438i']/* 'Enter your preferred text then tap add to add it' */})}
-                {this.render_detail_item('0')}
-                {this.render_detail_item('4',this.get_edited_text_object())}
-                <div style={{height:10}}/>
+                {/* {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['438i']})}
+                {this.render_detail_item('0')} */}
+                
                 {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
                 <TextInput height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_banner_image_picked.bind(this)} />
-                    </div>
+                    </div> */}
 
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -509,6 +509,10 @@ class NewProposalPage extends Component {
                         {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
                     </div>
                 </div>
+
+                <div style={{height:10}}/>    
+                {this.render_detail_item('4',this.get_edited_text_object())}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -559,7 +563,7 @@ class NewProposalPage extends Component {
         }
         var items = [].concat(this.state.entered_objects)
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <SwipeableList>
@@ -589,10 +593,10 @@ class NewProposalPage extends Component {
                 <div>
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                                 <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
-                            </div>
+                            </div> */}
 
                             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -650,7 +654,13 @@ class NewProposalPage extends Component {
                         // this.setState({selected_banner_image: ev.target.result});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -667,7 +677,13 @@ class NewProposalPage extends Component {
                         // this.setState({selected_banner_image: ev.target.result});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -949,7 +965,7 @@ class NewProposalPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -965,7 +981,7 @@ class NewProposalPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>this.when_searched_link_tapped(item)}>
@@ -1019,10 +1035,10 @@ class NewProposalPage extends Component {
     render_create_image_ui_buttons_part(){
       return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-            </div>
+            </div> */}
 
             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -1062,7 +1078,13 @@ class NewProposalPage extends Component {
                         this.setState({entered_image_objects: clonedArray});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -1677,7 +1699,7 @@ class NewProposalPage extends Component {
         if(items.length == 0){
             items = [0, 1]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -1694,7 +1716,7 @@ class NewProposalPage extends Component {
         }else{
             var items = this.state.spend_actions
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_when_spend_action_clicked(item)}>
@@ -2222,7 +2244,7 @@ class NewProposalPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -2238,7 +2260,7 @@ class NewProposalPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
@@ -2444,7 +2466,7 @@ class NewProposalPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -2460,7 +2482,7 @@ class NewProposalPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_transfer_action_value_clicked(item)}>
@@ -2621,7 +2643,7 @@ class NewProposalPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -2637,7 +2659,7 @@ class NewProposalPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_bounty_value_clicked(item)}>

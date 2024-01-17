@@ -167,7 +167,7 @@ class ContractorDetailsSection extends Component {
                     {this.render_selected_links(object)}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2217']/* 'Fees Per Hour' */, 'details':this.props.app_state.loc['2218']/* 'The amounts they charge per hour for their work' */, 'size':'l'})}
+                    {this.fee_per_hour_or_per_job(object)}
                     <div style={{height:10}}/>
                     {this.render_price_amounts(object)}
 
@@ -189,6 +189,23 @@ class ContractorDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    fee_per_hour_or_per_job(object){
+        var item = object['ipfs'].get_fee_type == null ? 'per-hour' : this.get_selected_item(object['ipfs'].get_fee_type, 'e')
+        if(item == 'per-hour'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2217']/* 'Fees Per Hour' */, 'details':this.props.app_state.loc['2218']/* 'The amounts they charge per hour for their work' */, 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['272e']/* 'Fees Per Job' */, 'details':this.props.app_state.loc['272f']/* 'The amounts they charge per job' */, 'size':'l'})}
+                </div>
+            )
+        }
     }
 
     render_selected_links(object){
@@ -300,13 +317,13 @@ class ContractorDetailsSection extends Component {
     }
 
     get_contractor_details_data(object){
-        var tags = object['ipfs'] == null ? ['Contractor'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Contractor'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
     }
@@ -485,6 +502,8 @@ class ContractorDetailsSection extends Component {
         }else{
             var filtered_responses = []
             var all_responses = this.props.app_state.contractor_applications[object['id']] == null ? [] : this.props.app_state.contractor_applications[object['id']]
+            console.log('all_responses??: ',all_responses)
+            console.log(this.props.app_state.contractor_applications)
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])

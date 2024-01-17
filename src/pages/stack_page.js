@@ -689,7 +689,7 @@ class StackPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -706,7 +706,7 @@ class StackPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
@@ -772,7 +772,7 @@ class StackPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -790,7 +790,7 @@ class StackPage extends Component {
         }else{
             return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{}}>
                         {this.render_clear_stack_button()}
                         <div style={{height: 10}}/>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
@@ -1396,7 +1396,7 @@ class StackPage extends Component {
             this.props.lock_run(true)
             
             if(txs.length > 0){
-                this.props.notify(this.props.app_state.loc['1496']/* 'Running your transactions...' */, 3600)
+                this.props.notify(this.props.app_state.loc['1496']/* 'Running your transactions...' */, 7600)
             }
         }
         var strs = []
@@ -1966,8 +1966,9 @@ class StackPage extends Component {
                     adds.push([])
                     ints.push(contractor_obj)
                 }
-                else if(txs[i].type == this.props.app_state.loc['253']/* 'job-request' */){
+                else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
                     var message_obj = await this.format_job_request_object(txs[i], calculate_gas)
+                    console.log('format_job_request_object --------------------------------------------------')
                     
                     strs.push(message_obj.str)
                     adds.push([])
@@ -2384,7 +2385,10 @@ class StackPage extends Component {
         var minimum_transactions_for_first_buy = t.minimum_transactions_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
         var trust_fee_proportion = t.trust_fee_proportion == 0 ? bgN(1,16) : t.trust_fee_proportion.toString().toLocaleString('fullwide', {useGrouping:false})
         
-        var block_limit = t.block_limit == 0 ? default_exchange_amount_buy_limit : t.block_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        var block_limit = t.block_limit.toString().toLocaleString('fullwide', {useGrouping:false})
+        if(t.block_limit != 0 && t.block_limit <= t.default_exchange_amount_buy_limit){
+            block_limit = (t.default_exchange_amount_buy_limit+1).toString().toLocaleString('fullwide', {useGrouping:false})
+        }
         
         var new_token_unlocked_liquidity_tags_object = this.get_selected_item(t.new_token_unlocked_liquidity_tags_object, t.new_token_unlocked_liquidity_tags_object['i'].active) == this.props.app_state.loc['609']/* 'unlocked' */ ? 1 : 0
         var new_token_unlocked_supply_tags_object = this.get_selected_item(t.new_token_unlocked_supply_tags_object, t.new_token_unlocked_supply_tags_object['i'].active) == this.props.app_state.loc['609']/* 'unlocked' */ ? 1 : 0
@@ -5401,6 +5405,7 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1556']/* 'Wallet Thyme' */, 'details':this.props.app_state.loc['1557']/* 'Set the preferred thyme for your wallet' */, 'size':'l'})}
+                <div style={{height: 10}}/>
                 <Tags page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
                 
@@ -5607,7 +5612,7 @@ class StackPage extends Component {
         if(items.length == 0){
             items = [0, 0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
@@ -5623,7 +5628,7 @@ class StackPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -5638,7 +5643,7 @@ class StackPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
-                                            {this.render_detail_item('3', {'title':''+item['id'], 'details':''+item['address'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id']), 'details':''+item['address'], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -5649,6 +5654,11 @@ class StackPage extends Component {
                 </div>
             )
         }
+    }
+
+    get_senders_name(sender){
+         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
     }
 
 
@@ -5743,7 +5753,7 @@ class StackPage extends Component {
         if(items.length == 0){
             items = [0, 0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
@@ -5759,7 +5769,7 @@ class StackPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
@@ -5774,7 +5784,7 @@ class StackPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '2px'}} onClick={()=>this.when_message_clicked(item)}>
-                                            {this.render_detail_item('3', {'title':''+item['id'], 'details':''+item['address'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':item['id']+' • '+this.get_senders_name(item['id']), 'details':''+item['address'], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>
@@ -5941,7 +5951,7 @@ class StackPage extends Component {
         if(items.length == 0){
             items = [0, 0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
@@ -5957,7 +5967,7 @@ class StackPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>

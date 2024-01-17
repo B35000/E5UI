@@ -1198,33 +1198,33 @@ class E5DetailsSection extends Component {
     }
 
     get_time_diff(diff){
-        if(diff < (61*265100)){//less than 1 min
+        if(diff < 60){//less than 1 min
             var num = diff
             var s = num > 1 ? 's': '';
             return num+ this.props.app_state.loc['29']
         }
-        else if(diff < (61*265100)*(61*265100)){//less than 1 hour
-            var num = Math.floor(diff/(61*265100));
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['30'] 
         }
-        else if(diff < (61*265100)*(61*265100)*24){//less than 24 hours
-            var num = Math.floor(diff/((61*265100)*(61*265100)));
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['31'] + s;
         }
-        else if(diff < (61*265100)*(61*265100)*24*7){//less than 7 days
-            var num = Math.floor(diff/((61*265100)*(61*265100)*24));
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['32'] + s;
         }
-        else if(diff < (61*265100)*(61*265100)*24*7*53){//less than 1 year
-            var num = Math.floor(diff/((61*265100)*(61*265100)*24*7));
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['33'] + s;
         }
         else {//more than a year
-            var num = Math.floor(diff/((61*265100)*(61*265100)*24*7*53));
+            var num = Math.floor(diff/(60*60*24*7*53));
             var s = num > 1 ? 's': '';
             return num + this.props.app_state.loc['34'] + s;
         }

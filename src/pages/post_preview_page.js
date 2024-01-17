@@ -120,7 +120,7 @@ class PostPreview extends Component {
             middle = this.props.height-80;
         }
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 0px 2px 0px'}}>

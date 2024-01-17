@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import syncrhonizing_image from './../assets/synchronizing_icon.png';
+import ViewGroups from './../components/view_groups'
 import p2p_trust from './../assets/p2p_trust_image.png';
 import unanimous_consensus from './../assets/unanimous_consensus_image.png';
 import Row from 'react-bootstrap/Row';
@@ -31,6 +32,9 @@ class synchronizing_page extends Component {
                 <div style={{width:'60%', 'margin-top':'20px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_bottom_text()}
                 </div>
+
+                <div style={{height:50}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1598b'], 'textsize':'9px', 'font':'Sans-serif'})}
             </div>
         );
     }
@@ -86,6 +90,20 @@ class synchronizing_page extends Component {
                 </Row>
             </div>
         )
+    }
+
+
+
+    /* renders the specific element in the post or detail object */
+    render_detail_item(item_id, object_data){
+        var size = this.props.screensize
+        var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
+        return(
+            <div>
+                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+            </div>
+        )
+
     }
 
 

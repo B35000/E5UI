@@ -334,7 +334,7 @@ class home_page extends Component {
         else{
             return(
                 <div style={{height: this.props.height, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'background-color':background_color}}>
-                    <img src={Letter} style={{height:'auto',width:'23%'}} />
+                    <img src={Letter} style={{height:'auto',width:'18%'}} />
                 </div>
             );
         }
@@ -450,7 +450,7 @@ class home_page extends Component {
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', StackIconImg, 'auto', '30px','3px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    {this.render_navbar_button('s','0px 0px 0px 0px', StackIconImg, 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
                   </div>
               </div>
           );

@@ -1,6 +1,6 @@
 {
   "name": "old_e5",
-  "homepage":"https://b35000.github.io/E5UI/",
+  "homepage": "https://b35000.github.io/E5UI/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -19,6 +19,7 @@
     "big-integer": "^1.6.51",
     "bip39": "^3.1.0",
     "bootstrap": "^5.3.2",
+    "browser-image-compression": "^2.0.2",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "crypto-js": "^4.2.0",

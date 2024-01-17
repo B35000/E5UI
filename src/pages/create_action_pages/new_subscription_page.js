@@ -13,6 +13,7 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Draggable } from "react-drag-reorder";
+import imageCompression from 'browser-image-compression';
 
 var bigInt = require("big-integer");
 
@@ -252,7 +253,7 @@ class NewSubscriptionPage extends Component {
     }
 
     add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim();
+        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
@@ -741,7 +742,7 @@ class NewSubscriptionPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -757,7 +758,7 @@ class NewSubscriptionPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
@@ -844,7 +845,7 @@ class NewSubscriptionPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -860,7 +861,7 @@ class NewSubscriptionPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
@@ -1006,7 +1007,7 @@ class NewSubscriptionPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -1022,7 +1023,7 @@ class NewSubscriptionPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>

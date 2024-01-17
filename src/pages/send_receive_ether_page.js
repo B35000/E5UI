@@ -83,7 +83,7 @@ class SendReceiveEtherPage extends Component {
         if(selected_item == this.props.app_state.loc['1369']/* 'send' */ || selected_item == 'e'){
             return(
                 <div>
-                    <div style={{'margin':'10px 0px 0px 10px', 'overflow-x':'hidden'}}>
+                    <div style={{'margin':'10px 0px 0px 10px'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_send_ether_ui()}
                     </div> 
@@ -103,7 +103,7 @@ class SendReceiveEtherPage extends Component {
         else{
             return(
                 <div>
-                    <div style={{'margin':'10px 0px 0px 10px', 'overflow-x':'hidden'}}>
+                    <div style={{'margin':'10px 0px 0px 10px'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_receive_ether_ui()}
                     </div>
@@ -138,7 +138,7 @@ class SendReceiveEtherPage extends Component {
 
     render_send_ether_ui(){
         return(
-            <div style={{'padding':'10px 10px 0px 0px', width:'100%', overflow: 'auto', maxHeight: this.props.height-120}}>
+            <div style={{'padding':'10px 10px 0px 0px', width:'100%', maxHeight: this.props.height-120}}>
                 {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['1371']/* 'Send Ether using the address shown below.' */, 'color':'dark-grey'})}
                 {this.render_medium_screen_ui()}
                 {this.render_dialog_ui()}
@@ -356,7 +356,7 @@ class SendReceiveEtherPage extends Component {
         }
         
         return (
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '5px'}}>

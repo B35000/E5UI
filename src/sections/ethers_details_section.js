@@ -612,7 +612,7 @@ class EthersDetailsSection extends Component {
             )
         }
         var items = [].concat(this.get_txs_history_txs(tx_history, object['e5']))
-        var middle = this.props.height-45;
+        var middle = this.props.height-55;
         return ( 
             <div style={{overflow: 'auto',height: middle, 'margin':'10px 5px 5px 0px'}}>
                 <ul style={{ 'padding': '0px 5px 0px 5px', 'list-style': 'none'}}>
@@ -654,12 +654,12 @@ class EthersDetailsSection extends Component {
 
     render_block_history_log_item(item, index, e5){
         var item_object = this.get_block_history_log_item_object(item, e5)
-        var to = this.get_from_value(item, e5)['to']
-        var e5_address = this.props.app_state.e5s[e5].e5_address
-        if(e5 == 'E35') e5_address = this.props.app_state.e5s['E25'].e5_address
-        if(to == e5_address){
-            return;
-        }
+        // var to = this.get_from_value(item, e5)['to']
+        // var e5_address = this.props.app_state.e5s[e5].e5_address
+        // if(e5 == 'E35') e5_address = this.props.app_state.e5s['E25'].e5_address
+        // if(to == e5_address){
+        //     return;
+        // }
         if(this.state.selected_tx_history_event_item == index){
             return ( 
                 <div>
@@ -692,7 +692,7 @@ class EthersDetailsSection extends Component {
                         <div style={{height: 2}}/>
                         <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                             {this.render_detail_item('2', item_object['value'])}
-                            {this.render_detail_item('2', item_object['value_ether'])}
+                            {/* {this.render_detail_item('2', item_object['value_ether'])} */}
                         </div>
                         <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }}/>
                     </div>         

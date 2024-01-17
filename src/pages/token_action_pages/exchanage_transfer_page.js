@@ -197,7 +197,7 @@ class ExchangeTransferPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -213,7 +213,7 @@ class ExchangeTransferPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_transfer_action_value_clicked(item)}>

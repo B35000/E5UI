@@ -14,6 +14,7 @@ import { Draggable } from "react-drag-reorder";
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import imageCompression from 'browser-image-compression';
 
 var bigInt = require("big-integer");
 
@@ -43,7 +44,7 @@ class NewContractorPage extends Component {
     state = {
         id: makeid(8), type:this.props.app_state.loc['253'], e5:this.props.app_state.selected_e5,
         get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(),
-        // get_new_contractor_text_tags_object: this.get_new_contractor_text_tags_object(),
+        get_fee_type: this.get_fee_type(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], exchange_id:'', price_amount:0, price_data:[],
@@ -101,6 +102,17 @@ class NewContractorPage extends Component {
                 ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
             ],
         };
+    }
+
+    get_fee_type(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','per-hour', 'per-job'], [1]
+            ],
+        }
     }
 
     render(){
@@ -236,7 +248,7 @@ class NewContractorPage extends Component {
     }
 
     add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim();
+        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128'], 1400)
@@ -340,22 +352,22 @@ class NewContractorPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136'] : this.props.app_state.loc['137']
         return(
             <div style={{'margin':'10px 0px 0px 10px', width:'100%'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['134']})}
-                {this.render_detail_item('0')}
-                {this.render_detail_item('4',this.get_edited_text_object())}
-                <div style={{height:10}}/>
+                {/* {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['134']})}
+                {this.render_detail_item('0')} */}
+                
                 {/* <div style={{}}>
                     <Tags page_tags_object={this.state.get_new_contractor_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_font_style_updated.bind(this)} theme={this.props.theme}/>
                 </div>
                 <div style={{height:10}}/> */}
 
                 <TextInput height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_banner_image_picked.bind(this)} />
-                    </div>
+                    </div> */}
 
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -366,6 +378,9 @@ class NewContractorPage extends Component {
                         {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
                     </div>
                 </div>
+                <div style={{height:10}}/>
+                {this.render_detail_item('4',this.get_edited_text_object())}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -416,7 +431,7 @@ class NewContractorPage extends Component {
         }
         var items = [].concat(this.state.entered_objects)
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <SwipeableList>
@@ -507,7 +522,13 @@ class NewContractorPage extends Component {
                         // this.setState({selected_banner_image: ev.target.result});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -524,7 +545,13 @@ class NewContractorPage extends Component {
                         // this.setState({selected_banner_image: ev.target.result});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -810,7 +837,7 @@ class NewContractorPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -826,7 +853,7 @@ class NewContractorPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>this.when_searched_link_tapped(item)}>
@@ -882,10 +909,10 @@ class NewContractorPage extends Component {
     render_create_image_ui_buttons_part(){
       return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-            </div>
+            </div> */}
 
             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -925,7 +952,13 @@ class NewContractorPage extends Component {
                         this.setState({entered_image_objects: clonedArray});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -1042,14 +1075,21 @@ class NewContractorPage extends Component {
     render_set_token_and_amount_part(){
         return(
             <div style={{'overflow-x':'hidden'}}>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['237'], 'details':this.props.app_state.loc['260'], 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['272a']/* 'Fee type.' */, 'details':this.props.app_state.loc['272b']/* 'Set your preferred fee type below.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+
+                <Tags page_tags_object={this.state.get_fee_type} tag_size={'l'} when_tags_updated={this.when_get_fee_type_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:20}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['237']/* 'Exchange ID.' */, 'details':this.props.app_state.loc['260']/* 'Select an exchange by its ID.' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['237']} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput height={30} placeholder={this.props.app_state.loc['237']/* 'Exchange ID.' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['261'], 'details':this.props.app_state.loc['262'], 'size':'l'})}
+                {this.fee_per_hour_or_per_job()}
                 <div style={{height: 10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -1063,6 +1103,27 @@ class NewContractorPage extends Component {
                 </div>
             </div>
         )
+    }
+
+    fee_per_hour_or_per_job(){
+        var item = this.get_selected_item(this.state.get_fee_type, 'e')
+        if(item == 'per-hour'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['261']/* 'Fee per hour.' */, 'details':this.props.app_state.loc['262']/* 'Set your desired fee per hour.' */, 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['272c']/* 'Fee per job.' */, 'details':this.props.app_state.loc['272d']/* 'Set your desired fee per job.' */, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+
+    when_get_fee_type_updated(tag_obj){
+        this.setState({get_fee_type: tag_obj})
     }
 
     when_exchange_id_input_field_changed(text){
@@ -1132,7 +1193,7 @@ class NewContractorPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -1148,7 +1209,7 @@ class NewContractorPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
@@ -1209,6 +1270,7 @@ class NewContractorPage extends Component {
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['269'], 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        if(exchanges_from_sync == null) exchanges_from_sync = []
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {

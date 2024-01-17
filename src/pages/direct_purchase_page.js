@@ -136,7 +136,7 @@ class DirectPurchasetPage extends Component {
         if(this.state.selected_variant != null){
             var items = [].concat(this.state.selected_variant['price_data'])
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1103']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1104']/* 'This is the final amount for the price of the items your buying' */, 'size':'l'})}
                     <div style={{height:10}}/>
 

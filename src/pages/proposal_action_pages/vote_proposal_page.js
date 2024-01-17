@@ -148,6 +148,9 @@ class VoteProposalPage extends Component {
 
                     <div style={{height:10}}/>
                     <Tags page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
             </div>
         )
     }

@@ -332,7 +332,7 @@ class NewContractPage extends Component {
     }
 
     add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim();
+        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128'], 400)
@@ -1093,7 +1093,7 @@ class NewContractPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
@@ -1109,7 +1109,7 @@ class NewContractPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
@@ -1208,7 +1208,7 @@ class NewContractPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
@@ -1224,7 +1224,7 @@ class NewContractPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
@@ -1435,7 +1435,7 @@ class NewContractPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -1451,7 +1451,7 @@ class NewContractPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>

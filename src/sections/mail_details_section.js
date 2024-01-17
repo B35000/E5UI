@@ -321,8 +321,12 @@ class MailDetailsSection extends Component {
     }
 
     render_focused_message(object){
-        var item = this.get_focused_message(object);
-        if(item != null){
+        var item_arg = this.get_focused_message(object);
+        var item = item_arg
+        if(item != null && item['ipfs'] != null){
+            item = item_arg['ipfs']
+        }
+        if(item != null){ 
             return(
                 <div style={{'padding': '7px 15px 10px 15px','margin':'0px 70px 5px 50px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '10px 10px 10px 10px'}} onClick={()=>this.unfocus_message(object)}> 
                     <div className="row" style={{'padding':'0px 0px 0px 0px'}}>
@@ -421,7 +425,7 @@ class MailDetailsSection extends Component {
         // }
         else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
@@ -646,11 +650,18 @@ class MailDetailsSection extends Component {
     }
 
     render_response_if_any(_item, object){
+        console.log(_item)
         if(_item['focused_message_id'] == 0) return;
         // if(this.get_focused_message(object) != null) return;
         var message_items = this.get_convo_messages(object).concat(this.get_stacked_items(object))
         var item = this.get_item_in_message_array(_item['focused_message_id'], message_items)
+        console.log(item)
         if(item == null) return;
+        if(item['ipfs'] != null){
+            item = item['ipfs']
+        }
+        // 
+        
         return(
             <div style={{'padding': '7px 15px 10px 15px','margin':'2px 5px 0px 20px', 'background-color': this.props.theme['messsage_reply_background'],'border-radius': '0px 0px 10px 10px'}}> 
                 <div className="row" style={{'padding':'0px 0px 0px 10px'}}>
@@ -672,6 +683,13 @@ class MailDetailsSection extends Component {
 
     get_item_in_message_array(message_id, object_array){
         var object = object_array.find(x => x['message_id'] === message_id);
+        if(object == null){
+            try{
+                object = object_array.find(x => x['ipfs']['message_id'] === message_id);
+            }catch(e){
+                console.log(e)
+            } 
+        } 
         return object
     }
 
@@ -839,10 +857,8 @@ class MailDetailsSection extends Component {
         var focused_message = this.get_focused_message(object)
         var focused_message_message_id = 0
         if(focused_message['ipfs'] != null){
-            console.log('setting focused message message id from ipfs object')
             focused_message_message_id = focused_message['ipfs']['message_id'];
         }else{
-            console.log('setting focused message message id from root object')
             focused_message_message_id = focused_message['message_id'];
         }
         return focused_message_message_id
@@ -910,7 +926,15 @@ class MailDetailsSection extends Component {
         var message = this.state.entered_text.trim()
         // var mail = this.get_mail_items()[this.props.selected_mail_item];
         var message_id = Date.now()
-        var focused_message_id = this.get_focused_message(mail) != null ? this.get_focused_message_id(mail) : 0
+
+        console.log('-------------------add_message_to_stack----------------------')
+        console.log(this.get_focused_message(mail))
+        var focused_message_id = this.get_focused_message(mail) != null ? this.get_focused_message(mail)['message_id'] : 0
+        if(focused_message_id == null){
+            focused_message_id = this.get_focused_message(mail)['ipfs']['message_id']
+        }
+        console.log(focused_message_id)
+        
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'Type something first.' */, 3600)
         }else{

@@ -200,7 +200,7 @@ class template extends Component {
         if(items.length == 0){
             items = [0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -217,7 +217,7 @@ class template extends Component {
         }else{
             var items = [].concat(this.state.stack_items)
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_stack_item_clicked(item, index)}>

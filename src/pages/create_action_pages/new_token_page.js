@@ -18,6 +18,7 @@ import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Draggable } from "react-drag-reorder";
+import imageCompression from 'browser-image-compression';
 
 
 var bigInt = require("big-integer");
@@ -355,7 +356,7 @@ class NewTokenPage extends Component {
     }
 
     add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim();
+        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
@@ -408,12 +409,12 @@ class NewTokenPage extends Component {
                         <img src={image} style={{height:50 ,width:50}} />
                     </div>
 
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px', 'margin':'0px 0px 0px 10px'}}>
+                    {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px', 'margin':'0px 0px 0px 10px'}}>
                         <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)}/>
-                    </div>
+                    </div> */}
 
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 0px'}}>
+                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'7px 0px 0px 0px','margin':'0px 0px 0px 10px'}}>
                         <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept ="image/*" onChange ={this.when_image_gif_picked.bind(this)}/>
                     </div>
@@ -433,7 +434,13 @@ class NewTokenPage extends Component {
                         this.props.notify(this.props.app_state.loc['627']/* 'Use a smaller image!' */, 4000);
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
         }
     }
@@ -581,8 +588,8 @@ class NewTokenPage extends Component {
 
         this.setState({
             new_token_type_tags_object: type,
-            default_exchange_amount_buy_limit:bigInt('1e72'),
-            default_exchange_amount_sell_limit:bigInt('1e72'),
+            default_exchange_amount_buy_limit:bigInt('1e62'),
+            default_exchange_amount_sell_limit:bigInt('1e62'),
             trust_fee_proportion:bigInt('35e15'),
 
             new_token_unlocked_liquidity_tags_object: unlocked_liquidity,
@@ -1589,7 +1596,7 @@ class NewTokenPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1605,7 +1612,7 @@ class NewTokenPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_moderator_account_clicked(item)}>
@@ -1702,7 +1709,7 @@ class NewTokenPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1718,7 +1725,7 @@ class NewTokenPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_interactible_account_clicked(item)}>
@@ -1749,7 +1756,7 @@ class NewTokenPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{overflow: 'auto', maxHeight: height, 'overflow-x':'hidden'}}>
+                <div style={{ 'overflow-x':'hidden'}}>
                     {this.render_set_token_and_amount_part()}
                     <div style={{height: 20}}/>
                     {this.render_set_prices_list_part()}
@@ -1758,7 +1765,7 @@ class NewTokenPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 20px', overflow: 'auto', maxHeight: height}}>
+                <div className="row" style={{'padding': '0px 0px 0px 20px'}}>
                     <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_set_token_and_amount_part()}
                     </div>
@@ -1917,7 +1924,7 @@ class NewTokenPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
@@ -1933,7 +1940,7 @@ class NewTokenPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>

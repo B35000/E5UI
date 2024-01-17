@@ -540,13 +540,13 @@ class StorefrontDetailsSection extends Component {
     }
 
     get_storefront_details_data(object){
-        var tags = object['ipfs'] == null ? ['Store'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Store'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Store ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['2633']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
         }
     }
@@ -810,7 +810,7 @@ class StorefrontDetailsSection extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
@@ -942,7 +942,7 @@ class StorefrontDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{'overflow-y': 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
@@ -951,7 +951,7 @@ class StorefrontDetailsSection extends Component {
             )
             }else{
                 return(
-                    <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div style={{'overflow-y': 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>

@@ -122,7 +122,7 @@ class ViewBagApplicationContractPage extends Component {
             items = [0,1]
             return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>

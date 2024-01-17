@@ -139,6 +139,22 @@ class ModifyTokenPage extends Component {
 
     when_reconfig_items_tags_object_object_updated(tag_obj){
         this.setState({reconfig_items_tags_object: tag_obj})
+        this.reset_the_number_picker()
+    }
+
+    constructor(props) {
+        super(props);
+        this.number_picker_ref = React.createRef();
+    }
+
+
+    reset_the_number_picker(){
+        var me = this;
+        setTimeout(function() {
+            if(me.number_picker_ref.current != null){
+                me.number_picker_ref.current.reset_number_picker()
+            }
+        }, (1 * 500));  
     }
 
     load_reconfig_item_selectors(){
@@ -160,7 +176,7 @@ class ModifyTokenPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
@@ -177,7 +193,7 @@ class ModifyTokenPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proportion_changed.bind(this)} power_limit={properties['powerlimit']} theme={this.props.theme} />
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e18')} when_number_picker_value_changed={this.when_proportion_changed.bind(this)} power_limit={properties['powerlimit']} theme={this.props.theme} />
 
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
@@ -194,7 +210,7 @@ class ModifyTokenPage extends Component {
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_changed.bind(this)} theme={this.props.theme} power_limit={properties['powerlimit']}/>
                     <div style={{height:20}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.add_reconfiguration_item()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1004']/* 'Add Change' */, 'action':''})}
@@ -456,7 +472,7 @@ class ModifyTokenPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -472,7 +488,7 @@ class ModifyTokenPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>

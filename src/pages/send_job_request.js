@@ -16,6 +16,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import imageCompression from 'browser-image-compression';
 
 var bigInt = require("big-integer");
 
@@ -157,10 +158,10 @@ class SendJobRequestPage extends Component {
     render_create_image_ui_buttons_part(){
         return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-            </div>
+            </div> */}
 
             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -183,7 +184,13 @@ class SendJobRequestPage extends Component {
                         this.setState({entered_image_objects: clonedArray});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been added.',500);
@@ -274,7 +281,7 @@ class SendJobRequestPage extends Component {
         if(items.length == 0){
             items = ['0','1'];
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -293,7 +300,7 @@ class SendJobRequestPage extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -553,7 +560,7 @@ class SendJobRequestPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -569,7 +576,7 @@ class SendJobRequestPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>

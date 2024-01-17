@@ -455,7 +455,7 @@ class SubscriptionDetailsSection extends Component {
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
                         <li style={{'padding': '1px'}}>
-                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':'depth:'+buy_depths[index], 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
                         </li>
                     ))}
                 </ul>
@@ -478,7 +478,7 @@ class SubscriptionDetailsSection extends Component {
 
     get_subscription_details_data(object){
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
-        var tags = object['ipfs'] == null ? ['Subscription'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Subscription'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? this.props.app_state.loc['1756']/* 'Subscription ID' */ : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
@@ -488,25 +488,25 @@ class SubscriptionDetailsSection extends Component {
         var subscription_beneficiary = subscription_config[6] == 0 ? subscription_config[0] : subscription_config[6]
         return{
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             
             'age':{ 'style':'l', 'title':this.props.app_state.loc['2206']/* 'Block Number' */, 'subtitle':'age', 'barwidth':this.get_number_width(age), 'number':`${this.format_account_balance_figure(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
             
-            'target_authority_id': {'title':subscription_config[0], 'details':this.props.app_state.loc['1830']/* 'Authority ID' */, 'size':'l'},
+            'target_authority_id': {'title':this.get_senders_name(subscription_config[0], object), 'details':this.props.app_state.loc['1830']/* 'Authority ID' */, 'size':'l'},
             
-            'minimum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1831']/* 'Minimum Buy Amount' */, 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${this.format_account_balance_figure(subscription_config[1])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
+            'minimum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1831']/* 'Minimum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[1]), 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${this.format_account_balance_figure(subscription_config[1])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
 
             'can_cancel_subscription': {'title':can_cancel_subscription, 'details':this.props.app_state.loc['1833']/* 'Subscription Type' */, 'size':'l'},
 
-            'maximum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1834']/* 'Maximum Buy Amount' */, 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${this.format_account_balance_figure(subscription_config[3])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
+            'maximum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1834']/* 'Maximum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[3]), 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${this.format_account_balance_figure(subscription_config[3])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
 
-            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':this.props.app_state.loc['1836']/* 'Minimum Cancellable Amount' */, 'subtitle':'??', 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${this.format_account_balance_figure(subscription_config[4])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
+            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':this.props.app_state.loc['1836']/* 'Minimum Cancellable Amount' */, 'subtitle':this.format_power_figure(subscription_config[4]), 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${this.format_account_balance_figure(subscription_config[4])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
 
             'time_unit': {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['1837']/* 'Time Unit' */, 'size':'l'},
 
             'payment_amount': {'title':this.get_time_diff(object['payment']), 'details':this.props.app_state.loc['1838']/* 'Remaining Subscription Time' */, 'size':'l'},
 
-            'subscription_beneficiary': {'title':subscription_beneficiary, 'details':this.props.app_state.loc['1839']/* 'Subscription Beneficiary' */, 'size':'l'},
+            'subscription_beneficiary': {'title':this.get_senders_name(subscription_beneficiary, object), 'details':this.props.app_state.loc['1839']/* 'Subscription Beneficiary' */, 'size':'l'},
 
             'entry_fees': {'title':this.props.app_state.loc['1840']/* 'Entry Fees' */, 'details':object['data'][2].length+this.props.app_state.loc['1841']/* ' tokens used' */, 'size':'l'},
         }
@@ -533,7 +533,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2667']/* 'Subscription Transfer Events' */, 'size': 'l' })}
@@ -569,7 +569,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -611,7 +611,7 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
@@ -627,7 +627,7 @@ class SubscriptionDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2413']/* 'Action: ' */+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id]+', depth: '+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -651,7 +651,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2668']/* 'Pay Subscription Events' */, 'size': 'l' })}
@@ -706,7 +706,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -784,7 +784,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2671']/* 'Cancel Subscription Events' */, 'size': 'l' })}
@@ -839,7 +839,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -909,7 +909,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2673']/* 'Collect Subscription Events' */, 'size': 'l' })}
@@ -945,7 +945,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1020,7 +1020,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2677']/* 'Modify Subscription Events' */, 'size': 'l' })}
@@ -1057,7 +1057,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1219,7 +1219,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2678']/* 'Subscription Modify Moderator Events' */, 'size': 'l' })}
@@ -1262,7 +1262,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1332,7 +1332,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2679']/* 'Subscription Access Rights Settings Events' */, 'size': 'l' })}
@@ -1368,7 +1368,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1431,7 +1431,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2680']/* 'Subscription Account Access Settings Events' */, 'size': 'l' })}
@@ -1467,7 +1467,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1533,7 +1533,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription '  */+ object['id'], 'details': this.props.app_state.loc['2681']/* 'Subscription Blocked Account Events' */, 'size': 'l' })}
@@ -1569,7 +1569,7 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1638,7 +1638,7 @@ class SubscriptionDetailsSection extends Component {
        var he = this.props.height - 45
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2682']/* 'Search Subscription Payment' */, 'size': 'l' })}
@@ -1737,7 +1737,7 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':(first_payment_block), 'details':this.props.app_state.loc['2689']/* 'First Payment Block' */, 'size':'s'})}
                     {this.render_chart_data_if_size_works(result)}
-
+                    <div style={{height: 10}}/>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2690']/* 'Highest Time Units Paid For ' */, 'subtitle': this.format_power_figure(this.get_interval_figure(result['events'])), 'barwidth': this.calculate_bar_width(this.get_interval_figure(result['events'])), 'number': this.format_account_balance_figure(this.get_interval_figure(result['events'])), 'barcolor': '', 'relativepower': this.props.app_state.loc['2685']/* time-units' */, })}
                     </div>

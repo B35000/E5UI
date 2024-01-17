@@ -748,7 +748,7 @@ class EndDetailSection extends Component {
         }
 
         var item = selected_object;
-        var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : [selected_object['e5']].concat(item['ipfs'].entered_indexing_tags)
+        var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : [].concat(item['ipfs'].entered_indexing_tags)
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+spend_type : item['ipfs'].entered_symbol_text
         // if(symbol == null){
@@ -765,7 +765,7 @@ class EndDetailSection extends Component {
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
-            'token_id': {'title':this.props.app_state.loc['2375']/* 'ID: ' */+selected_object['id'], 'details':this.props.app_state.loc['2376']/* 'Token Identifier' */, 'size':'l'},
+            'token_id': {'title':selected_object['e5']+' • '+selected_object['id'], 'details':this.props.app_state.loc['2376']/* 'Token Identifier' */, 'size':'l'},
             'token_type': {'title':this.props.app_state.loc['2377']/* 'Token Type' */, 'details':type, 'size':'l'},
             'age': { 'style': 'l', 'title': this.props.app_state.loc['2378']/* 'Block Number' */, 'subtitle': this.props.app_state.loc['2198']/* 'age' */, 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} ago`, },
 
@@ -1110,13 +1110,13 @@ class EndDetailSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p9
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(60*100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(60*100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -1206,13 +1206,13 @@ class EndDetailSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p9
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(60*100)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p9 - events[i].returnValues.p9
-                    for(var t=0; t<diff; t+=60){
+                    for(var t=0; t<diff; t+=(60*100)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -1284,7 +1284,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange '  */+ object['id'], 'details': this.props.app_state.loc['2408']/* 'Updated Exchange Ratio Events' */, 'size': 'l' })}
@@ -1329,7 +1329,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1438,7 +1438,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange '  */+ object['id'], 'details': this.props.app_state.loc['2412']/* 'Your Transfer Events' */, 'size': 'l' })}
@@ -1475,7 +1475,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1553,7 +1553,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2414']/* 'Exchange Modification Events' */, 'size': 'l' })}
@@ -1589,7 +1589,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1774,7 +1774,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2418']/* 'Exchange Transfer Events' */, 'size': 'l' })}
@@ -1811,7 +1811,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1888,7 +1888,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Update Balance Events', 'size': 'l' })}
@@ -1925,7 +1925,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2000,7 +2000,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Exchange ' + object['id'], 'details': 'Freeze-Unfreeze Events', 'size': 'l' })}
@@ -2037,7 +2037,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2109,7 +2109,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2426']/* 'Exchange Modify Moderator Events' */, 'size': 'l' })}
@@ -2152,7 +2152,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2221,7 +2221,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2432']/* 'Exchange Access Rights Settings Events' */, 'size': 'l' })}
@@ -2257,7 +2257,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2320,7 +2320,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2437']/* 'Exchange  Account Access Settings Events' */, 'size': 'l' })}
@@ -2356,7 +2356,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2422,7 +2422,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2440']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2441']/* 'Exchange  Blocked Account Events' */, 'size': 'l' })}
@@ -2458,7 +2458,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2525,7 +2525,7 @@ class EndDetailSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange ' */ + object['id'], 'details': this.props.app_state.loc['2444']/* 'Exchange  Depth-Mint Events' */, 'size': 'l' })}
@@ -2562,7 +2562,7 @@ class EndDetailSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>

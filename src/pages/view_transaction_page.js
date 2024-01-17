@@ -9,6 +9,8 @@ import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import EndImg from './../assets/end_token_icon.png';
+import SpendImg from './../assets/spend_token_icon.png';
 
 var bigInt = require("big-integer");
 
@@ -971,6 +973,8 @@ class ViewTransactionPage extends Component {
         var selected_object = this.format_token()
         var title = selected_object['id'];
         var img = selected_object['img']
+
+        
         
         var selected_obj_root_config = selected_object['data'][0];
         var selected_obj_config = selected_object['data'][1];
@@ -989,7 +993,11 @@ class ViewTransactionPage extends Component {
         var active_tags = item['ipfs'] == null ? [''+title, ''+type, 'token'] : item['ipfs'].entered_indexing_tags
         var name = item['ipfs'] == null ? ''+title : item['ipfs'].entered_title_text
         var symbol = item['ipfs'] == null ? ''+type : item['ipfs'].entered_symbol_text
-        var image = item['ipfs'] == null ? img : item['ipfs'].token_image
+
+        var default_image = type == this.props.app_state.loc['606']/* 'capped' */ ? EndImg: SpendImg
+        var image = item['ipfs'].token_image == null ? default_image : item['ipfs'].token_image
+
+        // var image = item['ipfs'] == null ? img : item['ipfs'].token_image
         
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},

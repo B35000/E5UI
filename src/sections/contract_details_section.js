@@ -83,7 +83,7 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.render_contract_details_section()}
-                    <div style={{ width: '100%', 'padding': '0px 0px 0px 0px', 'margin': '0px 0px 0px 0px', 'max-width': '470px' }}>
+                    <div style={{ width: '100%', 'padding': '0px 0px 0px 0px', 'margin': '0px 0px 0px 0px',  }}>
                         <Tags page_tags_object={this.state.navigate_view_contract_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_contract_list_detail_tags_object_updated.bind(this)} theme={this.props.theme} />
                     </div>
                 </div>
@@ -713,7 +713,7 @@ class ContractDetailsSection extends Component {
 
     get_contract_details_data(object) {
         // var object = this.get_contract_items()[this.props.selected_contract_item]
-        var tags = object['ipfs'] == null ? [object['e5'], 'Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Contract'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
@@ -728,7 +728,7 @@ class ContractDetailsSection extends Component {
         var voter_weight_balance = this.get_voter_weight_balance(contract_config[33], object)
         return {
             'tags': { 'active_tags': tags, 'index_option': 'indexed' },
-            'id': { 'title': object['id'], 'details': title, 'size': 'l' },
+            'id': { 'title': object['e5']+' • '+object['id'], 'details': title, 'size': 'l' },
             'age': { 'style': 'l', 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle': '', 'barwidth': this.get_number_width(age), 'number': `${number_with_commas(age)}`, 'barcolor': '', 'relativepower': `${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, },
 
             'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */, 'size': 'l' },
@@ -844,7 +844,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2176']/* 'Created Proposal Events' */, 'size': 'l' })}
@@ -881,7 +881,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -979,7 +979,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2177']/* 'Modify Proposal Events' */, 'size': 'l' })}
@@ -1016,7 +1016,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1189,7 +1189,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2186']/* 'Enter Contract Events' */, 'size': 'l' })}
@@ -1246,7 +1246,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1308,7 +1308,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': 'In Contract ' + object['id'], 'details': this.props.app_state.loc['2190']/* 'Extend Contract Stay Events' */, 'size': 'l' })}
@@ -1344,7 +1344,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1407,7 +1407,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2193']/* 'Exit Contract Events' */, 'size': 'l' })}
@@ -1463,7 +1463,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1526,7 +1526,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2195']/* 'Force Exit Contract Events' */, 'size': 'l' })}
@@ -1562,7 +1562,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1625,7 +1625,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2199']/* 'Contract Transfer Events' */, 'size': 'l' })}
@@ -1662,7 +1662,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1699,7 +1699,7 @@ class ContractDetailsSection extends Component {
                     <div style={{ height: 2 }} />
 
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2200']/* 'Token ID:  ' */+exchange_id+this.props.app_state.loc['2201']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
@@ -1715,7 +1715,7 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's' })}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2200']/* 'Token ID:  ' */+exchange_id+this.props.app_state.loc['2201']/* ', depth: ' */+depth, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                 </div>
@@ -1740,7 +1740,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2202']/* 'Contract Modify Moderator Events' */, 'size': 'l' })}
@@ -1784,7 +1784,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1856,7 +1856,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2204']/* 'Contract Access Rights Settings Events' */, 'size': 'l' })}
@@ -1893,7 +1893,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -1960,7 +1960,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title':this.props.app_state.loc['2185']/*  'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2207']/* 'Contract  Account Access Settings Events' */, 'size': 'l' })}
@@ -1997,7 +1997,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
@@ -2072,7 +2072,7 @@ class ContractDetailsSection extends Component {
         var he = this.props.height - 45
         // var object = this.get_contract_items()[this.props.selected_contract_item]
         return (
-            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px', 'max-width': '470px' }}>
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
                     <div style={{ padding: '5px 5px 5px 5px' }}>
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2209']/* 'Contract  Blocked Account Events' */, 'size': 'l' })}
@@ -2108,7 +2108,7 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{ overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse' }}>
+                <div style={{  }}>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>

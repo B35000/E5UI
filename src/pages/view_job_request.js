@@ -317,7 +317,7 @@ class ViewJobRequestPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -333,7 +333,7 @@ class ViewJobRequestPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
@@ -451,7 +451,7 @@ class ViewJobRequestPage extends Component {
         if(items.length == 0){
             items = ['0','1'];
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -470,7 +470,7 @@ class ViewJobRequestPage extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return ( 
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px 2px 5px 2px'}}>
@@ -698,7 +698,7 @@ class ViewJobRequestPage extends Component {
             items = [0,1]
             return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>

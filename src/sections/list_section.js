@@ -344,13 +344,13 @@ class PostListSection extends Component {
     }
 
     format_job_item(object){
-        var tags = object['ipfs'] == null ? ['Job'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Job'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -452,11 +452,11 @@ class PostListSection extends Component {
     }
 
     format_contract_item(object){
-        var tags = object['ipfs'] == null ? [object['e5'], 'Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
-        var id_text = ''+object['id']
-        if(object['id'] == 2) id_text = 'Main Contract'
+        var id_text = object['e5']+' • '+object['id']
+        if(object['id'] == 2) id_text = object['e5']+'•'+'Main Contract'
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text, 'details':title, 'size':'l'},
@@ -550,13 +550,13 @@ class PostListSection extends Component {
     }
 
     format_proposal_item(object){
-        var tags = object['ipfs'] == null ? ['Proposal'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Proposal'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p6
         var time = object['event'] == null ? 0 : object['event'].returnValues.p5
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -653,13 +653,13 @@ class PostListSection extends Component {
     }
 
     format_subscription_item(object){
-        var tags = object['ipfs'] == null ? ['Subscription'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Subscription'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Subscription ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -783,7 +783,7 @@ class PostListSection extends Component {
             'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'textsize':'14px', 'text':details, 'font':'Sans-serif'},
             'author_title':{'title':title, 'details':details, 'size':'l'},
-            'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':this.props.app_state.loc['1317']/* block */+` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':this.props.app_state.loc['1317']/* block */+` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
 
@@ -881,13 +881,13 @@ class PostListSection extends Component {
     }
 
     format_contractor_item(object){
-        var tags = object['ipfs'] == null ? ['Contractor'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Contractor'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contractor ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1268,13 +1268,13 @@ class PostListSection extends Component {
     }
 
     format_post_item(object){
-        var tags = object['ipfs'] == null ? ['Post'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1369,13 +1369,13 @@ class PostListSection extends Component {
     }
 
     format_channel_item(object){
-        var tags = object['ipfs'] == null ? ['Post'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -1467,13 +1467,13 @@ class PostListSection extends Component {
     }
 
     format_storefront_item(object){
-        var tags = object['ipfs'] == null ? ['Storefront'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Storefront'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Storefront ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.explore_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
     }
@@ -2025,7 +2025,7 @@ class PostListSection extends Component {
         var balance = item['balance']
         return{
             'tags':{'active_tags':[item['e5'], token_id].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
-            'label':{'title':name,'details':symbol, 'size':'l', 'image':image},
+            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'0%'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',}
         }
     }

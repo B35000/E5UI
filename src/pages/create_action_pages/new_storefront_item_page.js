@@ -14,6 +14,7 @@ import { Draggable } from "react-drag-reorder";
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+import imageCompression from 'browser-image-compression';
 
 var bigInt = require("big-integer");
 
@@ -54,7 +55,7 @@ class NewStorefrontItemPage extends Component {
         device_country: this.props.app_state.device_country,
 
         typed_link_text:'', link_search_results:[], added_links:[], 
-        edit_text_item_pos:-1,
+        edit_text_item_pos:-1, edit_variant_item_pos:-1
     };
 
     get_new_job_page_tags_object(){
@@ -469,7 +470,7 @@ class NewStorefrontItemPage extends Component {
         if(items.length == 0){
             items = [0, 1]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
@@ -485,7 +486,7 @@ class NewStorefrontItemPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_shipping_amount_clicked(item)}>
@@ -749,7 +750,7 @@ class NewStorefrontItemPage extends Component {
 
 
     add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim();
+        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
             this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
@@ -854,20 +855,19 @@ class NewStorefrontItemPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136']/* 'Add Text' */ : this.props.app_state.loc['137']/* 'Edit Text' */
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['497']/* 'Enter your preferred text then tap add to add it' */})}
-                {this.render_detail_item('0')}
-                {this.render_detail_item('4',this.get_edited_text_object())}
-                <div style={{height:10}}/>
+                {/* {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['497']})} */}
+                
+                
                 {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/> */}
+                */}
 
                 <TextInput height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_banner_image_picked.bind(this)} />
-                    </div>
+                    </div> */}
 
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -878,6 +878,9 @@ class NewStorefrontItemPage extends Component {
                         {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
                     </div>
                 </div>
+                <div style={{height:10}}/> 
+                {this.render_detail_item('4',this.get_edited_text_object())}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -928,7 +931,7 @@ class NewStorefrontItemPage extends Component {
         }
         var items = [].concat(this.state.entered_objects)
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.map((item, index) => (
                         <SwipeableList>
@@ -958,10 +961,10 @@ class NewStorefrontItemPage extends Component {
                 <div>
                     <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                                 <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={(e) => this.when_banner_image_updated(e, index)} />
-                            </div>
+                            </div> */}
 
                             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -1019,7 +1022,13 @@ class NewStorefrontItemPage extends Component {
                         // this.setState({selected_banner_image: ev.target.result});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -1036,7 +1045,13 @@ class NewStorefrontItemPage extends Component {
                         // this.setState({selected_banner_image: ev.target.result});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -1320,7 +1335,7 @@ class NewStorefrontItemPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -1336,7 +1351,7 @@ class NewStorefrontItemPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>this.when_searched_link_tapped(item)}>
@@ -1394,10 +1409,10 @@ class NewStorefrontItemPage extends Component {
     render_create_image_ui_buttons_part(){
       return(
         <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+            {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                 <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_gif_picked.bind(this)} multiple/>
-            </div>
+            </div> */}
 
             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -1437,7 +1452,13 @@ class NewStorefrontItemPage extends Component {
                         this.setState({entered_image_objects: clonedArray});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -1629,7 +1650,7 @@ class NewStorefrontItemPage extends Component {
         if(items.length == 0){
             items = [0, 1]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
@@ -1645,7 +1666,7 @@ class NewStorefrontItemPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
@@ -1678,6 +1699,21 @@ class NewStorefrontItemPage extends Component {
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div style={{'overflow-x':'hidden'}}>
+                <div style={{height:10}}/>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['535c']/* Set the details for a variant of your new storefront item, then tap the black circle to add it. */, 'textsize':'13px', 'font':'Sans-serif'})}
+                <div style={{height:10}}/>
+                <div className="row">
+                    <div className="col-10" style={{'padding': '0px 0px 0px 0px'}}>
+                        {this.render_variant_tabs()}
+                    </div>
+                    <div className="col-2" style={{'padding': '5px 0px 0px 5px'}}>
+                        <div style={{'padding': '0px'}} onClick={()=>this.when_add_variant_tapped()}>
+                            <img src={E5EmptyIcon} style={{height:45, width:'auto'}} />
+                        </div> 
+                    </div>
+                </div>
+                {this.render_detail_item('0')}
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['512']/* 'Variant Title' */, 'details':this.props.app_state.loc['513']/* 'Set a basic description of the variant of the item your selling like a color or size option' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -1703,17 +1739,10 @@ class NewStorefrontItemPage extends Component {
 
                 <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
 
-                {this.render_detail_item('0')}
                 {this.render_enter_item_price_part()}
 
                 {this.render_detail_item('0')}
-
-                <div style={{'padding': '5px'}} onClick={() => this.when_add_variant_tapped()}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['520']/* 'Add Variant' */, 'action':''})}
-                </div>
-
-
-                {this.render_variants()}
+                {this.render_detail_item('0')}
 
             </div>
         )
@@ -1723,10 +1752,10 @@ class NewStorefrontItemPage extends Component {
         return(
             <div>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
-                    <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
+                    {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
                         <input style={{height:30, width:40, opacity:0, 'z-index':'2' ,'position': 'absolute', 'margin':'5px 0px 0px 0px'}} id="upload" type="file" accept =".gif" onChange ={this.when_image_variant_gif_picked.bind(this)} multiple/>
-                    </div>
+                    </div> */}
 
                     <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
                         <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}} />
@@ -1754,7 +1783,13 @@ class NewStorefrontItemPage extends Component {
                         this.setState({variant_images: clonedArray});
                     }
                 }.bind(this);
-                reader.readAsDataURL(e.target.files[i]);
+                var imageFile = e.target.files[i];
+                imageCompression(imageFile, { maxSizeMB: 0.35, maxWidthOrHeight: 1920, useWebWorker: true }).then(function (compressedFile) {
+                    reader.readAsDataURL(compressedFile);
+                })
+                .catch(function (error) {
+                    console.log(error.message);
+                });
             }
             var image = e.target.files.length == 1 ? 'image has' : 'images have';
             // this.props.notify('Your selected '+e.target.files.length+image+' been staged.',500);
@@ -1835,8 +1870,12 @@ class NewStorefrontItemPage extends Component {
             var variant = {'variant_id':makeid(8),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
 
             var clone = this.state.variants.slice()
-            clone.push(variant)
-            this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0})
+            if(this.state.edit_variant_item_pos != -1){
+                clone[this.state.edit_variant_item_pos] = variant
+            }else{
+                clone.push(variant)
+            }
+            this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0, edit_variant_item_pos: -1})
             this.props.notify(this.props.app_state.loc['524']/* 'added the variant to the item' */, 600)
         }
     }
@@ -1848,12 +1887,12 @@ class NewStorefrontItemPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-        var items = this.state.variants
+        var items = [].concat(this.state.variants)
 
         if(items.length == 0){
             items = [0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
@@ -1869,7 +1908,7 @@ class NewStorefrontItemPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
@@ -1892,7 +1931,6 @@ class NewStorefrontItemPage extends Component {
         }
     }
 
-
     render_variant_price_data(variant){
         var items = [].concat(variant['price_data'])
         return(
@@ -1906,7 +1944,6 @@ class NewStorefrontItemPage extends Component {
         )
     }
 
-
     remove_variant(item){
         var cloned_array = this.state.variants.slice()
         const index = cloned_array.indexOf(item);
@@ -1915,6 +1952,122 @@ class NewStorefrontItemPage extends Component {
         }
         this.setState({variants: cloned_array})
         this.props.notify(this.props.app_state.loc['526']/* 'variant removed!' */,600)
+    }
+
+
+
+
+
+    render_variant_tabs(){
+        var background_color = this.props.theme['card_background_color']
+        var middle = this.props.height-100;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-100;
+        }
+        var items = [].concat(this.state.variants)
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=>this.when_tab_clicked(item, index)}>
+                            {this.render_tab_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+
+    render_tab_item(item, index){
+        if(this.is_tab_active(index)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':item['variant_id'], 'details':'', 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':item['variant_id'], 'details':this.truncate(item['variant_description'], 15), 'size':'s', 'padding':'5px 12px 5px 12px'})}
+                </div>
+            )
+        }
+    }
+
+
+    is_tab_active(index){
+        return this.state.edit_variant_item_pos == index
+    }
+
+    when_tab_clicked(item, index){
+        let me = this;
+        if(Date.now() - this.last_all_click_time < 200){
+            //double tap
+            me.remove_tab_item(index)
+            clearTimeout(this.all_timeout);
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.focus_tab(index)
+            }, 200);
+        }
+        this.last_all_click_time = Date.now();
+    }
+
+    remove_tab_item(index){
+        var cloned_array = this.state.variants.slice()
+        // const index = cloned_array.indexOf(item);
+        if (index > -1) { // only splice array when item is found
+            cloned_array.splice(index, 1); // 2nd parameter means remove one item only
+
+            var prev_index = index -1;
+            if(this.is_tab_active(index) && prev_index > -1){
+                this.focus_tab(prev_index)
+            }
+            this.setState({variants: cloned_array})
+        }
+    }
+
+    focus_tab(item_pos){
+        if(this.is_tab_active(item_pos)){
+            this.setState({edit_variant_item_pos: -1, variant_images:[], variant_description:'', price_data:[], available_unit_count:0})
+        }else{
+            this.props.notify(this.props.app_state.loc['535d']/* 'Editing that variant' */, 2000)
+            this.set_focused_variant_data(item_pos)
+        }
+        
+    }
+
+    set_focused_variant_data(item_pos){
+        var variant = this.state.variants[item_pos]
+        this.setState({variant_images: variant['image_data']['data']['images'], variant_description: variant['variant_description'], price_data: variant['price_data'], available_unit_count: variant['available_unit_count'], edit_variant_item_pos: item_pos});
     }
 
 
@@ -1947,6 +2100,7 @@ class NewStorefrontItemPage extends Component {
             {'id':'5', 'label':{'title':'SPEND', 'details':this.props.app_state.loc['528']/* 'Account 5' */, 'size':'s'}},
         ];
         var exchanges_from_sync = this.props.app_state.created_tokens[this.props.app_state.selected_e5]
+        if(exchanges_from_sync == null) exchanges_from_sync = [];
         var sorted_token_exchange_data = []
         // var myid = this.props.app_state.user_account_id
         for (let i = 0; i < exchanges_from_sync.length; i++) {

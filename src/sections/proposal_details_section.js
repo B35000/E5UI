@@ -580,7 +580,9 @@ class ProposalDetailsSection extends Component {
     render_archive_button_if_author(object){
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
-        if(object['event'].returnValues.p4/* supposed to be p3 */ == my_account && object['data'][1][3] < Date.now()/1000){
+        var events = this.get_item_logs(object, 'archive')
+
+        if(object['event'].returnValues.p4/* supposed to be p3 */ == my_account && object['data'][1][3] < Date.now()/1000 && events.length == 0){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -614,7 +616,7 @@ class ProposalDetailsSection extends Component {
 
     get_proposal_details_data(object){
         // var object = this.get_proposal_items()[this.props.selected_proposal_item]
-        var tags = object['ipfs'] == null ? ['Proposal'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Proposal'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p6
         var time = object['event'] == null ? 0 : object['event'].returnValues.p5
@@ -627,7 +629,7 @@ class ProposalDetailsSection extends Component {
         
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['2549']/* 'Age of Proposal' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
 
             '':{'title':'', 'details':'', 'size':'l'},
@@ -1012,7 +1014,7 @@ class ProposalDetailsSection extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
@@ -1133,7 +1135,7 @@ class ProposalDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{'overflow-y': 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
@@ -1142,7 +1144,7 @@ class ProposalDetailsSection extends Component {
             )
             }else{
                 return(
-                    <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div style={{'overflow-y': 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>

@@ -186,7 +186,7 @@ class NewStorefrontPage extends Component {
         if(items.length == 0){
             items = [1,2]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -202,7 +202,7 @@ class NewStorefrontPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -316,7 +316,7 @@ class NewStorefrontPage extends Component {
     }
 
     add_indexing_tag_for_new_job(){
-        var typed_word = this.state.entered_tag_text.trim();
+        var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
             this.props.notify('type something!', 400)
@@ -475,7 +475,7 @@ class NewStorefrontPage extends Component {
         }
         var items = this.state.entered_text_objects
         return ( 
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                     {items.reverse().map((item, index) => (
                         <li style={{'padding': '5px'}} onClick={()=>this.when_text_clicked(item)}>

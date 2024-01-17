@@ -233,7 +233,7 @@ class JobDetailsSection extends Component {
                     {this.render_selected_links(object)}
 
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2482']/* Price Amounts' */, 'details':this.props.app_state.loc['2483']/* 'The amounts they are offering for the job.' */, 'size':'l'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2482']/* 'Job Offers' */, 'details':this.props.app_state.loc['2483']/* 'The amounts they are offering for the job.' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_price_amounts(object)}
                     <div style={{height:10}}/>
@@ -480,13 +480,13 @@ class JobDetailsSection extends Component {
 
 
     get_job_details_data(object){
-        var tags = object['ipfs'] == null ? ['Job'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
+        var tags = object['ipfs'] == null ? ['Job'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Job ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
-            'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['2493']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
         }
     }
@@ -705,7 +705,7 @@ class JobDetailsSection extends Component {
         return(
             <div style={{}}>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
 
                         {this.render_top_title(object)}
@@ -830,7 +830,7 @@ class JobDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {/* {this.render_messages(items, object)} */}
                         {this.render_messages(items.concat(stacked_items), object)}
@@ -840,7 +840,7 @@ class JobDetailsSection extends Component {
             )
             }else{
                 return(
-                    <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>

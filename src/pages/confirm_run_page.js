@@ -164,7 +164,7 @@ class ConfirmRunPage extends Component {
         if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
+                <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
@@ -182,7 +182,7 @@ class ConfirmRunPage extends Component {
         }else{
             return(
                 <div>
-                    <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <div style={{}}>
                         <div style={{height: 10}}/>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (

@@ -273,13 +273,13 @@ class BagDetailsSection extends Component {
 
 
     get_bag_details_data(object){
-        var tags = [object['e5']].concat([object['event'].returnValues.p3])
+        var tags = [].concat([object['event'].returnValues.p3])
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+' item(s) ordered'
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
             'sender_account':{'title':''+object['event'].returnValues.p3, 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
-            'id':{'title':this.props.app_state.loc['2046']/* 'Bag ID: ' */+object['id'], 'details':title, 'size':'l'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
     }
@@ -569,7 +569,7 @@ class BagDetailsSection extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
 
                         {this.render_top_title(object)}
@@ -696,7 +696,7 @@ class BagDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
@@ -705,7 +705,7 @@ class BagDetailsSection extends Component {
             )
             }else{
                 return(
-                    <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>

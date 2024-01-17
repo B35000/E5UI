@@ -8,20 +8,20 @@ import Linkify from "linkify-react";
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-    function urlify(text) {
-        var urlRegex = /(https?:\/\/[^\s]+)/g;
-        
-        return text.replace(urlRegex, function(url) {
-            var hyperlink = url;
-            if(!hyperlink.match('^https?:\/\/')){
-                hyperlink = 'http://' + hyperlink;
-            }
-            return '<a className="blue" href="' + url + '" target="_blank">' + url + '</a>'
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    
+    return text.replace(urlRegex, function(url) {
+        var hyperlink = url;
+        if(!hyperlink.match('^https?:\/\/')){
+            hyperlink = 'http://' + hyperlink;
+        }
+        return '<a className="blue" href="' + url + '" target="_blank">' + url + '</a>'
 
-        })
-        // or alternatively
-        
-    }
+    })
+    // or alternatively
+    
+}
 
 class ViewGroups extends Component {
     
@@ -244,7 +244,7 @@ class ViewGroups extends Component {
             }
             return(
                 <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <button style={{'background-color': '#444444', 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize'}}>
+                    <button style={{'background-color': '#444444', 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize'}}/*  onMouseDown={e => e.preventDefault()} */>
                       {text}
                     </button>
                 </div>

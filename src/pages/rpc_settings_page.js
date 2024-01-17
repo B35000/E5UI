@@ -133,7 +133,7 @@ class RPCSettingsPage extends Component {
             middle = this.props.height-100;
         }
         return(
-            <div style={{overflow: 'auto', maxHeight: middle}}>
+            <div style={{}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '2px'}} onClick={()=> this.props.when_rpc_tapped(item, index, this.state.ether)}>
