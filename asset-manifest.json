@@ -1,9 +1,10 @@
 {
   "files": {
-    "main.css": "/E5UI/static/css/main.573e61c4.css",
-    "main.js": "/E5UI/static/js/main.95283bd5.js",
+    "main.css": "/E5UI/static/css/main.2848a84c.css",
+    "main.js": "/E5UI/static/js/main.397dae25.js",
     "static/media/e5empty_icon.png": "/E5UI/static/media/e5empty_icon.cc58b40d5e08618d1807.png",
     "static/media/e5empty_icon3.png": "/E5UI/static/media/e5empty_icon3.82753041adaab216b7f9.png",
+    "static/media/ComicSans.ttf": "/E5UI/static/media/ComicSans.3198d266c6629f0b7ce0.ttf",
     "static/media/alert_icon.png": "/E5UI/static/media/alert_icon.c9e4dc07aea028eb89ca.png",
     "static/media/end_token_icon.png": "/E5UI/static/media/end_token_icon.3e84e49554dd5d90fee1.png",
     "static/media/End25.png": "/E5UI/static/media/End25.42be351e0a037fb05bfe.png",
@@ -132,11 +133,11 @@
     "static/media/letter.png": "/E5UI/static/media/letter.0ed8625c19055ed06b21.png",
     "static/media/ethereum_testnet.png": "/E5UI/static/media/ethereum_testnet.9e100f6a6ed0a8baaca4.png",
     "index.html": "/E5UI/index.html",
-    "main.573e61c4.css.map": "/E5UI/static/css/main.573e61c4.css.map",
-    "main.95283bd5.js.map": "/E5UI/static/js/main.95283bd5.js.map"
+    "main.2848a84c.css.map": "/E5UI/static/css/main.2848a84c.css.map",
+    "main.397dae25.js.map": "/E5UI/static/js/main.397dae25.js.map"
   },
   "entrypoints": [
-    "static/css/main.573e61c4.css",
-    "static/js/main.95283bd5.js"
+    "static/css/main.2848a84c.css",
+    "static/js/main.397dae25.js"
   ]
 }
