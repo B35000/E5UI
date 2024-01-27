@@ -700,7 +700,7 @@ class JobDetailsSection extends Component {
 
     render_job_message_activity(object){
         var he = this.props.height-95
-        if(this.get_focused_message(object) != null) he = this.props.height-155
+        if(this.get_focused_message(object) != null) he = this.props.height-170
         var size = this.props.screensize
         return(
             <div style={{}}>

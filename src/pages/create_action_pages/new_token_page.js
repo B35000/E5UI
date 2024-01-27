@@ -318,7 +318,7 @@ class NewTokenPage extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['625']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag', 'prevent_default':true})}
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
@@ -500,7 +500,7 @@ class NewTokenPage extends Component {
             new_token_fully_custom_tags_object: fully_custom,
             
             token_exchange_ratio_x: bigInt('1e10'),
-            token_exchange_ratio_y: bigInt('1e6'),
+            token_exchange_ratio_y: bigInt('1e7'),
             price_data: price,
 
             minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0,
@@ -537,7 +537,7 @@ class NewTokenPage extends Component {
             price_data: price,
 
             minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, 
-            minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object:block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object:0, maturity_limit:0
+            minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object:block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object:halving_type, maturity_limit:0
         })
 
         this.props.notify(this.props.app_state.loc['638']/* 'End token preset has been applied' */, 2500)
@@ -2078,16 +2078,16 @@ class NewTokenPage extends Component {
         else if(title.length > 20){
             this.props.notify(this.props.app_state.loc['748']/* 'that name is too long' */, 3700)
         }
-        else if(title.includes(' ') || title == 'END' || title == 'SPEND'){
+        else if(title.includes(' ') || title == 'END' || title == 'SPEND' || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(title))){
             this.props.notify(this.props.app_state.loc['749']/* 'that name is invalid' */, 3700)
         }
-        else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND'){
+        else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND' || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(symbol))){
             this.props.notify(this.props.app_state.loc['750']/* 'that symbol is invalid' */, 3700)
         }
         else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null){
             this.props.notify(this.props.app_state.loc['752']/* 'that symbol is already in use' */, 3700)
         }
-        else if(symbol.length > 6){
+        else if(symbol.length > 9){
             this.props.notify(this.props.app_state.loc['752']/* 'that symbol is too long' */, 3700)
         }
         else{

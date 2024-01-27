@@ -585,7 +585,7 @@ class ChannelDetailsSection extends Component {
     
     render_channel_activity(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-160
+        if(this.get_focused_message(object) != null) he = this.props.height-175
         var size = this.props.screensize
         return(
             <div>

@@ -45,6 +45,7 @@
     "react-drag-reorder": "^1.2.0",
     "react-ipfs": "^0.4.4",
     "react-loading-icons": "^1.1.0",
+    "react-native": "^0.73.2",
     "react-qr-code": "^2.0.12",
     "react-scripts": "5.0.1",
     "react-swipeable-bottom-sheet": "^1.1.2",

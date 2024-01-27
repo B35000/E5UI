@@ -61,7 +61,7 @@ class NewStorefrontPage extends Component {
                 ['or','',0], ['e','e.font', 'e.size'], [0]
             ],
             'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
             ],
             'size':[
                 ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]

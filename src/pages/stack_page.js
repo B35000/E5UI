@@ -72,7 +72,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, this.props.app_state.loc['1593d']/* 'Notifications 🔔' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -607,6 +607,13 @@ class StackPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['1593d']/* 'Notifications 🔔' */){
+            return(
+                <div>
+                    {this.render_notifications()}
+                </div>
+            )
+        }
     }
 
     get_selected_item(object, option){
@@ -1121,7 +1128,7 @@ class StackPage extends Component {
 
     render_simplified_stack_history(){
         var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
-        var items = [].concat(runs)
+        var items = [].concat(this.remove_duplicates(runs))
         var background_color = this.props.theme['card_background_color']
 
         if(items.length == 0){
@@ -1153,6 +1160,18 @@ class StackPage extends Component {
                 </ul>
             </div>
         )
+    }
+
+    remove_duplicates(list){
+        var filtered = []
+        var item_mapping = {}
+        list.forEach(element => {
+            if(!filtered.includes(element) && item_mapping[element.returnValues.p3] == null){
+                filtered.push(element)
+                item_mapping[element.returnValues.p3] = element.returnValues.p3
+            }
+        });
+        return filtered
     }
 
     get_average_mempool_data(e5){
@@ -1483,7 +1502,9 @@ class StackPage extends Component {
                         ];
 
                         var expiry_time = Math.floor(Date.now()/1000) + bigInt(max_enter_contract_duration)
-                        var ex = expiry_time.toString().toLocaleString('fullwide', {useGrouping:false})
+                        var ex = expiry_time.toLocaleString('fullwide', {useGrouping:false})
+
+                        console.log('expiry_time: ', ex)
 
                         obj[1].push(contract_stack_id)
                         obj[2].push(35)
@@ -1515,7 +1536,6 @@ class StackPage extends Component {
                         ints.push(enable_interactibles_checker)
                         should_optimize_run = false
                     }
-                    
                     if(txs[i].interactibles.length != 0){
                         var add_interactibles_accounts = [ /* set account to be interactible */
                             [20000, 2, 0],
@@ -2399,8 +2419,10 @@ class StackPage extends Component {
         
         var new_token_block_limit_sensitivity_tags_object = parseInt(this.get_selected_item(t.new_token_block_limit_sensitivity_tags_object, t.new_token_block_limit_sensitivity_tags_object['i'].active)).toString().toLocaleString('fullwide', {useGrouping:false})
         var default_authority_mint_limit = t.default_authority_mint_limit == 0 ? bgN(1,16).toString().toLocaleString('fullwide', {useGrouping:false}) : t.default_authority_mint_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-        
+
+        console.log(t.new_token_halving_type_tags_object)
         var new_token_halving_type_tags_object = (this.get_selected_item(t.new_token_halving_type_tags_object, t.new_token_halving_type_tags_object['i'].active) == this.props.app_state.loc['615']/* 'spread' */ ? 1 : 0).toString().toLocaleString('fullwide', {useGrouping:false})
+        
         var maturity_limit = t.maturity_limit.toString().toLocaleString('fullwide', {useGrouping:false})
         
         var minimum_entered_contracts_for_first_buy = t.minimum_entered_contracts_for_first_buy.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -2556,12 +2578,12 @@ class StackPage extends Component {
 
     format_buy_sell_object(t){
         var obj = [/* buy end/spend */
-        [30000, 8, 0],
-        [], [],/* exchanges */
-        [], [],/* receivers */
-        []/* amounts */, [],/* action */
-        []/* lower_bounds */, []/* upper_bounds */
-      ];
+            [30000, 8, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            []/* amounts */, [],/* action */
+            []/* lower_bounds */, []/* upper_bounds */
+        ];
 
 
       var amount = bigInt(t.amount).toString().toLocaleString('fullwide', {useGrouping:false})
@@ -5390,7 +5412,7 @@ class StackPage extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'when_add_word_button_tapped'})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'when_add_word_button_tapped', 'prevent_default':true})}
                     </div>
                 </div>
 
@@ -6005,6 +6027,227 @@ class StackPage extends Component {
     }
 
 
+
+
+
+
+
+
+
+
+
+    render_notifications(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_my_notifications()}
+            </div>
+        )
+
+    }
+    
+
+    get_all_sorted_notifications(){
+        var my_job_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_responses_notifications)
+
+        var my_job_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_application_responses_notifications)
+
+        var my_contractor_job_request_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_contractor_job_request_notifications)
+
+        var my_token_event_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_token_event_notifications)
+
+        var my_bag_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_responses_notifications)
+
+        var my_bag_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_application_responses_notifications)
+
+        var enter_exit_accounts_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.enter_exit_accounts_notifications)
+
+        var my_store_direct_purchases_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_store_direct_purchases_notifications)
+
+
+        var all_object_list = []
+        for (const key in my_job_responses_notifications) {
+            all_object_list.push(my_job_responses_notifications[key])
+        }
+        for (const key in my_job_application_responses_notifications) {
+            all_object_list.push(my_job_application_responses_notifications[key])
+        }
+        for (const key in my_contractor_job_request_notifications) {
+            all_object_list.push(my_contractor_job_request_notifications[key])
+        }
+        for (const key in my_token_event_notifications) {
+            all_object_list.push(my_token_event_notifications[key])
+        }
+        for (const key in my_bag_responses_notifications) {
+            all_object_list.push(my_bag_responses_notifications[key])
+        }
+        for (const key in my_bag_application_responses_notifications) {
+            all_object_list.push(my_bag_application_responses_notifications[key])
+        }
+        for (const key in enter_exit_accounts_notifications) {
+            all_object_list.push(enter_exit_accounts_notifications[key])
+        }
+        for (const key in my_store_direct_purchases_notifications) {
+            all_object_list.push(my_store_direct_purchases_notifications[key])
+        }
+
+        var sorted_notifs = this.sortByAttributeDescending(all_object_list, 'timestamp')
+        console.log('sorted notifications: ', sorted_notifs)
+
+        return sorted_notifs
+    }
+
+
+    render_my_notifications(){
+        var items = [].concat(this.get_all_sorted_notifications())
+        if(items == null){
+            items = []
+        }
+        items = [].concat(items)
+        var middle = this.props.height-150;
+        var size = this.props.size;
+        if(size == 'm'){
+            middle = this.props.height-150;
+        }
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                                {this.render_notification_item(item, index)}
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_notification_item(item, index){
+        if(item['type'] == 'token_event_notification'){
+            var sender = item['event'].returnValues.p2
+            var amount = item['event'].returnValues.p4
+            var exchange = item['event'].returnValues.p1
+            var timestamp = item['event'].returnValues.p5
+            return(
+                <div onClick={() => this.open_object(exchange, item['e5'], 'token')}>
+                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+' sent you '+this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'my_job_application_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var job_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(job_id, item['e5'], 'job')}>
+                    {this.render_detail_item('3', {'title':'💼 '+this.get_senders_name_or_you(sender, item['e5'])+' selected your application for the job '+job_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'job_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var job_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(job_id, item['e5'], 'job')}>
+                    {this.render_detail_item('3', {'title':'💼 '+this.get_senders_name_or_you(sender, item['e5'])+' applied for your job '+job_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'bag_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var bag_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(bag_id, item['e5'], 'bag')}>
+                    {this.render_detail_item('3', {'title':'🛍 '+this.get_senders_name_or_you(sender, item['e5'])+' requested to fulfil your bag '+bag_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'my_bag_application_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var bag_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(bag_id, item['e5'], 'bag')}>
+                    {this.render_detail_item('3', {'title':'🛍 '+this.get_senders_name_or_you(sender, item['e5'])+' selected you to fulfil their bag '+bag_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'contractor_request_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var contractor_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(contractor_id, item['e5'], 'contractor')}>
+                    {this.render_detail_item('3', {'title':'👷🏻‍♀️ '+this.get_senders_name_or_you(sender, item['e5'])+' sent a job request to your contractor post '+contractor_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'contract_entry_notification'){
+            var timestamp = item['event'].returnValues.p7
+            var sender = item['event'].returnValues.p2
+            var contract_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(contract_id, item['e5'], 'contract')}>
+                    {this.render_detail_item('3', {'title':'📑 '+this.get_senders_name_or_you(sender, item['e5'])+' entered your contract '+contract_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'contract_exit_notification'){
+            var timestamp = item['event'].returnValues.p7
+            var sender = item['event'].returnValues.p2
+            var contract_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(contract_id, item['e5'], 'contract')}>
+                    {this.render_detail_item('3', {'title':'📜 '+this.get_senders_name_or_you(sender, item['e5'])+' exited your contract '+contract_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'direct_purchase_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p1
+            var storefront_id = item['event'].returnValues.p3
+            return(
+                <div onClick={() => this.open_object(storefront_id, item['e5'], 'storefront')}>
+                    {this.render_detail_item('3', {'title':'🏪 '+this.get_senders_name_or_you(sender, item['e5'])+' purchased your storefront item '+storefront_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    open_object(target, e5, type){
+        this.props.open_object_in_homepage(target, e5, type)
+    }
+
+    get_senders_name_or_you(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return 'You'
+        }
+         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+    }
 
     
 

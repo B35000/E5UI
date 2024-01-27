@@ -494,7 +494,7 @@ class PostsDetailsSection extends Component {
 
     render_post_responses(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-160
+        if(this.get_focused_message(object) != null) he = this.props.height-175
         var size = this.props.screensize
 
         return(
@@ -576,7 +576,7 @@ class PostsDetailsSection extends Component {
 
     render_sent_received_messages(object){
         var middle = this.props.height-250;
-        if(this.get_focused_message(object) != null) middle = this.props.height-300
+        if(this.get_focused_message(object) != null) middle = this.props.height-310
         var items = [].concat(this.get_convo_messages(object))
         var stacked_items = [].concat(this.get_stacked_items(object))
 
@@ -742,7 +742,7 @@ class PostsDetailsSection extends Component {
                 <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
-                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}>
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>

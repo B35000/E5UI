@@ -715,7 +715,7 @@ class SendReceiveEtherPage extends Component {
     when_send_ether_confirmation_received = () => {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
-        this.props.notify(this.props.app_state.loc['1045']/* 'running your sendtransaction...' */, 600)
+        this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 600)
         this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5);
         
     };

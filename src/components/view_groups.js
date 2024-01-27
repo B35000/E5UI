@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+// import Keyboard from "react-keyboard";
 
 import CanvasJSReact from './../externals/canvasjs.react';
 import E5EmptyIcon from './../assets/e5empty_icon.png';
@@ -6,7 +7,9 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import Linkify from "linkify-react";
 
+
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
 
 function urlify(text) {
     var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -24,9 +27,9 @@ function urlify(text) {
 }
 
 class ViewGroups extends Component {
-    
+      
     state = {
-        selected: 0,
+        keyboard_showing: false,
     };
 
     render(){
@@ -104,9 +107,9 @@ class ViewGroups extends Component {
 
             if(style == 's'){
               return ( 
-                  <div style={{'margin': '0px 10px 0px 10px'}}>                   
-                      <div style={{ height: 2, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
-                          <div className="progress" style={{ height: 2, width: "100%", 'background-color': '#BFBFBF' }}>
+                  <div style={{'margin': '0px 10px 0px 10px'}}>
+                      <div style={{ height: 3, width: "100%", 'border-radius': '5px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['bar_shadow'], 'margin': '0px 0px 4px 0px' }}>
+                          <div className="progress" style={{ height: 3, width: "100%", 'background-color': '#BFBFBF' }}>
                               <div className="progress-bar" role="progressbar" style={{ width: barwidth, 'background-image': 'none','background-color': barcolor, 'border-radius': '0px 3px 3px 0px' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                       </div>
@@ -208,7 +211,7 @@ class ViewGroups extends Component {
         }
         else if(item_id=='4'){/* text */
             /* {this.render_detail_item('4', {'text':'', 'textsize':'', 'font':''})} */
-            var font = 'Sans-serif';/* Sans-serif , Times New Roman */
+            var font = 'Sans-serif';/* Sans-serif , Times New Roman, ComicSans */
             var textsize = '15px';
             var text = 'some random text';
             var color = this.props.theme['primary_text_color'];
@@ -235,16 +238,18 @@ class ViewGroups extends Component {
             );
         }
         else if(item_id=='5'){/* button */
-            /* {this.render_detail_item('3', {'text':'', 'action':''})} */
+            /* {this.render_detail_item('5', {'text':'', 'action':''})} */
             var text = 'buy'
             var action = 'none'
+            var prevent_default = false
             if(object_data!= null){
-              text = object_data['text'];
-              action = object_data['action']
+                text = object_data['text'];
+                action = object_data['action']
+                prevent_default = object_data['prevent_default'] == null ? false : object_data['prevent_default']
             }
             return(
                 <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <button style={{'background-color': '#444444', 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize'}}/*  onMouseDown={e => e.preventDefault()} */>
+                    <button style={{'background-color': this.props.theme['button_color'], 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
                       {text}
                     </button>
                 </div>
@@ -348,8 +353,8 @@ class ViewGroups extends Component {
                     <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
-                                <div onClick={() => this.when_image_clicked(items, index)}>
-                                    <img src={item} style={{height:45 ,width:45, 'border-radius': '50%'}} />
+                                <div style={{}} onClick={() => this.when_image_clicked(items, index)}>
+                                    <img src={item} style={{width:45, height:45, 'border-radius': '50%'}} />
                                 </div> 
                             </ImageListItem>
                         ))}
@@ -431,6 +436,13 @@ class ViewGroups extends Component {
             ); 
         }
 
+    }
+
+    when_any_button_tapped(e, prevent_default){
+        if(prevent_default){
+            e.preventDefault()
+            console.log('prevented default!')
+        }
     }
 
     get_tag_color(tag, selected_tags, tag_background_color){

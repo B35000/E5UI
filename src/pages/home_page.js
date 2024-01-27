@@ -374,14 +374,14 @@ class home_page extends Component {
     }
 
     render_view_object_bottomsheet(){
-        if(this.state.view_post_bottomsheet2 != true) return;
+        // if(this.state.view_post_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
         var overlay_shadow_color = this.props.theme['send_receive_ether_overlay_shadow'];
         var size = this.props.screensize;
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px', }}>
                 {this.render_post_detail_object(size)}
             </div>
         </SwipeableBottomSheet>
@@ -3005,6 +3005,7 @@ class home_page extends Component {
         else if(tem == this.props.app_state.loc['1219']/* 'spends 🫰' */){
            this.setState({selected_spend_item: item['id']+item['e5']})
         }
+
     }
 
 
@@ -3041,6 +3042,61 @@ class home_page extends Component {
             me.update_cookies()
         }, (1 * 100));
 
+    }
+
+
+    open_notification_link(id, e5, type){
+        var obj = {'contract':['?','contracts'],'contractor':['?','contractors'],'job':['?','jobs'],'storefront':['e','storefront'],'bag':['e','bags'],'token':['w',this.get_token_type(id, e5)],}
+
+        var selected_page = obj[type][0]
+        var selected_tag = obj[type][1]
+        var e5_id = id+e5
+
+        console.log('open_notification_link', e5_id)
+
+        this.setState({detail_page:selected_page, detail_selected_tag:selected_tag})
+        
+        if(selected_tag == this.props.app_state.loc['1196']/* 'jobs' */){
+            this.setState({selected_job_post_item:  e5_id})
+        }
+        else if(selected_tag == this.props.app_state.loc['1197']/* 'contracts' */){
+            this.setState({selected_contract_item: e5_id})
+        }
+        else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
+            this.setState({selected_contractor_item: e5_id})
+        }
+        else if(selected_tag == this.props.app_state.loc['1215']/* 'storefront' */){
+            this.setState({selected_storefront_item: e5_id})
+        }
+        else if(selected_tag == this.props.app_state.loc['1216']/* 'bags' */){
+            this.setState({selected_bag_item: e5_id})
+        }
+        else if(selected_tag == this.props.app_state.loc['1218']/* 'ends ☝️' */){
+            this.setState({selected_end_item: e5_id})
+        }
+        else if(selected_tag == this.props.app_state.loc['1219']/* 'spends 🫰' */){
+           this.setState({selected_spend_item: e5_id})
+        }
+
+        if(this.props.screensize == 's'){
+            this.open_view_object_bottomsheet()
+        }
+
+        if(this.props.app_state.visible_tabs != 'e' && type != 'bag'){
+            this.add_link_to_tab(e5_id, id, selected_page, selected_tag)
+        }
+    }
+
+    get_token_type(id, e5){
+        var obj = this.get_item_in_array2(id+e5, this.get_all_sorted_objects(this.props.app_state.created_tokens))
+
+        if(obj != null){
+            if(obj['data'][0][3/* <3>token_type */] == 3){
+                return this.props.app_state.loc['1218']/* 'ends ☝️' */
+            }else{
+                return this.props.app_state.loc['1219']/* 'spends 🫰' */
+            }
+        }
     }
 
 

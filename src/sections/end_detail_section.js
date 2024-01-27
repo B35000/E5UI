@@ -331,6 +331,11 @@ class EndDetailSection extends Component {
 
                     <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['wallet_dominance'])}
+                    </div>
+
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['ratio_x'])}
                     </div>
                     <div style={{height:10}}/>
@@ -645,7 +650,7 @@ class EndDetailSection extends Component {
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var contract_config = object['data'][1]
         var my_account = this.props.app_state.user_account_id[object['e5']]
-        if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account){
+        if(object['id'] != 3 && contract_config[9/* exchange_authority */] == my_account && object['data'][0][1/* unlocked_liquidity */] == 1){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -762,6 +767,7 @@ class EndDetailSection extends Component {
             }
         }
         var max_supply = this.calculate_maximum_supply(selected_object)
+        var wallet_dominance = this.calculate_wallet_dominance(max_supply, selected_object)
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
@@ -797,12 +803,20 @@ class EndDetailSection extends Component {
             'mint_burn_button':{'text':this.props.app_state.loc['2380']/* 'Buy/Sell Token' */, 'action':''},
             
             'max_supply':{'style':'l','title':this.props.app_state.loc['2381']/* 'Tokens Total Supply' */, 'subtitle':this.format_power_figure(max_supply), 'barwidth':this.calculate_bar_width(max_supply), 'number':this.format_account_balance_figure(max_supply), 'relativepower':symbol},
-            '':{},
+            
+            'wallet_dominance':{'style':'l','title':this.props.app_state.loc['2447a']/* 'Wallet Dominance' */, 'subtitle':this.format_power_figure(wallet_dominance), 'barwidth':this.calculate_bar_width(wallet_dominance), 'number':(wallet_dominance)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */},
             '':{},
             '':{},
             '':{},
 
         }
+    }
+
+    calculate_wallet_dominance(max_supply, object){
+        var my_balance = object['balance'];
+        if(my_balance == 0) return 0
+        var percentage = (my_balance * 100) / max_supply
+        return percentage
     }
 
     calculate_maximum_supply(object){

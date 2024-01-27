@@ -77,13 +77,12 @@ class ViewTransactionPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1782']/* 'Stack ID: ' */, 'details':item.id,'size':'l'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1783']/* 'Type:' */, 'details':''+item.type,'size':'l'})}
-                    <div style={{height: 10}}/>
                     {/* {this.render_detail_item('3',{'title':'Estimated Gas: ', 'details':number_with_commas(this.get_estimated_gas(item))+' - '+number_with_commas(Math.floor(this.get_estimated_gas(item)*1.6)),'size':'l'})} */}
                     
                     {this.render_detail_item('0')}
                     {this.render_edit_button()}
 
-                    <div style={{height:20}}/>
+                    
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1784']/* 'Delete the transaction completely' */, 'title':this.props.app_state.loc['1785']/* 'Delete' */})}
                     <div style={{height:20}}/>
 
@@ -143,6 +142,7 @@ class ViewTransactionPage extends Component {
                     <div onClick={()=> this.open_edit_object_uis()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1789']/* 'Edit' */, 'action':''},)}
                     </div>
+                    <div style={{height:10}}/>
                 </div>
             )
         }
@@ -596,6 +596,13 @@ class ViewTransactionPage extends Component {
                 return(
                     <div>
                         {this.render_depthmint_data()}
+                    </div>
+                )
+            }
+            else if(tx.type == this.props.app_state.loc['783']/* submit */){
+                return(
+                    <div>
+                        {this.render_submit_proposal_data()}
                     </div>
                 )
             }
@@ -4618,6 +4625,102 @@ class ViewTransactionPage extends Component {
         )
     }
 
+
+    render_submit_proposal_data(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var object = transaction_item.proposal_item
+
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        var item = this.format_proposal_item(object)
+        var proposal_config = object['data'][1];
+        return(
+            <div>
+                {this.render_detail_item('1',{'active_tags':transaction_item.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':''})}
+                <div style={{height: 20}}/>
+
+                <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+                    <div style={{'padding': '0px 0px 0px 5px'}}>
+                        {this.render_detail_item('1', item['tags'])}
+                        <div style={{height: 10}}/>
+                        <div style={{'padding': '0px 0px 0px 0px'}}>
+                            {this.render_detail_item('3', item['id'])}
+                        </div>
+                        <div style={{'padding': '20px 0px 0px 0px'}}>
+                            {this.render_detail_item('2', item['age'])}
+                        </div>
+                    </div>         
+                </div>
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', item['vote_wait'])}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', item['vote_yes'])}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', item['vote_no'])}
+
+                <div style={{ height: 10 }} />
+                {this.render_detail_item('3', item['consensus_majority_target_proportion'])}
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['790']/* 'Proposal Expiry time' */, 'details':''+(new Date(proposal_config[1]*1000)), 'size':'l'})}
+                    
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[1]), 'details':this.props.app_state.loc['791']/* 'Proposal expiry time from now' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['792']/* 'Proposal Submit Expiry time' */, 'details':''+(new Date(proposal_config[3]*1000)), 'size':'l'})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[3]), 'details':this.props.app_state.loc['793']/* 'Proposal submit expiry time from now' */, 'size':'l'})}
+
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+    format_proposal_item(object){
+        var tags = object['ipfs'] == null ? ['Proposal'] : [].concat(object['ipfs'].entered_indexing_tags)
+        var title = object['ipfs'] == null ? 'Proposal ID' : object['ipfs'].entered_title_text
+        var age = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var proposal_config = object['data'][1]
+        var consensus_majority = proposal_config[6] == 0 ? bigInt('1e18') : proposal_config[6]
+        return {
+            'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
+            'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
+            'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, },
+
+            'vote_wait':{'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'},
+
+            'vote_yes':{'title':''+this.format_account_balance_figure(object['consensus_data'][1])+this.props.app_state.loc['788']/* ' YES votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'},
+
+            'vote_no':{'title':''+this.format_account_balance_figure(object['consensus_data'][2])+this.props.app_state.loc['789']/* ' NO votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'},
+
+            'consensus_majority_target_proportion': { 'title': this.format_proportion(consensus_majority), 'details': this.props.app_state.loc['2550']/* 'Consensus Majority Target Proportion' */, 'size': 'l' },
+        }
+    }
+
+
+    get_proportion_of_total(object, vote_count){
+        var sum = bigInt(object['consensus_data'][0]) + bigInt(object['consensus_data'][1]) + bigInt(object['consensus_data'][2]);
+
+        if(sum == bigInt(0)){
+            return 0
+        }
+
+        var prop = (bigInt(vote_count).divide(sum)).multiply(100)
+
+        if(isNaN(prop)){
+            return 0
+        }
+        return prop
+    }
+
+ 
 
 
 

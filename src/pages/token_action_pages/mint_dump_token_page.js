@@ -87,6 +87,8 @@ class NewMintActionPage extends Component {
         this.setState({new_mint_dump_action_page_tags_object: tag_obj})
     }
 
+
+
     render_everything(){
         return(
             <div>
@@ -98,17 +100,7 @@ class NewMintActionPage extends Component {
                 {this.load_account_suggestions()}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['956']/* 'Set the amount for the mint/dump action' */, 'title':this.props.app_state.loc['957']/* 'Amount for action' */})}
-
-                <div style={{height:10}}/>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['958']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
-
-                </div>
+                {this.set_buy_sell_header()}
 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.set_maximum()}>
@@ -137,13 +129,42 @@ class NewMintActionPage extends Component {
         )
     }
 
+    set_buy_sell_header(){
+        var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+        var message = ''
+        var token = ''
+        if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
+            message = this.props.app_state.loc['956']/* 'Set the amount of tokens your submitting for the mint/buy action.' */
+            token = this.props.app_state.loc['996a']/* tokens */
+        }else{
+            message = this.props.app_state.loc['996b']/* 'Set the amount of tokens your submitting for the dump-sell action.' */
+            token = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]
+        }
+        return(
+            <div>
+                {this.render_detail_item('3', {'size':'l', 'details':message, 'title':this.props.app_state.loc['957']/* 'Amount for action' */})}
+
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['958']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':token, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':token, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':token, })}
+
+                </div>
+            </div>
+        )
+    }
+
     set_maximum(){
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
         if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
             var max = this.get_token_buy_limit()
             this.setState({amount: max})
         }else{
-            if(this.state.token_item['balance'] < this.get_token_sell_limit()){
+            console.log('parent token balance: ', this.state.token_item['data'][2][3])
+            if(!bigInt(this.state.token_item['balance']).greater(this.get_token_sell_limit())){
                 var max = this.state.token_item['balance']
                 this.setState({amount: max})
             }else{
@@ -370,7 +391,7 @@ class NewMintActionPage extends Component {
     }
 
     check_if_sender_has_tokens_for_sell(){
-        if(this.state.token_item['balance'] < this.state.amount){
+        if(!bigInt(this.state.token_item['balance']).greaterOrEquals(this.state.amount)){
             return false
         }
         return true
@@ -660,10 +681,10 @@ class NewMintActionPage extends Component {
             else if(!this.check_if_sender_can_interact_with_exchange()){
                 this.props.notify(this.props.app_state.loc['982']/* 'You cant interact with the same exchange twice in one run.' */, 4200)
             }
-            else if(amount > this.get_token_buy_limit() && action == 'mint-buy'){
+            else if(bigInt(amount).greater(this.get_token_buy_limit()) && action == 'mint-buy'){
                 this.props.notify(this.props.app_state.loc['983']/* 'The amount youve set exceeds the maximum buy amount enforced by the exchange.' */, 7500)
             }
-            else if(amount > this.get_token_sell_limit() && action == 'dump-sell'){
+            else if(bigInt(amount).greater(this.get_token_sell_limit()) && action == 'dump-sell'){
                 this.props.notify(this.props.app_state.loc['984']/* 'The amount youve set exceeds the maximum sell amount enforced by the exchange.' */, 7500)
             }
             else if(!can_make_swap){

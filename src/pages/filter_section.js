@@ -106,7 +106,7 @@ class FilterSection extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['1120']/* 'Enter tag...' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'', 'prevent_default':true})}
                     </div>
                 </div>
 

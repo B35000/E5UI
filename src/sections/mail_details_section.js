@@ -282,7 +282,7 @@ class MailDetailsSection extends Component {
 
     render_mail_responses(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-160
+        if(this.get_focused_message(object) != null) he = this.props.height-175
         var size = this.props.screensize
         
         if(object != null){

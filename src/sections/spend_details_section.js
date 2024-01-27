@@ -256,9 +256,8 @@ class SpendDetailSection extends Component {
         var symbol = selected_object['ipfs'] == null ? this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[selected_object['id']] : selected_object['ipfs'].entered_symbol_text
         var author = selected_object['event'] != null ? this.get_senders_name(selected_object['event'].returnValues.p3, selected_object) :this.props.app_state.loc['1591']/* 'Unknown' */
         return(
-            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 20px 10px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
-                    
+            <div style={{'background-color': background_color, 'border-radius': '15px','margin':'5px 10px 5px 10px', 'padding':'0px 10px 0px 10px'}}>
+                <div style={{'overflow-y': 'auto', width:'100%', height: he,padding:'0px 10px 0px 10px'}}>      
                     {this.render_detail_item('7', item['banner-icon'])}
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height:10}}/>
@@ -326,6 +325,11 @@ class SpendDetailSection extends Component {
                     {this.render_revoke_author_privelages_event(selected_object)}
 
                     {this.render_detail_item('0')}
+
+
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', item['wallet_dominance'])}
+                    </div>
 
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['ratio_x'])}
@@ -807,6 +811,7 @@ class SpendDetailSection extends Component {
             }
         }
         var proportion_ratio_events = selected_object['proportion_ratio_data']
+        var wallet_dominance = this.calculate_wallet_dominance(selected_object)
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
@@ -855,10 +860,19 @@ class SpendDetailSection extends Component {
             'active_block_limit_reduction_proportion': {'title':this.format_proportion(selected_obj_ratio_config[6]), 'details':this.props.app_state.loc['1825']/* 'Active Block Limit Reduction Proportion' */, 'size':'l'},
             
             'active_mint_limit':{'style':'l','title':this.props.app_state.loc['2602a']/* 'Active Mint Limit.' */, 'subtitle':this.format_power_figure(this.calculate_active_mint_limit(selected_object)), 'barwidth':this.calculate_bar_width(this.calculate_active_mint_limit(selected_object)), 'number':this.format_account_balance_figure(this.calculate_active_mint_limit(selected_object)), 'relativepower':symbol},
-            '':{},
+
+            'wallet_dominance':{'style':'l','title':this.props.app_state.loc['2447a']/* 'Wallet Dominance' */, 'subtitle':this.format_power_figure(wallet_dominance), 'barwidth':this.calculate_bar_width(wallet_dominance), 'number':(wallet_dominance)+'%', 'relativepower':this.props.app_state.loc['1881']/* proportion */},
             '':{},
             '':{},
         }
+    }
+
+    calculate_wallet_dominance(object){
+        var max_supply = object['data'][2][2]
+        var my_balance = object['balance'];
+        if(my_balance == 0) return 0
+        var percentage = (my_balance * 100) / max_supply
+        return percentage
     }
 
     calculate_active_mint_limit(selected_object){

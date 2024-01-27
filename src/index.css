@@ -24,3 +24,13 @@ code {
 body > iframe {
   display: none;
 }
+
+@font-face {
+  font-family: "ComicSans";
+  src: local("ComicSans"), url(./fonts/ComicSans.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "papyrus";
+  src: local("papyrus"), url(./fonts/papyrus.ttf) format("truetype");
+}

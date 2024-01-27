@@ -513,7 +513,10 @@ class ProposalDetailsSection extends Component {
 
         var events = this.get_item_logs(object, 'submit')
 
-        if(now > proposal_exipry_time && now < proposal_sumbit_expiry_time && achieved_consensus >= target_consensus && events.length == 0){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        if(my_account == null) my_account = 1;
+
+        if(now > proposal_exipry_time && now < proposal_sumbit_expiry_time && achieved_consensus >= target_consensus && object['event'].returnValues.p4/* supposed to be p3 */ == my_account && events.length == 0){
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -1008,7 +1011,7 @@ class ProposalDetailsSection extends Component {
 
     render_proposal_message_activity(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-160
+        if(this.get_focused_message(object) != null) he = this.props.height-175
         var size = this.props.screensize
         
         return(

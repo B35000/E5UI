@@ -70,7 +70,7 @@ class NewStorefrontItemPage extends Component {
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
             ],
             'font':[
-                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
             ],
             'size':[
                 ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
@@ -81,7 +81,7 @@ class NewStorefrontItemPage extends Component {
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
             ];
         obj[this.props.app_state.loc['116']] = [
-                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
             ];
         obj[this.props.app_state.loc['117']] = [
                 ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
@@ -99,7 +99,7 @@ class NewStorefrontItemPage extends Component {
                 ['or','',0], ['e','e.font', 'e.size'], [0]
             ],
             'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
             ],
             'size':[
                 ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
@@ -259,7 +259,7 @@ class NewStorefrontItemPage extends Component {
     }
 
     is_text_selected_item(selected_item){
-        var obj = [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['116']/* 'font' */,this.props.app_state.loc['117']/* 'size' */,'Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
+        var obj = [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['116']/* 'font' */,this.props.app_state.loc['117']/* 'size' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus', '15px','11px','25px','40px']
         if(obj.includes(selected_item)){
             return true
         }
@@ -344,21 +344,7 @@ class NewStorefrontItemPage extends Component {
 
 
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['479']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['480']/* 'Set the accounts involved with shipping and fulfilling direct purchase orders from clients' */, 'size':'l'})}
-
-                <div className="row" style={{width: '103%'}}>
-                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <TextInput height={25} placeholder={this.props.app_state.loc['153']} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
-                    </div>
-                    <div className="col-3" style={{'padding': '2px 0px 0px 0px'}}>
-                        <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['169']/* 'Add' */, 'action':''})}
-                        </div>
-                    </div>
-                </div>
-                {/* {this.load_account_suggestions('fulfilment_account')} */}
-                {this.render_fulfilment_accounts()}
+                
 
                 {this.render_direct_shipping_fee_view_if_enabled()}
             </div>
@@ -371,6 +357,22 @@ class NewStorefrontItemPage extends Component {
         if(selected_item == this.props.app_state.loc['89']/* 'enabled' */){
             return(
                 <div>
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['479']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['480']/* 'Set the accounts involved with shipping and fulfilling direct purchase orders from clients' */, 'size':'l'})}
+
+                    <div className="row" style={{width: '103%'}}>
+                        <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                            <TextInput height={25} placeholder={this.props.app_state.loc['153']} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-3" style={{'padding': '2px 0px 0px 0px'}}>
+                            <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
+                                {this.render_detail_item('5', {'text':this.props.app_state.loc['169']/* 'Add' */, 'action':'', 'prevent_default':true})}
+                            </div>
+                        </div>
+                    </div>
+                    {/* {this.load_account_suggestions('fulfilment_account')} */}
+                    {this.render_fulfilment_accounts()}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['481']/* 'Direct Purchase Shipping Fee' */, 'details':this.props.app_state.loc['482']/* 'The shipping fee you charge for shipping your item when directly purchased by your clients' */, 'size':'l'})}
 
@@ -706,7 +708,7 @@ class NewStorefrontItemPage extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['126']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['127']/* 'Add' */, 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['127']/* 'Add' */, 'action':'add_indexing_tag', 'prevent_default':true})}
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
@@ -875,7 +877,7 @@ class NewStorefrontItemPage extends Component {
                     </div>
 
                     <div style={{'padding': '5px', width:205}}>
-                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
+                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped', 'prevent_default':true})}
                     </div>
                 </div>
                 <div style={{height:10}}/> 
@@ -1124,7 +1126,7 @@ class NewStorefrontItemPage extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':'', 'prevent_default':true})}
                     </div>
                 </div>
                 <div style={{height:10}}/>
@@ -2275,6 +2277,8 @@ class NewStorefrontItemPage extends Component {
         var target_receiver = this.state.target_receiver.trim()
         var fulfilment_location = this.state.fulfilment_location.trim()
 
+        var selected_item = this.get_selected_item(this.state.purchase_option_tags_object, this.state.purchase_option_tags_object['i'].active)
+
         if(index_tags.length == 0){
             this.props.notify(this.props.app_state.loc['529']/* 'add some tags first!' */, 2700)
         }
@@ -2293,7 +2297,7 @@ class NewStorefrontItemPage extends Component {
         else if(fulfilment_location==''){
             this.props.notify(this.props.app_state.loc['534']/* 'set a valid fulfilment location for your storefront items' */, 4900)
         }
-        else if(this.state.fulfilment_accounts.length == 0){
+        else if(selected_item == this.props.app_state.loc['89']/* 'enabled' */ && this.state.fulfilment_accounts.length == 0){
             this.props.notify(this.props.app_state.loc['535']/* 'you should set some fulfilment accounts for your item' */, 4700)
         }
         else{

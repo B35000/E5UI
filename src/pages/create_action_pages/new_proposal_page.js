@@ -101,7 +101,7 @@ class NewProposalPage extends Component {
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
             ],
             'font':[
-                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
             ],
             'size':[
                 ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
@@ -112,7 +112,7 @@ class NewProposalPage extends Component {
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]
             ];
         obj[this.props.app_state.loc['116']] = [
-                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','Papyrus'], [1],[1]
+                ['xor','e',1], [this.props.app_state.loc['116']/* 'font' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
             ];
         obj[this.props.app_state.loc['117']] = [
                 ['xor','e',1], [this.props.app_state.loc['117']/* 'size' */,'15px','11px','25px','40px'], [1],[1]
@@ -328,7 +328,7 @@ class NewProposalPage extends Component {
     }
 
     is_text_selected_item(selected_item){
-        var obj = [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['116']/* 'font' */,this.props.app_state.loc['117']/* 'size' */,'Sans-serif','Courier New','Times New Roman','Papyrus', '15px','11px','25px','40px']
+        var obj = [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['116']/* 'font' */,this.props.app_state.loc['117']/* 'size' */,'Sans-serif','Courier New','Times New Roman','ComicSans','papyrus', '15px','11px','25px','40px']
         if(obj.includes(selected_item)){
             return true
         }
@@ -375,7 +375,7 @@ class NewProposalPage extends Component {
                         <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}} onClick={() => this.add_indexing_tag_for_new_job()}>
-                        {this.render_detail_item('5', {'text':'Add', 'action':''})}
+                        {this.render_detail_item('5', {'text':'Add', 'action':'', 'prevent_default':true})}
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
@@ -754,7 +754,7 @@ class NewProposalPage extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':''})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':'', 'prevent_default':true})}
                     </div>
                 </div>
                 <div style={{height:10}}/>
@@ -1754,10 +1754,9 @@ class NewProposalPage extends Component {
         return(
             <div>
                 <Tags page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height:20}}/>
 
                 {this.load_reconfig_item_selectors()}
-                <div style={{height:20}}/>
+                <div style={{height:2}}/>
 
                 {this.load_reconfig_items()}
             </div>
@@ -1798,6 +1797,7 @@ class NewProposalPage extends Component {
         if(ui == 'number'){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                     </div>
@@ -1818,6 +1818,7 @@ class NewProposalPage extends Component {
         else if(ui == 'proportion'){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.reconfig_proportion), 'details':selected_item, 'size':'l'})}
 
                     <div style={{height:10}}/>
@@ -1836,6 +1837,7 @@ class NewProposalPage extends Component {
         else if(ui == 'time'){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.reconfig_duration), 'details':selected_item, 'size':'l'})}
 
                     <div style={{height:10}}/>
@@ -1853,6 +1855,7 @@ class NewProposalPage extends Component {
         else if(ui == 'tag'){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     {this.load_tags_ui()}
                     <div style={{height:10}}/>
                     {this.render_current_items(properties, selected_item)}
@@ -1866,6 +1869,7 @@ class NewProposalPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
+                    <div style={{height:10}}/>
                     <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}

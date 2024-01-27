@@ -1729,11 +1729,11 @@ class SubscriptionDetailsSection extends Component {
                     </div>
                     
                     {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':''+(new Date(latest_payment_time*1000))+', '+(this.get_time_difference(latest_payment_time))+' ago', 'details':this.props.app_state.loc['2686']/* 'Latest Payment Time' */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(latest_payment_time*1000))+', '+(this.get_time_difference(latest_payment_time))+this.props.app_state.loc['1698a']/* ago. */, 'details':this.props.app_state.loc['2686']/* 'Latest Payment Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':(latest_payment_block), 'details':this.props.app_state.loc['2687']/* 'Latest Payment Block' */, 'size':'s'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':''+(new Date(first_payment_time*1000))+', '+(this.get_time_difference(first_payment_time))+' ago', 'details':this.props.app_state.loc['2688']/* 'First Payment Time' */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':''+(new Date(first_payment_time*1000))+', '+(this.get_time_difference(first_payment_time))+this.props.app_state.loc['1698a']/* ago. */, 'details':this.props.app_state.loc['2688']/* 'First Payment Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':(first_payment_block), 'details':this.props.app_state.loc['2689']/* 'First Payment Block' */, 'size':'s'})}
                     {this.render_chart_data_if_size_works(result)}

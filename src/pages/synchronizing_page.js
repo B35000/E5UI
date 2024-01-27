@@ -34,7 +34,7 @@ class synchronizing_page extends Component {
                 </div>
 
                 <div style={{height:50}}/>
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['1598b'], 'textsize':'9px', 'font':'Sans-serif'})}
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1598b'], 'textsize':'10px', 'font':'Sans-serif'})}
             </div>
         );
     }

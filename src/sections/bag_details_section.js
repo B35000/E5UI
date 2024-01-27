@@ -565,7 +565,7 @@ class BagDetailsSection extends Component {
 
     render_bag_message_activity(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-160
+        if(this.get_focused_message(object) != null) he = this.props.height-175
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>

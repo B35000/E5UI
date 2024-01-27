@@ -214,9 +214,8 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['ipfs'].target_receiver, object), 'details':this.props.app_state.loc['2608']/* Target Payment Recipient' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2609']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['2610']/* 'The accounts involved with shipping and fulfilling direct purchase orders from clients.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-                    {this.render_fulfilment_accounts(object)}
+
+                    {this.render_fulfilment_accounts_if_any(object)}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2611']/* 'Fulfilment Location' */, 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -243,6 +242,17 @@ class StorefrontDetailsSection extends Component {
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    render_fulfilment_accounts_if_any(object){
+        if(object['ipfs'].fulfilment_accounts.length == 0) return;
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2609']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['2610']/* 'The accounts involved with shipping and fulfilling direct purchase orders from clients.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_fulfilment_accounts(object)}
             </div>
         )
     }
@@ -341,9 +351,9 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_out_of_stock_message_if_any(object){
-        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 'in-stock' : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1 : this.get_selected_item2(object['ipfs'].get_storefront_item_in_stock_option, 'e')
 
-        if(item_in_stock == 'in-stock'){
+        if(item_in_stock == 1){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2621']/* 'In Stock' */, 'details':this.props.app_state.loc['2622']/* 'The item is available for purchasing.' */, 'size':'l'})}
@@ -359,7 +369,7 @@ class StorefrontDetailsSection extends Component {
     }
 
     render_add_to_bag_button(object){
-        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1/* 'in-stock' */ : this.get_selected_item(object['ipfs'].get_storefront_item_in_stock_option, 'e')
+        var item_in_stock = object['ipfs'].get_storefront_item_in_stock_option == null ? 1/* 'in-stock' */ : this.get_selected_item2(object['ipfs'].get_storefront_item_in_stock_option, 'e')
         
         if(item_in_stock == 1/* 'in-stock' */){
             return(
@@ -805,7 +815,7 @@ class StorefrontDetailsSection extends Component {
 
     render_storefront_message_activity(object){
         var he = this.props.height-100
-        if(this.get_focused_message(object) != null) he = this.props.height-160
+        if(this.get_focused_message(object) != null) he = this.props.height-175
         var size = this.props.screensize
         return(
             <div>

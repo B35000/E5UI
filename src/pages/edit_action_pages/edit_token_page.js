@@ -176,7 +176,12 @@ class NewTokenPage extends Component {
 
 
     set_edit_data(){
-        this.setState({new_token_page_tags_object: this.get_new_token_page_tags_object(), type:this.getLocale()['761']/* 'edit-token' */})
+        this.setState({new_token_page_tags_object: this.get_new_token_page_tags_object(), type:this.props.app_state.loc['761']/* 'edit-token' */})
+    }
+
+    set_token_symbol(symbol){
+        console.log('setting symbol: '+symbol)
+        this.setState({existing_symbol: symbol})
     }
 
 
@@ -292,7 +297,7 @@ class NewTokenPage extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['625']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag'})}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag', 'prevent_default':true})}
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
@@ -1827,8 +1832,8 @@ class NewTokenPage extends Component {
 
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
-        var title = this.state.entered_title_text
-        var symbol = this.state.entered_symbol_text;
+        var title = this.state.entered_title_text.trim()
+        var symbol = this.state.entered_symbol_text.trim();
 
         if(index_tags.length == 0){
             this.props.notify(this.props.app_state.loc['745']/* 'add some tags first!' */, 3700)
@@ -1842,17 +1847,19 @@ class NewTokenPage extends Component {
         else if(title.length > 20){
             this.props.notify(this.props.app_state.loc['748']/* 'that name is too long' */, 3700)
         }
-        else if(title.includes(' ') || title == 'END' || title == 'SPEND'){
+        else if(title.includes(' ') || title == 'END' || title == 'SPEND' || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(title))){
             this.props.notify(this.props.app_state.loc['749']/* 'that name is invalid' */, 3700)
         }
-        else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND'){
+        else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND' || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(symbol)) ){
             this.props.notify(this.props.app_state.loc['750']/* 'that symbol is invalid' */, 3700)
         }
-        else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null){
+        else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null && this.state.existing_symbol != symbol){
+            console.log(this.state.existing_symbol)
+            console.log(symbol)
             this.props.notify(this.props.app_state.loc['752']/* 'that symbol is already in use' */, 3700)
         }
-        else if(symbol.length > 6){
-            this.props.notify(this.props.app_state.loc['752']/* 'that symbol is too long' */, 3700)
+        else if(symbol.length > 9){
+            this.props.notify(this.props.app_state.loc['752a']/* 'That token symbol is too long.' */, 3700)
         }
         else{
             this.props.when_add_edit_object_to_stack(this.state)
