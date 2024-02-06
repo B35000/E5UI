@@ -95,7 +95,8 @@ class DirectPurchasetPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1100']/* 'Item Variants' */, 'details':this.props.app_state.loc['1101']/* 'Pick the variant you want to purchase' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_item_variants()}
-
+                    {this.render_selected_variant()}
+                    {this.render_detail_item('0')}
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1102']/* 'Amount in ' */+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
                     </div>
@@ -104,7 +105,9 @@ class DirectPurchasetPage extends Component {
                     <div style={{height:10}}/>
 
                     {this.render_set_storefront_prices_list_part()}
-                    <div style={{height:10}}/>
+                    {this.render_detail_item('0')}
+                    {this.render_direct_purchase_shipping_fees()}
+                    {this.render_detail_item('0')}
                     {this.render_my_balances()}
                     <div style={{height:20}}/>
                 </div>
@@ -154,6 +157,28 @@ class DirectPurchasetPage extends Component {
         }
     }
 
+    render_direct_purchase_shipping_fees(){
+        var object = this.state.storefront_item
+        var items = [].concat(object['ipfs'].shipping_price_data)
+
+        return(
+                <div style={{}}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1114a']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1114b']/* 'This is the final amount for the shipping fee for the items your buying.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '5px 0px 5px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+    }
+
     render_my_balances(){
         if(this.state.selected_variant != null){
             var items = [].concat(this.state.selected_variant['price_data'])
@@ -193,16 +218,37 @@ class DirectPurchasetPage extends Component {
     render_item_variants(){
         var items = [].concat(this.state.storefront_item['ipfs'].variants)
         return(
-            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '97%', 'background-color': 'transparent'}}>
-                <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
-                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none', width: '90%'}} onClick={()=> this.when_variant_item_clicked(item)} >
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_variant_item_clicked(item)}>
                             {this.render_variant_item_if_selected(item)}
                         </li>
                     ))}
                 </ul>
             </div>
         )
+    }
+
+    render_variant_item_if_selected(item){
+        if(this.state.selected_variant == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
 
     when_variant_item_clicked(item){
@@ -214,41 +260,21 @@ class DirectPurchasetPage extends Component {
         
     }
 
-    render_variant_item_if_selected(item){
-        if(this.state.selected_variant == item){
+    render_selected_variant(){
+        var item = this.state.selected_variant
+        if(item != null){
             return(
                 <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 0px 5px','border-radius': '13px', width: this.props.width-50 }}>
-                        {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
-                        <div style={{height:3}}/>
-                        <div style={{padding:'0px 0px 0px 10px'}}>
-                            {this.render_detail_item('9', item['image_data']['data'])}
-                        </div>
-                        <div style={{height:5}}/>
-                        {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1107']/* 'Number of Units' */, 'size':'l'})}
-                        <div style={{height:15}}/>
-                        {this.render_variant_price_data(item)}
-
-                        {this.render_detail_item('0')}
-                        {this.render_detail_item('0')}
-                        <div style={{height:1}}/>
+                    <div style={{height:10}}/>
+                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
+                    <div style={{height:3}}/>
+                    <div style={{padding:'0px 0px 0px 0px'}}>
+                        {this.render_detail_item('9', item['image_data']['data'])}
                     </div>
-                </div>
-            )
-        }else{
-            return(
-                <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 0px 5px','border-radius': '13px', width: this.props.width-50 }}>
-                        {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
-                        <div style={{height:3}}/>
-                        <div style={{padding:'0px 0px 0px 10px'}}>
-                            {this.render_detail_item('9', item['image_data']['data'])}
-                        </div>
-                        <div style={{height:5}}/>
-                        {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1108']/* 'Number of Units' */, 'size':'l'})}
-                        <div style={{height:15}}/>
-                        {this.render_variant_price_data(item)}
-                    </div>
+                    <div style={{height:5}}/>
+                    {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['available_unit_count']), 'details':this.props.app_state.loc['1107']/* 'Number of Units' */, 'size':'l'})}
+                    <div style={{height:5}}/>
+                    {this.render_variant_price_data(item)}
                 </div>
             )
         }
@@ -259,10 +285,12 @@ class DirectPurchasetPage extends Component {
         var items = [].concat(variant['price_data'])
         return(
             <div>
-                {items.reverse().map((item, index) => (
-                    <li style={{'padding': '5px 0px 0px 0px'}}>
-                        {this.render_detail_item('2', { 'style':'s', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
-                    </li>
+                {items.map((item, index) => (
+                    <div style={{'padding': '0px 0px 0px 0px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']],})}
+                        </div>
+                    </div>
                 ))}
             </div>
         )
@@ -352,18 +380,34 @@ class DirectPurchasetPage extends Component {
 
 
     can_afford_purchase(){
-        var items = [].concat(this.state.selected_variant['price_data'])
+        var object = this.state.storefront_item
+        var items = [].concat(object['ipfs'].shipping_price_data)
+        items = items.concat(this.state.selected_variant['price_data'])
+        var price_data = {}
+        var exchanges_to_check = []
+        items.forEach(item => {
+            if(price_data[item['id']] == null){
+               price_data[item['id']] = 0 
+            }
+            price_data[item['id']] = bigInt(price_data[item['id']]).add(bigInt(item['amount']))
+            if(!exchanges_to_check.includes(item['id'])){
+                exchanges_to_check.push(item['id'])
+            }
+        });
+
         var can_afford = true;
-        for(var i=0; i<items.length; i++){
-            var item = items[i]
-            var token_id = item['id']
-            var item_price = this.get_amounts_to_be_paid(item['amount'])
-            var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][token_id]
+        for(var i=0; i<exchanges_to_check.length; i++){
+            var item = exchanges_to_check[i]
+            var item_price = this.get_amounts_to_be_paid(price_data[item])
+            var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][item]
             token_balance = token_balance == null ? 0 : token_balance['balance']
+
+            console.log('can_afford_purchase: ',token_balance, item_price)
             if(token_balance < item_price){
                 can_afford = false
             }
         }
+
         return can_afford
     }
 

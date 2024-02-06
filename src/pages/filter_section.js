@@ -41,7 +41,16 @@ class FilterSection extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <Tags page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
+                <div className="row" style={{width:'103%'}}>
+                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                        <Tags page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div style={{'padding': '5px'}} onClick={()=> this.clear_search()} >
+                            {this.render_detail_item('5',{'text':this.props.app_state.loc['1123']/* 'Clear' */,'action':''})}
+                        </div>
+                    </div>
+                </div>
                 
                 <div style={{height:10}}/>
                 {this.render_everything()}
@@ -112,11 +121,6 @@ class FilterSection extends Component {
 
                 {this.render_detail_item('1',{'active_tags':this.state.added_tags, 'indexed_option':'indexed', 'when_tapped':'delete_added_tag'})}
 
-                <div style={{height: 20}}/>
-
-                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.clear_search()} >
-                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1123']/* 'Clear Search' */,'action':''})}
-                </div>
             </div>
         )
     }
@@ -142,7 +146,7 @@ class FilterSection extends Component {
     clear_search(){
         this.props.when_search_button_tapped('')
         this.props.when_add_tags_button_tapped([])
-
+        this.props.notify(this.props.app_state.loc['1125a']/* 'Search filters cleared.' */, 1400)
         // var me = this;
         // setTimeout(function() {    
         //     me.props.reset_scroll_height()

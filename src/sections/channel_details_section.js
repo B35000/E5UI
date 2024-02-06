@@ -835,7 +835,7 @@ class ChannelDetailsSection extends Component {
                 <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
-                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}>
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>

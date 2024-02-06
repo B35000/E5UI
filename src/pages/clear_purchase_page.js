@@ -207,8 +207,8 @@ class ClearPurchasePage extends Component {
                 <div style={{height:5}}/>
                 
                 {this.render_detail_item('0')}
-                {this.render_qr_code_scanner()}
-                {this.render_detail_item('0')}
+                {/* {this.render_qr_code_scanner()}
+                {this.render_detail_item('0')} */}
 
                 {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1073']/* 'Paste Signature' */, 'details':this.props.app_state.loc['1074']/* 'Alternatively, you can paste the signature in the input field below' */ })}
                 <div style={{height:5}}/>

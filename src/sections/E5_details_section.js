@@ -371,20 +371,21 @@ class E5DetailsSection extends Component {
         if(e5_chart_data != null){
            return(
                <div>
-                    {this.show_subscription_transaction_count_chart(e5_chart_data)}
-                    {this.show_contract_transaction_count_chart(e5_chart_data)}
-                    {this.show_proposal_transaction_count_chart(e5_chart_data)}
-                    {this.show_exchange_transaction_count_chart(e5_chart_data)}
-                    {this.show_post_transaction_count_chart(e5_chart_data)}
-                    {this.show_channel_transaction_count_chart(e5_chart_data)}
-                    {this.show_job_transaction_count_chart(e5_chart_data)}
-                    {this.show_stores_transaction_count_chart(e5_chart_data)}
-                    {this.show_bag_transaction_count_chart(e5_chart_data)}
-                    {this.show_contractor_transaction_count_chart(e5_chart_data)}
+                    {/* {this.show_subscription_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_contract_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_proposal_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_exchange_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_post_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_channel_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_job_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_stores_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_bag_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_contractor_transaction_count_chart(e5_chart_data)} */}
                     {this.show_data_transaction_count_chart(e5_chart_data)}
-                    {this.show_metadata_transaction_count_chart(e5_chart_data)}
-                    {this.show_withdraw_amount_data_chart(e5_chart_data)}
-                    {this.show_deposit_amount_data_chart(e5_chart_data)}
+                    {/* {this.show_metadata_transaction_count_chart(e5_chart_data)} */}
+                    {/* {this.show_withdraw_amount_data_chart(e5_chart_data)} */}
+                    {/* {this.show_deposit_amount_data_chart(e5_chart_data)} */}
+                    {this.show_transfer_events_chart(e5_chart_data)}
                     {this.show_transaction_transaction_count_chart(e5_chart_data)}
                </div>
            ) 
@@ -579,13 +580,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p6
-                    for(var t=0; t<diff; t+=(61*265100)){
+                    for(var t=0; t<diff; t+=(60*60*3)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p6 - events[i].returnValues.p6
-                    for(var t=0; t<diff; t+=(61*265100)){
+                    for(var t=0; t<diff; t+=(60*60*3)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -1060,13 +1061,13 @@ class E5DetailsSection extends Component {
 
                 if(i==events.length-1){
                     var diff = Date.now()/1000 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=(61*265100)){
+                    for(var t=0; t<diff; t+=(60*60*3)){
                         data.push(data[data.length-1])      
                     }
                 }
                 else{
                     var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
-                    for(var t=0; t<diff; t+=(61*265100)){
+                    for(var t=0; t<diff; t+=(60*60*3)){
                         data.push(data[data.length-1])      
                     }
                 }
@@ -1102,6 +1103,90 @@ class E5DetailsSection extends Component {
     }
 
     get_transaction_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+
+    show_transfer_events_chart(e5_chart_data){
+        var events = e5_chart_data['transfer']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336a']/* 'Transfers' */, 'details':this.props.app_state.loc['2336b']/* `Chart containing the total number of transfers made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transfers_data_points(events), 'interval':this.get_transfers_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336c']/* 'Y-Axis: Total Transfers Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2336d']/* 'Total Transfers' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336e']/* 'transfers' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+
+    get_transfers_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transfers_interval_figure(events){
         return events.length
     }
 

@@ -621,7 +621,7 @@ class NewPostPage extends Component {
                     </div>
 
                     <div style={{'padding': '5px', width:205}}>
-                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
+                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped', 'prevent_default':true})}
                     </div>
                 </div>
                 <div style={{height:10}}/>

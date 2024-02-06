@@ -77,7 +77,7 @@ class synchronizing_page extends Component {
         return(
             <div>
                 <Row>
-                    <Col><p style={{margin: '60% 0% 0% 0%', width:'70%', color:text_color}}>{this.props.app_state.loc['1597']/* P2P Trust */}</p></Col>
+                    <Col><p style={{margin: '50% 0% 0% 0%', width:'70%', color:text_color}}>{this.props.app_state.loc['1597']/* P2P Trust */}</p></Col>
                     <Col>
                         <img style={{width:'130%', margin:'5% 0% 0% 17%'}} src={p2p_trust}/>
                     </Col>

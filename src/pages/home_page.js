@@ -310,7 +310,7 @@ class home_page extends Component {
         }
         else if(size == 's'){
             return ( 
-                <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${Background})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
+                <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${Background})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
                     <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px'}}>
                         {this.render_top_tag_bar(size)}
                     </div>
@@ -1071,7 +1071,7 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.explore_page_tags_object, this.state.explore_page_tags_object['i'].active)
 
         if(this.state.explore_page_tags_object['i'].active != this.props.app_state.loc['1216']/* 'bags' */){
-            return this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_stores))))
+            return this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_bags))))
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
@@ -3045,14 +3045,14 @@ class home_page extends Component {
     }
 
 
+
+
     open_notification_link(id, e5, type){
-        var obj = {'contract':['?','contracts'],'contractor':['?','contractors'],'job':['?','jobs'],'storefront':['e','storefront'],'bag':['e','bags'],'token':['w',this.get_token_type(id, e5)],}
+        var obj = {'contract':['?','contracts'], 'mail':['?', 'mail'],'contractor':['?','contractors'],'job':['?','jobs'],'storefront':['e','storefront'],'bag':['e','bags'],'token':['w',this.get_token_type(id, e5)],}
 
         var selected_page = obj[type][0]
         var selected_tag = obj[type][1]
         var e5_id = id+e5
-
-        console.log('open_notification_link', e5_id)
 
         this.setState({detail_page:selected_page, detail_selected_tag:selected_tag})
         
@@ -3077,12 +3077,15 @@ class home_page extends Component {
         else if(selected_tag == this.props.app_state.loc['1219']/* 'spends 🫰' */){
            this.setState({selected_spend_item: e5_id})
         }
+        else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
+            this.setState({selected_mail_item: id})
+        }
 
         if(this.props.screensize == 's'){
             this.open_view_object_bottomsheet()
         }
 
-        if(this.props.app_state.visible_tabs != 'e' && type != 'bag'){
+        if(this.props.app_state.visible_tabs != 'e' && type != 'bag' && type != 'mail'){
             this.add_link_to_tab(e5_id, id, selected_page, selected_tag)
         }
     }

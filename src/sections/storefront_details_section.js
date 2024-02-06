@@ -212,10 +212,9 @@ class StorefrontDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['ipfs'].target_receiver, object), 'details':this.props.app_state.loc['2608']/* Target Payment Recipient' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
 
                     {this.render_fulfilment_accounts_if_any(object)}
+                    <div style={{height: 10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2611']/* 'Fulfilment Location' */, 'details':object['ipfs'].fulfilment_location, 'size':'l'})}
                     <div style={{height: 10}}/>
@@ -225,9 +224,11 @@ class StorefrontDetailsSection extends Component {
                     {this.render_item_images(object)}
                     {this.render_selected_links(object)}
                     
-                    {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']/* ' variants' */, 'details':this.props.app_state.loc['2613']/* 'To choose from.' */, 'size':'l'})}   
+                    {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']/* ' variants' */, 'details':this.props.app_state.loc['2613']/* 'To choose from.' */, 'size':'l'})} 
+                    <div style={{height: 5}}/>
+                    {this.render_item_variants(object)}  
                     
-                    <div style={{height: 10}}/>
+                    <div style={{height: 20}}/>
                     {this.render_out_of_stock_message_if_any(object)}                
 
                     {this.render_add_to_bag_button(object)}
@@ -246,12 +247,27 @@ class StorefrontDetailsSection extends Component {
         )
     }
 
+    render_item_variants(object){
+        var items = [].concat(object['ipfs'].variants)
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_variant_item_clicked(item)}>
+                            {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
     render_fulfilment_accounts_if_any(object){
         if(object['ipfs'].fulfilment_accounts.length == 0) return;
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2609']/* 'Fulfilment Accounts' */, 'details':this.props.app_state.loc['2610']/* 'The accounts involved with shipping and fulfilling direct purchase orders from clients.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
+                <div style={{height: 2}}/>
                 {this.render_fulfilment_accounts(object)}
             </div>
         )
@@ -598,7 +614,7 @@ class StorefrontDetailsSection extends Component {
             middle = this.props.height-100;
         }
         var items = this.get_purchases(object)
-        // var object = this.get_storefront_items()[this.props.selected_storefront_item]
+
         var sender_type = 'storefront_owner'
         var fulfilment_accounts = object['ipfs'].fulfilment_accounts==null?[]:object['ipfs'].fulfilment_accounts
         if(this.props.app_state.user_account_id[object['e5']] != object['event'].returnValues.p5 && !fulfilment_accounts.includes(this.props.app_state.user_account_id[object['e5']])){
@@ -666,6 +682,7 @@ class StorefrontDetailsSection extends Component {
     filter_using_bottom_tags(filtered_purchases, object){
         var selected_item = this.get_selected_item(this.state.navigate_view_storefront_list_detail_tags_object, this.props.app_state.loc['2603']/* 'direct-purchases' */)
         // var object = this.get_storefront_items()[this.props.selected_storefront_item]
+        if(filtered_purchases == null) return []
 
         if(selected_item == this.props.app_state.loc['1426']/* 'all' */){
             return filtered_purchases
@@ -1073,7 +1090,7 @@ class StorefrontDetailsSection extends Component {
                 <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
-                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}>
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>

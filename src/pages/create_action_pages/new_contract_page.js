@@ -489,7 +489,7 @@ class NewContractPage extends Component {
         var spend_mint_limit = this.get_mint_limit(5)
 
         var end_price = bigInt((Math.round(end_mint_limit * 0.01)).toString())
-        var spend_price = bigInt((Math.round(spend_mint_limit * 0.001)).toString())
+        var spend_price = bigInt((Math.round(spend_mint_limit * 0.006)).toString())
 
         var auto_wait = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['81'], this.props.app_state.loc['82']], [1] ], };
         var can_modify_contrac_as_mod = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['83'], this.props.app_state.loc['84']], [2] ], };
@@ -504,7 +504,7 @@ class NewContractPage extends Component {
             default_vote_bounty_split_proportion: bigInt('3e16'),/* 3% */
             max_extend_enter_contract_limit: (60*60*12),/* 1/2 day */
             default_minimum_end_vote_bounty_amount: bigInt('0'),
-            default_proposal_expiry_duration_limit: (60*60), /* 1 hr */
+            default_proposal_expiry_duration_limit: (3*60*60), /* 5 hr */
             max_enter_contract_duration: (60*60*24*7),/* 1 wk */
 
             auto_wait_tags_object:auto_wait,

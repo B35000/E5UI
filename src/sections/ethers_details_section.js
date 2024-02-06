@@ -688,13 +688,12 @@ class EthersDetailsSection extends Component {
             return ( 
                 <div>
                     <div style={{'padding': '1px'}}>
-                        {this.from_to_filter(item, e5)}
-                        <div style={{height: 2}}/>
+                        {this.from_to_filter2(item, e5)}
+                        {/* <div style={{height: 2}}/>
                         <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                             {this.render_detail_item('2', item_object['value'])}
-                            {/* {this.render_detail_item('2', item_object['value_ether'])} */}
                         </div>
-                        <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }}/>
+                        <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }}/> */}
                     </div>         
                 </div>
             );
@@ -767,6 +766,25 @@ class EthersDetailsSection extends Component {
         }
     }
 
+    from_to_filter2(item, e5){
+        var from = this.get_from_value(item, e5)['from']
+        var to = this.get_from_value(item, e5)['to']
+        var value = parseInt(this.get_from_value(item, e5)['value'])
+        if(this.format_address(from, e5) == 'You'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2419']/* 'To: ' */+this.format_address(to, e5),'details':this.format_account_balance_figure(value)+' wei', 'size':'s'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2420']/* 'From: ' */+this.format_address(to, e5),'details':this.format_account_balance_figure(value)+' wei', 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
     get_block_history_log_item_object(item, e5){
         var from = this.get_from_value(item, e5)['from']
         var to = this.get_from_value(item, e5)['to']
@@ -792,6 +810,8 @@ class EthersDetailsSection extends Component {
 
             'block':{ 'details': block, 'title': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 'l' },
             'time':{ 'details': time+', '+relative_time+' ago', 'title': 'Timestamp', 'size': 'l' },
+
+            
         }
     }
 

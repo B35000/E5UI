@@ -1189,7 +1189,10 @@ class PostListSection extends Component {
 
     render_post_object_if_locked(item, index){
         var required_subscriptions = item['ipfs'].selected_subscriptions
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item)){
+        var post_author = item['event'].returnValues.p2
+        var me = this.props.app_state.user_account_id[item['e5']]
+        if(me == null) me = 1
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author==me){
             return this.render_post_object(item, index)
         }
         else{
@@ -1281,7 +1284,10 @@ class PostListSection extends Component {
 
     when_post_item_clicked(index, object){
         var required_subscriptions = object['ipfs'].selected_subscriptions
-        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions)){
+        var post_author = object['event'].returnValues.p2
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
             this.props.when_post_item_clicked(index, object['id'], object['e5'])
         }else{
             this.props.show_post_item_preview_with_subscription(object)
@@ -1456,7 +1462,7 @@ class PostListSection extends Component {
                     <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
-                    {this.render_storefront_item_images(object)}
+                    {/* {this.render_storefront_item_images(object)} */}
                     <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_storefront_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -1581,6 +1587,7 @@ class PostListSection extends Component {
                 </div>
             )
         }
+        if(object['ipfs'] == null) return;
         return(
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>

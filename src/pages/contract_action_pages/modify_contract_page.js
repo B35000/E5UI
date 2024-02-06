@@ -42,7 +42,7 @@ class ModifyContractPage extends Component {
         contract_force_exit_enabled: this.get_contract_force_exit_enabled(),
 
         reconfig_number:0, reconfig_proportion:0, reconfig_duration:0, reconfig_target_id:'',
-        reconfig_values:[],
+        reconfig_values:[], new_price_number:0
     };
 
     get_modify_contract_title_tags_object(){
@@ -62,7 +62,7 @@ class ModifyContractPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['68'],this.props.app_state.loc['69'], this.props.app_state.loc['70'], this.props.app_state.loc['71'], this.props.app_state.loc['72'], this.props.app_state.loc['73'], this.props.app_state.loc['74'], this.props.app_state.loc['75'], this.props.app_state.loc['76'], this.props.app_state.loc['77'], this.props.app_state.loc['78'], this.props.app_state.loc['79'], this.props.app_state.loc['80']], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['68'],this.props.app_state.loc['69'], this.props.app_state.loc['70'], this.props.app_state.loc['71'], this.props.app_state.loc['72'], this.props.app_state.loc['73'], this.props.app_state.loc['74'], this.props.app_state.loc['75'], this.props.app_state.loc['76'], this.props.app_state.loc['77'], this.props.app_state.loc['78'], this.props.app_state.loc['79'], this.props.app_state.loc['80'], this.props.app_state.loc['861a']/* 'prices' */], [1]
             ],
         };
     }
@@ -198,6 +198,14 @@ class ModifyContractPage extends Component {
 
         if(selected_item == 'e'){
             return(<div></div>)
+        }
+
+        if(selected_item == this.props.app_state.loc['861a']/* 'prices' */){
+            return(
+                <div>
+                    {this.render_prices_picker()}
+                </div>
+            )
         }
 
         var properties = this.get_target_configuration(selected_item)
@@ -704,6 +712,137 @@ class ModifyContractPage extends Component {
         if(type == 'reconfig_target_id'){
             this.setState({reconfig_target_id: item['id']})
         }
+    }
+
+
+
+
+
+
+
+    render_prices_picker(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['108a']/* 'Edit contract prices' */, 'details':this.props.app_state.loc['108b']/* 'Change the entry fees of your contract' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_current_contract_fees()}
+                <div style={{height:10}}/>
+
+                {this.render_contract_picker_amount()}
+            </div>
+        )
+    }
+
+
+    render_current_contract_fees(){
+        var items = this.get_my_current_contract_fees()
+        return(
+            <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_contract_price_clicked(item, index)}>
+                            {this.render_contract_price_item(item, index)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_my_current_contract_fees(){
+        var contract = this.state.contract_item
+        var price_exchanges = contract['data'][2]
+        var price_amounts = contract['data'][3]
+        var fees_objects = []
+
+        for(var i=0; i<price_exchanges.length; i++){
+            fees_objects.push({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+price_exchanges[i]], 'details':this.format_account_balance_figure(price_amounts[i])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[price_exchanges[i]], 'subtitle':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[price_exchanges[i]], 'pos': [3, i], 'size':'s'})
+        }
+
+        return fees_objects
+    }
+
+    get_all_sorted_objects_mappings(object){
+        var all_objects = {}
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            var e5_objects = object[e5]
+            var all_objects_clone = structuredClone(all_objects)
+            all_objects = { ...all_objects_clone, ...e5_objects}
+        }
+
+        return all_objects
+    }
+
+    render_contract_price_item(item, index){
+        if(this.state.selected_contract_price_pos == index){
+            return(
+                <div>
+                    {this.render_detail_item('3', item)}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', item)}
+                </div>
+            )
+        }
+    }
+
+    when_contract_price_clicked(item, index){
+        if(this.state.selected_contract_price_pos == index){
+            this.setState({selected_contract_price: null, selected_contract_price_pos: null});
+        }else{
+            this.setState({selected_contract_price: item, selected_contract_price_pos: index})
+        }
+    }
+
+    render_contract_picker_amount(){
+        if(this.state.selected_contract_price != null){
+            var item = this.state.selected_contract_price
+            var token_price = item['title']
+            var token_name = item['subtitle']
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':token_price, 'subtitle':this.format_power_figure(this.state.new_price_number), 'barwidth':this.calculate_bar_width(this.state.new_price_number), 'number':this.format_account_balance_figure(this.state.new_price_number), 'barcolor':'', 'relativepower':token_name, })}
+                    </div>
+                    <div style={{height:10}}/>
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_price_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                    <div style={{height:20}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.add_price_change_item()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['846']/* 'Add Change' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    when_new_price_changed(amount){
+        this.setState({new_price_number: amount})
+    }
+
+
+    add_price_change_item(){
+        var item = this.state.selected_contract_price
+        var token_price = item['title']
+        var position = item['pos']
+
+        if(position[1] == 0){
+            this.props.notify(this.props.app_state.loc['108c']/* 'You cant change the first price-value of the entry fees used' */, 6600)
+            return;
+        }
+        var number = this.state.new_price_number;
+        var reconfig_vaules_clone = this.state.reconfig_values.slice()
+
+        reconfig_vaules_clone.push({'value':number, 'pos':position, 'title':token_price, 'type':'number'})
+        this.setState({reconfig_values: reconfig_vaules_clone, new_price_number:0})
+        this.props.notify(this.props.app_state.loc['850']/* 'reconfig action added!' */, 1600)
     }
 
 

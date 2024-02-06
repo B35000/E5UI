@@ -699,14 +699,11 @@ class StackPage extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
+                            <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin':'5px 0px 5px 0px' }}>
+                                <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                    <img src={Letter} style={{ height: 30, width: 'auto' }} />
                                 </div>
-                            </li>
+                            </div>
                         ))}
                     </ul>
                 </div>
@@ -716,16 +713,9 @@ class StackPage extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
-                                <div onClick={() => this.props.show_view_transaction_log_bottomsheet(item)} style={{height:'auto', 'background-color': background_color, 'border-radius': '13px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 5px 0px'}}>
-                                    <div style={{'padding': '5px 0px 0px 5px'}}>
-                                        {this.render_detail_item('3',{'title':'ID: '+item.returnValues.p3, 'details':this.props.app_state.loc['1440']/* 'Age: ' */+this.get_time_difference(item.returnValues.p8),'size':'s'})}
-            
-                                        <div style={{height: 10}}/>
-                                        {this.render_detail_item('2', { 'style':'s', 'title':this.props.app_state.loc['1441']/* 'Gas Consumed' */, 'subtitle':this.format_power_figure(item.returnValues.p5), 'barwidth':this.calculate_bar_width(item.returnValues.p5), 'number':this.format_account_balance_figure(item.returnValues.p5), 'barcolor':'', 'relativepower':'gas', })}
-                                    </div>         
-                                </div>
-                            </li>
+                            <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.show_view_transaction_log_bottomsheet(item)}>
+                                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593g']/* 'Run ID: ' */+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+this.props.app_state.loc['1698a']+' • '+this.format_account_balance_figure(item.returnValues.p5)+' gas.','size':'l'})}
+                            </div>
                         ))}
                     </ul>
                 </div>
@@ -782,14 +772,11 @@ class StackPage extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
+                            <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin':'5px 0px 5px 0px' }}>
+                                <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                    <img src={Letter} style={{ height: 30, width: 'auto' }} />
                                 </div>
-                            </li>
+                            </div>
                         ))}
                     </ul>
                 </div>
@@ -802,7 +789,7 @@ class StackPage extends Component {
                         <div style={{height: 10}}/>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
-                                <li style={{'padding': '2px 2px 2px 2px'}} onClick={()=>console.log()}>
+                                <li style={{'padding': '2px 2px 2px 2px'}}>
                                     {this.render_stack_item(item, index)}
                                 </li>
                             ))}
@@ -892,16 +879,8 @@ class StackPage extends Component {
         var op = this.props.app_state.hidden.includes(item) ? 0.5 : 1.0
         var txt = this.props.app_state.hidden.includes(item) ? 'show' : 'hide'
         return(
-            <div onClick={() => this.props.view_transaction(item, index)} style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
-                    {this.render_detail_item('1',{'active_tags':[item.e5].concat(item.entered_indexing_tags), 'indexed_option':'indexed', 'when_tapped':''})}
-                    <div style={{height: 10}}/>
-
-                    {this.render_detail_item('3',{'details':this.props.app_state.loc['1446']/* 'Stack ID ' */, 'title':item.id,'size':'s'})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1447']/* 'Type' */,'size':'s'})}
-
-                </div>         
+            <div style={{'margin': '2px 0px 2px 0px', opacity: op}} onClick={() => this.props.view_transaction(item, index)}>
+                {this.render_detail_item('3',{'title':item.e5+' • '+item.type, 'details':this.props.app_state.loc['1446']/* 'Stack ID: ' */+item.id,'size':'l'})}
             </div>
         )
     }
@@ -3491,15 +3470,25 @@ class StackPage extends Component {
             obj[7].push(0)
         }
 
-        for(var i=0; i < t.storefront_item['ipfs'].shipping_price_data.length; i++){
-            var shipping_fee_exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
-            var shipping_fee_amount = t.storefront_item['ipfs'].shipping_price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
-            
-            obj[4].push(shipping_fee_exchange)
+        for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
+            var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+            var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
+
+            obj[4].push(exchange)
             obj[5].push(23)
-            obj[6].push(shipping_fee_amount)
+            obj[6].push(amount)
             obj[7].push(0)
         }
+
+        // for(var i=0; i < t.storefront_item['ipfs'].shipping_price_data.length; i++){
+        //     var shipping_fee_exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+        //     var shipping_fee_amount = t.storefront_item['ipfs'].shipping_price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
+            
+        //     obj[4].push(shipping_fee_exchange)
+        //     obj[5].push(23)
+        //     obj[6].push(shipping_fee_amount)
+        //     obj[7].push(0)
+        // }
 
         var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
         
@@ -5412,7 +5401,7 @@ class StackPage extends Component {
                         <TextInput height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'when_add_word_button_tapped', 'prevent_default':true})}
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'when_add_word_button_tapped'/* , 'prevent_default':true */})}
                     </div>
                 </div>
 
@@ -5927,6 +5916,9 @@ class StackPage extends Component {
         else if(this.hasWhiteSpace(typed_word)){
             this.props.notify(this.props.app_state.loc['129']/* 'Enter one word.' */, 3400)
         }
+        else if(!this.onlyLettersAndNumbers(typed_word)){
+            this.props.notify(this.props.app_state.loc['1593h']/* 'Special characters are not allowed.' */, 5400)
+        }
         else if(typed_word.length > 23){
             this.props.notify(this.props.app_state.loc['1586']/* 'That alias is too long.' */, 3900)
         }
@@ -5954,6 +5946,10 @@ class StackPage extends Component {
             return true
         }
         return false
+    }
+
+    onlyLettersAndNumbers(str) {
+        return /^[A-Za-z0-9]*$/.test(str);
     }
 
 
@@ -6065,6 +6061,8 @@ class StackPage extends Component {
 
         var my_store_direct_purchases_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_store_direct_purchases_notifications)
 
+        var my_mail_messages_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.received_mail_notifications)
+
 
         var all_object_list = []
         for (const key in my_job_responses_notifications) {
@@ -6090,6 +6088,10 @@ class StackPage extends Component {
         }
         for (const key in my_store_direct_purchases_notifications) {
             all_object_list.push(my_store_direct_purchases_notifications[key])
+        }
+
+        for(const key in my_mail_messages_notifications){
+            all_object_list.push(my_mail_messages_notifications[key])
         }
 
         var sorted_notifs = this.sortByAttributeDescending(all_object_list, 'timestamp')
@@ -6235,6 +6237,21 @@ class StackPage extends Component {
                 </div>
             )
         }
+        else if(item['type'] == 'mail_message_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var message = this.truncate(item['ipfs']['message'], 53)
+            var id = item['parent_id'] 
+            return(
+                <div onClick={() => this.open_object(id, item['e5'], 'mail')}>
+                    {this.render_detail_item('3', {'title':'📩 '+this.get_senders_name_or_you(sender, item['e5'])+': '+message, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
     }
 
     open_object(target, e5, type){

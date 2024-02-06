@@ -154,6 +154,7 @@ class BagDetailsSection extends Component {
         var selected_item = this.get_selected_item(this.state.navigate_view_bag_list_detail_tags_object, this.state.navigate_view_bag_list_detail_tags_object['i'].active)
         var object = this.get_item_in_array(this.get_bag_items(), this.props.selected_bag_item);
         
+
         if(object == null){
             return(
                 <div>
@@ -284,59 +285,97 @@ class BagDetailsSection extends Component {
         }
     }
 
-
     render_all_variants(object){
-        var middle = this.props.height-200;
         var items_to_deliver = [].concat(object['ipfs']['bag_orders'])
-        return (
-            <div style={{overflow: 'auto', maxHeight: middle}}>
-                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
-                    {/* <SwipeableViews index={0}>
-                        {items_to_deliver.map((item, index) => (
-                            <div style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}}>
-                                {this.render_variant_details(item, object)}
-                            </div>
-                        ))}
-                    </SwipeableViews> */}
-                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
-                            {items_to_deliver.map((item, index) => (
-                                <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none', 'width':'95%'}}>
-                                    {this.render_variant_details(item, object)}
-                                </li>
-                            ))}
-                        </ul>
-                </div>
-            </div>
-        );
-    }
-
-
-    render_variant_details(item, object){
-        var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
-        var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
-        var items = variant_in_store['price_data']
-        var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
         return(
-            <div>
-                {this.render_detail_item('3', {'title':storefront['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2048']/* 'Store ID:' */+storefront['id'] , 'size':'s'})}
-                <div style={{height: 3}}/>
-                {this.render_detail_item('3', {'title':item['purchase_unit_count'], 'details':composition_type+this.props.app_state.loc['2049']/* ' ordered.' */ , 'size':'s'})}
-                <div style={{height: 3}}/>
-                {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':this.props.app_state.loc['2050']/* 'Variant Description' */, 'size':'s'})}
-                <div style={{height: 3}}/>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2051']/* 'Pick-up Location' */, 'details':storefront['ipfs'].fulfilment_location, 'size':'s'})}
-                <div style={{padding:'0px 0px 0px 10px'}}>
-                    {this.render_detail_item('9', variant_in_store['image_data']['data'])}
-                </div>
-                <div style={{height: 10}}/>
-                {items.map((units, index) => (
-                    <li style={{'padding': '2px 0px 2px 0px'}}>
-                        {this.render_detail_item('2', { 'style':'s', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+units['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
-                    </li>
-                ))}
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items_to_deliver.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_variant_item_clicked(item)}>
+                            {this.render_variant_item_if_selected(item, object)}
+                        </li>
+                    ))}
+                </ul>
+                <div style={{height: 5}}/>
+                {this.render_variant_details(object)}
             </div>
         )
     }
+
+    render_variant_item_if_selected(item, object){
+        var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
+        var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+        if(variant_in_store == null) return null
+        var items = variant_in_store['price_data']
+        var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
+
+        if(this.state.selected_variant == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                    {this.render_detail_item('3',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3',{'title':this.truncate(storefront['ipfs'].entered_title_text, 10), 'details':this.truncate(variant_in_store['variant_description'], 15),'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    when_variant_item_clicked(item){
+        if(this.selected_variant == item){
+            this.setState({selected_variant: null})
+        }else{
+            this.setState({selected_variant: item})
+        }
+        
+    }
+
+
+    render_variant_details(object){
+        var item = this.state.selected_variant
+        if(item != null){
+            var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+            if(variant_in_store == null) return null
+            var items = variant_in_store['price_data']
+            var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
+
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':storefront['ipfs'].entered_title_text, 'details':this.props.app_state.loc['2048']/* 'Store ID:' */+storefront['id'] , 'size':'s'})}
+                    <div style={{height: 3}}/>
+                    {this.render_detail_item('3', {'title':item['purchase_unit_count'], 'details':composition_type+this.props.app_state.loc['2049']/* ' ordered.' */ , 'size':'s'})}
+                    <div style={{height: 3}}/>
+                    {this.render_detail_item('3', {'title':variant_in_store['variant_description'], 'details':this.props.app_state.loc['2050']/* 'Variant Description' */, 'size':'s'})}
+                    <div style={{height: 3}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2051']/* 'Pick-up Location' */, 'details':storefront['ipfs'].fulfilment_location, 'size':'s'})}
+                    <div style={{padding:'0px 0px 0px 0px'}}>
+                        {this.render_detail_item('9', variant_in_store['image_data']['data'])}
+                    </div>
+                    {items.map((units, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+units['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+    }
+
+
+
+
 
     get_all_sorted_objects(object){
         var all_objects = []
@@ -380,6 +419,7 @@ class BagDetailsSection extends Component {
 
 
     get_variant_object_from_storefront(storefront, id){
+        if(storefront == null) return null;
         for(var i=0; i<storefront['ipfs'].variants.length; i++){
             if(storefront['ipfs'].variants[i]['variant_id'] == id){
                 return storefront['ipfs'].variants[i]
@@ -817,7 +857,7 @@ class BagDetailsSection extends Component {
                 <SwipeableList>
                         <SwipeableListItem
                             swipeLeft={{
-                            content: <div>{this.props.app_state.loc['2507a']/* Reply */}</div>,
+                            content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2507a']/* Reply */}</p>,
                             action: () => this.focus_message(item, object)
                             }}>
                             <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>{this.render_stack_message_item(item, object)}</div>

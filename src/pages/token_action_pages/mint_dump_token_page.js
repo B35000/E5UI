@@ -109,11 +109,7 @@ class NewMintActionPage extends Component {
 
                 <NumberPicker number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
-                {this.render_fees_for_action_title()}
-
-                {this.render_my_balances_if_buy_action()}
-                
-                {this.set_price_data()}
+                {this.render_fees_and_price_data_if_buyable()}
 
                 {/* {this.render_detail_item('0')}
                 {this.set_upper_lower_bounds()} */}
@@ -127,6 +123,28 @@ class NewMintActionPage extends Component {
 
             </div>
         )
+    }
+
+    render_fees_and_price_data_if_buyable(){
+        var buy_tokens = this.state.token_item['data'][3]
+        var buy_amounts = this.state.token_item['data'][4]
+        var does_price_exist = true
+
+        if(buy_tokens.length == 1 && buy_tokens[0] == 0 && buy_amounts[0] == 0){
+            does_price_exist = false
+        }
+
+        if(does_price_exist){
+            return(
+                <div>
+                    {this.render_fees_for_action_title()}
+
+                    {this.render_my_balances_if_buy_action()}
+                    
+                    {this.set_price_data()}
+                </div>
+            )
+        }
     }
 
     set_buy_sell_header(){
@@ -160,8 +178,13 @@ class NewMintActionPage extends Component {
     set_maximum(){
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
         if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
-            var max = this.get_token_buy_limit()
-            this.setState({amount: max})
+            if(!bigInt(this.state.token_item['balance']).greater(this.get_token_buy_limit())){
+                var max = this.state.token_item['balance']
+                this.setState({amount: max})
+            }else{
+                var max = this.get_token_buy_limit()
+                this.setState({amount: max})
+            }   
         }else{
             console.log('parent token balance: ', this.state.token_item['data'][2][3])
             if(!bigInt(this.state.token_item['balance']).greater(this.get_token_sell_limit())){
@@ -296,10 +319,11 @@ class NewMintActionPage extends Component {
     }
 
     get_number_limit(){
-        if(this.state.token_item['data'] != null){
-            return this.state.token_item['data'][1][0]
-        }
-        else return bigInt('1e72')
+        // if(this.state.token_item['data'] != null){
+        //     return this.state.token_item['data'][1][0]
+        // }
+        // else 
+        return bigInt('1e72')
     }
 
     get_token_buy_limit(){

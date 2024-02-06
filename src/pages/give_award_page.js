@@ -50,7 +50,7 @@ class GiveAwardPage extends Component {
     }
 
     set_post(item){
-        this.setState({post_item: item, e5: item['e5']})
+        this.setState({post_item: item, e5: item['e5'], id:makeid(8)})
     }
 
     render(){

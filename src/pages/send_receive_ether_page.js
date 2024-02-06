@@ -200,8 +200,8 @@ class SendReceiveEtherPage extends Component {
                     disableFlip={false}
                     qrCodeSuccessCallback={this.onNewScanResult}/> */}
                 
-                {this.render_qr_code_scanner()}
-                {this.render_detail_item('0')}
+                {/* {this.render_qr_code_scanner()}
+                {this.render_detail_item('0')} */}
 
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(e5)}>
@@ -715,7 +715,7 @@ class SendReceiveEtherPage extends Component {
     when_send_ether_confirmation_received = () => {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
-        this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 600)
+        this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 5600)
         this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5);
         
     };

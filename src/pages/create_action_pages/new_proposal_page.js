@@ -85,7 +85,7 @@ class NewProposalPage extends Component {
         entered_objects:[], entered_text:'',
 
         typed_link_text:'', link_search_results:[], added_links:[], 
-        edit_text_item_pos:-1,
+        edit_text_item_pos:-1, new_price_number:0
     };
 
 
@@ -139,7 +139,7 @@ class NewProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['3']/* contract */,'e.'+this.props.app_state.loc['319']/* subscription */, 'e.'+this.props.app_state.loc['320']/* exchange */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['3']/* contract */,'e.'+this.props.app_state.loc['319']/* subscription */, 'e.'+this.props.app_state.loc['320']/* exchange */, this.props.app_state.loc['861a']/* 'prices' */], [0]
             ],
             'contract':[
                 ['xor','',0], [this.props.app_state.loc['3']/* contract */,this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */,this.props.app_state.loc['69']/* 'Maximum Extend Enter Contract Limit' */,this.props.app_state.loc['70'] /* 'Minimum End Bounty Amount' */,this.props.app_state.loc['71'] /* 'Proposal Expiry Duration Limit' */, this.props.app_state.loc['72']/* 'Maximum Enter Contract Duration' */,this.props.app_state.loc['73'] /* 'Auto Wait' */, this.props.app_state.loc['74']/* 'Proposal Modify Expiry Duration Limit' */,this.props.app_state.loc['75'] /* 'Moderator Modify Privelage' */, this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */, this.props.app_state.loc['77']/* 'Maximum Proposal Expiry Submit Expiry time difference' */, this.props.app_state.loc['78']/* 'Bounty Limit Type' */,this.props.app_state.loc['79'] /* 'Force Exit Enabled' */, this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, this.props.app_state.loc['438h']/* Transaction Gas Limit */], [1]
@@ -506,7 +506,7 @@ class NewProposalPage extends Component {
                     </div>
 
                     <div style={{'padding': '5px', width:205}}>
-                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped'})}
+                        {this.render_detail_item('5', {'text':add_text_button, 'action':'when_add_text_button_tapped', 'prevent_default':true})}
                     </div>
                 </div>
 
@@ -1791,6 +1791,14 @@ class NewProposalPage extends Component {
             return(<div></div>)
         }
 
+        if(selected_item == this.props.app_state.loc['861a']/* 'prices' */){
+            return(
+                <div>
+                    {this.render_prices_picker()}
+                </div>
+            )
+        }
+
         var properties = this.get_target_configuration(selected_item)
         var ui = properties['picker']
 
@@ -2268,7 +2276,7 @@ class NewProposalPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':'Modify Target', 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['861f']/* 'Modify Target' */, 'size':'l'})}
                                 <div style={{height:5}}/>
                                 {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['399']/* 'position' */, 'size':'l'})}
                                 <div style={{height:5}}/>
@@ -2354,6 +2362,154 @@ class NewProposalPage extends Component {
 
 
 
+
+    render_prices_picker(){
+        return(
+            <div>
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['438j']/* 'Edit Reconfig Prices' */, 'details':this.props.app_state.loc['438k']/* 'Change the prices of your target reconfig object.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_current_subscription_fees()}
+                <div style={{height:10}}/>
+
+                {this.render_subscription_picker_amount()}
+            </div>
+        )
+    }
+
+
+    render_current_subscription_fees(){
+        if(this.state.modify_target_data != null){
+            var modify_target_type = this.state.modify_target_data['type']
+
+            var o = {30/* 30(contract_obj_id) */:[2, 3], 33/* 33(subscription_object) */:[2,3], 31/* 31(token_exchange) */:[3,4]}
+            var position_array = o[modify_target_type]
+            
+            if(position_array != null){
+                var items = this.get_my_current_subscription_fees()
+                return(
+                    <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 0px 0px', width: '97%', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((item, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '5px 5px 5px 5px', '-ms-overflow-style': 'none'}} onClick={() => this.when_subscription_price_clicked(item, index)}>
+                                    {this.render_subscription_price_item(item, index)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
+        }
+        
+    }
+
+    get_my_current_subscription_fees(){
+        var o = {30/* 30(contract_obj_id) */:[2, 3], 33/* 33(subscription_object) */:[2,3], 31/* 31(token_exchange) */:[3,4]}
+        var modify_target_type = this.state.modify_target_data['type']
+        var subscription_contract_token = this.state.modify_target_data
+
+        var position_array = o[modify_target_type]
+        var price_exchanges = subscription_contract_token['data'][position_array[0]]
+        var price_amounts = subscription_contract_token['data'][position_array[1]]
+        var fees_objects = []
+
+        for(var i=0; i<price_exchanges.length; i++){
+            fees_objects.push({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+price_exchanges[i]], 'details':this.format_account_balance_figure(price_amounts[i])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[price_exchanges[i]], 'subtitle':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[price_exchanges[i]], 'pos': [position_array[1], i], 'size':'s'})
+        }
+
+        return fees_objects
+    }
+
+
+    render_subscription_price_item(item, index){
+        if(this.state.selected_subscription_price_pos == index){
+            return(
+                <div>
+                    {this.render_detail_item('3', item)}
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', item)}
+                </div>
+            )
+        }
+    }
+
+    when_subscription_price_clicked(item, index){
+        if(this.state.selected_subscription_price_pos == index){
+            this.setState({selected_subscription_price: null, selected_subscription_price_pos: null});
+        }else{
+            this.setState({selected_subscription_price: item, selected_subscription_price_pos: index})
+        }
+    }
+
+    render_subscription_picker_amount(){
+        if(this.state.selected_subscription_price != null){
+            var item = this.state.selected_subscription_price
+            var token_price = item['title']
+            var token_name = item['subtitle']
+            return(
+                <div>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':token_price, 'subtitle':this.format_power_figure(this.state.new_price_number), 'barwidth':this.calculate_bar_width(this.state.new_price_number), 'number':this.format_account_balance_figure(this.state.new_price_number), 'barcolor':'', 'relativepower':token_name, })}
+                    </div>
+                    <div style={{height:10}}/>
+
+                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_price_changed.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                    <div style={{height:20}}/>
+                    <div style={{'padding': '5px'}} onClick={()=>this.add_price_change_item()}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['846']/* 'Add Change' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+
+    when_new_price_changed(amount){
+        this.setState({new_price_number: amount})
+    }
+
+
+    add_price_change_item(){
+        var item = this.state.selected_subscription_price
+        var token_price = item['title']
+        var position = item['pos']
+
+        var modify_target_type = this.state.modify_target_data['type']
+        var subscription_contract_token = this.state.modify_target_data
+        if(modify_target_type == 30/* 30(contract_obj_id) */){
+            if(position[1] == 0){
+                this.props.notify(this.props.app_state.loc['108c']/* 'You cant change the first price-value of the entry fees used' */, 6600)
+                return;
+            }
+        }
+        else if(modify_target_type == 33/* 33(subscription_object) */){
+            var subscription_type = subscription_contract_token['data'][1][2]
+            if(subscription_type == 1){
+                this.props.notify(this.props.app_state.loc['861e']/* 'You cant modify a subscription price if its cancellable.' */, 6600)
+                return;
+            }
+        }
+        else if(modify_target_type == 31/* 31(token_exchange) */){
+            var token_type = subscription_contract_token['data'][0][2]
+            if(token_type == 0){
+                this.props.notify(this.props.app_state.loc['1017c']/* 'You cant modify an exchange price if its cancellable.' */, 6600)
+                return;
+            }
+        }
+        
+        var number = this.state.new_price_number;
+        var reconfig_vaules_clone = this.state.reconfig_values.slice()
+
+        reconfig_vaules_clone.push({'value':number, 'pos':position, 'title':token_price, 'type':'number'})
+        this.setState({reconfig_values: reconfig_vaules_clone, new_price_number:0})
+        this.props.notify(this.props.app_state.loc['850']/* 'reconfig action added!' */, 1600)
+    }
 
 
 
@@ -2717,26 +2873,29 @@ class NewProposalPage extends Component {
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
         var is_data_valid = this.check_if_sender_has_put_valid_data_for_proposal()
+        var modify_target_id = this.state.modify_target_id
 
         if(index_tags.length == 0){
-            this.props.notify(this.props.app_state.loc['430']/* 'add some tags first!' */, 1700)
+            this.props.notify(this.props.app_state.loc['430']/* 'add some tags first!' */, 4700)
         }
         else if(title == ''){
-            this.props.notify(this.props.app_state.loc['431']/* 'add a title first!' */, 1700)
+            this.props.notify(this.props.app_state.loc['431']/* 'add a title first!' */, 4700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify(this.props.app_state.loc['432']/* 'that title is too long' */, 1700)
+            this.props.notify(this.props.app_state.loc['432']/* 'that title is too long' */, 4700)
         }
         else if(!this.check_if_bounty_is_required()){
-            this.props.notify(this.props.app_state.loc['433']/* 'You need to specify bounty for your new proposal' */, 2500)
+            this.props.notify(this.props.app_state.loc['433']/* 'You need to specify bounty for your new proposal' */, 5500)
         }
         else if(!this.check_if_sender_has_enough_balance_for_bounties()){
-            this.props.notify(this.props.app_state.loc['434']/* 'One of your token balances is insufficient for the bounty amounts specified' */, 4900)
+            this.props.notify(this.props.app_state.loc['434']/* 'One of your token balances is insufficient for the bounty amounts specified' */, 5900)
         }
         else if(!is_data_valid.is_valid){
             this.props.notify(is_data_valid.message, 5000)
         }
-
+        else if(modify_target_id != '' && !this.is_valid_modify_target()){
+            this.props.notify(this.props.app_state.loc['438l']/* 'The modify target youve set is invalid.' */, 5500)
+        }
         else{
             var me = this
             this.setState({content_channeling_setting: me.props.app_state.content_channeling,
@@ -2782,6 +2941,13 @@ class NewProposalPage extends Component {
                 me.props.notify(me.props.app_state.loc['18']/* 'transaction added to stack' */, 700);
             }, (1 * 1000));
         }
+    }
+
+    is_valid_modify_target(){
+        if(this.state.modify_target_data['type'] == 30/* 30(contract_obj_id) */ || this.state.modify_target_data['type'] == 33/* 33(subscription_object) */ || this.state.modify_target_data['type'] == 31/* 31(token_exchange) */){
+            return true
+        }
+        return false
     }
 
 
