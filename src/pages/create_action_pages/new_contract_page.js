@@ -349,6 +349,12 @@ class NewContractPage extends Component {
         else if(this.state.entered_indexing_tags.includes(typed_word)){
             this.props.notify(this.props.app_state.loc['132'], 400)
         }
+        else if(this.state.entered_indexing_tags.length == this.props.app_state.max_tags_count){
+            this.props.notify(this.props.app_state.loc['162l']/* The maximum number of tags you can use is 7. */, 5400)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
+        }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
             cloned_seed_array.push(typed_word)

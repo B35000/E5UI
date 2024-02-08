@@ -256,19 +256,25 @@ class NewSubscriptionPage extends Component {
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
-            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 400)
+            this.props.notify(this.props.app_state.loc['128']/* 'type something!' */, 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 400)
+            this.props.notify(this.props.app_state.loc['129']/* 'enter one word!' */, 1400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify(this.props.app_state.loc['130']/* 'That tag is too long' */, 400)
+            this.props.notify(this.props.app_state.loc['130']/* 'That tag is too long' */, 1400)
         }
         else if(typed_word.length < 3){
-            this.props.notify(this.props.app_state.loc['131']/* 'That tag is too short' */, 400)
+            this.props.notify(this.props.app_state.loc['131']/* 'That tag is too short' */, 1400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify(this.props.app_state.loc['132']/* 'you cant enter the same word twice' */, 400)
+            this.props.notify(this.props.app_state.loc['132']/* 'you cant enter the same word twice' */, 1400)
+        }
+        else if(this.state.entered_indexing_tags.length == this.props.app_state.max_tags_count){
+            this.props.notify(this.props.app_state.loc['162l']/* The maximum number of tags you can use is 7. */, 5400)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()

@@ -381,7 +381,7 @@ class home_page extends Component {
         var size = this.props.screensize;
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px', }}>
+            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
                 {this.render_post_detail_object(size)}
             </div>
         </SwipeableBottomSheet>
@@ -1320,15 +1320,7 @@ class home_page extends Component {
         var selected_option_name = this.get_selected_item(this.state.work_page_tags_object, this.state.work_page_tags_object['i'].active)
 
         if(this.state.work_page_tags_object['i'].active != this.props.app_state.loc['1201']/* 'mail' */){
-            var all_mail = []
-            var received_mail = this.get_combined_created_mail('received_mail')
-            for(var i=0; i<received_mail['received_mail'].length; i++){
-                var convo_id = received_mail['received_mail'][i]
-                var context_object = received_mail['mail_activity'][convo_id][0]
-                if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
-                    all_mail.push(context_object)
-                }
-            }
+            var all_mail = this.get_all_mail()
             return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
         }
 
@@ -1373,6 +1365,29 @@ class home_page extends Component {
             }
             return this.filter_using_searched_text(this.filter_for_blocked_accounts(this.sortByAttributeDescending(all_mail, 'time')))
         }
+    }
+
+    get_all_mail(){
+        var all_mail = []
+        var received_mail = this.get_combined_created_mail('received_mail')
+        var created_mail = this.get_combined_created_mail('created_mail')
+
+        for(var i=0; i<received_mail['received_mail'].length; i++){
+            var convo_id = received_mail['received_mail'][i]
+            var context_object = received_mail['mail_activity'][convo_id][0]
+            if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+                all_mail.push(context_object)
+            }
+        }
+
+        for(var i=0; i<created_mail['created_mail'].length; i++){
+            var convo_id = created_mail['created_mail'][i]
+            var context_object = created_mail['mail_activity'][convo_id][0]
+            if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+                all_mail.push(context_object)
+            }
+        }
+        return all_mail
     }
 
     is_active(convo_id){
@@ -2932,7 +2947,12 @@ class home_page extends Component {
             var post = this.get_item_in_array2(item['id']+item['e5'], all_posts)
             if(post == null){
                 this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
-            }else{
+            }
+            else{
+                if(this.is_post_taken_down_for_sender(post)){
+                    this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+                    return;
+                }
                 var required_subscriptions = post['ipfs'].selected_subscriptions
                 if(required_subscriptions == null) {
                     this.open_link(item)
@@ -2943,9 +2963,82 @@ class home_page extends Component {
                     this.show_post_item_preview_with_subscription(post)
                 }
             }
-        }else{
+        }
+        else if(item['type'] == 'contractor'){
+            var contractors = this.get_all_sorted_objects(this.props.app_state.created_contractors)
+            var post = this.get_item_in_array2(item['id']+item['e5'], contractors)
+            if(post == null){
+                this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+            }
+            else{
+                if(this.is_post_taken_down_for_sender(post)){
+                    this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+                    return;
+                }else{
+                    this.open_link(item)
+                }
+            }
+        }
+        else if(item['type'] == 'job'){
+            var jobs = this.get_all_sorted_objects(this.props.app_state.created_jobs)
+            var post = this.get_item_in_array2(item['id']+item['e5'], jobs)
+            if(post == null){
+                this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+            }
+            else{
+                if(this.is_post_taken_down_for_sender(post)){
+                    this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+                    return;
+                }else{
+                    this.open_link(item)
+                }
+            }
+        }
+        else if(item['type'] == 'storefront'){
+            var storefronts = this.get_all_sorted_objects(this.props.app_state.created_stores)
+            var post = this.get_item_in_array2(item['id']+item['e5'], storefronts)
+            if(post == null){
+                this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+            }
+            else{
+                if(!this.is_item_listed(post)){
+                    this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+                    return;
+                }else{
+                    this.open_link(item)
+                }
+            }
+        }
+        else{
             this.open_link(item)
         }
+    }
+
+    is_post_taken_down_for_sender(object){
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(post_author == me) return false
+
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
+    is_item_listed(object){
+        if(object['ipfs'].get_storefront_item_listing_option == null) return true
+
+        var selected_option = this.get_selected_item2(object['ipfs'].get_storefront_item_listing_option, 'e')
+        var myid = this.props.app_state.user_account_id[object['e5']]
+        if(myid == null) myid = 1
+        if(selected_option == 2 && object['event'].returnValues.p5 != myid){
+            return false
+        }
+        return true
     }
 
     check_if_sender_has_paid_subscriptions(required_subscriptions){
@@ -3078,7 +3171,8 @@ class home_page extends Component {
            this.setState({selected_spend_item: e5_id})
         }
         else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
-            this.setState({selected_mail_item: id})
+            var _id = this.find_mail_object_from_convo_id(id)
+            this.setState({selected_mail_item: _id})
         }
 
         if(this.props.screensize == 's'){
@@ -3100,6 +3194,14 @@ class home_page extends Component {
                 return this.props.app_state.loc['1219']/* 'spends 🫰' */
             }
         }
+    }
+
+
+    find_mail_object_from_convo_id(convo_id){
+        var all_mail = this.get_all_mail()
+        var object = all_mail.find(x => x['convo_id'] === convo_id);
+        if(object == null) return;
+        return object['id']
     }
 
 

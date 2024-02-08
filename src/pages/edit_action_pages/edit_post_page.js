@@ -36,10 +36,12 @@ class NewPostPage extends Component {
      state = {
         id: makeid(8), type:this.props.app_state.loc['765']/* 'edit-post' */,
         get_new_job_page_tags_object: this.get_new_job_page_tags_object(),
-        // get_new_job_text_tags_object: this.get_new_job_text_tags_object(),
+        get_take_down_option: this.get_take_down_option(),
         entered_tag_text: '', entered_title_text:'', entered_text:'',
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], selected_subscriptions:[], edit_text_item_pos:-1,
+
+        get_sort_links_tags_object:this.get_sort_links_tags_object(),
     };
 
     get_new_job_page_tags_object(){
@@ -96,14 +98,37 @@ class NewPostPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['299'], this.props.app_state.loc['300']], [1]
+                ['xor','',0], ['e',this.props.app_state.loc['299']/* invisible */, this.props.app_state.loc['300']/* visible */], [1]
+            ],
+        };
+    }
+
+
+    get_take_down_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['767c']], [0]
+            ],
+        };
+    }
+
+    get_sort_links_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['162a']/* '📑 contract' */, this.props.app_state.loc['162b']/* '💼 job' */, this.props.app_state.loc['162c']/* '👷🏻‍♀️ contractor' */, this.props.app_state.loc['162d']/* '🏪 storefront' */, this.props.app_state.loc['162e']/* '🎫 subscription' */,this.props.app_state.loc['162f']/* '📰 post' */,this.props.app_state.loc['162g'] /* '📡 channel' */, this.props.app_state.loc['162h']/* '🪙 token' */, this.props.app_state.loc['162i']/* '🧎 proposal' */], [0]
             ],
         };
     }
 
 
     set(){
-        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1,})
+        this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1,get_sort_links_tags_object:this.get_sort_links_tags_object()})
     }
 
 
@@ -254,10 +279,21 @@ class NewPostPage extends Component {
                 <Tags page_tags_object={this.state.get_post_preview_option} tag_size={'l'} when_tags_updated={this.when_get_post_preview_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_take_down_option(tag_group){
+        this.setState({get_take_down_option: tag_group})
     }
 
     when_get_post_preview_option(tag_obj){
@@ -276,19 +312,25 @@ class NewPostPage extends Component {
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();
 
         if(typed_word == ''){
-            this.props.notify(this.props.app_state.loc['128'], 400)
+            this.props.notify(this.props.app_state.loc['128'], 1400)
         }
         else if(this.hasWhiteSpace(typed_word)){
-            this.props.notify(this.props.app_state.loc['129'], 400)
+            this.props.notify(this.props.app_state.loc['129'], 1400)
         }
         else if(typed_word.length > this.props.app_state.tag_size){
-            this.props.notify(this.props.app_state.loc['130'], 400)
+            this.props.notify(this.props.app_state.loc['130'], 1400)
         }
         else if(typed_word.length < 3){
-            this.props.notify(this.props.app_state.loc['131'], 400)
+            this.props.notify(this.props.app_state.loc['131'], 1400)
         }
         else if(this.state.entered_indexing_tags.includes(typed_word)){
-            this.props.notify(this.props.app_state.loc['132'], 400)
+            this.props.notify(this.props.app_state.loc['132'], 1400)
+        }
+        else if(this.state.entered_indexing_tags.length == this.props.app_state.max_tags_count){
+            this.props.notify(this.props.app_state.loc['162l']/* The maximum number of tags you can use is 7. */, 5400)
+        }
+        else if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(typed_word)){
+            this.props.notify(this.props.app_state.loc['162m'], 4400)/* You cant use special characters. */
         }
         else{
             var cloned_seed_array = this.state.entered_indexing_tags.slice()
@@ -869,11 +911,18 @@ class NewPostPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_selected_links()}
 
+                {this.render_detail_item('0')}
+                <Tags page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
                 <div style={{height:10}}/>
                 {this.render_searched_link_results()}
 
             </div>
         )
+    }
+
+    when_get_sort_links_tags_object_updated(tag_obj){
+        this.setState({get_sort_links_tags_object: tag_obj})
     }
 
     when_typed_link_text_changed(text){
@@ -904,14 +953,21 @@ class NewPostPage extends Component {
         var storefronts = this.get_all_sorted_objects(this.props.app_state.created_stores)
         var subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
         var tokens = this.get_all_sorted_objects(this.props.app_state.created_tokens)
+    
 
         var return_objects = []
+        var my_objects = []
         contracts.forEach(object => {
             var ipfs_title = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
             var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
             console.log(object['id'])
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contract'})
+            }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contract'})
             }
         });
 
@@ -921,6 +977,11 @@ class NewPostPage extends Component {
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'channel'})
             }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'channel'})
+            }
         });
 
         contractors.forEach(object => {
@@ -929,6 +990,11 @@ class NewPostPage extends Component {
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contractor'})
             }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'contractor'})
+            }
         });
 
         jobs.forEach(object => {
@@ -936,6 +1002,11 @@ class NewPostPage extends Component {
             var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'job'})
+            }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'job'})
             }
         });
 
@@ -946,6 +1017,11 @@ class NewPostPage extends Component {
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'post'})
             }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'post'})
+            }
         });
 
 
@@ -955,6 +1031,11 @@ class NewPostPage extends Component {
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'proposal'})
             }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'proposal'})
+            }
         });
 
         storefronts.forEach(object => {
@@ -962,6 +1043,11 @@ class NewPostPage extends Component {
             var full_id = (object['e5'] + 'e' + object['id']).toLowerCase()
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'storefront'})
+            }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'storefront'})
             }
         });
 
@@ -972,6 +1058,11 @@ class NewPostPage extends Component {
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'subscription'})
             }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'subscription'})
+            }
         });
 
         tokens.forEach(object => {
@@ -980,8 +1071,14 @@ class NewPostPage extends Component {
             if(object['id'].toString().includes(typed_text) || ipfs_title.includes(typed_text) || full_id.includes(typed_text)){
                 return_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'token'})
             }
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(object['author'] == me){
+                my_objects.push({'id':object['id'], 'title':ipfs_title, 'e5':object['e5'], 'type':'token'})
+            }
         });
 
+        if(return_objects.length == 0 || typed_text == '') return my_objects;
         return return_objects
     }
 
@@ -1052,7 +1149,7 @@ class NewPostPage extends Component {
 
     get_title(item){
         var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
         return `${obj[item['type']]} ${item_id}`
     }
 
@@ -1077,9 +1174,15 @@ class NewPostPage extends Component {
         var items = [].concat(this.state.link_search_results)
 
         if(items.length == 0){
+            items = this.search_for_object('')
+        }
+
+        items = this.sort_searched_link_results(items)
+
+        if(items.length == 0){
             items = [0,3,0]
             return(
-                <div style={{}}>
+                <div style={{overflow: 'auto', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
@@ -1099,7 +1202,7 @@ class NewPostPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>this.when_searched_link_tapped(item)}>
-                                {this.render_detail_item('3', {'title':''+this.get_title(item), 'details':item['title'], 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+this.get_title(item), 'details':item['title'], 'size':'s'})}
                             </li>
                         ))}
                     </ul>
@@ -1108,18 +1211,104 @@ class NewPostPage extends Component {
         }
     }
 
+    sort_searched_link_results(items){
+        var selected_item = this.get_selected_item2(this.state.get_sort_links_tags_object, 'e')
+        var results = []
+        if(selected_item == 0/* e */){
+            return items
+        }
+        else if(selected_item == 1/* 📑 contract */){
+            items.forEach(item => {
+                if(item['type'] == 'contract'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 2/* 💼 job */){
+            items.forEach(item => {
+                if(item['type'] == 'job'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 3/* 👷🏻‍♀️ contractor */){
+            items.forEach(item => {
+                if(item['type'] == 'contractor'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 4/* 🏪 storefront */){
+            items.forEach(item => {
+                if(item['type'] == 'storefront'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 5/* 🎫 subscription */){
+            items.forEach(item => {
+                if(item['type'] == 'subscription'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 6/* 📰 post */){
+            items.forEach(item => {
+                if(item['type'] == 'post'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 7/* 📡 channel */){
+            items.forEach(item => {
+                if(item['type'] == 'channel'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 8/* 🪙 token */){
+            items.forEach(item => {
+                if(item['type'] == 'token'){
+                    results.push(item)
+                }
+            });
+        }
+        else if(selected_item == 9/* 🧎 proposal */){
+            items.forEach(item => {
+                if(item['type'] == 'proposal'){
+                    results.push(item)
+                }
+            });
+        }
+
+        return results;
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
 
     when_searched_link_tapped(item){
         var clone = this.state.added_links.slice()
-        var pos = clone.indexOf(item)
+        var pos = this.position_of(item, clone)
 
         if(pos > -1){
-            this.props.notify(this.props.app_state.loc['309'], 1700)
+            this.props.notify(this.props.app_state.loc['143'], 1700)
         }else{
             clone.push(item)
             this.setState({added_links: clone})
-            this.props.notify(this.props.app_state.loc['310'], 1400)
+            this.props.notify(this.props.app_state.loc['144'], 1400)
         }
+    }
+
+    position_of(item, added_links){
+        var pos = -1
+        added_links.forEach(element => {
+            if(element['id'] == item['id'] && element['e5'] == item['e5']){
+                pos = added_links.indexOf(element)
+            }
+        });
+        return pos
     }
 
 

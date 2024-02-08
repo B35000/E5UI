@@ -178,7 +178,7 @@ class MailDetailsSection extends Component {
 
     get_title(item){
         var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
         return `${obj[item['type']]} ${item_id}`
     }
 
@@ -301,7 +301,7 @@ class MailDetailsSection extends Component {
                         <div style={{'margin':'1px 0px 0px 0px'}}>
                             {/* {this.render_image_picker()} */}
                             <div>
-                                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet(object)}>
+                                <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked(object)}>
                                     <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                                 </div>
                             </div>
@@ -318,6 +318,26 @@ class MailDetailsSection extends Component {
             )
         }
         
+    }
+
+    when_circle_clicked = (object) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.scroll_to_bottom()
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.show_add_comment_bottomsheet(object)
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    scroll_to_bottom(){
+        this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
     }
 
     render_focused_message(object){
@@ -945,9 +965,9 @@ class MailDetailsSection extends Component {
             this.setState({entered_text:''})
             this.props.notify(this.props.app_state.loc['1697']/* 'Message added to stack.' */, 1600)
 
-            if (this.messagesEnd.current){
-                this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
-            }
+            // if (this.messagesEnd.current){
+            //     this.messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
+            // }
         }
     }
 

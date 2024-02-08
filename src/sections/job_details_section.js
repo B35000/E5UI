@@ -224,6 +224,10 @@ class JobDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':''+this.get_senders_name(object['event'].returnValues.p5, object), 'details':this.props.app_state.loc['2070']/* 'Author' */, 'size':'l'})}
                     <div style={{height: 10}}/>
+                    
+                    {this.render_taken_down_message_if_post_is_down(object)}
+                    <div style={{height: 10}}/>
+
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -255,6 +259,26 @@ class JobDetailsSection extends Component {
         )
     }
 
+    render_taken_down_message_if_post_is_down(object){
+        if(this.is_post_taken_down_for_sender(object)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2526b']/* The object has been taken down.' */, 'title':this.props.app_state.loc['2526a']/* '🔒 Taken Down' */})}
+                </div>
+            )
+        }
+    }
+
+    is_post_taken_down_for_sender(object){
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
+    }
+
     render_selected_links(object){
         if(object['ipfs'].added_links == null) return;
         var items = [].concat(object['ipfs'].added_links).reverse()
@@ -278,7 +302,7 @@ class JobDetailsSection extends Component {
 
     get_title(item){
         var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
         return `${obj[item['type']]} ${item_id}`
     }
 
@@ -648,7 +672,7 @@ class JobDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2498']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2499']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2500']/* 'Sender ID: ' */+item['applicant_id'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2499']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2500']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'s'})}
                     <div style={{height:3}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2501']/* 'Accepted' */, 'details':this.props.app_state.loc['2502']/* 'The job owner picked this application' */, 'size':'s'})}
@@ -662,12 +686,22 @@ class JobDetailsSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2503']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2504']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2505']/* 'Sender ID: ' */+item['applicant_id'], 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2504']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2505']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'s'})}
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
                 </div>
             )
         }
         
+    }
+
+    get_senders_name2(sender, object){
+        // var object = this.get_mail_items()[this.props.selected_mail_item];
+        if(sender == this.props.app_state.user_account_id[object['e5']]){
+            return 'You'
+        }else{
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? '' : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
     }
 
     get_expiry_time(item){
@@ -719,7 +753,7 @@ class JobDetailsSection extends Component {
                     <div style={{'margin':'0px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet(object)}>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked(object)}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
@@ -734,6 +768,26 @@ class JobDetailsSection extends Component {
                 </div>
             </div> 
         )
+    }
+
+    when_circle_clicked = (object) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.scroll_to_bottom()
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.show_add_comment_bottomsheet(object)
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    scroll_to_bottom(){
+        this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
     }
 
     render_focused_message(object){
@@ -832,7 +886,6 @@ class JobDetailsSection extends Component {
                 return(
                 <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {/* {this.render_messages(items, object)} */}
                         {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
                     </ul>

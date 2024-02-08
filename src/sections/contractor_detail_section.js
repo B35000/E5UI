@@ -157,6 +157,10 @@ class ContractorDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3',{ 'title': '' + this.get_senders_name(object['event'].returnValues.p5, object), 'details': this.props.app_state.loc['2070']/* 'Author' */, 'size': 'l' }, )}
                     <div style={{height: 10}}/>
+                    
+                    {this.render_taken_down_message_if_post_is_down(object)}
+                    <div style={{height: 10}}/>
+
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -189,6 +193,26 @@ class ContractorDetailsSection extends Component {
                 </div>
             </div>
         )
+    }
+
+    render_taken_down_message_if_post_is_down(object){
+        if(this.is_post_taken_down_for_sender(object)){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2526b']/* The object has been taken down.' */, 'title':this.props.app_state.loc['2526a']/* '🔒 Taken Down' */})}
+                </div>
+            )
+        }
+    }
+
+    is_post_taken_down_for_sender(object){
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
     fee_per_hour_or_per_job(object){
@@ -231,7 +255,7 @@ class ContractorDetailsSection extends Component {
 
     get_title(item){
         var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
         return `${obj[item['type']]} ${item_id}`
     }
 

@@ -318,7 +318,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_job_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -856,7 +856,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_contractor_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1189,7 +1189,7 @@ class PostListSection extends Component {
 
     render_post_object_if_locked(item, index){
         var required_subscriptions = item['ipfs'].selected_subscriptions
-        var post_author = item['event'].returnValues.p2
+        var post_author = item['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[item['e5']]
         if(me == null) me = 1
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || this.is_post_preview_enabled(item) || post_author==me){
@@ -1201,7 +1201,7 @@ class PostListSection extends Component {
                     <div style={{height:160, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 0px 0px'}}>
                             <img src={Letter} style={{height:60 ,width:'auto'}} />
-                            <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}>locked</p>
+                            <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}></p>
                         </div>
                     </div>
                 </div>
@@ -1224,9 +1224,13 @@ class PostListSection extends Component {
 
     is_post_preview_enabled(object){
         if(object['ipfs'].get_post_preview_option == null) return false
-        var selected_post_preview_option = this.get_selected_item(object['ipfs'].get_post_preview_option, 'e')
-        if(selected_post_preview_option == 'visible') return true
+        var selected_post_preview_option = this.get_selected_item2(object['ipfs'].get_post_preview_option, 'e')
+        if(selected_post_preview_option == 2) return true
         return false
+    }
+
+    get_selected_item2(object, option){
+        return object[option][2][0]
     }
 
 
@@ -1246,7 +1250,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_post_item(object)
-        if(this.is_object_sender_blocked(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1270,6 +1274,17 @@ class PostListSection extends Component {
         )
     }
 
+    is_post_taken_down_for_sender(object){
+        var post_author = object['event'].returnValues.p5
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(me == null) me = 1
+        if(post_author == me) return false
+
+        if(object['ipfs'].get_take_down_option == null) return false
+        var selected_take_down_option = this.get_selected_item2(object['ipfs'].get_take_down_option, 'e')
+        if(selected_take_down_option == 1) return true
+    }
+
     format_post_item(object){
         var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
@@ -1284,9 +1299,10 @@ class PostListSection extends Component {
 
     when_post_item_clicked(index, object){
         var required_subscriptions = object['ipfs'].selected_subscriptions
-        var post_author = object['event'].returnValues.p2
+        var post_author = object['event'].returnValues.p5
         var me = this.props.app_state.user_account_id[object['e5']]
         if(me == null) me = 1
+        
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
             this.props.when_post_item_clicked(index, object['id'], object['e5'])
         }else{
@@ -1491,10 +1507,10 @@ class PostListSection extends Component {
     is_item_listed(object){
         if(object['ipfs'].get_storefront_item_listing_option == null) return true
 
-        var selected_option = this.get_selected_item(object['ipfs'].get_storefront_item_listing_option, 'e')
+        var selected_option = this.get_selected_item2(object['ipfs'].get_storefront_item_listing_option, 'e')
         var myid = this.props.app_state.user_account_id[object['e5']]
         if(myid == null) myid = 1
-        if(selected_option == 'delisted' && object['event'].returnValues.p5 != myid){
+        if(selected_option == 2 && object['event'].returnValues.p5 != myid){
             return false
         }
         return true

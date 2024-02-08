@@ -294,7 +294,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{height:10}}/>
                     {this.render_conseusns_status(object)}
 
-                    <div style={{height:10}}/>
+                    {this.render_detail_item('0')}
                     {this.render_submitted_proposal_event(object)}
                     <div style={{height:10}}/>
                     {this.render_archived_proposal_event(object)}
@@ -320,7 +320,10 @@ class ProposalDetailsSection extends Component {
     render_edit_object_button(object){
         // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         var my_account = this.props.app_state.user_account_id[object['e5']]
-        if(object['event'].returnValues.p4 == my_account){//<--------issue! should be p3
+        var now = Date.now()/1000
+        var proposal_exipry_time = object['data'][1][1/* <1>proposal_expiry_time */]
+
+        if(object['event'].returnValues.p4 == my_account && now < proposal_exipry_time){//<--------issue! should be p3
             return(
                 <div>
                     {this.render_detail_item('0')}
@@ -411,7 +414,7 @@ class ProposalDetailsSection extends Component {
 
     get_title(item){
         var obj = {'contract':'📑', 'job':'💼', 'contractor':'👷🏻‍♀️', 'storefront':'🏪','subscription':'🎫', 'post':'📰','channel':'📡','token':'🪙', 'proposal':'🧎'}
-        var item_id = (item['e5'] + 'e' + item['id']).toLowerCase()
+        var item_id = ((item['e5']).toUpperCase()+' • '+item['id'])
         return `${obj[item['type']]} ${item_id}`
     }
 
@@ -1030,7 +1033,7 @@ class ProposalDetailsSection extends Component {
                     <div style={{'margin':'1px 0px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet(object)}>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked(object)}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
@@ -1045,6 +1048,26 @@ class ProposalDetailsSection extends Component {
                 </div>
             </div> 
         )
+    }
+
+    when_circle_clicked = (object) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.scroll_to_bottom()
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.show_add_comment_bottomsheet(object)
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    scroll_to_bottom(){
+        this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
     }
 
 

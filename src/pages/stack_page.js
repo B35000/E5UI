@@ -1742,6 +1742,30 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(proposal_obj)
+
+                    var include_yes_vote = this.get_selected_item(txs[i].get_auto_vote_yes_object, txs[i].get_auto_vote_yes_object['i'].active)
+
+                    var proposal_stack_id = ints.length-1
+
+                    if(include_yes_vote == this.props.app_state.loc['438o']/* 'vote' */){
+                        var yes_vote_object = [/* vote proposal */
+                            [30000, 4, 0],
+                            [proposal_stack_id], [35],/* proposal ids */
+                            [1],/* votes */
+                            [], [], []/* target bounty exchanges */
+                        ]
+                        
+                        var bounty_exchanges = txs[i].bounty_values
+                        for(var j=0; j<bounty_exchanges.length; j++){
+                            yes_vote_object[4].push(bounty_exchanges[j]['exchange'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                            yes_vote_object[5].push(23)
+                            yes_vote_object[6].push(0)
+                        }
+
+                        strs.push([])
+                        adds.push([])
+                        ints.push(yes_vote_object)
+                    }
                 }
                 else if(txs[i].type == this.props.app_state.loc['796']/* 'vote' */){
                     var vote_obj = this.format_vote_object(txs[i])
@@ -2047,6 +2071,7 @@ class StackPage extends Component {
             []/* int_data */
         ]
         var metadata_strings = [ [] ]
+
 
         for(var i=0; i<pushed_txs.length; i++){
             if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */){
@@ -6042,7 +6067,6 @@ class StackPage extends Component {
         )
 
     }
-    
 
     get_all_sorted_notifications(){
         var my_job_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_responses_notifications)
@@ -6099,7 +6123,6 @@ class StackPage extends Component {
 
         return sorted_notifs
     }
-
 
     render_my_notifications(){
         var items = [].concat(this.get_all_sorted_notifications())
@@ -6241,7 +6264,7 @@ class StackPage extends Component {
             var timestamp = item['timestamp']
             var sender = item['event'].returnValues.p2
             var message = this.truncate(item['ipfs']['message'], 53)
-            var id = item['parent_id'] 
+            var id = item['convo_id']
             return(
                 <div onClick={() => this.open_object(id, item['e5'], 'mail')}>
                     {this.render_detail_item('3', {'title':'📩 '+this.get_senders_name_or_you(sender, item['e5'])+': '+message, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
