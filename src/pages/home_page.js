@@ -12,6 +12,7 @@ import SwipeableBottomSheet from 'react-swipeable-bottom-sheet';
 import Dialog from "@mui/material/Dialog";
 import ViewGroups from './../components/view_groups'
 import { motion } from "framer-motion"
+import SwipeableViews from 'react-swipeable-views';
 
 import Tags from './../components/tags';
 import PostDetailSection from '../sections/detail_section';
@@ -54,7 +55,10 @@ class home_page extends Component {
 
     constructor(props) {
         super(props);
-        this.list_section = React.createRef();
+        this.work_list_section = React.createRef();
+        this.explore_list_section = React.createRef();
+        this.wallet_list_section = React.createRef();
+
         this.filter_section_page = React.createRef();
         this.post_preview_page = React.createRef();
     }
@@ -311,13 +315,7 @@ class home_page extends Component {
         else if(size == 's'){
             return ( 
                 <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${Background})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
-                    <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px'}}>
-                        {this.render_top_tag_bar(size)}
-                    </div>
-                    
-                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
-                        {this.render_post_list_group(size)}
-                    </div>
+                    {this.render_small_screen_size_ui(size, top_bar, width)}
                     
                     <div style={{height:5}}/>
                     <div style={{height:bottom_bar, width:width, 'background-color': navbar_color,'display':'flex', 'align-items': 'center', 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 15px'}}>
@@ -339,6 +337,35 @@ class home_page extends Component {
             );
         }
 
+    }
+
+    render_small_screen_size_ui(size, top_bar, width){
+        var orientation = this.props.app_state.homepage_tags_position
+
+        if(orientation == this.props.app_state.loc['1593k']/* top */){
+            return(
+                <div>
+                    <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px'}}>
+                        {this.render_top_tag_bar(size)}
+                    </div>
+                    
+                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
+                        {this.render_post_list_group(size)}
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
+                        {this.render_post_list_group(size)}
+                    </div>
+                    <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px'}}>
+                        {this.render_top_tag_bar(size)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_post_details_with_orientation(middle, width, size){
@@ -374,18 +401,19 @@ class home_page extends Component {
     }
 
     render_view_object_bottomsheet(){
-        // if(this.state.view_post_bottomsheet2 != true) return;
+        if(this.state.view_post_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
         var overlay_shadow_color = this.props.theme['send_receive_ether_overlay_shadow'];
         var size = this.props.screensize;
         return(
-        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
+        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5', 'overflow-y':'scroll !important'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
+            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'scroll !important' }}>
                 {this.render_post_detail_object(size)}
             </div>
         </SwipeableBottomSheet>
         )
+
     }
 
     open_view_object_bottomsheet(){
@@ -489,9 +517,9 @@ class home_page extends Component {
                 <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
                     <img src={img} style={{height:img_height,width:img_width, padding: img_padding}} />
 
-                    <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p>
+                    <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p>
 
-                    <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
+                    <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                 </div>
             );
         }else{
@@ -504,8 +532,8 @@ class home_page extends Component {
                     </div>
                     <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
                         <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
-                            <p style={{'font-size': '18px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p> 
-                            <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
+                            <p style={{'font-size': '18px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p> 
+                            <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                         </div>
                     </div>
                 </div> 
@@ -807,7 +835,7 @@ class home_page extends Component {
     render_tag_bar_group(option, size){
         return(
             <div>
-                <Tags page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                <Tags app_state={this.props.app_state} page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
             </div>
         )
     }
@@ -884,33 +912,33 @@ class home_page extends Component {
            
             var selected_tag = this.state.work_page_tags_object['i'].active
             if(selected_tag == 'e' || selected_tag == this.props.app_state.loc['1196']/* 'jobs' */){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_jobs_list(scroll_pos)
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_jobs_list(scroll_pos)
                 }
             } 
             else if(selected_tag == this.props.app_state.loc['1197']/* 'contracts' */){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_contract_list(scroll_pos)
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_contract_list(scroll_pos)
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1199']/* 'proposals' */ ){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_proposal_list(scroll_pos)
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_proposal_list(scroll_pos)
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1200']/* 'subscriptions' */ ){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_subscription_list(scroll_pos)
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_subscription_list(scroll_pos)
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_mail_list(scroll_pos)
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_mail_list(scroll_pos)
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_contractor_list(scroll_pos)
+                if(this.work_list_section.current != null){
+                    this.work_list_section.current?.set_contractor_list(scroll_pos)
                 }
             }
         }
@@ -925,33 +953,33 @@ class home_page extends Component {
             if(selected_tag == this.props.app_state.loc['1212']/* 'E5s' */ || selected_tag == 'e'){
                 var selected_item = this.get_selected_item(this.state.explore_page_tags_object, selected_tag)
                 if(selected_item == this.props.app_state.loc['1221']/* 'blockexplorer 🗺️' */){
-                    if(this.list_section.current != null){
-                        this.list_section.current?.set_searched_account_list(scroll_pos)
+                    if(this.explore_list_section.current != null){
+                        this.explore_list_section.current?.set_searched_account_list(scroll_pos)
                     }
                 }else{
-                    if(this.list_section.current != null){
-                        this.list_section.current?.set_e5_list(scroll_pos)
+                    if(this.explore_list_section.current != null){
+                        this.explore_list_section.current?.set_e5_list(scroll_pos)
                     }
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1213']/* 'posts' */ ){
-               if(this.list_section.current != null){
-                    this.list_section.current?.set_post_list(scroll_pos)
+               if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_post_list(scroll_pos)
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1214']/* 'channels' */ ){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_channel_list(scroll_pos)
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_channel_list(scroll_pos)
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1215']/* 'storefront' */){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_storefront_list(scroll_pos)
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_storefront_list(scroll_pos)
                 }
             }
             else if(selected_tag == this.props.app_state.loc['1216']/* 'bags' */){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_bag_list(scroll_pos)
+                if(this.explore_list_section.current != null){
+                    this.explore_list_section.current?.set_bag_list(scroll_pos)
                 }
             }
         }
@@ -964,18 +992,18 @@ class home_page extends Component {
             if(scroll_pos == null) scroll_pos = 0;
 
             if(selected_item == this.props.app_state.loc['1217']/* 'ethers ⚗️' */ || selected_item == 'e'){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_ether_list(scroll_pos)
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_ether_list(scroll_pos)
                 }
             }
             else if(selected_item == this.props.app_state.loc['1218']/* 'ends ☝️' */ ){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_end_list(scroll_pos)
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_end_list(scroll_pos)
                 }
             }
             else if(selected_item == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
-                if(this.list_section.current != null){
-                    this.list_section.current?.set_spend_list(scroll_pos)
+                if(this.wallet_list_section.current != null){
+                    this.wallet_list_section.current?.set_spend_list(scroll_pos)
                 }
             }
         }
@@ -1835,13 +1863,29 @@ class home_page extends Component {
 
 
     
-    
-
-
+    handleChange = (value) => {
+        var obj = {0:'?', 1:'e', 2:'w'}
+        this.setState({page: obj[value]})
+    };
 
     render_post_list_group(size){
+        var obj = {'?':0, 'e':1, 'w':2}
+        var pos = obj[this.state.page];
         return(
-            <PostListSection ref={this.list_section} size={size} height={this.props.height} width={this.props.width} page={this.state.page} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.props.notify.bind(this)}
+            <div>
+                <SwipeableViews index={pos} onChangeIndex={this.handleChange} disabled>
+                    <div>{this.render_post_list_group2(size, '?', this.work_list_section)}</div>
+                    <div>{this.render_post_list_group2(size, 'e', this.explore_list_section)}</div>
+                    <div>{this.render_post_list_group2(size, 'w', this.wallet_list_section)}</div>
+                </SwipeableViews>
+            </div>
+        )
+        
+    }
+
+    render_post_list_group2(size, p, list_section){
+        return(
+            <PostListSection ref={list_section} size={size} height={this.props.height} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.props.notify.bind(this)}
             when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)}
 
             theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} when_view_image_clicked={this.when_view_image_clicked.bind(this)}
@@ -3224,7 +3268,7 @@ class home_page extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} />
             </div>
         )
 

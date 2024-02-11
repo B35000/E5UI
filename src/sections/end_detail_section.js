@@ -100,7 +100,7 @@ class EndDetailSection extends Component {
                 <div style={{}}>
                     {this.render_end_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags page_tags_object={this.state.navigate_view_end_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_end_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_end_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_end_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -965,7 +965,7 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2387']/* 'Y-Aggregate' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the y-aggregate of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object), 'interval':this.get_exchange_ratio_interval_figure(exchange_ratio_events)})}
                     <div style={{height: 10}}/>
-                    <Tags page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2390']/* 'Y-Axis: Y-aggregate' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1199,7 +1199,7 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2396']/* 'Exchange Liquidity' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2398']/* ` in the exchange over time.` */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_exchange_liquidity_data_points(exchange_ratio_events), 'interval':110})}
                     <div style={{height: 10}}/>
-                    {/* <Tags page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2399']/* 'Y-Axis: Exchange Liquidity' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -2657,7 +2657,7 @@ class EndDetailSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
             </div>
         )
 

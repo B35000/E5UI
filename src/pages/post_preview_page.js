@@ -31,7 +31,7 @@ class PostPreview extends Component {
 
                 {this.render_post_object(this.state.post_object)}
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['1303']/* 'Subscriptions to pay.' */, 'textsize':'13px', 'font':'Sans-serif'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1303']/* 'Subscriptions to pay.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
                 {this.render_subscription_objects(subscriptions)}
                 {this.render_pin_post_button(this.state.post_object)}
@@ -250,7 +250,7 @@ class PostPreview extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

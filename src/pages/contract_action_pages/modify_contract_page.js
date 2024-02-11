@@ -128,7 +128,7 @@ class ModifyContractPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.modify_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_modify_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.modify_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_modify_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -151,11 +151,11 @@ class ModifyContractPage extends Component {
     render_everything(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['91']+this.state.contract_item['id']})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['91']+this.state.contract_item['id']})}
 
                 {this.render_detail_item('0')}
 
-                <Tags page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.load_reconfig_item_selectors()}
                 <div style={{height:20}}/>
@@ -279,7 +279,7 @@ class ModifyContractPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    <TextInput height={30} placeholder={this.props.app_state.loc['94']} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['94']} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}
 
@@ -393,50 +393,50 @@ class ModifyContractPage extends Component {
         if(selected_item == this.props.app_state.loc['73']){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['75']){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['76']){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['78']){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['79']){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
@@ -888,7 +888,7 @@ class ModifyContractPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

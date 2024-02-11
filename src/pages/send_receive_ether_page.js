@@ -125,7 +125,7 @@ class SendReceiveEtherPage extends Component {
     render_top_tag_bar_group(){
         return(
             <div>
-                <Tags page_tags_object={this.state.send_receive_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.send_receive_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme}/>
             </div>
         )
     }
@@ -139,7 +139,7 @@ class SendReceiveEtherPage extends Component {
     render_send_ether_ui(){
         return(
             <div style={{'padding':'10px 10px 0px 0px', width:'100%', maxHeight: this.props.height-120}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['1371']/* 'Send Ether using the address shown below.' */, 'color':'dark-grey'})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1371']/* 'Send Ether using the address shown below.' */, 'color':'dark-grey'})}
                 {this.render_medium_screen_ui()}
                 {this.render_dialog_ui()}
             </div>
@@ -190,7 +190,7 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':this.state.recipient_address, 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                <TextInput height={30} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
                 <div style={{height: 10}} theme={this.props.theme}/>
 
                 
@@ -641,7 +641,7 @@ class SendReceiveEtherPage extends Component {
     render_scan_qr_code_ui(){
         return(
             <div style={{'padding':'10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['1400']/* 'Receive Ether using the address shown below' */, 'color':'dark-grey'})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1400']/* 'Receive Ether using the address shown below' */, 'color':'dark-grey'})}
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1401']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'s'})}
                 <div style={{height: 10}}/>
@@ -668,7 +668,7 @@ class SendReceiveEtherPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} copy_to_clipboard={this.copy_address_to_clipboard.bind(this)} when_send_ether_button_tapped={this.when_send_ether_button_tapped.bind(this)} when_send_ether_confirmation_received={this.when_send_ether_confirmation_received.bind(this)} theme={this.props.theme}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} copy_to_clipboard={this.copy_address_to_clipboard.bind(this)} when_send_ether_button_tapped={this.when_send_ether_button_tapped.bind(this)} when_send_ether_confirmation_received={this.when_send_ether_confirmation_received.bind(this)} theme={this.props.theme}/>
             </div>
         )
 

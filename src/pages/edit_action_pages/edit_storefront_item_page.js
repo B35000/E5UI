@@ -201,7 +201,7 @@ class NewStorefrontItemPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -294,29 +294,29 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['463']/* 'Unit Denomination' */, 'details':this.props.app_state.loc['464']/* 'Specify the denomination of the item from the tag picker below' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <Tags page_tags_object={this.state.composition_type} tag_size={'l'} when_tags_updated={this.when_composition_type_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.composition_type} tag_size={'l'} when_tags_updated={this.when_composition_type_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['465']/* 'Set denomination: ' */+selected_composition})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['465']/* 'Set denomination: ' */+selected_composition})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['466']/* 'Target Payment Recipient' */, 'details':this.props.app_state.loc['467']/* 'Set the account ID thats set to receive the purchase payments for your new item' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['535b']/* 'Enter Account ID' */} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['535b']/* 'Enter Account ID' */} when_text_input_field_changed={this.when_target_receiver_input_field_changed.bind(this)} text={this.state.target_receiver} theme={this.props.theme}/>
                 {this.load_account_suggestions('target_receiver')}
 
 
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['468']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['469']/* 'Set location of the pick up station for your item when its ordered using a bag and contractors' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={70} placeholder={this.props.app_state.loc['470']/* 'Location Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['470']/* 'Location Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['471']/* 'Direct Purchase Option' */, 'details':this.props.app_state.loc['472']/* 'If set to enabled, youll handle the shipping for the item when purchased directly by your clients' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
@@ -324,14 +324,14 @@ class NewStorefrontItemPage extends Component {
                 {/* {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Sales Visibility', 'details':'If set to masked, all your direct purchase sales will be invisible to outsiders', 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['473']/* 'Product Chatroom' */, 'details':this.props.app_state.loc['474']/* 'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
@@ -340,7 +340,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['475']/* 'Product Listing' */, 'details':this.props.app_state.loc['476']/* 'If set to delisted, the item will not be visible for purchasing' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
@@ -350,7 +350,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['477']/* 'Product Stock' */, 'details':this.props.app_state.loc['478']/* 'If set to out-of-stock, users will not be able to direct purchase or add to their bags.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_storefront_item_in_stock_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_in_stock_option_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_storefront_item_in_stock_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_in_stock_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 
 
@@ -370,7 +370,7 @@ class NewStorefrontItemPage extends Component {
 
                     <div className="row" style={{width: '103%'}}>
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                            <TextInput height={25} placeholder={this.props.app_state.loc['153']} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
+                            <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['153']} when_text_input_field_changed={this.when_fulfilment_account_input_field_changed.bind(this)} text={this.state.fulfilment_account} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '2px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_account_set()}>
@@ -385,7 +385,7 @@ class NewStorefrontItemPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['481']/* 'Direct Purchase Shipping Fee' */, 'details':this.props.app_state.loc['482']/* 'The shipping fee you charge for shipping your item when directly purchased by your clients' */, 'size':'l'})}
 
                     <div style={{height:10}}/>
-                    <TextInput height={30} placeholder={this.props.app_state.loc['535a']/* 'Exchange ID' */} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['535a']/* 'Exchange ID' */} when_text_input_field_changed={this.when_shipping_exchange_id_input_field_changed.bind(this)} text={this.state.shipping_exchange_id} theme={this.props.theme}/>
                     {this.load_token_suggestions('shipping_exchange_id')}
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -699,27 +699,27 @@ class NewStorefrontItemPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['494']/* 'Set a title for your new Storefront Item' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['494']/* 'Set a title for your new Storefront Item' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['495']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['495']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['496']/* 'Set tags for indexing your new Storefront Item' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['496']/* 'Set tags for indexing your new Storefront Item' */})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['126']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['126']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['127']/* 'Add' */, 'action':'add_indexing_tag', 'prevent_default':true})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
                 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
@@ -820,7 +820,7 @@ class NewStorefrontItemPage extends Component {
                 <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                     {this.render_detail_item('0')}
 
                     <Draggable>
@@ -871,12 +871,12 @@ class NewStorefrontItemPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136']/* 'Add Text' */ : this.props.app_state.loc['137']/* 'Edit Text' */
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {/* {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['497']})} */}
+                {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['497']})} */}
                 
-                {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
-                <TextInput height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
@@ -1133,11 +1133,11 @@ class NewStorefrontItemPage extends Component {
     render_enter_links_part(){
         return(
             <div style={{'margin':'10px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['498']/* 'Search an object by its title or id, then tap it to add it to the new channel' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['498']/* 'Search an object by its title or id, then tap it to add it to the new channel' */})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Object ID...'} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={'Enter Object ID...'} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':'', 'prevent_default':true})}
@@ -1147,7 +1147,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_selected_links()}
 
                 {this.render_detail_item('0')}
-                <Tags page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.render_searched_link_results()}
@@ -1563,8 +1563,8 @@ class NewStorefrontItemPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image. Then tap to remove.' */})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image. Then tap to remove.' */})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -1750,7 +1750,7 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['504']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['504']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
  
@@ -1869,7 +1869,7 @@ class NewStorefrontItemPage extends Component {
         return(
             <div style={{'overflow-x':'hidden'}}>
                 <div style={{height:10}}/>
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['535c']/* Set the details for a variant of your new storefront item, then tap the black circle to add it. */, 'textsize':'13px', 'font':'Sans-serif'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['535c']/* Set the details for a variant of your new storefront item, then tap the black circle to add it. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
                 <div className="row">
                     <div className="col-10" style={{'padding': '0px 0px 0px 0px'}}>
@@ -1886,12 +1886,12 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['512']/* 'Variant Title' */, 'details':this.props.app_state.loc['513']/* 'Set a basic description of the variant of the item your selling like a color or size option' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['512']/* 'Variant Title' */} when_text_input_field_changed={this.when_variant_description_input_field_changed.bind(this)} text={this.state.variant_description} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['512']/* 'Variant Title' */} when_text_input_field_changed={this.when_variant_description_input_field_changed.bind(this)} text={this.state.variant_description} theme={this.props.theme}/>
                 
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['514']/* 'Variant Images' */, 'details':this.props.app_state.loc['515']/* 'You can set some images for your variant' */, 'size':'l'})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 <div style={{height:10}}/>
                 {this.render_variant_image_picker_ui()}
                 <div style={{height:10}}/>
@@ -2082,7 +2082,7 @@ class NewStorefrontItemPage extends Component {
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 0px 5px','border-radius': '13px' }} onClick={()=> this.remove_variant(item)}>
-                                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
+                                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':this.props.app_state.font})}
                                     <div style={{height:3}}/>
                                     <div style={{padding:'0px 0px 0px 10px'}}>
                                         {this.render_detail_item('9', item['image_data']['data'])}
@@ -2346,7 +2346,7 @@ class NewStorefrontItemPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
             </div>
         )
 

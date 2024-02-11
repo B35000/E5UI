@@ -50,7 +50,7 @@ class ViewBagApplicationContractPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-12" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.view_application_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_view_application_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.view_application_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_view_application_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
 
@@ -70,7 +70,7 @@ class ViewBagApplicationContractPage extends Component {
             var item = this.state.application_item
             return(
                 <div>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1638']/* 'The contract they applied with is shown below.' */})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1638']/* 'The contract they applied with is shown below.' */})}
                     {this.render_contracts_data()}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1639']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
@@ -419,7 +419,7 @@ class ViewBagApplicationContractPage extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
             </div>
         )
 

@@ -55,7 +55,7 @@ class ForceExitPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.new_force_exit_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_force_exit_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.new_force_exit_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_force_exit_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -65,7 +65,7 @@ class ForceExitPage extends Component {
                 </div>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['52']+this.state.contract_item['id']})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['52']+this.state.contract_item['id']})}
 
                 <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
@@ -86,7 +86,7 @@ class ForceExitPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['53'], 'details':this.props.app_state.loc['54'], 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['55']} when_text_input_field_changed={this.when_force_exit_target_text_input_field_changed.bind(this)} text={this.state.force_exit_target} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['55']} when_text_input_field_changed={this.when_force_exit_target_text_input_field_changed.bind(this)} text={this.state.force_exit_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions()}
                 <div style={{height:20}}/>
@@ -252,7 +252,7 @@ class ForceExitPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

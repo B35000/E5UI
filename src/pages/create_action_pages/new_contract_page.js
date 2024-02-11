@@ -182,7 +182,7 @@ class NewContractPage extends Component {
                 <div style={{'padding':'10px 10px 0px 10px'}}>
                     <div className="row">
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                            <Tags page_tags_object={this.state.new_contract_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_tags_object.bind(this)} theme={this.props.theme}/>
+                            <Tags app_state={this.props.app_state} page_tags_object={this.state.new_contract_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -280,33 +280,33 @@ class NewContractPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['167']})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['167']})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['123']} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['168']})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['168']})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['169'], 'action':'add_indexing_tag', 'prevent_default':true})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['170'], 'details':this.props.app_state.loc['171'], 'size':'l'})}
                 <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
 
@@ -386,7 +386,7 @@ class NewContractPage extends Component {
     render_presets_menu(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['172']})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['172']})}
                 <div style={{height:10}}/>
 
                 <div onClick={()=>this.preset_workgroup_contract()}>
@@ -583,7 +583,7 @@ class NewContractPage extends Component {
                 <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                     {this.render_detail_item('0')}
 
                 </div>         
@@ -659,7 +659,7 @@ class NewContractPage extends Component {
     render_contract_list(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['185']})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['185']})}
                 <div style={{height:20}}/>
                 {this.render_contract_section_parts()}
 
@@ -709,10 +709,10 @@ class NewContractPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['188'], 'details':this.props.app_state.loc['189'], 'size':'l'})}
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.new_contract_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_type_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.new_contract_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_type_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['190'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['190'], 'textsize':'10px', 'font':this.props.app_state.font})}
                 </div>
             )
         }
@@ -725,7 +725,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_vote_bounty_split_proportion), 'details':this.props.app_state.loc['193'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['194'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['194'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
@@ -740,7 +740,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_extend_enter_contract_limit), 'details':this.props.app_state.loc['195'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['197'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['197'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_extend_enter_contract_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -757,7 +757,7 @@ class NewContractPage extends Component {
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -774,7 +774,7 @@ class NewContractPage extends Component {
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -789,7 +789,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.max_enter_contract_duration), 'details':this.props.app_state.loc['204'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['206'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['206'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_enter_contract_duration.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -801,10 +801,10 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['207'], 'details':this.props.app_state.loc['208'], 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['209'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['209'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                 </div>
             )
@@ -818,7 +818,7 @@ class NewContractPage extends Component {
         //             {this.render_detail_item('3', {'title':this.get_time_diff(this.state.proposal_modify_expiry_duration_limit), 'details':this.props.app_state.loc['210'], 'size':'l'})}
 
         //             <div style={{height:2}}/>
-        //             {this.render_detail_item('10', {'text':this.props.app_state.loc['212'], 'textsize':'10px', 'font':'Sans-serif'})}
+        //             {this.render_detail_item('10', {'text':this.props.app_state.loc['212'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
         //             <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
         //         </div>
@@ -830,10 +830,10 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['213'], 'details':this.props.app_state.loc['214'], 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['215'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['215'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                 </div>
             )
@@ -844,10 +844,10 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['216'], 'details':this.props.app_state.loc['217'], 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['218'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['218'], 'textsize':'10px', 'font':this.props.app_state.font})}
                     
                 </div>
             )
@@ -861,7 +861,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.maximum_proposal_expiry_submit_expiry_time_difference), 'details':this.props.app_state.loc['219'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['221'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['221'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_proposal_expiry_submit_expiry_time_difference.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -873,10 +873,10 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['222'], 'details':this.props.app_state.loc['223'], 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['224'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['224'], 'textsize':'10px', 'font':this.props.app_state.font})}
                     
                 </div>
             )
@@ -887,10 +887,10 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['225'], 'details':this.props.app_state.loc['226'], 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['227'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['227'], 'textsize':'10px', 'font':this.props.app_state.font})}
                     
                 </div>
             )
@@ -904,7 +904,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.default_proposal_expiry_duration_limit), 'details':this.props.app_state.loc['228'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['230'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['230'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_proposal_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -919,7 +919,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.format_proportion(this.state.default_consensus_majority_limit), 'details':this.props.app_state.loc['231'], 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['233'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['233'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_consensus_majority_limit.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
@@ -931,10 +931,10 @@ class NewContractPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['234'], 'details':this.props.app_state.loc['235'], 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <TextInput height={30} placeholder={this.props.app_state.loc['237']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_voter_weight_id_changed.bind(this)} text={this.state.voter_weight_exchange_id} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['237']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_voter_weight_id_changed.bind(this)} text={this.state.voter_weight_exchange_id} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['252a'], 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['252a'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     {this.load_token_suggestions('weight_exchange_id')}
                 </div>
@@ -1010,7 +1010,7 @@ class NewContractPage extends Component {
     render_moderator_interactible_ui(){
         return(
             <div>
-                {/* <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/> */}
+                {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/> */}
 
                 {this.render_moderator_or_interactible_setting()}
             </div>
@@ -1047,7 +1047,7 @@ class NewContractPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['149'], 'details':this.props.app_state.loc['150'], 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['149']} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['149']} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('moderator_id')}
 
@@ -1143,7 +1143,7 @@ class NewContractPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['154'], 'details':this.props.app_state.loc['155'], 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['154']} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['154']} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('interactible_id')}
 
@@ -1331,7 +1331,7 @@ class NewContractPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                <TextInput height={30} placeholder={this.props.app_state.loc['237']} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['237']} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 20}}/>
@@ -1648,7 +1648,7 @@ class NewContractPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
             </div>
         )
 

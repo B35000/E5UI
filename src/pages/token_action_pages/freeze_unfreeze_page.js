@@ -52,7 +52,7 @@ class FreezeUnfreezePage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.freeze_unfreeze_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_freeze_unfreeze_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.freeze_unfreeze_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_freeze_unfreeze_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -62,7 +62,7 @@ class FreezeUnfreezePage extends Component {
                     </div>
                 </div>
 
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['934']/* 'Freeze or Unfreeze the token ' */+this.state.token_item['id']+this.props.app_state.loc['935']/* ' for a specified set of accounts' */})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['934']/* 'Freeze or Unfreeze the token ' */+this.state.token_item['id']+this.props.app_state.loc['935']/* ' for a specified set of accounts' */})}
                 <div style={{height:10}}/>
                 {this.render_everything()}
             </div>
@@ -80,7 +80,7 @@ class FreezeUnfreezePage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['936']/* 'Set the account to be frozen or unfrozen' */, 'title':this.props.app_state.loc['937']/* 'Account ID' */})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['937']/* 'Account ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['937']/* 'Account ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['938']/* 'Set the amount to freeze or unfreeze.' */, 'title':this.props.app_state.loc['939']/* 'Action Amount.' */})}
@@ -269,7 +269,7 @@ class FreezeUnfreezePage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

@@ -43,7 +43,7 @@ class FilterSection extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=> this.clear_search()} >
@@ -90,12 +90,12 @@ class FilterSection extends Component {
         return(
             <div>
                 {/* {this.render_detail_item('3', {'title':'Search Object', 'details':'You can search an object by its ID or its title.', 'size':'l'})} */}
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['1116']/* 'You can search an object by its ID or its title.' */, 'textsize':'13px', 'font':'Sans-serif'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1116']/* 'You can search an object by its ID or its title.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['1117']/* 'Enter Object ID or Title...' */} when_text_input_field_changed={this.when_search_input_field_changed.bind(this)} text={this.state.typed_searched_word} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1117']/* 'Enter Object ID or Title...' */} when_text_input_field_changed={this.when_search_input_field_changed.bind(this)} text={this.state.typed_searched_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['1118']/* 'Search' */,'action':''})}
@@ -107,12 +107,12 @@ class FilterSection extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4', {'text':this.props.app_state.loc['1119']/* 'You can filter objects using their tags.' */, 'textsize':'13px', 'font':'Sans-serif'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['1119']/* 'You can filter objects using their tags.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
                 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['1120']/* 'Enter tag...' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1120']/* 'Enter tag...' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'', 'prevent_default':true})}
@@ -189,7 +189,7 @@ class FilterSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} delete_added_tag={this.delete_added_tag.bind(this)} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} delete_added_tag={this.delete_added_tag.bind(this)} />
             </div>
         )
 

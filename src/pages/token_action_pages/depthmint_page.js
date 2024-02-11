@@ -54,7 +54,7 @@ class DepthMintPage extends Component {
                 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.new_authmint_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_authmint_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.new_authmint_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_authmint_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -64,7 +64,7 @@ class DepthMintPage extends Component {
                     </div>
                 </div>
 
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['900']/* 'Depth-Mint your token ' */+this.state.token_item['id']+this.props.app_state.loc['901']/* ' for a specified target' */})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['900']/* 'Depth-Mint your token ' */+this.state.token_item['id']+this.props.app_state.loc['901']/* ' for a specified target' */})}
                 <div style={{height:10}}/>
                 {this.render_everything()}
 
@@ -82,7 +82,7 @@ class DepthMintPage extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['902']/* 'Set the recipient of the depth-mint action' */, 'title':this.props.app_state.loc['903']/* 'Recipient' */})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['904']/* 'Account ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['904']/* 'Account ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions()}
 
@@ -316,7 +316,7 @@ class DepthMintPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

@@ -59,7 +59,7 @@ class EnterContractPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.enter_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_enter_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.enter_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_enter_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_entering_contract_ui()}>
@@ -204,7 +204,7 @@ class EnterContractPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} font={this.props.app_state.font}/>
             </div>
         )
 
@@ -307,7 +307,12 @@ class EnterContractPage extends Component {
             this.props.notify(this.props.app_state.loc['15'], 3600);
         }
         else if(expiry_time_in_seconds != 0 && time_to_expiry > 0){
-            this.props.notify(this.props.app_state.loc['16'], 3700);
+            if(this.state.job_acceptance_action_state_object != null){
+                this.props.accept_job_without_entering_contract(this.state.job_acceptance_action_state_object)
+                this.props.notify(this.props.app_state.loc['18'], 700);
+            }else{
+                this.props.notify(this.props.app_state.loc['16'], 3700);
+            }
         }
         else if(!this.check_if_sender_can_enter_contract()){
             this.props.notify(this.props.app_state.loc['17'], 5700);

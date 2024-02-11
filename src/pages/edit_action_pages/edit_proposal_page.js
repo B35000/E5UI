@@ -268,7 +268,7 @@ class EditProposalPage extends Component {
             <div style={{'padding':'10px 20px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.new_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.new_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_new_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -377,25 +377,25 @@ class EditProposalPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-                <TextInput height={30} placeholder={this.props.app_state.loc['123']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['123']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['345']/* 'Set tags for indexing your new Proposal' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['345']/* 'Set tags for indexing your new Proposal' */})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}} onClick={() => this.add_indexing_tag_for_new_job()}>
                         {this.render_detail_item('5', {'text':'Add', 'action':'', 'prevent_default':true})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 
@@ -468,7 +468,7 @@ class EditProposalPage extends Component {
                 <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                     {this.render_detail_item('0')}
 
                 </div>         
@@ -509,12 +509,12 @@ class EditProposalPage extends Component {
         var add_text_button = this.state.edit_text_item_pos == -1 ? this.props.app_state.loc['136']/* 'Add Text' */ : this.props.app_state.loc['137']/* 'Edit Text' */
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {/* {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['497']})} */}
+                {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['497']})} */}
                 
-                {/* <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
-                <TextInput height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px','padding': '7px 5px 10px 10px', width: '99%'}}>
                     {/* <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}}>
@@ -769,11 +769,11 @@ class EditProposalPage extends Component {
     render_enter_links_part(){
         return(
             <div style={{'margin':'10px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['438f']/* 'Search an object by its title or id, then tap it to add it to the new channel' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['438f']/* 'Search an object by its title or id, then tap it to add it to the new channel' */})}
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['292']} when_text_input_field_changed={this.when_typed_link_text_changed.bind(this)} text={this.state.typed_link_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['499']/* 'Search' */,'action':'', 'prevent_default':true})}
@@ -783,7 +783,7 @@ class EditProposalPage extends Component {
                 {this.render_selected_links()}
 
                 {this.render_detail_item('0')}
-                <Tags page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.render_searched_link_results()}
@@ -1190,8 +1190,8 @@ class EditProposalPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image. Then tap to remove.' */})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image. Then tap to remove.' */})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -1409,7 +1409,7 @@ class EditProposalPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['346']/* 'Consensus Type' */, 'details':this.props.app_state.loc['347']/* 'Set the type of action you wish to perform with the contract through your new proposal' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <Tags page_tags_object={this.state.new_proposal_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_proposal_type_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.new_proposal_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_proposal_type_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
@@ -1439,7 +1439,7 @@ class EditProposalPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['352']/* 'Modify Target' */, 'details':this.props.app_state.loc['353']/* 'The target object thats being modified if the consensus type is reconfig' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <TextInput height={30} placeholder={this.props.app_state.loc['354']/* 'Object ID...' */} when_text_input_field_changed={this.when_modify_target_text_input_field_changed.bind(this)} text={this.state.modify_target_id} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['354']/* 'Object ID...' */} when_text_input_field_changed={this.when_modify_target_text_input_field_changed.bind(this)} text={this.state.modify_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('modify_target')}
 
@@ -1759,7 +1759,7 @@ class EditProposalPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['379']/* 'Spend Target' */, 'details':this.props.app_state.loc['380']/* 'Set a target for the spend action' */, 'size':'l'})}
                 <div style={{height:20}}/>
 
-                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_target_text_input_field_changed.bind(this)} text={this.state.spend_target_input_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_target_text_input_field_changed.bind(this)} text={this.state.spend_target_input_text} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('spend_target')}
 
@@ -1770,7 +1770,7 @@ class EditProposalPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['382']/* 'Exchange' */, 'details':this.props.app_state.loc['383']/* 'Set the token exchange your spending' */, 'size':'l'})}
                 <div style={{height:20}}/>
 
-                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_token_text_input_field_changed.bind(this)} text={this.state.spend_token_input_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_spend_token_text_input_field_changed.bind(this)} text={this.state.spend_token_input_text} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('spend_token')}
 
@@ -1923,7 +1923,7 @@ class EditProposalPage extends Component {
     render_reconfig_proposal_ui(){
         return(
             <div>
-                <Tags page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:20}}/>
 
                 {this.load_reconfig_item_selectors()}
@@ -2036,7 +2036,7 @@ class EditProposalPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
 
                     {this.load_account_suggestions('reconfig_target_id')}
 
@@ -2216,70 +2216,70 @@ class EditProposalPage extends Component {
         if(selected_item == this.props.app_state.loc['73']/* 'Auto Wait' */){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.auto_wait_tags_object} tag_size={'l'} when_tags_updated={this.when_auto_wait_tags_object.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['75']/* 'Moderator Modify Privelage' */){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.can_modify_contract_as_moderator} tag_size={'l'} when_tags_updated={this.when_can_modify_contract_as_moderator.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['76']/* 'Unlimited Extend Contract Time' */){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.can_extend_enter_contract_at_any_time} tag_size={'l'} when_tags_updated={this.when_can_extend_enter_contract_at_any_time.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['78']/* 'Bounty Limit Type' */){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.bounty_limit_type} tag_size={'l'} when_tags_updated={this.when_bounty_limit_type.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['79']/* 'Force Exit Enabled' */){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.contract_force_exit_enabled} tag_size={'l'} when_tags_updated={this.when_contract_force_exit_enabled.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['336']/* 'Halving type' */){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
                     
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.new_token_halving_type_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_halving_type_tags_object.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
         else if(selected_item == this.props.app_state.loc['341']/* 'Block Limit Sensitivity' */){
             return(
                 <div>
-                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':selected_item, 'textsize':'15px', 'font':this.props.app_state.font})}
                     
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.new_token_block_limit_sensitivity_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_block_limit_sensitivity_tags_object.bind(this)} theme={this.props.theme}/>
                 </div>
             )
         }
@@ -2528,7 +2528,7 @@ class EditProposalPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['404']/* 'Target Exchange' */, 'details':this.props.app_state.loc['405']/* 'Set the exchange id you wish to run the exchange transfer from' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_exchange_transfer_target_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_target} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_exchange_transfer_target_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_target} theme={this.props.theme}/>
 
                 {/* {this.load_account_suggestions('exchange_transfer_target')} */}
                 {this.render_detail_item('0')}
@@ -2536,7 +2536,7 @@ class EditProposalPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['406']/* 'Target Receiver' */, 'details':this.props.app_state.loc['413']/* 'Set the account set to receive the token amounts' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['407']/* 'Target Receiver...' */} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['407']/* 'Target Receiver...' */} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('exchange_transfer_receiver')}
                 {this.render_detail_item('0')}
@@ -2544,7 +2544,7 @@ class EditProposalPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['408']/* 'Token Targets' */, 'details':this.props.app_state.loc['409']/* 'Set the targeted token ID your transfering from the exchange' */, 'size':'l'})}
                 <div style={{height:20}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['410']/* 'Token Target ID...' */} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['410']/* 'Token Target ID...' */} when_text_input_field_changed={this.when_token_target_text_input_field_changed.bind(this)} text={this.state.token_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('token_target')}
                 {this.render_detail_item('0')}
@@ -2693,7 +2693,7 @@ class EditProposalPage extends Component {
         var spend_token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][5]['balance']
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['420']/* 'The first bounty exchange should be the End or Spend Exchange' */})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['420']/* 'The first bounty exchange should be the End or Spend Exchange' */})}
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
@@ -2718,7 +2718,7 @@ class EditProposalPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                <TextInput height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['381']/* 'Target ID...' */} when_text_input_field_changed={this.when_bounty_exchange_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('bounty_exchange_target')}
                 {this.render_detail_item('0')}
@@ -2866,7 +2866,7 @@ class EditProposalPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)}/>
             </div>
         )
 

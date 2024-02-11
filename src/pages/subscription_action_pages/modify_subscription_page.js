@@ -65,7 +65,7 @@ class ModifySubscriptionPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.modify_subscription_title_tags_object} tag_size={'l'} when_tags_updated={this.when_modify_subscription_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.modify_subscription_title_tags_object} tag_size={'l'} when_tags_updated={this.when_modify_subscription_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -89,11 +89,11 @@ class ModifySubscriptionPage extends Component {
         
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['844']/* 'Make changes to the configuration of the subscription ID: ' */+this.state.subscription_item['id']})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['844']/* 'Make changes to the configuration of the subscription ID: ' */+this.state.subscription_item['id']})}
 
                 {this.render_detail_item('0')}
 
-                <Tags page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 {this.load_reconfig_item_selectors()}
@@ -171,7 +171,7 @@ class ModifySubscriptionPage extends Component {
         else if(ui == 'id'){
             return(
                 <div>
-                    <TextInput height={30} placeholder={this.props.app_state.loc['847']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['847']/* 'Target ID...' */} when_text_input_field_changed={this.when_reconfig_target_id_text_input_field_changed.bind(this)} text={this.state.reconfig_target_id} theme={this.props.theme}/>
                     {this.load_account_suggestions('reconfig_target_id')}
 
                     <div style={{height:10}}/>
@@ -598,7 +598,7 @@ class ModifySubscriptionPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

@@ -30,7 +30,7 @@
     "ethereum-private-key-to-public-key": "^0.0.5",
     "ethers": "^5.7.2",
     "filecoin.js": "^0.0.5-alpha",
-    "framer-motion": "^10.16.5",
+    "framer-motion": "^10.18.0",
     "gh-pages": "^6.1.1",
     "helia": "^2.0.3",
     "ipfs-http-client": "^60.0.1",

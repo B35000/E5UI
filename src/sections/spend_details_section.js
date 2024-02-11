@@ -110,7 +110,7 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_spend_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
-                        <Tags page_tags_object={this.state.navigate_view_spend_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_spend_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_spend_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_spend_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -929,7 +929,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(proportion_ratio_events), 'interval':110})}
                     <div style={{height: 10}}/>
-                    <Tags page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2578']/* Y-Axis: Proportion' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1049,7 +1049,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2389']/* ` over time.` */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_total_supply_data_points(proportion_ratio_events), 'interval':110, 'hide_label':true})}
                     <div style={{height: 10}}/>
-                    {/* <Tags page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -2468,7 +2468,7 @@ class SpendDetailSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
             </div>
         )
 

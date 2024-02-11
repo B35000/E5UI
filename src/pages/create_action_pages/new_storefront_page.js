@@ -61,7 +61,7 @@ class NewStorefrontPage extends Component {
                 ['or','',0], ['e','e.font', 'e.size'], [0]
             ],
             'font':[
-                ['xor','e',1], ['font','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
+                ['xor','e',1], ['font',this.props.app_state.font,'Courier New','Times New Roman','ComicSans','papyrus'], [1],[1]
             ],
             'size':[
                 ['xor','e',1], ['size','15px','11px','25px','40px'], [1],[1]
@@ -89,7 +89,7 @@ class NewStorefrontPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -161,7 +161,7 @@ class NewStorefrontPage extends Component {
         if(size == 's'){
             return(
                 <div style={{'padding': '10px 0px 0px 0px'}}>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'14px','text':'Add some items into your storefront. Tap the grey button to edit, and the black button to delete.'})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'14px','text':'Add some items into your storefront. Tap the grey button to edit, and the black button to delete.'})}
                     <div style={{height:10}}/>
                     <div style={{'padding': '5px'}} onClick={()=>this.create_new_store_item()}>
                         {this.render_detail_item('5', {'text':'New Store Item', 'action':'finish_creating_object'})}
@@ -221,7 +221,7 @@ class NewStorefrontPage extends Component {
                                         </div>
                                         
                                         <div style={{height: 10}}/>
-                                        {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':item.entered_title_text})}
+                                        {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':item.entered_title_text})}
                                         <div style={{height: 10}}/>
                                         {this.render_detail_item('3',{'title':''+item.entered_objects.length, 'details':'metadata item groups','size':'l'})}                                                                                
                                     </div>         
@@ -280,23 +280,23 @@ class NewStorefrontPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 15px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set a title for your new Store'})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':'Set a title for your new Store'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={'Enter Title...'} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Set tags for indexing your new Store'})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':'Set tags for indexing your new Store'})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={'Enter Tag...'} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':'Add', 'action':'add_indexing_tag'})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':'remaining character count: '+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
@@ -369,7 +369,7 @@ class NewStorefrontPage extends Component {
                 <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                     {this.render_detail_item('0')}
 
                     <Draggable>
@@ -420,14 +420,14 @@ class NewStorefrontPage extends Component {
     render_text_part(){
         return(
             <div style={{'margin':'10px 0px 0px 10px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':'Enter your preferred text then tap add to add it'})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':'Enter your preferred text then tap add to add it'})}
                 {this.render_detail_item('0')}
                 {this.render_detail_item('4',this.get_edited_text_object())}
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
-                <TextInput height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={'Type Something...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.render_detail_item('5', {'text':'Add Text', 'action':'when_add_text_button_tapped'})}
             </div>
@@ -521,7 +521,7 @@ class NewStorefrontPage extends Component {
 
         return(
             <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove one and click add images to add them to the object.'})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':'Black stages gif, grey stages image. Then tap to remove one and click add images to add them to the object.'})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
                 {this.render_detail_item('0')}
@@ -676,7 +676,7 @@ class NewStorefrontPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
             </div>
         )
 

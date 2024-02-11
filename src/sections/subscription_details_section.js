@@ -85,7 +85,7 @@ class SubscriptionDetailsSection extends Component {
                 <div>
                     {this.render_subscription_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags page_tags_object={this.state.navigate_view_subscriptions_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_subscriptions_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_subscriptions_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_subscriptions_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -657,7 +657,7 @@ class SubscriptionDetailsSection extends Component {
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2668']/* 'Pay Subscription Events' */, 'size': 'l' })}
                     </div>
                     <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput height={20} placeholder={this.props.app_state.loc['2669']/* Search account ID...' */} when_text_input_field_changed={this.when_subscription_payment_search_text_input_field_changed.bind(this)} text={this.state.subscription_payment_search_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2669']/* Search account ID...' */} when_text_input_field_changed={this.when_subscription_payment_search_text_input_field_changed.bind(this)} text={this.state.subscription_payment_search_text} theme={this.props.theme}/>
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_pay_subscription_item_logs(object)}
@@ -790,7 +790,7 @@ class SubscriptionDetailsSection extends Component {
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2666']/* 'In Subscription ' */ + object['id'], 'details': this.props.app_state.loc['2671']/* 'Cancel Subscription Events' */, 'size': 'l' })}
                     </div>
                     <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput height={20} placeholder={this.props.app_state.loc['2669']/* 'Search account ID...' */} when_text_input_field_changed={this.when_subscription_cancellation_search_text_input_field_changed.bind(this)} text={this.state.subscription_cancellation_search_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2669']/* 'Search account ID...' */} when_text_input_field_changed={this.when_subscription_cancellation_search_text_input_field_changed.bind(this)} text={this.state.subscription_cancellation_search_text} theme={this.props.theme}/>
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_cancel_subscription_item_logs(object)}
@@ -1645,7 +1645,7 @@ class SubscriptionDetailsSection extends Component {
                     </div>
                     <div className="row" style={{ padding: '5px 10px 5px 10px', width:'103%' }}>
                         <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput height={25} placeholder={this.props.app_state.loc['2682']/* 'Enter ID or Alias...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                            <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2682']/* 'Enter ID or Alias...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search(object)}>
                             {this.render_detail_item('5',{'text':'Search','action':''})}
@@ -1866,7 +1866,7 @@ class SubscriptionDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={width}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width}/>
             </div>
         )
 

@@ -80,7 +80,7 @@ class SearchedAccountPage extends Component {
         }
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <Tags page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.render_search_bar()}
                 <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-f}}>
@@ -218,7 +218,7 @@ class SearchedAccountPage extends Component {
         return(
             <div>
                 <div style={{ padding: '5px 10px 0px 10px'}}>
-                    <TextInput height={25} placeholder={obj[selected_item]} when_text_input_field_changed={this.when_typed_search_changed.bind(this)} text={search_id_text} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={25} placeholder={obj[selected_item]} when_text_input_field_changed={this.when_typed_search_changed.bind(this)} text={search_id_text} theme={this.props.theme}/>
                 </div>
             </div>
         )
@@ -359,7 +359,7 @@ class SearchedAccountPage extends Component {
 
                 <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={25} placeholder={this.props.app_state.loc['1723']/* 'Exchange ID...' */} when_text_input_field_changed={this.when_typed_search_exchange_id_changed.bind(this)} text={this.state.typed_search_exchange_id} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['1723']/* 'Exchange ID...' */} when_text_input_field_changed={this.when_typed_search_exchange_id_changed.bind(this)} text={this.state.typed_search_exchange_id} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['140']/* 'Search' */,'action':''})}
@@ -1674,7 +1674,7 @@ class SearchedAccountPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme}/>
             </div>
         )
 

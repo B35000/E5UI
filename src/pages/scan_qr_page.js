@@ -41,7 +41,7 @@ class ScanQrPage extends Component {
                         qrCodeSuccessCallback={this.onNewScanResult}/>
 
                 <div style={{height:10}}/>
-                {this.render_detail_item('4', {'text':this.state.received_data, 'textsize':'11px', 'font':'Sans-serif'})}
+                {this.render_detail_item('4', {'text':this.state.received_data, 'textsize':'11px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.finish_scan()}>
@@ -70,7 +70,7 @@ class ScanQrPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

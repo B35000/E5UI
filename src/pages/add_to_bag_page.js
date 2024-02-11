@@ -54,7 +54,7 @@ class AddToBagPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.add_to_bag_tags_object} tag_size={'l'} when_tags_updated={this.when_add_to_bag_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.add_to_bag_tags_object} tag_size={'l'} when_tags_updated={this.when_add_to_bag_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_bag_item()}>
@@ -204,7 +204,7 @@ class AddToBagPage extends Component {
             return(
                 <div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':this.props.app_state.font})}
                     <div style={{height:3}}/>
                     <div style={{padding:'0px 0px 0px 0px'}}>
                         {this.render_detail_item('9', item['image_data']['data'])}
@@ -318,7 +318,7 @@ class AddToBagPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)} />
             </div>
         )
 

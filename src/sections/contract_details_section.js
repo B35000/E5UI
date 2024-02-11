@@ -84,7 +84,7 @@ class ContractDetailsSection extends Component {
                 <div>
                     {this.render_contract_details_section()}
                     <div style={{ width: '100%', 'padding': '0px 0px 0px 0px', 'margin': '0px 0px 0px 0px',  }}>
-                        <Tags page_tags_object={this.state.navigate_view_contract_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_contract_list_detail_tags_object_updated.bind(this)} theme={this.props.theme} />
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_contract_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_contract_list_detail_tags_object_updated.bind(this)} theme={this.props.theme} />
                     </div>
                 </div>
             )
@@ -561,14 +561,14 @@ class ContractDetailsSection extends Component {
         } else if (expiry_time_in_seconds != 0 && time_to_expiry < 0) {
             return (
                 <div>
-                    {this.render_detail_item('4', { 'text': this.props.app_state.loc['2164']/* 'Your time in the contract has exipred, you have to enter it again.' */, 'textsize': '13px', 'font': 'Sans-serif' })}
+                    {this.render_detail_item('4', { 'text': this.props.app_state.loc['2164']/* 'Your time in the contract has exipred, you have to enter it again.' */, 'textsize': '13px', 'font': this.props.app_state.font })}
                 </div>
             )
         }
         else {
             return (
                 <div>
-                    {this.render_detail_item('4', { 'text': this.props.app_state.loc['2165']/* 'Youre not part of the contract' */, 'textsize': '13px', 'font': 'Sans-serif' })}
+                    {this.render_detail_item('4', { 'text': this.props.app_state.loc['2165']/* 'Youre not part of the contract' */, 'textsize': '13px', 'font': this.props.app_state.font })}
                 </div>
             )
         }
@@ -1195,7 +1195,7 @@ class ContractDetailsSection extends Component {
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2185']/* In Contract '  */+ object['id'], 'details': this.props.app_state.loc['2186']/* 'Enter Contract Events' */, 'size': 'l' })}
                     </div>
                     <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_enter_contract_search_text_input_field_changed.bind(this)} text={this.state.enter_contract_search_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_enter_contract_search_text_input_field_changed.bind(this)} text={this.state.enter_contract_search_text} theme={this.props.theme}/>
                     </div>
                     
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
@@ -1413,7 +1413,7 @@ class ContractDetailsSection extends Component {
                         {this.render_detail_item('3', { 'title': this.props.app_state.loc['2175']/* 'In Contract ' */ + object['id'], 'details': this.props.app_state.loc['2193']/* 'Exit Contract Events' */, 'size': 'l' })}
                     </div>
                     <div style={{margin:'5px 10px 0px 10px'}}>
-                        <TextInput height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_exit_contract_search_text_input_field_changed.bind(this)} text={this.state.exit_contract_search_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['2187']/* 'Search account ID...' */} when_text_input_field_changed={this.when_exit_contract_search_text_input_field_changed.bind(this)} text={this.state.exit_contract_search_text} theme={this.props.theme}/>
                     </div>
                     <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
                     {this.render_exit_contract_item_logs(object)}
@@ -2190,7 +2190,7 @@ class ContractDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width / 2 : this.props.app_state.width
         return (
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} />
             </div>
         )
 

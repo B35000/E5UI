@@ -70,7 +70,7 @@ class RespondToJobPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.respond_to_job_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_job_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.respond_to_job_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_job_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
@@ -130,7 +130,7 @@ class RespondToJobPage extends Component {
 
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1316']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1316']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
                 <div style={{height:10}}/>
 
                 {this.render_my_contracts()}
@@ -323,7 +323,7 @@ class RespondToJobPage extends Component {
     render_application_expiry_time(){
         return(
             <div>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'13px','text':this.props.app_state.loc['1318']/* 'Select an expiry time for your application' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1318']/* 'Select an expiry time for your application' */})}
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -359,13 +359,13 @@ class RespondToJobPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1319']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1320']/* 'Set the payment option you prefer for the application.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <Tags page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1321']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1322']/* 'Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['1321']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1321']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 10}}/>
@@ -599,7 +599,7 @@ class RespondToJobPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

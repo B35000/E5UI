@@ -55,6 +55,8 @@ class StackPage extends Component {
         get_tabs_tags_object: this.get_tabs_tags_object(),
         get_storage_permissions_tags_object: this.get_storage_permissions_tags_object(),
         get_stack_optimizer_tags_object: this.get_stack_optimizer_tags_object(),
+        get_homepage_tags_position_tags_object: this.get_homepage_tags_position_tags_object(),
+        get_preferred_font_tags_object: this.get_preferred_font_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -519,6 +521,63 @@ class StackPage extends Component {
 
 
 
+    get_homepage_tags_position_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1593k']/* 'top' */, this.props.app_state.loc['1593l']/* 'bottom' */], [this.get_homepage_tags_position_option()]
+            ],
+        };
+    }
+
+    get_homepage_tags_position_option(){
+        if(this.props.app_state.homepage_tags_position == this.props.app_state.loc['1593k']/* 'top' */){
+            return 1
+        }
+        else if(this.props.app_state.homepage_tags_position == this.props.app_state.loc['1593l']/* 'bottom' */){
+            return 2
+        }
+        return 1;
+    }
+
+    set_homepage_tags_position_tag(){
+        this.setState({get_homepage_tags_position_tags_object: this.get_homepage_tags_position_tags_object(),})
+    }
+
+
+
+
+
+
+    get_preferred_font_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','Sans-serif','Courier New','Times New Roman','ComicSans','papyrus'], [this.get_selected_font_option()]
+            ],
+        };
+    }
+
+
+    get_selected_font_option(){
+        var obj = {'Sans-serif':1,'Courier New':2,'Times New Roman':3,'ComicSans':4,'papyrus':5}
+        return obj[this.props.app_state.font]
+    }
+
+
+    set_preferred_font_tag(){
+        this.setState({get_preferred_font_tags_object: this.get_preferred_font_tags_object(),})
+    }
+
+
+
+
+
+
 
 
 
@@ -533,7 +592,7 @@ class StackPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
-                <Tags page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
                 <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
@@ -1022,7 +1081,7 @@ class StackPage extends Component {
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_gas_history_data_points(events), 'interval':this.get_gas_history_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    <Tags page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1460']/* 'Y-Axis: Gas Prices in Gwei' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
@@ -5024,7 +5083,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5032,19 +5091,16 @@ class StackPage extends Component {
                     {/* {this.render_detail_item('3',{'title':'Orientation (for larger screens)', 'details':'Set the orientation for viewing a posts details', 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')} */}
 
                     
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1530']/* 'Preferred E5' */, 'details':this.props.app_state.loc['1531']/* Set the E5 you prefer to use' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
 
-                    {/* <Tags page_tags_object={this.state.get_selected_e5_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_e5_tags_object_updated.bind(this)} theme={this.props.theme}/> */}
-
-                    {this.load_preferred_e5_ui()}
-
-                    {this.render_detail_item('0')}
+                    {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l'})}
+                    <div style={{height: 10}}/> */}
+                    {/* {this.load_preferred_e5_ui()}
+                    {this.render_detail_item('0')} */}
 
                     
 
@@ -5053,20 +5109,20 @@ class StackPage extends Component {
                     {/* {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')} */}
 
 
 
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1532']/* 'Clear Browser Cache' */, 'details':this.props.app_state.loc['1533']/* 'Delete browser data such as your pins and viewed history.' */, 'size':'l'})}
+                    {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1532'], 'details':this.props.app_state.loc['1533'], 'size':'l'})}
                     <div style={{height: 10}}/>
 
                     <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1534']/* 'Clear Cache' */, 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1534'], 'action':''},)}
                     </div>
 
-                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')} */}
 
 
 
@@ -5074,7 +5130,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5086,7 +5142,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5098,7 +5154,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5110,7 +5166,7 @@ class StackPage extends Component {
                     {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')} */}
 
@@ -5123,7 +5179,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1541']/* 'Content Filter' */, 'details':this.props.app_state.loc['1542']/* 'If set to filtered, the content including the tags you follow will be prioritized in your feed.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5132,7 +5188,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5142,7 +5198,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5153,7 +5209,31 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+
+
+                    
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
                 </div>
@@ -5256,6 +5336,19 @@ class StackPage extends Component {
         this.run_transactions(true)
     }
 
+    when_homepage_tags_position_tags_object_updated(tag_group){
+        this.setState({get_homepage_tags_position_tags_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_homepage_tags_position_tags_object, 'e')
+        this.props.when_homepage_tags_position_tags_changed(selected_item)
+    }
+
+
+    when_get_preferred_font_tags_object_updated(tag_group){
+        this.setState({get_preferred_font_tags_object: tag_group})
+        var selected_item = this.get_selected_item(this.state.get_preferred_font_tags_object, 'e')
+        this.props.when_preferred_font_tags_changed(selected_item)
+    }
+
 
 
 
@@ -5349,7 +5442,7 @@ class StackPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px', 'text':'Set the seed and salt for your preferred wallet', 'color':'dark-grey'})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':'Set the seed and salt for your preferred wallet', 'color':'dark-grey'})}
                     <div style={{height: 20}}/>
 
                     <div className="col-6" style={{'padding': '0px 0px 0px 20px'}}>
@@ -5423,7 +5516,7 @@ class StackPage extends Component {
                 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'when_add_word_button_tapped'/* , 'prevent_default':true */})}
@@ -5442,7 +5535,7 @@ class StackPage extends Component {
 
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1556']/* 'Wallet Thyme' */, 'details':this.props.app_state.loc['1557']/* 'Set the preferred thyme for your wallet' */, 'size':'l'})}
                 <div style={{height: 10}}/>
-                <Tags page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
                 
                 {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
@@ -5601,7 +5694,7 @@ class StackPage extends Component {
 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['1567']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1567']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_cotact_to_list()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['1568']/* 'Add' */,'action':''})}
@@ -5742,7 +5835,7 @@ class StackPage extends Component {
 
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['1575']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_blocked_account_changed.bind(this)} text={this.state.typed_blocked_account_word} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1575']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_blocked_account_changed.bind(this)} text={this.state.typed_blocked_account_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_blocked_account_to_list()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['1568']/* 'Add' */,'action':''})}
@@ -5855,7 +5948,7 @@ class StackPage extends Component {
                 <div style={{height:10}}/>
                 <div className="row" style={{width:'103%'}}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['1580']/* 'Enter New Alias Name...' */} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1580']/* 'Enter New Alias Name...' */} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias_list()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['1581']/* 'Reserve' */,'action':''})}
@@ -5864,7 +5957,7 @@ class StackPage extends Component {
 
                 <div style={{height:10}}/>
                 {/* {this.render_detail_item('3', {'title':this.state.typed_alias_word, 'details':'Typed Alias', 'size':'l'})} */}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.typed_alias_word.length)})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.typed_alias_word.length)})}
 
                 {this.render_detail_item('0')}
                 {this.render_my_account_id()}
@@ -5909,9 +6002,9 @@ class StackPage extends Component {
             <div>
                 {/* {this.render_detail_item('3', {'title':display, 'details':alias, 'size':'l'})} */}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':display, 'textsize':'30px', 'font':this.props.app_state.font})}
                     <div style={{'padding':'0px 0px 0px 5px'}}>
-                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1585']/* 'Alias: ' */+alias, 'textsize':'12px', 'font':'Sans-serif'})} 
+                        {this.render_detail_item('10', {'text':this.props.app_state.loc['1585']/* 'Alias: ' */+alias, 'textsize':'12px', 'font':this.props.app_state.font})} 
                     </div>
                 </div>
             </div>
@@ -6302,7 +6395,7 @@ class StackPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}/>
             </div>
         )
 

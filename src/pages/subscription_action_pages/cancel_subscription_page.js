@@ -50,7 +50,7 @@ class CancelSubscriptionPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.cancel_subscription_title_tags_object} tag_size={'l'} when_tags_updated={this.when_cancel_subscription_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.cancel_subscription_title_tags_object} tag_size={'l'} when_tags_updated={this.when_cancel_subscription_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -75,7 +75,7 @@ class CancelSubscriptionPage extends Component {
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'13px', 'text':this.props.app_state.loc['824']/* 'Cancel the subscription ID: ' */+this.state.subscription_item['id']})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['824']/* 'Cancel the subscription ID: ' */+this.state.subscription_item['id']})}
                 <div style={{height: 10}}/>
 
                 {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'s'})}
@@ -173,7 +173,7 @@ class CancelSubscriptionPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

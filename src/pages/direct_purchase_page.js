@@ -51,7 +51,7 @@ class DirectPurchasetPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.direct_purchase_tags_object} tag_size={'l'} when_tags_updated={this.when_direct_purchase_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.direct_purchase_tags_object} tag_size={'l'} when_tags_updated={this.when_direct_purchase_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_direct_purchase_item()}>
@@ -89,7 +89,7 @@ class DirectPurchasetPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1097']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['1098']/* 'Set the delivery location, and be sure to be specific to avoid shipping issues' */, 'size':'l'})}
                     <div style={{height:10}}/>
-                    <TextInput height={70} placeholder={this.props.app_state.loc['1099']/* 'Shipping Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1099']/* 'Shipping Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1100']/* 'Item Variants' */, 'details':this.props.app_state.loc['1101']/* 'Pick the variant you want to purchase' */, 'size':'l'})}
@@ -266,7 +266,7 @@ class DirectPurchasetPage extends Component {
             return(
                 <div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('4', {'text':item['variant_description'], 'textsize':'13px', 'font':this.props.app_state.font})}
                     <div style={{height:3}}/>
                     <div style={{padding:'0px 0px 0px 0px'}}>
                         {this.render_detail_item('9', item['image_data']['data'])}
@@ -423,7 +423,7 @@ class DirectPurchasetPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)} />
             </div>
         )
 

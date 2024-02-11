@@ -23,18 +23,20 @@ class synchronizing_page extends Component {
     render_synchronizing_page(){
         return(
             <div style={{}}>
-                <p style={{margin:'15% 0% 3% 0%', 'text-align': 'center', color: this.props.theme['primary_text_color']}}>{this.get_sync_text()}</p>
+                <p style={{margin:'15% 0% 3% 0%', 'text-align': 'center', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font}}>{this.get_sync_text()}</p>
                 <div style={{width:'60%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_synch_bar()}
                 </div>
-                <img style={{width:'60%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={syncrhonizing_image} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
+                <img style={{width:'70%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={syncrhonizing_image} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
                 
-                <div style={{width:'60%', 'margin-top':'20px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
+                {/* <div style={{width:'60%', 'margin-top':'20px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_bottom_text()}
-                </div>
+                </div> */}
 
-                <div style={{height:50}}/>
-                {this.render_detail_item('10', {'text':this.props.app_state.loc['1598b'], 'textsize':'10px', 'font':'Sans-serif'})}
+                {this.render_bottom_text2()}
+
+                <div style={{'margin-top':'4%'}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['1598b'], 'textsize':'10px', 'font':this.props.app_state.font})}
             </div>
         );
     }
@@ -72,6 +74,17 @@ class synchronizing_page extends Component {
         )
     }
 
+    render_bottom_text2(){
+        return(
+            <div style={{'margin-top':'15%'}}>
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['1597']/* Peer to Peer Trust. */,'details':this.props.app_state.loc['1598c']/* For securing all your transactions. */, 'size':'l', 'image':p2p_trust, 'border_radius':'0%'})}
+                
+                <div style={{height:5}}/>
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['1598']/* Unanimous Consensus. */,'details':this.props.app_state.loc['1598d']/* For securing all your Money. */, 'size':'l', 'image':unanimous_consensus, 'border_radius':'0%'})}
+            </div>
+        )
+    }
+
     render_bottom_text(){
         var text_color = this.props.theme['primary_text_color']
         return(
@@ -83,7 +96,7 @@ class synchronizing_page extends Component {
                     </Col>
                 </Row>
                 <Row style={{margin: '25% 0% 0% 0%'}}>
-                    <Col><p style={{margin: '55% 0% 0% -20%', color:text_color}}>{this.props.app_state.loc['1598']/* Unanimous Consensus */}</p></Col>
+                    <Col><p style={{margin: '40% 0% 0% -20%', color:text_color}}>{this.props.app_state.loc['1598']/* Unanimous Consensus */}</p></Col>
                     <Col>
                         <img style={{width:'130%', margin:'5% 0% 0% 12%'}} src={unanimous_consensus} alt="Paris"/>
                     </Col>
@@ -100,7 +113,7 @@ class synchronizing_page extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
             </div>
         )
 

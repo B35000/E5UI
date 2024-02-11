@@ -77,7 +77,7 @@ class ModeratorPage extends Component {
                 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.new_moderator_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_moderator_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.new_moderator_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_moderator_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -141,7 +141,7 @@ class ModeratorPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1274']/* 'Moderator' */, 'details':this.props.app_state.loc['1275']/* 'Add or Remove a moderator by their account ID.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_moderator_text_input_field_changed.bind(this)} text={this.state.entered_moderator_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_moderator_text_input_field_changed.bind(this)} text={this.state.entered_moderator_text} theme={this.props.theme}/>
                 <div style={{height:10}}/>
                 {this.load_account_suggestions()}
 
@@ -160,7 +160,7 @@ class ModeratorPage extends Component {
                 {this.render_detail_item('3', {'title':this.get_current_access_rights(), 'details':this.props.app_state.loc['1280']/* 'Current access rights settings' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.access_rights_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_access_rights_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.access_rights_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_access_rights_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 <div onClick={() => this.enable_disable_interactible_checker()}>
@@ -266,7 +266,7 @@ class ModeratorPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1292']/* 'Access Rights' */, 'details':this.props.app_state.loc['1293']/* 'Add/Remove an interactable account by their account ID.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_interactable_text_input_field_changed.bind(this)} text={this.state.entered_interactable_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_interactable_text_input_field_changed.bind(this)} text={this.state.entered_interactable_text} theme={this.props.theme}/>
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -323,7 +323,7 @@ class ModeratorPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1297']/* 'Block Accounts' */, 'details':this.props.app_state.loc['1298']/* 'Deny an account access to your object' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_blocked_text_input_field_changed.bind(this)} text={this.state.entered_blocked_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1276']/* 'Account ID...' */} when_text_input_field_changed={this.when_blocked_text_input_field_changed.bind(this)} text={this.state.entered_blocked_text} theme={this.props.theme}/>
 
                 <div style={{height:20}}/>
                 <ThemeProvider theme={createTheme({ palette: { mode: this.props.theme['calendar_color'], }, })}>
@@ -529,7 +529,7 @@ class ModeratorPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

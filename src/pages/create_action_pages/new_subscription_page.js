@@ -116,7 +116,7 @@ class NewSubscriptionPage extends Component {
                 <div style={{'padding':'10px 10px 0px 10px'}}>
                     <div className="row">
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                            <Tags page_tags_object={this.state.new_subscription_tags_object} tag_size={'l'} when_tags_updated={this.when_new_subscription_tags_object.bind(this)} theme={this.props.theme}/>
+                            <Tags app_state={this.props.app_state} page_tags_object={this.state.new_subscription_tags_object} tag_size={'l'} when_tags_updated={this.when_new_subscription_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -214,27 +214,27 @@ class NewSubscriptionPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 0px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['546']/* 'Set a name for your new Subscription' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['546']/* 'Set a name for your new Subscription' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['547']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['547']/* 'Enter Title...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
 
                 <div style={{height: 10}}/>
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.title_size - this.state.entered_title_text.length)})}
 
                 {this.render_detail_item('0')}
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['548']/* 'Set tags for indexing your new Subscription' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['548']/* 'Set tags for indexing your new Subscription' */})}
                 <div style={{height:10}}/>
 
                 <div className="row">
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={30} placeholder={this.props.app_state.loc['549']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['549']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag', 'prevent_default':true})}
                     </div>
                 </div>
-                {this.render_detail_item('10',{'font':'Sans-serif', 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
 
                 {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                 
@@ -313,7 +313,7 @@ class NewSubscriptionPage extends Component {
                 <div style={{'padding': '5px 0px 5px 0px'}}>
                     {this.render_detail_item('1',{'active_tags':this.state.entered_indexing_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_tag_word'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.state.entered_title_text})}
+                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.state.entered_title_text})}
                     {this.render_detail_item('0')}
 
                 </div>         
@@ -368,7 +368,7 @@ class NewSubscriptionPage extends Component {
                 {this.render_detail_item('3', {'title':'Cancellable', 'details':'If set to true, subscription payers can refund their subscription payments', 'size':'l'})}
 
                 <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
 
@@ -431,7 +431,7 @@ class NewSubscriptionPage extends Component {
     render_subscription_list(){
         return(
             <div>
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['551']/* 'Create a basic E5 subscription' */})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['551']/* 'Create a basic E5 subscription' */})}
                 <div style={{height:20}}/>
                 {this.render_subscription_section_parts()}
 
@@ -481,10 +481,10 @@ class NewSubscriptionPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['554']/* 'Cancellable' */, 'details':this.props.app_state.loc['555']/* 'If set to true, subscription payers can refund their subscription payments' */, 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <Tags page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.cancellable_tags_object} tag_size={'l'} when_tags_updated={this.when_cancellable_tags_object.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['556']/* 'Recommended: false' */, 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['556']/* 'Recommended: false' */, 'textsize':'10px', 'font':this.props.app_state.font})}
                     
                 </div>
             )
@@ -498,7 +498,7 @@ class NewSubscriptionPage extends Component {
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.time_unit), 'details':this.props.app_state.loc['557']/* 'Time Unit' */, 'size':'l'})}
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['559']/* 'Recommended: 1 min' */, 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['559']/* 'Recommended: 1 min' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
                    <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
                 </div>
@@ -515,7 +515,7 @@ class NewSubscriptionPage extends Component {
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['563']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['563']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -547,7 +547,7 @@ class NewSubscriptionPage extends Component {
                     </div>
 
                     <div style={{height:2}}/>
-                    {this.render_detail_item('10', {'text':this.props.app_state.loc['569']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':'Sans-serif'})}
+                    {this.render_detail_item('10', {'text':this.props.app_state.loc['569']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
                     <NumberPicker ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
@@ -618,20 +618,20 @@ class NewSubscriptionPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['570']/* 'Access Rights' */, 'details':this.props.app_state.loc['571']/* 'If enabled, access to the subscription will be restricted to moderators and specified accounts' */, 'size':'l'})}
 
                 <div style={{height:20}}/>
-                <Tags page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.new_token_access_rights_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_access_rights_tags_object.bind(this)} theme={this.props.theme}/>
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['572']/* 'Set the authority ID for your new subscription' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['572']/* 'Set the authority ID for your new subscription' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['600a']/* 'Enter Authority...' */} when_text_input_field_changed={this.when_authority_text_input_field_changed.bind(this)} text={this.state.authority_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['600a']/* 'Enter Authority...' */} when_text_input_field_changed={this.when_authority_text_input_field_changed.bind(this)} text={this.state.authority_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('authority_id')}
                 {this.render_detail_item('0')}
 
 
-                {this.render_detail_item('4',{'font':'Sans-serif', 'textsize':'15px','text':this.props.app_state.loc['573']/* 'Set the subscription beneficiary ID for your new subscription' */})}
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['573']/* 'Set the subscription beneficiary ID for your new subscription' */})}
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['600b']/* 'Enter Beneficiary ID...' */} when_text_input_field_changed={this.when_subscription_beneficiary.bind(this)} text={this.state.subscription_beneficiary} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['600b']/* 'Enter Beneficiary ID...' */} when_text_input_field_changed={this.when_subscription_beneficiary.bind(this)} text={this.state.subscription_beneficiary} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('subscription_beneficiary')}
 
@@ -658,7 +658,7 @@ class NewSubscriptionPage extends Component {
     render_moderator_interactible_ui(){
         return(
             <div>
-                <Tags page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.new_token_interactible_moderator_tags_object} tag_size={'l'} when_tags_updated={this.when_new_token_interactible_moderator_tags_object.bind(this)} theme={this.props.theme}/>
 
                 {this.render_moderator_or_interactible_setting()}
             </div>
@@ -696,7 +696,7 @@ class NewSubscriptionPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['576']/* 'Moderator ID' */, 'details':this.props.app_state.loc['577']/* 'Set the account id for your targeted moderator' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['576']/* 'Moderator ID' */} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['576']/* 'Moderator ID' */} when_text_input_field_changed={this.when_moderator_id_input_field_changed.bind(this)} text={this.state.moderator_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('moderator_id')}
 
@@ -793,7 +793,7 @@ class NewSubscriptionPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['580']/* 'Interactible ID' */, 'details':this.props.app_state.loc['581']/* 'Set the account id for your targeted account, and expiry time for their interactibility' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['580']/* 'Interactible ID' */} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['580']/* 'Interactible ID' */} when_text_input_field_changed={this.when_interactible_id_input_field_changed.bind(this)} text={this.state.interactible_id} theme={this.props.theme}/>
 
                 {this.load_account_suggestions('interactible_id')}
 
@@ -926,7 +926,7 @@ class NewSubscriptionPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['587']/* 'Exchange ID' */, 'details':this.props.app_state.loc['588']/* 'Type an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['587']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['587']/* 'Exchange ID' */} when_text_input_field_changed={this.when_exchange_id_input_field_changed.bind(this)} text={this.state.exchange_id} theme={this.props.theme}/>
 
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 20}}/>
@@ -1233,7 +1233,7 @@ class NewSubscriptionPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
             </div>
         )
 

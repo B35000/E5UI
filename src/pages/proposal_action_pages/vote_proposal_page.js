@@ -67,7 +67,7 @@ class VoteProposalPage extends Component {
                 <div style={{'padding':'10px 20px 0px 10px'}}>
                     <div className="row">
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                            <Tags page_tags_object={this.state.vote_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_vote_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                            <Tags app_state={this.props.app_state} page_tags_object={this.state.vote_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_vote_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -76,7 +76,7 @@ class VoteProposalPage extends Component {
                         </div>
                     </div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':this.props.app_state.loc['803']/* 'Cast your vote in proposal ID: ' */+this.state.proposal_item['id'], 'textsize':'14px', 'font':'Sans-serif'})} 
+                    {this.render_detail_item('4', {'text':this.props.app_state.loc['803']/* 'Cast your vote in proposal ID: ' */+this.state.proposal_item['id'], 'textsize':'14px', 'font':this.props.app_state.font})} 
                     <div style={{height:10}}/>
 
                     {this.render_everything()}
@@ -147,7 +147,7 @@ class VoteProposalPage extends Component {
 
 
                     <div style={{height:10}}/>
-                    <Tags page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags app_state={this.props.app_state} page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
@@ -220,7 +220,7 @@ class VoteProposalPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['814']/* 'Targeted Bounty Exchanges' */, 'details':this.props.app_state.loc['815']/* 'Specify which exchanges you wish to collect bounty from. You can only collect bounty while voting for the very first time.' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <TextInput height={30} placeholder={this.props.app_state.loc['816']/* 'Target Exchange ID...' */} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['816']/* 'Target Exchange ID...' */} when_text_input_field_changed={this.when_bounty_target_text_input_field_changed.bind(this)} text={this.state.bounty_exchange_target} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.load_token_suggestions('bounty_exchange_target')}
@@ -439,7 +439,7 @@ class VoteProposalPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

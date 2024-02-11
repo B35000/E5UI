@@ -297,14 +297,16 @@ class PostListSection extends Component {
             var background_color = this.props.theme['card_background_color']
             var card_shadow_color = this.props.theme['card_shadow_color']
             return (
-                <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                {this.render_job_object(item, index)}
-                            </li>
-                        ))}
-                    </ul>
+                <div>
+                    <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {items.map((item, index) => (
+                                <li style={{'padding': '5px'}}>
+                                    {this.render_job_object(item, index)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             );
         } 
@@ -781,7 +783,7 @@ class PostListSection extends Component {
         }
         return {
             'tags':{'active_tags':final_tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
-            'id':{'textsize':'14px', 'text':details, 'font':'Sans-serif'},
+            'id':{'textsize':'14px', 'text':details, 'font':this.props.app_state.font},
             'author_title':{'title':title, 'details':details, 'size':'l'},
             'age':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':this.props.app_state.loc['1317']/* block */+` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)}`, }
         }
@@ -986,7 +988,7 @@ class PostListSection extends Component {
         return {
             'label':{'title':name, 'details':'Main Contract', 'size':'l', 'image': image},
             'tags':{'active_tags':['E5', 'Main', 'Contract'], 'index_option':'indexed'},
-            'address':{'font':'Sans-serif', 'text':this.get_address(name), 'textsize':'12px'},
+            'address':{'font':this.props.app_state.font, 'text':this.get_address(name), 'textsize':'12px'},
             'data':{'title':name, 'details':start_and_end(this.get_address(name)), 'size':'l', 'image': image, 'border_radius':'0%'}
         }
     }
@@ -1006,7 +1008,7 @@ class PostListSection extends Component {
             <div>
                 <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                        <TextInput height={25} placeholder={'Enter ID or Alias...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={'Enter ID or Alias...'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_search_id} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
                         {this.render_detail_item('5',{'text':'Search','action':''})}
@@ -1701,7 +1703,7 @@ class PostListSection extends Component {
             return (
                 <div>
                     <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                        <TextInput height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
+                        <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
                     </div>
                     <div style={{overflow: 'auto', maxHeight: middle}}>
                         <ul style={{ 'margin': '0px 0px 0px 0px'}}>
@@ -1719,10 +1721,10 @@ class PostListSection extends Component {
         return ( 
             <div>
                 <div style={{ 'margin': '5px 5px 5px 5px'}}>
-                    <TextInput height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme}/>
+                    <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['2509a']/* 'Enter Name or Symbol...' */} when_text_input_field_changed={this.when_search_ether_input_field_changed.bind(this)} text={this.state.typed_search_ether_id} theme={this.props.theme} />
                 </div>
 
-                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle-45}}>
+                <div ref={this.ether_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', height: middle-53}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '1px 5px 1px 5px'}}>
@@ -2048,7 +2050,7 @@ class PostListSection extends Component {
         var balance = item['balance']
         return{
             'tags':{'active_tags':[item['e5'], token_id].concat(active_tags), 'index_option':'indexed', 'when_tapped':''},
-            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'0%'},
+            'label':{'title':name,'details':symbol, 'size':'l', 'image':image, 'border_radius':'15%'},
             'number_label':{'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(balance), 'number':`${this.format_account_balance_figure(balance)}`, 'barcolor':'#606060', 'relativepower':'balance',}
         }
     }
@@ -2167,7 +2169,7 @@ class PostListSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
             </div>
         )
 

@@ -42,7 +42,7 @@ class RPCSettingsPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 
-                <Tags page_tags_object={this.state.get_rpc_title_tags_object} tag_size={'l'} when_tags_updated={this.when_get_rpc_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_rpc_title_tags_object} tag_size={'l'} when_tags_updated={this.when_get_rpc_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.render_everything()}
@@ -63,7 +63,7 @@ class RPCSettingsPage extends Component {
                     <div style={{height:10}}/>
                     <div className="row" style={{width:'103%'}}>
                         <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput height={30} placeholder={this.props.app_state.loc['1335']/* 'Enter Node Url...' */} when_text_input_field_changed={this.when_typed_rpc_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
+                            <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1335']/* 'Enter Node Url...' */} when_text_input_field_changed={this.when_typed_rpc_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_rpc()} >
                             {this.render_detail_item('5',{'text':this.props.app_state.loc['1336']/* 'Add' */,'action':''})}
@@ -190,7 +190,7 @@ class RPCSettingsPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

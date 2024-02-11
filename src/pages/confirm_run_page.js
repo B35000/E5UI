@@ -36,7 +36,7 @@ class ConfirmRunPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
-                <Tags page_tags_object={this.state.get_confirm_run_tags_object} tag_size={'l'} when_tags_updated={this.when_get_confirm_run_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_confirm_run_tags_object} tag_size={'l'} when_tags_updated={this.when_get_confirm_run_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
                 {this.render_everything()}
@@ -245,7 +245,7 @@ class ConfirmRunPage extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data}  theme={this.props.theme} width={width}/>
             </div>
         )
 

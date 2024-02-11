@@ -55,7 +55,7 @@ class ExitContractPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags page_tags_object={this.state.exit_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_exit_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.exit_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_exit_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         
@@ -103,7 +103,7 @@ class ExitContractPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('4', {'font':'Sans-serif', 'textsize':'15px', 'text':this.props.app_state.loc['23']})}
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['23']})}
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.finish_exiting_contract_ui()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['24'], 'action':''})}
@@ -161,7 +161,7 @@ class ExitContractPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} font={this.props.app_state.font}/>
             </div>
         )
 

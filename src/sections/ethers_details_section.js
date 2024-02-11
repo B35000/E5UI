@@ -66,7 +66,7 @@ class EthersDetailsSection extends Component {
                 <div>
                     {this.render_ether_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags page_tags_object={this.state.navigate_view_ethers_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_ethers_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_ethers_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_ethers_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -583,7 +583,7 @@ class EthersDetailsSection extends Component {
         // if(tx_history == null){
         //     return(
         //         <div style={{height: middle, 'margin':'10px 5px 0px 5px'}}>
-        //             {this.render_detail_item('4', {'text':'Transaction history Unavailable', 'textsize':'15px', 'font':'Sans-serif'})}
+        //             {this.render_detail_item('4', {'text':'Transaction history Unavailable', 'textsize':'15px', 'font':this.props.app_state.font})}
         //         </div>
         //     )
         // }
@@ -989,7 +989,7 @@ class EthersDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} theme={this.props.theme}  width={width}/>
+                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme}  width={width}/>
             </div>
         )
 

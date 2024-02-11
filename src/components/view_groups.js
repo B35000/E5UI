@@ -82,7 +82,7 @@ class ViewGroups extends Component {
                       {active_tags.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
                               <div style={{'background-color': this.get_tag_color(item, selected_tags, tag_background_color), 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
-                                <p style={{'color': 'white', 'font-size': '16px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify'}} className="text-center">{item}</p>
+                                <p style={{'color': 'white', 'font-size': '16px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{item}</p>
                             </div>
                           </li>
                       ))}
@@ -116,10 +116,10 @@ class ViewGroups extends Component {
 
                       <div className="row">
                           <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                              <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '10px', height: '100%'}} className="fw-bold">{number}</p>
+                              <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '10px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
                           </div>
                           <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
-                              <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', height: '100%', 'padding-top':' 1px'}} className="text-end">{relativepower}</p>
+                              <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '9px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.font}} className="text-end">{relativepower}</p>
                           </div>
                       </div>
                   </div>
@@ -129,10 +129,10 @@ class ViewGroups extends Component {
                     <div style={{'margin': '5px 20px 0px 15px'}}>
                         <div className="row">
                             <div className="col-10" style={{'padding': '0px 0px 0px 14px' }}> 
-                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7}} className="fw-bold">{title}</p>
+                            <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'font-family': this.props.font}} className="fw-bold">{title}</p>
                             </div>
                             <div className="col-2" style={{'padding': '0px 15px 0px 0px' }}>
-                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '11px', height: 7, 'padding-top':' 0.5px'}} className="text-end">{subtitle}</p>
+                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '11px', height: 7, 'padding-top':' 0.5px', 'font-family': this.props.font}} className="text-end">{subtitle}</p>
                             </div>
                         </div>
                         
@@ -144,10 +144,10 @@ class ViewGroups extends Component {
 
                         <div className="row">
                             <div className="col-9" style={{'padding': '0px 0px 0px 14px' }}> 
-                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%'}} className="fw-bold">{number}</p>
+                                <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: '100%', 'font-family': this.props.font}} className="fw-bold">{number}</p>
                             </div>
                             <div className="col-3" style={{'padding': '0px 15px 0px 0px' }}>
-                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '10px', height: '100%', 'padding-top':' 1px'}} className="text-end">{relativepower}</p>
+                                <p style={{'color': this.props.theme['secondary_text_color'], 'font-size': '10px', height: '100%', 'padding-top':' 1px', 'font-family': this.props.font}} className="text-end">{relativepower}</p>
                             </div>
                         </div>
                     </div>
@@ -190,8 +190,8 @@ class ViewGroups extends Component {
                                 <img src={img} style={{height:50 ,width:50, 'border-radius': image_border_radius}} />
                             </div>
                             <div style={{'margin':'0px 0px 0px 10px'}}>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>
@@ -201,8 +201,8 @@ class ViewGroups extends Component {
                     <div style={{'display': 'flex','flex-direction': 'row','padding': padding,'margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
                         <div style={{height:'100%', width:'100%'}}>
                             <div>
-                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
-                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                                <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
                     </div>
@@ -249,7 +249,7 @@ class ViewGroups extends Component {
             }
             return(
                 <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <button style={{'background-color': this.props.theme['button_color'], 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize'}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
+                    <button style={{'background-color': this.props.theme['button_color'], 'color': 'white','border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize', 'font-family': this.props.font}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
                       {text}
                     </button>
                 </div>
@@ -333,11 +333,11 @@ class ViewGroups extends Component {
             var img = object_data != null ? object_data['image']:E5EmptyIcon;
             return(
                 <div style={{height:230, width:'90%','display': 'flex', 'align-items':'center','justify-content':'center','padding':'0px 0px 0px 50px'}}>
-                    <img src={img} style={{height:'180px' ,width:'180px'}} />
+                    <img src={img} style={{height:'180px' ,width:'180px','border-radius':'15%'}} />
 
                     <div style={{'margin':'0px 0px 0px 20px'}}> 
-                        <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{header}</p>
-                        <p style={{'font-size': '13px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none'}}>{subtitle}</p>
+                        <p style={{'font-size': '15px','color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{header}</p>
+                        <p style={{'font-size': '13px','color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none'}}>{subtitle}</p>
                     </div>
                 </div>
             );
@@ -427,9 +427,9 @@ class ViewGroups extends Component {
                             <img src={img} style={{height:45 ,width:45}} />
                         </div>
                         <div style={{'margin':'3px 0px 0px 5px'}}>
-                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                            <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
                             
-                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': 'Sans-serif','text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
+                            <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                         </div>
                     </div>
                 </div>
