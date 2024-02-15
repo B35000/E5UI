@@ -1,12 +1,21 @@
 {
   "files": {
     "main.css": "/E5UI/static/css/main.19802a6a.css",
-    "main.js": "/E5UI/static/js/main.c067ed69.js",
+    "main.js": "/E5UI/static/js/main.9c58a8c9.js",
+    "static/media/stack_icon_green.png": "/E5UI/static/media/stack_icon_green.b5771a79855e1d6a048e.png",
+    "static/media/explore_icon_green.png": "/E5UI/static/media/explore_icon_green.0aa218c5f523dd8d4ac8.png",
+    "static/media/add_icon_green.png": "/E5UI/static/media/add_icon_green.c0eaa603c73632d1610c.png",
+    "static/media/stack_icon_light.png": "/E5UI/static/media/stack_icon_light.2d0001f34fd23d3249ba.png",
     "static/media/e5empty_icon.png": "/E5UI/static/media/e5empty_icon.cc58b40d5e08618d1807.png",
     "static/media/papyrus.ttf": "/E5UI/static/media/papyrus.ca0c0d7f3f97c15b5476.ttf",
     "static/media/e5empty_icon3.png": "/E5UI/static/media/e5empty_icon3.82753041adaab216b7f9.png",
+    "static/media/wallet_icon_green.png": "/E5UI/static/media/wallet_icon_green.428c19e28dcdb14b39f5.png",
+    "static/media/explore_icon_light.png": "/E5UI/static/media/explore_icon_light.3385b9c695c67c0439c1.png",
+    "static/media/job_icon_green.png": "/E5UI/static/media/job_icon_green.32581e83494e64cee427.png",
+    "static/media/alert_icon_green.png": "/E5UI/static/media/alert_icon_green.c147a40ef61fa09d1b12.png",
     "static/media/ComicSans.ttf": "/E5UI/static/media/ComicSans.3198d266c6629f0b7ce0.ttf",
-    "static/media/alert_icon.png": "/E5UI/static/media/alert_icon.c9e4dc07aea028eb89ca.png",
+    "static/media/wallet_icon_light.png": "/E5UI/static/media/wallet_icon_light.e0078004dc43668c0795.png",
+    "static/media/job_icon_light.png": "/E5UI/static/media/job_icon_light.e20d6d8792a0ac88b51d.png",
     "static/media/end_token_icon.png": "/E5UI/static/media/end_token_icon.3e84e49554dd5d90fee1.png",
     "static/media/End25.png": "/E5UI/static/media/End25.42be351e0a037fb05bfe.png",
     "static/media/send_ether_data_image.png": "/E5UI/static/media/send_ether_data_image.ab08557f50f6c24fce57.png",
@@ -15,7 +24,6 @@
     "static/media/stack_icon.png": "/E5UI/static/media/stack_icon.8644af3ec52504228584.png",
     "static/media/end35.png": "/E5UI/static/media/end35.40589a46410f9b96914e.png",
     "static/media/E45.png": "/E5UI/static/media/E45.887070c7fda6ab1f4492.png",
-    "static/media/background.png": "/E5UI/static/media/background.f7db6c7f479a7933ec1c.png",
     "static/media/E125.png": "/E5UI/static/media/E125.40629c5ee6c4d5f8b91e.png",
     "static/media/E25.png": "/E5UI/static/media/E25.649ba0cf79b6d1ae957f.png",
     "static/media/e35_spend_token.png": "/E5UI/static/media/e35_spend_token.6c818476387f80588282.png",
@@ -40,7 +48,6 @@
     "static/media/p2p_trust_image.png": "/E5UI/static/media/p2p_trust_image.df63ef54215983ad839c.png",
     "static/media/3175.png": "/E5UI/static/media/3175.ac5a5fa7ebf41a4a0f90.png",
     "static/media/E55.png": "/E5UI/static/media/E55.5164d515631d1d371b84.png",
-    "static/media/add_icon.png": "/E5UI/static/media/add_icon.713f7eb7c62d0a8a67dc.png",
     "static/media/385.png": "/E5UI/static/media/385.ff6d26c3466063a34dd0.png",
     "static/media/3105.png": "/E5UI/static/media/3105.03db04c98e317bfc86db.png",
     "static/media/unanimous_consensus_image.png": "/E5UI/static/media/unanimous_consensus_image.a1d1aa647899799769d2.png",
@@ -55,6 +62,7 @@
     "static/media/job_icon.png": "/E5UI/static/media/job_icon.f9722186bf79f33d210a.png",
     "static/media/open_stack_data_image.png": "/E5UI/static/media/open_stack_data_image.09e4f9ba59270f20f883.png",
     "static/media/settings_data_image.png": "/E5UI/static/media/settings_data_image.bca85a5d545901a5d583.png",
+    "static/media/add_icon.png": "/E5UI/static/media/add_icon.6a615e538e7bf64a765e.png",
     "static/media/mantle.png": "/E5UI/static/media/mantle.d153dee654274dbe0fd9.png",
     "static/media/ozone.png": "/E5UI/static/media/ozone.2d9081213102c72cfb56.png",
     "static/media/iotex.png": "/E5UI/static/media/iotex.033445dc5a3a732d38fe.png",
@@ -66,6 +74,8 @@
     "static/media/wemix.png": "/E5UI/static/media/wemix.ceaf382cc08ef37f7be2.png",
     "static/media/rsk.png": "/E5UI/static/media/rsk.7f40618826fd81a9a6cc.png",
     "static/media/ultron.png": "/E5UI/static/media/ultron.e725b0f701541fd4950c.png",
+    "static/media/background_green.png": "/E5UI/static/media/background_green.05474f9796a0e2852fba.png",
+    "static/media/alert_icon.png": "/E5UI/static/media/alert_icon.6a545a8755f54fb38437.png",
     "static/media/astar.png": "/E5UI/static/media/astar.ac7c385a213dfb5af547.png",
     "static/media/eos.png": "/E5UI/static/media/eos.51534ca26166ec1fb87f.png",
     "static/media/arbitrum.png": "/E5UI/static/media/arbitrum.2d7f074030401bb31f3e.png",
@@ -128,6 +138,7 @@
     "static/media/glmr.png": "/E5UI/static/media/glmr.024eed432edf784180fe.png",
     "static/media/tfuel.png": "/E5UI/static/media/tfuel.5ab03995e31a5aa75b9b.png",
     "static/media/viction.png": "/E5UI/static/media/viction.43d805766864aff60e59.png",
+    "static/media/background.png": "/E5UI/static/media/background.8dfcf80661d5eeed149c.png",
     "static/media/celo.png": "/E5UI/static/media/celo.a6492b13646d00abe489.png",
     "static/media/flare.png": "/E5UI/static/media/flare.efbc1cec9bf669a6b9c4.png",
     "static/media/eluv.png": "/E5UI/static/media/eluv.24338d1170a603fd0a37.png",
@@ -135,10 +146,10 @@
     "static/media/ethereum_testnet.png": "/E5UI/static/media/ethereum_testnet.9e100f6a6ed0a8baaca4.png",
     "index.html": "/E5UI/index.html",
     "main.19802a6a.css.map": "/E5UI/static/css/main.19802a6a.css.map",
-    "main.c067ed69.js.map": "/E5UI/static/js/main.c067ed69.js.map"
+    "main.9c58a8c9.js.map": "/E5UI/static/js/main.9c58a8c9.js.map"
   },
   "entrypoints": [
     "static/css/main.19802a6a.css",
-    "static/js/main.c067ed69.js"
+    "static/js/main.9c58a8c9.js"
   ]
 }
