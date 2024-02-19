@@ -40,7 +40,7 @@ class RespondToJobPage extends Component {
     state = {
         selected: 0, job_item:{'id':0},  type:this.props.app_state.loc['1307']/* 'job-response' */, id:makeid(8),
         entered_indexing_tags:[this.props.app_state.loc['1308']/* 'respond' */, this.props.app_state.loc['1309']/* 'job' */, this.props.app_state.loc['1310']/* 'ad' */], respond_to_job_title_tags_object: this.get_respond_to_job_title_tags_object(), picked_contract: null, application_expiry_time: (Date.now()/1000)+6000, exchange_id: '', price_amount:0, price_data:[], pre_post_paid_option: this.get_pre_post_paid_option_tags_object(),
-        e5: this.props.app_state.selected_e5
+        e5: this.props.app_state.selected_e5, custom_specifications:''
     };
 
     get_respond_to_job_title_tags_object(){
@@ -49,7 +49,7 @@ class RespondToJobPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1311']/* 'contract' */, this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [1]
+                ['xor','',0], ['e', this.props.app_state.loc['1332c']/* specs */,this.props.app_state.loc['1311']/* 'contract' */, this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [1]
             ],
         };
     }
@@ -70,7 +70,7 @@ class RespondToJobPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.respond_to_job_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_job_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.respond_to_job_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_job_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
@@ -95,7 +95,14 @@ class RespondToJobPage extends Component {
     render_everything(){
         var selected_item = this.get_selected_item(this.state.respond_to_job_title_tags_object, this.state.respond_to_job_title_tags_object['i'].active)
 
-        if(selected_item == this.props.app_state.loc['1311']/* 'contract' */){
+        if(selected_item == this.props.app_state.loc['1332c']/* specs */){
+            return(
+                <div>
+                    {this.render_application_custom_specs()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1311']/* 'contract' */){
             return(
                 <div>
                     {this.render_select_contract_parts()}
@@ -351,17 +358,35 @@ class RespondToJobPage extends Component {
 
 
 
-
-
-    render_application_prices(){
+    render_application_custom_specs(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1319']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1320']/* 'Set the payment option you prefer for the application.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1332a']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1332b']/* 'You can also include extra information for the job your applying for.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications.' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
+
+            </div>
+        )
+    }
+
+    when_custom_specifications_input_field_changed(text){
+        this.setState({custom_specifications: text})
+    }
+
+
+
+
+
+
+    render_application_prices(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1321']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1322']/* 'Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -374,7 +399,7 @@ class RespondToJobPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1324']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1325']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1326']/* 'Add Price' */, 'action':''})}

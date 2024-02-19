@@ -50,7 +50,8 @@ class NewPostPage extends Component {
 
         edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(),
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), get_post_nsfw_option:this.get_post_nsfw_option(),
+        get_masked_from_outsiders_option:this.get_masked_from_outsiders_option()
     };
 
     get_new_job_page_tags_object(){
@@ -125,6 +126,30 @@ class NewPostPage extends Component {
     }
 
 
+    get_post_nsfw_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['311a']/* nsfw */], [0]
+            ],
+        };
+    }
+
+
+    get_masked_from_outsiders_option(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['311b']/* masked */], [0]
+            ],
+        };
+    }
+
+
 
 
 
@@ -134,7 +159,7 @@ class NewPostPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -272,13 +297,36 @@ class NewPostPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['303'], 'details':this.props.app_state.loc['304'], 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_post_preview_option} tag_size={'l'} when_tags_updated={this.when_get_post_preview_option.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_preview_option} tag_size={'l'} when_tags_updated={this.when_get_post_preview_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['311c']/* Mark as NSFW. */, 'details':this.props.app_state.loc['311d']/* If set to nsfw, post will be marked as not safe for work. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_post_nsfw_option} tag_size={'l'} when_tags_updated={this.when_get_post_nsfw_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['311e']/* Masked for Outsiders. */, 'details':this.props.app_state.loc['311f']/* If set to masked, your post will not be visible to users without accounts. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_from_outsiders_option} tag_size={'l'} when_tags_updated={this.when_get_masked_from_outsiders_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_masked_from_outsiders_option(tag_obj){
+        this.setState({get_masked_from_outsiders_option: tag_obj})
+    }
+
+    when_get_post_nsfw_option(tag_obj){
+        this.setState({get_post_nsfw_option: tag_obj})
     }
 
     when_get_post_preview_option(tag_obj){
@@ -622,7 +670,7 @@ class NewPostPage extends Component {
                 {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['307']})}
                 {this.render_detail_item('0')} */}
                 
-                {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
@@ -897,7 +945,7 @@ class NewPostPage extends Component {
                 {this.render_selected_links()}
 
                 {this.render_detail_item('0')}
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.render_searched_link_results()}

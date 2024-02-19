@@ -100,7 +100,7 @@ class EndDetailSection extends Component {
                 <div style={{}}>
                     {this.render_end_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_end_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_end_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_end_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_end_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -965,7 +965,7 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2387']/* 'Y-Aggregate' */, 'details':this.props.app_state.loc['2388']/* 'Chart containing the y-aggregate of ' */+ symbol+this.props.app_state.loc['2389']/* ' over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_exchange_ratio_data_points(exchange_ratio_events, selected_object), 'interval':this.get_exchange_ratio_interval_figure(exchange_ratio_events)})}
                     <div style={{height: 10}}/>
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.y_aggregate_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_y_aggregate_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2390']/* 'Y-Axis: Y-aggregate' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1199,7 +1199,7 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2396']/* 'Exchange Liquidity' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2398']/* ` in the exchange over time.` */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_exchange_liquidity_data_points(exchange_ratio_events), 'interval':110})}
                     <div style={{height: 10}}/>
-                    {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2399']/* 'Y-Axis: Exchange Liquidity' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
@@ -1539,7 +1539,7 @@ class EndDetailSection extends Component {
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Amount: '+this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
                     {/* <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
@@ -1634,7 +1634,7 @@ class EndDetailSection extends Component {
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2416']/* 'Targeted Modify Item' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.get_value_ui(item)}
+                    {this.get_value_ui(item, object)}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['2198']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
@@ -1657,6 +1657,10 @@ class EndDetailSection extends Component {
 
         var target_array_pos = item.returnValues.p3
         var target_array_item = item.returnValues.p4
+
+        if(target_array_pos == 4/* contract_entry_amounts */){
+            return 'price'
+        }
         var selected_key = ''
         for (let key in obj) {
             if (obj[key]['position'][0] == target_array_pos && obj[key]['position'][1] == target_array_item) {
@@ -1668,10 +1672,18 @@ class EndDetailSection extends Component {
         return selected_key
     }
 
-    get_value_ui(item) {
+    get_value_ui(item, object) {
         var identifier = this.get_target_identifier(item)
-        var type = this.get_contract_modify_details()[identifier]['picker']
         var number = item.returnValues.p5
+        
+        var target_array_pos = item.returnValues.p3
+        var target_array_item = item.returnValues.p4
+
+        var type = identifier == 'price' ? 'number' : this.get_contract_modify_details()[identifier]['picker']
+        var exchange = object['data']
+        var exchange_id = exchange[3][target_array_item]
+
+        var title = identifier == 'price' ? this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id] : identifier
 
         if (type == 'proportion') {
             return (
@@ -1691,7 +1703,7 @@ class EndDetailSection extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1430']/* 'units' */, })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': title, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1430']/* 'units' */, })}
                     </div>
                 </div>
             )

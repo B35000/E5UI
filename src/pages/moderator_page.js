@@ -77,7 +77,7 @@ class ModeratorPage extends Component {
                 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.new_moderator_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_moderator_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.new_moderator_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_moderator_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
@@ -160,7 +160,7 @@ class ModeratorPage extends Component {
                 {this.render_detail_item('3', {'title':this.get_current_access_rights(), 'details':this.props.app_state.loc['1280']/* 'Current access rights settings' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.access_rights_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_access_rights_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.access_rights_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_access_rights_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 <div onClick={() => this.enable_disable_interactible_checker()}>

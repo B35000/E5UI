@@ -1252,7 +1252,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_post_item(object)
-        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object)){
+        if(this.is_object_sender_blocked(object) || this.is_post_taken_down_for_sender(object) || !this.should_show_post_if_masked_for_outsiders(object)){
             return(
                 <div>
                     {this.render_empty_object()}
@@ -1287,8 +1287,31 @@ class PostListSection extends Component {
         if(selected_take_down_option == 1) return true
     }
 
+    should_show_post_if_masked_for_outsiders(object){
+        var selected_option = this.is_post_marked_as_masked_for_outsiders(object)
+        if(selected_option == false) return true
+        else{
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(me <1000){
+                return false
+            }else{
+                return true
+            }
+        }
+    }
+
+    is_post_marked_as_masked_for_outsiders(object){
+        if(object['ipfs'].get_masked_from_outsiders_option == null) return false
+        var selected_masked_option = this.get_selected_item2(object['ipfs'].get_masked_from_outsiders_option, 'e')
+        if(selected_masked_option == 1) return true
+    }
+
     format_post_item(object){
         var tags = object['ipfs'] == null ? ['Post'] : [].concat(object['ipfs'].entered_indexing_tags)
+        if(this.is_post_nsfw(object)){
+            tags = object['ipfs'] == null ? ['Post'] : ['🔞🔞🔞'].concat(object['ipfs'].entered_indexing_tags)
+        }
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
@@ -1299,6 +1322,12 @@ class PostListSection extends Component {
         }
     }
 
+    is_post_nsfw(object){
+        if(object['ipfs'].get_post_nsfw_option == null) return false
+        var selected_nsfw_option = this.get_selected_item2(object['ipfs'].get_post_nsfw_option, 'e')
+        if(selected_nsfw_option == 1) return true
+    }
+
     when_post_item_clicked(index, object){
         var required_subscriptions = object['ipfs'].selected_subscriptions
         var post_author = object['event'].returnValues.p5
@@ -1306,7 +1335,7 @@ class PostListSection extends Component {
         if(me == null) me = 1
         
         if(this.check_if_sender_has_paid_subscriptions(required_subscriptions) || post_author == me){
-            this.props.when_post_item_clicked(index, object['id'], object['e5'])
+            this.props.when_post_item_clicked(index, object['id'], object['e5'], this.is_post_nsfw(object))
         }else{
             this.props.show_post_item_preview_with_subscription(object)
         }
@@ -1611,12 +1640,13 @@ class PostListSection extends Component {
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {/* {this.render_detail_item('1', item['tags'])} */}
                     {/* <div style={{height: 10}}/> */}
-                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+                    {/* <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
                         {this.render_detail_item('3', item['id'])}
                     </div>
                     <div style={{padding:'0px 0px 0px 0px'}}>
                         {this.render_images(object)}
-                    </div>
+                    </div> */}
+                    {this.render_bag_data(object, item, index)}
                     <div style={{'padding': '20px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
                         {this.render_detail_item('2', item['age'])}
                     </div>
@@ -1624,6 +1654,39 @@ class PostListSection extends Component {
                 </div>         
             </div>
         )
+    }
+
+    render_bag_data(object, item, index){
+        var images = this.get_bag_images(object)
+        if(images.length == 0){
+            return(
+                <div>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                </div>
+            )
+        }
+        else if(images.length == 1){
+            return(
+                <div>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+                        {this.render_detail_item('8', item['id_with_image'])}
+                    </div>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{'padding': '0px 0px 0px 0px'}} onClick={() => this.when_bag_item_clicked(index, object)}>
+                        {this.render_detail_item('3', item['id'])}
+                    </div>
+                    <div style={{padding:'0px 0px 0px 0px'}}>
+                        {this.render_images(object)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_images(object){
@@ -1646,9 +1709,12 @@ class PostListSection extends Component {
         var title = object['ipfs'] == null ? '' : object['ipfs']['bag_orders'].length+' item(s) ordered'
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
+        var item_images = this.get_bag_images(object)
+        var image = item_images.length == 0 ? null : item_images[0]
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['id'], 'details':title, 'size':'l'},
+            'id_with_image':{'title':object['id'], 'details':title, 'size':'l', 'image':image},
             'age':{'style':'s', 'title':'Block Number', 'subtitle':'??', 'barwidth':this.get_number_width(age), 'number':` ${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} ago`, },
         }
     }
@@ -1661,12 +1727,14 @@ class PostListSection extends Component {
             var variant_id = object['ipfs']['bag_orders'][i]['storefront_variant_id']
             var bag_storefront_id = object['ipfs']['bag_orders'][i]['storefront_item_id']
             var storefront = this.props.app_state.created_store_mappings[object['e5']][bag_storefront_id]
-            var variant_in_store = this.get_variant_object_from_storefront(storefront, variant_id)
-
-            var variant_images = variant_in_store['image_data']['data']
-            if(variant_images['images'].length != 0){
-                images.push(variant_images['images'][0])
-            }
+            
+            if(storefront != null){
+                var variant_in_store = this.get_variant_object_from_storefront(storefront, variant_id)
+                var variant_images = variant_in_store['image_data']['data']
+                if(variant_images['images'].length != 0){
+                    images.push(variant_images['images'][0])
+                }
+            } 
         }
 
         return images
@@ -1674,6 +1742,7 @@ class PostListSection extends Component {
     }
 
     get_variant_object_from_storefront(storefront, id){
+        
         for(var i=0; i<storefront['ipfs'].variants.length; i++){
             if(storefront['ipfs'].variants[i]['variant_id'] == id){
                 return storefront['ipfs'].variants[i]

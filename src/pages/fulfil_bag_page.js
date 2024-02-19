@@ -71,7 +71,7 @@ class FulfilBagPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.respond_to_bag_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_bag_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.respond_to_bag_title_tags_object} tag_size={'l'} when_tags_updated={this.when_respond_to_bag_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_response()}>
@@ -362,7 +362,7 @@ class FulfilBagPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1138']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1139']/* 'Set the payment option you prefer for the application' */, 'size':'l'})}
                 <div style={{height: 10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.pre_post_paid_option} tag_size={'l'} when_tags_updated={this.when_pre_post_paid_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
 
@@ -372,7 +372,7 @@ class FulfilBagPage extends Component {
                     
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.estimated_delivery_time), 'details':this.props.app_state.loc['1142']/* 'Estimated Delivery time' */, 'size':'l'})}
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_estimated_delivery_time_updated.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_estimated_delivery_time_updated.bind(this)} theme={this.props.theme} power_limit={63}/>
 
 
 
@@ -390,7 +390,7 @@ class FulfilBagPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1145']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1146']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1147']/* 'Add Price' */, 'action':''})}

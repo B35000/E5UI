@@ -138,6 +138,9 @@ class NewContractorPage extends Component {
     set(){
         var fee_type = this.state.get_fee_type
         if(fee_type == null) fee_type = this.get_fee_type()
+        if(this.state.get_take_down_option == null){
+            this.setState({get_take_down_option: this.get_take_down_option()})
+        }
         this.setState({edit_text_item_pos:-1, get_new_contractor_page_tags_object: this.get_new_contractor_page_tags_object(), get_fee_type: fee_type, get_sort_links_tags_object: this.get_sort_links_tags_object()})
     }
 
@@ -147,7 +150,7 @@ class NewContractorPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_contractor_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_contractor_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -266,13 +269,17 @@ class NewContractorPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_take_down_option(tag_group){
+        this.setState({get_take_down_option: tag_group})
     }
 
     when_title_text_input_field_changed(text){
@@ -391,7 +398,7 @@ class NewContractorPage extends Component {
                 {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['134']})} */}
                 
                 {/* <div style={{}}>
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_contractor_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_font_style_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_contractor_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_font_style_updated.bind(this)} theme={this.props.theme}/>
                 </div>
                 <div style={{height:10}}/> */}
 
@@ -671,7 +678,7 @@ class NewContractorPage extends Component {
                 {this.render_selected_links()}
 
                 {this.render_detail_item('0')}
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.render_searched_link_results()}
@@ -1276,7 +1283,7 @@ class NewContractorPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['272a']/* 'Fee type.' */, 'details':this.props.app_state.loc['272b']/* 'Set your preferred fee type below.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_fee_type} tag_size={'l'} when_tags_updated={this.when_get_fee_type_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_fee_type} tag_size={'l'} when_tags_updated={this.when_get_fee_type_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:20}}/>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['237']/* 'Exchange ID.' */, 'details':this.props.app_state.loc['260']/* 'Select an exchange by its ID.' */, 'size':'l'})}
@@ -1293,7 +1300,7 @@ class NewContractorPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['261'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':'tokens', })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['263'], 'action':''})}

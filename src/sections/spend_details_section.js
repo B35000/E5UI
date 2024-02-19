@@ -110,7 +110,7 @@ class SpendDetailSection extends Component {
                 <div>
                     {this.render_spend_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 20px 0px', 'max-width':'470px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_spend_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_spend_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_spend_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_spend_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -381,7 +381,7 @@ class SpendDetailSection extends Component {
                         {this.render_detail_item('2', item['active_mint_limit'])}
                     </div>
                     
-                    {/* {this.render_detail_item('0')} */}
+                    <div style={{height:10}}/>
 
                     {this.render_token_liquidity_balance(selected_object, symbol)}
       
@@ -929,7 +929,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(proportion_ratio_events), 'interval':110})}
                     <div style={{height: 10}}/>
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2578']/* Y-Axis: Proportion' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1049,7 +1049,7 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['2397']/* `Chart containing the total supply of ` */ +symbol+this.props.app_state.loc['2389']/* ` over time.` */, 'size':'l'})}
                     {this.render_detail_item('6', {'dataPoints':this.get_total_supply_data_points(proportion_ratio_events), 'interval':110, 'hide_label':true})}
                     <div style={{height: 10}}/>
-                    {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.total_supply_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_total_supply_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/> */}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
                 </div>
@@ -1321,7 +1321,7 @@ class SpendDetailSection extends Component {
         } else {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Amount: '+this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 'l' })}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
                     {/* <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
@@ -1534,7 +1534,7 @@ class SpendDetailSection extends Component {
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_target_identifier(item), 'details': this.props.app_state.loc['2590']/* 'Targeted Modify Item' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.get_value_ui(item)}
+                    {this.get_value_ui(item, object)}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p6), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
@@ -1557,6 +1557,10 @@ class SpendDetailSection extends Component {
 
         var target_array_pos = item.returnValues.p3
         var target_array_item = item.returnValues.p4
+
+        if(target_array_pos == 4/* exchange_entry_amounts */){
+            return 'price'
+        }
         var selected_key = ''
         for (let key in obj) {
             if (obj[key]['position'][0] == target_array_pos && obj[key]['position'][1] == target_array_item) {
@@ -1568,10 +1572,18 @@ class SpendDetailSection extends Component {
         return selected_key
     }
 
-    get_value_ui(item) {
+    get_value_ui(item, object) {
         var identifier = this.get_target_identifier(item)
-        var type = this.get_contract_modify_details()[identifier]['picker']
         var number = item.returnValues.p5
+         
+        var target_array_pos = item.returnValues.p3
+        var target_array_item = item.returnValues.p4
+
+        var type = identifier == 'price' ? 'number' : this.get_contract_modify_details()[identifier]['picker']
+        var exchange = object['data']
+        var exchange_id = exchange[3][target_array_item]
+
+        var title = identifier == 'price' ? this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id] : identifier
 
         if (type == 'proportion') {
             return (
@@ -1591,7 +1603,7 @@ class SpendDetailSection extends Component {
             return (
                 <div>
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': identifier, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1880']/* 'units' */, })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': title, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1880']/* 'units' */, })}
                     </div>
                 </div>
             )

@@ -32,7 +32,7 @@ function makeid(length) {
 class DirectPurchasetPage extends Component {
     
     state = {
-        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5
+        selected: 0, storefront_item:{}, id:makeid(8), direct_purchase_tags_object: this.get_direct_purchase_tags_object(),  type:this.props.app_state.loc['1093']/* 'direct-purchase' */, entered_indexing_tags:[this.props.app_state.loc['1094']/* 'direct' */, this.props.app_state.loc['1095']/* 'purchase' */, this.props.app_state.loc['1096']/* 'buy' */], purchase_unit_count:1, selected_variant:null, fulfilment_location:'', e5:this.props.app_state.selected_e5, custom_specifications:''
     };
 
     get_direct_purchase_tags_object(){
@@ -51,7 +51,7 @@ class DirectPurchasetPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.direct_purchase_tags_object} tag_size={'l'} when_tags_updated={this.when_direct_purchase_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.direct_purchase_tags_object} tag_size={'l'} when_tags_updated={this.when_direct_purchase_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_direct_purchase_item()}>
@@ -90,18 +90,30 @@ class DirectPurchasetPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1097']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['1098']/* 'Set the delivery location, and be sure to be specific to avoid shipping issues' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1099']/* 'Shipping Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                    {this.render_shipping_detail_suggestions()}
+                    {this.render_detail_item('0')}
+
+
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1114c']/* 'Custom Specifications.' */, 'details':this.props.app_state.loc['1114d']/* 'You can also include custom requirements for the item variant your ordering such as color, material and such.' */, 'size':'l'})}
                     <div style={{height:10}}/>
+                    <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['1114e']/* 'Custom Specifications.' */} when_text_input_field_changed={this.when_custom_specifications_input_field_changed.bind(this)} text={this.state.custom_specifications} theme={this.props.theme}/>
+                    {this.render_detail_item('0')}
+
+
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1100']/* 'Item Variants' */, 'details':this.props.app_state.loc['1101']/* 'Pick the variant you want to purchase' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     {this.render_item_variants()}
                     {this.render_selected_variant()}
                     {this.render_detail_item('0')}
+
+
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1102']/* 'Amount in ' */+composition_type, 'subtitle':this.format_power_figure(this.state.purchase_unit_count), 'barwidth':this.calculate_bar_width(this.state.purchase_unit_count), 'number':this.format_account_balance_figure(this.state.purchase_unit_count), 'barcolor':'', 'relativepower':composition_type, })}
                     </div>
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/>
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/>
                     <div style={{height:10}}/>
 
                     {this.render_set_storefront_prices_list_part()}
@@ -114,6 +126,59 @@ class DirectPurchasetPage extends Component {
             )
         }
     }
+
+    render_shipping_detail_suggestions(){
+        var items = [].concat(this.get_fulfilment_location_from_local_storage())
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3',{'title':this.truncate(item['text'], 15), 'details':this.get_time_difference(item['time']),'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_fulfilment_location_from_local_storage(){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            return []
+        }
+
+        return fulfilment_locations['data']
+    }
+
+    when_suggestion_clicked = (item, pos) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.when_location_suggestion_double_tapped(item, pos)
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.when_location_suggestion_tapped(item, pos)
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    when_location_suggestion_tapped(item, pos){
+        this.setState({fulfilment_location: item['text']})
+    }
+
+    when_location_suggestion_double_tapped(item, pos){
+        this.remove_fulfilment_location_from_local_storage(pos)
+    }
+
+
 
     get_variant_supply(){
         if(this.state.selected_variant != null){
@@ -132,6 +197,9 @@ class DirectPurchasetPage extends Component {
         this.setState({fulfilment_location: text})
     }
 
+    when_custom_specifications_input_field_changed(text){
+        this.setState({custom_specifications: text})
+    }
 
     render_set_storefront_prices_list_part(){
         var middle = this.props.height-200;
@@ -231,17 +299,19 @@ class DirectPurchasetPage extends Component {
     }
 
     render_variant_item_if_selected(item){
+        var composition_type = this.get_composition_type()
+
         if(this.state.selected_variant == item){
             return(
                 <div>
                     <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
-                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' '+composition_type, 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
                 </div>
             )
         }else{
             return(
                 <div>
-                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                    {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' '+composition_type, 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
                 </div>
             )
         }
@@ -366,9 +436,50 @@ class DirectPurchasetPage extends Component {
         }
         else{
             this.props.add_direct_purchase_to_stack(this.state)
-            this.setState({purchase_unit_count:1, selected_variant:null, fulfilment_location:''})
+            this.add_fulfilment_location_to_local_storage()
+            this.setState({purchase_unit_count:1, selected_variant:null, fulfilment_location:'', custom_specifications:''})
             this.props.notify(this.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1700)
         }
+    }
+
+    add_fulfilment_location_to_local_storage(){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            fulfilment_locations = {'data':[]}
+        }
+        var set_fulfilment_location = this.state.fulfilment_location
+        var obj = {'text':set_fulfilment_location, 'time':((new Date()).getTime()/1000)}
+
+        if(!this.fulfilment_location_includes(fulfilment_locations['data'], obj)){
+            fulfilment_locations['data'].push(obj)
+        }
+
+        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+    }
+
+    remove_fulfilment_location_from_local_storage(pos){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            fulfilment_locations = {'data':[]}
+        }
+        fulfilment_locations['data'].splice(pos, 1);
+
+        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+    }
+
+    fulfilment_location_includes(array, item){
+        var includes = false
+        array.forEach(element => {
+            if(element['text'] == item['text']){
+                includes = true
+            }
+        });
+
+        return includes
     }
 
     get_composition_type(){

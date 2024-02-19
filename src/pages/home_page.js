@@ -1,9 +1,4 @@
 import React, { Component } from 'react';
-import Background from './../assets/background.png'
-import JobIconImg from './../assets/job_icon.png';  
-import ExploreIconImg from './../assets/explore_icon.png'; 
-import WalletIconImg from './../assets/wallet_icon.png'; 
-import StackIconImg from './../assets/stack_icon.png';
 import Letter from './../assets/letter.png'; 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
@@ -18,7 +13,8 @@ import Tags from './../components/tags';
 import PostDetailSection from '../sections/detail_section';
 import PostListSection from './../sections/list_section';
 import FilterSection from './filter_section';
-import PostPreview from './post_preview_page'
+import PostPreview from './post_preview_page';
+import NsfwPage from './nsfw_warning_page'
 
 import CanvasJSReact from './../externals/canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -44,7 +40,7 @@ class home_page extends Component {
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
         selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null, selected_mail_item: null, selected_storefront_item: null, selected_bag_item: null,
-        view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false,
+        view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
         viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], confirmation_dialog_box: false, contact_to_add:0, 
         
@@ -61,6 +57,7 @@ class home_page extends Component {
 
         this.filter_section_page = React.createRef();
         this.post_preview_page = React.createRef();
+        this.post_nsfw_page = React.createRef();
     }
 
 
@@ -214,7 +211,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1200']/* 'subscriptions' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
           ]
         obj[this.props.app_state.loc['1201']/* 'mail' */] = [
               ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */], [1],[1]
@@ -288,12 +285,12 @@ class home_page extends Component {
         var width = this.props.width;
         var navbar_color = this.props.theme['nav_bar_color'];
         var background_color = this.props.theme['homepage_background_color'];
-
+        var back = this.props.theme['background']
 
         if(size == 'm'){
             return ( 
                 <div className="row" style={{height: this.props.height, width:'102%','background-color':background_color, 'overflow': 'hidden'}}>
-                    <div className="col" style={{backgroundImage: `url(${Background})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
+                    <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
                         <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 15px'}}>
                             {this.render_top_tag_bar(size)}
                         </div>
@@ -309,12 +306,14 @@ class home_page extends Component {
                     </div>
                     {this.render_filter_section_bottomsheet()}
                     {this.render_post_preview_bottomsheet()}
+                    {this.render_nsfw_preview_bottomsheet()}
+                    {this.render_dialog_ui()}
                 </div>
             );
         }
         else if(size == 's'){
             return ( 
-                <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${Background})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
+                <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
                     {this.render_small_screen_size_ui(size, top_bar, width)}
                     
                     <div style={{height:5}}/>
@@ -325,6 +324,7 @@ class home_page extends Component {
                     {this.render_view_object_bottomsheet()}
                     {this.render_filter_section_bottomsheet()}
                     {this.render_post_preview_bottomsheet()}
+                    {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
                 </div>
             );
@@ -408,7 +408,7 @@ class home_page extends Component {
         var size = this.props.screensize;
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5', 'overflow-y':'scroll !important'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': overlay_shadow_color, 'border-radius': '0px 0px 0px 0px','margin': '0px 5px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'scroll !important' }}>
+            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 2px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'scroll !important' }}>
                 {this.render_post_detail_object(size)}
             </div>
         </SwipeableBottomSheet>
@@ -444,19 +444,19 @@ class home_page extends Component {
           return ( 
               <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
                   <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('l','1px 0px 0px 12px', JobIconImg, 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+                      {this.render_navbar_button('l','1px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
                   </div>
 
                   <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                    {this.render_navbar_button('l','2px 0px 0px 3px', ExploreIconImg, 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                    {this.render_navbar_button('l','2px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
                   </div>
 
                   <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('l','2px 0px 0px 15px', WalletIconImg, 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                    {this.render_navbar_button('l','2px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
                   </div>
                   
                   <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('l','2px 0px 0px 5px', StackIconImg, 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    {this.render_navbar_button('l','2px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
                   </div>
               </div>
           );
@@ -465,20 +465,20 @@ class home_page extends Component {
           return(
             <div className="row" style={{'padding':'0px 0px 0px 0px','display':'flex', 'align-items': 'center', height:'100%', width:'103%'}}>
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 0px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'border-radius': '1px 0px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('s','0px 0px 0px 0px', JobIconImg, 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['JobIcon'], 'auto', '38px','5px 0px 0px 0px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                      {this.render_navbar_button('s','0px 0px 0px 0px', ExploreIconImg, 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                      {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['ExploreIcon'], 'auto', '30px','5px 0px 0px 0px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'0px 0px 0px 1px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', WalletIconImg, 'auto', '42px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['WalletIcon'], 'auto', '42px','6px 0px 0px 0px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
                       
                   </div>
 
                   <div className="col" style={{height: '100%', width:'100%', padding:'5px 0px 0px 1px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('s','0px 0px 0px 0px', StackIconImg, 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    {this.render_navbar_button('s','0px 0px 0px 0px', this.props.theme['StackIcon'], 'auto', '31px','4px 0px 0px 0px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
                   </div>
               </div>
           );
@@ -517,7 +517,7 @@ class home_page extends Component {
                 <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
                     <img src={img} style={{height:img_height,width:img_width, padding: img_padding}} />
 
-                    <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p>
+                    <p style={{'font-size': '12px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p>
 
                     <p style={{'font-size': '8px','color': navbar_button_secondary_text,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                 </div>
@@ -532,7 +532,7 @@ class home_page extends Component {
                     </div>
                     <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
                         <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
-                            <p style={{'font-size': '18px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px #BABABA'}}>{title}</p> 
+                            <p style={{'font-size': '18px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p> 
                             <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                         </div>
                     </div>
@@ -832,10 +832,67 @@ class home_page extends Component {
 
 
 
+
+    render_nsfw_preview_bottomsheet(){
+        if(this.state.post_nsfw_bottomsheet2 != true) return;
+        var background_color = this.props.theme['send_receive_ether_background_color'];
+        var size = this.props.size
+        return(
+        <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_post_nsfw_bottomsheet.bind(this)} open={this.state.post_nsfw_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
+            <div style={{ height: 430, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                <NsfwPage ref={this.post_nsfw_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_warning_ignored={this.when_warning_ignored.bind(this)}/>
+            </div>
+        </SwipeableBottomSheet>
+        )
+    }
+
+    open_post_nsfw_bottomsheet(){
+        if(this.state.post_nsfw_bottomsheet == true){
+            //closing
+            this.setState({post_nsfw_bottomsheet: !this.state.post_nsfw_bottomsheet});
+            var me = this;
+            setTimeout(function() {
+                me.setState({post_nsfw_bottomsheet2: false});
+            }, (1 * 1000));
+        }else{
+            //opening
+            this.setState({post_nsfw_bottomsheet2: true});
+            var me = this;
+            setTimeout(function() {
+                if(me.state != null){
+                    me.setState({post_nsfw_bottomsheet: !me.state.post_nsfw_bottomsheet});
+                }
+            }, (1 * 200));
+        }
+    }
+
+    open_post_nsfw_section(index, id, e5){
+        this.open_post_nsfw_bottomsheet()
+
+        var me = this;
+        setTimeout(function() {
+            if(me.post_nsfw_page.current != null){
+                me.post_nsfw_page.current?.set_data(index, id, e5) 
+            }
+        }, (1 * 500));  
+        
+    }
+
+    when_warning_ignored(index, id, e5){
+        this.open_post_nsfw_bottomsheet()
+        this.open_post(index, id, e5)
+    }
+
+
+
+
+
+
+
     render_tag_bar_group(option, size){
         return(
             <div>
-                <Tags app_state={this.props.app_state} page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                <Tags font={this.props.app_state.font} page_tags_object={option} tag_size={size} when_tags_updated={this.when_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
             </div>
         )
     }
@@ -1664,6 +1721,17 @@ class home_page extends Component {
             }
             return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))
         }
+        else if(selected_option_name == this.props.app_state.loc['1264b']/* upcoming */){
+            var my_paid_subscriptions = []
+            var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+            for(var i=0; i<all_subscriptions.length; i++){
+                var object = all_subscriptions[i]
+                if(object['payment'] != 0 && object['payment'] <= 60*60*24){
+                    my_paid_subscriptions.push(object)
+                }
+            }
+            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(my_paid_subscriptions)))
+        }
         else {
             var my_subscriptions = []
             var all_subscriptions = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
@@ -2005,7 +2073,32 @@ class home_page extends Component {
         }
     }
 
-    when_post_item_clicked(index, id, e5){
+    when_post_item_clicked(index, id, e5, is_post_nsfw){
+        // this.setState({selected_post_item: id+e5})
+        // this.set_detail_data()
+        // this.add_to_tab(id+e5, id)
+        // var viewed_posts_clone = this.state.viewed_posts.slice()
+        // var pos = viewed_posts_clone.indexOf(id)
+        // if(pos == -1){
+        //     viewed_posts_clone.push(id)
+        //     this.setState({viewed_posts: viewed_posts_clone})
+        //     this.update_cookies()
+        // }
+
+        // this.props.get_objects_messages(id, e5)
+        // this.props.get_post_award_data(id, e5)
+        if(is_post_nsfw){
+            if(this.props.app_state.auto_skip_nsfw_warning == 'e'){
+                this.open_post_nsfw_section(index, id, e5)
+            }else{
+                this.open_post(index, id, e5)
+            }
+        }else{
+            this.open_post(index, id, e5)
+        }
+    }
+
+    open_post(index, id, e5,){
         this.setState({selected_post_item: id+e5})
         this.set_detail_data()
         this.add_to_tab(id+e5, id)
@@ -2627,7 +2720,7 @@ class home_page extends Component {
 
     render_dialog_ui(){
         return(
-            <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
+            <Dialog PaperProps={{ sx: { borderRadius: "15px" } }} onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1253']/* Confirmation */}</h3>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1254']/* 'Add To Contacts Confirmation' */, 'details':this.props.app_state.loc['1255']/* 'Confirm that you want to add the account ' */+this.state.contact_to_add+this.props.app_state.loc['1256']/* ' to your contacts' */, 'size':'s'})}
@@ -2997,6 +3090,10 @@ class home_page extends Component {
                     this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
                     return;
                 }
+                if(!this.should_show_post_if_masked_for_outsiders(post)){
+                    this.props.notify(this.props.app_state.loc['1264a']/* That link is unavailable. */)
+                    return;
+                }
                 var required_subscriptions = post['ipfs'].selected_subscriptions
                 if(required_subscriptions == null) {
                     this.open_link(item)
@@ -3098,8 +3195,28 @@ class home_page extends Component {
         return has_sender_paid_all_subs
     }
 
+    should_show_post_if_masked_for_outsiders(object){
+        var selected_option = this.is_post_marked_as_masked_for_outsiders(object)
+        if(selected_option == false) return true
+        else{
+            var me = this.props.app_state.user_account_id[object['e5']]
+            if(me == null) me = 1
+            if(me <1000){
+                return false
+            }else{
+                return true
+            }
+        }
+    }
+
+    is_post_marked_as_masked_for_outsiders(object){
+        if(object['ipfs'].get_masked_from_outsiders_option == null) return false
+        var selected_masked_option = this.get_selected_item2(object['ipfs'].get_masked_from_outsiders_option, 'e')
+        if(selected_masked_option == 1) return true
+    }
+
     open_link(item){
-        console.log('opening link')
+        
         var obj = {'contract':['?','contracts'],'channel':['e','channels'],'contractor':['?','contractors'],'job':['?','jobs'],'post':['e','posts'],'proposal':['?','proposals'],'storefront':['e','storefront'],'subscription':['?','subscriptions'],'token':['w',this.get_token_type_if_token(item)],}
 
         var selected_page = obj[item['type']][0]
@@ -3184,6 +3301,8 @@ class home_page extends Component {
 
 
 
+
+
     open_notification_link(id, e5, type){
         var obj = {'contract':['?','contracts'], 'mail':['?', 'mail'],'contractor':['?','contractors'],'job':['?','jobs'],'storefront':['e','storefront'],'bag':['e','bags'],'token':['w',this.get_token_type(id, e5)],}
 
@@ -3239,7 +3358,6 @@ class home_page extends Component {
             }
         }
     }
-
 
     find_mail_object_from_convo_id(convo_id){
         var all_mail = this.get_all_mail()

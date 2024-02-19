@@ -110,18 +110,18 @@ class tags extends Component {
             }
         }
 
-        var font = this.props.app_state == null ? 'Sans-serif' : this.props.app_state.font
+        var font = this.props.font
 
         if(tag_size == 's'){
             return ( 
                 <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
-                    <p style={{'color': 'white', 'font-size': '13px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{this.final_text(txt,index)}</p>
+                    <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '13px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': font}} className="text-center">{this.final_text(txt,index)}</p>
                 </div>
             );
         }else{
             return ( 
                 <div onClick={() => this.when_tag_button_clicked(index)} style={{'background-color': background, 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+this.props.theme['tag_shadow']}}>
-                    <p style={{'color': 'white', 'font-size': '16px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{this.final_text(txt,index)}</p>
+                    <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '16px', 'padding':' 3px 17px 4px 17px', 'text-align': 'justify','text-shadow': '-1px -1px 3px #A1A1A1', 'font-family': font}} className="text-center">{this.final_text(txt,index)}</p>
                 </div>
             );
         }

@@ -118,7 +118,7 @@ class StorefrontDetailsSection extends Component {
                 <div>
                     {this.render_storefront_details_section()}
                     <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_storefront_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_storefront_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_storefront_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_storefront_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -226,7 +226,7 @@ class StorefrontDetailsSection extends Component {
                     
                     {this.render_detail_item('3', {'title':variants.length+this.props.app_state.loc['2612']/* ' variants' */, 'details':this.props.app_state.loc['2613']/* 'To choose from.' */, 'size':'l'})} 
                     <div style={{height: 5}}/>
-                    {this.render_item_variants(object)}  
+                    {this.render_item_variants(object, composition_type)}  
                     
                     <div style={{height: 20}}/>
                     {this.render_out_of_stock_message_if_any(object)}                
@@ -247,14 +247,15 @@ class StorefrontDetailsSection extends Component {
         )
     }
 
-    render_item_variants(object){
+    render_item_variants(object, composition_type){
         var items = [].concat(object['ipfs'].variants)
+         
         return(
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
                     {items.map((item, index) => (
                         <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_variant_item_clicked(item)}>
-                            {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' Units.', 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
+                            {this.render_detail_item('3',{'title':this.format_account_balance_figure(item['available_unit_count'])+' '+composition_type, 'details':this.truncate(item['variant_description'], 15),'size':'s'})}
                         </li>
                     ))}
                 </ul>
@@ -761,6 +762,8 @@ class StorefrontDetailsSection extends Component {
                     <div style={{height:3}}/>
                     {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1958']/* 'Variant ID: ' */+item['variant_id'], 'details':this.get_variant_from_id(item['variant_id'], object)['variant_description'] })}
                     <div style={{height:3}}/>
+                    {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1114c']/* 'custom_specifications ' */, 'details':item['custom_specifications']})}
+                    <div style={{height:3}}/>
                     {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1063']/* 'Quantity: ' */+this.format_account_balance_figure(item['purchase_unit_count']), 'details':this.props.app_state.loc['1064']/* 'Sender Account ID: ' */+item['sender_account'] })}
                     <div style={{height:3}}/>
                     {this.render_fulfilment_signature_if_any(item, object)}
@@ -838,7 +841,7 @@ class StorefrontDetailsSection extends Component {
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>

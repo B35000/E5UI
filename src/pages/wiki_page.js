@@ -32,7 +32,7 @@ class WikiPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
-                {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.get_wiki_page_tags_object} tag_size={'l'} when_tags_updated={this.when_wiki_tags_updated.bind(this)} theme={this.props.theme}/>
+                {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_wiki_page_tags_object} tag_size={'l'} when_tags_updated={this.when_wiki_tags_updated.bind(this)} theme={this.props.theme}/>
                 
                 <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   

@@ -55,7 +55,7 @@ class ExitContractPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.exit_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_exit_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.exit_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_exit_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         

@@ -126,7 +126,7 @@ class NumberPicker extends Component {
     render_number_label_item(background_color, shadow_color, pos, number, width){
       return(
         <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 0px 5px 5px 5px' }} onClick={()=>this.when_number_label_item_clicked(pos)}>
-            <p style={{'color': this.get_text_color(pos), 'font-size': '26px', 'padding-top':' 0px'}} >{number}</p>
+            <p style={{'color': this.get_text_color(pos), 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
         </button>
       );
     }
@@ -302,7 +302,7 @@ class NumberPicker extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups item_id={item_id} object_data={object_data} when_number_picker_power_tapped={this.when_number_picker_power_tapped.bind(this)} theme={this.props.theme}/>
+                <ViewGroups font={this.props.font} item_id={item_id} object_data={object_data} when_number_picker_power_tapped={this.when_number_picker_power_tapped.bind(this)} theme={this.props.theme}/>
             </div>
         )
 

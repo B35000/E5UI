@@ -57,6 +57,7 @@ class StackPage extends Component {
         get_stack_optimizer_tags_object: this.get_stack_optimizer_tags_object(),
         get_homepage_tags_position_tags_object: this.get_homepage_tags_position_tags_object(),
         get_preferred_font_tags_object: this.get_preferred_font_tags_object(),
+        get_skip_nsfw_warning_tags_object: this.get_skip_nsfw_warning_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -133,7 +134,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['xor','',0], ['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['1593a']/* 'auto' */], [this.get_light_dark_option()]
+                ['xor','',0], ['e',this.props.app_state.loc['1417']/* 'light' */,this.props.app_state.loc['1418']/* 'dark' */, this.props.app_state.loc['1593a']/* 'auto' *//* , this.props.app_state.loc['2741'] *//* green */], [this.get_light_dark_option()]
             ],
         };
         
@@ -148,6 +149,9 @@ class StackPage extends Component {
         }
         else if(this.props.app_state.theme['name'] == this.props.app_state.loc['1593a']/* 'auto' */){
             return 3
+        }
+        else if(this.props.app_state.theme['name'] == this.props.app_state.loc['2741']/* green */){
+            return 4
         }
         return 1
     }
@@ -581,6 +585,35 @@ class StackPage extends Component {
 
 
 
+    get_skip_nsfw_warning_tags_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['1428']/* 'enabled' */], [this.get_selected_skip_nsfw_warning_option()]
+            ],
+        };
+    }
+
+    get_selected_skip_nsfw_warning_option(){
+        if(this.props.app_state.auto_skip_nsfw_warning == 'e'){
+            return 0
+        }
+        else if(this.props.app_state.auto_skip_nsfw_warning == this.props.app_state.loc['1428']/* 'enabled' */){
+            return 1
+        }
+        return 0;
+    }
+
+    set_skip_nsfw_warning_tag(){
+        this.setState({get_skip_nsfw_warning_tags_object: this.get_skip_nsfw_warning_tags_object(),})
+    }
+
+
+
+
+
 
 
 
@@ -592,7 +625,7 @@ class StackPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
                 <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
@@ -693,7 +726,7 @@ class StackPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'subtitle':this.format_power_figure(this.state.run_gas_limit), 'barwidth':this.calculate_bar_width(this.state.run_gas_limit), 'number':this.format_account_balance_figure(this.state.run_gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['1430']/* 'units' */, })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.set_tx_gas_limit()}>
@@ -709,7 +742,7 @@ class StackPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
@@ -718,7 +751,7 @@ class StackPage extends Component {
                 
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l'})}
 
-                <NumberPicker number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
 
             </div>
         )
@@ -880,7 +913,7 @@ class StackPage extends Component {
 
     render_confirm_clear_dialog(){
         return(
-            <Dialog onClose = {() => this.cancel_clear_transactions_dialog_box()} open = {this.state.confirm_clear_stack_dialog}>
+            <Dialog PaperProps={{ sx: { borderRadius: "15px" } }} onClose = {() => this.cancel_clear_transactions_dialog_box()} open = {this.state.confirm_clear_stack_dialog}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1443']/* Confirm Action */}</h4>
@@ -1081,7 +1114,7 @@ class StackPage extends Component {
                     
                     {this.render_detail_item('6', {'dataPoints':this.get_gas_history_data_points(events), 'interval':this.get_gas_history_interval_figure(events)})}
                     <div style={{height: 10}}/>
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.gas_history_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_gas_history_chart_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1460']/* 'Y-Axis: Gas Prices in Gwei' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
@@ -1996,6 +2029,8 @@ class StackPage extends Component {
                     var ipfs_obj = await this.get_object_ipfs_index(final_bag_object, calculate_gas);
                     metadata_strings[0].push(ipfs_obj.toString())
 
+                    should_optimize_run = false
+
                     ints.push(metadata_action)
                     strs.push(metadata_strings)
                     adds.push([])
@@ -2269,11 +2304,7 @@ class StackPage extends Component {
         ints = optimized_run['ints']
         strs = optimized_run['strs']
         adds = optimized_run['adds']
-
         console.log('-------------------------------------------run-transactions--------------------------------')
-        console.log(ints)
-        console.log(strs)
-        console.log(adds)
 
         // this.props.lock_run(false)
         // return;
@@ -2354,7 +2385,7 @@ class StackPage extends Component {
         var run_gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
         var required_ether = (run_gas_limit * run_gas_price);
         return(
-            <Dialog onClose = {() => this.cancel_dialog_box()} open = {this.state.invalid_ether_amount_dialog_box}>
+            <Dialog PaperProps={{ sx: { borderRadius: "15px" } }} onClose = {() => this.cancel_dialog_box()} open = {this.state.invalid_ether_amount_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1522']/* Issue With Run */}</h4>
@@ -3359,7 +3390,7 @@ class StackPage extends Component {
         var context = 36
         var int_data = Date.now()
 
-        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application'}
+        var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application', 'custom_specifications':t.custom_specifications}
 
         var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
 
@@ -3574,7 +3605,7 @@ class StackPage extends Component {
         //     obj[7].push(0)
         // }
 
-        var purchase_object = {'shipping_detail':t.fulfilment_location, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
+        var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
         
         var string_data = await this.get_object_ipfs_index(purchase_object, calculate_gas);
 
@@ -4662,9 +4693,9 @@ class StackPage extends Component {
                             obj.push(ints[i][j])
                         }
 
-                        // strs[i][0].forEach(element => {
-                        //     str_obj[0].push(element)
-                        // });
+                        strs[i][0].forEach(element => {
+                            str_obj[0].push(element)
+                        });
                         // adds[i].forEach(element => {
                         //     add_obj.push(element)
                         // });
@@ -5083,7 +5114,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5091,7 +5122,7 @@ class StackPage extends Component {
                     {/* {this.render_detail_item('3',{'title':'Orientation (for larger screens)', 'details':'Set the orientation for viewing a posts details', 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')} */}
 
@@ -5109,7 +5140,7 @@ class StackPage extends Component {
                     {/* {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')} */}
 
@@ -5130,7 +5161,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5142,7 +5173,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5154,7 +5185,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5166,7 +5197,7 @@ class StackPage extends Component {
                     {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
 
                     {this.render_detail_item('0')} */}
 
@@ -5179,7 +5210,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1541']/* 'Content Filter' */, 'details':this.props.app_state.loc['1542']/* 'If set to filtered, the content including the tags you follow will be prioritized in your feed.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5188,7 +5219,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_tabs_tags_object} tag_size={'l'} when_tags_updated={this.when_get_tabs_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5198,7 +5229,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1545']/* 'Preserve State (cookies)' */, 'details':this.props.app_state.loc['1546']/* 'If set to enabled, the state of E5 including your stack and settings will be preserved in memory.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storage_permissions_tags_object} tag_size={'l'} when_tags_updated={this.when_storage_permissions_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5209,7 +5240,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1547']/* 'Stack Optimizer (Experimental)' */, 'details':this.props.app_state.loc['1548']/* 'If set to enabled, similar transactions will be bundled together to consume less gas during runtime.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_optimizer_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_optimizer_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5221,7 +5252,7 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593i']/* 'Homepage Tags Position' */, 'details':this.props.app_state.loc['1593j']/* 'If set to bottom, the Homepage Tags position will be at the bottom instead of the top.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_homepage_tags_position_tags_object} tag_size={'l'} when_tags_updated={this.when_homepage_tags_position_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
 
@@ -5233,7 +5264,16 @@ class StackPage extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1593m']/* 'App Font.' */, 'details':this.props.app_state.loc['1593n']/* 'You can change your preferred font displayed by the app.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <Tags app_state={this.props.app_state} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_preferred_font_tags_object} tag_size={'l'} when_tags_updated={this.when_get_preferred_font_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1593o']/* 'Auto-Skip NSFW warning.' */, 'details':this.props.app_state.loc['1593p']/* 'If set to enabled, you wont be seeing the NSFW warning while viewing NSFW posts in the explore section.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
                 </div>
@@ -5342,11 +5382,16 @@ class StackPage extends Component {
         this.props.when_homepage_tags_position_tags_changed(selected_item)
     }
 
-
     when_get_preferred_font_tags_object_updated(tag_group){
         this.setState({get_preferred_font_tags_object: tag_group})
         var selected_item = this.get_selected_item(this.state.get_preferred_font_tags_object, 'e')
         this.props.when_preferred_font_tags_changed(selected_item)
+    }
+
+    when_get_skip_nsfw_warning_tags_object_updated(tag_object){
+        this.setState({get_skip_nsfw_warning_tags_object: tag_object})
+        var selected_item = this.get_selected_item(this.state.get_skip_nsfw_warning_tags_object, 'e')
+        this.props.when_skip_nsfw_warning_tags_changed(selected_item)
     }
 
 
@@ -5462,7 +5507,7 @@ class StackPage extends Component {
             <div>
                 {this.render_wallet_address()}
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1593b']/* Wallet Balance in Ether and Wei */}</p>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1593b']/* Wallet Balance in Ether and Wei */}</p>
                         {this.render_detail_item('2', this.get_balance_amount_in_wei())}
                         {this.render_detail_item('2', this.get_balance_amount_in_ether())}
                 </div>
@@ -5477,7 +5522,7 @@ class StackPage extends Component {
     render_reload_wallet_if_wallet_is_set(){
         if(this.props.app_state.has_wallet_been_set){
             return(
-                <div onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
+                <div style={{'padding':'0px 5px 0px 5px'}} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
                 </div>
             )
@@ -5510,7 +5555,6 @@ class StackPage extends Component {
     render_wallet_settings_part(){
         return(
             <div>
-                
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
@@ -5529,16 +5573,18 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1554']/* 'Wallet Salt' */, 'details':this.props.app_state.loc['1555']/* 'Set the preferred salt for your wallet' */, 'size':'l'})}
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_salt_figure_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_salt_figure_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1556']/* 'Wallet Thyme' */, 'details':this.props.app_state.loc['1557']/* 'Set the preferred thyme for your wallet' */, 'size':'l'})}
                 <div style={{height: 10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_wallet_thyme_tags_object} tag_size={'l'} when_tags_updated={this.when_thyme_tags_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
                 
-                {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
+                <div style={{'padding':'0px 5px 0px 5px'}}>
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1558']/* 'Set Wallet' */,'action':'when_set_wallet_button_tapped'})}
+                </div>
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>

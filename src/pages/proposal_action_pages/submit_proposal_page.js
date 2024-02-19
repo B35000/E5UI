@@ -49,7 +49,7 @@ class SubmitProposalPage extends Component {
                 <div style={{'padding':'10px 20px 0px 10px'}}>
                     <div className="row">
                         <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                            <Tags app_state={this.props.app_state} page_tags_object={this.state.submit_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_submit_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                            <Tags font={this.props.app_state.font} page_tags_object={this.state.submit_proposal_title_tags_object} tag_size={'l'} when_tags_updated={this.when_submit_proposal_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                             <div style={{'padding': '5px'}} onClick={()=>this.finish()}>

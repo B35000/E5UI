@@ -122,7 +122,7 @@ class BagDetailsSection extends Component {
                 <div>
                     {this.render_bag_details_section()}
                     <div style={{width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.navigate_view_bag_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_bag_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_bag_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_bag_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
             )
@@ -198,7 +198,7 @@ class BagDetailsSection extends Component {
         
         return(
             <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
+                <div style={{ 'overflow-y': 'scroll', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', this.get_senders_name(item['sender_account'], object))}
                     <div style={{height: 10}}/>
@@ -303,11 +303,12 @@ class BagDetailsSection extends Component {
     }
 
     render_variant_item_if_selected(item, object){
-        var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
+        // var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
+        var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
         var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
         if(variant_in_store == null) return null
-        var items = variant_in_store['price_data']
-        var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
+        // var items = variant_in_store['price_data']
+        // var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
 
         if(this.state.selected_variant == item){
             return(
@@ -343,7 +344,8 @@ class BagDetailsSection extends Component {
     render_variant_details(object){
         var item = this.state.selected_variant
         if(item != null){
-            var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
+            // var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
+            var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
             if(variant_in_store == null) return null
             var items = variant_in_store['price_data']
@@ -620,7 +622,7 @@ class BagDetailsSection extends Component {
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
                     <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
 
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}

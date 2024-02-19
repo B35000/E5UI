@@ -36,7 +36,7 @@ class ConfirmRunPage extends Component {
     render(){
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_confirm_run_tags_object} tag_size={'l'} when_tags_updated={this.when_get_confirm_run_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_confirm_run_tags_object} tag_size={'l'} when_tags_updated={this.when_get_confirm_run_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height: 10}}/>
 
                 {this.render_everything()}

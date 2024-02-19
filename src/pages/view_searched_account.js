@@ -80,7 +80,7 @@ class SearchedAccountPage extends Component {
         }
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.render_search_bar()}
                 <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-f}}>

@@ -200,7 +200,7 @@ class NewStorefrontItemPage extends Component {
 
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
+                        <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
                         <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
@@ -295,7 +295,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['463']/* 'Unit Denomination' */, 'details':this.props.app_state.loc['464']/* 'Specify the denomination of the item from the tag picker below' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.composition_type} tag_size={'l'} when_tags_updated={this.when_composition_type_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.composition_type} tag_size={'l'} when_tags_updated={this.when_composition_type_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['465']/* 'Set denomination: ' */+selected_composition})}
@@ -311,13 +311,14 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['468']/* 'Fulfilment Location' */, 'details':this.props.app_state.loc['469']/* 'Set location of the pick up station for your item when its ordered using a bag and contractors' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={70} placeholder={this.props.app_state.loc['470']/* 'Location Details...' */} when_text_input_field_changed={this.when_fulfilment_location_input_field_changed.bind(this)} text={this.state.fulfilment_location} theme={this.props.theme}/>
+                {this.render_shipping_detail_suggestions()}
                 <div style={{height:10}}/>
 
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['471']/* 'Direct Purchase Option' */, 'details':this.props.app_state.loc['472']/* 'If set to enabled, youll handle the shipping for the item when purchased directly by your clients' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
@@ -325,14 +326,14 @@ class NewStorefrontItemPage extends Component {
                 {/* {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Sales Visibility', 'details':'If set to masked, all your direct purchase sales will be invisible to outsiders', 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.visibility_tags_object} tag_size={'l'} when_tags_updated={this.when_visibility_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/> */}
 
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['473']/* 'Product Chatroom' */, 'details':this.props.app_state.loc['474']/* 'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
@@ -341,7 +342,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['475']/* 'Product Listing' */, 'details':this.props.app_state.loc['476']/* 'If set to delisted, the item will not be visible for purchasing' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storefront_item_listing_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_listing_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
@@ -351,7 +352,7 @@ class NewStorefrontItemPage extends Component {
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['477']/* 'Product Stock' */, 'details':this.props.app_state.loc['478']/* 'If set to out-of-stock, users will not be able to direct purchase or add to their bags.' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_storefront_item_in_stock_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_in_stock_option_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storefront_item_in_stock_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_in_stock_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
 
@@ -363,6 +364,62 @@ class NewStorefrontItemPage extends Component {
             </div>
         )
     }
+
+    render_shipping_detail_suggestions(){
+        var items = [].concat(this.get_fulfilment_location_from_local_storage())
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3',{'title':this.truncate(item['text'], 15), 'details':this.get_time_difference(item['time']),'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_fulfilment_location_from_local_storage(){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            return []
+        }
+
+        return fulfilment_locations['data']
+    }
+
+    when_suggestion_clicked = (item, pos) => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.when_location_suggestion_double_tapped(item, pos)
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.when_location_suggestion_tapped(item, pos)
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    when_location_suggestion_tapped(item, pos){
+        this.setState({fulfilment_location: item['text']})
+    }
+
+    when_location_suggestion_double_tapped(item, pos){
+        this.remove_fulfilment_location_from_local_storage(pos)
+    }
+
+
+
+
+
 
     render_direct_shipping_fee_view_if_enabled(){
         var selected_item = this.get_selected_item(this.state.purchase_option_tags_object, this.state.purchase_option_tags_object['i'].active)
@@ -397,7 +454,7 @@ class NewStorefrontItemPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['484']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.shipping_price_amount), 'barwidth':this.calculate_bar_width(this.state.shipping_price_amount), 'number':this.format_account_balance_figure(this.state.shipping_price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['483']/* 'tokens' */, })}
                     </div>
 
-                    <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                     <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_price_set()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['485']/* 'Add Price' */, 'action':''})}
@@ -879,7 +936,7 @@ class NewStorefrontItemPage extends Component {
                 {/* {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['497']})} */}
                 
                 
-                {/* <Tags app_state={this.props.app_state} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
+                {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_text_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_font_style_updated.bind(this)} theme={this.props.theme}/>
                 */}
 
                 <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['135']/* 'Type Something...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
@@ -1153,7 +1210,7 @@ class NewStorefrontItemPage extends Component {
 
 
                 {this.render_detail_item('0')}
-                <Tags app_state={this.props.app_state} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_sort_links_tags_object} tag_size={'l'} when_tags_updated={this.when_get_sort_links_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 <div style={{height:10}}/>
                 {this.render_searched_link_results()}
@@ -1760,7 +1817,7 @@ class NewStorefrontItemPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['505']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['506']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['507']/* 'Add Price' */, 'action':''})}
@@ -1907,7 +1964,7 @@ class NewStorefrontItemPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                 </div>
 
-                <NumberPicker number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_enter_item_price_part()}
 
@@ -2475,6 +2532,8 @@ class NewStorefrontItemPage extends Component {
                 device_country :me.props.app_state.device_country,
                 e5 :me.props.app_state.selected_e5,})
 
+            this.add_fulfilment_location_to_local_storage()
+
             setTimeout(function() {
                 me.props.when_add_new_object_to_stack(me.state)
 
@@ -2491,6 +2550,47 @@ class NewStorefrontItemPage extends Component {
             }, (1 * 1000));
             me.props.notify(me.props.app_state.loc['18']/* 'Transaction added to Stack' */, 1600)
         }
+    }
+
+
+    add_fulfilment_location_to_local_storage(){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            fulfilment_locations = {'data':[]}
+        }
+        var set_fulfilment_location = this.state.fulfilment_location
+        var obj = {'text':set_fulfilment_location, 'time':((new Date()).getTime()/1000)}
+
+        if(!this.fulfilment_location_includes(fulfilment_locations['data'], obj)){
+            fulfilment_locations['data'].push(obj)
+        }
+
+        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+    }
+
+    remove_fulfilment_location_from_local_storage(pos){
+        var fulfilment_locations = localStorage.getItem("fulfilment");
+        if(fulfilment_locations != null && fulfilment_locations != ""){
+            fulfilment_locations = JSON.parse(fulfilment_locations)
+        }else{
+            fulfilment_locations = {'data':[]}
+        }
+        fulfilment_locations['data'].splice(pos, 1);
+
+        localStorage.setItem("fulfilment", JSON.stringify(fulfilment_locations));
+    }
+
+    fulfilment_location_includes(array, item){
+        var includes = false
+        array.forEach(element => {
+            if(element['text'] == item['text']){
+                includes = true
+            }
+        });
+
+        return includes
     }
 
 
