@@ -2,15 +2,15 @@
 
 Official repository for the User Interface used in the E5 webapp.
 
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo1.jpg "screenshot1.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo2.jpg "screenshot2.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo3.jpg "screenshot3.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo4.jpg "screenshot4.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo5.jpg "screenshot5.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo6.jpg "screenshot6.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo7.jpg "screenshot7.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo8.jpg "screenshot8.jpg")
-![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo9.jpg "screenshot9.jpg")
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo1.jpg" alt="screenshot1.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo2.jpg" alt="screenshot2.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo3.jpg" alt="screenshot3.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo4.jpg" alt="screenshot4.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo5.jpg" alt="screenshot5.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo6.jpg" alt="screenshot6.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo7.jpg" alt="screenshot7.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo8.jpg" alt="screenshot8.jpg" width="100"/>
+<img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo9.jpg" alt="screenshot9.jpg" width="100"/>
 
 # Getting Started
 
