@@ -2,6 +2,7 @@
 
 Official repository for the User Interface used in the E5 webapp.
 
+<p float="left">
 <img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo1.jpg" alt="screenshot1.jpg" width="100"/>
 <img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo2.jpg" alt="screenshot2.jpg" width="100"/>
 <img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo3.jpg" alt="screenshot3.jpg" width="100"/>
@@ -11,6 +12,7 @@ Official repository for the User Interface used in the E5 webapp.
 <img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo7.jpg" alt="screenshot7.jpg" width="100"/>
 <img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo8.jpg" alt="screenshot8.jpg" width="100"/>
 <img src="https://github.com/B35000/E5UI/blob/master/public/screenshots/photo9.jpg" alt="screenshot9.jpg" width="100"/>
+</p>
 
 # Getting Started
 
