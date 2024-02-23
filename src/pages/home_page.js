@@ -16,6 +16,7 @@ import FilterSection from './filter_section';
 import PostPreview from './post_preview_page';
 import NsfwPage from './nsfw_warning_page'
 
+
 import CanvasJSReact from './../externals/canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -406,10 +407,11 @@ class home_page extends Component {
         var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
         var overlay_shadow_color = this.props.theme['send_receive_ether_overlay_shadow'];
         var size = this.props.screensize;
+
         return(
-        <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5', 'overflow-y':'scroll !important'}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-            <div style={{ height: this.props.height+10, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 2px 0px 0px', 'padding':'0px 0px 0px 0px', 'overflow-y':'scroll !important' }}>
-                {this.render_post_detail_object(size)}
+        <SwipeableBottomSheet fullScreen={true}  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px', 'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
+            <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
+                {this.render_post_detail_object(size, this.props.height)}
             </div>
         </SwipeableBottomSheet>
         )
@@ -900,13 +902,19 @@ class home_page extends Component {
     when_tags_updated(tag_group){
         if(this.state.page == '?'){
             this.setState({work_page_tags_object: tag_group})
+            var selected_page = tag_group['i'].active
+            if(selected_page == 'e') selected_page = this.props.app_state.loc['1196']/* 'jobs' */
+            this.props.load_data_from_page_in_focus(selected_page)
         }
         else if(this.state.page == 'e'){
             this.setState({explore_page_tags_object: tag_group})
+            var selected_page = tag_group['i'].active
+            this.props.load_data_from_page_in_focus(selected_page)
         }
         else{
             //wallet
             this.setState({wallet_page_tags_object: tag_group})
+            this.props.load_data_from_page_in_focus('w')
         }
 
         this.setState({ selected_job_post_item:null, selected_contract_item:null, selected_subscription_item:null, selected_post_item:null, selected_channel_item:null, selected_proposal_item:null, selected_storefront_item:null, selected_bag_item:null, selected_contractor_item: null})
@@ -2328,9 +2336,9 @@ class home_page extends Component {
 
 
 
-    render_post_detail_object(size){
-        var h = this.props.height - 48
-        if(this.props.app_state.visible_tabs == 'e') h = this.props.height
+    render_post_detail_object(size, height){
+        var h = height - 48
+        if(this.props.app_state.visible_tabs == 'e') h = height
         return(
             <div>
                 {this.render_page_tabs()}
@@ -3213,6 +3221,7 @@ class home_page extends Component {
         if(object['ipfs'].get_masked_from_outsiders_option == null) return false
         var selected_masked_option = this.get_selected_item2(object['ipfs'].get_masked_from_outsiders_option, 'e')
         if(selected_masked_option == 1) return true
+        else return false
     }
 
     open_link(item){

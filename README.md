@@ -1,4 +1,10 @@
-# Getting Started with Create React App
+###### E5(Beta)
+
+Official repository for the User Interface used in the E5 webapp.
+
+![alt text](https://github.com/B35000/E5UI/public/screenshots/photo1.jpg "Logo Title Text 1")
+
+# Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

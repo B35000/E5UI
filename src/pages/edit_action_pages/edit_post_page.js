@@ -503,7 +503,7 @@ class NewPostPage extends Component {
         var my_subscriptions = []
         var myid = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         if(myid == null) myid = 1;
-        var created_subs = this.get_all_sorted_objects(this.props.app_state.created_subscriptions)
+        var created_subs = this.get_all_sorted_objects(this.props.app_state.my_created_subscriptions)
         for(var i = 0; i < created_subs.length; i++){
             var post_author = created_subs[i]['event'] == null ? 0 : created_subs[i]['event'].returnValues.p3
             if(post_author.toString() == myid.toString()){

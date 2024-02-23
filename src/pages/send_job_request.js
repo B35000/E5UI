@@ -55,7 +55,7 @@ class SendJobRequestPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e', this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [0]
+                ['or','',0], ['e', this.props.app_state.loc['1311']/* 'contract' */, this.props.app_state.loc['1312']/* 'expiry-time' */, this.props.app_state.loc['1313']/* 'amount' */], [0]
             ],
         };
     }
@@ -317,7 +317,7 @@ class SendJobRequestPage extends Component {
     get_contract_items(){
         var my_contracts = []
         // var myid = this.props.app_state.user_account_id
-        var created_contracts = this.get_all_sorted_objects(this.props.app_state.created_contracts)
+        var created_contracts = this.get_all_sorted_objects(this.props.app_state.my_created_contracts)
         for(var i = 0; i < created_contracts.length; i++){
             var post_author = created_contracts[i]['event'] == null ? 0 : created_contracts[i]['event'].returnValues.p3
             var myid = this.props.app_state.user_account_id[created_contracts[i]['e5']]

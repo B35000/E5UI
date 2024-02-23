@@ -42,7 +42,7 @@ class tags extends Component {
     }
 
     componentDidUpdate(){
-        this.myRef.current?.scrollTo({top: 0 });
+        // this.myRef.current?.scrollTo({top: 0 });
     }
 
     handleScroll = (event, id) => {

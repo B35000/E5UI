@@ -203,7 +203,7 @@ class ViewBagApplicationContractPage extends Component {
 
         return(
             <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
-                <div style={{ 'overflow-y': 'auto', width:'100%', height: he, padding:'0px 10px 0px 10px'}}>
+                <div style={{width:'100%', padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['id'])}
@@ -271,6 +271,7 @@ class ViewBagApplicationContractPage extends Component {
 
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
+                    <div style={{height: 20}}/>
                 </div>
             </div>
         )

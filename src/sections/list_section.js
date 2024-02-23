@@ -1305,6 +1305,7 @@ class PostListSection extends Component {
         if(object['ipfs'].get_masked_from_outsiders_option == null) return false
         var selected_masked_option = this.get_selected_item2(object['ipfs'].get_masked_from_outsiders_option, 'e')
         if(selected_masked_option == 1) return true
+        else return false
     }
 
     format_post_item(object){

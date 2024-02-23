@@ -205,7 +205,6 @@ class PostsDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_taken_down_message_if_post_is_down(object)}
-                    <div style={{height: 10}}/>
                     
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -234,6 +233,7 @@ class PostsDetailsSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2526b']/* The object has been taken down.' */, 'title':this.props.app_state.loc['2526a']/* '🔒 Taken Down' */})}
+                    <div style={{height: 10}}/>
                 </div>
             )
         }
