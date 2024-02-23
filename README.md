@@ -1,8 +1,8 @@
-###### E5(Beta)
+# E5(Beta)
 
 Official repository for the User Interface used in the E5 webapp.
 
-![alt text](https://github.com/B35000/E5UI/public/screenshots/photo1.jpg "Logo Title Text 1")
+![](https://github.com/B35000/E5UI/blob/master/public/screenshots/photo1.jpg "screenshot1.jpg")
 
 # Getting Started
 
