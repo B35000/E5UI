@@ -15,6 +15,7 @@ Official repository for the User Interface used in the E5 webapp, a decentralise
 </p>
 
 [It only works on your phone](https://b35000.github.io/E5UI/). Feel free to try it out for yourself.
+[heres another link](https://ipfs.io/ipns/k51qzi5uqu5dhifmovvsiyfz8fi22wc75nga23fic5uf67800jdklqm68u5fr9/) if you prefer using ipfs.
 
 # Getting Started
 
