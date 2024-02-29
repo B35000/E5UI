@@ -98,7 +98,7 @@ class EditProposalPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* 'e.text' */,this.props.app_state.loc['111']/* 'links' */, this.props.app_state.loc['112']/* 'images' */,], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* 'e.text' *//* ,this.props.app_state.loc['111'] *//* 'links' */, this.props.app_state.loc['112']/* 'images' */,], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115']/* 'text' */,this.props.app_state.loc['120']/* 'e.font' */, this.props.app_state.loc['121']/* 'e.size' */], [0]

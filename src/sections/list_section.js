@@ -29,7 +29,43 @@ class PostListSection extends Component {
         selected: 0,
         viewed_posts:[],
         scroll_positions:{}, typed_search_id:'', searched_account:'', typed_search_ether_id:'',
+        loading_screen_opacity:0,
+        direction:'positive',
     };
+
+
+    componentDidMount(){
+        if(this.interval != null) clearInterval(this.interval);
+        
+        var me = this;
+        setTimeout(function() {
+            me.interval = setInterval(() => me.set_screen_opacity(), 50);
+        }, (1 * 100));
+    }
+
+    componentWillUnmount(){
+        if(this.interval != null) clearInterval(this.interval);
+    }
+
+    set_screen_opacity(){
+        var current_value = this.state.loading_screen_opacity
+        if(this.state.direction == 'positive'){
+            var new_value = current_value + 0.03
+            if(new_value >= 1.0){
+                this.setState({direction:'negative'})
+            }else{
+                this.setState({loading_screen_opacity: new_value})
+            }
+        }else{
+            //negative
+            var new_value = current_value - 0.03
+            if(new_value <= 0.3){
+                this.setState({direction:'positive'})
+            }else{
+                this.setState({loading_screen_opacity: new_value})
+            }
+        }
+    }
 
 
     render(){
@@ -281,7 +317,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={Letter} style={{height:60 ,width:'auto'}} />
@@ -305,11 +341,27 @@ class PostListSection extends Component {
                                     {this.render_job_object(item, index)}
                                 </li>
                             ))}
+                            {this.render_loading_screen_card()}
                         </ul>
                     </div>
                 </div>
             );
         } 
+    }
+
+    render_loading_screen_card(){
+        var background_color = this.props.theme['card_background_color']
+        var card_shadow_color = this.props.theme['card_shadow_color']
+        return(
+            <div>
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','margin':'5px 0px 0px 0px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center', 'opacity':this.state.loading_screen_opacity}}>
+                    <div style={{'margin':'10px 20px 0px 0px'}}>
+                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     get_job_items(){
@@ -414,6 +466,7 @@ class PostListSection extends Component {
                                 {this.render_contract_item(item, index)}
                             </li>
                         ))}
+                    {this.render_loading_screen_card()}
                     </ul>
                 </div>
             );
@@ -513,6 +566,7 @@ class PostListSection extends Component {
                                 {this.render_proposal_object(item, index)}
                             </li>
                         ))}
+                    {this.render_loading_screen_card()}
                     </ul>
                 </div>
             );
@@ -611,6 +665,7 @@ class PostListSection extends Component {
                                 {this.render_subscription_object(item, index)}
                             </li>
                         ))}
+                    {this.render_loading_screen_card()}
                     </ul>
                 </div>
             );
@@ -843,6 +898,7 @@ class PostListSection extends Component {
                                 {this.render_contractor_object(item, index)}
                             </li>
                         ))}
+                    {this.render_loading_screen_card()}
                     </ul>
                 </div>
             );
@@ -1178,7 +1234,9 @@ class PostListSection extends Component {
                                 {this.render_post_object_if_locked(item, index)}
                             </li>
                         ))}
+                        {this.render_loading_screen_card()}
                     </ul>
+                    
                 </div>
             );
         }
@@ -1384,6 +1442,7 @@ class PostListSection extends Component {
                                 {this.render_channel_object(item, index)}
                             </li>
                         ))}
+                    {this.render_loading_screen_card()}
                     </ul>
                 </div>
             );
@@ -1481,6 +1540,7 @@ class PostListSection extends Component {
                                 {this.render_storefront_object(item, index)}
                             </li>
                         ))}
+                    {this.render_loading_screen_card()}
                     </ul>
                 </div>
             );
@@ -1614,6 +1674,7 @@ class PostListSection extends Component {
                                 {this.render_bag_object(item, index)}
                             </li>
                         ))}
+                    {this.render_loading_screen_card()}
                     </ul>
                 </div>
             );
@@ -2028,7 +2089,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px', 'margin':'5px 0px 0px 0px'}}>
                                 {this.render_small_empty_object()}
                             </li>
                         ))}
@@ -2044,9 +2105,9 @@ class PostListSection extends Component {
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}
-                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
-                        {this.render_small_empty_object()}
-                    </div> */}
+                    <div style={{'padding': '1px 5px 1px 5px'}}>
+                        {this.render_small_empty_object_loading_card()}
+                    </div>
                 </ul>
             </div>
         );
@@ -2138,6 +2199,18 @@ class PostListSection extends Component {
         
     }
 
+    render_small_empty_object_loading_card(){
+        return(
+            <div>
+                <div style={{ height: 65, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px','margin':'0px 0px 0px 0px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'opacity':this.state.loading_screen_opacity}}>
+                    <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                        <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
 
 
     render_spends_list_group(){
@@ -2154,7 +2227,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px', 'margin':'5px 0px 0px 0px'}}>
                                 {this.render_small_empty_object()}
                             </li>
                         ))}
@@ -2171,9 +2244,9 @@ class PostListSection extends Component {
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}
                         </div>
                     ))}
-                    {/* <div style={{'padding': '1px 5px 1px 5px'}}>
-                        {this.render_small_empty_object()}
-                    </div> */}
+                    <div style={{'padding': '1px 5px 1px 5px'}}>
+                        {this.render_small_empty_object_loading_card()}
+                    </div>
                 </ul>
             </div>
         );

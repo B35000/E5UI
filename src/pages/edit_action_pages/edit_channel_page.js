@@ -61,7 +61,7 @@ class NewChannelPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110'], this.props.app_state.loc['111'], this.props.app_state.loc['112'], this.props.app_state.loc['113']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* , this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['113']], [0]
             ],
             'authorities':[
               ['xor','e',1], [this.props.app_state.loc['114'],this.props.app_state.loc['118'], this.props.app_state.loc['119']], [1],[1]

@@ -41,7 +41,9 @@ class SendReceiveEtherPage extends Component {
         picked_wei_gas_price: 0,
         recipient_address:'',
         confirmation_dialog_box: false,
-        ether:{'e5':this.props.app_state.selected_e5}
+        ether:{'e5':this.props.app_state.selected_e5},
+        picked_max_priority_per_gas_amount: 0,
+        picked_max_fee_per_gas_amount: 0,
     };
 
     set_object(item){
@@ -172,7 +174,7 @@ class SendReceiveEtherPage extends Component {
     render_send_ether_middle_part(){
         var e5 = this.state.ether['e5']
 
-        var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        var gas_price = this.props.app_state.gas_price[e5]
         if(gas_price == null){
             gas_price = this.get_gas_price_from_runs()
         }
@@ -224,7 +226,7 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1381']/* 'Amount to Send' */, 'details':this.props.app_state.loc['1382']/* 'Set the amount to send in the number picker below.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1383']/* Picked Amount In Ether and Wei */}</p>
+                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1383']/* Picked Amount In Ether and Wei */}</p>
 
                     {this.render_detail_item('2', this.get_picked_amount_in_wei())}
                     {this.render_detail_item('2', this.get_picked_amount_in_ether())}
@@ -240,26 +242,71 @@ class SendReceiveEtherPage extends Component {
 
                 {this.render_detail_item('0')}
                 
-                {/* <div style={{height: 10}}/> */}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1385']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['1386']/* 'Set the gas price for your transaction below.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
-                    <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px'}} className="fw-bold">{this.props.app_state.loc['1387']/* Picked Gas Price in Ether and Gwei. */}</p>
-                    {this.render_detail_item('2', this.get_picked_gas_price_in_wei())}
-                    {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**9), 'number':(this.state.picked_wei_gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
-                    {/* {this.render_detail_item('2', this.get_picked_gas_price_in_ether())} */}
-                </div>
-
-                {this.render_gas_price_number_picker()}
-
-                {this.render_detail_item('0')}
+                {this.show_gas_price_or_eip_options(e5)}
                 
+                <div style={{height: 10}}/>
                 {this.render_detail_item('5', {'text':this.props.app_state.loc['1388']/* 'Send Ether to Address' */, 'action':'send_ether'})}
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    show_gas_price_or_eip_options(e5){
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1407a']/* 'Max Priority Fee per Gas.' */, 'details':this.props.app_state.loc['1407b']/* 'Set the max prioryt fee per gas for your transaction below.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407g']/* Picked Max Priority Gas Price. */}</p>
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount/10**9), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_priority_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
+
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1407c']/* 'Max Fee per Gas.' */, 'details':this.props.app_state.loc['1407d']/* 'Set the maximum amount of gas fee your willing to pay for your transaction below.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407h']/* Picked Max Fee Gas Price. */}</p>
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':(this.state.picked_max_fee_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_fee_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1385']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['1386']/* 'Set the gas price for your transaction below.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1387']/* Picked Gas Price in Gwei. */}</p>
+                        {/* {this.render_detail_item('2', this.get_picked_gas_price_in_wei())} */}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**9), 'number':(this.state.picked_wei_gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
+                        {/* {this.render_detail_item('2', this.get_picked_gas_price_in_ether())} */}
+                    </div>
+
+                    {this.render_gas_price_number_picker()}
+                </div>
+            )
+        }
+    }
+
+    when_new_max_priority_per_gas_figure_set(number){
+        this.setState({picked_max_priority_per_gas_amount: number+0})
+    }
+
+    when_new_max_fee_per_gas_figure_set(amount){
+        this.setState({picked_max_fee_per_gas_amount: amount+0})
     }
 
     set_maximum(g, e5){
@@ -314,7 +361,7 @@ class SendReceiveEtherPage extends Component {
         return(
             <Dialog PaperProps={{ sx: { borderRadius: "15px" } }} onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
-                    <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
+                    <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1407f']}{/* Confirmation */}</h3>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1393']/* 'Send Ether Confirmation' */, 'details':this.props.app_state.loc['1394']/* 'Confirm that you want to send Ether to the targeted recipient' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
@@ -685,12 +732,25 @@ class SendReceiveEtherPage extends Component {
         var e5 = this.state.ether['e5']
         var picked_amount = this.state.picked_wei_amount
         var my_balance = this.props.app_state.account_balance[e5]
-        
         var gas_price_picked = 30_000 * this.state.picked_wei_gas_price
-        
-        if((picked_amount+gas_price_picked) > my_balance){
-            this.props.notify(this.props.app_state.loc['1404']/* 'Your ether balance is insufficient to fulfil that transaction.' */, 7200)
-            return;
+
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            var base_fee = this.props.app_state.gas_price[e5]
+            gas_price_picked = 30_000 * (base_fee + this.state.picked_max_priority_per_gas_amount)
+            
+            if(gas_price_picked > this.state.picked_max_fee_per_gas_amount){
+                this.props.notify(this.props.app_state.loc['1407e']/* 'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.' */, 11200)
+                return;
+            }
+            else if((picked_amount+gas_price_picked) > my_balance){
+                this.props.notify(this.props.app_state.loc['1404']/* 'Your ether balance is insufficient to fulfil that transaction.' */, 7200)
+                return;
+            }
+        }else{
+            if((picked_amount+gas_price_picked) > my_balance){
+                this.props.notify(this.props.app_state.loc['1404']/* 'Your ether balance is insufficient to fulfil that transaction.' */, 7200)
+                return;
+            }
         }
 
         this.open_confirmation_dialog_box()
@@ -716,18 +776,41 @@ class SendReceiveEtherPage extends Component {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
         this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 5600)
-        this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5);
+        this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas());
         
     };
 
     set_gas_price(){
         if(this.state.picked_wei_gas_price == 0){
-            var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+            var e5 = this.state.ether['e5']
+            var gas_price = this.props.app_state.gas_price[e5]
             if(gas_price == null){
                 gas_price = this.get_gas_price_from_runs()
             }
             return gas_price;
         }else return this.state.picked_wei_gas_price
+    }
+
+    set_max_priority_per_gas(){
+        if(this.state.picked_max_priority_per_gas_amount == 0){
+            var e5 = this.state.ether['e5']
+            var gas_price = this.props.app_state.gas_price[e5]
+            if(gas_price == null){
+                gas_price = this.get_gas_price_from_runs()
+            }
+            return gas_price + 1;
+        }else return this.state.picked_max_priority_per_gas_amount
+    }
+
+    set_max_fee_per_gas(){
+        if(this.state.picked_max_fee_per_gas_amount == 0){
+            var e5 = this.state.ether['e5']
+            var gas_price = this.props.app_state.gas_price[e5]
+            if(gas_price == null){
+                gas_price = this.get_gas_price_from_runs()
+            }
+            return gas_price + 2;
+        }else return this.state.picked_max_fee_per_gas_amount
     }
 
     isValidAddress = (adr) => {

@@ -67,6 +67,9 @@ class StackPage extends Component {
 
         typed_contact_word:'', typed_alias_word:'', typed_blocked_account_word:'',
         run_time_expiry:0, confirm_clear_stack_dialog:false,
+
+        picked_max_priority_per_gas_amount:0,
+        picked_max_fee_per_gas_amount:0
     };
 
     get_stack_page_tags_object(){
@@ -735,14 +738,7 @@ class StackPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['1434']/* 'The gas price for your next run with E5. The default is set to the amount set by the network.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
-                </div>
-
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                {this.show_gas_price_or_eip_options()}
 
                 {this.render_detail_item('0')}
 
@@ -757,6 +753,50 @@ class StackPage extends Component {
         )
     }
 
+    show_gas_price_or_eip_options(){
+        var e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'details':this.props.app_state.loc['1593r']/* 'The max priority fee per gas(miner tip) for your next run with E5.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_priority_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+
+
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'details':this.props.app_state.loc['1593t']/* 'The maximum amount of gas fee your willing to pay for your next run with E5.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_fee_per_gas_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['1434']/* 'The gas price for your next run with E5. The default is set to the amount set by the network.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
+    }
+
     set_tx_gas_limit(){
         var estimated_gas = this.estimated_gas_consumed()
         this.setState({run_gas_limit: estimated_gas+80_000})
@@ -768,6 +808,14 @@ class StackPage extends Component {
 
     when_run_gas_price(number){
         this.setState({run_gas_price: number})
+    }
+
+    when_max_priority_amount(number){
+        this.setState({picked_max_priority_per_gas_amount: number+0})
+    }
+
+    when_max_fee_per_gas_amount(number){
+        this.setState({picked_max_fee_per_gas_amount: number+0})
     }
 
     when_run_expiry_time_set(number){
@@ -2313,7 +2361,8 @@ class StackPage extends Component {
 
         var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
-        var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
+        // var run_gas_price = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
+        var run_gas_price = this.get_gas_price()
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
 
         var gas_limit = this.get_latest_block_data(this.props.app_state.selected_e5).gasLimit
@@ -2343,7 +2392,7 @@ class StackPage extends Component {
                 }
                 else{
                     var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration)
+                    this.props.run_transaction_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, run_expiry_duration, )
                 }
             }else{
                 this.props.lock_run(false)
@@ -2351,8 +2400,43 @@ class StackPage extends Component {
             }
         }else{
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
-            this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price)
+            this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, this.set_max_priority_per_gas(), this.set_max_fee_per_gas())
         }  
+    }
+
+    get_gas_price(){
+        var base_fee = this.state.run_gas_price == 0 ? this.props.app_state.gas_price[this.props.app_state.selected_e5] : this.state.run_gas_price
+
+        var e5 = this.props.app_state.selected_e5
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            var gas_price = base_fee + this.set_max_priority_per_gas()
+            return gas_price
+        }else{
+            return base_fee
+        }
+        
+    }
+
+    set_max_priority_per_gas(){
+        if(this.state.picked_max_priority_per_gas_amount == 0){
+            var e5 = this.props.app_state.selected_e5
+            var gas_price = this.props.app_state.gas_price[e5]
+            if(gas_price == null){
+                gas_price = this.get_gas_price_from_runs()
+            }
+            return gas_price + 1;
+        }else return this.state.picked_max_priority_per_gas_amount
+    }
+
+    set_max_fee_per_gas(){
+        if(this.state.picked_max_fee_per_gas_amount == 0){
+            var e5 = this.props.app_state.selected_e5
+            var gas_price = this.props.app_state.gas_price[e5]
+            if(gas_price == null){
+                gas_price = this.get_gas_price_from_runs()
+            }
+            return gas_price + 2;
+        }else return this.state.picked_max_fee_per_gas_amount
     }
 
     get_latest_block_data(e5){
