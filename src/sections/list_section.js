@@ -1517,7 +1517,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={Letter} style={{height:60 ,width:'auto'}} />
@@ -1651,13 +1651,8 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
-                                        <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
-                                    </div>
-                                </div>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
+                                {this.render_small_empty_object()}
                             </li>
                         ))}
                     </ul>
@@ -1670,11 +1665,11 @@ class PostListSection extends Component {
                 <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 {this.render_bag_object(item, index)}
                             </li>
                         ))}
-                    {this.render_loading_screen_card()}
+                    {this.render_small_empty_object_loading_card()}
                     </ul>
                 </div>
             );
@@ -1692,11 +1687,16 @@ class PostListSection extends Component {
         if(this.is_object_sender_blocked(object)){
             return(
                 <div>
-                    {this.render_empty_object()}
+                    {this.render_small_empty_object()}
                 </div>
             )
         }
         if(object['ipfs'] == null) return;
+            return(
+                <div onClick={() => this.when_bag_item_clicked(index, object)}>
+                    {this.render_bag_data(object, item, index)}
+                </div>
+            )
         return(
             <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>

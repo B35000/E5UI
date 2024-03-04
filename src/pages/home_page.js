@@ -1424,7 +1424,7 @@ class home_page extends Component {
             for(var i=0; i<received_mail['received_mail'].length; i++){
                 var convo_id = received_mail['received_mail'][i]
                 var context_object = received_mail['mail_activity'][convo_id][0]
-                if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+                if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
                     all_mail.push(context_object)
                 }
             }
@@ -1468,7 +1468,7 @@ class home_page extends Component {
         for(var i=0; i<received_mail['received_mail'].length; i++){
             var convo_id = received_mail['received_mail'][i]
             var context_object = received_mail['mail_activity'][convo_id][0]
-            if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+            if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
                 all_mail.push(context_object)
             }
         }
@@ -1476,7 +1476,7 @@ class home_page extends Component {
         for(var i=0; i<created_mail['created_mail'].length; i++){
             var convo_id = created_mail['created_mail'][i]
             var context_object = created_mail['mail_activity'][convo_id][0]
-            if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+            if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
                 all_mail.push(context_object)
             }
         }

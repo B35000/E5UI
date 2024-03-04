@@ -200,7 +200,7 @@ class BagDetailsSection extends Component {
             <div style={{'border-radius': '15px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ 'overflow-y': 'scroll', width:'100%', height: he, padding:'0px 0px 0px 0px'}}>
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', this.get_senders_name(item['sender_account'], object))}
+                    {this.render_detail_item('3', item['sender_account'])}
                     <div style={{height: 10}}/>
                     <div style={{'padding': '0px 0px 0px 0px'}}>
                         {this.render_detail_item('3', item['id'])}
@@ -279,7 +279,7 @@ class BagDetailsSection extends Component {
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
         var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         return {
-            'sender_account':{'title':''+object['event'].returnValues.p3, 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
+            'sender_account':{'title':''+this.get_senders_name(object['event'].returnValues.p3, object), 'details':this.props.app_state.loc['2045']/* 'Sender Account' */, 'size':'l'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
@@ -287,6 +287,24 @@ class BagDetailsSection extends Component {
 
     render_all_variants(object){
         var items_to_deliver = [].concat(object['ipfs']['bag_orders'])
+        if(items_to_deliver.length == 0){
+            items_to_deliver = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 10px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items_to_deliver.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
         return(
             <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
@@ -304,9 +322,30 @@ class BagDetailsSection extends Component {
 
     render_variant_item_if_selected(item, object){
         // var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
+        if(this.props.app_state.created_store_mappings[object['e5']] == null){
+            return(
+                <div>
+                    <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'0px 0px 0px 0px'}}>
+                            <img src={Letter} style={{height:20 ,width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
         var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
         var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
-        if(variant_in_store == null) return null
+        if(variant_in_store == null){
+            return(
+                <div>
+                    <div style={{height:47, width:97, 'background-color': this.props.theme['card_background_color'], 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                        <div style={{'margin':'0px 0px 0px 0px'}}>
+                            <img src={Letter} style={{height:20 ,width:'auto'}} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
         // var items = variant_in_store['price_data']
         // var composition_type = storefront['ipfs'].composition_type == null ? 'items' : this.get_selected_item(storefront['ipfs'].composition_type, 'e')
 

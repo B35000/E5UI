@@ -1685,7 +1685,7 @@ class App extends Component {
   }
 
   is_allowed_in_e5(){
-    return true
+    // return true
     var obj = ['United States', 'Kenya']
     var user_country = this.get_country()
 
@@ -2622,7 +2622,7 @@ class App extends Component {
           me.setState({should_update_contacts_onchain: false, is_running: clone, should_update_section_tags_onchain: false, should_update_blocked_accounts_onchain: false})
           this.delete_stack_items(delete_pos_array)
           // this.start_get_accounts_data(false)
-          this.start_get_accounts_for_specific_e5(false, this.state.selected_e5)
+          this.start_get_accounts_for_specific_e5(false, this.state.selected_e5, false)
           me.reset_gas_calculation_figure(me)
           this.prompt_top_notification(this.getLocale()['2700']/* 'run complete!' */, 2600)
         }).on('error', (error) => {
@@ -6571,7 +6571,7 @@ class App extends Component {
           // me.get_accounts_data(me.state.account, false, this.state.web3, this.state.e5_address)
           // this.start_get_accounts_data(false)
           this.update_withdraw_balance(e5)
-          this.start_get_accounts_for_specific_e5(false, e5)
+          this.start_get_accounts_for_specific_e5(false, e5, false)
           this.prompt_top_notification(this.getLocale()['2723']/* 'withdraw complete!' */, 4000)
         }) .on('error', (error) => {
           console.error('Transaction error:', error);
@@ -6991,7 +6991,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.set_cookies()
-      me.start_get_accounts_for_specific_e5(false, ether['e5'])
+      me.start_get_accounts_for_specific_e5(false, ether['e5'], false)
     }, (1 * 1000));
   }
 
@@ -7676,12 +7676,9 @@ class App extends Component {
     var account_for_e5 = this.state.accounts[e5]
     if(web3_url != ''){
       this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
-      // await this.wait(5_000)
       if(this.get_contract_from_e5(e5) != ''){
          this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data)
       }
-    }else{
-      console.log(e5, ' e5 missing web3_url')
     }
   }
 
@@ -10034,10 +10031,7 @@ class App extends Component {
   }
 
   get_job_data = async (E52contractInstance, web3, e5, contract_addresses, account, loop_count) => {
-    // var now = Date.now()
     var created_job_events =  await this.load_event_data(web3, E52contractInstance, 'e2', e5, {p3/* item_type */: 17/* 17(job_object) */})
-    // var time = Date.now() - now;
-    // console.log('timee: ', time)
     created_job_events = created_job_events.reverse()
     var created_job = []
     var created_job_mappings = {}
@@ -10048,7 +10042,9 @@ class App extends Component {
       var id = created_job_events[i].returnValues.p2
       var hash = web3.utils.keccak256('en')
       if(created_job_events[i].returnValues.p1.toString() == hash.toString()){
+        // console.log('fetching: ', id)
         var job_data = await this.fetch_objects_data(id, web3, e5, contract_addresses);
+        // console.log('fetching: ', job_data)
         await this.wait(90)
         var job = {'id':id, 'ipfs':job_data, 'event': created_job_events[i], 'e5':e5, 'timestamp':created_job_events[i].returnValues.p6, 'author':created_job_events[i].returnValues.p5 ,'e5_id':id+e5}
         created_job.push(job)
@@ -10526,6 +10522,7 @@ class App extends Component {
     else if(page == this.getLocale()['1216']/* 'bags' */){
       this.load_storefront_data()
       this.load_bag_data()
+      this.load_contract_data()
     }
 
     else if(page == 'w'){
@@ -10924,6 +10921,9 @@ class App extends Component {
   }
 
   load_main_contracts = async (e5) => {
+    if(this.state.created_contracts[e5] != null){
+      return;
+    }
     var e5_address = this.state.e5s[e5].e5_address;
     if(e5_address != ''){
       var web3_url = this.get_web3_url_from_e5(e5)
@@ -11215,6 +11215,7 @@ class App extends Component {
 
   fetch_objects_data_from_nft_storage = async (cid, depth) => {
     await this.wait(this.state.ipfs_delay)
+
     var gateways = [
       `https://ipfs.io/ipfs/${cid}`,
       `https://gateway.ipfs.io/ipfs/${cid}`,
@@ -11231,9 +11232,14 @@ class App extends Component {
       `https://fleek.ipfs.io/ipfs/${cid}`,
       `https://ipfs.w3s.link/ipfs/${cid}`,
     ]
+
+    var gateways = [
+      `https://cloudflare-ipfs.com/ipfs/${cid}`
+    ]
     
     await this.wait(this.state.ipfs_delay)
-    var selected_gateway = gateways[Math.round(Math.random() * 12)]
+    // var selected_gateway = gateways[Math.round(Math.random() * 12)]
+    var selected_gateway = gateways[0]
 
     try {
       const response = await fetch(selected_gateway);
