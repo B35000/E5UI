@@ -31,7 +31,7 @@ function makeid(length) {
     return result;
 }
 
-class NewPostPage extends Component {
+class EditPostPage extends Component {
     
      state = {
         id: makeid(8), type:this.props.app_state.loc['765']/* 'edit-post' */,
@@ -41,8 +41,10 @@ class NewPostPage extends Component {
         entered_indexing_tags:[], entered_text_objects:[], entered_image_objects:[],
         entered_objects:[], selected_subscriptions:[], edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(), get_post_nsfw_option:this.get_post_nsfw_option(),
-        get_masked_from_outsiders_option:this.get_masked_from_outsiders_option()
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), 
+        get_post_nsfw_option:this.get_post_nsfw_option(),
+        get_masked_from_outsiders_option:this.get_masked_from_outsiders_option(),
+        get_disabled_comments_section:this.get_disabled_comments_section(),
     };
 
     get_new_job_page_tags_object(){
@@ -51,7 +53,7 @@ class NewPostPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'], this.props.app_state.loc['298']], [0]
+                ['or','',0], ['e',this.props.app_state.loc['110']/* ,this.props.app_state.loc['111'] */, this.props.app_state.loc['112'],/*  this.props.app_state.loc['298'] */], [0]
             ],
             'text':[
                 ['or','',0], [this.props.app_state.loc['115'],this.props.app_state.loc['120'], this.props.app_state.loc['121']], [0]
@@ -128,7 +130,7 @@ class NewPostPage extends Component {
     }
 
 
-        get_post_nsfw_option(){
+    get_post_nsfw_option(){
         return{
             'i':{
                 active:'e', 
@@ -151,13 +153,27 @@ class NewPostPage extends Component {
         };
     }
 
+    get_disabled_comments_section(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['2756']/* disabled */], [0]
+            ],
+        };
+    }
+
 
     set(){
         if(this.state.get_post_nsfw_option == null){
             this.setState({get_post_nsfw_option:this.get_post_nsfw_option()})
         }
-        if(this.state.get_masked_from_outsiders_option){
+        if(this.state.get_masked_from_outsiders_option == null){
             this.setState({get_masked_from_outsiders_option:this.get_masked_from_outsiders_option()})
+        }
+        if(this.state.get_disabled_comments_section == null){
+            this.setState({get_disabled_comments_section:this.get_disabled_comments_section()})
         }
         this.setState({get_new_job_page_tags_object: this.get_new_job_page_tags_object(), edit_text_item_pos:-1,get_sort_links_tags_object:this.get_sort_links_tags_object()})
     }
@@ -332,10 +348,23 @@ class NewPostPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_from_outsiders_option} tag_size={'l'} when_tags_updated={this.when_get_masked_from_outsiders_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
+
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_disabled_comments_section_option(tag_obj){
+        this.setState({get_disabled_comments_section: tag_obj})
     }
 
     when_get_post_nsfw_option(tag_group){
@@ -501,9 +530,10 @@ class NewPostPage extends Component {
 
     get_subscription_items(){
         var my_subscriptions = []
-        var myid = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
+        var myid = this.props.app_state.user_account_id[this.state.e5]
         if(myid == null) myid = 1;
         var created_subs = this.get_all_sorted_objects(this.props.app_state.my_created_subscriptions)
+        console.log('created_subs: ', this.props.app_state.my_created_subscriptions, ' my_id: ', myid)
         for(var i = 0; i < created_subs.length; i++){
             var post_author = created_subs[i]['event'] == null ? 0 : created_subs[i]['event'].returnValues.p3
             if(post_author.toString() == myid.toString()){
@@ -1549,7 +1579,7 @@ class NewPostPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
             </div>
         )
 
@@ -1596,4 +1626,4 @@ class NewPostPage extends Component {
 
 
 
-export default NewPostPage;
+export default EditPostPage;

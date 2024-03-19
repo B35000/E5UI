@@ -29,18 +29,18 @@ class PostListSection extends Component {
         selected: 0,
         viewed_posts:[],
         scroll_positions:{}, typed_search_id:'', searched_account:'', typed_search_ether_id:'',
-        loading_screen_opacity:0,
+        loading_screen_opacity:1.0,
         direction:'positive',
     };
 
 
     componentDidMount(){
-        if(this.interval != null) clearInterval(this.interval);
+        // if(this.interval != null) clearInterval(this.interval);
         
-        var me = this;
-        setTimeout(function() {
-            me.interval = setInterval(() => me.set_screen_opacity(), 50);
-        }, (1 * 100));
+        // var me = this;
+        // setTimeout(function() {
+        //     me.interval = setInterval(() => me.set_screen_opacity(), 50);
+        // }, (1 * 100));
     }
 
     componentWillUnmount(){
@@ -354,7 +354,7 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div>
-                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','margin':'5px 0px 0px 0px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center', 'opacity':this.state.loading_screen_opacity}}>
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','margin':'5px 0px 0px 0px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center',/*  'opacity':this.state.loading_screen_opacity */}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={Letter} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -2202,7 +2202,7 @@ class PostListSection extends Component {
     render_small_empty_object_loading_card(){
         return(
             <div>
-                <div style={{ height: 65, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px','margin':'0px 0px 0px 0px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'opacity':this.state.loading_screen_opacity}}>
+                <div style={{ height: 65, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px','margin':'0px 0px 0px 0px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', /* 'opacity':this.state.loading_screen_opacity */}}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
                         <img src={Letter} style={{ height: 30, width: 'auto' }} />
                     </div>
@@ -2312,7 +2312,7 @@ class PostListSection extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} width={this.props.width} theme={this.props.theme} show_images={this.show_images.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)}/>
             </div>
         )
 

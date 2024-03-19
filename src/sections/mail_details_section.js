@@ -289,7 +289,7 @@ class MailDetailsSection extends Component {
             return(
                 <div>
                     <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                        <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                        <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                             {this.render_top_title(object)}
                             {/* {this.render_focus_list(object)} */}
                             <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
@@ -339,6 +339,10 @@ class MailDetailsSection extends Component {
     scroll_to_bottom(){
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
     }
+
+    handleScroll = (event, object) => {
+        this.has_user_scrolled[object['e5_id']] = true
+    };
 
     render_focused_message(object){
         var item_arg = this.get_focused_message(object);
@@ -392,6 +396,14 @@ class MailDetailsSection extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
+        this.has_user_scrolled = {}
+    }
+
+    componentDidUpdate(){
+        var has_scrolled = this.has_user_scrolled[this.props.selected_mail_item]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
 
@@ -1056,7 +1068,7 @@ class MailDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

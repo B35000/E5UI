@@ -302,7 +302,7 @@ class ViewGroups extends Component {
               },
               height:230,
               data: [{
-                        type: "splineArea",//area
+                        type: this.props.graph_type,//area, splineArea
                         color:default_chart_color,
                         lineThickness: 0.5,
                         fillOpacity: 1,

@@ -49,7 +49,7 @@ class NumberPicker extends Component {
     render(){
         return(
             <div>
-                <div  style={{'margin':'30px 0px 0px 5px','padding': '0px 0px 5px 0px'}}>
+                <div  style={{'margin':'25px 0px 0px 5px','padding': '0px 0px 5px 0px'}}>
                     {this.render_number_label_group()}
                     {this.render_number_picker_sliders()}
                     <div style={{height: 10}}/>

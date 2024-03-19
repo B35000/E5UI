@@ -3,6 +3,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
+import DurationPicker from './../components/duration_picker';
 
 import Letter from './../assets/letter.png';
 
@@ -372,7 +373,7 @@ class FulfilBagPage extends Component {
                     
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.estimated_delivery_time), 'details':this.props.app_state.loc['1142']/* 'Estimated Delivery time' */, 'size':'l'})}
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_estimated_delivery_time_updated.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <DurationPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_estimated_delivery_time_updated.bind(this)} theme={this.props.theme} power_limit={63} loc={this.props.app_state.loc}/>
 
 
 
@@ -572,7 +573,7 @@ class FulfilBagPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} />
             </div>
         )
 

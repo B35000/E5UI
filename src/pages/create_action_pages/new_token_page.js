@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import NumberPicker from '../../components/number_picker';
+import DurationPicker from '../../components/duration_picker';
 import TextInput from '../../components/text_input';
 import Letter from '../../assets/letter.png';
 
@@ -464,8 +465,8 @@ class NewTokenPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['628']/* 'Preset the new tokens settings based on common use cases.' */})}
                 <div style={{height:10}}/>
 
-                <div onClick={()=>this.preset_stock_token()}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['629']/* '📈 Stock Token' */, 'details':this.props.app_state.loc['630']/* 'A fixed supply token used for managing stake in a workgroup and raising capital inside of E5.' */, 'size':'l'})}
+                <div onClick={()=>this.preset_e_token()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['629']/* '📈 e-Token' */, 'details':this.props.app_state.loc['630']/* 'A fixed supply token used for managing stake and funding a workgroup.' */, 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
 
@@ -488,7 +489,7 @@ class NewTokenPage extends Component {
     }
 
 
-    preset_stock_token(){
+    preset_e_token(){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [1] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
@@ -518,7 +519,7 @@ class NewTokenPage extends Component {
             default_authority_mint_limit:0, new_token_halving_type_tags_object: halving_type, maturity_limit:0,
         });
 
-        this.props.notify(this.props.app_state.loc['637']/* 'Stock token preset has been applied' */, 2500)
+        this.props.notify(this.props.app_state.loc['637']/* 'e-token preset has been applied' */, 2500)
     }
 
 
@@ -1006,7 +1007,7 @@ class NewTokenPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.get_time_diff(this.state.minimum_time_between_swap), 'details':this.props.app_state.loc['658']/* 'Minimum Time Between Swap' */, 'size':'l'})}
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <DurationPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_time_between_swap.bind(this)} theme={this.props.theme} power_limit={63} loc={this.props.app_state.loc}/>
                 </div>
             )
         }
@@ -1982,7 +1983,7 @@ class NewTokenPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
             </div>
         )
 

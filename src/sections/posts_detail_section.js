@@ -205,6 +205,7 @@ class PostsDetailsSection extends Component {
                     <div style={{height: 10}}/>
 
                     {this.render_taken_down_message_if_post_is_down(object)}
+                    {this.render_comment_section_disabled(object)}
                     
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                         {this.render_detail_item('2', item['age'])}
@@ -247,6 +248,19 @@ class PostsDetailsSection extends Component {
 
     get_selected_item2(object, option){
         return object[option][2][0]
+    }
+
+
+    render_comment_section_disabled(object){
+        var comments_disabled_option = this.get_selected_item2(object['ipfs'].get_disabled_comments_section, 'e')
+        if(comments_disabled_option == 1){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2761']/* The responses section has been disabled by the posts author.' */, 'title':this.props.app_state.loc['2760']/* '🤐 Activity Section Disabled' */})}
+                    <div style={{height: 10}}/>
+                </div>
+            )
+        }
     }
 
     render_selected_links(object){
@@ -533,7 +547,7 @@ class PostsDetailsSection extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}
                         {/* {this.render_focus_list(object)} */}
@@ -583,6 +597,10 @@ class PostsDetailsSection extends Component {
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
     }
 
+    handleScroll = (event, object) => {
+        this.has_user_scrolled[object['e5_id']] = true
+    };
+
     render_focused_message(object){
         var item = this.get_focused_message(object);
         if(item != null){
@@ -607,7 +625,13 @@ class PostsDetailsSection extends Component {
     }
 
     show_add_comment_bottomsheet(object){
-        // var object = this.get_post_items()[this.props.selected_post_item];
+        var comments_disabled_option = this.get_selected_item2(object['ipfs'].get_disabled_comments_section, 'e')
+        var posts_author = object['author']
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(comments_disabled_option == 1 && me != posts_author){
+            this.props.notify(this.props.app_state.loc['2759']/* The comment section has been disabled by the posts author. */, 4500)
+            return
+        }
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
         this.props.show_add_comment_bottomsheet(object, focused_message_id, 'post')
     }
@@ -624,6 +648,14 @@ class PostsDetailsSection extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
+        this.has_user_scrolled = {}
+    }
+
+    componentDidUpdate(){
+        var has_scrolled = this.has_user_scrolled[this.props.selected_post_item]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
 
@@ -1133,6 +1165,15 @@ class PostsDetailsSection extends Component {
         // var object = this.get_post_items()[this.props.selected_post_item];
         var message_id = Date.now()
         var focused_message_id = this.get_focused_message(object) != null ? this.get_focused_message(object)['message_id'] : 0
+
+        var comments_disabled_option = this.get_selected_item2(object['ipfs'].get_disabled_comments_section, 'e')
+        var posts_author = object['author']
+        var me = this.props.app_state.user_account_id[object['e5']]
+        if(comments_disabled_option == 1 && me != posts_author){
+            this.props.notify(this.props.app_state.loc['2759']/* The comment section has been disabled by the posts author. */, 4500)
+            return
+        }
+
         if(message == ''){
             this.props.notify(this.props.app_state.loc['1695']/* 'type something first' */, 600)
         }
@@ -1314,7 +1355,7 @@ class PostsDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

@@ -3,6 +3,7 @@ import Tags from './../components/tags';
 import ViewGroups from './../components/view_groups'
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
+import DurationPicker from './../components/duration_picker';
 
 import Letter from './../assets/letter.png';
 import Dialog from "@mui/material/Dialog";
@@ -58,6 +59,7 @@ class StackPage extends Component {
         get_homepage_tags_position_tags_object: this.get_homepage_tags_position_tags_object(),
         get_preferred_font_tags_object: this.get_preferred_font_tags_object(),
         get_skip_nsfw_warning_tags_object: this.get_skip_nsfw_warning_tags_object(),
+        get_graph_type_tags_object: this.get_graph_type_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -622,6 +624,39 @@ class StackPage extends Component {
 
 
 
+    get_graph_type_tags_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['2753']/* 'area' */, this.props.app_state.loc['2752']/* 'splineArea' */], [this.get_selected_graph_type_option()]
+            ], 
+        }
+    }
+
+
+    get_selected_graph_type_option(){
+        if(this.props.app_state.graph_type == this.props.app_state.loc['2753']/* 'area' */){
+            return 1
+        }
+        else if(this.props.app_state.graph_type == this.props.app_state.loc['2752']/* 'splineArea' */){
+            return 2
+        }
+        return 1;
+    }
+
+
+    set_selected_graph_type_tag(){
+        this.setState({get_graph_type_tags_object: this.get_graph_type_tags_object(),})
+    }
+
+
+
+
+
+
+
 
 
 
@@ -747,7 +782,7 @@ class StackPage extends Component {
                 
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':this.props.app_state.loc['1439']/* 'Estimated Time.' */, 'size':'l'})}
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>
 
             </div>
         )
@@ -5360,6 +5395,16 @@ class StackPage extends Component {
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.get_skip_nsfw_warning_tags_object} tag_size={'l'} when_tags_updated={this.when_get_skip_nsfw_warning_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                     {this.render_detail_item('0')}
+
+
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2754']/* 'Graph Type' */, 'details':this.props.app_state.loc['2755']/* 'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_graph_type_tags_object} tag_size={'l'} when_tags_updated={this.when_get_graph_type_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                    {this.render_detail_item('0')}
                 </div>
             </div>
         )
@@ -5476,6 +5521,12 @@ class StackPage extends Component {
         this.setState({get_skip_nsfw_warning_tags_object: tag_object})
         var selected_item = this.get_selected_item(this.state.get_skip_nsfw_warning_tags_object, 'e')
         this.props.when_skip_nsfw_warning_tags_changed(selected_item)
+    }
+
+    when_get_graph_type_tags_object_updated(tag_object){
+        this.setState({get_graph_type_tags_object: tag_object})
+        var selected_item = this.get_selected_item(this.state.get_graph_type_tags_object, 'e')
+        this.props.when_graph_type_tags_changed(selected_item)
     }
 
 
@@ -5657,7 +5708,7 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1554']/* 'Wallet Salt' */, 'details':this.props.app_state.loc['1555']/* 'Set the preferred salt for your wallet' */, 'size':'l'})}
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_salt_figure_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_new_salt_figure_set.bind(this)} theme={this.props.theme} power_limit={990}/>
 
                 {this.render_detail_item('0')}
 
@@ -5897,7 +5948,7 @@ class StackPage extends Component {
                                     action: () => console.log()
                                     }}
                                     swipeLeft={{
-                                    content: <div>Delete</div>,
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.props.remove_account_from_contacts(item)
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
@@ -6038,7 +6089,7 @@ class StackPage extends Component {
                                     action: () => console.log()
                                     }}
                                     swipeLeft={{
-                                    content: <div>Delete</div>,
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                     action: () =>this.props.remove_account_from_blocked_accounts(item)
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
@@ -6239,11 +6290,11 @@ class StackPage extends Component {
                             <SwipeableList>
                                 <SwipeableListItem
                                     swipeRight={{
-                                    content: <div>Set Alias</div>,
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2749']/* Set Alias */}</p>,
                                     action: () => this.reset_alias(item)
                                     }}
                                     swipeLeft={{
-                                    content: <div>Release</div>,
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2750']/* Release */}</p>,
                                     action: () =>this.unreserve_alias(item)
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
@@ -6525,7 +6576,7 @@ class StackPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} when_add_word_button_tapped={this.when_add_word_button_tapped.bind(this)} delete_entered_seed_word={this.delete_entered_seed_word.bind(this)} when_set_wallet_button_tapped={this.when_set_wallet_button_tapped.bind(this)}/>
             </div>
         )
 

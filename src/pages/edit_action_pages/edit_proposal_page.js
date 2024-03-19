@@ -2866,7 +2866,7 @@ class EditProposalPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)}/>
             </div>
         )
 

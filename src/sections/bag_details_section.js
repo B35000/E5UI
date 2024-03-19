@@ -211,6 +211,8 @@ class BagDetailsSection extends Component {
                     </div>
                     {this.render_detail_item('0')}
 
+                    {this.render_bag_value(object)}
+
                     {this.render_all_variants(object)}
 
                     {this.render_fulfil_order_button(object)}
@@ -283,6 +285,59 @@ class BagDetailsSection extends Component {
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
             'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['1748']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2047']/* ago */, }
         }
+    }
+
+    render_bag_value(object){
+        var items_to_deliver = [].concat(object['ipfs']['bag_orders'])
+        if(items_to_deliver.length != 0){
+            var total_amounts = this.get_total_bag_value(items_to_deliver, object)
+            if(total_amounts != null){
+                return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064a']/* 'Bag Value.' */, 'details':this.props.app_state.loc['2064b']/* 'The total amount to be paid by the bag owner in the respective denominations.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {total_amounts.map((units, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+units['id']], 'subtitle':this.format_power_figure(units['amount']), 'barwidth':this.calculate_bar_width(units['amount']), 'number':this.format_account_balance_figure(units['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
+                            </div>
+                        </div>
+                    ))}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+            }
+        }
+    }
+
+    get_total_bag_value(items_to_deliver, object){
+        var obj = {}
+        items_to_deliver.forEach(item => {
+            var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
+            if(variant_in_store == null) return null
+            var price_items = variant_in_store['price_data']
+            
+            for(var i=0; i<price_items.length; i++){
+                var units = price_items[i];
+                var amount = this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)
+                var token_id = units['id']
+
+                if(obj[token_id] == null){
+                    obj[token_id] = bigInt(0);
+                }
+                obj[token_id] = bigInt(obj[token_id]).add(amount)
+            }
+        });
+        
+        var arr = []
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                arr.push({'id':key, 'amount':obj[key]})
+            }
+        }
+
+        return arr
     }
 
     render_all_variants(object){
@@ -383,7 +438,6 @@ class BagDetailsSection extends Component {
     render_variant_details(object){
         var item = this.state.selected_variant
         if(item != null){
-            // var storefront = this.get_all_sorted_objects_mappings(this.props.app_state.created_store_mappings)[item['storefront_item_id']]
             var storefront = this.props.app_state.created_store_mappings[object['e5']][item['storefront_item_id']]
             var variant_in_store = this.get_variant_object_from_storefront(storefront, item['storefront_variant_id'])
             if(variant_in_store == null) return null
@@ -660,7 +714,7 @@ class BagDetailsSection extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
 
                         {this.render_top_title(object)}
@@ -711,6 +765,10 @@ class BagDetailsSection extends Component {
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
     }
 
+    handleScroll = (event, object) => {
+        this.has_user_scrolled[object['e5_id']] = true
+    };
+
     render_focused_message(object){
         var item = this.get_focused_message(object);
         if(item != null){
@@ -753,6 +811,14 @@ class BagDetailsSection extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
+        this.has_user_scrolled = {}
+    }
+
+    componentDidUpdate(){
+        var has_scrolled = this.has_user_scrolled[this.props.selected_bag_item]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
     render_sent_received_messages(object){
@@ -1382,7 +1448,7 @@ class BagDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

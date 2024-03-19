@@ -610,7 +610,7 @@ class ViewJobRequestPage extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div onScroll={event => this.handleScroll(event)} style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/> */}
                         {/* {this.render_top_title()} */}
                         {/* {this.render_focus_list()} */}
@@ -623,7 +623,7 @@ class ViewJobRequestPage extends Component {
                     <div style={{'margin':'1px 10px 0px 0px'}}>
                         {/* {this.render_image_picker()} */}
                         <div>
-                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.show_add_comment_bottomsheet()}>
+                            <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked()}>
                                 <img src={E5EmptyIcon3} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
@@ -639,6 +639,31 @@ class ViewJobRequestPage extends Component {
             </div> 
         )
     }
+
+    when_circle_clicked = () => {
+        let me = this;
+        if(Date.now() - this.last_all_click_time2 < 200){
+            clearTimeout(this.all_timeout);
+            //double tap
+            me.scroll_to_bottom()
+        }else{
+            this.all_timeout = setTimeout(function() {
+                clearTimeout(this.all_timeout);
+                // single tap
+                me.show_add_comment_bottomsheet()
+            }, 200);
+        }
+        this.last_all_click_time2 = Date.now();
+    }
+
+    scroll_to_bottom(){
+        this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    handleScroll = (event) => {
+        var object = this.state.request_item;      
+        this.has_user_scrolled[object['job_request_id']] = true
+    };
 
     render_focused_message(){
         var item = this.get_focused_message();
@@ -682,6 +707,15 @@ class ViewJobRequestPage extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
+        this.has_user_scrolled = {}
+    }
+
+    componentDidUpdate(){
+        var object = this.state.request_item;
+        var has_scrolled = this.has_user_scrolled[object['job_request_id']]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
 
     render_sent_received_messages(){
@@ -1351,7 +1385,7 @@ class ViewJobRequestPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={this.props.app_state.width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

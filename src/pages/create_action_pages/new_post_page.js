@@ -50,8 +50,10 @@ class NewPostPage extends Component {
 
         edit_text_item_pos:-1,
 
-        get_sort_links_tags_object:this.get_sort_links_tags_object(), get_post_nsfw_option:this.get_post_nsfw_option(),
-        get_masked_from_outsiders_option:this.get_masked_from_outsiders_option()
+        get_sort_links_tags_object:this.get_sort_links_tags_object(), 
+        get_post_nsfw_option:this.get_post_nsfw_option(),
+        get_masked_from_outsiders_option:this.get_masked_from_outsiders_option(),
+        get_disabled_comments_section:this.get_disabled_comments_section(),
     };
 
     get_new_job_page_tags_object(){
@@ -145,6 +147,18 @@ class NewPostPage extends Component {
             },
             'e':[
                 ['or','',0], ['e',this.props.app_state.loc['311b']/* masked */], [0]
+            ],
+        };
+    }
+
+
+    get_disabled_comments_section(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e',this.props.app_state.loc['2756']/* disabled */], [0]
             ],
         };
     }
@@ -315,10 +329,22 @@ class NewPostPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_from_outsiders_option} tag_size={'l'} when_tags_updated={this.when_get_masked_from_outsiders_option.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2757']/* Disable Activity Section. */, 'details':this.props.app_state.loc['2758']/* If set to disabled, activity and comments will be disabled for all users except you. */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_disabled_comments_section} tag_size={'l'} when_tags_updated={this.when_get_disabled_comments_section_option.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}
             </div>
         )
+    }
+
+    when_get_disabled_comments_section_option(tag_obj){
+        this.setState({get_disabled_comments_section: tag_obj})
     }
 
     when_get_masked_from_outsiders_option(tag_obj){
@@ -340,6 +366,7 @@ class NewPostPage extends Component {
     when_index_text_input_field_changed(text){
         this.setState({entered_tag_text: text})
     }
+
 
     add_indexing_tag_for_new_job(){
         var typed_word = this.state.entered_tag_text.trim().toLowerCase();
@@ -1528,7 +1555,7 @@ class NewPostPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} />
             </div>
         )
 

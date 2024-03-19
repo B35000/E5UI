@@ -1417,7 +1417,7 @@ class NewMailPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)} delete_entered_tag={this.delete_entered_tag_word.bind(this)} when_add_text_button_tapped={this.when_add_text_button_tapped.bind(this)} width={this.props.app_state.width} show_images={this.show_images.bind(this)}/>
             </div>
         )
 
@@ -1427,12 +1427,22 @@ class NewMailPage extends Component {
 
     }
 
+    get_recipient_id(recipient){
+        var id = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[recipient] == null ? recipient : this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[recipient])
+
+        return id
+    }
 
 
     finish_creating_object(){
         var index_tags = this.state.entered_indexing_tags
         var title = this.state.entered_title_text
         var recipient = this.state.target_recipient.trim()
+
+        if(isNaN(recipient)){
+            recipient = this.get_recipient_id(recipient)
+            this.setState({target_recipient: recipient})
+        }
 
         if(index_tags.length < 1){
             this.props.notify(this.props.app_state.loc['160'], 2700)
@@ -1463,6 +1473,7 @@ class NewMailPage extends Component {
                 device_language_setting :me.props.app_state.device_language,
                 device_country :me.props.app_state.device_country,
                 e5 :me.props.app_state.selected_e5,})
+
             setTimeout(function() {
                 me.props.when_add_new_mail_to_stack(me.state)
         

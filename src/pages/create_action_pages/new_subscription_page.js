@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ViewGroups from '../../components/view_groups';
 import Tags from '../../components/tags';
 import NumberPicker from '../../components/number_picker';
+import DurationPicker from '../../components/duration_picker';
 import TextInput from '../../components/text_input';
 
 import Letter from '../../assets/letter.png';
@@ -500,7 +501,7 @@ class NewSubscriptionPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['559']/* 'Recommended: 1 min' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                   <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
+                   <DurationPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12} loc={this.props.app_state.loc}/>
                 </div>
             )
         }
@@ -1233,7 +1234,7 @@ class NewSubscriptionPage extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} delete_entered_tag={this.delete_entered_tag_word.bind(this)} add_indexing_tag_for_new_job={this.add_indexing_tag_for_new_job.bind(this)}/>
             </div>
         )
 

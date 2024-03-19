@@ -581,6 +581,15 @@ class ChannelDetailsSection extends Component {
     constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
+        this.message_list = React.createRef();
+        this.has_user_scrolled = {}
+    }
+
+    componentDidUpdate(){
+        var has_scrolled = this.has_user_scrolled[this.props.selected_channel_item]
+        if(has_scrolled == null){
+            this.scroll_to_bottom()
+        }
     }
     
     render_channel_activity(object){
@@ -590,7 +599,7 @@ class ChannelDetailsSection extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
 
                         {this.render_top_title(object)}
@@ -640,6 +649,10 @@ class ChannelDetailsSection extends Component {
     scroll_to_bottom(){
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
     }
+
+    handleScroll = (event, object) => {
+        this.has_user_scrolled[object['e5_id']] = true
+    };
 
 
     render_focused_message(object){
@@ -793,6 +806,7 @@ class ChannelDetailsSection extends Component {
         }
         
     }
+
 
     focus_message(item, object){
         var clone = JSON.parse(JSON.stringify(this.state.focused_message))
@@ -1826,7 +1840,7 @@ class ChannelDetailsSection extends Component {
         var width = size == 'm' ? this.props.app_state.width/2 : this.props.app_state.width
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} width={width} show_images={this.props.show_images.bind(this)}/>
             </div>
         )
 

@@ -1452,7 +1452,7 @@ class home_page extends Component {
             for(var i=0; i<created_mail['created_mail'].length; i++){
                 var convo_id = created_mail['created_mail'][i]
                 var context_object = created_mail['mail_activity'][convo_id][0]
-                if(context_object['ipfs'] != null && context_object['ipfs'].selected != null){
+                if(context_object != null && context_object['ipfs'] != null && context_object['ipfs'].selected != null){
                     all_mail.push(context_object)
                 }
             }
@@ -1900,7 +1900,8 @@ class home_page extends Component {
     sort_feed_based_on_my_section_tags(objects){
         var feed_objs = []
         var like_tags = []
-        var section_tags = this.state.page == '?' ?  this.props.app_state.job_section_tags : this.props.app_state.explore_section_tags
+
+        var section_tags = this.state.page == '?' ?  this.get_job_section_tags() : this.get_explore_section_tags()
 
         if(this.props.app_state.section_tags_setting == this.props.app_state.loc['1202']/* 'all' */){
             return objects
@@ -1930,6 +1931,24 @@ class home_page extends Component {
         });
 
         return feed_objs
+    }
+
+    get_job_section_tags(){
+        if(this.state.job_section_tags == null){
+            this.setState({job_section_tags: this.props.app_state.job_section_tags})
+            return this.props.app_state.job_section_tags;
+        }else{
+            return this.state.job_section_tags
+        }
+    }
+
+    get_explore_section_tags(){
+        if(this.state.explore_section_tags == null){
+            this.setState({explore_section_tags: this.props.app_state.explore_section_tags})
+            return this.props.app_state.explore_section_tags
+        }else{
+            return this.state.explore_section_tags
+        }
     }
     
 
@@ -3395,7 +3414,7 @@ class home_page extends Component {
     render_detail_item(item_id, object_data){
         return(
             <div>
-                <ViewGroups font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} />
+                <ViewGroups graph_type={this.props.app_state.graph_type} font={this.props.app_state.font} item_id={item_id} object_data={object_data} theme={this.props.theme} />
             </div>
         )
 
