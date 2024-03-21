@@ -1518,6 +1518,7 @@ class EndDetailSection extends Component {
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
+        number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
@@ -1550,6 +1551,11 @@ class EndDetailSection extends Component {
         }
     }
 
+    get_actual_number(number, depth){
+        var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth_vaule = bigInt(('1e'+p))
+        return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
+    }
 
 
 
@@ -1866,6 +1872,8 @@ class EndDetailSection extends Component {
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
+        number = this.get_actual_number(number, depth)
+
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* From:  */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_exchange_transfer_event_item == index) {
             return (
@@ -2092,6 +2100,7 @@ class EndDetailSection extends Component {
         var amount = item.returnValues.p5
         var action = freeze_unfreeze_obj[item.returnValues.p2]
         var depth = item.returnValues.p6
+        amount = this.get_actual_number(amount, depth)
         if (this.state.selected_freeze_unfreeze_event_item == index) {
             return (
                 <div>
@@ -2609,6 +2618,7 @@ class EndDetailSection extends Component {
     render_depth_mint_event_item(item, object, index){
         var amount = item.returnValues.p5
         var depth = item.returnValues.p4
+        amount = this.get_actual_number(amount, depth)
         if (this.state.selected_depth_mint_event_item == index) {
             return (
                 <div>

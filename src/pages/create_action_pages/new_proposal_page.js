@@ -2942,9 +2942,21 @@ class NewProposalPage extends Component {
     add_bounty_item(){
         var target_exchange = this.get_token_id_from_symbol(this.state.bounty_exchange_target.trim())
         var target_amount = this.state.bounty_amount
+        
+        var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][target_exchange]
+        var default_depth = 0;
+        if(target_exchange_data != null){
+            target_exchange_data = target_exchange_data['ipfs']
+            if(target_exchange_data != null){
+                default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+            }
+        }
 
         if(isNaN(target_exchange) || parseInt(target_exchange) < 0 || target_exchange == '' || !this.does_exchange_exist(target_exchange)){
             this.props.notify(this.props.app_state.loc['388']/* 'please put a valid exchange id' */, 3600)
+        }
+        else if(default_depth != 0){
+            this.props.notify(this.props.app_state.loc['2762']/* 'You cant use that exchange.' */, 3600)
         }
         else if(target_amount == 0){
             this.props.notify(this.props.app_state.loc['389']/* 'please put a valid amount' */, 3600)

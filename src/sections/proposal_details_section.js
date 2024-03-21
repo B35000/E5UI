@@ -1852,6 +1852,7 @@ class ProposalDetailsSection extends Component {
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
+        number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
@@ -1882,6 +1883,12 @@ class ProposalDetailsSection extends Component {
                 </div>
             )
         }
+    }
+
+    get_actual_number(number, depth){
+        var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth_vaule = bigInt(('1e'+p))
+        return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
 

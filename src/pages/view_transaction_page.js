@@ -1087,7 +1087,10 @@ class ViewTransactionPage extends Component {
     }
 
     format_token_object(t){
-        //.toString().toLocaleString('fullwide', {useGrouping:false})
+        var default_depth = t.default_depth
+        if(default_depth != 0){
+            return this.format_end_token_object(t)
+        }
         var type = this.get_selected_item(t.new_token_type_tags_object, t.new_token_type_tags_object['i'].active);
         var new_token_type_tags_object = type == this.props.app_state.loc['606']/* 'capped' */ ? 3 : 5
         var token_exchange_liquidity_total_supply = t.token_exchange_liquidity_total_supply <= 100_000 ? 1_000_000_000 : t.token_exchange_liquidity_total_supply.toString().toLocaleString('fullwide', {useGrouping:false})
@@ -1197,6 +1200,26 @@ class ViewTransactionPage extends Component {
       ]
 
       return final_obj
+    }
+
+    format_end_token_object(t){
+        var obj = [/* create token */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
+            [1/* new_token_unlocked_supply_tags_object */, 0/* new_token_unlocked_liquidity_tags_object */, 0/* new_token_fully_custom_tags_object */, 5/* new_token_type_tags_object */],
+            [23, 23, 23, 23],
+
+            [ bigInt('1e6').toString().toLocaleString('fullwide', {useGrouping:false})/* default_exchange_amount_buy_limit */, 0/* block_limit */, 0/* minimum_transactions_between_swap */, 0/* minimum_blocks_between_swap *//* 3 */, 0/* minimum_time_between_swap */, 0/* internal_block_halfing_proportion */, 0/* block_limit_reduction_proportion */, bigInt('3e16').toString().toLocaleString('fullwide', {useGrouping:false})/* trust_fee_proportion *//* 7 */, 0/* block_reset_limit */, 0/* exchange_authority */, 0/* trust_fee_target */, 1/* default_exchange_amount_sell_limit *//* 11 */, 0/* new_token_block_limit_sensitivity_tags_object */, 0/* minimum_entered_contracts_between_swap */, 0/* default_authority_mint_limit */, 0/* new_token_halving_type_tags_object *//* 15 */, 0/* maturity_limit */, 0/* minimum_transactions_for_first_buy */, 0/* minimum_entered_contracts_for_first_buy */],
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, 53, 53, 23, 23, 23, 23, 23, 23, 23, 23],
+
+            [bigInt('1e72').toString().toLocaleString('fullwide', {useGrouping:false})/* token_exchange_ratio_x */, bigInt('1e72').toString().toLocaleString('fullwide', {useGrouping:false})/* token_exchange_ratio_y */, 0/* token_exchange_liquidity_total_supply *//* 2 */, 0, 0, 0, bigInt('1e18').toString().toLocaleString('fullwide', {useGrouping:false})/* active_block_limit_reduction_proportion */],
+            [23, 23, 23, 23, 23, 23, 23],
+
+            [3], [23],
+            [1], [23],
+            [0], [23]
+        ]
+
+        return obj
     }
 
 
@@ -3708,10 +3731,77 @@ class ViewTransactionPage extends Component {
                 {this.render_detail_item('3', {'title':''+transaction_item.items_to_deliver.length+this.props.app_state.loc['1933']/* ' items' */, 'details':this.props.app_state.loc['1934']/* 'in your bag.' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
+                {this.render_bag_value()}
+                {this.render_detail_item('0')}
+
                 {this.render_all_items()}
                 <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '2px 20px 20px 20px'}}/>
             </div>
         )
+    }
+
+    render_bag_value(){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var items_to_deliver = [].concat(transaction_item.items_to_deliver)
+        if(items_to_deliver.length != 0){
+            var total_amounts = this.get_total_bag_value(items_to_deliver)
+
+            if(total_amounts != null){
+                return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2064a']/* 'Bag Value.' */, 'details':this.props.app_state.loc['2771']/* 'The value of all the items in your bag in their respective denominations.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {total_amounts.map((units, index) => (
+                        <div style={{'padding': '2px 0px 2px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[transaction_item.e5+units['id']], 'subtitle':this.format_power_figure(units['amount']), 'barwidth':this.calculate_bar_width(units['amount']), 'number':this.format_account_balance_figure(units['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )
+            }
+        }
+    }
+
+    get_total_bag_value(items_to_deliver){
+        var transaction_item = this.props.app_state.stack_items[this.state.transaction_index];
+        var obj = {}
+        items_to_deliver.forEach(item => {
+            var storefront = this.props.app_state.created_store_mappings[transaction_item.e5][item['storefront_item']['id']]
+            var variant_in_store = this.get_variant_object_from_storefront(storefront, item['selected_variant']['variant_id'])
+            if(variant_in_store == null) return null
+            var price_items = variant_in_store['price_data']
+            
+            for(var i=0; i<price_items.length; i++){
+                var units = price_items[i];
+                var amount = this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)
+                var token_id = units['id']
+
+                if(obj[token_id] == null){
+                    obj[token_id] = bigInt(0);
+                }
+                obj[token_id] = bigInt(obj[token_id]).add(amount)
+            }
+        });
+        
+        var arr = []
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                arr.push({'id':key, 'amount':obj[key]})
+            }
+        }
+
+        return arr
+    }
+
+    get_variant_object_from_storefront(storefront, id){
+        if(storefront == null) return null;
+        for(var i=0; i<storefront['ipfs'].variants.length; i++){
+            if(storefront['ipfs'].variants[i]['variant_id'] == id){
+                return storefront['ipfs'].variants[i]
+            }
+        }
     }
 
     render_all_items(){
@@ -3749,23 +3839,44 @@ class ViewTransactionPage extends Component {
         var composition_type = storefront_item['ipfs'].composition_type == null ? this.props.app_state.loc['1935']/* 'items' */ : this.get_selected_item(storefront_item['ipfs'].composition_type, 'e') 
         var items = selected_variant['price_data']
         return(
-            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+            <div> 
+                <div onClick={() => this.when_picked_variant_tapped(item)}>
+                    {this.render_detail_item('3', {'title':storefront_item['ipfs'].entered_title_text+'; '+selected_variant['variant_description'], 'details':this.format_account_balance_figure(item.purchase_unit_count)+this.props.app_state.loc['1936']/* ' units in ' */+composition_type, 'size':'s'})} 
+                </div> 
+                {this.render_picked_variant_prices(item, items)}
                 
-                {this.render_detail_item('3', {'title':storefront_item['ipfs'].entered_title_text+'; '+selected_variant['variant_description'], 'details':this.format_account_balance_figure(item.purchase_unit_count)+this.props.app_state.loc['1936']/* ' units in ' */+composition_type, 'size':'s'})} 
-                <div style={{height:10}}/>
-                
-                {items.map((units, index) => (
-                    <li style={{'padding': '2px 0px 2px 0px'}}>
-                        {this.render_detail_item('2', { 'style':'s', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+units['id']], 'subtitle':this.format_power_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barwidth':this.calculate_bar_width(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'number':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], })}
-                    </li>
-                ))}
-
-                <div style={{'margin':'0px 10px 0px 10px'}} onClick={()=> this.props.when_edit_bag_item_tapped(item)}>
-                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1937']/* 'Edit' */, 'action':''},)}
-                </div>
-                <div style={{height:10}}/>
             </div>
         )
+    }
+
+    render_picked_variant_prices(item, items){
+        if(this.state.picked_variant == item){
+            return(
+                <div>
+                    <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                        <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                            {items.map((units, index) => (
+                                <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                    {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.stack_items[this.state.transaction_index].e5+units['id']], 'details':this.format_account_balance_figure(this.get_amounts_to_be_paid(units['amount'], item.purchase_unit_count)) +' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[units['id']], 'size':'s'})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    when_picked_variant_tapped(item){
+        if(this.state.picked_variant == item){
+            this.setState({picked_variant: null})
+        }else{
+            this.setState({picked_variant: item})
+        }
+    }
+
+    get_storefront_image(object){
+        return object['ipfs'].entered_image_objects.length == 0 ? null : object['ipfs'].entered_image_objects[0]
     }
 
     get_amounts_to_be_paid(amount, count){

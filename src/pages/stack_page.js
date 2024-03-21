@@ -1671,66 +1671,129 @@ class StackPage extends Component {
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['601']/* 'token' */){
-                    var token_obj = this.format_token_object(txs[i])
-                    strs.push([])
-                    adds.push([])
-                    ints.push(token_obj)
+                    var default_depth = txs[i].default_depth
+                    if(default_depth != 0){
+                        //its an end token
+                        var token_obj = this.format_end_token_object(txs[i])
+                        strs.push([])
+                        adds.push([])
+                        ints.push(token_obj)
 
-                    var token_stack_id = ints.length-1
+                        var obj = {}
+                        obj[this.props.app_state.loc['2773']/* 'low' */] = '10000'
+                        obj[this.props.app_state.loc['2774']/* 'medium' */] = '100000'
+                        obj[this.props.app_state.loc['2775']/* 'high' */] = '1000000'
+                        var liquidity = this.get_selected_item(t.get_end_token_base_liquidity, t.get_end_token_base_liquidity['i'].active);
+                        var buy_amount = obj[liquidity]
+
+                        var token_stack_id = ints.length-1
+                        var buy_token = [
+                            [30000, 8, 0],
+                            [token_stack_id], [35],/* exchanges */
+                            [0], [53],/* receivers */
+                            [buy_amount]/* amounts */, [0],/* action */
+                            []/* lower_bounds */, []/* upper_bounds */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_token)
+
+
+                        var depth_mint_obj = this.format_depth_mint_transaction(txs[i], token_stack_id)
+                        strs.push([])
+                        adds.push([])
+                        ints.push(depth_mint_obj)
+
+                        var modify_token_as_authority_obj = [
+                            [20000, 3, 0],
+                            [token_stack_id], [35],/* targets */
+                            [1],/* target_array_pos */
+                            [9],/* target_array_items */
+                            [0], [23]/* new_items */
+                        ]
+                        strs.push([])
+                        adds.push([])
+                        ints.push(modify_token_as_authority_obj)
+
+                    }
+                    else{
+                        var token_obj = this.format_token_object(txs[i])
+                        strs.push([])
+                        adds.push([])
+                        ints.push(token_obj)
+
+                        var token_stack_id = ints.length-1
+                        
+                        var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
+
+                        if(access_rights_setting == this.props.app_state.loc['616']/* 'enabled' */){
+                            var enable_interactibles_checker = [ /* enable interactible checkers */
+                                [20000, 5, 0],
+                                [token_stack_id], [35]/* target objects */
+                            ]
+                            strs.push([])
+                            adds.push([])
+                            ints.push(enable_interactibles_checker)
+                            should_optimize_run = false
+                        }
+                        if(txs[i].interactibles.length != 0){
+                            var add_interactibles_accounts = [ /* set account to be interactible */
+                                [20000, 2, 0],
+                                [], [],/* target objects */
+                                [], [],/* target account ids*/
+                                []/* interacible expiry time limit */
+                            ]
+
+                            for(var j = 0; j < txs[i].interactibles.length; j++){
+                                add_interactibles_accounts[1].push(token_stack_id)
+                                add_interactibles_accounts[2].push(35)
+                                add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
+                                txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
+                                add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
+                            }
+
+                            strs.push([])
+                            adds.push([])
+                            ints.push(add_interactibles_accounts)
+                            should_optimize_run = false
+            
+                        }
+                        if(txs[i].moderators.length != 0){
+                            var add_moderator_accounts = [ /* set account as mod */
+                                [20000, 4, 0],
+                                [], [],/* target objects */
+                                [], []/* target moderator account ids*/
+                            ]
+
+                            for(var j = 0; j < txs[i].moderators.length; j++){
+                                add_moderator_accounts[1].push(token_stack_id)
+                                add_moderator_accounts[2].push(35)
+                                add_moderator_accounts[3].push(txs[i].moderators[j])
+                                txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
+                            }
+
+                            strs.push([])
+                            adds.push([])
+                            ints.push(add_moderator_accounts)
+                            should_optimize_run = false
+                        }
+                    }
+                    var transaction_obj = [ /* set data */
+                        [20000, 13, 0],
+                        [19], [23],/* target objects */
+                        [0], /* contexts */
+                        [0] /* int_data */
+                    ]
+
+                    var string_obj = [[]]
+                    var token_name = txs[i].entered_title_text
+                    var token_symbol = txs[i].entered_symbol_text
+                    var data = {'name':token_name, 'symbol':token_symbol, 'time':Date.now()}
+                    string_obj[0].push(JSON.stringify(data))
                     
-                    var access_rights_setting = this.get_selected_item(txs[i].new_token_access_rights_tags_object, txs[i].new_token_access_rights_tags_object['i'].active);
-
-                    if(access_rights_setting == this.props.app_state.loc['616']/* 'enabled' */){
-                        var enable_interactibles_checker = [ /* enable interactible checkers */
-                            [20000, 5, 0],
-                            [token_stack_id], [35]/* target objects */
-                        ]
-                        strs.push([])
-                        adds.push([])
-                        ints.push(enable_interactibles_checker)
-                        should_optimize_run = false
-                    }
-                    if(txs[i].interactibles.length != 0){
-                        var add_interactibles_accounts = [ /* set account to be interactible */
-                            [20000, 2, 0],
-                            [], [],/* target objects */
-                            [], [],/* target account ids*/
-                            []/* interacible expiry time limit */
-                        ]
-
-                        for(var j = 0; j < txs[i].interactibles.length; j++){
-                            add_interactibles_accounts[1].push(token_stack_id)
-                            add_interactibles_accounts[2].push(35)
-                            add_interactibles_accounts[3].push(txs[i].interactibles[j]['id'])
-                            txs[i].interactibles[j]['id'] == 53 ? add_interactibles_accounts[4].push(53) :add_interactibles_accounts[4].push(23)
-                            add_interactibles_accounts[5].push(txs[i].interactibles[j]['timestamp'])
-                        }
-
-                        strs.push([])
-                        adds.push([])
-                        ints.push(add_interactibles_accounts)
-                        should_optimize_run = false
-        
-                    }
-                    if(txs[i].moderators.length != 0){
-                        var add_moderator_accounts = [ /* set account as mod */
-                            [20000, 4, 0],
-                            [], [],/* target objects */
-                            [], []/* target moderator account ids*/
-                        ]
-
-                        for(var j = 0; j < txs[i].moderators.length; j++){
-                            add_moderator_accounts[1].push(token_stack_id)
-                            add_moderator_accounts[2].push(35)
-                            add_moderator_accounts[3].push(txs[i].moderators[j])
-                            txs[i].moderators[j] == 53 ? add_moderator_accounts[4].push(53):add_moderator_accounts[4].push(23)
-                        }
-
-                        strs.push([])
-                        adds.push([])
-                        ints.push(add_moderator_accounts)
-                        should_optimize_run = false
-                    }
+                    strs.push(string_obj)
+                    adds.push([])
+                    ints.push(transaction_obj)
                 }
                 else if(txs[i].type == this.props.app_state.loc['823']/* 'subscription' */){
                     var subscription_obj = this.format_subscription_object(txs[i])
@@ -1879,20 +1942,33 @@ class StackPage extends Component {
                     ints.push(storefront_data)
                 }
                 else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
-                    var buy_sell_obj = this.format_buy_sell_object(txs[i])
+                    var buy_sell_obj = this.format_buy_sell_object(txs[i], ints)
+                    if(transfer_object['swaps'][1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(buy_sell_obj['depth'])
+                    }
+
                     strs.push([])
                     adds.push([])
-                    ints.push(buy_sell_obj)
+                    ints.push(buy_sell_obj['obj'])
+                    
                     if(txs[i].token_item['id'] == 3 && this.get_action(txs[i]) == 0){
                         //if we're buying end
                         wei = (bigInt(txs[i].token_item['data'][4][0]).multiply(txs[i].amount).add(35)).toString()
                     }
                 }
                 else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
-                    var transfer_object = this.format_transfer_object(txs[i])
+                    var transfer_object = this.format_transfer_object(txs[i], ints)
+                    if(transfer_object['swaps'][1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(transfer_object['swaps'])
+                    }
+
                     strs.push([])
                     adds.push([])
-                    ints.push(transfer_object)
+                    ints.push(transfer_object['transfers'])
                 }
                 else if(txs[i].type == this.props.app_state.loc['1']/* 'enter-contract' */){
                     var enter_object = this.format_enter_contract_object(txs[i])
@@ -2133,8 +2209,13 @@ class StackPage extends Component {
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
-                    var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas)
-                    
+                    var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas, ints)
+                    if(format_object.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(transfer_object.depth)
+                    }
+
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
@@ -2220,7 +2301,13 @@ class StackPage extends Component {
                     ints.push(format_edit_object.metadata_action)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
-                    var format_object = await this.format_award_object(txs[i], calculate_gas)
+                    var format_object = await this.format_award_object(txs[i], calculate_gas, ints)
+                    if(format_object.depth[1].length > 0){
+                        strs.push([])
+                        adds.push([])
+                        ints.push(transfer_object.depth)
+                    }
+
                     strs.push(format_object.str)
                     adds.push([])
                     ints.push(format_object.int)
@@ -2713,6 +2800,72 @@ class StackPage extends Component {
       return obj
     }
 
+    format_end_token_object(t){
+        var obj = {'1 END':1, '10 END':10, '100 END':100}
+        obj[this.props.app_state.loc['2776']/* '1 END' */] = 1
+        obj[this.props.app_state.loc['2777']/* '10 END' */] = 10
+        obj[this.props.app_state.loc['2778']/* '100 END' */] = 100
+        var stability = this.get_selected_item(t.get_end_token_base_stability, t.get_end_token_base_stability['i'].active);
+        var default_exchange_amount_sell_limit = obj[stability]
+
+        var obj = [/* create token */
+            [10000, 0, 0, 0, 0/* 4 */, 0, 0, 0, 0, 31, 0],
+            [1/* new_token_unlocked_supply_tags_object */, 0/* new_token_unlocked_liquidity_tags_object */, 0/* new_token_fully_custom_tags_object */, 5/* new_token_type_tags_object */],
+            [23, 23, 23, 23],
+
+            [ bigInt('1e6').toString().toLocaleString('fullwide', {useGrouping:false})/* default_exchange_amount_buy_limit */, 0/* block_limit */, 0/* minimum_transactions_between_swap */, 0/* minimum_blocks_between_swap *//* 3 */, 0/* minimum_time_between_swap */, 0/* internal_block_halfing_proportion */, 0/* block_limit_reduction_proportion */, bigInt('3e16').toString().toLocaleString('fullwide', {useGrouping:false})/* trust_fee_proportion *//* 7 */, 0/* block_reset_limit */, 0/* exchange_authority */, 0/* trust_fee_target */, default_exchange_amount_sell_limit/* 11 */, 0/* new_token_block_limit_sensitivity_tags_object */, 0/* minimum_entered_contracts_between_swap */, 0/* default_authority_mint_limit */, 0/* new_token_halving_type_tags_object *//* 15 */, 0/* maturity_limit */, 0/* minimum_transactions_for_first_buy */, 0/* minimum_entered_contracts_for_first_buy */],
+            [23, 23, 23, 23, 23, 23, 23, 23, 23, 53, 53, 23, 23, 23, 23, 23, 23, 23, 23],
+
+            [bigInt('1e72').toString().toLocaleString('fullwide', {useGrouping:false})/* token_exchange_ratio_x */, bigInt('1e72').toString().toLocaleString('fullwide', {useGrouping:false})/* token_exchange_ratio_y */, 0/* token_exchange_liquidity_total_supply *//* 2 */, 0, 0, 0, bigInt('1e18').toString().toLocaleString('fullwide', {useGrouping:false})/* active_block_limit_reduction_proportion */],
+            [23, 23, 23, 23, 23, 23, 23],
+
+            [3], [23],
+            [1], [23],
+            [0], [23]
+        ]
+
+        return obj
+    }
+
+    format_depth_mint_transaction(t, token_stack_id){
+        /* depth_mint\swap up\swap down tokens [2(depth_auth_mint), 1(swap_up), 0(swap_down)] */
+        var depth_mint_action = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var default_depth = t.default_depth
+        var total_supply = t.token_exchange_liquidity_total_supply.toString().toLocaleString('fullwide', {useGrouping:false})
+        
+        var end = total_supply.length - 1
+        var start = (end - 71) < 0 ? 0 : (end-71)
+        for(var j=0; j<=default_depth; j++){
+            var depth_amount = bigInt(total_supply.substring(start, end+1)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var depth = j
+
+            if(!bigInt(depth_amount).equals(0)){
+                depth_mint_action[1].push(token_stack_id)
+                depth_mint_action[2].push(35)
+                depth_mint_action[3].push(0)
+                depth_mint_action[4].push(53)
+                depth_mint_action[5].push(2)
+                depth_mint_action[6].push(depth)
+                depth_mint_action[7].push(depth_amount)
+            }
+
+            end -= 72
+            start -= 72
+        }
+
+
+        return depth_mint_action
+
+    }
+
     format_subscription_object(t){
         var exchange_authority = t.authority_id == '' ? 53 : parseInt(t.authority_id)
         var exchange_authority_type = 23
@@ -2789,7 +2942,16 @@ class StackPage extends Component {
         return obj
     }
 
-    format_buy_sell_object(t){
+    format_buy_sell_object(t, ints){
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
         var obj = [/* buy end/spend */
             [30000, 8, 0],
             [], [],/* exchanges */
@@ -2800,9 +2962,26 @@ class StackPage extends Component {
 
 
       var amount = bigInt(t.amount).toString().toLocaleString('fullwide', {useGrouping:false})
+      var exchange = t.token_item['id']
+      var action = this.get_action(t)
+    
+      if(action == 1){
+        //if its a sell action
+        var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+        var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+        for(var s=0; s<swap_actions.length; s++){
+            depth_swap_obj[1].push(exchange)
+            depth_swap_obj[2].push(23)
+            depth_swap_obj[3].push(0)
+            depth_swap_obj[4].push(53)
+            depth_swap_obj[5/* action */].push(0)
+            depth_swap_obj[6/* depth */].push(swap_actions[s])
+            depth_swap_obj[7].push('1')
+        }
+      }
+      
       obj[5].push(amount)
-
-      obj[1].push(t.token_item['id'])
+      obj[1].push(exchange)
       obj[2].push(23)
       obj[3].push(t.recipient_id)
       if(t.recipient_id == 53){
@@ -2811,14 +2990,14 @@ class StackPage extends Component {
         obj[4].push(23)
       }
       
-      obj[6].push(this.get_action(t))
+      obj[6].push(action)
 
       if(t.upper_bound != 0 && t.lower_bound != 0){
         obj[7].push(t.lower_bound.toString().toLocaleString('fullwide', {useGrouping:false}))
         obj[8].push(t.upper_bound.toString().toLocaleString('fullwide', {useGrouping:false}))
       }
 
-      return obj
+      return {'obj':obj, 'depth':depth_swap_obj}
     }
 
     get_action(t){
@@ -2828,34 +3007,204 @@ class StackPage extends Component {
         return stack_action
     }
 
-    format_transfer_object(t){
-        var obj = [/* send tokens to another account */
-        [30000, 1, 0],
-        [], [],/* exchanges */
-        [], [],/* receivers */
-        [],/* amounts */
-        []/* depths */
-      ]
-      var added_txs = t.stack_items
-      for(var i=0; i<added_txs.length; i++){
-        obj[1].push(added_txs[i]['exchange']['id'])
-        obj[2].push(23)
 
-        obj[3].push(added_txs[i]['recipient'])
-        if(added_txs[i]['recipient'] == 53){
-            obj[4].push(53)
-        }else{
-            obj[4].push(23)
+
+
+    format_transfer_object(t, ints){
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+        /* depth_mint\swap up\swap down tokens [2(depth_auth_mint), 1(swap_up), 0(swap_down)] */
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
+        var added_txs = t.stack_items
+        var last_obj = -1
+        var last_depth_swap_obj = -1
+        for(var i=0; i<added_txs.length; i++){
+            var transfer_actions = this.get_exchange_transfer_actions(added_txs[i]['amount'])
+            for(var t=0; t<transfer_actions.length; t++){
+                transfers_obj[1].push(added_txs[i]['exchange']['id'])
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(added_txs[i]['recipient'])
+                if(added_txs[i]['recipient'] == 53){
+                    transfers_obj[4].push(53)
+                }else{
+                    transfers_obj[4].push(23)
+                }
+                transfers_obj[5].push(transfer_actions[t]['amount'])
+                transfers_obj[6].push(transfer_actions[t]['depth'])
+            }
+            if(last_obj != -1){
+                ints.splice(last_obj, 1);
+            }
+            last_obj = ints.length;
+            ints.push(transfers_obj)
+
+
+            var swap_actions = this.get_exchange_swap_down_actions(added_txs[i]['amount'], t.token_item, ints)
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(added_txs[i]['exchange']['id'])
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+            if(last_depth_swap_obj != -1){
+                ints.splice(last_depth_swap_obj, 1);
+            }
+            last_depth_swap_obj = ints.length;
+            ints.push(depth_swap_obj)
         }
-        obj[5].push(added_txs[i]['amount'])
-        obj[6].push(0)
-      }
-
-    //   console.log('-------------------------format_transfer_object-------------------')
-    //   console.log(obj)
       
-      return obj
+        return {'transfers':transfers_obj, 'swaps':depth_swap_obj}
     }
+
+    constructor(props) {
+        super(props);
+        this.active_depth_balances = {}
+    }
+
+    get_active_exchange_depth_balance(exchange, ints){
+        var token_balance_data = exchange['token_balances_data']
+        for(var i=0; i<ints.length; i++){
+            //all the swap down transactions
+            if(ints[i][0][0] == 3000 && ints[i][0][1] == 16){
+                //its a swap down action
+                for(var j=0; j=ints[i][1].length; j++){
+                    //for each targeted exchange id
+                    if(ints[i][1][j] == exchange['id'] && ints[i][5] == 0){
+                        //if the target is the exchange id and its a swap down
+                        var depth = ints[i][6][j]
+                        token_balance_data[depth-1] = bigInt(token_balance_data[depth-1]).add(bigInt('1e72'))
+                        /* update the new depth balance */
+                        token_balance_data[(depth)] = bigInt(token_balance_data[(depth)]).minus(1)
+                        /* remove one from the next depth balance */
+                    }
+                }
+            }
+        }
+
+        for(var i=0; i<ints.length; i++){
+            //all the transfer transactions
+            if(ints[i][0][0] == 3000 && ints[i][0][1] == 1){
+                //its a transfer action
+                for(var j=0; j=ints[i][1].length; j++){
+                    //for each targeted exchange
+                    if(ints[i][1][j] == exchange['id']){
+                        //if the target is the exchange id
+                        var amount = ints[i][5][j]
+                        var depth = ints[i][6][j]
+                        token_balance_data[depth] = bigInt(token_balance_data[depth]).minus(bigInt(amount))
+                    }
+                }
+            }
+        }
+
+        for(var i=0; i<ints.length; i++){
+            //all the transfer transactions
+            if(ints[i][0][0] == 3000 && ints[i][0][1] == 7){
+                //if the action is a award action
+                for(var j=0; j=ints[i][4].length; j++){
+                    //for each targeted exchange
+                    if(ints[i][4][j] == exchange['id']){
+                        //if the target is the exchange id
+                        var amount = ints[i][6][j]
+                        var depth = ints[i][7][j]
+                        token_balance_data[depth] = bigInt(token_balance_data[depth]).minus(bigInt(amount))
+                    }
+                }
+            }
+        }
+
+        return token_balance_data
+    }
+
+    get_exchange_swap_down_actions(amount, exchange, ints){
+        var active_exchange_depth_data = this.get_active_exchange_depth_balance(exchange, ints)
+        //get the depth balances
+        var swap_down_actions = []
+        
+        var transactions = this.get_exchange_transfer_actions(amount)
+        //get the individual transfer actions for each depth
+        transactions.forEach(item => {
+            //for each transaction
+            var transaction_amount = item['amount']
+            var transaction_amount_depth = item['depth']
+            //record the amount and depth
+
+            var my_balance_at_depth = active_exchange_depth_data[transaction_amount_depth]
+            //record the accounts balance at the depth in focus
+
+            if(bigInt(my_balance_at_depth).lesser(transaction_amount)){
+                //if my balance at depth in focus is less than the transactions amount
+                var a = true;
+                var starting_search_depth = transaction_amount_depth+1
+                var starting_point_depth = -1
+                while(a) {
+                    if(active_exchange_depth_data[starting_search_depth] != 0){
+                        starting_point_depth = starting_search_depth
+                        a = false
+                    }else{
+                        starting_search_depth +=1
+                    }
+                }
+
+                for(var i=starting_point_depth; i>transaction_amount_depth; i--){
+                    swap_down_actions.push(i)
+                    active_exchange_depth_data[i] = bigInt(active_exchange_depth_data[i]).minus(1)
+                    //decrement by 1 since were swapping down
+                    active_exchange_depth_data[i-1] = bigInt(active_exchange_depth_data[i-1]).add(bigInt('1e72'))
+                    //increment by 1e72 since were swapping down
+                }
+            }
+        });
+
+        return swap_down_actions
+    }
+
+    get_default_depth(number){
+        var number_as_string = number.toString().toLocaleString('fullwide', {useGrouping:false})
+        return Math.floor((number_as_string.length-1)/72)
+    }
+
+    get_exchange_transfer_actions(amount){
+        var transaction_amount = amount.toString().toLocaleString('fullwide', {useGrouping:false})
+        var transaction_amount_depth = this.get_default_depth(transaction_amount)
+
+        var end = transaction_amount.length - 1
+        var start = (end - 71) < 0 ? 0 : (end-71)
+
+        var data = []
+        for(var j=0; j<=transaction_amount_depth; j++){
+            var depth_amount = bigInt(transaction_amount.substring(start, end+1)).toString().toLocaleString('fullwide', {useGrouping:false})
+            var depth = j
+            if(!bigInt(depth_amount).equals(0)){
+                data.push({'amount':depth_amount, 'depth':depth})
+            }
+
+            end -= 72
+            start -= 72
+        }
+        return data
+    }
+
+
+
+
+
 
     format_enter_contract_object(t){
         var obj = [/* enter a contract */
@@ -3682,7 +4031,16 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_direct_purchase_object = async (t, calculate_gas) => {
+    format_direct_purchase_object = async (t, calculate_gas, ints) => {
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
         var obj = [/* send awwards */
             [30000, 7, 0],
             [t.storefront_item['ipfs'].target_receiver], [23],/* target receivers */
@@ -3694,35 +4052,77 @@ class StackPage extends Component {
         ]
         var string_obj = [[]]
 
+        var last_obj = -1
+        var last_depth_swap_obj = -1
         for(var i=0; i<t.selected_variant['price_data'].length; i++){
             var exchange = t.selected_variant['price_data'][i]['id']
             var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
             
-            obj[4].push(exchange)
-            obj[5].push(23)
-            obj[6].push(amount)
-            obj[7].push(0)
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
+            }
+            if(last_obj != -1){
+                ints.splice(last_obj, 1);
+            }
+            last_obj = ints.length;
+            ints.push(obj)
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+            if(last_depth_swap_obj != -1){
+                ints.splice(last_depth_swap_obj, 1);
+            }
+            last_depth_swap_obj = ints.length;
+            ints.push(depth_swap_obj)
         }
 
         for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
             var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
             var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
 
-            obj[4].push(exchange)
-            obj[5].push(23)
-            obj[6].push(amount)
-            obj[7].push(0)
-        }
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
+            }
+            if(last_obj != -1){
+                ints.splice(last_obj, 1);
+            }
+            last_obj = ints.length;
+            ints.push(obj)
 
-        // for(var i=0; i < t.storefront_item['ipfs'].shipping_price_data.length; i++){
-        //     var shipping_fee_exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
-        //     var shipping_fee_amount = t.storefront_item['ipfs'].shipping_price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
-            
-        //     obj[4].push(shipping_fee_exchange)
-        //     obj[5].push(23)
-        //     obj[6].push(shipping_fee_amount)
-        //     obj[7].push(0)
-        // }
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+            if(last_depth_swap_obj != -1){
+                ints.splice(last_depth_swap_obj, 1);
+            }
+            last_depth_swap_obj = ints.length;
+            ints.push(depth_swap_obj)
+        }
 
         var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
         
@@ -3730,7 +4130,7 @@ class StackPage extends Component {
 
         string_obj[0].push(string_data)
 
-        return {int: obj, str: string_obj}
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
     }
 
     get_amounts_to_be_paid(amount, count){
@@ -4023,9 +4423,19 @@ class StackPage extends Component {
         return {metadata_action: metadata_action, metadata_strings:metadata_strings}
     }
 
-    format_award_object = async (t, calculate_gas) => {
+    format_award_object = async (t, calculate_gas, ints) => {
         var author = t.post_item['event'].returnValues.p5
         var post_id = t.post_item['id'];
+
+        var depth_swap_obj = [
+            [30000,16,0],
+            [], [],/* target exchange ids */
+            [], [],/* receivers */
+            [],/* action */ 
+            [],/* depth */
+            []/* amount */
+        ]
+
         var obj = [/* send awwards */
             [30000, 7, 0],
             [author.toString().toLocaleString('fullwide', {useGrouping:false})], [23],/* target receivers */
@@ -4037,14 +4447,43 @@ class StackPage extends Component {
         ]
         var string_obj = [[]]
 
+        var last_obj = -1
+        var last_depth_swap_obj = -1
         for(var i=0; i<t.price_data.length; i++){
             var exchange = t.price_data[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
             var amount = t.price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
 
-            obj[4].push(exchange)
-            obj[5].push(23)
-            obj[6].push(amount)
-            obj[7].push(0)
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
+            }
+            if(last_obj != -1){
+                ints.splice(last_obj, 1);
+            }
+            last_obj = ints.length;
+            ints.push(obj)
+
+
+            var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+            for(var s=0; s<swap_actions.length; s++){
+                depth_swap_obj[1].push(exchange)
+                depth_swap_obj[2].push(23)
+                depth_swap_obj[3].push(0)
+                depth_swap_obj[4].push(53)
+                depth_swap_obj[5/* action */].push(0)
+                depth_swap_obj[6/* depth */].push(swap_actions[s])
+                depth_swap_obj[7].push('1')
+            }
+            if(last_depth_swap_obj != -1){
+                ints.splice(last_depth_swap_obj, 1);
+            }
+            last_depth_swap_obj = ints.length;
+            ints.push(depth_swap_obj)
+
         }
 
         var award_object = {'selected_tier_object':t.selected_tier_object, 'post_id':post_id, 'multiplier':t.multiplier, 'custom_amounts':t.price_data, 'entered_message':t.entered_message_text}
@@ -4052,7 +4491,7 @@ class StackPage extends Component {
         var string_data = await this.get_object_ipfs_index(award_object, calculate_gas);
         string_obj[0].push(string_data)
 
-        return {int: obj, str: string_obj}
+        return {int: obj, str: string_obj, depth: depth_swap_obj}
     }
 
     format_depthmint_object(t){
@@ -4134,6 +4573,45 @@ class StackPage extends Component {
                         adds[i].forEach(element => {
                             add_obj.push(element)
                         });
+                    }
+                }
+            }
+            if(obj[1].length != 0){
+                new_ints.push(obj)
+                new_strs.push(str_obj)
+                new_adds.push(add_obj)
+            }
+
+
+
+
+            var obj = [/* depth_mint\swap up\swap down tokens [2(depth_auth_mint), 1(swap_up), 0(swap_down)] */
+                [30000,16,0],
+                [], [],/* target exchange ids */
+                [], [],/* receivers */
+                [],/* action */ 
+                [],/* depth */
+                []/* amount */
+            ]
+            var str_obj = [[]]
+            var add_obj = []
+            for(var i=0; i<ints.length; i++){
+                var global_action = ints[i][0][0]
+                if(global_action == obj[0][0]){
+                    var action = ints[i][0][1]
+                    if(action == obj[0][1]){
+                        for(var j=1; j<ints[i].length; j++){
+                            ints[i][j].forEach(element => {
+                                obj[j].push(element)
+                            });
+                        }
+
+                        // strs[i][0].forEach(element => {
+                        //     str_obj[0].push(element)
+                        // });
+                        // adds[i].forEach(element => {
+                        //     add_obj.push(element)
+                        // });
                     }
                 }
             }
@@ -5077,42 +5555,6 @@ class StackPage extends Component {
                 new_adds.push(add_obj)
             }
 
-
-            var obj = [/* depth_mint\swap up\swap down tokens [2(depth_auth_mint), 1(swap_up), 0(swap_down)] */
-                [30000,16,0],
-                [], [],/* target exchange ids */
-                [], [],/* receivers */
-                [],/* action */ 
-                [],/* depth */
-                []/* amount */
-            ]
-            var str_obj = [[]]
-            var add_obj = []
-            for(var i=0; i<ints.length; i++){
-                var global_action = ints[i][0][0]
-                if(global_action == obj[0][0]){
-                    var action = ints[i][0][1]
-                    if(action == obj[0][1]){
-                        for(var j=1; j<ints[i].length; j++){
-                            ints[i][j].forEach(element => {
-                                obj[j].push(element)
-                            });
-                        }
-
-                        // strs[i][0].forEach(element => {
-                        //     str_obj[0].push(element)
-                        // });
-                        // adds[i].forEach(element => {
-                        //     add_obj.push(element)
-                        // });
-                    }
-                }
-            }
-            if(obj[1].length != 0){
-                new_ints.push(obj)
-                new_strs.push(str_obj)
-                new_adds.push(add_obj)
-            }
 
 
             var obj = [/* ✔️exchange transfer */

@@ -958,8 +958,21 @@ class NewSubscriptionPage extends Component {
     when_add_price_set(){
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
+
+        var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+        var default_depth = 0;
+        if(target_exchange_data != null){
+            target_exchange_data = target_exchange_data['ipfs']
+            if(target_exchange_data != null){
+                default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+            }
+        }
+
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id=='' || !this.does_exchange_exist(exchange_id)){
             this.props.notify(this.props.app_state.loc['592']/* 'please put a valid exchange id' */, 3600)
+        }
+        else if(default_depth != 0){
+            this.props.notify(this.props.app_state.loc['2762']/* 'You cant use that exchange.' */, 3600)
         }
         else if(amount == 0){
             this.props.notify(this.props.app_state.loc['593']/* 'please put a valid amount' */, 3600)
@@ -1114,7 +1127,9 @@ class NewSubscriptionPage extends Component {
         }
 
         for (let i = 0; i < sorted_token_exchange_data.length; i++) {
-            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+            if(sorted_token_exchange_data[i]['ipfs'] == null || sorted_token_exchange_data[i]['ipfs'].default_depth == null || sorted_token_exchange_data[i]['ipfs'].default_depth == 0){
+                items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+            }
         }
 
         return items;

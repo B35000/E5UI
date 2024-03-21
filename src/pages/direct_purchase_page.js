@@ -512,9 +512,9 @@ class DirectPurchasetPage extends Component {
             var item_price = this.get_amounts_to_be_paid(price_data[item])
             var token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][item]
             token_balance = token_balance == null ? 0 : token_balance['balance']
+            token_balance = bigInt(token_balance).minus(this.get_debit_balance_in_stack(item, this.state.e5))
 
-            console.log('can_afford_purchase: ',token_balance, item_price)
-            if(token_balance < item_price){
+            if(bigInt(token_balance).lesser(bigInt(item_price))){
                 can_afford = false
             }
         }
@@ -522,7 +522,57 @@ class DirectPurchasetPage extends Component {
         return can_afford
     }
 
-
+    get_debit_balance_in_stack(token_id, e5){
+        var txs = this.props.app_state.stack_items
+        var total_amount = bigInt(0)
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(txs[i].e5 == e5){
+                if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                    var amount = bigInt(txs[i].amount)
+                    var exchange = t.token_item['id']
+                    var action = this.get_action(t)
+                    if(token_id == exchange && action == 1){
+                        total_amount = bigInt(total_amount).add(amount)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                    if(txs[i].token_item['id'] == token_id){
+                        total_amount = bigInt(total_amount).add(txs[i].debit_balance)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    for(var i=0; i<t.selected_variant['price_data'].length; i++){
+                        var exchange = t.selected_variant['price_data'][i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                    for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
+                    if(token_id == 5){
+                        total_amount = bigInt(total_amount).add(t.award_amount)
+                    }
+                    for(var i=0; i<t.price_data.length; i++){
+                        var exchange = t.price_data[i]['id']
+                        var amount = t.price_data[i]['amount']
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+            }
+        }
+        return total_amount
+    }
 
 
 

@@ -164,7 +164,7 @@ import E175SpendImg from './assets/3175.png';
 /* blockchain stuff */
 import { mnemonicToSeedSync } from 'bip39';
 import { Buffer } from 'buffer';
-import { bigInt } from 'big-integer';
+// import { bigInt } from 'big-integer';
 
 
 /* shared component stuff */
@@ -259,7 +259,7 @@ const { ethers } = require("ethers");
 const ecies = require('ecies-geth');
 var textEncoding = require('text-encoding'); 
 var CryptoJS = require("crypto-js"); 
-
+var bigInt = require("big-integer");
 
 const { countries, zones } = require("moment-timezone/data/meta/latest.json");
 const { toBech32, fromBech32,} = require('@harmony-js/crypto');
@@ -353,9 +353,8 @@ class App extends Component {
 
     loc:this.getLocale(), my_job_responses_notifications:{}, my_job_application_responses_notifications:{}, my_contractor_job_request_notifications:{}, my_token_event_notifications:{}, my_bag_responses_notifications:{}, my_bag_application_responses_notifications:{}, enter_exit_accounts_notifications:{}, my_store_direct_purchases_notifications:{}, received_mail_notifications:{},
 
-    my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}
+    my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{}
   };
-
 
   get_e5s(){
     var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765']
@@ -375,13 +374,15 @@ class App extends Component {
         // e5_address:'0x57d2189085D4F4e0156F70B71F0c90897836967E', 
         // first_block:18730085, end_image:E25EndImg, spend_image:E25SpendImg, ether_image:EthereumTestnet, iteration:400_000, url:0, active:true, e5_img:End25Img,
 
-        iteration:400_000, url:0, active:true, e5_img:End25Img
+        iteration:400_000, url:0, active:true, e5_img:End25Img,
+        end_token_power_limit: 135
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:'',/* 0x24d7436eC90392f20AfeD800523E0d995Ec4310d */ 
-        first_block:18716990, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:18716990, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img,
+        end_token_power_limit: 999,
       },
       'E45':{
         web3:['https://api.harmony.one'],
@@ -893,7 +894,7 @@ class App extends Component {
         '536':'subscription','537':'configuration','538':'authorities','539':'prices','540':'false','541':'true','542':'moderators','543':'interactable','544':'enabled','545':'disabled','546':'Set a name for your new Subscription.','547':'Enter Title...','548':'Set some tags for indexing your new Subscription.','549':'Enter Tag...','550':'Add.','551':'Create a basic E5 Subscription.','552':'Next','553':'Previous','554':'Cancellable.','555':'If set to true, subscription payers can refund their subscription payments.','556':'Recommended: false.','557':'Time Unit','558':'The amount of time thats used as a unit when paying for your new subscription.','559':'Recommended: 1 min.','560':'Minimum Buy Amount.','561':'Minimum amount of time units that can be paid for your new subscription.','562':'units','563':'Recommended: at least 1','564':'Maximum Buy Amount','565':'Maximum amount of time units that can be paid for your new subscription.','566':'Minimum Cancellable Amount(For Cancellable Subscriptions)','567':'The minimum amount of time units that can be left when cancelling your new subscriptions payments.','568':'Minimum Cancellable Amount','569':'Recommended: at least 1','570':'Access Rights','571':'If enabled, access to the subscription will be restricted to moderators and specified accounts.','572':'Set the authority ID for your new subscription.','573':'Set the subscription beneficiary ID for your new subscription.','574':'moderators','575':'interactable','576':'Moderator ID','577':'Set the account id for your targeted moderator','578':'Add Moderator','579':'Account ID','580':'Interactible ID','581':'Set the account id for your targeted account, and expiry time for their interactability','582':'Add Interactible Account.','583':'Please put a valid account ID.','584':'Added interactable account.','585':'Interactible Account ID: ','586':'Until: ','587':'Exchange ID','588':'Type an exchange by its id, then the desired price and click add.','589':'Price','590':'tokens','591':'Add Price','592':'Please put a valid exchange ID.','593':'Please put a valid amount.','594':'You cant use the same exchange twice.','595':'Added price.','596':'My Account','597':'Account','598':'Add some tags first.','599':'Add a name first.','600':'That name is too long.', '600a':'Enter Authority', '600b':'Enter Beneficiary ID...',
         
         /* new token page */
-        '601':'token','602':'basic','603':'custom','604':'token-authorities','605':'token-prices','606':'capped','607':'uncapped','608':'locked','609':'unlocked','610':'locked','611':'unlocked','612':'partially-custom','613':'fully-custom','614':'fixed','615':'spread','616':'enabled','617':'disabled','618':'moderators','619':'interactable','620':'Set a name for your new Token. No spaces should be used.','621':'Enter Name..','622':'Set a symbol for your new Token. No spaces should be used.','623':'Enter Symbol...','624':'Set tags for indexing your new Token.','625':'Enter Tag...','626':'Set an image for your new Token.','627':'Use a smaller image.','628':'Preset the new tokens settings based on common use cases.','629':'📈 E Token','630':'A fixed supply token used for managing stake and funding a workgroup.','631':'☝️ End Token','632':'A fixed supply token with a very large supply similar to END.','633':'🫰 Spend Token','634':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.','635':'🔧 Utility Token','636':'An uncapped, general purpose token which is bought and sold from its exchange.','637':'e-token preset has been applied.','638':'End token preset has been applied.','639':'Spend token preset has been applied.','640':'Utility token preset has been applied.','641':'Next.','642':'Previous.','643':'Token Supply(For Capped Tokens)','644':'The supply of a capped token available for buying (for capped tokens)','645':'Token Supply','646':'tokens','647':'Recommended: 100,000,000e2','648':'Buy Limit','649':'The maximum amount of tokens that can be bought in one transaction.','650':'Trust Fee','651':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.','652':'Recommended: 3.5%','653':'Sell Limit','654':'The maximum amount of your new token a sender can sell in a transaction.','655':'Create a custom E5 token.','656':'Set the token type.','657':'Capped token (with limited supply) or uncapped token (with unlimited supply)','658':'Minimum Time Between Swap','659':'The minimum amount of time a sender has to wait between making a swap for a given token.','660':'Trust Fee.','661':'Proportion or percentage fee enforced on all contract spending that takes place using token.','662':'Recommended: 3.5%','663':'Minimum Transactions Between Swap','664':'The minimum number of transactions sender has to make between swaps for your new token.','665':'transactions','666':'Minimum Blocks Between Swap','667':'The minimum number of blocks sender has to wait between making a swap for your new token.','668':'blocks','669':'Minimum Entered Contracts Between Swap','670':'The minimum amount of contracts sender should enter before interacting with your new exchange again.','671':'Minimum Transactions For First Buy','672':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.','673':'contracts','674':'Minimum Entered Contracts For First Buy.','675':'The minimum number of contracts sender should have entered before first buy.','676':'Unlocked Liquidity','677':'If set to unlocked, You have direct access to the token exchanges liquidity','678':'Recommended: unlocked','679':'Unlocked Supply','680':'If set to unlocked, you can mint more of the token outside the exchange.','681':'Recommended: unlocked','682':'Fully Custom','683':'If set to fully-custom, you have full access to the token exchanges configuration','684':'Recommended: fully-custom','685':'Block Limit(For Uncapped Spend Tokens)','686':'The maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.','687':'Block Limit.','688':'Recommended: ','689':'Halving type (for Uncapped Spend Tokens)','690':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.','691':'Recommended: Spread','692':'Maturity Limit(For Uncapped Spend Tokens)','693':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is proportionately less than its default set value.','694':'Maturity Limit','695':'Internal Block Halving(For Uncapped Spend Tokens)','696':'Proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)','697':'Internal Block Halving Proportion','698':'Recommended: 40% - 51%','699':'Block Limit Reduction(For Uncapped Spend Tokens)','700':'Proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)','701':'Block Limit Reduction Proportion','702':'Recommended: 65% - 91%','703':'Block Reset Limit(For Uncapped Spend Tokens)','704':'The maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.','705':'Block Reset Limit','706':'Recommended: 3','707':'Block Limit Sensitivity (for Uncapped Spend Tokens)','708':'The sensitivity of your new exchange to increasing demand','709':'Recommended: 2','710':'Exchange Ratio X','711':'The buy output exchange ratio X for your new token','712':'Exchange Ratio X:Y','713':'Exchange Ratio Y','714':'The buy input exchange ratio Y for your new token','715':'Access Rights','716':'If enabled, access to the exchange will be restricted to moderators and specified accounts','717':'Exchange Authority ID','718':'The account set to control the exchange','719':'Set Exchange Authority ID','720':'Trust Fee Target ID','721':'The account set to receive trust fee when collected from contract spend actions','722':'Set Trust Fee Target ID','723':'My Account','724':'Account','725':'Moderator ID','726':'Moderator ID','727':'Set the account id for your targeted moderator.','728':'Add Moderator','729':'Please put a valid account ID.','730':'Added the account as a moderator.','731':'Account ID','732':'Interactable ID','733':'Set the account id for your targeted account, and expiry time for their interactability','734':'Add Interactable Account','735':'Please put a valid account id','736':'Added interactable account.','737':'Exchange ID','738':'The an exchange by its id, then the desired price and click add.','739':'Price.','740':'Add Price.','741':'Please put a valid exchange ID.','742':'Please put a valid amount.','743':'You cant use the same exchange twice','744':'Added your set price.','745':'Add some tags first.','746':'Please add a name for your token.','747':'Please add a symbol for your token.','748':'That token name is too long.','749':'That token name is invalid.','750':'That token symbol is invalid.','751':'','752':'That token symbol is already in use.','752a':'That token symbol is too long.',
+        '601':'token','602':'basic','603':'custom','604':'token-authorities','605':'token-prices','606':'capped','607':'uncapped','608':'locked','609':'unlocked','610':'locked','611':'unlocked','612':'partially-custom','613':'fully-custom','614':'fixed','615':'spread','616':'enabled','617':'disabled','618':'moderators','619':'interactable','620':'Set a name for your new Token. No spaces should be used.','621':'Enter Name..','622':'Set a symbol for your new Token. No spaces should be used.','623':'Enter Symbol...','624':'Set tags for indexing your new Token.','625':'Enter Tag...','626':'Set an image for your new Token.','627':'Use a smaller image.','628':'Preset the new tokens settings based on common use cases.','629':'📈 e Token','630':'A fixed supply token used for managing stake and funding a workgroup.','631':'☝️ Paid Token','632':'A fixed supply token with a very large supply similar to END.','633':'🫰 Free Token','634':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.','635':'🔧 Utility Token','636':'An uncapped, general purpose token which is bought and sold from its exchange.','637':'e-token preset has been applied.','638':'End token preset has been applied.','639':'Spend token preset has been applied.','640':'Utility token preset has been applied.','641':'Next.','642':'Previous.','643':'Token Supply(For Capped Tokens)','644':'The supply of a capped token available for buying (for capped tokens)','645':'Token Supply','646':'tokens','647':'Recommended: 100,000,000e2','648':'Buy Limit','649':'The maximum amount of tokens that can be bought in one transaction.','650':'Trust Fee','651':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.','652':'Recommended: 3.5%','653':'Sell Limit','654':'The maximum amount of your new token a sender can sell in a transaction.','655':'Create a custom E5 token.','656':'Set the token type.','657':'Capped token (with limited supply) or uncapped token (with unlimited supply)','658':'Minimum Time Between Swap','659':'The minimum amount of time a sender has to wait between making a swap for a given token.','660':'Trust Fee.','661':'Proportion or percentage fee enforced on all contract spending that takes place using token.','662':'Recommended: 3.5%','663':'Minimum Transactions Between Swap','664':'The minimum number of transactions sender has to make between swaps for your new token.','665':'transactions','666':'Minimum Blocks Between Swap','667':'The minimum number of blocks sender has to wait between making a swap for your new token.','668':'blocks','669':'Minimum Entered Contracts Between Swap','670':'The minimum amount of contracts sender should enter before interacting with your new exchange again.','671':'Minimum Transactions For First Buy','672':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.','673':'contracts','674':'Minimum Entered Contracts For First Buy.','675':'The minimum number of contracts sender should have entered before first buy.','676':'Unlocked Liquidity','677':'If set to unlocked, You have direct access to the token exchanges liquidity','678':'Recommended: unlocked','679':'Unlocked Supply','680':'If set to unlocked, you can mint more of the token outside the exchange.','681':'Recommended: unlocked','682':'Fully Custom','683':'If set to fully-custom, you have full access to the token exchanges configuration','684':'Recommended: fully-custom','685':'Block Limit(For Uncapped Spend Tokens)','686':'The maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.','687':'Block Limit.','688':'Recommended: ','689':'Halving type (for Uncapped Spend Tokens)','690':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.','691':'Recommended: Spread','692':'Maturity Limit(For Uncapped Spend Tokens)','693':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is proportionately less than its default set value.','694':'Maturity Limit','695':'Internal Block Halving(For Uncapped Spend Tokens)','696':'Proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)','697':'Internal Block Halving Proportion','698':'Recommended: 40% - 51%','699':'Block Limit Reduction(For Uncapped Spend Tokens)','700':'Proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)','701':'Block Limit Reduction Proportion','702':'Recommended: 65% - 91%','703':'Block Reset Limit(For Uncapped Spend Tokens)','704':'The maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.','705':'Block Reset Limit','706':'Recommended: 3','707':'Block Limit Sensitivity (for Uncapped Spend Tokens)','708':'The sensitivity of your new exchange to increasing demand','709':'Recommended: 2','710':'Exchange Ratio X','711':'The buy output exchange ratio X for your new token','712':'Exchange Ratio X:Y','713':'Exchange Ratio Y','714':'The buy input exchange ratio Y for your new token','715':'Access Rights','716':'If enabled, access to the exchange will be restricted to moderators and specified accounts','717':'Exchange Authority ID','718':'The account set to control the exchange','719':'Set Exchange Authority ID','720':'Trust Fee Target ID','721':'The account set to receive trust fee when collected from contract spend actions','722':'Set Trust Fee Target ID','723':'My Account','724':'Account','725':'Moderator ID','726':'Moderator ID','727':'Set the account id for your targeted moderator.','728':'Add Moderator','729':'Please put a valid account ID.','730':'Added the account as a moderator.','731':'Account ID','732':'Interactable ID','733':'Set the account id for your targeted account, and expiry time for their interactability','734':'Add Interactable Account','735':'Please put a valid account id','736':'Added interactable account.','737':'Exchange ID','738':'The an exchange by its id, then the desired price and click add.','739':'Price.','740':'Add Price.','741':'Please put a valid exchange ID.','742':'Please put a valid amount.','743':'You cant use the same exchange twice','744':'Added your set price.','745':'Add some tags first.','746':'Please add a name for your token.','747':'Please add a symbol for your token.','748':'That token name is too long.','749':'That token name is invalid.','750':'That token symbol is invalid.','751':'','752':'That token symbol is already in use.','752a':'That token symbol is too long.',
         
         /* edit pages */
         '753':'edit-channel','754':'unlocked','755':'locked','756':'tokens','757':'Add some tags first.','758':'Add a title fro your job post.','759':'That title is too long.','760':'job','761':'edit-token','762':'edit-channel','763':'edit-contractor','764':'edit-job','765':'edit-post','766':'edit-storefront-item','767':'edit-token', '767a':'Take down post.', '767b':'If set to taken-down, your post will not be visible to others except for yourself.', '767c':'taken-down',
@@ -1072,7 +1073,9 @@ class App extends Component {
         '2739':'edit-proposal','2740':'midnight','2741':'green-ish','2742':'Not Safe For Work Warning.','2743':'Warning. This content contains material that may not be suitable for all audiences. Viewer discretion is advised. The content may include explicit language, sexual themes, nudity, or other adult-oriented material. It is intended for mature audiences only.','2744':'Proceed.','2745':'Years','2746':'Days','2747':'Hours','2748':'Minutes','2749':'Set Alias','2750':'Release','2751':'Delete',
         
         
-        '2752':'splineArea','2753':'area','2754':'Graph Type','2755':'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.','2756':'disabled','2757':'Disable Activity Section.','2758':'If set to disabled, activity and comments will be disabled for all users except you.','2759':'The comment section has been disabled by the posts author.','2760':'🤐 Activity Section Disabled','2761':'The responses section has been disabled by the posts author.','2762':'','2763':'','2764':'','2765':'','2766':'','2767':'','2768':'','2769':'','2770':'','2771':'','2772':'','2773':'','2774':'','2775':'','2776':'','2777':'','2778':'','2779':'','2780':'','2781':'','2782':'','2783':'','2784':'','2785':'','2786':'','2787':'','2788':'','2789':'','2790':'','2791':'','2792':'','2793':'','2794':'','2795':'','2796':'','2797':'','2798':'','2799':'','2800':'','2801':'','2802':'','2803':'','2804':'','2805':'','2806':'','2807':'','2808':'','2809':'','2810':'','2811':'','2812':'','2813':'','2814':'','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2752':'splineArea','2753':'area','2754':'Graph Type','2755':'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.','2756':'disabled','2757':'Disable Activity Section.','2758':'If set to disabled, activity and comments will be disabled for all users except you.','2759':'The comment section has been disabled by the posts author.','2760':'🤐 Activity Section Disabled','2761':'The responses section has been disabled by the posts author.','2762':'You cant use that exchange.','2763':'You cant use that exchange for the voter weights feature.',
+        
+        '2764':'configuration','2765':'???','2766':'End Token Supply.','2767':'The total supply of the End token that will be minted for you.','2768':'End token preset has been applied.','2769':'🦣 End Token.','2770':'A token with a very large supply, thats pegged to the value of End.','2771':'The value of all the items in your bag in their respective denominations.','2772':'That name is already in use.','2773':'low','2774':'medium','2775':'high','2776':'1 END','2777':'10 END','2778':'100 END','2779':'Token Depth','2780':'Base Liquidity.','2781':'Set the base liquidity in End for your End token.','2782':'Base Stability.','2783':'Set the base stability for your new End token. This is equivalent to the tokens sell limit.','2784':'Your balance in END is insufficient to create your End token.','2785':'','2786':'','2787':'','2788':'','2789':'','2790':'','2791':'','2792':'','2793':'','2794':'','2795':'','2796':'','2797':'','2798':'','2799':'','2800':'','2801':'','2802':'','2803':'','2804':'','2805':'','2806':'','2807':'','2808':'','2809':'','2810':'','2811':'','2812':'','2813':'','2814':'','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1722,7 +1725,7 @@ class App extends Component {
   background_sync(){
     if(this.state.accounts[this.state.selected_e5] != null){
       if(this.is_allowed_in_e5()){
-        // this.start_get_accounts_data(false)
+        this.start_get_accounts_data(false, false)
         this.load_data_from_page_in_focus(this.focused_page)
       }
     }
@@ -7478,7 +7481,7 @@ class App extends Component {
     this.generate_one_account_for_all_e5s(seed)
     var me = this
     setTimeout(function() {
-        me.start_get_accounts_data(is_synching)
+        me.start_get_accounts_data(is_synching, false)
     }, (3 * 1000));
 
     if(selected_item != ''){
@@ -9774,6 +9777,23 @@ class App extends Component {
 
   get_token_data = async (contractInstance, H5contractInstance, H52contractInstance, E52contractInstance, web3, e5, contract_addresses, account) => {
     var created_token_events = await this.load_event_data(web3, contractInstance, 'e1', e5, {p2/* object_type */:31/* token_exchange */})
+
+    var token_registry = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */:19/* 19(token_symbol_registry) */});
+    var registered_token_names = {}
+    var registered_token_symbols = {}
+    token_registry.forEach(event => {
+      var data = event.returnValues.p4/* string_data */
+      var object = JSON.parse(data)
+      registered_token_names[object['name']] = object['time']
+      registered_token_symbols[object['symbol']] = object['time']
+    });
+    var registered_token_names_clone = structuredClone(this.state.registered_token_names)
+    var registered_token_symbols_clone = structuredClone(this.state.registered_token_symbols)
+    registered_token_names_clone[e5] = registered_token_names
+    registered_token_symbols_clone[e5] = registered_token_symbols
+    this.setState({registered_token_names:registered_token_names_clone, registered_token_symbols:registered_token_symbols_clone})
+
+
     var created_tokens = [3, 5]
     var created_token_depths = [0,0]
     var exchange_accounts = [account, account]
@@ -9785,7 +9805,11 @@ class App extends Component {
     }
 
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
-    var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
+    // var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
+    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, 12)
+    var token_balances = token_balances_and_data['bal']
+    var token_balances_data = token_balances_and_data['bal_data']
+
 
     var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
@@ -9822,6 +9846,8 @@ class App extends Component {
       }
       var exchanges_balances = await H52contractInstance.methods.f140e(created_token_data[i][3], created_tokens[i], depth_values).call((error, result) => {});
 
+      // var exchanges_balances = await this.get_balance_from_multiple_exchanges(created_token_data[i][3], created_tokens[i], H52contractInstance)
+
       var moderator_data = await this.load_event_data(web3, E52contractInstance, 'e1', e5, {p1/* target_obj_id */:created_tokens[i], p2/* action_type */:4/* <4>modify_moderator_accounts */})
       var old_moderators = []
 
@@ -9854,7 +9880,10 @@ class App extends Component {
 
       var timestamp = event == null ? 0 : event.returnValues.p4
       var author = event == null ? 0 : event.returnValues.p3
-      var token_obj = {'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5 }
+      var token_obj = {
+        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5, 
+        'token_balances_data':token_balances_data[i]
+      }
 
       if(interactible_checker_status_values[i] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
 
@@ -9918,28 +9947,6 @@ class App extends Component {
 
 
 
-    // var token_symbol_directory = {}
-    // var token_name_directory = {}
-    // token_symbol_directory[0] = 'wei'
-    // token_symbol_directory['wei'] = 0
-    // token_name_directory[e5+'0'] = this.state.e5s[e5].token
-    // for(var u=0; u<created_token_object_data.length; u++){
-    //   var token_name = created_token_object_data[u]['ipfs'] == null ? 'tokens' : created_token_object_data[u]['ipfs'].entered_symbol_text
-    //   var token_title = created_token_object_data[u]['ipfs'] == null ? 'tokens' : created_token_object_data[u]['ipfs'].entered_title_text
-    //   var token_id = created_token_object_data[u]['id']
-
-    //   if(token_id == 3){
-    //     token_name = 'END'
-    //     token_title = e5
-    //   } 
-    //   if(token_id == 5) {
-    //     token_name = 'SPEND'
-    //     token_title = e5.replace('E','3')
-    //   }
-    //   token_symbol_directory[token_id] = token_name;
-    //   token_symbol_directory[token_name] = token_id
-    //   token_name_directory[e5+token_id] = token_title
-    // }
 
 
     //load my received token events
@@ -9948,13 +9955,6 @@ class App extends Component {
     for(var i=0; i<received_tokens_event_data.length; i++){
       my_token_event_notifications_data.push({'type':'token_event_notification', 'event':received_tokens_event_data[i], 'e5':e5, 'timestamp':received_tokens_event_data[i].returnValues.p5})
     }
-
-
-    // var token_directory_clone = structuredClone(this.state.token_directory)
-    // token_directory_clone[e5] = token_symbol_directory
-
-    // var token_name_directory_clone = structuredClone(this.state.token_name_directory)
-    // token_name_directory_clone[e5] = token_name_directory
 
     var my_token_event_notifications_clone = structuredClone(this.state.my_token_event_notifications)
     my_token_event_notifications_clone[e5] = my_token_event_notifications_data
@@ -11329,17 +11329,66 @@ class App extends Component {
 
 
 
+  get_balance_from_multiple_exchanges = async (exchanges, account, H52contractInstance, exchanges_depth) => {
+    var exchange_ids = []
+    var depths = []
+    for(var j=0; j<exchanges.length; j++){
+      for(var i=exchanges_depth; i>=0; i--){
+        exchange_ids.push(exchanges[j])
+        depths.push(i)
+      }
+    }
+    
+    var token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
 
+    var bal = [];
+    var balance_data = []
+    for(var i=0; i<token_balances.length; i++){
+      var bal_pos = Math.floor(i/(exchanges_depth+1))
+      if(bal_pos == bal.length){
+        bal.push(0)
+        balance_data.push({})
+      }
+      var balance = bal[bal_pos]
+      var balance_at_depth = bigInt(this.get_actual_number(token_balances[i], depths[i]))
+      
+      balance = bigInt(balance).add(balance_at_depth)
+      bal[bal_pos] = balance
+      balance_data[bal_pos][depths[i]] = token_balances[i]
+    }
+
+    // return bal
+    return { 'bal':bal, 'bal_data':balance_data }
+  }
 
   get_balance_in_exchange = async (exchange_id, account, e5, addresses) => {
       const web3 = new Web3(this.get_web3_url_from_e5(e5));
       const H52contractArtifact = require('./contract_abis/H52.json');
       const H52_address = addresses[6];
       const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
-      
-      var token_balances = await H52contractInstance.methods.f140e([exchange_id], account, [0]).call((error, result) => {});
 
-      return token_balances[0]
+      var exchange = this.state.created_token_object_mapping[e5] == null ? null : this.state.created_token_object_mapping[e5][exchange_id];
+      var exchanges_depth = 0
+      if(exchange != null){
+        exchanges_depth = exchange['ipfs'].default_depth == null ? 0 : exchange['ipfs'].default_depth
+      }
+      var exchange_ids = []
+      var depths = []
+      for(var i=exchanges_depth; i>=0; i--){
+        exchange_ids.push(exchange_id)
+        depths.push(i)
+      }
+      
+      var token_balances = await H52contractInstance.methods.f140e(exchange_ids, account, depths).call((error, result) => {});
+
+      var bal = 0;
+      for(var i=0; i<token_balances.length; i++){
+        var balance_at_depth = bigInt(this.get_actual_number(token_balances[i], depths[i]))
+        bal = bigInt(bal).add(balance_at_depth)
+      }
+
+
+      return bal
   }
 
   get_balance_in_exchange_for_multiple_accounts = async (exchange_ids, accounts, e5, addresses, depths, action) => {
@@ -11351,6 +11400,12 @@ class App extends Component {
       var token_balances = await H52contractInstance.methods.f270(exchange_ids, accounts, depths, 1, action).call((error, result) => {});
 
       return token_balances
+  }
+
+  get_actual_number(number, depth){
+      var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+      var depth_vaule = bigInt(('1e'+p))
+      return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
   }
 
 

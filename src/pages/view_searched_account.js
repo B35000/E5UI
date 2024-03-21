@@ -387,6 +387,7 @@ class SearchedAccountPage extends Component {
             this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 1000)
             this.setState({searched_exchange: exchange_id})
             this.props.perform_searched_account_balance_search(exchange_id, this.state.searched_account['id'], this.state.searched_account['e5'])
+
         }
     }
 
@@ -1591,18 +1592,22 @@ class SearchedAccountPage extends Component {
     }
 
     render_transfers_event_item(item, index){
+        var item = this.state.searched_account
+        var e5 = item['e5']
+
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
+        number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3): 'From: '+this.get_sender_title_text(item['event'].returnValues.p2)
         
         if (this.state.selected_transfers_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': 'Action: '+item['action'], 'size': 's'})}
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's'})}
                     <div style={{ height: 2 }} />
                     <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['13']/* 'Token ID:  ' */+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
                     <div style={{ height: 2 }} />
@@ -1647,6 +1652,12 @@ class SearchedAccountPage extends Component {
             }
         });
         return filtered_events
+    }
+
+    get_actual_number(number, depth){
+        var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth_vaule = bigInt(('1e'+p))
+        return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
 

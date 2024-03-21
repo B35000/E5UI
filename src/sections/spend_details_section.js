@@ -296,8 +296,6 @@ class SpendDetailSection extends Component {
                     
                     {this.render_detail_item('0')}
                     {this.show_transaction_count_chart(selected_object, symbol)}
-
-                    {this.render_detail_item('0')}
                     
                     <div style={{height:10}}/>
                     {this.render_detail_item('3', item['minimum_transactions_between_swap'])}
@@ -813,6 +811,8 @@ class SpendDetailSection extends Component {
         }
         var proportion_ratio_events = selected_object['proportion_ratio_data']
         var wallet_dominance = this.calculate_wallet_dominance(selected_object)
+
+        var circulating_supply = this.get_circulating_supply(selected_object)
         return{
             'tags':{'active_tags':active_tags, 'index_option':'indexed', 'when_tapped':''},
             'banner-icon':{'header':name, 'subtitle':symbol, 'image':image},
@@ -844,7 +844,7 @@ class SpendDetailSection extends Component {
             'ratio_y':{'style':'l','title':this.props.app_state.loc['396']/* 'Exchange Ratio Y' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[1]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[1]), 'relativepower':''},
             'combined_exchange_ratio': {'title':this.format_exchange_ratio(selected_obj_ratio_config[0], selected_obj_ratio_config[1]), 'details':this.props.app_state.loc['712']/* 'Exchange Ratio X:Y' */, 'size':'l'},
 
-            'exchanges_liquidity':{'style':'l','title':this.props.app_state.loc['2579']/* 'Circulating Supply' */, 'subtitle':this.format_power_figure(selected_obj_ratio_config[2]), 'barwidth':this.calculate_bar_width(selected_obj_ratio_config[2]), 'number':this.format_account_balance_figure(selected_obj_ratio_config[2]), 'relativepower':symbol},
+            'exchanges_liquidity':{'style':'l','title':this.props.app_state.loc['2579']/* 'Circulating Supply' */, 'subtitle':this.format_power_figure(circulating_supply), 'barwidth':this.calculate_bar_width(circulating_supply), 'number':this.format_account_balance_figure(circulating_supply), 'relativepower':symbol},
             'mint_burn_button':{'text':this.props.app_state.loc['1822']/* 'Mint/Burn Token' */, 'action':''},
 
             'block_limit':{'style':'l','title':this.props.app_state.loc['335']/* 'Block Limit' */, 'subtitle':this.format_power_figure(selected_obj_config[1]), 'barwidth':this.calculate_bar_width(selected_obj_config[1]), 'number':this.format_account_balance_figure(selected_obj_config[1]), 'relativepower':symbol},
@@ -869,11 +869,23 @@ class SpendDetailSection extends Component {
     }
 
     calculate_wallet_dominance(object){
-        var max_supply = object['data'][2][2]
+        var max_supply = this.get_circulating_supply(object) 
         var my_balance = object['balance'];
         if(my_balance == 0) return 0
-        var percentage = (my_balance * 100) / max_supply
+        // var percentage = (my_balance * 100) / max_supply
+        var percentage = (bigInt(my_balance).multiply(100)).divide(max_supply)
         return percentage
+    }
+
+    get_circulating_supply(object){
+        var selected_obj_ratio_config = object['data'][2];
+        var active_supply = selected_obj_ratio_config[2]
+        if(object['ipfs'] != null){
+            if(object['ipfs'].default_depth != 0){
+                active_supply = bigInt(object['ipfs'].token_exchange_liquidity_total_supply).add(active_supply)
+            }
+        }
+        return active_supply
     }
 
     calculate_active_mint_limit(selected_object){
@@ -1134,7 +1146,7 @@ class SpendDetailSection extends Component {
 
     show_transaction_count_chart(selected_object, symbol){
         var exchange_ratio_events = selected_object['exchange_ratio_data']
-        if(exchange_ratio_events.length != 0){
+        if(exchange_ratio_events.length > 10){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -1142,6 +1154,8 @@ class SpendDetailSection extends Component {
                     {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(exchange_ratio_events), 'interval':this.get_transaction_count_interval_figure(exchange_ratio_events)})}
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2584']/* 'Y-Axis: Total Transactions' */, 'details':this.props.app_state.loc['2585']/* 'X-Axis: Time' */, 'size':'s'})}
+
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -1300,6 +1314,7 @@ class SpendDetailSection extends Component {
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
+        number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
@@ -1339,6 +1354,12 @@ class SpendDetailSection extends Component {
             var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
         }
+    }
+
+    get_actual_number(number, depth){
+        var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth_vaule = bigInt(('1e'+p))
+        return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
 
@@ -1766,6 +1787,7 @@ class SpendDetailSection extends Component {
         var exchange_id = item['event'].returnValues.p1;
         var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
+        number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
@@ -1991,6 +2013,7 @@ class SpendDetailSection extends Component {
         var amount = item.returnValues.p5
         var action = freeze_unfreeze_obj[item.returnValues.p2]
         var depth = item.returnValues.p6
+        amount = this.get_actual_number(amount, depth)
         if (this.state.selected_freeze_unfreeze_event_item == index) {
             return (
                 <div>

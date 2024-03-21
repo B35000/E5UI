@@ -493,7 +493,7 @@ class SendJobRequestPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1355']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1356']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1357']/* 'Add Pay' */, 'action':''})}
@@ -502,6 +502,26 @@ class SendJobRequestPage extends Component {
                 {this.render_set_prices_list_part()}
             </div>
         )
+    }
+
+    get_power_limit_for_exchange(exchange){
+        var exchange_id = this.get_token_id_from_symbol(exchange.trim())
+
+        if(!isNaN(exchange_id) && parseInt(exchange_id) > 0 && exchange_id != '' && this.does_exchange_exist(exchange_id)){
+            var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+            var default_depth = 0;
+            if(target_exchange_data != null){
+                target_exchange_data = target_exchange_data['ipfs']
+                if(target_exchange_data != null){
+                    default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+                }
+            }
+
+            return (default_depth*72)+63
+        }
+        else{
+            return 63
+        }
     }
 
     when_pre_post_paid_option_tags_object_updated(tag_obj){

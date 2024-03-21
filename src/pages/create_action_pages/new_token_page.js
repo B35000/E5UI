@@ -74,18 +74,31 @@ class NewTokenPage extends Component {
         
         content_channeling_setting: this.props.app_state.content_channeling, 
         device_language_setting: this.props.app_state.device_language, 
-        device_country: this.props.app_state.device_country
+        device_country: this.props.app_state.device_country,
+
+        default_depth:0,
+        get_end_token_base_liquidity:this.get_end_token_base_liquidity(),
+        get_end_token_base_stability:this.get_end_token_base_stability(),
     };
 
     get_new_token_page_tags_object(){
-        return{
+        var obj = {
             'i':{
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e',this.props.app_state.loc['602']/* 'basic' */, this.props.app_state.loc['603']/* 'custom' */, this.props.app_state.loc['604']/* 'token-authorities' */, this.props.app_state.loc['605']/* 'token-prices' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['604']/* 'token-authorities' */, this.props.app_state.loc['605']/* 'token-prices' */], [0]
+            ],
+            'configuration': [
+                ['xor', 'e', 1], [this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['602']/* 'basic' */, this.props.app_state.loc['603']/* 'custom' */, this.props.app_state.loc['2765']/* ??? */], [1], [1]
             ],
         };
+
+        obj[this.props.app_state.loc['2764']/* 'configuration' */] = [
+            ['xor', 'e', 1], [this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['602']/* 'basic' */, this.props.app_state.loc['603']/* 'custom' */, this.props.app_state.loc['2765']/* ??? */], [1], [1]
+        ]
+
+        return obj;
     }
 
     get_new_token_type_tags_object(){
@@ -181,6 +194,31 @@ class NewTokenPage extends Component {
 
 
 
+
+    get_end_token_base_liquidity(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['2773']/* 'low' */,this.props.app_state.loc['2774']/* 'medium' */, this.props.app_state.loc['2775']/* 'high' */], [1]
+            ],
+        };
+    }
+
+    get_end_token_base_stability(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e', this.props.app_state.loc['2776']/* '1 END' */,this.props.app_state.loc['2777']/* '10 END' */, this.props.app_state.loc['2778']/* '100 END' */], [1]
+            ],
+        };
+    }
+
+
+
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
@@ -217,7 +255,7 @@ class NewTokenPage extends Component {
 
 
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'e')
+        var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, this.state.new_token_page_tags_object['i'].active)
 
         // if(this.state.new_token_page_tags_object['i'].active == 'custom'){
         //     selected_item = this.get_selected_item(this.state.new_token_page_tags_object, 'custom')
@@ -255,6 +293,13 @@ class NewTokenPage extends Component {
             return(
                 <div>
                     {this.render_simple_token_list()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['2765']/* ??? */){
+            return(
+                <div>
+                    {this.render_end_token_list()}
                 </div>
             )
         }
@@ -470,18 +515,24 @@ class NewTokenPage extends Component {
                 </div>
                 <div style={{height:3}}/>
 
-                <div  onClick={()=>this.preset_end_token()}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['631']/* '☝️ End Token' */, 'details':this.props.app_state.loc['632']/* 'A fixed supply token with a very large supply similar to END.' */, 'size':'l'})}
+                <div  onClick={()=>this.preset_paid_token()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['631']/* '☝️ Paid Token' */, 'details':this.props.app_state.loc['632']/* 'A fixed supply token with a very large supply similar to END.' */, 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
 
-                <div onClick={()=>this.preset_spend_token()}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['633']/* '🫰 Spend Token' */, 'details':this.props.app_state.loc['634']/* 'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.' */, 'size':'l'})}
+                <div onClick={()=>this.preset_free_token()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['633']/* '🫰 Free Token' */, 'details':this.props.app_state.loc['634']/* 'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.' */, 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
 
                 <div onClick={()=>this.preset_utility_token()}>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['635']/* '🔧 Utility Token' */, 'details':this.props.app_state.loc['636']/* 'An uncapped, general purpose token which is bought and sold from its exchange.' */, 'size':'l'})}
+                </div>
+                <div style={{height:3}}/>
+
+                
+                <div onClick={()=>this.preset_end_token()}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2769']/* '🦣 End Token.' */, 'details':this.props.app_state.loc['2770']/* 'A token with a very large supply, thats pegged to the value of End.' */, 'size':'l'})}
                 </div>
                 <div style={{height:3}}/>
             </div>
@@ -523,7 +574,7 @@ class NewTokenPage extends Component {
     }
 
 
-    preset_end_token(){
+    preset_paid_token(){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [1] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [1] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
@@ -554,7 +605,7 @@ class NewTokenPage extends Component {
         this.props.notify(this.props.app_state.loc['638']/* 'End token preset has been applied' */, 2500)
     }
 
-    preset_spend_token(){
+    preset_free_token(){
         var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [2] ], };
         var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [1] ], };
         var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [1] ], };
@@ -615,6 +666,40 @@ class NewTokenPage extends Component {
         })
 
         this.props.notify(this.props.app_state.loc['640']/* 'Utility token preset has been applied' */, 2500)
+    }
+
+
+    preset_end_token(){
+        var type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['606']/* 'capped' */, this.props.app_state.loc['607']/* 'uncapped' */], [2] ], };
+        var unlocked_liquidity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
+        var unlocked_supply = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['608']/* 'locked' */, this.props.app_state.loc['609']/* 'unlocked' */], [2] ], };
+        var fully_custom = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['612']/* 'partially-custom' */, this.props.app_state.loc['613']/* 'fully-custom' */], [2] ], };
+        var block_limit_sensitivity = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e','1', '2', '3', '4', '5'], [1] ], };
+        var halving_type = { 'i':{ active:'e', }, 'e':[ ['xor','',0], ['e',this.props.app_state.loc['614']/* 'fixed' */, this.props.app_state.loc['615']/* 'spread' */], [1] ], };
+        var price = [{'id':'3', 'amount':bigInt('1')}]
+
+        var number = bigInt('9e143')
+
+        this.setState({
+            new_token_type_tags_object: type,
+            default_exchange_amount_buy_limit:bigInt('1e62'),
+            default_exchange_amount_sell_limit:bigInt('1e62'),
+            trust_fee_proportion:bigInt('35e15'),
+
+            new_token_unlocked_liquidity_tags_object: unlocked_liquidity,
+            new_token_unlocked_supply_tags_object: unlocked_supply,
+            new_token_fully_custom_tags_object: fully_custom,
+
+            token_exchange_ratio_x: bigInt('1e72'),
+            token_exchange_ratio_y: bigInt('1e72'),
+            price_data: price,
+
+            minimum_transactions_between_swap:0, minimum_blocks_between_swap:0, minimum_time_between_swap:0, minimum_entered_contracts_between_swap:0, minimum_transactions_for_first_buy:0, block_limit:0, minimum_entered_contracts_for_first_buy:0, internal_block_halfing_proportion:0, block_limit_reduction_proportion:0, block_reset_limit:0, new_token_block_limit_sensitivity_tags_object: block_limit_sensitivity, default_authority_mint_limit:0, new_token_halving_type_tags_object: halving_type, maturity_limit:0, 
+
+            token_exchange_liquidity_total_supply: number, default_depth: this.get_default_depth(number)
+        })
+
+        this.props.notify(this.props.app_state.loc['2768']/* 'End token preset has been applied.' */, 2500)
     }
    
 
@@ -1329,6 +1414,83 @@ class NewTokenPage extends Component {
 
 
 
+
+
+
+
+
+
+    render_end_token_list(){
+        return(
+            <div>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2766']/* 'End Token Supply.' */, 'details':this.props.app_state.loc['2767']/* 'The total supply of the End token that will be minted for you.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['645']/* 'Token Supply' */, 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2779']/* 'Token Depth' */, 'subtitle':this.format_power_figure(this.state.default_depth), 'barwidth':this.calculate_bar_width(this.state.default_depth), 'number':this.format_account_balance_figure(this.state.default_depth), 'barcolor':'', 'relativepower':'??', })}
+                </div>
+
+                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_end_token_total_supply.bind(this)} theme={this.props.theme} power_limit={this.get_e5_power_limit()}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2780']/* 'Base Liquidity.' */, 'details':this.props.app_state.loc['2781']/* 'Set the base liquidity in End for your End token.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_end_token_base_liquidity} tag_size={'l'} when_tags_updated={this.when_get_end_token_base_liquidity.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2782']/* 'Base Stability.' */, 'details':this.props.app_state.loc['2783']/* 'Set the base stability for your new End token. This is equivalent to the tokens sell limit. ' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_end_token_base_stability} tag_size={'l'} when_tags_updated={this.when_get_end_token_base_stability.bind(this)} theme={this.props.theme}/>
+            </div>
+        )
+    }
+
+    when_get_end_token_base_liquidity(tag_obj){
+        this.setState({get_end_token_base_liquidity: tag_obj})
+    }
+
+    when_get_end_token_base_stability(tag_obj){
+        this.setState({get_end_token_base_stability: tag_obj})
+    }
+
+
+    when_end_token_total_supply(number){
+        this.setState({token_exchange_liquidity_total_supply: number, default_depth: this.get_default_depth(number)})
+    }
+
+    get_e5_power_limit(){
+        var current_e5 = this.props.app_state.selected_e5
+        var power_limit = this.props.app_state.e5s[current_e5].end_token_power_limit
+        if(power_limit == null) return 63
+        return power_limit
+    }
+
+    get_default_depth(number){
+        var number_as_string = number.toString().toLocaleString('fullwide', {useGrouping:false})
+        return Math.floor((number_as_string.length-1)/72)
+    }
+
+
+
+
+
+
+
+
+
+
+
     render_token_authorities_part(){
         var size = this.props.size
         var height = this.props.height-150
@@ -1857,7 +2019,9 @@ class NewTokenPage extends Component {
         }
 
         for (let i = 0; i < sorted_token_exchange_data.length; i++) {
-            items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+            if(sorted_token_exchange_data[i]['ipfs'] == null || sorted_token_exchange_data[i]['ipfs'].default_depth == null || sorted_token_exchange_data[i]['ipfs'].default_depth == 0){
+                items.push({'id':sorted_token_exchange_data[i]['id'], 'label':{'title':sorted_token_exchange_data[i]['id'], 'details':sorted_token_exchange_data[i]['ipfs'].entered_title_text, 'size':'s'}})
+            }
         }
 
         return items;
@@ -1878,8 +2042,21 @@ class NewTokenPage extends Component {
     when_add_price_set(){
         var exchange_id = this.get_token_id_from_symbol(this.state.exchange_id.trim())
         var amount = this.state.price_amount
+
+        var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+        var default_depth = 0;
+        if(target_exchange_data != null){
+            target_exchange_data = target_exchange_data['ipfs']
+            if(target_exchange_data != null){
+                default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+            }
+        }
+
         if(isNaN(exchange_id) || parseInt(exchange_id) < 0 || exchange_id == '' || !this.does_exchange_exist(exchange_id)){
             this.props.notify(this.props.app_state.loc['741']/* 'please put a valid exchange id' */, 2600)
+        }
+        else if(default_depth != 0){
+            this.props.notify(this.props.app_state.loc['2762']/* 'You cant use that exchange.' */, 3600)
         }
         else if(amount == 0){
             this.props.notify(this.props.app_state.loc['742']/* 'please put a valid amount' */, 2600)
@@ -2095,11 +2272,17 @@ class NewTokenPage extends Component {
         else if(symbol.includes(' ') || symbol == 'END' || symbol == 'SPEND' || (/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(symbol))){
             this.props.notify(this.props.app_state.loc['750']/* 'that symbol is invalid' */, 3700)
         }
-        else if(this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol] != null){
+        else if(this.is_symbol_in_use(symbol)){
             this.props.notify(this.props.app_state.loc['752']/* 'that symbol is already in use' */, 3700)
+        }
+        else if(this.is_name_in_use(title)){
+            this.props.notify(this.props.app_state.loc['2772']/* 'That name is already in use.' */, 3700)
         }
         else if(symbol.length > 9){
             this.props.notify(this.props.app_state.loc['752']/* 'that symbol is too long' */, 3700)
+        }
+        else if(!this.is_end_token_ok_if_any()){
+            this.props.notify(this.props.app_state.loc['2784']/* 'Your balance in END is insufficient to create your End token.' */, 5700)
         }
         else{
             var me = this
@@ -2117,6 +2300,95 @@ class NewTokenPage extends Component {
             }, (1 * 1000));
         }
 
+    }
+
+    is_symbol_in_use(symbol){
+        var record = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[symbol]
+        if(record != null) return true
+        record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_symbols)[symbol]
+        if(record != null) return true
+        return false
+    }
+
+    is_name_in_use(name){
+        var record = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[name]
+        if(record != null) return true
+        record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_names)[name]
+        if(record != null) return true
+        return false
+    }
+
+
+    is_end_token_ok_if_any(){
+        if(this.state.default_depth == 0) return true
+        var obj = {}
+        obj[this.props.app_state.loc['2773']/* 'low' */] = '10000'
+        obj[this.props.app_state.loc['2774']/* 'medium' */] = '100000'
+        obj[this.props.app_state.loc['2775']/* 'high' */] = '1000000'
+        var liquidity = this.get_selected_item(this.state.get_end_token_base_liquidity, this.state.get_end_token_base_liquidity['i'].active);
+        var buy_amount = obj[liquidity]
+
+        var token_balance = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][3]
+        token_balance = token_balance == null ? 0 : token_balance['balance']
+        token_balance = bigInt(token_balance).minus(this.get_debit_balance_in_stack(3, this.props.app_state.selected_e5))
+        
+        if(bigInt(token_balance).lesser(bigInt(buy_amount))){
+            return false
+        }else{
+            return true
+        }
+    }
+
+    get_debit_balance_in_stack(token_id, e5){
+        var txs = this.props.app_state.stack_items
+        var total_amount = bigInt(0)
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(txs[i].e5 == e5){
+                if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                    var amount = bigInt(txs[i].amount)
+                    var exchange = t.token_item['id']
+                    var action = this.get_action(t)
+                    if(token_id == exchange && action == 1){
+                        total_amount = bigInt(total_amount).add(amount)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                    if(txs[i].token_item['id'] == token_id){
+                        total_amount = bigInt(total_amount).add(txs[i].debit_balance)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    for(var i=0; i<t.selected_variant['price_data'].length; i++){
+                        var exchange = t.selected_variant['price_data'][i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                    for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
+                    if(token_id == 5){
+                        total_amount = bigInt(total_amount).add(t.award_amount)
+                    }
+                    for(var i=0; i<t.price_data.length; i++){
+                        var exchange = t.price_data[i]['id']
+                        var amount = t.price_data[i]['amount']
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+            }
+        }
+        return total_amount
     }
 
 

@@ -72,7 +72,7 @@ class template extends Component {
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'subtitle':this.format_power_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barwidth':this.calculate_bar_width(this.state.token_item['balance'] - this.state.debit_balance), 'number':this.format_account_balance_figure(this.state.token_item['balance'] - this.state.debit_balance), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'subtitle':this.format_power_figure(this.calculate_balance_after_set_transfers()), 'barwidth':this.calculate_bar_width(this.calculate_balance_after_set_transfers()), 'number':this.format_account_balance_figure(this.calculate_balance_after_set_transfers()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                     </div>
 
                     {this.render_everything()}
@@ -84,6 +84,10 @@ class template extends Component {
 
     when_new_transfer_action_page_tags_object_updated(tag_obj){
         this.setState({new_transfer_action_page_tags_object: tag_obj})
+    }
+
+    calculate_balance_after_set_transfers(){
+        return bigInt(this.state.token_item['balance']).minus(this.state.debit_balance)
     }
 
 
@@ -111,7 +115,7 @@ class template extends Component {
                 </div>
 
                 <div style={{height:10}}/>
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange()}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1029']/* 'Add Transaction' */, 'action':''})}
@@ -123,6 +127,19 @@ class template extends Component {
         )
     }
 
+    get_power_limit_for_exchange(){
+        var target_exchange_data = this.state.token_item
+        var default_depth = 0;
+        if(target_exchange_data != null){
+            target_exchange_data = target_exchange_data['ipfs']
+            if(target_exchange_data != null){
+                default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+            }
+        }
+
+        return (default_depth*72)+63
+    }
+
     set_maximum(){
         var max = this.state.token_item['balance']
         this.setState({amount: max})
@@ -131,10 +148,66 @@ class template extends Component {
     get_number_limit(){
         if(this.state.token_item['balance'] != null){
             var balance =  this.state.token_item['balance']
-            var balance_after_transfers = balance - this.state.debit_balance
+            var balance_after_transfers = bigInt(balance).minus(this.state.debit_balance)
             return balance_after_transfers;
         }
         else return bigInt('1e72')
+    }
+
+    get_debit_balance_in_stack(token_id, e5){
+        var txs = this.props.app_state.stack_items
+        var total_amount = bigInt(0)
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(txs[i].e5 == e5){
+                if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                    var amount = bigInt(txs[i].amount)
+                    var exchange = t.token_item['id']
+                    var action = this.get_action(t)
+                    if(token_id == exchange && action == 1){
+                        total_amount = bigInt(total_amount).add(amount)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                    if(txs[i].token_item['id'] == token_id){
+                        total_amount = bigInt(total_amount).add(txs[i].debit_balance)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    for(var i=0; i<t.selected_variant['price_data'].length; i++){
+                        var exchange = t.selected_variant['price_data'][i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                    for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
+                    if(token_id == 5){
+                        total_amount = bigInt(total_amount).add(t.award_amount)
+                    }
+                    for(var i=0; i<t.price_data.length; i++){
+                        var exchange = t.price_data[i]['id']
+                        var amount = t.price_data[i]['amount']
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+            }
+        }
+        return total_amount
+    }
+
+    get_amounts_to_be_paid(amount, count){
+        return bigInt(amount).multiply(bigInt(count))
     }
 
     when_recipient_input_field_changed(text){
@@ -164,7 +237,7 @@ class template extends Component {
             var tx = {id:makeid(8), type:'transfer', 'amount':''+amount, 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
 
             clone.push(tx)
-            this.setState({stack_items: clone, debit_balance: this.state.debit_balance + amount, recipient_id:'', amount:0})
+            this.setState({stack_items: clone, debit_balance: bigInt(this.state.debit_balance).add(amount), recipient_id:'', amount:0})
             this.props.notify(this.props.app_state.loc['1034']/* 'Transaction added.' */, 1600)
         }
     }
@@ -183,7 +256,7 @@ class template extends Component {
         var picked_amount = this.state.amount
         var limit = this.get_number_limit()
 
-        if(picked_amount > limit){
+        if(bigInt(picked_amount).greater(limit)){
             return false
         }
         return true
@@ -270,7 +343,7 @@ class template extends Component {
     when_stack_item_clicked(item, index){
         var cloned_array = this.state.stack_items.slice()
         cloned_array.splice(index, 1);
-        this.setState({stack_items: cloned_array, debit_balance: this.state.debit_balance - bigInt(item.amount)})
+        this.setState({stack_items: cloned_array, debit_balance: bigInt(this.state.debit_balance).minus(bigInt(item.amount))})
         this.props.notify(this.props.app_state.loc['1036']/* 'Transaction removed.' */, 600)
     }
 
@@ -337,8 +410,8 @@ class template extends Component {
         if(amount < 1_000_000_000){
             return number_with_commas(amount.toString())
         }else{
-            var power = amount.toString().length - 9
-            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+            var power = amount.toString().toLocaleString('fullwide', {useGrouping:false}).length - 9
+            return number_with_commas(amount.toString().toLocaleString('fullwide', {useGrouping:false}).substring(0, 9)) +'e'+power
         }
         
     }
@@ -422,14 +495,18 @@ class template extends Component {
                 entered_indexing_tags:[this.props.app_state.loc['1018']/* 'transfer' */, this.props.app_state.loc['1019']/* 'send' */, this.props.app_state.loc['999']/* 'token' */]
             })
         }
-        this.setState({token_item: item, e5: item['e5']})
+        this.setState({
+            token_item: item, 
+            e5: item['e5'], 
+            debit_balance: this.get_debit_balance_in_stack(item['id'], item['e5'])
+        })
 
-        var stack_items = this.props.app_state.stack_items
-        for(var i=0; i<stack_items.length; i++){
-            if(stack_items[i].type == this.props.app_state.loc['1018']/* 'transfer' */ && stack_items[i].token_item['id'] == item['id']){
-                this.setState({debit_balance: this.state.debit_balance + stack_items[i].debit_balance})
-            }
-        }
+        // var stack_items = this.props.app_state.stack_items
+        // for(var i=0; i<stack_items.length; i++){
+        //     if(stack_items[i].type == this.props.app_state.loc['1018']/* 'transfer' */ && stack_items[i].token_item['id'] == item['id']){
+        //         this.setState({debit_balance: bigInt(this.state.debit_balance).add(stack_items[i].debit_balance)})
+        //     }
+        // }
     }
 
 

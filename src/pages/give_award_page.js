@@ -201,8 +201,6 @@ class GiveAwardPage extends Component {
 
                 <NumberPicker font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_multiplier.bind(this)} theme={this.props.theme} power_limit={3}/>
 
-
-
             </div>
         )
     }
@@ -310,7 +308,7 @@ class GiveAwardPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1182']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1184']/* Add Amount' */, 'action':''})}
@@ -320,6 +318,26 @@ class GiveAwardPage extends Component {
                 {this.render_set_prices_list_part()}
             </div>
         )
+    }
+
+    get_power_limit_for_exchange(exchange){
+        var exchange_id = this.get_token_id_from_symbol(exchange.trim())
+
+        if(!isNaN(exchange_id) && parseInt(exchange_id) > 0 && exchange_id != '' && this.does_exchange_exist(exchange_id)){
+            var target_exchange_data = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][exchange_id]
+            var default_depth = 0;
+            if(target_exchange_data != null){
+                target_exchange_data = target_exchange_data['ipfs']
+                if(target_exchange_data != null){
+                    default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+                }
+            }
+
+            return (default_depth*72)+63
+        }
+        else{
+            return 63
+        }
     }
 
 
@@ -557,7 +575,8 @@ class GiveAwardPage extends Component {
             var bounty_item_amount = price_data[i]['amount']
             var my_balance = this.props.app_state.created_token_object_mapping[this.state.post_item['e5']][bounty_item_exchange]
             my_balance = my_balance == null ? 0 : my_balance['balance']
-            if(my_balance < bounty_item_amount){
+            my_balance = bigInt(my_balance).minus(this.get_debit_balance_in_stack(bounty_item_exchange, this.state.post_item['e5']))
+            if(bigInt(my_balance).lesser(bigInt(bounty_item_amount))){
                 has_enough = false
             }
         }
@@ -565,6 +584,57 @@ class GiveAwardPage extends Component {
     }
 
 
+    get_debit_balance_in_stack(token_id, e5){
+        var txs = this.props.app_state.stack_items
+        var total_amount = bigInt(0)
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(txs[i].e5 == e5){
+                if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
+                    var amount = bigInt(txs[i].amount)
+                    var exchange = t.token_item['id']
+                    var action = this.get_action(t)
+                    if(token_id == exchange && action == 1){
+                        total_amount = bigInt(total_amount).add(amount)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1018']/* 'transfer' */){
+                    if(txs[i].token_item['id'] == token_id){
+                        total_amount = bigInt(total_amount).add(txs[i].debit_balance)
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    for(var i=0; i<t.selected_variant['price_data'].length; i++){
+                        var exchange = t.selected_variant['price_data'][i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                    for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
+                        var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
+                        var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count)
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
+                    if(token_id == 5){
+                        total_amount = bigInt(total_amount).add(t.award_amount)
+                    }
+                    for(var i=0; i<t.price_data.length; i++){
+                        var exchange = t.price_data[i]['id']
+                        var amount = t.price_data[i]['amount']
+                        if(exchange == token_id){
+                            total_amount = bigInt(total_amount).add(amount)
+                        }
+                    }
+                }
+            }
+        }
+        return total_amount
+    }
 
 
 
