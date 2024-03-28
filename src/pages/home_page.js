@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Letter from './../assets/letter.png'; 
+// import Letter from './../assets/letter.png'; 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 
@@ -333,7 +333,7 @@ class home_page extends Component {
         else{
             return(
                 <div style={{height: this.props.height, width:'100%','display': 'flex', 'align-items':'center','justify-content':'center', 'background-color':background_color}}>
-                    <img src={Letter} style={{height:'auto',width:'18%'}} />
+                    <img src={this.props.app_state.static_assets['letter']} style={{height:'auto',width:'18%'}} />
                 </div>
             );
         }
@@ -2792,7 +2792,7 @@ class home_page extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>

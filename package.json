@@ -2,7 +2,7 @@
   "name": "old_e5",
   "homepage": "https://b35000.github.io/E5UI/",
   "hmepage":"./",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",

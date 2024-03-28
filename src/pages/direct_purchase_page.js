@@ -4,7 +4,7 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 
-import Letter from './../assets/letter.png';
+// import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
 

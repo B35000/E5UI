@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ViewGroups from '../components/view_groups'
 import Tags from '../components/tags';
 
-import Letter from './../assets/letter.png'; 
+// import Letter from './../assets/letter.png'; 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import E35EndImg from './../assets/e35_end_token.png';

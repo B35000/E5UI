@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Tags from './tags';
 import Slider from './slider'
 import ViewGroups from './view_groups'
-import E5EmptyIcon3 from './../assets/e5empty_icon.png';
+// import E5EmptyIcon3 from './../assets/e5empty_icon.png';
 
 var bigInt = require("big-integer");
 

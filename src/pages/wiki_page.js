@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
-import SettingsDataImage from './../assets/settings_data_image.png';
-import WalletDataImage from './../assets/wallet_data_image.png';
-import SendEtherDataImage from './../assets/send_ether_data_image.png';
-import OpenStackDataImage from './../assets/open_stack_data_image.png';
+// import SettingsDataImage from './../assets/settings_data_image.png';
+// import WalletDataImage from './../assets/wallet_data_image.png';
+// import SendEtherDataImage from './../assets/send_ether_data_image.png';
+// import OpenStackDataImage from './../assets/open_stack_data_image.png';
 
 class WikiPage extends Component {
     
@@ -54,18 +54,18 @@ class WikiPage extends Component {
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1982']/* The wallet section is in the settings-data...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiea2ghodwkrscl5stf73tnzrvlopmbgy3jtngjdcwcncv5tbkcauy'} alt="E5"/>
                     <div style={{height: 30}}/>
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1983']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreia6f7vzmxsq2olbfqmlgromkow5kenoa53nmutzwb5upisgz7ls5u'} alt="E5"/>
                     <div style={{height: 30}}/>
 
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1984']/* 'Then afterwards fill it with the E5s ether of your choice' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SendEtherDataImage} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreic2g67litsuomu6n7nqy7ydbbpzdtplhf6lt7d2cfknfpq7vwkhpi'} alt="E5"/>
                     <div style={{height: 20}}/>
                 </div>
             )
@@ -78,17 +78,17 @@ class WikiPage extends Component {
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1987']/* 'The wallet section is in the stack page...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={OpenStackDataImage} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreicb7gvqlpahbd6yhpok55dntagzzjixln7t2jpzy2mxrd4jqf26ae'} alt="E5"/>
                     <div style={{height: 30}}/>
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1988']/* 'In the settings-data section...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={SettingsDataImage} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiea2ghodwkrscl5stf73tnzrvlopmbgy3jtngjdcwcncv5tbkcauy'} alt="E5"/>
                     <div style={{height: 30}}/>
 
                     {this.render_detail_item('4', {'text':this.props.app_state.loc['1989']/* 'Under the Wallet tag...' */, 'textsize':'12px', 'font':this.props.app_state.font})}
                     <div style={{height: 20}}/>
-                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={WalletDataImage} alt="E5"/>
+                    <img style={{width:'90%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreia6f7vzmxsq2olbfqmlgromkow5kenoa53nmutzwb5upisgz7ls5u'} alt="E5"/>
                     <div style={{height: 30}}/>
 
                 </div>

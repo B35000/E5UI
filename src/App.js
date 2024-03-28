@@ -1,163 +1,163 @@
 import React, { Component } from 'react';
 
-/* light theme icons */
-import AlertIcon from './assets/alert_icon.png';
-import AddIcon from './assets/add_icon.png'
-import Background from './assets/background.png'
-import JobIconImg from './assets/job_icon_light.png';  
-import ExploreIconImg from './assets/explore_icon_light.png'; 
-import WalletIconImg from './assets/wallet_icon_light.png'; 
-import StackIconImg from './assets/stack_icon_light.png';
+// /* light theme icons */
+// import AlertIcon from './assets/alert_icon.png';
+// import AddIcon from './assets/add_icon.png'
+// import Background from './assets/background.png'
+// import JobIconImg from './assets/job_icon_light.png';  
+// import ExploreIconImg from './assets/explore_icon_light.png'; 
+// import WalletIconImg from './assets/wallet_icon_light.png'; 
+// import StackIconImg from './assets/stack_icon_light.png';
 
 
-/* dark theme icons */
-import AlertIconDark from './assets/alert_icon_dark.png'
-import AddIconDark from './assets/add_icon_dark.png'
-// import BackgroundDark from './assets/background.png'
-import JobIconImgDark from './assets/job_icon.png';  
-import ExploreIconImgDark from './assets/explore_icon.png'; 
-import WalletIconImgDark from './assets/wallet_icon.png'; 
-import StackIconImgDark from './assets/stack_icon.png';
+// /* dark theme icons */
+// import AlertIconDark from './assets/alert_icon_dark.png'
+// import AddIconDark from './assets/add_icon_dark.png'
+// // import BackgroundDark from './assets/background.png'
+// import JobIconImgDark from './assets/job_icon.png';  
+// import ExploreIconImgDark from './assets/explore_icon.png'; 
+// import WalletIconImgDark from './assets/wallet_icon.png'; 
+// import StackIconImgDark from './assets/stack_icon.png';
 
 
-/* green theme icons */
-import AlertIconGreen from './assets/alert_icon_green.png'
-import AddIconGreen from './assets/add_icon_green.png'
-import BackgroundGreen from './assets/background_green.png';
-import JobIconImgGreen from './assets/job_icon_green.png';
-import ExploreIconImgGreen from './assets/explore_icon_green.png'; 
-import WalletIconImgGreen from './assets/wallet_icon_green.png'; 
-import StackIconImgGreen from './assets/stack_icon_green.png';
+// /* green theme icons */
+// import AlertIconGreen from './assets/alert_icon_green.png'
+// import AddIconGreen from './assets/add_icon_green.png'
+// import BackgroundGreen from './assets/background_green.png';
+// import JobIconImgGreen from './assets/job_icon_green.png';
+// import ExploreIconImgGreen from './assets/explore_icon_green.png'; 
+// import WalletIconImgGreen from './assets/wallet_icon_green.png'; 
+// import StackIconImgGreen from './assets/stack_icon_green.png';
 
 
 
 
-/* ether images */
-import EthereumTestnet from './assets/ethereum_testnet.png'
-import Harmony from './assets/harmony.png'
-import Celo from './assets/celo.png'
-import Flare from './assets/flare.png'
-import xDai from './assets/xdai.png'
-import fuse from './assets/fuse.png'
-import glmr from './assets/glmr.png'
-import movr from './assets/movr.png'
-import matic from './assets/matic.png'
-import bnb from './assets/bnb.png'
-import xdc from './assets/xdc.png'
-import tt from './assets/tt.png'
-import nrg from './assets/nrg.png'
-import viction from './assets/viction.png'
-import evmos from './assets/evmos.png'
-import eth from './assets/ethereum.png'
-import optimism from './assets/optimism.png'
-import base from './assets/base.png'
-import arbitrum from './assets/arbitrum.png'
-import astar from './assets/astar.png'
-import cronos from './assets/cronos.png'
-import kava from './assets/kava.png'
-import neon from './assets/neon.png'
-import mAda from './assets/milkomeda.png'
-import fantom from './assets/fantom.png'
-import brise from './assets/brise.png'
-import syscoin from './assets/syscoin.png'
-import avalanche from './assets/avalanche.png'
-import findora from './assets/findora.png'
-import iexec from './assets/iexec.png'
-import oasis from './assets/oasis.png'
-import ozone from './assets/ozone.png'
-import pixie from './assets/pixie.png'
-import rei from './assets/rei.png'
-import klaytn from './assets/klaytn.png'
-import mantle from './assets/mantle.png'
-import pulse from './assets/pulse.png'
-import canto from './assets/canto.png'
-import eos from './assets/eos.png'
-import iotex from './assets/iotex.png'
-import songbird from './assets/songbird.png'
-import ultron from './assets/ultron.png'
-import coinex from './assets/coinex.png'
-import tfuel from './assets/tfuel.png'
-import step from './assets/step.png'
-import energyweb from './assets/energyweb.png'
-import callisto from './assets/callisto.png'
-import shiden from './assets/shiden.png'
-import tenet from './assets/tenet.png'
-import ubiq from './assets/ubiq.png'
-import gochain from './assets/gochain.png'
-import omax from './assets/omax.png'
-import wemix from './assets/wemix.png'
-import confulx from './assets/conflux.png'
-import telos from './assets/telos.png'
-import rsk from './assets/rsk.png'
-import metadium from './assets/metadium.png'
-import kardiachain from './assets/kardiachain.png'
-import cmp from './assets/cmp.png'
-import seele from './assets/seele.png'
-import btt from './assets/btt.png'
-import doublea from './assets/doublea.png'
-import karura from './assets/karura.png'
-import acala from './assets/acala.png'
-import edgeware from './assets/edgeware.png'
-import bloxberg from './assets/bloxberg.png'
-import phoenix from './assets/phoenix.png'
-import omchain from './assets/omchain.png'
-import om from './assets/om.png'
-import mintme from './assets/mintme.png'
-import ecredits from './assets/ecredits.png'
-import eluv from './assets/eluv.png'
-import etho from './assets/etho.png'
-import oneledger from './assets/oneledger.png'
+// /* ether images */
+// import EthereumTestnet from './assets/ethereum_testnet.png'
+// import Harmony from './assets/harmony.png'
+// import Celo from './assets/celo.png'
+// import Flare from './assets/flare.png'
+// import xDai from './assets/xdai.png'
+// import fuse from './assets/fuse.png'
+// import glmr from './assets/glmr.png'
+// import movr from './assets/movr.png'
+// import matic from './assets/matic.png'
+// import bnb from './assets/bnb.png'
+// import xdc from './assets/xdc.png'
+// import tt from './assets/tt.png'
+// import nrg from './assets/nrg.png'
+// import viction from './assets/viction.png'
+// import evmos from './assets/evmos.png'
+// import eth from './assets/ethereum.png'
+// import optimism from './assets/optimism.png'
+// import base from './assets/base.png'
+// import arbitrum from './assets/arbitrum.png'
+// import astar from './assets/astar.png'
+// import cronos from './assets/cronos.png'
+// import kava from './assets/kava.png'
+// import neon from './assets/neon.png'
+// import mAda from './assets/milkomeda.png'
+// import fantom from './assets/fantom.png'
+// import brise from './assets/brise.png'
+// import syscoin from './assets/syscoin.png'
+// import avalanche from './assets/avalanche.png'
+// import findora from './assets/findora.png'
+// import iexec from './assets/iexec.png'
+// import oasis from './assets/oasis.png'
+// import ozone from './assets/ozone.png'
+// import pixie from './assets/pixie.png'
+// import rei from './assets/rei.png'
+// import klaytn from './assets/klaytn.png'
+// import mantle from './assets/mantle.png'
+// import pulse from './assets/pulse.png'
+// import canto from './assets/canto.png'
+// import eos from './assets/eos.png'
+// import iotex from './assets/iotex.png'
+// import songbird from './assets/songbird.png'
+// import ultron from './assets/ultron.png'
+// import coinex from './assets/coinex.png'
+// import tfuel from './assets/tfuel.png'
+// import step from './assets/step.png'
+// import energyweb from './assets/energyweb.png'
+// import callisto from './assets/callisto.png'
+// import shiden from './assets/shiden.png'
+// import tenet from './assets/tenet.png'
+// import ubiq from './assets/ubiq.png'
+// import gochain from './assets/gochain.png'
+// import omax from './assets/omax.png'
+// import wemix from './assets/wemix.png'
+// import confulx from './assets/conflux.png'
+// import telos from './assets/telos.png'
+// import rsk from './assets/rsk.png'
+// import metadium from './assets/metadium.png'
+// import kardiachain from './assets/kardiachain.png'
+// import cmp from './assets/cmp.png'
+// import seele from './assets/seele.png'
+// import btt from './assets/btt.png'
+// import doublea from './assets/doublea.png'
+// import karura from './assets/karura.png'
+// import acala from './assets/acala.png'
+// import edgeware from './assets/edgeware.png'
+// import bloxberg from './assets/bloxberg.png'
+// import phoenix from './assets/phoenix.png'
+// import omchain from './assets/omchain.png'
+// import om from './assets/om.png'
+// import mintme from './assets/mintme.png'
+// import ecredits from './assets/ecredits.png'
+// import eluv from './assets/eluv.png'
+// import etho from './assets/etho.png'
+// import oneledger from './assets/oneledger.png'
 
 
-/* e5 images */
-import E25EndImg from './assets/E25.png';
-import E25SpendImg from './assets/325.png';
-import End25Img from './assets/End25.png'
+// /* e5 images */
+// import E25EndImg from './assets/E25.png';
+// import E25SpendImg from './assets/325.png';
+// import End25Img from './assets/End25.png'
 
-import E35EndImg from './assets/e35_end_token.png';
-import E35SpendImg from './assets/e35_spend_token.png';
+// import E35EndImg from './assets/e35_end_token.png';
+// import E35SpendImg from './assets/e35_spend_token.png';
 
-import E45EndImg from './assets/E45.png';
-import E45SpendImg from './assets/345.png';
+// import E45EndImg from './assets/E45.png';
+// import E45SpendImg from './assets/345.png';
 
-import E55EndImg from './assets/E55.png';
-import E55SpendImg from './assets/355.png';
+// import E55EndImg from './assets/E55.png';
+// import E55SpendImg from './assets/355.png';
 
-import E65EndImg from './assets/E65.png';
-import E65SpendImg from './assets/365.png';
+// import E65EndImg from './assets/E65.png';
+// import E65SpendImg from './assets/365.png';
 
-import E75EndImg from './assets/E75.png';
-import E75SpendImg from './assets/375.png';
+// import E75EndImg from './assets/E75.png';
+// import E75SpendImg from './assets/375.png';
 
-import E85EndImg from './assets/E85.png';
-import E85SpendImg from './assets/385.png';
+// import E85EndImg from './assets/E85.png';
+// import E85SpendImg from './assets/385.png';
 
-import E95EndImg from './assets/E95.png';
-import E95SpendImg from './assets/395.png';
+// import E95EndImg from './assets/E95.png';
+// import E95SpendImg from './assets/395.png';
 
-import E105EndImg from './assets/E105.png';
-import E105SpendImg from './assets/3105.png';
+// import E105EndImg from './assets/E105.png';
+// import E105SpendImg from './assets/3105.png';
 
-import E115EndImg from './assets/E115.png';
-import E115SpendImg from './assets/3115.png';
+// import E115EndImg from './assets/E115.png';
+// import E115SpendImg from './assets/3115.png';
 
-import E125EndImg from './assets/E125.png';
-import E125SpendImg from './assets/3125.png';
+// import E125EndImg from './assets/E125.png';
+// import E125SpendImg from './assets/3125.png';
 
-import E135EndImg from './assets/E135.png';
-import E135SpendImg from './assets/3135.png';
+// import E135EndImg from './assets/E135.png';
+// import E135SpendImg from './assets/3135.png';
 
-import E145EndImg from './assets/E145.png';
-import E145SpendImg from './assets/3145.png';
+// import E145EndImg from './assets/E145.png';
+// import E145SpendImg from './assets/3145.png';
 
-import E155EndImg from './assets/E155.png';
-import E155SpendImg from './assets/3155.png';
+// import E155EndImg from './assets/E155.png';
+// import E155SpendImg from './assets/3155.png';
 
-import E165EndImg from './assets/E165.png';
-import E165SpendImg from './assets/3165.png';
+// import E165EndImg from './assets/E165.png';
+// import E165SpendImg from './assets/3165.png';
 
-import E175EndImg from './assets/E175.png';
-import E175SpendImg from './assets/3175.png';
+// import E175EndImg from './assets/E175.png';
+// import E175SpendImg from './assets/3175.png';
 
 
 
@@ -301,6 +301,15 @@ function random(min, max) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
 class App extends Component {
 
   state = {
@@ -344,7 +353,7 @@ class App extends Component {
     selected_e5:'E25', default_e5:'E25',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
-    device_country:this.get_country(), 
+    device_country:this.get_country(), static_assets: this.get_static_assets(),
     
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
@@ -353,8 +362,17 @@ class App extends Component {
 
     loc:this.getLocale(), my_job_responses_notifications:{}, my_job_application_responses_notifications:{}, my_contractor_job_request_notifications:{}, my_token_event_notifications:{}, my_bag_responses_notifications:{}, my_bag_application_responses_notifications:{}, enter_exit_accounts_notifications:{}, my_store_direct_purchases_notifications:{}, received_mail_notifications:{},
 
-    my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{}
+    my_created_contracts:{}, my_created_contract_mapping:{}, my_created_subscriptions:{}, my_created_subscription_object_mapping:{}, registered_token_names:{}, registered_token_symbols:{},
+
   };
+
+  get_static_assets(){
+    return {
+      'letter':'https://nftstorage.link/ipfs/bafkreigapfe43wknpmflvp234k7fuijmv4fxbyjaybhcgc37pscsschi4u',
+      'e5_empty_icon':'https://nftstorage.link/ipfs/bafkreib7p2e5m437q3pi6necii3bssqc3eh2zcd2fcxnms7iwfdiyevh2e',
+      'e5_empty_icon3':'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
+    }
+  }
 
   get_e5s(){
     var others = ['E185', 'E195', 'E205', 'E215', 'E225', 'E235', 'E245', 'E255', 'E265', 'E275', 'E285', 'E295', 'E305', 'E315', 'E325', 'E335', 'E345', 'E355', 'E365', 'E375', 'E385', 'E395', 'E405', 'E415', 'E425', 'E435', 'E445', 'E455', 'E465', 'E475', 'E485', 'E495', 'E505', 'E515', 'E525', 'E535', 'E545', 'E555', 'E565', 'E575', 'E585', 'E595', 'E605', 'E615', 'E625', 'E635', 'E645', 'E655', 'E665', 'E675', 'E685', 'E695', 'E705', 'E715', 'E725', 'E735', 'E745', 'E755', 'E765']
@@ -363,110 +381,111 @@ class App extends Component {
       'E15':{
         web3:['http://127.0.0.1:8545/'], 
         token:'ETHT',
-        e5_address:'0x9E545E3C0baAB3E08CdfD552C960A1050f373042', 
-        first_block:40, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img
+        e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0', 
+        first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
+        end_token_power_limit: 990
       },
       'E25':{
         web3:['https://etc.etcdesktop.com'], 
         token:'ETC',
         e5_address:'0xF3895fe95f423A4EBDdD16232274091a320c5284', 
-        first_block:19151130, end_image:E25EndImg, spend_image:E25SpendImg, ether_image:EthereumTestnet, 
+        first_block:19151130, end_image:'https://nftstorage.link/ipfs/bafkreiechh4ndeaxlannymv664bp6alq2w7ydp2e2ayt4bdz7meypeifj4', spend_image:'https://nftstorage.link/ipfs/bafkreifm7bcvh45uw2rra7svi4fphxrwxaik5lzskzxnizttoo4owivs34', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', 
         // e5_address:'0x57d2189085D4F4e0156F70B71F0c90897836967E', 
         // first_block:18730085, end_image:E25EndImg, spend_image:E25SpendImg, ether_image:EthereumTestnet, iteration:400_000, url:0, active:true, e5_img:End25Img,
 
-        iteration:400_000, url:0, active:true, e5_img:End25Img,
+        iteration:400_000, url:0, active:true, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
         end_token_power_limit: 135
       },
       'E35':{
         web3:['https://etc.etcdesktop.com'],
         token:'ETC',
         e5_address:'',/* 0x24d7436eC90392f20AfeD800523E0d995Ec4310d */ 
-        first_block:18716990, end_image:E35EndImg, spend_image:E35SpendImg, ether_image:EthereumTestnet, iteration:40_000, url:0, active:false, e5_img:End25Img,
+        first_block:18716990, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:400_000, url:0, active:false, e5_img:null,
         end_token_power_limit: 999,
       },
       'E45':{
         web3:['https://api.harmony.one'],
         token:'ONE',
         e5_address:'', /* 0xC621A0305D1826AB1E24C7d78792035cD9204eD4 */
-        first_block:50166065, end_image:E45EndImg, spend_image:E45SpendImg, ether_image:Harmony, iteration:1_024/* this limit is horrible! bad blockchain. */, url:0, active:false, e5_img:End25Img
+        first_block:50166065, end_image:'https://nftstorage.link/ipfs/bafkreiehe7jgkkhkb6rwh6o3eirbi4hr6rvm256gxuxnpltbcjiymsnaji', spend_image:'https://nftstorage.link/ipfs/bafkreihyjmhty3kqxvicghsh2apwd4n2grvmhcadwuzfuqtpcm4c2h7jwm', ether_image:'https://nftstorage.link/ipfs/bafkreidqivbjiabs2zcyj2qljx5u4wytvhoctjkq4kjrleuyxjrhz3xjl4', iteration:1_024/* this limit is horrible. bad blockchain. */, url:0, active:false, e5_img:null
       },
       'E55':{
         web3:['https://1rpc.io/celo', 'https://forno.celo.org'],
         token:'CELO',
         e5_address:'', /* 0xdfaE4E1a8447E560a0064fdB89D1919bF7cC0902 */
-        first_block:22528756, end_image:E55EndImg, spend_image:E55SpendImg, ether_image:Celo, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:22528756, end_image:'https://nftstorage.link/ipfs/bafkreihciglctxpprbcf3xx7ykrzfxacfblvdtjnld7p4hfczsyy67aajy', spend_image:'https://nftstorage.link/ipfs/bafkreianjrpyl6xi7vz3aahnvqy6r3liysoc4sg5z742xlawip7if4qjsi', ether_image:'https://nftstorage.link/ipfs/bafkreidcfqahs3qwnte4do6di6gvcczfwu4bikwvkqlcrmaekheevohvce', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E65':{
         web3:['https://rpc.ftso.au/flare'],
         token:'FLR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:15492557, end_image:E65EndImg, spend_image:E65SpendImg, ether_image:Flare, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:15492557, end_image:'https://nftstorage.link/ipfs/bafkreibxgvjqeewxnpvlhbr7fdffjqpdlm46jgq46n4ph5ycntc4gkg3iu', spend_image:'https://nftstorage.link/ipfs/bafkreibi6jb4mv3lukllruf5byelbq2hbtnzksefixsf34dozga33urv34', ether_image:'https://nftstorage.link/ipfs/bafkreibcju2icekhorub6nhkvuwidz52s3kt5wxq5pivowqkchodczvsru', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E75':{
         web3:['https://rpc.gnosischain.com'],
         token:'XDAI',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:31015240, end_image:E75EndImg, spend_image:E75SpendImg, ether_image:xDai, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:31015240, end_image:'https://nftstorage.link/ipfs/bafkreibgr7powl4htuxigjxl6noyew6taomrmztiwnyo5kvytwxwvrg7xq', spend_image:'https://nftstorage.link/ipfs/bafkreifuqbzibz4efhnbkwllwo5qepsnacyhbcpmuxcfcacbyddyniocsm', ether_image:'https://nftstorage.link/ipfs/bafkreiezzy66goly3tmsbxoknk43372eqnc5y6252n5jkxsyurp5ktfmhe', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E85':{
         web3:['https://rpc.fuse.io'],
         token:'FUSE',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:26508302, end_image:E85EndImg, spend_image:E85SpendImg, ether_image:fuse, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:26508302, end_image:'https://nftstorage.link/ipfs/bafkreifokwa2355i6iaawawx2z2puyhpgi6o75ytayxbqqjoygj3xjb7pa', spend_image:'https://nftstorage.link/ipfs/bafkreictaiv2g4yfnuc4yfshi7ddtukcz7zbmqamii7eqptzre5edwiibi', ether_image:'https://nftstorage.link/ipfs/bafkreibuk5w63v62cd34reirc4xm7ryvz56vlytls2gp5b3bkowhevsbxq', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E95':{
         web3:['https://rpc.api.moonbeam.network'],
         token:'GLMR',
         e5_address:'', /* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:4910897, end_image:E95EndImg, spend_image:E95SpendImg, ether_image:glmr, iteration:10_000, url:0, active:false, e5_img:End25Img
+        first_block:4910897, end_image:'https://nftstorage.link/ipfs/bafkreie6krbxayljpkyl4tdyz554us6i4razp2a5b3wuu77h4prq2n7xju', spend_image:'https://nftstorage.link/ipfs/bafkreibf3jqav6igwprq4wzgf24xbzl6eq44lfjv7anbsd2ufirjjbwu5m', ether_image:'https://nftstorage.link/ipfs/bafkreifwbdj5pgh63ihou6vd26pwygsucauvutjrilmfmshg74xnv63274', iteration:10_000, url:0, active:false, e5_img:null
       },
       'E105':{
         web3:['https://rpc.api.moonriver.moonbeam.network', 'https://moonriver.unitedbloc.com:2000'],
         token:'MOVR',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:5587390, end_image:E105EndImg, spend_image:E105SpendImg, ether_image:movr, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:5587390, end_image:'https://nftstorage.link/ipfs/bafkreicfqe6oih24rzjc4vkqv6rmamoia6jshilwqhoc7b6qwvoxaftg74', spend_image:'https://nftstorage.link/ipfs/bafkreibhweqzoh2ntnfexepezpt2ktat3wemkc2egjcrliwasz3v2tzyga', ether_image:'https://nftstorage.link/ipfs/bafkreihfgqnilqclm4p5oin5dy34ywk5q6srsjnxiomk4e2h5np4nwliia', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E115':{
         web3:['https://xdc.public-rpc.com'],
         token:'XDC',
         e5_address:'',/* 0xAf7e201B3424D0Cc43392C8Eae71FBdc983932Fb */
-        first_block:68418980, end_image:E115EndImg, spend_image:E115SpendImg, ether_image:xdc, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:68418980, end_image:'https://nftstorage.link/ipfs/bafkreia4rnmraomzhv5ofx4bzp4l2chi4toderqyqkvct6q2vzpxgdtpai', spend_image:'https://nftstorage.link/ipfs/bafkreidxjjqn3muqycclxfddeqzaeboepw6yu3f424a3rwhiedt4tlga5a', ether_image:'https://nftstorage.link/ipfs/bafkreidextl3x3rq4c26vxqwh7q5jjpv6bgcmutad257qyabe6zslxpevi', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E125':{
         web3:['https://polygon.llamarpc.com'],
         token:'MATIC',
         e5_address:'',/* 0x3D610010C43fC1Af89D8d040ED530398817A8E94 */
-        first_block:50258928, end_image:E125EndImg, spend_image:E125SpendImg, ether_image:matic, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:50258928, end_image:'https://nftstorage.link/ipfs/bafkreihldhuazp6fcbxqvzpl7zzr2zay4zuxnnnma44fg7u7lvydfzrv6y', spend_image:'https://nftstorage.link/ipfs/bafkreih4ctarqvngz5zjyahjlqppslmnpexfyjiso65ywyrepqnv5d7wtm', ether_image:'https://nftstorage.link/ipfs/bafkreid3rpf2wbk4i6y6sd4zltdapek2i3dst5pxzfjy3kvn6iv56obfty', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E135':{
         web3:['https://binance.llamarpc.com'],
         token:'BNB',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:33723227, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:33723227, end_image:'https://nftstorage.link/ipfs/bafkreif4lbsuzzhu23piwbdv3p47ha46g6egmoh7pddrex6f3tbl76ycii', spend_image:'https://nftstorage.link/ipfs/bafkreigvlzjjujid2f3n7zzfw4jzmwowaq2mvd35d32rauedberpnjl6vq', ether_image:'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E145':{
         web3:['https://nodeapi.energi.network'],
         token:'NRG',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:1955370, end_image:E145EndImg, spend_image:E145SpendImg, ether_image:nrg, iteration:10_000, url:1	, active:false, e5_img:End25Img
+        first_block:1955370, end_image:'https://nftstorage.link/ipfs/bafkreicgkrcoqradelnzgdnm3tm7x7atblgskl6uxkywv2klp7ghrv6ndu', spend_image:'https://nftstorage.link/ipfs/bafkreif35wji3e3mcuu5y67mclzb3zwzneckvqo5n4dj7ekbigjsnd2g24', ether_image:'https://nftstorage.link/ipfs/bafkreiaoiipzjii67rl6jujy25qbwiauu43ifcrhofw625x4cm34hjmz5e', iteration:10_000, url:1	, active:false, e5_img:null
       },
       'E155':{
         web3:['https://mainnet-rpc.thundercore.io'],
         token:'TT',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:148816985, end_image:E155EndImg, spend_image:E155SpendImg, ether_image:tt, iteration:40_000, url:0	, active:false, e5_img:End25Img
+        first_block:148816985, end_image:'https://nftstorage.link/ipfs/bafkreihcc4bnygb42rlpib2uev7cbduintrvf72jqf4yzosfoz65s6x7bq', spend_image:'https://nftstorage.link/ipfs/bafkreicxhgrbre7cta2jn5i7sm4lzdige3wiqa3pdpegu7kla5v6g66c74', ether_image:'https://nftstorage.link/ipfs/bafkreidw4ngkifzyei6dekjjfnpkhwodubkwe2eodrq3yvijeai3sqk74i', iteration:40_000, url:0	, active:false, e5_img:null
       },
       'E165':{
         web3:['https://rpc.tomochain.com'],
         token:'VIC',
         e5_address:'',/* 0xd3B4c06c7514a72284fCe95DCAD911c8EaD9Be3F */
-        first_block:73021490, end_image:E165EndImg, spend_image:E165SpendImg, ether_image:viction, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:73021490, end_image:'https://nftstorage.link/ipfs/bafkreifgogs44o7da3acci3uc2oqv5oxmsmegw437w2zif655ifxtkkr7a', spend_image:'https://nftstorage.link/ipfs/bafkreiht6b53kzxpwomvq7kmrqseav3rwxgrbeovw6zlqhxc4tccylav4u', ether_image:'https://nftstorage.link/ipfs/bafkreiaovtind2gl7fguqisxsdlqp2agxr7xe2t3dehietmhygwcx3dcny', iteration:40_000, url:0, active:false, e5_img:null
       },
       'E175':{
         web3:['https://evmos-jsonrpc.theamsolutions.info'],
         token:'EVMOS',
         e5_address:'',/* 0x6433Ec901f5397106Ace7018fBFf15cf7434F6b6 */
-        first_block:17475951, end_image:E175EndImg, spend_image:E175SpendImg, ether_image:evmos, iteration:40_000, url:0, active:false, e5_img:End25Img
+        first_block:17475951, end_image:'https://nftstorage.link/ipfs/bafkreibwm67vdnsbnxxm6muhoaqejctvneslseapupegh3yh2kxtarrwly', spend_image:'https://nftstorage.link/ipfs/bafkreidisjbdffry64mz2pdqf3qwsweq43sv7vgfozodxwge7ubxoggfae', ether_image:'https://nftstorage.link/ipfs/bafkreigavsqsyulrxb3l2wyosu34zsj4r32nftdkbvtemmqcka7veudxzi', iteration:40_000, url:0, active:false, e5_img:null
       },
 
 
@@ -481,362 +500,362 @@ class App extends Component {
         web3:[''],
         token:'',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bnb, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreibsa7mds2mc75oyalixvrycvcn6grk625paucy7ol3sifdz42ew5e', iteration:3_000, url:0, active:false, e5_img:null
       },
 
       'E185':{
         web3:['https://rpc.ankr.com/eth'],
         token:'ETH',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:eth, iteration:3_000, url:0, active:false, e5_img:End25Img, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreifhlwgbspcfrn2kbu25nevksegskhbns7aesdr6kwy6ikqct7lp7e', iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E195':{
         web3:['https://optimism.llamarpc.com'],
         token:'OETH',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:optimism, iteration:3_000, url:0, active:false, e5_img:End25Img, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreies5rawvabvmzovxqesuor3a43wqmgnec7y7yzlberkwqvicehdse', iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E205':{
         web3:['https://base.llamarpc.com'],
         token:'BETH',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:base, iteration:3_000, url:0, active:false, e5_img:End25Img, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreicwdtpk4fjjh6zmbrreafp7yuuehagxc5iso5iaggezwu2edsrmj4', iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E215':{
         web3:['https://arbitrum.llamarpc.com'],
         token:'AETH',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:arbitrum, iteration:3_000, url:0, active:false, e5_img:End25Img, type:'1559'
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreia5kfqglxtwiyrm7fw4ydrr4dwyrwftxrs6gvksxss7s5wjvc2ndm', iteration:3_000, url:0, active:false, e5_img:null, type:'1559'
       },
       'E225':{
         web3:['https://astar-rpc.dwellir.com'],
         token:'ASTR',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:astar, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreihq22vobhmkdlrrxv3nei6b757u6acklwsnjcmn6pwpwkh76s7azy', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E235':{
         web3:['https://cronos-evm.publicnode.com'],
         token:'CRO',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:cronos, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreib7cta7pbzjgd6ys2rxxt7plf6ool4n7xxrndqd5zw6bkqmecablq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E245':{
         web3:['https://evm.kava.io'],
         token:'KAVA',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:kava, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreieeiyg42q6sb2jk5qz47alefcfc72wyxtkhdhzxqycqroixbt6kke', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E255':{
         web3:['https://neon-proxy-mainnet.solana.p2p.org'],
         token:'NEON',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:neon, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreicezjbxf47t7n6welb63atcx4v7jnl36tfbddmpxiu4ajzi2vmad4', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E265':{
         web3:['https://rpc-mainnet-cardano-evm.c1.milkomeda.com'],
         token:'mADA',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:mAda, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiauduj7d7lhlbiac2y2i6fr5mz3xky2h4jvqjgyxgco4wrfu244oi', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E275':{
         web3:['https://fantom-mainnet.public.blastapi.io'],
         token:'FTM',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:fantom, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreidsstxytde2mwe7u63hu54b6bcwgay7ckpgy7fgypflsyki2ntb2m', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E285':{
         web3:['https://flux-rpc2.brisescan.com'],
         token:'BRISE',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:brise, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreihqobs4apgub5767t2y5hkn5idhwmxhiwtjkwxhfu566w7l6wt2ym', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E295':{
         web3:['https://syscoin.public-rpc.com'],
         token:'SYS',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:syscoin, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreibmwawsdkh5tgdcotewbdunarzapcb2qmh6eoo5ynbojy6kkwyaky', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E305':{
         web3:['https://avalanche.drpc.org'],
         token:'AVAX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:avalanche, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiazy7wgqjb3w6owts3xixp527kxdb6mohcrt3rkvvomsvk3rqep4e', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E315':{
         web3:['https://rpc-mainnet.findora.org'],
         token:'FRA',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:findora, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiahfewosrjnjrsw22p54go7d5wqu7kghzvqufnzueaxl3trvzn52u', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E325':{
         web3:['https://bellecour.iex.ec'],
         token:'xRLC',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:iexec, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiggejzqvra2hzwdtr42whtzklislx6mch6bffufumnowiusinagvm', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E335':{
         web3:['https://emerald.oasis.dev'],
         token:'ROSE',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:oasis, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiavbox3rj73c4h6qezsdvbbsz52lgd7g3y6fnu62hzn6wqz73bjwm', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E345':{
         web3:['https://node1.ozonechain.io'],
         token:'OZO',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ozone, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreifpugp4hawkzc7ouvanhzk33jhxjqhdg63kq2waswq64wip54kfiy', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E355':{
         web3:['https://http-mainnet.chain.pixie.xyz'],
         token:'PIX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:pixie, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreifmgqxk23mp3nvsblfszv3wxziy24h7wqssycrh5gulp5tw7jkamq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E365':{
         web3:['https://rpc.rei.network'],
         token:'REI',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:rei, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreibpmldmytfxkvz2yprozcfr57hdlcjngcrv4oia6jqqb75wmmxgzq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E375':{
         web3:['https://public-en-cypress.klaytn.net'],
         token:'KLAY',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:klaytn, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiescyzouik566qarxqeqzxoriace6j4stbdchculm5x56tjkp2sqi', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E385':{
         web3:['https://rpc.mantle.xyz'],
         token:'MNT',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:mantle, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreihsbilx43a554olrkmfhsse7rxyhtg7i4hlshd5kqnydgpihwbi5m', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E395':{
         web3:['https://rpc.pulsechain.com'],
         token:'PLS',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:pulse, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreibrilqmflglo7qylgt3zwbywzzbpp2x6tfz76eqnocrhhprrgir5q', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E405':{
         web3:['https://jsonrpc.canto.nodestake.top'],
         token:'CANTO',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:canto, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreidpyqijpifjco2jlijkqn7lix7gej4oo5reka2gxbbin6ir6eyepy', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E415':{
         web3:['https://api.evm.eosnetwork.com'],
         token:'EOS',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:eos, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreidr7jfavw27kj64fspqcidevjyufkxq6accycnr3e6pckdqfe5lze', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E425':{
         web3:['https://babel-api.mainnet.iotex.io'],
         token:'IOTX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:iotex, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreig7l7jsdnuesu2j6cscmwkhumvcuiqx3sumdq36hnswd4iugldqxe', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E435':{
         web3:['https://sgb.ftso.com.au/ext/bc/C/rpc'],
         token:'SGB',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:songbird, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiapvqa26ifxjkyldnukiqaaodkavic3xbbzdbqajgn6v5rdw3u2ni', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E445':{
         web3:['https://ultron-rpc.net'],
         token:'ULX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ultron, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreieswovobb76mebl4hl5amisqsyh4wuaw6vdkdf5iflx4pufeghida', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E455':{
         web3:['https://rpc.coinex.net'],
         token:'CET',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:coinex, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreib6gldtkg2yh4oklnznn4zjt6xclqvmurut3s23zai3fuaarqazk4', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E465':{
         web3:['https://eth-rpc-api.thetatoken.org/rpc'],
         token:'TFUEL',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:tfuel, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreigg23q3fyi6okevwhrieevuvb3ellj26s3pdhoq4e7tv2qp725dnm', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E475':{
         web3:['https://rpc.step.network'],
         token:'FITFI',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:step, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreigqzgwcqib66uivlcmh6c5jr56xfge3cxyc7jb23vghlmiqvkvrky', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E485':{
         web3:['https://rpc.energyweb.org'],
         token:'EWT',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:energyweb, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreih3rxl7pdkov3yelfkbmsocwvx7gejtvuwjqltyfse5bvxj52gm7e', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E495':{
         web3:['https://rpc.callisto.network'],
         token:'CLO',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:callisto, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreibewb5rlbvptqvovuzink4y7crot5nkxplgqd7o7ajvqp4ocjz3je', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E505':{
         web3:['https://shiden-rpc.dwellir.com'],
         token:'SDN',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:shiden, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreidrlqfkm53twzvh5lnuzoddpv24yrzsaixgxyzfwe4qxzfyjpnmly', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E515':{
         web3:['https://tenet-evm.publicnode.com'],
         token:'TENET',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:tenet, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreifxl5uapxvm47vc4hec4bbvvsnazedn36zjiwsw2s4v7dzqn6s74m', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E525':{
         web3:['https://pyrus2.ubiqscan.io'],
         token:'UBQ',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ubiq, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreidh2cvl7y2njzpfuc6z2rdiocdbw2sbczz4rtod3c7pzw3pckob5u', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E535':{
         web3:['https://rpc.gochain.io'],
         token:'GO',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:gochain, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreihnhyg4dyvptbvh5ykq2wzyraj74n6wcyxxwsb4eepkcds74r46kq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E545':{
         web3:['https://mainapi.omaxray.com'],
         token:'OMAX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:omax, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreicf546yuctqunrcfdb73vwdl7bq645f26zkfjodj2rymcqcwicliu', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E555':{
         web3:['https://api.wemix.com'],
         token:'WEMIX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:wemix, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreibu5gf53hzlth6qafuaxozwytw2qdtnofoxjvusxpne4pqc3yntju', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E565':{
         web3:['https://evm.confluxrpc.com'],
         token:'CFX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:confulx, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiboh4aov7q7wzvi6be27uskvad6bzir7s5alr2dihvzznrkflhxza', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E575':{
         web3:['https://rpc1.eu.telos.net/evm'],
         token:'TLOS',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:telos, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreihsqmpt6szoqnam4qpwcjtpn73p5hmlxu53qxnaf4ytzvvrhvqmya', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E585':{
         web3:['https://mycrypto.rsk.co'],
         token:'RSK',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:rsk, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiegatpac6ycp23meknqhihmlxrsb7asnl22yksh44swopk4nluv7a', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E595':{
         web3:['https://api.metadium.com/prod'],
         token:'META',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:metadium, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiem6fmyfzpix5dmokefc7dakf5hd5ouckwtuzo2yxh6yn7g45iioe', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E605':{
         web3:['https://rpc.kardiachain.io'],
         token:'KAI',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:kardiachain, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreidkhcnyvp5cwi5cb3sdg4cerrgyzi3qbv7vint4esk7vabceeo54m', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E615':{
         web3:['https://mainnet.block.caduceus.foundation'],
         token:'CMP',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:cmp, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreickyon3ett5kn2lqvhhdfl37mmdnrngh6fvfetqbavyyat2gcbq2u', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E625':{
         web3:['https://rpc.seelen.pro'],
         token:'SEELE',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:seele, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreigyvectz4cwg4mj7noyw3eo5txd3fh2feir6loi4xqrxxufu4i4ta', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E635':{
         web3:['https://rpc.bittorrentchain.io'],
         token:'BTT',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:btt, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreigf6kxh5622gndetusjo5wci53kikq4m7j3w5ieha75eewzqg6i5y', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E645':{
         web3:['https://rpc.acuteangle.com'],
         token:'AAC',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:doublea, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreidtmpi7bagyu7vtvspkx7nx73bztl7g7raxhprlqhdzt4226gy5ne', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E655':{
         web3:['https://rpc.evm.karura.network'],
         token:'KAR',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:karura, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreihmmav45jddg6egaooccb7ywij3ietijnvtzep7vfyy2gjazfsdjq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E665':{
         web3:['https://eth-rpc-acala.aca-staging.network'],
         token:'ACA',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:acala, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreiajrgopwvl6cpwpi25vdrafi47p27hfgm4imbs6ur5o57xku6xzzq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E675':{
         web3:['https://mainnet3.edgewa.re/evm'],
         token:'EDG',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:edgeware, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreicpea6ke2daanmhb73ejaqht2xkpig3yicqotwkm3spkivixb5ju4', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E685':{
         web3:['https://core.bloxberg.org'],
         token:'BERG',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:bloxberg, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreif4dsu7lxayad6wkh2xdeplaym5llftknaluwvtxblfasik6wahvm', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E695':{
         web3:['https://rpc.phoenixplorer.com'],
         token:'PHOENIX',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:phoenix, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreih6ijcxbidzo2isqlu2hjm43llyv3f2kmkz72tt32li4gl25kzypq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E705':{
         web3:['https://seed.omlira.com'],
         token:'OMC',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:omchain, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreieph4yuxvzjxugw5hmdtwlsp7434dwapm65pr5b3o5pk2fb5uvosa', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E715':{
         web3:['https://rpc-cnx.omplatform.com'],
         token:'OM',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:om, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreicz56kvmxvnzab5eve3dq624pmptwsrmkceu27wgxzticyyjeobhu', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E725':{
         web3:['https://node1.mintme.com'],
         token:'MINTME',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:mintme, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreicpvjaago2uqrvid4x5cq27grwuxapcxs4l2tfwgqcocwbxxq7edq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E735':{
         web3:['https://rpc.ecredits.com'],
         token:'ECS',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:ecredits, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreifktidofrlhlkpwnfyf5p3ftk3k2y3dbsq7cxqcjpgs2axqdvhqoi', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E745':{
         web3:['https://host-154-14-192-66.contentfabric.io/eth'],
         token:'ELV',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:eluv, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreicchvnsegzclfaz2xnfzlnpjey4ahxnoxzpyhudb524ezstp5cc5u', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E755':{
         web3:['https://rpc.ethoprotocol.com'],
         token:'ETHO',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:etho, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreihxyf4fksj7bajilfz2m66v455goeushb2w36kn5h63p7f2gvllgq', iteration:3_000, url:0, active:false, e5_img:null
       },
       'E765':{
         web3:['https://mainnet-rpc.oneledger.network'],
         token:'OLT',
         e5_address:'',
-        first_block:0, end_image:E135EndImg, spend_image:E135SpendImg, ether_image:oneledger, iteration:3_000, url:0, active:false, e5_img:End25Img
+        first_block:0, end_image:null, spend_image:null, ether_image:'https://nftstorage.link/ipfs/bafkreifn4sbeosn63ogew4z7gm4dw2t5l2xhmtauxwgh4wakaqmxjuuwwm', iteration:3_000, url:0, active:false, e5_img:null
       },
     }
   }
@@ -1075,7 +1094,7 @@ class App extends Component {
         
         '2752':'splineArea','2753':'area','2754':'Graph Type','2755':'If set to splineArea, E5 graphs will appear smooth, with area will make them jaggered.','2756':'disabled','2757':'Disable Activity Section.','2758':'If set to disabled, activity and comments will be disabled for all users except you.','2759':'The comment section has been disabled by the posts author.','2760':'🤐 Activity Section Disabled','2761':'The responses section has been disabled by the posts author.','2762':'You cant use that exchange.','2763':'You cant use that exchange for the voter weights feature.',
         
-        '2764':'configuration','2765':'???','2766':'End Token Supply.','2767':'The total supply of the End token that will be minted for you.','2768':'End token preset has been applied.','2769':'🦣 End Token.','2770':'A token with a very large supply, thats pegged to the value of End.','2771':'The value of all the items in your bag in their respective denominations.','2772':'That name is already in use.','2773':'low','2774':'medium','2775':'high','2776':'1 END','2777':'10 END','2778':'100 END','2779':'Token Depth','2780':'Base Liquidity.','2781':'Set the base liquidity in End for your End token.','2782':'Base Stability.','2783':'Set the base stability for your new End token. This is equivalent to the tokens sell limit.','2784':'Your balance in END is insufficient to create your End token.','2785':'','2786':'','2787':'','2788':'','2789':'','2790':'','2791':'','2792':'','2793':'','2794':'','2795':'','2796':'','2797':'','2798':'','2799':'','2800':'','2801':'','2802':'','2803':'','2804':'','2805':'','2806':'','2807':'','2808':'','2809':'','2810':'','2811':'','2812':'','2813':'','2814':'','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2764':'configuration','2765':'???','2766':'End Token Supply.','2767':'The total supply of the End token that will be minted for you.','2768':'End token preset has been applied.','2769':'🦣 End Token.','2770':'A token with a very large supply, thats pegged to the value of End.','2771':'The value of all the items in your bag in their respective denominations.','2772':'That name is already in use.','2773':'low','2774':'medium','2775':'high','2776':'1 END','2777':'10 END','2778':'100 END','2779':'Token Depth','2780':'Base Liquidity.','2781':'Set the base liquidity in End for your End token.','2782':'Base Stability.','2783':'Set the base stability for your new End token. This is equivalent to the tokens sell limit.','2784':'Your balance in END is insufficient to create your End token.','2785':'You','2786':'','2787':'','2788':'','2789':'','2790':'','2791':'','2792':'','2793':'','2794':'','2795':'','2796':'','2797':'','2798':'','2799':'','2800':'','2801':'','2802':'','2803':'','2804':'','2805':'','2806':'','2807':'','2808':'','2809':'','2810':'','2811':'','2812':'','2813':'','2814':'','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1843,9 +1862,9 @@ class App extends Component {
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#868686',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787',
         
-        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':AlertIcon, 'add_icon':AddIcon, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white',
+        'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white',
 
-        'background':Background, 'JobIcon':JobIconImg, 'ExploreIcon': ExploreIconImg, 'WalletIcon':WalletIconImg, 'StackIcon': StackIconImg
+        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq'
 
 
       }
@@ -1868,9 +1887,9 @@ class App extends Component {
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 
         
-        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':AlertIconDark, 'add_icon':AddIconDark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
+        'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
-        'background':Background, 'JobIcon':JobIconImgDark, 'ExploreIcon': ExploreIconImgDark, 'WalletIcon':WalletIconImgDark, 'StackIcon': StackIconImgDark
+        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4'
         
       }
     }
@@ -1892,10 +1911,10 @@ class App extends Component {
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 
         
-        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':AlertIconDark, 'add_icon':AddIconDark, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
+        'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
 
-        'background':Background, 'JobIcon':JobIconImgDark, 'ExploreIcon': ExploreIconImgDark, 'WalletIcon':WalletIconImgDark, 'StackIcon': StackIconImgDark
+        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4'
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
@@ -1917,10 +1936,10 @@ class App extends Component {
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#013f01',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#5bc15b', 
         
-        'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':AlertIconGreen, 'add_icon':AddIconGreen, 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
+        'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
 
-        'background':BackgroundGreen, 'JobIcon':JobIconImgGreen, 'ExploreIcon': ExploreIconImgGreen, 'WalletIcon':WalletIconImgGreen, 'StackIcon': StackIconImgGreen
+        'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli'
       }
     }
 
@@ -9335,7 +9354,6 @@ class App extends Component {
     for(var i=0; i<alias_events.length; i++){
       var alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
       var alias_sender = alias_events[i].returnValues.p2/* owner */
-      // var context = alias_events[i].returnValues.p3
 
       if(alias_owners[alias_string] == null){
         console.log('setting alias: ',alias_string, ' for account: ',alias_sender)
@@ -9806,10 +9824,9 @@ class App extends Component {
 
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
     // var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
-    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, 12)
+    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, 13)
     var token_balances = token_balances_and_data['bal']
     var token_balances_data = token_balances_and_data['bal_data']
-
 
     var accounts_exchange_data = await H5contractInstance.methods.f241(exchange_accounts, created_tokens).call((error, result) => {});
     
@@ -9880,6 +9897,7 @@ class App extends Component {
 
       var timestamp = event == null ? 0 : event.returnValues.p4
       var author = event == null ? 0 : event.returnValues.p3
+
       var token_obj = {
         'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5, 
         'token_balances_data':token_balances_data[i]
@@ -9930,7 +9948,7 @@ class App extends Component {
       }
     }
 
-    var created_tokens_clone = structuredClone(this.state.created_tokens)
+    var created_tokens_clone = this.structuredClone(this.state.created_tokens)
     created_tokens_clone[e5] = created_token_object_data
 
     var created_token_object_mapping_clone = structuredClone(this.state.created_token_object_mapping)
@@ -9943,10 +9961,11 @@ class App extends Component {
     token_name_directory_clone[e5] = token_name_directory
 
     this.setState({created_tokens: created_tokens_clone, created_token_object_mapping: created_token_object_mapping_clone, token_directory: token_directory_clone, token_name_directory: token_name_directory_clone,})
-    console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
+    // console.log('token count for e5: ',e5,' : ',created_token_object_data.length)
 
-
-
+    if(e5 == 'E25'){
+      console.log('token data: ', created_tokens_clone)
+    }
 
 
     //load my received token events
@@ -9960,6 +9979,18 @@ class App extends Component {
     my_token_event_notifications_clone[e5] = my_token_event_notifications_data
 
     this.setState({/* token_directory: token_directory_clone, token_name_directory: token_name_directory_clone, */ my_token_event_notifications: my_token_event_notifications_clone});
+  }
+
+  structuredClone(page_data){
+    var clone = {}
+    for (var key in page_data) {
+      if (page_data.hasOwnProperty(key)) {
+        clone[key] = page_data[key];
+      }
+    }
+    return clone
+
+    // return JSON.parse(JSON.stringify(page_data))
   }
 
   get_post_data = async (E52contractInstance, web3, e5, contract_addresses) => {
@@ -10515,7 +10546,7 @@ class App extends Component {
       this.load_contract_data()
       this.load_jobs_data()
     }
-    else if(page == this.getLocale()['1197']/* 'contracts' */){ 
+    else if(page == this.getLocale()['1197']/* 'contracts' */){
       this.load_contract_data()
     }
     else if(page == this.getLocale()['1199']/* 'proposals' */){
@@ -10550,7 +10581,7 @@ class App extends Component {
     }
 
     else if(page == 'w'){
-      this.load_token_data()
+      // this.load_token_data()
     }
   }
 
@@ -11353,8 +11384,8 @@ class App extends Component {
       var balance_at_depth = bigInt(this.get_actual_number(token_balances[i], depths[i]))
       
       balance = bigInt(balance).add(balance_at_depth)
-      bal[bal_pos] = balance
-      balance_data[bal_pos][depths[i]] = token_balances[i]
+      bal[bal_pos] = balance.toString().toLocaleString('fullwide', {useGrouping:false})
+      balance_data[bal_pos][depths[i]] = token_balances[i].toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
     // return bal
@@ -11369,7 +11400,7 @@ class App extends Component {
 
       var exchange = this.state.created_token_object_mapping[e5] == null ? null : this.state.created_token_object_mapping[e5][exchange_id];
       var exchanges_depth = 0
-      if(exchange != null){
+      if(exchange != null && exchange['ipfs'] != null){
         exchanges_depth = exchange['ipfs'].default_depth == null ? 0 : exchange['ipfs'].default_depth
       }
       var exchange_ids = []

@@ -3,7 +3,7 @@ import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 
-import Letter from './../assets/letter.png';
+// import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
 

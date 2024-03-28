@@ -27,7 +27,7 @@ class synchronizing_page extends Component {
                 <div style={{width:'60%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_synch_bar()}
                 </div>
-                <img style={{width:'70%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={syncrhonizing_image} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
+                <img style={{width:'70%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiaszixz3iclvzxocneibrmppoazemylhb5ynki5sownn7n2bub4m4'} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
                 
                 {/* <div style={{width:'60%', 'margin-top':'20px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
                     {this.render_bottom_text()}
@@ -77,10 +77,10 @@ class synchronizing_page extends Component {
     render_bottom_text2(){
         return(
             <div style={{'margin-top':'15%'}}>
-                {this.render_detail_item('8', {'title':this.props.app_state.loc['1597']/* Peer to Peer Trust. */,'details':this.props.app_state.loc['1598c']/* For securing all your transactions. */, 'size':'l', 'image':p2p_trust, 'border_radius':'0%'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['1597']/* Peer to Peer Trust. */,'details':this.props.app_state.loc['1598c']/* For securing all your transactions. */, 'size':'l', 'image':'https://nftstorage.link/ipfs/bafkreihmpljj34hqnmf5dcwj6k42dt63olobl2krglhcdhnq3ucoxz3mlu', 'border_radius':'0%'})}
                 
                 <div style={{height:5}}/>
-                {this.render_detail_item('8', {'title':this.props.app_state.loc['1598']/* Unanimous Consensus. */,'details':this.props.app_state.loc['1598d']/* For securing all your Money. */, 'size':'l', 'image':unanimous_consensus, 'border_radius':'0%'})}
+                {this.render_detail_item('8', {'title':this.props.app_state.loc['1598']/* Unanimous Consensus. */,'details':this.props.app_state.loc['1598d']/* For securing all your Money. */, 'size':'l', 'image':'https://nftstorage.link/ipfs/bafkreifwdbjrdhnis6a3xgoh2qgyy4dveg3glgih5rhe32253dm3l3ejoa', 'border_radius':'0%'})}
             </div>
         )
     }

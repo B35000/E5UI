@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
-import Letter from './../assets/letter.png'; 
+// import Letter from './../assets/letter.png'; 
 
 var bigInt = require("big-integer");
 
@@ -28,7 +28,7 @@ class NsfwPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
-                <img style={{width:'30%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'10%'}} src={Letter} alt="E5"/>
+                <img style={{width:'30%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'10%'}} src={this.props.app_state.static_assets['letter']} alt="E5"/>
 
                 <div style={{height: 40}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2742']/* Not Safe For Work Warning. */,'details':this.props.app_state.loc['2743']/*  */, 'size':'l', 'text_align':'center'})}

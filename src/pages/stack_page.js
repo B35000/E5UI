@@ -5,7 +5,7 @@ import TextInput from './../components/text_input';
 import NumberPicker from './../components/number_picker';
 import DurationPicker from './../components/duration_picker';
 
-import Letter from './../assets/letter.png';
+// import Letter from './../assets/letter.png';
 import Dialog from "@mui/material/Dialog";
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
@@ -876,7 +876,7 @@ class StackPage extends Component {
                         {items.map((item, index) => (
                             <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin':'5px 0px 5px 0px' }}>
                                 <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                    <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                    <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                 </div>
                             </div>
                         ))}
@@ -949,7 +949,7 @@ class StackPage extends Component {
                         {items.map((item, index) => (
                             <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin':'5px 0px 5px 0px' }}>
                                 <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                    <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                    <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                 </div>
                             </div>
                         ))}
@@ -1294,7 +1294,7 @@ class StackPage extends Component {
                             <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
                                 <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 0px 0px 0px'}}>
-                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -1683,7 +1683,7 @@ class StackPage extends Component {
                         obj[this.props.app_state.loc['2773']/* 'low' */] = '10000'
                         obj[this.props.app_state.loc['2774']/* 'medium' */] = '100000'
                         obj[this.props.app_state.loc['2775']/* 'high' */] = '1000000'
-                        var liquidity = this.get_selected_item(t.get_end_token_base_liquidity, t.get_end_token_base_liquidity['i'].active);
+                        var liquidity = this.get_selected_item(txs[i].get_end_token_base_liquidity, txs[i].get_end_token_base_liquidity['i'].active);
                         var buy_amount = obj[liquidity]
 
                         var token_stack_id = ints.length-1
@@ -1943,7 +1943,7 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['946']/* 'buy-sell' */){
                     var buy_sell_obj = this.format_buy_sell_object(txs[i], ints)
-                    if(transfer_object['swaps'][1].length > 0){
+                    if(buy_sell_obj['depth'][1].length > 0){
                         strs.push([])
                         adds.push([])
                         ints.push(buy_sell_obj['depth'])
@@ -2210,10 +2210,10 @@ class StackPage extends Component {
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
                     var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas, ints)
-                    if(format_object.depth[1].length > 0){
+                    if(message_obj.depth[1].length > 0){
                         strs.push([])
                         adds.push([])
-                        ints.push(transfer_object.depth)
+                        ints.push(message_obj.depth)
                     }
 
                     strs.push(message_obj.str)
@@ -2324,8 +2324,6 @@ class StackPage extends Component {
             }
             
         }
-
-
 
 
         var metadata_action = [ /* set metadata */
@@ -3011,6 +3009,7 @@ class StackPage extends Component {
 
 
     format_transfer_object(t, ints){
+        var ints_clone = ints.slice()
         var transfers_obj = [/* send tokens to another account */
             [30000, 1, 0],
             [], [],/* exchanges */
@@ -3029,30 +3028,8 @@ class StackPage extends Component {
         ]
 
         var added_txs = t.stack_items
-        var last_obj = -1
-        var last_depth_swap_obj = -1
         for(var i=0; i<added_txs.length; i++){
-            var transfer_actions = this.get_exchange_transfer_actions(added_txs[i]['amount'])
-            for(var t=0; t<transfer_actions.length; t++){
-                transfers_obj[1].push(added_txs[i]['exchange']['id'])
-                transfers_obj[2].push(23)
-                transfers_obj[3].push(added_txs[i]['recipient'])
-                if(added_txs[i]['recipient'] == 53){
-                    transfers_obj[4].push(53)
-                }else{
-                    transfers_obj[4].push(23)
-                }
-                transfers_obj[5].push(transfer_actions[t]['amount'])
-                transfers_obj[6].push(transfer_actions[t]['depth'])
-            }
-            if(last_obj != -1){
-                ints.splice(last_obj, 1);
-            }
-            last_obj = ints.length;
-            ints.push(transfers_obj)
-
-
-            var swap_actions = this.get_exchange_swap_down_actions(added_txs[i]['amount'], t.token_item, ints)
+            var swap_actions = this.get_exchange_swap_down_actions(added_txs[i]['amount'], t.token_item, ints_clone.concat([depth_swap_obj, transfers_obj]))
             for(var s=0; s<swap_actions.length; s++){
                 depth_swap_obj[1].push(added_txs[i]['exchange']['id'])
                 depth_swap_obj[2].push(23)
@@ -3062,72 +3039,84 @@ class StackPage extends Component {
                 depth_swap_obj[6/* depth */].push(swap_actions[s])
                 depth_swap_obj[7].push('1')
             }
-            if(last_depth_swap_obj != -1){
-                ints.splice(last_depth_swap_obj, 1);
+
+
+            var transfer_actions = this.get_exchange_transfer_actions(added_txs[i]['amount'])
+            for(var tx=0; tx<transfer_actions.length; tx++){
+                transfers_obj[1].push(added_txs[i]['exchange']['id'])
+                transfers_obj[2].push(23)
+                transfers_obj[3].push(added_txs[i]['recipient'])
+                if(added_txs[i]['recipient'] == 53){
+                    transfers_obj[4].push(53)
+                }else{
+                    transfers_obj[4].push(23)
+                }
+                transfers_obj[5].push(transfer_actions[tx]['amount'])
+                transfers_obj[6].push(transfer_actions[tx]['depth'])
             }
-            last_depth_swap_obj = ints.length;
-            ints.push(depth_swap_obj)
+
+            // console.log('-------------------e------------------')
         }
       
         return {'transfers':transfers_obj, 'swaps':depth_swap_obj}
     }
 
-    constructor(props) {
-        super(props);
-        this.active_depth_balances = {}
-    }
-
     get_active_exchange_depth_balance(exchange, ints){
-        var token_balance_data = exchange['token_balances_data']
+        var token_balance_data = structuredClone(exchange['token_balances_data'])
+
         for(var i=0; i<ints.length; i++){
-            //all the swap down transactions
-            if(ints[i][0][0] == 3000 && ints[i][0][1] == 16){
+            //all the transactions
+            if(ints[i][0][0] == 30000 && ints[i][0][1] == 16){
                 //its a swap down action
-                for(var j=0; j=ints[i][1].length; j++){
+                for(var j=0; j<ints[i][1].length; j++){
                     //for each targeted exchange id
-                    if(ints[i][1][j] == exchange['id'] && ints[i][5] == 0){
+                    if(ints[i][1][j] == exchange['id'] && ints[i][5][j] == 0){
                         //if the target is the exchange id and its a swap down
-                        var depth = ints[i][6][j]
-                        token_balance_data[depth-1] = bigInt(token_balance_data[depth-1]).add(bigInt('1e72'))
+                        var depth = parseInt(ints[i][6][j])
+                        // console.log('adding 1e72 end at depth: ', depth-1)
+                        token_balance_data[depth-1] = bigInt(token_balance_data[depth-1]).add(bigInt('1e72')).toString().toLocaleString('fullwide', {useGrouping:false})
                         /* update the new depth balance */
-                        token_balance_data[(depth)] = bigInt(token_balance_data[(depth)]).minus(1)
+                        token_balance_data[(depth)] = bigInt(token_balance_data[(depth)]).minus(1).toString().toLocaleString('fullwide', {useGrouping:false})
                         /* remove one from the next depth balance */
                     }
                 }
             }
         }
 
+
         for(var i=0; i<ints.length; i++){
-            //all the transfer transactions
-            if(ints[i][0][0] == 3000 && ints[i][0][1] == 1){
+            //all the transactions
+            if(ints[i][0][0] == 30000 && ints[i][0][1] == 1){
                 //its a transfer action
-                for(var j=0; j=ints[i][1].length; j++){
+                for(var j=0; j<ints[i][1].length; j++){
                     //for each targeted exchange
                     if(ints[i][1][j] == exchange['id']){
                         //if the target is the exchange id
                         var amount = ints[i][5][j]
-                        var depth = ints[i][6][j]
-                        token_balance_data[depth] = bigInt(token_balance_data[depth]).minus(bigInt(amount))
+                        var depth = parseInt(ints[i][6][j])
+                        token_balance_data[depth] = bigInt(token_balance_data[depth]).minus(bigInt(amount)).toString().toLocaleString('fullwide', {useGrouping:false})
                     }
                 }
             }
         }
 
         for(var i=0; i<ints.length; i++){
-            //all the transfer transactions
-            if(ints[i][0][0] == 3000 && ints[i][0][1] == 7){
+            //all the transactions
+            if(ints[i][0][0] == 30000 && ints[i][0][1] == 7){
                 //if the action is a award action
-                for(var j=0; j=ints[i][4].length; j++){
+                for(var j=0; j<ints[i][4].length; j++){
                     //for each targeted exchange
                     if(ints[i][4][j] == exchange['id']){
                         //if the target is the exchange id
                         var amount = ints[i][6][j]
-                        var depth = ints[i][7][j]
-                        token_balance_data[depth] = bigInt(token_balance_data[depth]).minus(bigInt(amount))
+                        var depth = parseInt(ints[i][7][j])
+                        token_balance_data[depth] = bigInt(token_balance_data[depth]).minus(bigInt(amount)).toString().toLocaleString('fullwide', {useGrouping:false})
                     }
                 }
             }
         }
+
+        // console.log('token_balance_data: ',JSON.stringify(token_balance_data))
 
         return token_balance_data
     }
@@ -3141,12 +3130,15 @@ class StackPage extends Component {
         //get the individual transfer actions for each depth
         transactions.forEach(item => {
             //for each transaction
-            var transaction_amount = item['amount']
-            var transaction_amount_depth = item['depth']
+            var transaction_amount = bigInt(item['amount'])
+            var transaction_amount_depth = parseInt(item['depth'])
             //record the amount and depth
 
             var my_balance_at_depth = active_exchange_depth_data[transaction_amount_depth]
             //record the accounts balance at the depth in focus
+
+            // console.log('my_balance_at_depth: ', this.format_account_balance_figure(my_balance_at_depth))
+            // console.log('transaction_amount', this.format_account_balance_figure(transaction_amount))
 
             if(bigInt(my_balance_at_depth).lesser(transaction_amount)){
                 //if my balance at depth in focus is less than the transactions amount
@@ -3154,7 +3146,7 @@ class StackPage extends Component {
                 var starting_search_depth = transaction_amount_depth+1
                 var starting_point_depth = -1
                 while(a) {
-                    if(active_exchange_depth_data[starting_search_depth] != 0){
+                    if(bigInt(active_exchange_depth_data[starting_search_depth]).greater(0)){
                         starting_point_depth = starting_search_depth
                         a = false
                     }else{
@@ -3171,6 +3163,8 @@ class StackPage extends Component {
                 }
             }
         });
+
+        console.log('swap down actions for ', amount, ' ', swap_down_actions)
 
         return swap_down_actions
     }
@@ -4032,6 +4026,7 @@ class StackPage extends Component {
     }
 
     format_direct_purchase_object = async (t, calculate_gas, ints) => {
+        var ints_clone = ints.slice()
         var depth_swap_obj = [
             [30000,16,0],
             [], [],/* target exchange ids */
@@ -4052,27 +4047,12 @@ class StackPage extends Component {
         ]
         var string_obj = [[]]
 
-        var last_obj = -1
-        var last_depth_swap_obj = -1
         for(var i=0; i<t.selected_variant['price_data'].length; i++){
             var exchange = t.selected_variant['price_data'][i]['id']
             var amount = this.get_amounts_to_be_paid(t.selected_variant['price_data'][i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
-            
-            var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
-                obj[4].push(exchange)
-                obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
-            }
-            if(last_obj != -1){
-                ints.splice(last_obj, 1);
-            }
-            last_obj = ints.length;
-            ints.push(obj)
 
             var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
-            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
             for(var s=0; s<swap_actions.length; s++){
                 depth_swap_obj[1].push(exchange)
                 depth_swap_obj[2].push(23)
@@ -4082,32 +4062,23 @@ class StackPage extends Component {
                 depth_swap_obj[6/* depth */].push(swap_actions[s])
                 depth_swap_obj[7].push('1')
             }
-            if(last_depth_swap_obj != -1){
-                ints.splice(last_depth_swap_obj, 1);
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
             }
-            last_depth_swap_obj = ints.length;
-            ints.push(depth_swap_obj)
         }
 
         for(var i=0; i<t.storefront_item['ipfs'].shipping_price_data.length; i++){
             var exchange = t.storefront_item['ipfs'].shipping_price_data[i]['id']
             var amount = this.get_amounts_to_be_paid(t.storefront_item['ipfs'].shipping_price_data[i]['amount'], t.purchase_unit_count).toString().toLocaleString('fullwide', {useGrouping:false})
 
-            var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
-                obj[4].push(exchange)
-                obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
-            }
-            if(last_obj != -1){
-                ints.splice(last_obj, 1);
-            }
-            last_obj = ints.length;
-            ints.push(obj)
 
             var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
-            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
             for(var s=0; s<swap_actions.length; s++){
                 depth_swap_obj[1].push(exchange)
                 depth_swap_obj[2].push(23)
@@ -4117,11 +4088,15 @@ class StackPage extends Component {
                 depth_swap_obj[6/* depth */].push(swap_actions[s])
                 depth_swap_obj[7].push('1')
             }
-            if(last_depth_swap_obj != -1){
-                ints.splice(last_depth_swap_obj, 1);
+
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
             }
-            last_depth_swap_obj = ints.length;
-            ints.push(depth_swap_obj)
         }
 
         var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
@@ -4424,6 +4399,7 @@ class StackPage extends Component {
     }
 
     format_award_object = async (t, calculate_gas, ints) => {
+        var ints_clone = ints.slice()
         var author = t.post_item['event'].returnValues.p5
         var post_id = t.post_item['id'];
 
@@ -4447,28 +4423,12 @@ class StackPage extends Component {
         ]
         var string_obj = [[]]
 
-        var last_obj = -1
-        var last_depth_swap_obj = -1
         for(var i=0; i<t.price_data.length; i++){
             var exchange = t.price_data[i]['id'].toString().toLocaleString('fullwide', {useGrouping:false})
             var amount = t.price_data[i]['amount'].toString().toLocaleString('fullwide', {useGrouping:false})
 
-            var transfer_actions = this.get_exchange_transfer_actions(amount)
-            for(var t=0; t<transfer_actions.length; t++){
-                obj[4].push(exchange)
-                obj[5].push(23)
-                obj[6].push(transfer_actions[t]['amount'])
-                obj[7].push(transfer_actions[t]['depth'])
-            }
-            if(last_obj != -1){
-                ints.splice(last_obj, 1);
-            }
-            last_obj = ints.length;
-            ints.push(obj)
-
-
             var exchange_obj = this.props.app_state.created_token_object_mapping[this.props.app_state.selected_e5][parseInt(exchange)]
-            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints)
+            var swap_actions = this.get_exchange_swap_down_actions(amount, exchange_obj, ints_clone.concat([depth_swap_obj, obj]))
             for(var s=0; s<swap_actions.length; s++){
                 depth_swap_obj[1].push(exchange)
                 depth_swap_obj[2].push(23)
@@ -4478,11 +4438,15 @@ class StackPage extends Component {
                 depth_swap_obj[6/* depth */].push(swap_actions[s])
                 depth_swap_obj[7].push('1')
             }
-            if(last_depth_swap_obj != -1){
-                ints.splice(last_depth_swap_obj, 1);
+
+
+            var transfer_actions = this.get_exchange_transfer_actions(amount)
+            for(var t=0; t<transfer_actions.length; t++){
+                obj[4].push(exchange)
+                obj[5].push(23)
+                obj[6].push(transfer_actions[t]['amount'])
+                obj[7].push(transfer_actions[t]['depth'])
             }
-            last_depth_swap_obj = ints.length;
-            ints.push(depth_swap_obj)
 
         }
 
@@ -5689,10 +5653,10 @@ class StackPage extends Component {
 
                     
 
-                    {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l'})}
-                    <div style={{height: 10}}/> */}
-                    {/* {this.load_preferred_e5_ui()}
-                    {this.render_detail_item('0')} */}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.load_preferred_e5_ui()}
+                    {this.render_detail_item('0')}
 
                     
 
@@ -6370,7 +6334,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -6511,7 +6475,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -6716,7 +6680,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -6785,54 +6749,53 @@ class StackPage extends Component {
     }
 
     get_all_sorted_notifications(){
-        var my_job_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_responses_notifications)
+        // var my_job_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_responses_notifications)
 
-        var my_job_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_application_responses_notifications)
+        // var my_job_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_application_responses_notifications)
 
-        var my_contractor_job_request_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_contractor_job_request_notifications)
+        // var my_contractor_job_request_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_contractor_job_request_notifications)
 
         var my_token_event_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_token_event_notifications)
 
-        var my_bag_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_responses_notifications)
+        // var my_bag_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_responses_notifications)
 
-        var my_bag_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_application_responses_notifications)
+        // var my_bag_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_application_responses_notifications)
 
-        var enter_exit_accounts_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.enter_exit_accounts_notifications)
+        // var enter_exit_accounts_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.enter_exit_accounts_notifications)
 
-        var my_store_direct_purchases_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_store_direct_purchases_notifications)
+        // var my_store_direct_purchases_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_store_direct_purchases_notifications)
 
-        var my_mail_messages_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.received_mail_notifications)
+        // var my_mail_messages_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.received_mail_notifications)
 
 
         var all_object_list = []
-        for (const key in my_job_responses_notifications) {
-            all_object_list.push(my_job_responses_notifications[key])
-        }
-        for (const key in my_job_application_responses_notifications) {
-            all_object_list.push(my_job_application_responses_notifications[key])
-        }
-        for (const key in my_contractor_job_request_notifications) {
-            all_object_list.push(my_contractor_job_request_notifications[key])
-        }
+        // for (const key in my_job_responses_notifications) {
+        //     all_object_list.push(my_job_responses_notifications[key])
+        // }
+        // for (const key in my_job_application_responses_notifications) {
+        //     all_object_list.push(my_job_application_responses_notifications[key])
+        // }
+        // for (const key in my_contractor_job_request_notifications) {
+        //     all_object_list.push(my_contractor_job_request_notifications[key])
+        // }
         for (const key in my_token_event_notifications) {
             all_object_list.push(my_token_event_notifications[key])
         }
-        for (const key in my_bag_responses_notifications) {
-            all_object_list.push(my_bag_responses_notifications[key])
-        }
-        for (const key in my_bag_application_responses_notifications) {
-            all_object_list.push(my_bag_application_responses_notifications[key])
-        }
-        for (const key in enter_exit_accounts_notifications) {
-            all_object_list.push(enter_exit_accounts_notifications[key])
-        }
-        for (const key in my_store_direct_purchases_notifications) {
-            all_object_list.push(my_store_direct_purchases_notifications[key])
-        }
-
-        for(const key in my_mail_messages_notifications){
-            all_object_list.push(my_mail_messages_notifications[key])
-        }
+        // for (const key in my_bag_responses_notifications) {
+        //     all_object_list.push(my_bag_responses_notifications[key])
+        // }
+        // for (const key in my_bag_application_responses_notifications) {
+        //     all_object_list.push(my_bag_application_responses_notifications[key])
+        // }
+        // for (const key in enter_exit_accounts_notifications) {
+        //     all_object_list.push(enter_exit_accounts_notifications[key])
+        // }
+        // for (const key in my_store_direct_purchases_notifications) {
+        //     all_object_list.push(my_store_direct_purchases_notifications[key])
+        // }
+        // for(const key in my_mail_messages_notifications){
+        //     all_object_list.push(my_mail_messages_notifications[key])
+        // }
 
         var sorted_notifs = this.sortByAttributeDescending(all_object_list, 'timestamp')
         console.log('sorted notifications: ', sorted_notifs)
@@ -6861,7 +6824,7 @@ class StackPage extends Component {
                             <li style={{'padding': '2px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -6888,11 +6851,12 @@ class StackPage extends Component {
         if(item['type'] == 'token_event_notification'){
             var sender = item['event'].returnValues.p2
             var amount = item['event'].returnValues.p4
+            var depth = item['event'].returnValues.p7
             var exchange = item['event'].returnValues.p1
             var timestamp = item['event'].returnValues.p5
             return(
                 <div onClick={() => this.open_object(exchange, item['e5'], 'token')}>
-                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+' sent you '+this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+' sent you '+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
                 </div>
             )
         }
@@ -6987,6 +6951,12 @@ class StackPage extends Component {
                 </div>
             )
         }
+    }
+
+    get_actual_number(number, depth){
+        var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth_vaule = bigInt(('1e'+p))
+        return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
     }
 
     truncate(source, size) {

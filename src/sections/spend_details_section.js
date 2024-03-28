@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
-import Letter from './../assets/letter.png'; 
+// import Letter from './../assets/letter.png'; 
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 import E35EndImg from './../assets/e35_end_token.png';
@@ -132,7 +132,7 @@ class SpendDetailSection extends Component {
         return(
             <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
                 <div style={{'margin':'10px 20px 0px 0px'}}>
-                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                     <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
@@ -881,7 +881,8 @@ class SpendDetailSection extends Component {
         var selected_obj_ratio_config = object['data'][2];
         var active_supply = selected_obj_ratio_config[2]
         if(object['ipfs'] != null){
-            if(object['ipfs'].default_depth != 0){
+            var depth = object['ipfs'].default_depth == null ? 0 : object['ipfs'].default_depth
+            if(depth != 0){
                 active_supply = bigInt(object['ipfs'].token_exchange_liquidity_total_supply).add(active_supply)
             }
         }
@@ -1054,7 +1055,13 @@ class SpendDetailSection extends Component {
         var total_supply = selected_object['data'][2][2]
         var proportion_ratio_events = selected_object['exchange_ratio_data']
         var amount = total_supply
-        if(proportion_ratio_events.length >= 23){
+        var is_end_token = false
+        var token_ipfs = selected_object['ipfs']
+        if(token_ipfs != null) {
+            var depth = token_ipfs.default_depth == null ? 0 : token_ipfs.default_depth
+            if(depth != 0) is_end_token = true
+        }
+        if(proportion_ratio_events.length >= 23 && !is_end_token){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -1146,7 +1153,13 @@ class SpendDetailSection extends Component {
 
     show_transaction_count_chart(selected_object, symbol){
         var exchange_ratio_events = selected_object['exchange_ratio_data']
-        if(exchange_ratio_events.length > 10){
+        var is_end_token = false
+        var token_ipfs = selected_object['ipfs']
+        if(token_ipfs != null) {
+            var depth = token_ipfs.default_depth == null ? 0 : token_ipfs.default_depth
+            if(depth != 0) is_end_token = true
+        }
+        if(exchange_ratio_events.length > 10 && !is_end_token){
             return(
                 <div>
                     <div style={{height: 10}}/>
@@ -1274,7 +1287,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1404,7 +1417,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1513,7 +1526,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1747,7 +1760,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1862,7 +1875,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -1972,7 +1985,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2093,7 +2106,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2199,7 +2212,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2298,7 +2311,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -2400,7 +2413,7 @@ class SpendDetailSection extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>

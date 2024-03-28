@@ -3,7 +3,7 @@ import ViewGroups from '../../components/view_groups'
 import Tags from '../../components/tags';
 import NumberPicker from '../../components/number_picker';
 
-import Letter from '../../assets/letter.png';
+// import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
 
@@ -176,7 +176,7 @@ class CollectSubscriptionPage extends Component {
                             <li style={{'padding': '3px'}} onClick={()=>console.log()}>
                                 <div style={{height:50, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'0px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:20 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>

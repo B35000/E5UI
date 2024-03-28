@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Slider from './slider'
 import ViewGroups from './view_groups'
-import E5EmptyIcon3 from './../assets/e5empty_icon.png';
+// import E5EmptyIcon3 from './../assets/e5empty_icon.png';
 var bigInt = require("big-integer");
 
 
@@ -59,7 +59,7 @@ class NumberPicker extends Component {
                         </div>
                         <div className="col-2" style={{'padding': '3px 0px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '5px'}} onClick={()=>this.reset_number_picker2()}>
-                              <img src={E5EmptyIcon3} style={{height:35 ,width:35}} />
+                              <img src={'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'} style={{height:35 ,width:35}} />
                             </div>
                             
                         </div>

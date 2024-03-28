@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Letter from './../assets/letter.png';
+// import Letter from './../assets/letter.png';
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 import ViewGroups from './../components/view_groups';
 import TextInput from './../components/text_input';
@@ -320,7 +320,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '2px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -356,7 +356,7 @@ class PostListSection extends Component {
             <div>
                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','margin':'5px 0px 0px 0px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center',/*  'opacity':this.state.loading_screen_opacity */}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                     </div>
                 </div>
@@ -446,7 +446,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -548,7 +548,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -645,7 +645,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -743,7 +743,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -877,7 +877,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -1178,7 +1178,7 @@ class PostListSection extends Component {
             <div>
                 <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                        <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                        <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
                 </div>
             </div>
@@ -1214,7 +1214,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -1260,7 +1260,7 @@ class PostListSection extends Component {
                 <div>
                     <div style={{height:160, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 0px 0px'}}>
-                            <img src={Letter} style={{height:60 ,width:'auto'}} />
+                            <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                             <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}></p>
                         </div>
                     </div>
@@ -1422,7 +1422,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -1520,7 +1520,7 @@ class PostListSection extends Component {
                             <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                                     </div>
                                 </div>
@@ -2085,11 +2085,11 @@ class PostListSection extends Component {
 
         if(items.length == 0){
             items = ['0','1'];
-            return ( 
+            return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px', 'margin':'5px 0px 0px 0px'}}>
+                            <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
                                 {this.render_small_empty_object()}
                             </li>
                         ))}
@@ -2204,7 +2204,7 @@ class PostListSection extends Component {
             <div>
                 <div style={{ height: 65, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px','margin':'0px 0px 0px 0px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', /* 'opacity':this.state.loading_screen_opacity */}}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                        <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                        <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
                 </div>
             </div>
@@ -2227,7 +2227,7 @@ class PostListSection extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px', 'margin':'5px 0px 0px 0px'}}>
+                            <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
                                 {this.render_small_empty_object()}
                             </li>
                         ))}
@@ -2299,7 +2299,7 @@ class PostListSection extends Component {
         return(
                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:60 ,width:'auto'}} />
+                        <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                     </div>
                 </div>

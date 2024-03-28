@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
-import Letter from './../assets/letter.png'; 
+// import Letter from './../assets/letter.png'; 
 import EthereumTestnet from './../assets/ethereum_testnet.png';
 
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
@@ -115,7 +115,7 @@ class EthersDetailsSection extends Component {
         return(
             <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
                 <div style={{'margin':'10px 20px 0px 0px'}}>
-                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                     <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
@@ -601,7 +601,7 @@ class EthersDetailsSection extends Component {
                                 <li style={{'padding': '2px'}}>
                                     <div style={{ height: 80, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -874,7 +874,7 @@ class EthersDetailsSection extends Component {
         return(
             <div style={{height:180, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                 <div style={{'margin':'10px 20px 0px 0px'}}>
-                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                     <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div> 
             </div>

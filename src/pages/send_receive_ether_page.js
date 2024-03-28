@@ -6,7 +6,7 @@ import NumberPicker from './../components/number_picker';
 import TextInput from './../components/text_input';
 import Html5QrcodePlugin from '../externals/Html5QrcodePlugin'
 import Dialog from "@mui/material/Dialog";
-import Letter from './../assets/letter.png';
+// import Letter from './../assets/letter.png';
 
 // import { ethToEvmos, evmosToEth } from '@evmos/address-converter'
 import { from } from "@iotexproject/iotex-address-ts";
@@ -424,7 +424,7 @@ class SendReceiveEtherPage extends Component {
         return(
             <div style={{height:150, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
-                        <img src={Letter} style={{height:70 ,width:'auto'}} />
+                        <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                     </div>
                     

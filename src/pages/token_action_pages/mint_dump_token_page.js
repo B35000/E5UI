@@ -5,7 +5,7 @@ import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
 import AddStack from '../../assets/e5empty_icon3.png'; 
-import Letter from '../../assets/letter.png';
+// import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
 const Web3 = require('web3');
@@ -36,7 +36,7 @@ class NewMintActionPage extends Component {
     state = {
         selected: 0, id:makeid(8), type:this.props.app_state.loc['946']/* 'buy-sell' */, entered_indexing_tags:[this.props.app_state.loc['947']/* 'mint' */, this.props.app_state.loc['948']/* 'dump' */, this.props.app_state.loc['883']/* 'token' */],
         new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),
-        recipient_id:'', amount:0, token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, 
+        recipient_id:'', amount:0, token_item: null, 
         upper_bound:0, lower_bound:0, e5:this.props.app_state.selected_e5
     };
 
@@ -53,6 +53,8 @@ class NewMintActionPage extends Component {
     }
 
     render(){
+        if(this.state.token_item == null) return;
+        console.log('otk: ',this.state.token_item['balance'])
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
 
@@ -178,15 +180,9 @@ class NewMintActionPage extends Component {
     set_maximum(){
         var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
         if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
-            if(!bigInt(this.state.token_item['balance']).greater(this.get_token_buy_limit())){
-                var max = this.state.token_item['balance']
-                this.setState({amount: max})
-            }else{
-                var max = this.get_token_buy_limit()
-                this.setState({amount: max})
-            }   
+            var max = this.get_token_buy_limit()
+            this.setState({amount: max})   
         }else{
-            console.log('parent token balance: ', this.state.token_item['data'][2][3])
             if(!bigInt(this.state.token_item['balance']).greater(this.get_token_sell_limit())){
                 var max = this.state.token_item['balance']
                 this.setState({amount: max})
@@ -435,7 +431,7 @@ class NewMintActionPage extends Component {
             if(token_id == 0) token_balance = my_ether_balance
             var required_amount = required_amounts[i]
 
-            if(token_balance < required_amount){
+            if(bigInt(token_balance).lesser(required_amount)){
                 affordable = false
             }
         }
@@ -836,7 +832,8 @@ class NewMintActionPage extends Component {
 
 
     set_token(item){
-        if(this.state.token_item['id'] != item['id']){
+        var current_token_id = this.state.token_item == null ? 1 : this.state.token_item['id']
+        if(current_token_id != item['id']){
             this.setState({
                 selected: 0, id:makeid(8), type:this.props.app_state.loc['946']/* 'buy-sell' */, entered_indexing_tags:[this.props.app_state.loc['948']/* 'dump' */, this.props.app_state.loc['947']/* 'mint' */,this.props.app_state.loc['883']/* 'token' */],
                 new_mint_dump_action_page_tags_object: this.get_new_mint_dump_action_page_tags_object(),

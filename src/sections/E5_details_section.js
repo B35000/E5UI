@@ -4,7 +4,7 @@ import Tags from './../components/tags';
 
 import End35 from './../assets/end35.png';
 import End25 from './../assets/E25.png';
-import Letter from './../assets/letter.png'; 
+// import Letter from './../assets/letter.png'; 
 
 var bigInt = require("big-integer");
 
@@ -67,7 +67,7 @@ class E5DetailsSection extends Component {
         return(
             <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
                 <div style={{'margin':'10px 20px 0px 0px'}}>
-                    <img src={Letter} style={{height:70 ,width:'auto'}} />
+                    <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                     <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>

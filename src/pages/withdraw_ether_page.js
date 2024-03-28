@@ -5,7 +5,7 @@ import TextInput from './../components/text_input';
 import Dialog from "@mui/material/Dialog";
 import NumberPicker from './../components/number_picker';
 
-import Letter from './../assets/letter.png'; 
+// import Letter from './../assets/letter.png'; 
 import { from } from "@iotexproject/iotex-address-ts";
 
 var bigInt = require("big-integer");
@@ -390,7 +390,7 @@ class WithdrawEtherPage extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>
@@ -495,7 +495,7 @@ class WithdrawEtherPage extends Component {
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
                                     <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                            <img src={Letter} style={{ height: 30, width: 'auto' }} />
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
                                     </div>
                                 </li>

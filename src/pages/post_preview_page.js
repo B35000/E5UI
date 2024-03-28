@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ViewGroups from './../components/view_groups'
 import Tags from './../components/tags';
 
-import Letter from './../assets/letter.png';
+// import Letter from './../assets/letter.png';
 
 var bigInt = require("big-integer");
 
@@ -142,7 +142,7 @@ class PostPreview extends Component {
                 <div>
                     <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 0px 0px'}}>
-                            <img src={Letter} style={{height:60 ,width:'auto'}} />
+                            <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                             <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                         </div>
                     </div>

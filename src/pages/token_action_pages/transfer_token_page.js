@@ -4,7 +4,7 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
-import Letter from '../../assets/letter.png';
+// import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
 
@@ -33,8 +33,10 @@ class template extends Component {
     state = {
         selected: 0,id:makeid(8), type: this.props.app_state.loc['1018']/* 'transfer' */,
         new_transfer_action_page_tags_object: this.get_new_transfer_action_page_tags_object(),
-        recipient_id:'', amount:0, token_item: {'balance':1, 'id':0}, stack_items:[], debit_balance:0,
-        entered_indexing_tags:[this.props.app_state.loc['1018']/* 'transfer' */, this.props.app_state.loc['1019']/* 'send' */, this.props.app_state.loc['999']/* 'token' */]
+        recipient_id:'', amount:0, token_item: null, stack_items:[], debit_balance:0,
+        entered_indexing_tags:[this.props.app_state.loc['1018']/* 'transfer' */, this.props.app_state.loc['1019']/* 'send' */, this.props.app_state.loc['999']/* 'token' */],
+
+        power_lim:0
     };
 
     get_new_transfer_action_page_tags_object(){
@@ -49,6 +51,7 @@ class template extends Component {
     }
 
     render(){
+        if(this.state.token_item == null) return
         return(
             <div style={{'padding':'10px 20px 0px 10px'}}>
 
@@ -115,7 +118,7 @@ class template extends Component {
                 </div>
 
                 <div style={{height:10}}/>
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange()}/>
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.token_item)}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1029']/* 'Add Transaction' */, 'action':''})}
@@ -127,13 +130,12 @@ class template extends Component {
         )
     }
 
-    get_power_limit_for_exchange(){
-        var target_exchange_data = this.state.token_item
+    get_power_limit_for_exchange(exchange){
         var default_depth = 0;
-        if(target_exchange_data != null){
-            target_exchange_data = target_exchange_data['ipfs']
-            if(target_exchange_data != null){
-                default_depth = target_exchange_data.default_depth == null ? 0 : target_exchange_data.default_depth
+        if(exchange['ipfs'] != null){
+            var depth = exchange['ipfs'].default_depth
+            if(depth != null){
+                default_depth = depth
             }
         }
 
@@ -234,7 +236,7 @@ class template extends Component {
             this.props.notify(this.props.app_state.loc['1032']/* 'You dont have enough tokens to add that transaction.' */, 4200)
         }
         else{
-            var tx = {id:makeid(8), type:'transfer', 'amount':''+amount, 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
+            var tx = {id:makeid(8), type:'transfer', 'amount':amount.toLocaleString('fullwide', {useGrouping:false}), 'recipient':recipient, 'exchange':this.state.token_item, entered_indexing_tags:['transfer', 'send', 'token']}
 
             clone.push(tx)
             this.setState({stack_items: clone, debit_balance: bigInt(this.state.debit_balance).add(amount), recipient_id:'', amount:0})
@@ -279,7 +281,7 @@ class template extends Component {
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={Letter} style={{height:30 ,width:'auto'}} />
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
                                 </div>
                             </li>
@@ -294,13 +296,20 @@ class template extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>this.when_stack_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':this.props.app_state.loc['1035']/* 'recipient account: ' */+item['recipient'], 'size':'l'})}
+                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':this.props.app_state.loc['1035']/* 'recipient account: ' */+this.format_recipient_account(item['recipient']), 'size':'l'})}
                             </li>
                         ))}
                     </ul>
                 </div>
             )
         }
+    }
+
+    format_recipient_account(recipient){
+        if(recipient == '53'){
+            return this.props.app_state.loc['2785']/* 'You' */
+        }
+        return recipient
     }
 
     get_all_sorted_objects(object){
@@ -340,9 +349,12 @@ class template extends Component {
     }
 
 
-    when_stack_item_clicked(item, index){
+    when_stack_item_clicked(item){
         var cloned_array = this.state.stack_items.slice()
-        cloned_array.splice(index, 1);
+        const index = cloned_array.indexOf(item);
+        if (index > -1) {
+            cloned_array.splice(index, 1);
+        }
         this.setState({stack_items: cloned_array, debit_balance: bigInt(this.state.debit_balance).minus(bigInt(item.amount))})
         this.props.notify(this.props.app_state.loc['1036']/* 'Transaction removed.' */, 600)
     }
@@ -410,8 +422,8 @@ class template extends Component {
         if(amount < 1_000_000_000){
             return number_with_commas(amount.toString())
         }else{
-            var power = amount.toString().toLocaleString('fullwide', {useGrouping:false}).length - 9
-            return number_with_commas(amount.toString().toLocaleString('fullwide', {useGrouping:false}).substring(0, 9)) +'e'+power
+            var power = amount.toLocaleString('fullwide', {useGrouping:false}).length - 9
+            return number_with_commas(amount.toLocaleString('fullwide', {useGrouping:false}).substring(0, 9)) +'e'+power
         }
         
     }
@@ -487,7 +499,8 @@ class template extends Component {
 
 
     set_token(item){
-        if(this.state.token_item['id'] != item['id']){
+        var current_token_id = this.state.token_item == null ? 1 : this.state.token_item['id']
+        if(current_token_id != item['id']){
             this.setState({
                 selected: 0,id:makeid(8), type: this.props.app_state.loc['1018']/* 'transfer' */,
                 new_transfer_action_page_tags_object: this.get_new_transfer_action_page_tags_object(),
