@@ -4,6 +4,9 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 // import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
@@ -152,7 +155,7 @@ class ModifySubscriptionPage extends Component {
         if(ui == 'number'){
             return(
                 <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':selected_item, 'number':this.state.reconfig_number, 'relativepower':this.props.app_state.loc['845']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':selected_item, 'subtitle':this.format_power_figure(this.state.reconfig_number), 'barwidth':this.calculate_bar_width(this.state.reconfig_number), 'number':this.format_account_balance_figure(this.state.reconfig_number), 'barcolor':'', 'relativepower':this.props.app_state.loc['845']/* 'units' */, })}
                     </div>
 
@@ -200,7 +203,7 @@ class ModifySubscriptionPage extends Component {
         if(ui == 'number'){
             return(
                 <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['848']/* 'Current ' */+selected_item, 'number':current_value, 'relativepower':this.props.app_state.loc['845']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['848']/* 'Current ' */+selected_item, 'subtitle':this.format_power_figure(current_value), 'barwidth':this.calculate_bar_width(current_value), 'number':this.format_account_balance_figure(current_value), 'barcolor':'', 'relativepower':this.props.app_state.loc['845']/* 'units' */, })}
                     </div>
                 </div>
@@ -323,14 +326,25 @@ class ModifySubscriptionPage extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_added_modify_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['861f']/* 'Modify Target' */, 'size':'l'})}
-                                <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['852']/* 'position' */, 'size':'l'})}
-                                <div style={{height:5}}/>
-                                {this.render_reconfig_value(item)}
-                                <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
-                            </li>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () => this.when_added_modify_item_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            {this.render_detail_item('3', {'title':''+item['title'], 'details':this.props.app_state.loc['861f']/* 'Modify Target' */, 'size':'l'})}
+                                            <div style={{height:5}}/>
+                                            {this.render_detail_item('3', {'title':''+item['pos'], 'details':this.props.app_state.loc['852']/* 'position' */, 'size':'l'})}
+                                            <div style={{height:5}}/>
+                                            {this.render_reconfig_value(item)}
+                                            <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '5px 20px 5px 20px'}}/>
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
                         ))}
                     </ul>
                 </div>
@@ -346,7 +360,7 @@ class ModifySubscriptionPage extends Component {
         if(ui == 'number'){
             return(
                 <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':title, 'number':number, 'relativepower':this.props.app_state.loc['845']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'', 'relativepower':this.props.app_state.loc['845']/* 'units' */, })}
                     </div>
                 </div>
@@ -514,7 +528,7 @@ class ModifySubscriptionPage extends Component {
             var token_name = item['subtitle']
             return(
                 <div>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':token_price, 'number':this.state.new_price_number, 'relativepower':token_name})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':token_price, 'subtitle':this.format_power_figure(this.state.new_price_number), 'barwidth':this.calculate_bar_width(this.state.new_price_number), 'number':this.format_account_balance_figure(this.state.new_price_number), 'barcolor':'', 'relativepower':token_name, })}
                     </div>
                     <div style={{height:10}}/>

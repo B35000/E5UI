@@ -4,6 +4,9 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 // import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
@@ -87,7 +90,7 @@ class FreezeUnfreezePage extends Component {
 
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['940']/* 'Transfer Amount' */, 'number':this.state.freeze_unfreeze_amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['940']/* 'Transfer Amount' */, 'subtitle':this.format_power_figure(this.state.freeze_unfreeze_amount), 'barwidth':this.calculate_bar_width(this.state.freeze_unfreeze_amount), 'number':this.format_account_balance_figure(this.state.freeze_unfreeze_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
@@ -182,9 +185,20 @@ class FreezeUnfreezePage extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_freeze_unfreeze_item_clicked(item)}>
-                                {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':'Target Account ID: '+item['recipient'], 'size':'s'})}
-                            </li>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () => this.when_freeze_unfreeze_item_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':'Target Account ID: '+item['recipient'], 'size':'s'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
                         ))}
                     </ul>
                 </div>

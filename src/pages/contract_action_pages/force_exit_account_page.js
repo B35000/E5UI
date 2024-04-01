@@ -4,6 +4,9 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 // import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
@@ -160,10 +163,21 @@ class ForceExitPage extends Component {
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_force_exit_value_clicked(item)}>
-                                <div style={{height:5}}/>
-                                {this.render_detail_item('3', {'title':this.props.app_state.loc['59']+item, 'details':this.props.app_state.loc['60']+this.state.contract_item['id'], 'size':'s'})}
-                            </li>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_force_exit_value_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            <div style={{height:5}}/>
+                                            {this.render_detail_item('3', {'title':this.props.app_state.loc['59']+item, 'details':this.props.app_state.loc['60']+this.state.contract_item['id'], 'size':'s'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
                         ))}
                     </ul>
                 </div>

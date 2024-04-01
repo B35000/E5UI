@@ -234,17 +234,17 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['target_authority_id'])}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['minimum_buy_amount']['title'], 'number':item['minimum_buy_amount']['n'], 'relativepower':item['minimum_buy_amount']['relativepower']})}>
                         {this.render_detail_item('2', item['minimum_buy_amount'])}
                     </div>
                     <div style={{height: 10}}/>
                     {this.render_detail_item('3', item['can_cancel_subscription'])}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['maximum_buy_amount']['title'], 'number':item['maximum_buy_amount']['n'], 'relativepower':item['maximum_buy_amount']['relativepower']})}>
                         {this.render_detail_item('2', item['maximum_buy_amount'])}
                     </div>
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['minimum_cancellable_balance_amount']['title'], 'number':item['minimum_cancellable_balance_amount']['n'], 'relativepower':item['minimum_cancellable_balance_amount']['relativepower']})}>
                         {this.render_detail_item('2', item['minimum_cancellable_balance_amount'])}
                     </div>
                     <div style={{height: 10}}/>
@@ -454,7 +454,7 @@ class SubscriptionDetailsSection extends Component {
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                     {bt.map((item, index) => (
-                        <li style={{'padding': '1px'}}>
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                             {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
                         </li>
                     ))}
@@ -494,13 +494,13 @@ class SubscriptionDetailsSection extends Component {
             
             'target_authority_id': {'title':this.get_senders_name(subscription_config[0], object), 'details':this.props.app_state.loc['1830']/* 'Authority ID' */, 'size':'l'},
             
-            'minimum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1831']/* 'Minimum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[1]), 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${this.format_account_balance_figure(subscription_config[1])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
+            'minimum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1831']/* 'Minimum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[1]), 'barwidth':this.get_number_width(subscription_config[1]), 'number':`${this.format_account_balance_figure(subscription_config[1])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, 'n':subscription_config[1]},
 
             'can_cancel_subscription': {'title':can_cancel_subscription, 'details':this.props.app_state.loc['1833']/* 'Subscription Type' */, 'size':'l'},
 
-            'maximum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1834']/* 'Maximum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[3]), 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${this.format_account_balance_figure(subscription_config[3])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
+            'maximum_buy_amount':{ 'style':'l', 'title':this.props.app_state.loc['1834']/* 'Maximum Buy Amount' */, 'subtitle':this.format_power_figure(subscription_config[3]), 'barwidth':this.get_number_width(subscription_config[3]), 'number':`${this.format_account_balance_figure(subscription_config[3])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, 'n':subscription_config[3]},
 
-            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':this.props.app_state.loc['1836']/* 'Minimum Cancellable Amount' */, 'subtitle':this.format_power_figure(subscription_config[4]), 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${this.format_account_balance_figure(subscription_config[4])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */, },
+            'minimum_cancellable_balance_amount':{ 'style':'l', 'title':this.props.app_state.loc['1836']/* 'Minimum Cancellable Amount' */, 'subtitle':this.format_power_figure(subscription_config[4]), 'barwidth':this.get_number_width(subscription_config[4]), 'number':`${this.format_account_balance_figure(subscription_config[4])}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1832']/* 'time-units' */,'n':subscription_config[4] },
 
             'time_unit': {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['1837']/* 'Time Unit' */, 'size':'l'},
 
@@ -573,7 +573,7 @@ class SubscriptionDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_contract_transfer_event_item(item, object, index)}
                                 </div>
                             </li>
@@ -608,10 +608,12 @@ class SubscriptionDetailsSection extends Component {
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2413']/* 'Action: ' */+item['action'], 'size': 's' })}
+                    <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['2413']/* 'Action: ' */+item['action'], 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
@@ -624,13 +626,8 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': from_to, 'details':this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
-                    {/* <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} /> */}
                 </div>
             )
         }
@@ -713,11 +710,11 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div style={{  }}>
+                <div>
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_pay_subscription_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_pay_subscription_event_item(item, object, index)}
                                 </div>
                             </li>
@@ -741,9 +738,11 @@ class SubscriptionDetailsSection extends Component {
         if (this.state.selected_pay_subscription_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Paying Account', 'size': 's' })}
+                    <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': 'Paying Account', 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1757']/* 'Time Units: ' */, 'number':number, 'relativepower':this.props.app_state.loc['1628']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1757']/* 'Time Units: ' */, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* 'units' */, })}
                     </div>
 
@@ -756,13 +755,9 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2670']/* 'Paying Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {/* <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Time Units: ', 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} /> */}
                 </div>
             )
         }
@@ -876,7 +871,7 @@ class SubscriptionDetailsSection extends Component {
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2672']/* 'Cancelling Account' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'number':number, 'relativepower':this.props.app_state.loc['1628']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* 'units' */, })}
                     </div>
 
@@ -891,11 +886,6 @@ class SubscriptionDetailsSection extends Component {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2672']/* 'Cancelling Account' */, 'size': 's' })}
-                    {/* <div style={{ height: 2 }} /> */}
-                    {/* <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Subscription ID:  '+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} /> */}
                 </div>
             )
         }
@@ -956,7 +946,7 @@ class SubscriptionDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_collect_subscription_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_collect_subscription_event_item(item, object, index)}
                                 </div>
                             </li>
@@ -982,9 +972,11 @@ class SubscriptionDetailsSection extends Component {
         if (this.state.selected_collect_subscription_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2674']/* 'Collecting Account' */, 'size': 's' })}
+                    <div onClick={() => this.when_collect_subscription_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.props.app_state.loc['2674']/* 'Collecting Account' */, 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2675']/* 'Total Time Units Collected' */, 'number':number, 'relativepower':this.props.app_state.loc['2676']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2675']/* 'Total Time Units Collected' */, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['2676']/* 'units' */, })}
                     </div>
 
@@ -997,13 +989,8 @@ class SubscriptionDetailsSection extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_collect_subscription_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': this.get_sender_title_text(item.returnValues.p2, object), 'details': this.format_account_balance_figure(number)+' '+this.props.app_state.loc['2676']/* 'units' */, 'size': 's' })}
-                    {/* <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2675'], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['2676'], })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} /> */}
                 </div>
             )
         }
@@ -1166,7 +1153,7 @@ class SubscriptionDetailsSection extends Component {
         else if (type == 'number') {
             return (
                 <div>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':title, 'number':number, 'relativepower':this.props.app_state.loc['1904']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': title, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1904']/* 'units' */, })}
                     </div>
                 </div>
@@ -1692,7 +1679,7 @@ class SubscriptionDetailsSection extends Component {
         else if(parseInt(typed_account) < 1001){
             this.props.notify(this.props.app_state.loc['1576']/* 'That ID is not valid.' */, 3800)
         }else{
-            this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 800)
+            // this.props.notify(this.props.app_state.loc['2509']/* 'Searching...' */, 800)
             this.setState({searched_account: typed_account})
             this.props.get_accounts_payment_information(object['id'], object['e5'], typed_account)
         }
@@ -1710,8 +1697,7 @@ class SubscriptionDetailsSection extends Component {
 
 
     render_search_results_if_any(object){
-        var result = this.props.app_state.subscription_search_result[object['id']+this.state.searched_account]
-
+        const result = this.props.app_state.subscription_search_result[object['id']+this.state.searched_account]
         if(result == null || result['events'].length == 0){
             var items = [0, 1]
             return (
@@ -1732,43 +1718,114 @@ class SubscriptionDetailsSection extends Component {
                 </div>
             )
         }else{
-            var first_payment_time = result['events'][0].returnValues.p5
-            var first_payment_block = result['events'][0].returnValues.p4
-            var latest_payment_time = result['events'][result['events'].length-1].returnValues.p5
-            var latest_payment_block = result['events'][result['events'].length-1].returnValues.p4
+            const result_events = [].concat(result['events'])
+            var first_payment_time = result_events[0].returnValues.p5
+            var latest_payment_time = result_events[result_events.length-1].returnValues.p5
             var time_unit = object['data'][1][5] == 0 ? 60*53 : object['data'][1][5]
             var remaining_time_units = Math.floor(result['payment'] / time_unit)
             return(
                 <div style={{ margin: '5px 10px 5px 10px' }}>
                     {this.render_detail_item('3', {'title':this.get_time_diff(result['payment']), 'details':this.props.app_state.loc['2683']/* 'Remaining Subscription Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2684']/* 'Remaining Time Units (As of Now)' */, 'number':remaining_time_units, 'relativepower':this.props.app_state.loc['2685']/* time-units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2684']/* 'Remaining Time Units (As of Now)' */, 'subtitle': this.format_power_figure(remaining_time_units), 'barwidth': this.calculate_bar_width(remaining_time_units), 'number': this.format_account_balance_figure(remaining_time_units), 'barcolor': '', 'relativepower': this.props.app_state.loc['2685']/* time-units' */, })}
                     </div>
                     
-                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':''+(new Date(latest_payment_time*1000))+', '+(this.get_time_difference(latest_payment_time))+this.props.app_state.loc['1698a']/* ago. */, 'details':this.props.app_state.loc['2686']/* 'Latest Payment Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':(latest_payment_block), 'details':this.props.app_state.loc['2687']/* 'Latest Payment Block' */, 'size':'s'})}
-                    <div style={{height: 10}}/>
+    
                     {this.render_detail_item('3', {'title':''+(new Date(first_payment_time*1000))+', '+(this.get_time_difference(first_payment_time))+this.props.app_state.loc['1698a']/* ago. */, 'details':this.props.app_state.loc['2688']/* 'First Payment Time' */, 'size':'s'})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3', {'title':(first_payment_block), 'details':this.props.app_state.loc['2689']/* 'First Payment Block' */, 'size':'s'})}
+                    
                     {this.render_chart_data_if_size_works(result)}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2804']/* Payment History */,'details':this.props.app_state.loc['2805']/* Their payment history is shown below. */, 'size':'s'})}
                     <div style={{height: 10}}/>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2690']/* 'Highest Time Units Paid For ' */, 'subtitle': this.format_power_figure(this.get_interval_figure(result['events'])), 'barwidth': this.calculate_bar_width(this.get_interval_figure(result['events'])), 'number': this.format_account_balance_figure(this.get_interval_figure(result['events'])), 'barcolor': '', 'relativepower': this.props.app_state.loc['2685']/* time-units' */, })}
-                    </div>
-                    <div style={{height: 10}}/>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2691']/* 'Lowest Time Units Paid For ' */, 'subtitle': this.format_power_figure(this.get_lowest_figure(result['events'])), 'barwidth': this.calculate_bar_width(this.get_lowest_figure(result['events'])), 'number': this.format_account_balance_figure(this.get_lowest_figure(result['events'])), 'barcolor': '', 'relativepower': this.props.app_state.loc['2685']/* 'time-units' */, })}
-                    </div>
+                    {this.render_searched_accounts_payment_history(result_events)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
             )
         }
     }
+
+    render_searched_accounts_payment_history(events){
+        var items = events.reverse()
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index}>
+                                    {this.render_searched_account_event_item(item, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_searched_account_paid_item_clicked(index){
+        if (this.state.selected_pay_subscription_event_item2 == index) {
+            this.setState({ selected_pay_subscription_event_item2: null })
+        } else {
+            this.setState({ selected_pay_subscription_event_item2: index })
+        }
+    }
+
+    render_searched_account_event_item(item, index){
+        var number = item.returnValues.p3
+        var payment_time = item.returnValues.p5
+        if (this.state.selected_pay_subscription_event_item2 == index) {
+            return (
+                <div>
+                    <div onClick={() => this.when_searched_account_paid_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': ''+(this.get_time_difference(payment_time))+this.props.app_state.loc['1698a']/* ago. */, 'details': ''+(new Date(payment_time*1000)), 'size': 's' })}
+                    </div>
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1757']/* 'Time Units: ' */, 'number':number, 'relativepower':this.props.app_state.loc['1628']/* 'units' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1757']/* 'Time Units: ' */, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* 'units' */, })}
+                    </div>
+
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p5), 'details': this.props.app_state.loc['1748']/* 'Age' */, 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item.returnValues.p4, 'details': this.props.app_state.loc['1744']/* 'Block Number' */, 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div onClick={() => this.when_searched_account_paid_item_clicked(index)}>
+                    {this.render_detail_item('3', { 'title': ''+this.format_account_balance_figure(number)+ ' '+ this.props.app_state.loc['2685']/* time-units' */, 'details': ''+(new Date(payment_time*1000))+', '+(this.get_time_difference(payment_time))+this.props.app_state.loc['1698a']/* ago. */, 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                </div>
+            )
+        }
+    }   
 
     render_chart_data_if_size_works(result){
         if(result['events'].length > 23){

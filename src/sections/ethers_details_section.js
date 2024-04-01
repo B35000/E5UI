@@ -190,7 +190,7 @@ class EthersDetailsSection extends Component {
                     {this.render_detail_item('0')} */}
 
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'number':this.props.app_state.account_balance[item['e5']], 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2450']/* 'Your Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item['e5']]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2451']/* 'Your Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item['e5']]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item['e5']]/10**18), 'number':(this.props.app_state.account_balance[item['e5']]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
@@ -199,7 +199,7 @@ class EthersDetailsSection extends Component {
                     </div>
                     <div style={{height:10}}/>
 
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'number':this.get_gas_price(item['e5']), 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2453']/* 'Gas Price in Wei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])), 'number':this.format_account_balance_figure(this.get_gas_price(item['e5'])), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2454']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.get_gas_price(item['e5'])/10**9), 'barwidth':this.calculate_bar_width(this.get_gas_price(item['e5'])/10**9), 'number':(this.get_gas_price(item['e5'])/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
@@ -220,7 +220,7 @@ class EthersDetailsSection extends Component {
 
                     {this.render_detail_item('3', item['gas_limit'])}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} >
                         {this.render_detail_item('2', item['base_fee_per_gas_unit_in_gwei'])}
                         {this.render_detail_item('2', item['base_fee_per_gas_unit'])}
                     </div>
@@ -437,9 +437,9 @@ class EthersDetailsSection extends Component {
 
                 'gas_limit':{'title':this.get_gas_limit(e5), 'details':this.props.app_state.loc['2469']/* 'Gas Limit per Block' */, 'size' :'l'},
 
-                'base_fee_per_gas_unit':{ 'style':'l', 'title':this.props.app_state.loc['2470']/* Base Fee in wei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)), 'number':this.format_account_balance_figure(this.get_base_fee_in_wei(e5)), 'barcolor':'#606060', 'relativepower':'wei', },
+                'base_fee_per_gas_unit':{ 'style':'l', 'title':this.props.app_state.loc['2470']/* Base Fee in wei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)), 'number':this.format_account_balance_figure(this.get_base_fee_in_wei(e5)), 'barcolor':'', 'relativepower':'wei', 'n':this.get_base_fee_in_wei(e5)},
 
-                'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':this.props.app_state.loc['2471']/* 'Base Fee in gwei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)/10**9), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)/10**9), 'number':(this.get_base_fee_in_wei(e5)/10**9), 'barcolor':'#606060', 'relativepower':'gwei', },
+                'base_fee_per_gas_unit_in_gwei':{ 'style':'l', 'title':this.props.app_state.loc['2471']/* 'Base Fee in gwei' */, 'subtitle':this.format_power_figure(this.get_base_fee_in_wei(e5)/10**9), 'barwidth':this.calculate_bar_width(this.get_base_fee_in_wei(e5)/10**9), 'number':(this.get_base_fee_in_wei(e5)/10**9), 'barcolor':'', 'relativepower':'gwei', },
 
                 'supply':{'style': 'l', 'title':'Ether Supply', 'subtitle': this.format_power_figure(this.get_supply_figure(e5)), 'barwidth': this.calculate_bar_width(this.get_supply_figure(e5)), 'number': this.format_account_balance_figure(this.get_supply_figure(e5)), 'barcolor': '', 'relativepower': 'ether',},
 
@@ -617,7 +617,7 @@ class EthersDetailsSection extends Component {
             <div style={{overflow: 'auto',height: middle, 'margin':'10px 5px 5px 0px'}}>
                 <ul style={{ 'padding': '0px 5px 0px 5px', 'list-style': 'none'}}>
                     {items.map((item, index) => (
-                        <div onClick={()=> this.when_tx_history_item_clicked(index)}>
+                        <div>
                             {this.render_block_history_log_item(item, index, object['e5'])}
                         </div>
                     ))}
@@ -664,15 +664,17 @@ class EthersDetailsSection extends Component {
             return ( 
                 <div>
                     <div style={{'padding': '1px'}}>
-                        {this.from_to_filter(item, e5)}
+                        <div onClick={()=> this.when_tx_history_item_clicked(index)}>
+                            {this.from_to_filter(item, e5)}
+                        </div>
                         {this.render_gas_used_value(item_object, e5)}
                         <div style={{height: 2}}/>
-                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item_object['gas_price']['title'], 'number':item_object['gas_price']['n'], 'relativepower':item_object['gas_price']['relativepower']})}>
                             {this.render_detail_item('2', item_object['gas_price'])}
                             {this.render_detail_item('2', item_object['gas_price_gwei'])}
                         </div>
                         <div style={{height: 2}}/>
-                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item_object['value']['title'], 'number':item_object['value']['n'], 'relativepower':item_object['value']['relativepower']})}>
                             {this.render_detail_item('2', item_object['value'])}
                             {this.render_detail_item('2', item_object['value_ether'])}
                         </div>
@@ -687,13 +689,8 @@ class EthersDetailsSection extends Component {
         }else{
             return ( 
                 <div>
-                    <div style={{'padding': '1px'}}>
+                    <div style={{'padding': '1px'}} onClick={()=> this.when_tx_history_item_clicked(index)}>
                         {this.from_to_filter2(item, e5)}
-                        {/* <div style={{height: 2}}/>
-                        <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                            {this.render_detail_item('2', item_object['value'])}
-                        </div>
-                        <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }}/> */}
                     </div>         
                 </div>
             );
@@ -713,7 +710,7 @@ class EthersDetailsSection extends Component {
             return(
                 <div>
                     <div style={{height: 2}}/>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item_object['gas_used']['title'], 'number':item_object['gas_used']['n'], 'relativepower':item_object['gas_used']['relativepower']})}>
                         {this.render_detail_item('2', item_object['gas_used'])}
                     </div>
                 </div>
@@ -798,13 +795,13 @@ class EthersDetailsSection extends Component {
             'from':{'title':this.props.app_state.loc['2420']/* 'From: ' */,'details':this.format_address(from, e5), 'size':'l'},
             'to':{'title':this.props.app_state.loc['2419']/* 'To: ' */,'details':this.format_address(to, e5), 'size':'l'},
             
-            'gas_used':{'style': 'l', 'title':this.props.app_state.loc['2477']/* 'Gas Used' */, 'subtitle': this.format_power_figure(gas_used), 'barwidth': this.calculate_bar_width(gas_used), 'number': this.format_account_balance_figure(gas_used), 'barcolor': '', 'relativepower': 'gas',},
+            'gas_used':{'style': 'l', 'title':this.props.app_state.loc['2477']/* 'Gas Used' */, 'subtitle': this.format_power_figure(gas_used), 'barwidth': this.calculate_bar_width(gas_used), 'number': this.format_account_balance_figure(gas_used), 'barcolor': '', 'relativepower': 'gas', 'n':gas_used},
             
-            'gas_price':{'style': 'l', 'title':this.props.app_state.loc['2478']/* 'Gas Price Paid in Wei' */, 'subtitle': this.format_power_figure(gas_price), 'barwidth': this.calculate_bar_width(gas_price), 'number': this.format_account_balance_figure(gas_price), 'barcolor': '', 'relativepower': 'wei',},
+            'gas_price':{'style': 'l', 'title':this.props.app_state.loc['2478']/* 'Gas Price Paid in Wei' */, 'subtitle': this.format_power_figure(gas_price), 'barwidth': this.calculate_bar_width(gas_price), 'number': this.format_account_balance_figure(gas_price), 'barcolor': '', 'relativepower': 'wei', 'n':gas_price},
             
             'gas_price_gwei':{'style': 'l', 'title':this.props.app_state.loc['2479']/* 'Gas Price Paid in Gwei' */, 'subtitle': this.format_power_figure(gas_price/10**9), 'barwidth': this.calculate_bar_width(gas_price/10**9), 'number': gas_price/10**9, 'barcolor': '', 'relativepower': 'gwei',},
             
-            'value':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value), 'barwidth': this.calculate_bar_width(value), 'number': this.format_account_balance_figure(value), 'barcolor': '', 'relativepower': 'wei',},
+            'value':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value), 'barwidth': this.calculate_bar_width(value), 'number': this.format_account_balance_figure(value), 'barcolor': '', 'relativepower': 'wei', 'n':value},
 
             'value_ether':{'style': 'l', 'title':this.props.app_state.loc['2480']/* 'Value' */, 'subtitle': this.format_power_figure(value/10**18), 'barwidth': this.calculate_bar_width(value/10**18), 'number': (value/10**18), 'barcolor': '', 'relativepower': 'ether',},
 

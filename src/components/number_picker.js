@@ -117,6 +117,7 @@ class NumberPicker extends Component {
             <div style={{width:10}}/>
             {this.render_number_label_item(label_background_color,label_shadow_color,0, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(0)), 65)}
             <div style={{width:20}}/>
+            
             {this.render_number_label_item(number_picker_power_color,number_picker_power_shadow_color,3,this.state.create_number_data['power'], 60)}
           </div>
         );

@@ -4,6 +4,9 @@ import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
 
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
+
 // import Letter from '../../assets/letter.png';
 
 var bigInt = require("big-integer");
@@ -73,9 +76,13 @@ class template extends Component {
                     <div style={{height:10}}/> 
 
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'number':this.state.token_item['balance'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                        </div>
 
-                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'subtitle':this.format_power_figure(this.calculate_balance_after_set_transfers()), 'barwidth':this.calculate_bar_width(this.calculate_balance_after_set_transfers()), 'number':this.format_account_balance_figure(this.calculate_balance_after_set_transfers()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'number':this.calculate_balance_after_set_transfers(), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'subtitle':this.format_power_figure(this.calculate_balance_after_set_transfers()), 'barwidth':this.calculate_bar_width(this.calculate_balance_after_set_transfers()), 'number':this.format_account_balance_figure(this.calculate_balance_after_set_transfers()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                        </div>
                     </div>
 
                     {this.render_everything()}
@@ -108,7 +115,7 @@ class template extends Component {
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1026']/* 'Amount to transfer to the speicified target account' */, 'title':this.props.app_state.loc['1027']/* 'Amount for Transfer' */})}
 
                 <div style={{height:10}}/>
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1037']/* 'Transfer Amount' */, 'number':this.state.amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1037']/* 'Transfer Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
@@ -295,9 +302,20 @@ class template extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_stack_item_clicked(item, index)}>
-                                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':this.props.app_state.loc['1035']/* 'recipient account: ' */+this.format_recipient_account(item['recipient']), 'size':'l'})}
-                            </li>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_stack_item_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':this.props.app_state.loc['1035']/* 'recipient account: ' */+this.format_recipient_account(item['recipient']), 'size':'l'})}
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
                         ))}
                     </ul>
                 </div>
@@ -524,6 +542,10 @@ class template extends Component {
 
 
     add_transactions_to_stack(){
+        if(this.state.stack_items.length == 0){
+            this.props.notify(this.props.app_state.loc['2810']/* 'add a transaction first' */, 3700)
+            return;
+        }
         this.props.add_transfer_transactions_to_stack(this.state)
         this.props.notify(this.props.app_state.loc['18']/* 'transactions added to stack!' */, 1600)
         this.setState({recipient_id:'', stack_items:[]})

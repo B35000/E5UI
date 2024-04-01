@@ -254,17 +254,17 @@ class ContractDetailsSection extends Component {
                     {this.render_detail_item('3', item['default_voter_weight_exchange'])}
 
                     <div style={{ height: 10 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['voter_weight_balance']['title'], 'number':item['voter_weight_balance']['n'], 'relativepower':item['voter_weight_balance']['relativepower']})}>
                         {this.render_detail_item('2', item['voter_weight_balance'])}
                     </div>
 
                     <div style={{ height: 10 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_end_vote_bounty_amount']['title'], 'number':item['default_minimum_end_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_end_vote_bounty_amount']['relativepower']})}>
                         {this.render_detail_item('2', item['default_minimum_end_vote_bounty_amount'])}
                     </div>
 
                     <div style={{ height: 10 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['default_minimum_spend_vote_bounty_amount']['title'], 'number':item['default_minimum_spend_vote_bounty_amount']['n'], 'relativepower':item['default_minimum_spend_vote_bounty_amount']['relativepower']})}>
                         {this.render_detail_item('2', item['default_minimum_spend_vote_bounty_amount'])}
                     </div>
                     <div style={{ height: 10 }} />
@@ -697,12 +697,12 @@ class ContractDetailsSection extends Component {
             return (
                 <div>
                     {this.render_detail_item('0')}
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['end_balance']['title'], 'number':item['end_balance']['n'], 'relativepower':item['end_balance']['relativepower']})}>
                         {this.render_detail_item('2', item['end_balance'])}
                     </div>
 
                     <div style={{ height: 10 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['spend_balance']['title'], 'number':item['spend_balance']['n'], 'relativepower':item['spend_balance']['relativepower']})}>
                         {this.render_detail_item('2', item['spend_balance'])}
                     </div>
                 </div>
@@ -733,9 +733,9 @@ class ContractDetailsSection extends Component {
 
             'default_vote_bounty_split_proportion': { 'title': this.format_proportion(contract_config[1]), 'details': this.props.app_state.loc['68']/* 'Vote Bounty Split Proportion' */, 'size': 'l' },
 
-            'default_minimum_end_vote_bounty_amount': { 'style': 'l', 'title': this.props.app_state.loc['70']/* 'Minimum End Bounty Amount' */, 'subtitle': this.format_power_figure(contract_config[4]), 'barwidth': this.calculate_bar_width(contract_config[4]), 'number': this.format_account_balance_figure(contract_config[4]), 'relativepower': this.props.app_state.loc['483']/* 'tokens' */ },
+            'default_minimum_end_vote_bounty_amount': { 'style': 'l', 'title': this.props.app_state.loc['70']/* 'Minimum End Bounty Amount' */, 'subtitle': this.format_power_figure(contract_config[4]), 'barwidth': this.calculate_bar_width(contract_config[4]), 'number': this.format_account_balance_figure(contract_config[4]), 'relativepower': this.props.app_state.loc['483']/* 'tokens' */, 'n': contract_config[4]},
 
-            'default_minimum_spend_vote_bounty_amount': { 'style': 'l', 'title': this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, 'subtitle': this.format_power_figure(contract_config[10]), 'barwidth': this.calculate_bar_width(contract_config[10]), 'number': this.format_account_balance_figure(contract_config[10]), 'relativepower': this.props.app_state.loc['483']/* 'tokens' */ },
+            'default_minimum_spend_vote_bounty_amount': { 'style': 'l', 'title': this.props.app_state.loc['80']/* 'Minimum Spend Bounty Amount' */, 'subtitle': this.format_power_figure(contract_config[10]), 'barwidth': this.calculate_bar_width(contract_config[10]), 'number': this.format_account_balance_figure(contract_config[10]), 'relativepower': this.props.app_state.loc['483']/* 'tokens' */,'n':contract_config[10] },
 
             'default_proposal_expiry_duration_limit': { 'title': this.get_time_diff(contract_config[5]), 'details': this.props.app_state.loc['228']/* 'Proposal Expiry Duration Limit' */, 'size': 'l' },
 
@@ -757,16 +757,16 @@ class ContractDetailsSection extends Component {
 
             'entry_fees': { 'title': this.props.app_state.loc['1623']/* 'Entry Fees' */, 'details': object['data'][2].length + this.props.app_state.loc['1624']/* ' tokens used' */, 'size': 'l' },
 
-            'end_balance': { 'style': 'l', 'title': this.props.app_state.loc['377'],/* 'End Balance' */ 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${number_with_commas(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, },
+            'end_balance': { 'style': 'l', 'title': this.props.app_state.loc['377'],/* 'End Balance' */ 'subtitle': this.format_power_figure(object['end_balance']), 'barwidth': this.get_number_width(object['end_balance']), 'number': `${number_with_commas(object['end_balance'])}`, 'barcolor': '', 'relativepower': `END`, 'n':object['end_balance'] },
 
-            'spend_balance': { 'style': 'l', 'title': this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${number_with_commas(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, },
+            'spend_balance': { 'style': 'l', 'title': this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle': this.format_power_figure(object['spend_balance']), 'barwidth': this.get_number_width(object['spend_balance']), 'number': ` ${number_with_commas(object['spend_balance'])}`, 'barcolor': '', 'relativepower': `SPEND`, 'n':object['spend_balance']},
 
 
             'default_consensus_majority_limit': { 'title': this.format_proportion(consensus_majority), 'details': this.props.app_state.loc['1625']/* 'Consensus Majority Proportion' */, 'size': 'l' },
 
             'default_voter_weight_exchange': { 'title': voter_weight_target_name, 'details': this.props.app_state.loc['1626']/* 'Voter Weight Exchange' */, 'size': 'l' },
 
-            'voter_weight_balance': { 'style': 'l', 'title': this.props.app_state.loc['1627']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${number_with_commas(voter_weight_balance)}`, 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* `units` */, },
+            'voter_weight_balance': { 'style': 'l', 'title': this.props.app_state.loc['1627']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${number_with_commas(voter_weight_balance)}`, 'barcolor': '', 'relativepower': this.props.app_state.loc['1628']/* `units` */, 'n':voter_weight_balance},
         }
     }
 
@@ -808,7 +808,7 @@ class ContractDetailsSection extends Component {
             <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 0px 5px 0px', 'border-radius': '8px' }}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin': '0px' }}>
                     {bt.map((item, index) => (
-                        <li style={{ 'padding': '1px' }}>
+                        <li style={{ 'padding': '1px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                             {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+item], 'subtitle': this.format_power_figure(buy_amounts[index]), 'barwidth': this.calculate_bar_width(buy_amounts[index]), 'number': this.format_account_balance_figure(buy_amounts[index]), 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item] })}
                         </li>
                     ))}
@@ -1117,7 +1117,7 @@ class ContractDetailsSection extends Component {
         else if (type == 'number') {
             return (
                 <div>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':title, 'number':number, 'relativepower':this.props.app_state.loc['1430']/* 'units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': title, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.props.app_state.loc['1430']/* 'units' */, })}
                     </div>
                 </div>
@@ -1678,7 +1678,7 @@ class ContractDetailsSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_contract_transfer_event_item(item, object, index)}
                                 </div>
                             </li>
@@ -1699,19 +1699,19 @@ class ContractDetailsSection extends Component {
     }
 
 
-    render_contract_transfer_event_item(item, object, index){
-        var exchange_id = item['event'].returnValues.p1;
-        var number = item['event'].returnValues.p4
+    render_contract_transfer_event_item(item, object, index){        var exchange_id = item['event'].returnValues.p1; var number = item['event'].returnValues.p4
         var depth = item['event'].returnValues.p7
         number = this.get_actual_number(number, depth)
         var from_to = item['action'] == 'Sent' ? this.props.app_state.loc['2419']/* 'To: ' */+this.get_sender_title_text(item['event'].returnValues.p3, object) : this.props.app_state.loc['2420']/* 'From: ' */+this.get_sender_title_text(item['event'].returnValues.p2, object)
         if (this.state.selected_contract_transfer_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's' })}
+                    <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }} />
 
-                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
@@ -1724,13 +1724,9 @@ class ContractDetailsSection extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_contract_transfer_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
-                    {/* <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[object['e5']+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} /> */}
+              
                 </div>
             )
         }

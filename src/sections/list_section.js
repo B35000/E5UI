@@ -302,6 +302,83 @@ class PostListSection extends Component {
 
 
 
+
+
+    show_load_metrics(objects, object_type){
+        var selected_page = this.props.page;
+        if(selected_page == '?'){
+            var selected_item = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+            if(selected_item == this.props.app_state.loc['1202']/* 'all' */ || selected_item == this.props.app_state.loc['1211']/* 'my-proposals' */ || selected_item == this.props.app_state.loc['1208']/* 'received' */ || selected_item == this.props.app_state.loc['1209']/* 'sent' */ || this.props.work_page_tags_object['i'].active == 'e'){
+                return(
+                    <div>
+                        {this.load_metric_status_item(objects, object_type)}
+                    </div>
+                )
+            }
+        }
+        else if(selected_page == 'e'){
+            var selected_item = this.get_selected_item(this.props.explore_page_tags_object, this.props.explore_page_tags_object['i'].active)
+
+            if(selected_item == this.props.app_state.loc['1202']/* 'all' */){
+                return(
+                    <div>
+                        {this.load_metric_status_item(objects, object_type)}
+                    </div>
+                )
+            }
+        }
+        else if(selected_page == 'w'){
+            return(
+                <div>
+                    {this.load_metric_status_item(objects, object_type)}
+                </div>
+            )
+        }
+    }
+
+    load_metric_status_item(objects, object_type){
+        return;
+        var total_count = this.get_total_count_for_object_type(object_type)
+        var loaded_objects = objects.length
+        var p = ((loaded_objects*100)/total_count)
+        var per = Math.round(p * 1000) / 1000
+        var percentage = per + '%'
+        var obj = {'subscriptions':'Subscriptions Indexed.', 'contracts':'Contracts Indexed.', 'proposals':'Proposals Indexed.', 'tokens':'Tokens Indexed.', 'posts':'Posts Indexed.', 'channels':'Channels Indexed.', 'jobs':'Jobs Indexed.', 'sent_mail':'Sent Mail Indexed.', 'received_mail':'Received Mail Indexed.', 'storefront':'Storefront Items Indexed.', 'bags':'Bags Indexed.', 'contractor':'Contractors Indexed.'}
+        var title = obj[object_type]
+        var number = this.format_account_balance_figure(loaded_objects) +' out of '+ this.format_account_balance_figure(total_count)
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(total_count), 'barwidth':percentage, 'number':number, 'barcolor':'', 'relativepower':percentage, })}
+                </div>
+                <div style={{height: 3}}/>
+            </div>
+        )
+    }
+
+    get_total_count_for_object_type(object_type){
+        var obj = {'subscriptions':this.props.app_state.load_subscription_metrics, 'contracts':this.props.app_state.load_contracts_metrics, 'proposals':this.props.app_state.load_proposal_metrics, 'tokens':this.props.app_state.load_tokens_metrics, 'posts':this.props.app_state.load_posts_metrics, 'channels':this.props.app_state.load_channels_metrics, 'jobs':this.props.app_state.load_jobs_metrics, 'sent_mail':this.props.app_state.load_sent_mail_metrics, 'received_mail':this.props.app_state.load_received_mail_metrics, 'storefront':this.props.app_state.load_storefront_metrics, 'bags':this.props.app_state.load_bags_metrics, 'contractor':this.props.app_state.load_contractors_metrics}
+        
+        var load_metrics = obj[object_type]
+        var total_count = 0        
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(load_metrics[e5] != null) {
+                total_count += load_metrics[e5]
+            }
+        }
+        return total_count
+    }
+
+
+
+
+
+
+
+
+
     render_jobs_list_group(){
        var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-123;
@@ -316,6 +393,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'jobs')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -336,6 +414,7 @@ class PostListSection extends Component {
                 <div>
                     <div ref={this.jobs_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style': 'none'}}>
+                            {this.show_load_metrics(items, 'jobs')}
                             {items.map((item, index) => (
                                 <li style={{'padding': '5px'}}>
                                     {this.render_job_object(item, index)}
@@ -442,6 +521,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'contracts')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -461,6 +541,7 @@ class PostListSection extends Component {
             return ( 
                 <div ref={this.contract_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}} >
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'contracts')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_contract_item(item, index)}
@@ -544,6 +625,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'proposals')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -561,6 +643,7 @@ class PostListSection extends Component {
             return (
                 <div ref={this.proposal_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'proposals')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_proposal_object(item, index)}
@@ -641,6 +724,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'subscriptions')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -660,6 +744,7 @@ class PostListSection extends Component {
             return ( 
                 <div ref={this.subscription_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'subscriptions')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_subscription_object(item, index)}
@@ -734,11 +819,19 @@ class PostListSection extends Component {
         }
         var items = this.get_mail_items()
 
+        var selected_item = this.get_selected_item(this.props.work_page_tags_object, this.props.work_page_tags_object['i'].active)
+
+        var object_type = 'sent_mail'
+        if(selected_item == this.props.app_state.loc['1208']/* 'received' */){
+            object_type = 'received_mail'
+        }
+
         if(items.length == 0){
             items = ['0','1'];
             return( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], object_type)}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -758,6 +851,7 @@ class PostListSection extends Component {
             return (
                 <div ref={this.mail_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, object_type)}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_mail_object_or_null(item, index)}
@@ -873,6 +967,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'contractor')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -893,6 +988,7 @@ class PostListSection extends Component {
             return ( 
                 <div ref={this.contractor_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'contractor')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_contractor_object(item, index)}
@@ -1123,7 +1219,6 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_search_results()
-        console.log(items)
         if(items.length == 0){
             items = ['0','1'];
             return (
@@ -1210,8 +1305,9 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'posts')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
@@ -1229,8 +1325,9 @@ class PostListSection extends Component {
             return ( 
                 <div ref={this.post_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'posts')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '5px 3px 5px 3px'}}>
                                 {this.render_post_object_if_locked(item, index)}
                             </li>
                         ))}
@@ -1418,6 +1515,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'channels')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -1437,6 +1535,7 @@ class PostListSection extends Component {
             return ( 
                 <div ref={this.channel_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'channels')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_channel_object(item, index)}
@@ -1516,6 +1615,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'storefront')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -1535,6 +1635,7 @@ class PostListSection extends Component {
             return ( 
                 <div ref={this.storefront_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'storefront')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_storefront_object(item, index)}
@@ -1650,6 +1751,7 @@ class PostListSection extends Component {
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'bags')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
                                 {this.render_small_empty_object()}
@@ -1664,6 +1766,7 @@ class PostListSection extends Component {
             return ( 
                 <div ref={this.bag_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items, 'bags')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
                                 {this.render_bag_object(item, index)}
@@ -1859,7 +1962,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '1px 5px 1px 5px'}}>
-                                {this.render_ethers_object(item, index)}
+                                {this.render_ether_item(item, index)}
                             </li>
                         ))}
                         {/* <div style={{'padding': '1px 5px 1px 5px'}}>
@@ -1869,6 +1972,22 @@ class PostListSection extends Component {
                 </div>
             </div>
         );
+    }
+
+    render_ether_item(item, index){
+        if(item == 'e'){
+            return(
+                <div>
+                    {this.render_detail_item('0')} 
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_ethers_object(item, index)}
+                </div>
+            )
+        }
     }
 
     when_search_ether_input_field_changed(text){
@@ -1911,7 +2030,7 @@ class PostListSection extends Component {
             this.get_token_data('MATIC', 'Polygon', 'E125'),
             this.get_token_data('BNB', 'Binance Smart Chain', 'E135'),
             this.get_token_data('TT', 'ThunderCore', 'E155'),
-            this.get_token_data('NRG', 'Energi', 'E145'),
+            // this.get_token_data('NRG', 'Energi', 'E145'),
             this.get_token_data('VIC', 'Viction', 'E165'),
             this.get_token_data('EVMOS', 'Evmos EVM', 'E175'),
 
@@ -1946,7 +2065,7 @@ class PostListSection extends Component {
             this.get_token_data('TFUEL', 'Theta Mainnet', 'E465'),
             this.get_token_data('FITFI', 'Step Network', 'E475'),
             this.get_token_data('EWT', 'Energy Web Chain', 'E485'),
-            this.get_token_data('CLO', 'Callisto', 'E495'),
+            // this.get_token_data('CLO', 'Callisto', 'E495'),
             this.get_token_data('SDN', 'Shiden', 'E505'),
             this.get_token_data('TENET', 'Tenet', 'E515'),
             this.get_token_data('UBQ', 'Ubiq', 'E525'),
@@ -1964,7 +2083,7 @@ class PostListSection extends Component {
             this.get_token_data('AAC', 'Double-A Chain', 'E645'),
             this.get_token_data('KAR', 'Karura EVM', 'E655'),
             this.get_token_data('ACA', 'Acala EVM', 'E665'),
-            this.get_token_data('EDG', 'Edgeware EVM', 'E675'),
+            // this.get_token_data('EDG', 'Edgeware EVM', 'E675'),
             this.get_token_data('BERG', 'Bloxberg', 'E685'),
             this.get_token_data('PHOENIX', 'Phoenix', 'E695'),
             this.get_token_data('OMC', 'Omchain', 'E705'),
@@ -1983,6 +2102,9 @@ class PostListSection extends Component {
                 prioritized_list.push(token)
             }
         });
+        if(prioritized_list.length != 0) {
+            prioritized_list.push('e')
+        }
         sorted_list.forEach(token => {
             if(!prioritized_list.includes(token)){
                 prioritized_list.push(token)
@@ -2082,12 +2204,14 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_exchange_tokens(3)
+        var items2 = items.concat(this.get_exchange_tokens(5))
 
         if(items.length == 0){
             items = ['0','1'];
             return (
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics([], 'tokens')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
                                 {this.render_small_empty_object()}
@@ -2100,6 +2224,7 @@ class PostListSection extends Component {
         return ( 
             <div ref={this.end_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
                         <div>
                             {this.render_ends_object(item['data'], index, item['id'], item['img'], item)}
@@ -2220,12 +2345,14 @@ class PostListSection extends Component {
             middle = this.props.height-80;
         }
         var items = this.get_exchange_tokens(5)
+        var items2 = items.concat(this.get_exchange_tokens(3))
 
         if(items.length == 0){
             items = ['0','1'];
             return ( 
                 <div style={{overflow: 'auto', maxHeight: middle}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {this.show_load_metrics(items2, 'tokens')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px', 'margin':'0px 0px 0px 0px'}}>
                                 {this.render_small_empty_object()}
@@ -2239,6 +2366,7 @@ class PostListSection extends Component {
         return ( 
             <div ref={this.spend_list} onScroll={event => this.handleScroll(event)} style={{overflow: 'auto', maxHeight: middle}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {this.show_load_metrics(items2, 'tokens')}
                     {items.map((item, index) => (
                         <div>
                             {this.render_spends_object(item['data'], index, item['id'], item['img'], item)}

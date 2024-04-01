@@ -321,7 +321,7 @@ class SearchedAccountPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1714']/* 'Address' */, 'details':start_and_end(address), 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1716']/* 'Ether Balance in Wei' */, 'number':ether_balance, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1715']/* 'Ether Balance in Ether' */, 'subtitle': this.format_power_figure(ether_balance/10**18), 'barwidth': this.calculate_bar_width(ether_balance/10**18), 'number': (ether_balance/10**18), 'barcolor': '', 'relativepower': 'ether', })}
                     
                     {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1716']/* 'Ether Balance in Wei' */, 'subtitle': this.format_power_figure(ether_balance), 'barwidth': this.calculate_bar_width(ether_balance), 'number': this.format_account_balance_figure(ether_balance), 'barcolor': '', 'relativepower': 'wei', })}
@@ -331,9 +331,13 @@ class SearchedAccountPage extends Component {
                 <div style={{height:10}}/>
 
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(item['end_balance']), 'barwidth':this.calculate_bar_width(item['end_balance']), 'number':this.format_account_balance_figure(item['end_balance']), 'relativepower':'END'})}
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['377']/* 'End Balance' */, 'number':item['end_balance'], 'relativepower':'END'})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['377']/* 'End Balance' */, 'subtitle':this.format_power_figure(item['end_balance']), 'barwidth':this.calculate_bar_width(item['end_balance']), 'number':this.format_account_balance_figure(item['end_balance']), 'relativepower':'END'})}
+                    </div>
 
-                    {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(item['spend_balance']), 'barwidth':this.calculate_bar_width(item['spend_balance']), 'number':this.format_account_balance_figure(item['spend_balance']), 'relativepower':'SPEND'})}
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'number':item['spend_balance'], 'relativepower':'SPEND'})}>
+                        {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['378']/* 'Spend Balance' */, 'subtitle':this.format_power_figure(item['spend_balance']), 'barwidth':this.calculate_bar_width(item['spend_balance']), 'number':this.format_account_balance_figure(item['spend_balance']), 'relativepower':'SPEND'})}
+                    </div>
                 </div>
 
                 {this.render_detail_item('0')}
@@ -350,10 +354,65 @@ class SearchedAccountPage extends Component {
                 {this.render_detail_item('3', {'title':run_data[3], 'details':this.props.app_state.loc['1720']/* 'Number of E5 runs' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
-                {this.render_detail_item('0')}
                 {this.show_transaction_transaction_count_chart(item['transactions'])}
 
+                {this.render_search_account_ui(item)}
+                {this.render_detail_item('0')}
 
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2808']/* 'Accounts Balances' */, 'details':this.props.app_state.loc['2809']/* 'Heres all the tokens the account is in posession of.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_accounts_balances(item)}
+
+                
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_accounts_balances(searched_item_data){
+        var e5 = searched_item_data['e5']
+        var interacted_exchanges = [].concat(searched_item_data['interacted_exchanges'])
+        var interacted_exchanges_balances = [].concat(searched_item_data['interacted_exchanges_balances'])
+        if(interacted_exchanges.length == 0){
+            interacted_exchanges = [0, 1, 2]
+            return(
+                <div>
+                    <div style={{overflow: 'auto'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {interacted_exchanges.map((item, index) => (
+                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                        <div style={{'margin':'10px 20px 10px 0px'}}>
+                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div> 
+            )
+        }
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    {interacted_exchanges.map((item, index) => (
+                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':interacted_exchanges_balances[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(interacted_exchanges_balances[index]), 'barwidth':this.calculate_bar_width(interacted_exchanges_balances[index]), 'number':this.format_account_balance_figure(interacted_exchanges_balances[index]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_search_account_ui(item){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1721']/* 'Balance Search' */, 'details':this.props.app_state.loc['1722']/* 'Search the accounts balance in a specified exchange' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -366,11 +425,7 @@ class SearchedAccountPage extends Component {
                     </div>
                 </div>
                 <div style={{height:10}}/>
-
                 {this.render_searched_balance_if_any()}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -418,7 +473,7 @@ class SearchedAccountPage extends Component {
         }
         return(
             <div>
-                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1724']/* 'Balance' */, 'number':balance, 'relativepower':exchange_symbol})}>
                     {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['1724']/* 'Balance' */, 'subtitle':this.format_power_figure(balance), 'barwidth':this.calculate_bar_width(balance), 'number':this.format_account_balance_figure(balance), 'relativepower':exchange_symbol})}
                 </div>
             </div>
@@ -426,7 +481,7 @@ class SearchedAccountPage extends Component {
     }
 
     get_token_symbol(id){
-       return this.props.app_state.token_directory[this.state.searched_account['e5']][id] == null ? 'tokens' : this.props.app_state.token_directory[this.state.searched_account['e5']][id]
+       return this.props.app_state.token_directory[this.state.searched_account['e5']][id] == null ? this.props.app_state.loc['483']/* 'tokens' */ : this.props.app_state.token_directory[this.state.searched_account['e5']][id]
     }
 
 
@@ -898,11 +953,7 @@ class SearchedAccountPage extends Component {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': this.props.app_state.loc['1750']/* 'Transaction ID' */+': '+item.returnValues.p3, 'details': this.format_account_balance_figure(estimated_gas_consumed)+' gas', 'size': 's' })}
-                    {/* <div style={{ height: 2 }}/>
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1752'], 'subtitle': this.format_power_figure(estimated_gas_consumed), 'barwidth': this.calculate_bar_width(estimated_gas_consumed), 'number': this.format_account_balance_figure(estimated_gas_consumed), 'barcolor': '', 'relativepower': 'Gas', })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
+                    
                 </div>
             )
         }
@@ -959,7 +1010,7 @@ class SearchedAccountPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_pay_subscription_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_pay_subscription_event_item(item, index)}
                                 </div>
                             </li>
@@ -983,10 +1034,12 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_pay_subscription_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
+                    <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':'Time Units: ', 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2807']/* 'Time Units: ' */, 'number':number, 'relativepower':'units'})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2807']/* 'Time Units: ' */, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
 
                     <div style={{ height: 2 }} />
@@ -998,13 +1051,8 @@ class SearchedAccountPage extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_pay_subscription_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number), 'size': 's' })}
-                    {/* <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1757'], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -1059,7 +1107,7 @@ class SearchedAccountPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_cancellations_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_cancellations_event_item(item, index)}
                                 </div>
                             </li>
@@ -1083,9 +1131,11 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_cancellations_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
+                    <div onClick={() => this.when_cancellations_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1756']/* 'Subscription ID' */, 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'number':number, 'relativepower': 'units'})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1758']/* 'Subscription ID:  ' */+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
 
@@ -1098,13 +1148,8 @@ class SearchedAccountPage extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_cancellations_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': this.props.app_state.loc['1756']/* 'Subscription ID' */+': '+(item.returnValues.p1), 'details': this.format_account_balance_figure(number)+' units.', 'size': 's' })}
-                    {/* <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['1758']+item.returnValues.p1, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': 'units', })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -1432,7 +1477,7 @@ class SearchedAccountPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_swap_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_swap_event_item(item, index)}
                                 </div>
                             </li>
@@ -1462,27 +1507,29 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_swap_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 's' })}
+                    <div onClick={() => this.when_swap_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': (item.returnValues.p1), 'details': this.props.app_state.loc['1763']/* 'Exchange ID' */, 'size': 's' })}
+                    </div>
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': action, 'details': 'Action', 'size': 's' })}
                     <div style={{ height: 2 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'number':amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1764']/* 'Amount Swapped' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: 2 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1765']/* 'Updted Token Exchange Liquidity' */, 'number':token_exchange_liquidity, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1765']/* 'Updted Token Exchange Liquidity' */, 'subtitle': this.format_power_figure(token_exchange_liquidity), 'barwidth': this.calculate_bar_width(token_exchange_liquidity), 'number': this.format_account_balance_figure(token_exchange_liquidity), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
                     </div>
                     <div style={{ height: 2 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1766']/* 'Updated Exchange Ratio X' */, 'number':updated_exchange_ratio_x, 'relativepower':'units'})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1766']/* 'Updated Exchange Ratio X' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_x), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_x), 'number': this.format_account_balance_figure(updated_exchange_ratio_x), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
                     <div style={{ height: 2 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1767']/* 'Updated Exchange Ratio Y' */, 'number':updated_exchange_ratio_y, 'relativepower':'units'})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1767']/* 'Updated Exchange Ratio Y' */, 'subtitle': this.format_power_figure(updated_exchange_ratio_y), 'barwidth': this.calculate_bar_width(updated_exchange_ratio_y), 'number': this.format_account_balance_figure(updated_exchange_ratio_y), 'barcolor': '', 'relativepower': 'units', })}
                     </div>
                     <div style={{ height: 2 }} />
@@ -1498,13 +1545,9 @@ class SearchedAccountPage extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_swap_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.searched_account['e5']+item.returnValues.p1], 'details': this.format_account_balance_figure(amount)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], 'size': 's' })}
-                    {/* <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['1764'], 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item.returnValues.p1], })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
+                    
                 </div>
             )
         }
@@ -1572,7 +1615,7 @@ class SearchedAccountPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
-                                <div key={index} onClick={() => this.when_transfers_item_clicked(index)}>
+                                <div key={index}>
                                     {this.render_transfers_event_item(item, index)}
                                 </div>
                             </li>
@@ -1604,9 +1647,11 @@ class SearchedAccountPage extends Component {
         if (this.state.selected_transfers_event_item == index) {
             return (
                 <div>
-                    {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's'})}
+                    <div onClick={() => this.when_transfers_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's'})}
+                    </div>
                     <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
+                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
                     </div>
 
@@ -1619,13 +1664,9 @@ class SearchedAccountPage extends Component {
             )
         } else {
             return (
-                <div>
+                <div onClick={() => this.when_transfers_item_clicked(index)}>
                     {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
-                    {/* <div style={{ height: 2 }} />
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['13']+exchange_id, 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
-                    </div>
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
+    
                 </div>
             )
         }

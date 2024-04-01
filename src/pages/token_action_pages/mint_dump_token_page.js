@@ -54,10 +54,8 @@ class NewMintActionPage extends Component {
 
     render(){
         if(this.state.token_item == null) return;
-        console.log('otk: ',this.state.token_item['balance'])
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-
                 <div className="row">
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.new_mint_dump_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_mint_dump_page_tags_updated.bind(this)} theme={this.props.theme}/>
@@ -71,10 +69,9 @@ class NewMintActionPage extends Component {
                 
                 <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['951']/* 'Buy or Sell the specified token' */})}
-
                     <div style={{height:10}}/> 
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'number':this.state.token_item['balance'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['952']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                     </div>
 
@@ -166,11 +163,15 @@ class NewMintActionPage extends Component {
 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['958']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':token, })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':token, })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':token, })}
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['958']/* 'Amount' */, 'number':this.state.amount, 'relativepower':token})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['958']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.amount), 'barwidth':this.calculate_bar_width(this.state.amount), 'number':this.format_account_balance_figure(this.state.amount), 'barcolor':'', 'relativepower':token, })}
+                    </div>
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'number':this.get_token_buy_limit(), 'relativepower':token})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['959']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.get_token_buy_limit()), 'barwidth':this.calculate_bar_width(this.get_token_buy_limit()), 'number':this.format_account_balance_figure(this.get_token_buy_limit()), 'barcolor':'', 'relativepower':token, })}
+                    </div>
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'number':this.get_token_sell_limit(), 'relativepower':token})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['960']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.get_token_sell_limit()), 'barwidth':this.calculate_bar_width(this.get_token_sell_limit()), 'number':this.format_account_balance_figure(this.get_token_sell_limit()), 'barcolor':'', 'relativepower':token, })}
+                    </div>
 
                 </div>
             </div>
@@ -214,7 +215,7 @@ class NewMintActionPage extends Component {
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                             <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
                                 {buy_tokens.map((item, index) => (
-                                    <li style={{'padding': '1px'}}>
+                                    <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+item], 'number':this.calculate_price_from_sell_action(buy_amounts[index], price), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                                         {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+item], 'subtitle':this.format_power_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'barwidth':this.calculate_bar_width(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'number':this.format_account_balance_figure(this.calculate_price_from_sell_action(buy_amounts[index], price)), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                                     </li>
                                 ))}
@@ -235,7 +236,7 @@ class NewMintActionPage extends Component {
                         <div style={{height:20}}/>
                         {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['965']/* 'The amount youll probably get from the buy action' */, 'title':this.props.app_state.loc['966']/* 'Receive Amount' */})}
                         <div style={{height:10}}/>
-                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                        <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'number':price, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
                             {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'subtitle':this.format_power_figure(price), 'barwidth':this.calculate_bar_width(price), 'number':''+this.format_account_balance_figure(price), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}
                         </div>
                     </div>
@@ -304,7 +305,7 @@ class NewMintActionPage extends Component {
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
                     {bt.map((item, index) => (
-                        <li style={{'padding': '1px'}}>
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+item], 'number':buy_amounts[index], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
                             {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}

@@ -97,18 +97,18 @@ class ConfirmRunPage extends Component {
                     {this.render_detail_item('3',{'title':txs.length, 'details':this.props.app_state.loc['1083']/* 'Transaction Stack Size' */,'size':'l'})}
                     <div style={{height: 10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1084']/* 'Gas Limit' */, 'number':gas_limit, 'relativepower':this.props.app_state.loc['1085']/* 'gas' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1084']/* 'Gas Limit' */, 'subtitle':this.format_power_figure(gas_limit), 'barwidth':this.calculate_bar_width(gas_limit), 'number':this.format_account_balance_figure(gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['1085']/* 'gas' */, })}
                     </div>
                     <div style={{height: 10}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1086']/* 'Estimated Gas to be Consumed' */, 'number':estimated_gas_to_be_consumed, 'relativepower':this.props.app_state.loc['1085']/* 'gas' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1086']/* 'Estimated Gas to be Consumed' */, 'subtitle':this.format_power_figure(estimated_gas_to_be_consumed), 'barwidth':this.calculate_bar_width(estimated_gas_to_be_consumed), 'number':this.format_account_balance_figure(estimated_gas_to_be_consumed), 'barcolor':'', 'relativepower':this.props.app_state.loc['1085']/* 'gas' */, })}
                     </div>
                     <div style={{height: 10}}/>
 
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'number':gas_price, 'relativepower':'wei'})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1087']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
 
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1088']/* 'Gas Price in wei' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'', 'relativepower':'wei', })}

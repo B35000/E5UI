@@ -206,7 +206,7 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('0')} */}
 
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.get_wallet_data_for_specific_e5(e5)}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1375']/* 'Balance in Wei' */, 'number':this.props.app_state.account_balance[e5], 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1375']/* 'Balance in Wei' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[e5]), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1376']/* 'Balance in Ether' */, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[e5]/10**18), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[e5]/10**18), 'number':(this.props.app_state.account_balance[e5]/10**18), 'barcolor':'#606060', 'relativepower':'ether', })}
@@ -216,7 +216,7 @@ class SendReceiveEtherPage extends Component {
 
                 <div style={{height: 30}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1379']/* 'Gas Price' */, 'number':gas_price, 'relativepower':'wei'})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1379']/* 'Gas Price' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'#606060', 'relativepower':'wei', })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1380']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
@@ -259,7 +259,7 @@ class SendReceiveEtherPage extends Component {
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1407a']/* 'Max Priority Fee per Gas.' */, 'details':this.props.app_state.loc['1407b']/* 'Set the max prioryt fee per gas for your transaction below.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1407g']/* Picked Max Priority Gas Price. */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':'wei'})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407g']/* Picked Max Priority Gas Price. */}</p>
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount/10**9), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
@@ -272,7 +272,7 @@ class SendReceiveEtherPage extends Component {
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1407c']/* 'Max Fee per Gas.' */, 'details':this.props.app_state.loc['1407d']/* 'Set the maximum amount of gas fee your willing to pay for your transaction below.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1407h']/* Picked Max Fee Gas Price. */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':'wei'})}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1407h']/* Picked Max Fee Gas Price. */}</p>
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
@@ -676,9 +676,6 @@ class SendReceiveEtherPage extends Component {
                     <div className="col-6">
                         {this.render_scan_qr_code_ui()}
                     </div>
-                    <div className="col-6" style={{'margin':'0px 10px 0px 0px', width:'47%'}}>
-                        {this.render_transaction_history()}
-                    </div>
                 </div> 
             )
         }
@@ -702,7 +699,7 @@ class SendReceiveEtherPage extends Component {
                     />
                     
                 </div>
-                <p style={{'margin':'5% 0% 0% 0%', 'text-align': 'center', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
+                <p style={{'margin':'5% 0% 0% 0%', 'text-align': 'center', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2800']}</p>
                 
             </div>
         )
@@ -776,7 +773,7 @@ class SendReceiveEtherPage extends Component {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
         this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 5600)
-        this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas());
+        this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas(), this.state.ether);
         
     };
 

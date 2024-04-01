@@ -20,6 +20,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Draggable } from "react-drag-reorder";
 import imageCompression from 'browser-image-compression';
+import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
+import '@sandstreamdev/react-swipeable-list/dist/styles.css';
 
 
 var bigInt = require("big-integer");
@@ -890,7 +892,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['643']/* 'Token Supply(For Capped Tokens)' */, 'details':this.props.app_state.loc['644']/* 'The supply of a capped token available for buying (for capped tokens)' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['645']/* 'Token Supply' */, 'number':this.state.token_exchange_liquidity_total_supply, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['645']/* 'Token Supply' */, 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
                     <div style={{height:2}}/>
@@ -906,7 +908,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'details':this.props.app_state.loc['649']/* 'The maximum amount of tokens that can be bought in one transaction.' */, 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'number':this.state.default_exchange_amount_buy_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -935,7 +937,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'details':this.props.app_state.loc['654']/* 'The maximum amount of your new token a sender can sell in a transaction.' */, 'size':'l'})}
 
                     <div style={{height:20}}/>
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'number':this.state.default_exchange_amount_sell_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1045,7 +1047,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['643']/* 'Token Supply' */, 'details':this.props.app_state.loc['644']/* 'The supply of a capped token available for buying (for capped tokens)' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['645']/* 'Token Supply' */, 'number':this.state.token_exchange_liquidity_total_supply, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['645']/* 'Token Supply' */, 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1062,7 +1064,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'details':this.props.app_state.loc['649']/* 'The maximum amount of tokens that can be bought in one transaction.' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'number':this.state.default_exchange_amount_buy_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['648']/* 'Buy Limit' */, 'subtitle':this.format_power_figure(this.state.default_exchange_amount_buy_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_buy_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_buy_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1076,7 +1078,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'details':this.props.app_state.loc['654']/* 'The maximum amount of your new token a sender can sell in a transaction.' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'number':this.state.default_exchange_amount_sell_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['653']/* 'Sell Limit' */, 'subtitle':this.format_power_figure(this.state.default_exchange_amount_sell_limit), 'barwidth':this.calculate_bar_width(this.state.default_exchange_amount_sell_limit), 'number':this.format_account_balance_figure(this.state.default_exchange_amount_sell_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1118,7 +1120,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'details':this.props.app_state.loc['664']/* 'The minimum number of transactions sender has to make between swaps for your new token.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'number':this.state.minimum_transactions_between_swap, 'relativepower':this.props.app_state.loc['665']/* 'transactions' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['663']/* 'Minimum Transactions Between Swap' */, 'subtitle':this.format_power_figure(this.state.minimum_transactions_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_transactions_between_swap), 'barcolor':'', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
                     </div>
 
@@ -1132,7 +1134,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['666']/* 'Minimum Blocks Between Swap' */, 'details':this.props.app_state.loc['667']/* 'the minimum number of blocks sender has to wait between making a swap for your new token.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['666']/* 'Minimum Blocks Between Swap' */, 'number':this.state.minimum_blocks_between_swap, 'relativepower':this.props.app_state.loc['668']/* 'blocks' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['666']/* 'Minimum Blocks Between Swap' */, 'subtitle':this.format_power_figure(this.state.minimum_blocks_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_blocks_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_blocks_between_swap), 'barcolor':'', 'relativepower':this.props.app_state.loc['668']/* 'blocks' */, })}
                     </div>
 
@@ -1146,7 +1148,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['669']/* 'Minimum Entered Contracts Between Swap' */, 'details':this.props.app_state.loc['670']/* 'the minimum amount of contracts sender should enter before interacting with your new exchange again.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['669']/* 'Minimum Entered Contracts Between Swap' */, 'number':this.state.minimum_entered_contracts_between_swap, 'relativepower':this.props.app_state.loc['673']/* 'blocks' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['669']/* 'Minimum Entered Contracts Between Swap' */, 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_between_swap), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_between_swap), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_between_swap), 'barcolor':'', 'relativepower':this.props.app_state.loc['673']/* 'blocks' */, })}
                     </div>
 
@@ -1160,7 +1162,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['671']/* 'Minimum Transactions For First Buy' */, 'details':this.props.app_state.loc['672']/* 'The minimum number of transactions sender has to make to buy/sell your new token for the first time.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['671']/* 'Minimum Transactions For First Buy' */, 'number':this.state.minimum_transactions_for_first_buy, 'relativepower':this.props.app_state.loc['665']/* 'transactions' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['671']/* 'Minimum Transactions For First Buy' */, 'subtitle':this.format_power_figure(this.state.minimum_transactions_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_transactions_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_transactions_for_first_buy), 'barcolor':'', 'relativepower':this.props.app_state.loc['665']/* 'transactions' */, })}
                     </div>
 
@@ -1174,7 +1176,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['674']/* 'Minimum Entered Contracts For First Buy' */, 'details':this.props.app_state.loc['675']/* 'The minimum number of contracts sender should have entered before first buy.' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['674']/* 'Minimum Entered Contracts For First Buy' */, 'number':this.state.minimum_entered_contracts_for_first_buy, 'relativepower':this.props.app_state.loc['673']/* 'contracts' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['674']/* 'Minimum Entered Contracts For First Buy' */, 'subtitle':this.format_power_figure(this.state.minimum_entered_contracts_for_first_buy), 'barwidth':this.calculate_bar_width(this.state.minimum_entered_contracts_for_first_buy), 'number':this.format_account_balance_figure(this.state.minimum_entered_contracts_for_first_buy), 'barcolor':'', 'relativepower':this.props.app_state.loc['673']/* 'contracts' */, })}
                     </div>
 
@@ -1230,7 +1232,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['685']/* 'Block Limit(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['686']/* 'the maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['687']/* 'Block Limit' */, 'number':this.state.block_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['687']/* 'Block Limit' */, 'subtitle':this.format_power_figure(this.state.block_limit), 'barwidth':this.calculate_bar_width(this.state.block_limit), 'number':this.format_account_balance_figure(this.state.block_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1261,7 +1263,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['692']/* 'Maturity Limit(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['693']/* 'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is less than its default set value.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['694']/* 'Maturity Limit' */, 'number':this.state.maturity_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['694']/* 'Maturity Limit' */, 'subtitle':this.format_power_figure(this.state.maturity_limit), 'barwidth':this.calculate_bar_width(this.state.maturity_limit), 'number':this.format_account_balance_figure(this.state.maturity_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1308,7 +1310,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['703']/* 'Block Reset Limit(For Uncapped Spend Tokens)' */, 'details':this.props.app_state.loc['704']/* 'the maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['705']/* 'Block Reset Limit' */, 'number':this.state.block_reset_limit, 'relativepower':this.props.app_state.loc['668']/* 'blocks' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['705']/* 'Block Reset Limit' */, 'subtitle':this.format_power_figure(this.state.block_reset_limit), 'barwidth':this.calculate_bar_width(this.state.block_reset_limit), 'number':this.format_account_balance_figure(this.state.block_reset_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['668']/* 'blocks' */, })}
                     </div>
 
@@ -1339,7 +1341,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['710']/* 'Exchange Ratio X' */, 'details':this.props.app_state.loc['711']/* 'The buy output exchange ratio X for your new token' */, 'size':'l'})}
                     <div style={{height:20}}/>
 
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['710']/* 'Exchange Ratio X' */, 'number':this.state.token_exchange_ratio_x, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['710']/* 'Exchange Ratio X' */, 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_x), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_x), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_x), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1361,7 +1363,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'details':this.props.app_state.loc['714']/* 'The buy input exchange ratio Y for your new token' */, 'size':'l'})}
                     <div style={{height:20}}/>
                     
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'number':this.state.token_exchange_ratio_y, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['713']/* 'Exchange Ratio Y' */, 'subtitle':this.format_power_figure(this.state.token_exchange_ratio_y), 'barwidth':this.calculate_bar_width(this.state.token_exchange_ratio_y), 'number':this.format_account_balance_figure(this.state.token_exchange_ratio_y), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                     </div>
 
@@ -1427,7 +1429,7 @@ class NewTokenPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2766']/* 'End Token Supply.' */, 'details':this.props.app_state.loc['2767']/* 'The total supply of the End token that will be minted for you.' */, 'size':'l'})}
                 <div style={{height:20}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['645']/* 'Token Supply' */, 'number':this.state.token_exchange_liquidity_total_supply, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['645']/* 'Token Supply' */, 'subtitle':this.format_power_figure(this.state.token_exchange_liquidity_total_supply), 'barwidth':this.calculate_bar_width(this.state.token_exchange_liquidity_total_supply), 'number':this.format_account_balance_figure(this.state.token_exchange_liquidity_total_supply), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
 
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2779']/* 'Token Depth' */, 'subtitle':this.format_power_figure(this.state.default_depth), 'barwidth':this.calculate_bar_width(this.state.default_depth), 'number':this.format_account_balance_figure(this.state.default_depth), 'barcolor':'', 'relativepower':'??', })}
@@ -1962,7 +1964,7 @@ class NewTokenPage extends Component {
                 {this.load_token_suggestions('exchange_id')}
                 <div style={{height: 20}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['739']/* 'Price' */, 'number':this.state.price_amount, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['739']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
                 </div>
 
@@ -2131,11 +2133,22 @@ class NewTokenPage extends Component {
                 <div style={{}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.reverse().map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>this.when_amount_clicked(item)}>
-                                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
-                                </div>
-                            </li>
+                            <SwipeableList>
+                                <SwipeableListItem
+                                    swipeLeft={{
+                                    content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
+                                    action: () =>this.when_amount_clicked(item)
+                                    }}>
+                                    <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
+                                        <li style={{'padding': '5px'}}>
+                                            <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']]})}>
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.props.app_state.selected_e5+item['id']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['id']], })}
+                                            </div>
+                                        </li>
+                                    </div>
+                                </SwipeableListItem>
+                            </SwipeableList>
+                            
                         ))}
                     </ul>
                 </div>
