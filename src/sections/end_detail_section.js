@@ -61,7 +61,7 @@ class EndDetailSection extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[0]
+              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
           ],
             'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2337']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2340']/* 'updated-exchange-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */ ,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */, this.props.app_state.loc['2343']/* 'depth-mints' */], [1], [1]
@@ -99,7 +99,7 @@ class EndDetailSection extends Component {
             return(
                 <div style={{}}>
                     {this.render_end_details_section()}
-                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_end_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_end_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ class EndDetailSection extends Component {
         var he = this.props.height
         return(
             <div>
-                <div style={{height:this.props.height-70, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'10px 10px 10px 10px'}}>
+                <div style={{height:he, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
@@ -235,9 +235,7 @@ class EndDetailSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-60
         var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
+        
         var item = this.get_end_data(selected_object);
         // var selected_item = this.props.selected_end_item
         // var selected_object = this.get_exchange_tokens(3)[selected_item]
@@ -1330,7 +1328,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1472,7 +1470,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1589,7 +1587,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1823,7 +1821,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1936,7 +1934,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -2044,7 +2042,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -2157,7 +2155,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -2262,7 +2260,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -2361,7 +2359,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -2463,7 +2461,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -2567,7 +2565,7 @@ class EndDetailSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>

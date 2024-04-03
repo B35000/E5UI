@@ -84,7 +84,7 @@ class SubscriptionDetailsSection extends Component {
             return(
                 <div>
                     {this.render_subscription_details_section()}
-                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                    <div style={{ width:'100%','padding':'0px 0px 0px 0px','margin':'0px 0px 0px 0px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.navigate_view_subscriptions_list_detail_tags_object} tag_size={'l'} when_tags_updated={this.when_navigate_view_subscriptions_list_detail_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                 </div>
@@ -106,7 +106,7 @@ class SubscriptionDetailsSection extends Component {
         var he = this.props.height
         return(
             <div>
-                <div style={{height:this.props.height-70, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'10px 10px 10px 10px'}}>
+                <div style={{height:he, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
@@ -209,9 +209,7 @@ class SubscriptionDetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-50
         var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
+        
         var item = this.get_subscription_details_data(object)
         // var object = this.get_subscription_items()[this.props.selected_subscription_item]
         return(
@@ -556,7 +554,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -697,7 +695,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -828,7 +826,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -929,7 +927,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1038,7 +1036,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1254,7 +1252,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1360,7 +1358,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1459,7 +1457,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1561,7 +1559,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1706,7 +1704,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1730,7 +1728,7 @@ class SubscriptionDetailsSection extends Component {
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2684']/* 'Remaining Time Units (As of Now)' */, 'number':remaining_time_units, 'relativepower':this.props.app_state.loc['2685']/* time-units' */})}>
                         {this.render_detail_item('2', { 'style': 'l', 'title':this.props.app_state.loc['2684']/* 'Remaining Time Units (As of Now)' */, 'subtitle': this.format_power_figure(remaining_time_units), 'barwidth': this.calculate_bar_width(remaining_time_units), 'number': this.format_account_balance_figure(remaining_time_units), 'barcolor': '', 'relativepower': this.props.app_state.loc['2685']/* time-units' */, })}
                     </div>
-                    
+                    <div style={{height: 10}}/>
                     {this.render_detail_item('3', {'title':''+(new Date(latest_payment_time*1000))+', '+(this.get_time_difference(latest_payment_time))+this.props.app_state.loc['1698a']/* ago. */, 'details':this.props.app_state.loc['2686']/* 'Latest Payment Time' */, 'size':'s'})}
                     <div style={{height: 10}}/>
     
@@ -1760,7 +1758,7 @@ class SubscriptionDetailsSection extends Component {
                         <ul style={{ 'padding': '0px 0px 0px 0px' }}>
                             {items.map((item, index) => (
                                 <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -1774,7 +1772,7 @@ class SubscriptionDetailsSection extends Component {
         } else {
             return (
                 <div>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' ,'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index}>

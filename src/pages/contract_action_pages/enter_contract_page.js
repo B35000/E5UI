@@ -38,7 +38,7 @@ class EnterContractPage extends Component {
     
     state = {
         selected: 0, type:this.props.app_state.loc['1'], id:makeid(8),
-        contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:(new Date().getTime()/1000),
+        contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:(new Date().getTime()/1000)+64800,
         entered_indexing_tags:[this.props.app_state.loc['2'], this.props.app_state.loc['3']], job_acceptance_action_state_object:null
     };
 
@@ -55,17 +55,15 @@ class EnterContractPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
-
+            <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
-                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.enter_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_enter_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'padding': '5px'}} onClick={()=>this.finish_entering_contract_ui()}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':''})}
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                            <img className="text-end" onClick={()=>this.finish_entering_contract_ui()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
-                        
                     </div>
                 </div>
 
@@ -191,7 +189,7 @@ class EnterContractPage extends Component {
         if(this.state.contract_item['id'] != contract['id']){
             this.setState({
                 selected: 0, type:this.props.app_state.loc['1'], id:makeid(8),
-                contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:(new Date().getTime()/1000),
+                contract_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]}, enter_contract_title_tags_object:this.get_enter_contract_title_tags_object(), interactible_timestamp:(new Date().getTime()/1000)+64800,
                 entered_indexing_tags:[this.props.app_state.loc['2'], this.props.app_state.loc['3']]
             })
         }

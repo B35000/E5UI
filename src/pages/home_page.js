@@ -47,7 +47,9 @@ class home_page extends Component {
         
         pinned_bags:[], pinned_channels:[], pinned_item:[], pinned_post:[], pinned_subscriptions:[], pinned_proposal:[], pinned_contractor:[], pinned_contract:[], pinned_job:[], 
         
-        page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'', tabs:[]
+        page_scroll_data:{}, page_search_data:{}, tags_search_data:{}, detail_page:'?', detail_selected_tag:'e', tabs:[], 
+
+        details_container_width:0
     };
 
     constructor(props) {
@@ -59,6 +61,9 @@ class home_page extends Component {
         this.filter_section_page = React.createRef();
         this.post_preview_page = React.createRef();
         this.post_nsfw_page = React.createRef();
+
+
+        this.details_container = React.createRef()
     }
 
 
@@ -72,6 +77,9 @@ class home_page extends Component {
 
     componentDidMount() {
         this.set_cupcake_data()
+        var w = this.details_container.current?.getBoundingClientRect().width
+        if(w == null) w = 0
+        this.setState({details_container_width: w})
     }
 
     componentWillUnmount(){
@@ -288,7 +296,42 @@ class home_page extends Component {
         var background_color = this.props.theme['homepage_background_color'];
         var back = this.props.theme['background']
 
-        if(size == 'm'){
+        if(size == 'l'){
+            var middle = this.props.height-112;
+            return ( 
+                <div style={{}}>
+                    <div className="row" style={{height: this.props.height, width:width+10, 'background-color':background_color, 'padding':'0px 0px 0px 15px'}}>
+                        <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
+                            <div style={{height:15, width:90, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid'}}/>
+                            <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.2}}/>
+                            <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.4}}/>
+                            <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.6}}/>
+                            <div style={{height:(this.props.height-89), width:90, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px'}}>
+                                {this.render_navbar_button_group(size)}
+                            </div>
+                        </div>
+
+                        <div className="col-11" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}} >
+                            <div style={{height:top_bar, width:'99%', 'padding':'9px 0px 0px 5px'}}>
+                                {this.render_top_tag_bar(size)}
+                            </div>
+                            
+                            <div className="row" style={{height:(middle+55), 'padding':'0px 10px 0px 15px'}}>
+                                <div className="col-5" style={{height: (middle+55)}}>
+                                    {this.render_post_list_group(size, (middle+133))}
+                                </div>
+                                
+                                <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                                    {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
+                                </div>
+                                
+                            </div>
+                        </div>   
+                    </div>
+                </div>
+            );
+        }
+        else if(size == 'm'){
             return ( 
                 <div className="row" style={{height: this.props.height, width:'102%','background-color':background_color, 'overflow': 'hidden'}}>
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
@@ -351,7 +394,7 @@ class home_page extends Component {
                     </div>
                     
                     <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
-                        {this.render_post_list_group(size)}
+                        {this.render_post_list_group(size, this.props.height-129)}
                     </div>
                 </div>
             )
@@ -359,7 +402,7 @@ class home_page extends Component {
             return(
                 <div>
                     <div style={{height:this.props.height-129, width:width, 'padding':'0px 5px 0px 5px'}}  >
-                        {this.render_post_list_group(size)}
+                        {this.render_post_list_group(size, this.props.height-129)}
                     </div>
                     <div style={{height:top_bar, width:width, 'padding':'9px 0px 0px 0px'}}>
                         {this.render_top_tag_bar(size)}
@@ -371,16 +414,17 @@ class home_page extends Component {
 
     render_post_details_with_orientation(middle, width, size){
         var orientation = this.props.details_orientation;
-
+        var h = middle
+        var w = this.props.width/2
         if(orientation == 'right'){
             return(
                 <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 0px'}}>
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size)}
+                        {this.render_post_list_group(size, h)}
                     </div>
 
-                    <div className="col-6" style={{'padding':'0px 0px 0px 0px'}}>
-                        {this.render_post_detail_object(size)}
+                    <div className="col-6" style={{'padding':'3px 5px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
+                        {this.render_post_detail_object(size, h, w)}
                     </div>
 
                 </div>
@@ -388,12 +432,12 @@ class home_page extends Component {
         }else{
             return(
                 <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding':'0px 0px 0px 0px'}}>
-                        {this.render_post_detail_object(size)}
+                    <div className="col-6" style={{'padding':'3px 5px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
+                        {this.render_post_detail_object(size, h, w)}
                     </div>
 
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size)}
+                        {this.render_post_list_group(size, h)}
                     </div>
 
                 </div>
@@ -411,7 +455,7 @@ class home_page extends Component {
         return(
         <SwipeableBottomSheet fullScreen={true}  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px', 'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
             <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
-                {this.render_post_detail_object(size, this.props.height)}
+                {this.render_post_detail_object(size, this.props.height, this.props.width)}
             </div>
         </SwipeableBottomSheet>
         )
@@ -484,6 +528,38 @@ class home_page extends Component {
                   </div>
               </div>
           );
+        }
+        else if(size == 'l'){
+            return ( 
+                <div style={{height: '100%', width:'100%', padding:'5px 0px 0px 0px'}}>
+                  <div style={{height:'1px', 'background-color':'#7E7E7E', 'margin': '0px 80% 0px 0px'}}/>
+                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('?'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
+                      {this.render_navbar_button('s', '1px 0px 10px 5px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)} 
+                  </div>
+                
+
+                  <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
+                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('e'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
+                      {this.render_navbar_button('s', '0px 0px 10px 5px', this.props.theme['ExploreIcon'], 'auto', '50px','5px 11px 0px 10px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                      
+                  </div>
+                
+
+                  <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
+                  <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
+                    {this.render_navbar_button('s', '0px 0px 10px 5px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 6px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                      
+                  </div>
+                
+
+                  <div style={{height:'1px', 'background-color':'transparent', 'margin': '10px 12px '+(this.props.height-460)+'px 0px'}} />
+                    <div style={{'background-color':'transparent', padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
+                        {this.render_navbar_button('s', '0px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    </div>
+                  <div style={{height:'1px', 'background-color':'transparent', 'margin': '0px 12px 5px 0px'}}/>
+            </div>
+                
+            );
         }
     }
 
@@ -558,17 +634,19 @@ class home_page extends Component {
 
     /* render the top bar tags with the create object button */
     render_top_tag_bar(size){
-        var width = this.props.width - 80;
-        if(size == 'l') width = this.props.width - 10;
+        var width = this.props.width;
+        if(size == 'l') width = this.props.width - 100;
+        if(size == 's') width = this.props.width + 10
         return(
-            <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', height: 40,  width: '99%'}}>
-                <div style={{width: width}}>
+            <div className="row" style={{width:width}}>
+                <div className="col-10" style={{'padding': '0px 0px 0px 10px'}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
-                
-                <button style={{'text-decoration': 'none', 'border': 'none','background-color': 'transparent' ,'float': 'right', width: 70,'padding': '2px 0px 12px 0px', opacity:1}}>
-                    {this.render_e_plus_button()}
-                </button>
+                <div className="col-2" style={{'padding': '2px 0px 0px 0px'}}>
+                    <div className="text-end" style={{'padding': '0px 0px 0px 0px'}} >
+                        {this.render_e_plus_button()}
+                    </div>
+                </div>
             </div>
         );
     }
@@ -582,7 +660,7 @@ class home_page extends Component {
         alpha = 0.2;
       }
       return(
-        <img onClick={()=> this.when_e_button_tapped()} src={this.props.theme['add_icon']} style={{height:36, width:'auto', opacity:alpha}} />
+        <img className="text-end" onClick={()=> this.when_e_button_tapped()} src={this.props.theme['add_icon']} style={{height:36, width:'auto', opacity:alpha}} />
       )
     }
 
@@ -917,7 +995,7 @@ class home_page extends Component {
             this.props.load_data_from_page_in_focus('w')
         }
 
-        this.setState({ selected_job_post_item:null, selected_contract_item:null, selected_subscription_item:null, selected_post_item:null, selected_channel_item:null, selected_proposal_item:null, selected_storefront_item:null, selected_bag_item:null, selected_contractor_item: null})
+        // this.setState({ selected_job_post_item:null, selected_contract_item:null, selected_subscription_item:null, selected_post_item:null, selected_channel_item:null, selected_proposal_item:null, selected_storefront_item:null, selected_bag_item:null, selected_contractor_item: null})
 
         var me = this;
         setTimeout(function() {
@@ -1965,24 +2043,24 @@ class home_page extends Component {
         this.setState({page: obj[value]})
     };
 
-    render_post_list_group(size){
+    render_post_list_group(size, height){
         var obj = {'?':0, 'e':1, 'w':2}
         var pos = obj[this.state.page];
         return(
             <div>
                 <SwipeableViews index={pos} onChangeIndex={this.handleChange} disabled>
-                    <div>{this.render_post_list_group2(size, '?', this.work_list_section)}</div>
-                    <div>{this.render_post_list_group2(size, 'e', this.explore_list_section)}</div>
-                    <div>{this.render_post_list_group2(size, 'w', this.wallet_list_section)}</div>
+                    <div>{this.render_post_list_group2(size, '?', this.work_list_section, height)}</div>
+                    <div>{this.render_post_list_group2(size, 'e', this.explore_list_section, height)}</div>
+                    <div>{this.render_post_list_group2(size, 'w', this.wallet_list_section, height)}</div>
                 </SwipeableViews>
             </div>
         )
         
     }
 
-    render_post_list_group2(size, p, list_section){
+    render_post_list_group2(size, p, list_section, h){
         return(
-            <PostListSection ref={list_section} size={size} height={this.props.height} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.props.notify.bind(this)}
+            <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.props.notify.bind(this)}
             when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)}
 
             theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} when_view_image_clicked={this.when_view_image_clicked.bind(this)}
@@ -2357,7 +2435,7 @@ class home_page extends Component {
 
 
 
-    render_post_detail_object(size, height){
+    render_post_detail_object(size, height, width){
         var h = height - 48
         if(this.props.app_state.visible_tabs == 'e') h = height
         return(
@@ -2367,7 +2445,7 @@ class home_page extends Component {
 
                 selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item}
 
-                height={h} screensize={this.props.screensize} width={this.props.width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.props.notify.bind(this)}
+                height={h} screensize={this.props.screensize} width={width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.props.notify.bind(this)}
                 
                 when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
                 

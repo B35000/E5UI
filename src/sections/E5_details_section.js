@@ -65,13 +65,12 @@ class E5DetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height
         return(
-            <div style={{height:this.props.height-45, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 20px 0px'}}>
-                <div style={{'margin':'10px 20px 0px 0px'}}>
+            <div>
+                <div style={{height:he, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
-                    <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
                 </div>
             </div>
-        );
+        )
     }
 
     when_navigate_view_e5_list_detail_tags_object_updated(tag_group){
@@ -108,9 +107,7 @@ class E5DetailsSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var he = this.props.height-55
         var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
+
         var item = this.get_e5_details_data(obj)
         // var obj = this.get_e5_data()[this.props.selected_e5_item]
         var e5 = obj['id']

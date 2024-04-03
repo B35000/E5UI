@@ -1045,7 +1045,7 @@ class App extends Component {
         '2028':'metadata','2029':'responses','2030':'activity','2031':'Pin the bag for future reference.','2032':'Pin the Bag Order.','2033':'','2034':'','2035':'','2036':'','2037':'','2038':'','2039':'','2040':'','2041':'','2042':'Pin/Unpin Bag','2043':'Fulfil the delivery request for the sender account','2044':'Fulfil Bag','2045':'Sender Account','2046':'Bag ID: ','2047':'ago','2048':'Store ID:','2049':' ordered.','2050':'Variant Description','2051':'Pick-up Location','2052':'In ','2053':'Bag Responses','2054':'Expiry time from now: ','2055':'Contract ID: ','2056':'Sender ID: ','2057':'Accepted','2058':'The bag owner picked this fulfilment application','2059':'Expiry time from now: ','2060':'Contract ID: ','2061':'Sender ID: ','2062':'Shopping Bag Acivity','2063':'Copied message to clipboard.','2064':' responses','2064a':'Bag Value.','2064b':'The total amount to be paid by the bag owner in the respective denominations.','2064c':'','2064d':'','2064e':'','2064f':'','2064g':'','2064h':'',
         
         /* channel details section */
-        '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101':'The channel has been locked by its moderators.','2102':'In Channel','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
+        '2065':'moderator-events','2066':'modify-moderators','2067':'interactable-checkers','2068':'interactable-accounts','2069':'block-accounts','2070':'Author','2071':'Channel Locked','2072':'Channel activity has been restricted to existing participants','2073':'Channel Unlocked','2074':'','2075':'Channel activity is not restricted to existing participants','2076':'Pin the channel to your feed','2077':'Pin Channel','2078':'Pin/Unpin Channel','2079':'Perform Moderator Actions','2080':'Set an accounts access rights, moderator privelages or block an account.','2081':'Perform Action','2082':'Edit Channel Post','2083':'Change the basic details for your Channel','2084':'Edit','2085':'Author Moderator Privelages Disabled','2086':'Author of Object is not a Moderator by default','2087':'Author Moderator Privelages Enabled','2088':'Author of Object is a Moderator by default','2089':'Channel Traffic','2090':'Chart containing the total number of messages made over time.','2091':'Y-Axis: Total Messages Made','2092':'X-Axis: Time','2093':'Total Channel Messages','2094':'messages','2095':'','2096':'','2097':'','2098':'','2099':'','2100':'You cant do that. The channel is access restricted.','2101':'You cant do that. Youve been blocked from the channel for ','2101':'The channel has been locked by its moderators.','2102':'In Channel ','2103':'Channel Modify Moderator Events','2104':'Not Moderator','2105':'Moderator','2106':'Targeted Account','2107':'Moderator Account','2108':'Authority value','2109':'Channel Access Rights Settings Events','2110':'Access Rights Disabled(Public)','2111':'Access Rights Enabled(Private)','2112':'Access Rights Status','2113':'Moderator Account','2114':'Channel Account Access Settings Events','2115':'Targeted Account','2116':'Moderator Account','2117':'Until: ',
         
         /* contract details section */
         '2118':'details','2119':'events','2120':'moderator-events','2121':'transfers','2122':'create-proposal','2123':'modify-contract','2124':'Channel Blocked Account Events','2125':'enter-contract','2126':'extend-contract-stay','2127':'exit-contract','2128':'force-exit-accounts','2129':'Participant Accounts','2130':'The accounts that have entered the contract.','2131':'Pin the contract to your feed','2132':'Pin Contract','2134':'Pin/Unpin Contract','2135':'Author Moderator Privelages Disabled','2136':'','2137':'Author of Object is not a Moderator by default','2138':'Author Moderator Privelages Enabled','2139':'Author of Object is a Moderator by default','2140':'Enabled','2141':'Disabled','2142':'Enter a contract to participate in its consensus','2143':'Enter Contract','2144':'Enter','2145':'Max Extend Enter Contract Limit','2146':'Extend your stay in the contract','2147':'Extend Stay','2148':'Extend','2149':'Send a proposal to the contract to perform a specified action','2150':'Send Proposal','2151':'Send','2152':'Send a proposal to the contract to perform a specified action.','2153':'','2154':'','2155':'','2156':'','2157':'','2158':'Send Proposal','2159':'Exit from the contract and no longer participate in its consensus','2160':'Exit Contract','2161':'Exit','2162':'Entry Exipry Time','2163':'Time remaining','2164':'Your time in the contract has exipred, you have to enter it again.','2165':'Youre not part of the contract','2166':'Modify Contract','2167':'Modify the configuration of the contract directly.','2168':'Force Exit Accounts','2169':'Remove an account from the contract directly.','2170':'Archive Contract','2171':'Delete the contracts data to free up space in the blockchain','2172':'Perform Moderator Actions','2173':'Set an accounts access rights, moderator privelages or block an account','2174':'Perform Action','2175':'In Contract ','2176':'Created Proposal Events','2177':'Modify Proposal Events','2178':'Proposer Account ID','2179':'Modifier','2180':'Spend Proposal','2181':'Reconfiguration Proposal','2182':'Exchange-Transfer','2183':'Targeted Modify Item','2184':'target ID','2185':'In Contract ','2186':'Enter Contract Events','2187':'Search account ID...','2188':'Entering Account ID','2189':'Entry Expiry','2190':'Extend Contract Stay Events','2191':'Extending Account ID','2192':'Entry Expiry','2193':'Exit Contract Events','2194':'Exiting Account ID','2195':'Force Exit Contract Events','2196':'Moderator Account ID','2197':'Exiting Account ID','2198':'Age','2199':'Contract Transfer Events','2200':'Token ID:  ','2201':', depth: ','2202':'Contract Modify Moderator Events','2203':'Authority value','2204':'Contract Access Rights Settings Events','2205':'Access Rights Status','2206':'Block Number','2207':'Contract  Account Access Settings Events','2208':'Until: ','2209':'Contract Blocked Account Events','2210':'','2211':'Not Moderator','2212':'Moderator','2213':'Targeted Account','2214':'Moderator Account',
@@ -1098,7 +1098,7 @@ class App extends Component {
         
         '2786':'Transaction Broadcasted.','2787':'Your transaction was successfuly broadcasted to the rest of the network.','2788':'From Your Address.','2789':'Recipient Address','2790':'Amount Sent in Wei.','2791':'Amount Sent in Ether.','2792':'Transaction Gas.','2793':'Gas Price Set in Wei.','2794':'Max Priority Fee Per Gas Set in Wei.','2795':'Max Fee per Gas Set in Wei.','2796':'Gas Price Set in Gwei.','2797':'Max Priority Fee Per Gas Set in Gwei.','2798':'Max Fee per Gas Set in Gwei.','2799':'Transaction Hash.','2800':'Qr Code.','2801':'Copy Transaction Hash.','2802':'Track Your Transaction.','2803':'You can track the status of your transaction from the chains blockexplorer.',
         
-        '2804':'Payment History','2805':'Their payment history is shown below.','2806':'Current ','2807':'Time Units: ','2808':'Accounts Balances','2809':'Heres all the tokens the account is in posession of.','2810':'Add a transaction first.','2811':'','2812':'','2813':'','2814':'','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2804':'Payment History','2805':'Their payment history is shown below.','2806':'Current ','2807':'Time Units: ','2808':'Accounts Balances','2809':'Heres all the tokens the account is in posession of.','2810':'Add a transaction first.','2811':'Exchange Authority','2812':'Trust Fee Target','2813':'','2814':'','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1818,26 +1818,55 @@ class App extends Component {
   }
 
   /* gets the screensize in three categories, small medium and large */
+  //   getScreenSize() {
+  //     var width = this.state.width;
+  //     var height = this.state.height;
+
+     
+  //     if(width<350 || height <550){
+  //         return 's';
+  //     }
+  //     else if(width == 1366 && height == 1024){
+  //         return 'e';//l
+  //     }
+
+  //     else if(width > 1250){
+  //         return 'e';
+  //     }
+  //     else if(width > 1020){
+  //         return 'e';//l
+  //     }
+  //     else if(width > 730){
+  //         return 'e'; //m
+  //     }else{
+  //         if(width < 280){
+  //             return 's';
+  //         }
+  //         return 's';
+          
+  //     }
+
+  // }
+
   getScreenSize() {
       var width = this.state.width;
       var height = this.state.height;
 
      
-      if(width<350 || height <550){
-          return 's';
+      if(width<250){
+          return 'e';
       }
-      else if(width == 1366 && height == 1024){
-          return 'e';//l
-      }
-
+      // else if(width == 1366 && height == 1024){
+      //     return 'e';//l
+      // }
       else if(width > 1250){
           return 'e';
       }
       else if(width > 1020){
-          return 'e';//l
+          return 'l';//l
       }
-      else if(width > 730){
-          return 'e'; //m
+      else if(width > 690){
+          return 'm'; //m
       }else{
           if(width < 280){
               return 's';
@@ -1870,7 +1899,9 @@ class App extends Component {
         
         'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white',
 
-        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq'
+        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
+
+        'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24'
 
 
       }
@@ -1895,8 +1926,9 @@ class App extends Component {
         
         'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
-        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4'
+        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
         
+        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme'
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -1920,7 +1952,9 @@ class App extends Component {
         'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
 
-        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4'
+        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
+
+        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme'
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
@@ -1945,7 +1979,9 @@ class App extends Component {
         'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
 
-        'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli'
+        'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli',
+
+        'close':'https://nftstorage.link/ipfs/bafkreidjlt2fejd5t2urmawpfg5xgtm55zlctx2zek3bqxwikehoyq6whe'
       }
     }
 
@@ -7385,6 +7421,9 @@ class App extends Component {
   render_view_image(){
     var images = this.state.view_images == null ? [] : this.state.view_images;
     var pos = this.state.view_images_pos == null ? 0 : this.state.view_images_pos;
+    var screen = this.getScreenSize()
+    var w = '100%'
+    if(screen == 'm' || screen == 'l') w = '60%'
     return(
       <div style={{'position': 'relative', height:'100%', width:'100%', 'background-color':'rgb(0, 0, 0,.9)','border-radius': '0px','display': 'flex', 'align-items':'center','justify-content':'center', 'margin':'0px 0px 0px 0px', 'text-align':'center'}}>
         <SwipeableViews index={pos}>
@@ -7394,7 +7433,7 @@ class App extends Component {
             //     <img src={item} style={{height:'auto',width:'100%'}} />
             //   </TransformComponent>
             // </TransformWrapper>
-            <img src={item} style={{height:'auto',width:'100%'}} />
+            <img src={item} style={{height:'auto',width:w}} />
           ))}
         </SwipeableViews>
       </div> 
@@ -7476,8 +7515,8 @@ class App extends Component {
   /* renders the toast item used */
   render_toast_item(message){
     var width = this.state.width
-    if(width > 400){
-      width = 350
+    if(width > 330){
+      width = 330
     }
     return (
           <div>
@@ -9736,8 +9775,9 @@ class App extends Component {
     var entered_timestamp_data = await G52contractInstance.methods.f266(created_contracts, accounts_for_expiry_time, 3).call((error, result) => {});
     var created_contract_object_data = []
     var created_contract_mapping = {}
-    var is_first_time = this.has_gotten_contracts == false
-    this.has_gotten_contracts = true
+    // var is_first_time = this.has_gotten_contracts == false
+    var is_first_time = this.state.created_contracts[e5].length <= 1 ? true : false
+    // this.has_gotten_contracts = true
 
 
 
@@ -9855,7 +9895,6 @@ class App extends Component {
     this.setState({created_contracts: created_contract_object_data_clone, created_contract_mapping: created_contract_mapping_clone, enter_exit_accounts_notifications: enter_exit_accounts_notifications_clone})
     console.log('contract count for : ',e5, ' : ',created_contract_object_data.length)
     
-
   }
 
   get_proposal_data = async (G52contractInstance, G5contractInstance, E52contractInstance, web3, e5, contract_addresses, account) => {
@@ -10819,6 +10858,7 @@ class App extends Component {
         this.get_contract_data(contractInstance, account, G5contractInstance, G52contractInstance, web3, e5, contract_addresses, E52contractInstance)
       }
     }
+    // this.has_gotten_contracts = true
   }
 
   load_proposal_data = async () => {

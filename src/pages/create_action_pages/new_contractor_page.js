@@ -132,12 +132,12 @@ class NewContractorPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
-                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_contractor_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'padding': '5px'}} onClick={()=>this.finish_creating_object()}>
-                            {this.render_detail_item('5', {'text':this.props.app_state.loc['4'], 'action':'finish_creating_object'})}
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                            <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>

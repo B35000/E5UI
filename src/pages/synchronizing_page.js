@@ -15,7 +15,23 @@ class synchronizing_page extends Component {
     render(){
         return(
             <div>
-                {this.render_synchronizing_page()}
+                {this.render_sync_page()}
+            </div>
+        )
+    }
+
+
+    render_sync_page(){
+        var h = this.props.app_state.height-200
+        return(
+            <div style={{width:'100%', height:h,'display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div>
+                    <p style={{'text-align': 'center', color: this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font}}>{this.get_sync_text()}</p>
+                    <div style={{width:'230px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}}>
+                        {this.render_synch_bar()}
+                    </div>
+                    <img style={{width:'250px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}} src={'https://nftstorage.link/ipfs/bafkreiaszixz3iclvzxocneibrmppoazemylhb5ynki5sownn7n2bub4m4'} alt="E5" onClick={()=> this.props.close_syncronizing_page()}/>
+                </div>
             </div>
         )
     }

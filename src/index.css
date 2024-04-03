@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scrollbar-width: none;
+  /* scrollbar-width: none; */
 }
 
 code {
@@ -14,11 +14,11 @@ code {
 }
 
 ::-webkit-scrollbar {
-  width: 0.5em;
+  /* width: 0.5em; */
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0);
+  /* background-color: rgba(0, 0, 0, 0); */
 }
 
 body > iframe {

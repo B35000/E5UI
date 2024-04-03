@@ -381,7 +381,7 @@ class PostListSection extends Component {
 
     render_jobs_list_group(){
        var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -396,7 +396,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'jobs')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -433,7 +433,7 @@ class PostListSection extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         return(
             <div>
-                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','margin':'5px 0px 0px 0px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center',/*  'opacity':this.state.loading_screen_opacity */}}>
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','margin':'5px 0px 0px 0px','display': 'flex', 'align-items':'center','justify-content':'center',/*  'opacity':this.state.loading_screen_opacity */}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -459,7 +459,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -509,7 +509,7 @@ class PostListSection extends Component {
     
     render_contracts_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -524,7 +524,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'contracts')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -571,7 +571,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -591,12 +591,13 @@ class PostListSection extends Component {
         var tags = object['ipfs'] == null ? ['Contract'] : [object['e5']].concat(object['ipfs'].entered_indexing_tags)
         var title = object['ipfs'] == null ? 'Contract ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p5
+        var time = object['event'] == null ? 0 : object['event'].returnValues.p4
         var id_text = object['e5']+' • '+object['id']
         if(object['id'] == 2) id_text = object['e5']+' • '+'Main Contract'
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed', 'selected_tags':this.props.app_state.job_section_tags, 'when_tapped':'select_deselect_tag'},
             'id':{'title':id_text, 'details':title, 'size':'l', 'image':this.props.app_state.e5s[object['e5']].e5_img, 'border_radius':'0%'},
-            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.props.app_state.loc['1317']/* 'block' */, }
+            'age':{ 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':this.get_time_difference(time), }
         }
     }
 
@@ -613,7 +614,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
 
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -628,7 +629,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'proposals')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -668,7 +669,7 @@ class PostListSection extends Component {
         //     )
         // }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -712,7 +713,7 @@ class PostListSection extends Component {
 
     render_subscription_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -727,7 +728,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'subscriptions')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -774,7 +775,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -812,7 +813,7 @@ class PostListSection extends Component {
 
     render_mail_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -834,7 +835,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], object_type)}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -895,7 +896,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -955,7 +956,7 @@ class PostListSection extends Component {
 
     render_contractor_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -970,7 +971,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'contractor')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -1018,7 +1019,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1057,7 +1058,7 @@ class PostListSection extends Component {
 
     render_E5s_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1111,7 +1112,7 @@ class PostListSection extends Component {
             )
         }
         return ( 
-            // <div onClick={() => this.when_E5_item_clicked(index, name)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            // <div onClick={() => this.when_E5_item_clicked(index, name)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
             //     <div style={{'padding': '0px 0px 0px 5px'}}>
             //         {this.render_detail_item('1', item['tags'])}
             //         <div style={{height: 10}}/>
@@ -1271,7 +1272,7 @@ class PostListSection extends Component {
     render_small_empty_object(){
         return(
             <div>
-                <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
                         <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
@@ -1293,7 +1294,7 @@ class PostListSection extends Component {
     
     render_posts_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1308,7 +1309,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'posts')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -1355,7 +1356,7 @@ class PostListSection extends Component {
         else{
             return(
                 <div>
-                    <div style={{height:160, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{height:160, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                         <div style={{'margin':'10px 20px 0px 0px'}}>
                             <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                             <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray', 'font-size': '13px'}}></p>
@@ -1415,7 +1416,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1503,7 +1504,7 @@ class PostListSection extends Component {
 
     render_channels_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1518,7 +1519,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'channels')}
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -1560,7 +1561,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1603,7 +1604,7 @@ class PostListSection extends Component {
 
     render_storefront_item_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1618,7 +1619,7 @@ class PostListSection extends Component {
                         {this.show_load_metrics([], 'storefront')}
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -1664,7 +1665,7 @@ class PostListSection extends Component {
             )
         }
         return(
-            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -1739,7 +1740,7 @@ class PostListSection extends Component {
 
     render_bag_item_list_group(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1801,7 +1802,7 @@ class PostListSection extends Component {
                 </div>
             )
         return(
-            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
                 <div style={{'padding': '0px 0px 0px 5px'}}>
                     {/* {this.render_detail_item('1', item['tags'])} */}
                     {/* <div style={{height: 10}}/> */}
@@ -1926,7 +1927,7 @@ class PostListSection extends Component {
 
 
     render_ethers_list_group(){
-        var middle = this.props.height-125;
+        var middle = this.props.height;
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -1998,7 +1999,7 @@ class PostListSection extends Component {
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         return ( 
-            // <div onClick={() => this.when_ether_object_clicked(index, item)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            // <div onClick={() => this.when_ether_object_clicked(index, item)} style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
             //     <div style={{'padding': '0px 0px 0px 5px'}}>
             //         {this.render_detail_item('1', item['tags'])}
             //         <div style={{height: 10}}/>
@@ -2198,7 +2199,7 @@ class PostListSection extends Component {
 
 
     render_ends_list_group(){
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -2260,7 +2261,7 @@ class PostListSection extends Component {
             )
         }
         return ( 
-            // <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            // <div  style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
             //     <div style={{'padding': '0px 0px 0px 5px'}}>
             //         {this.render_detail_item('1', item['tags'])}
             //         <div style={{height: 10}}/>
@@ -2327,7 +2328,7 @@ class PostListSection extends Component {
     render_small_empty_object_loading_card(){
         return(
             <div>
-                <div style={{ height: 65, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px','margin':'0px 0px 0px 0px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', /* 'opacity':this.state.loading_screen_opacity */}}>
+                <div style={{ height: 65, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px','margin':'0px 0px 0px 0px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', /* 'opacity':this.state.loading_screen_opacity */}}>
                     <div style={{ 'margin': '10px 20px 10px 0px' }}>
                         <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                     </div>
@@ -2339,7 +2340,7 @@ class PostListSection extends Component {
 
 
     render_spends_list_group(){
-        var middle = this.props.height-123;
+        var middle = this.props.height
         var size = this.props.size;
         if(size == 'l'){
             middle = this.props.height-80;
@@ -2396,7 +2397,7 @@ class PostListSection extends Component {
             return;
         }
         return (
-            // <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
+            // <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
             //     <div style={{'padding': '0px 0px 0px 5px'}}>
             //         {this.render_detail_item('1', item['tags'])}
             //         <div style={{height: 10}}/>
@@ -2425,7 +2426,7 @@ class PostListSection extends Component {
     render_empty_object(){
         var background_color = this.props.theme['card_background_color']
         return(
-                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                     <div style={{'margin':'10px 20px 0px 0px'}}>
                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
