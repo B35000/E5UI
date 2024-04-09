@@ -160,7 +160,7 @@ class NewContractorPage extends Component {
                     </div>
                 </div>
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}
                 </div>
             </div>
@@ -229,14 +229,41 @@ class NewContractorPage extends Component {
 
 
     render_enter_tags_part(){
-        return(
-            <div>
-                {this.render_title_tags_part()}
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_title_tags_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
                 
-                {this.render_new_job_object()}
-                {this.render_detail_item('0')}
-            </div>
-        )
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
     }
 
 
@@ -364,6 +391,29 @@ class NewContractorPage extends Component {
     }
 
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
 
 
     render_enter_text_part(){
@@ -371,7 +421,7 @@ class NewContractorPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 10px 0px 0px'}}>
+                <div>
                     {this.render_text_part()}
                     {this.render_entered_texts()}
                 </div>
@@ -379,12 +429,27 @@ class NewContractorPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_text_part()}
-                    </div>
-                    <div className="col-6">
                         {this.render_entered_texts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_text_part()}
+                        {this.render_entered_texts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -1099,14 +1164,48 @@ class NewContractorPage extends Component {
 
     render_enter_image_part(){
         var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_images_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_pick_images_parts(){
         return(
-            <div style={{'padding': '10px 10px 0px 0px'}}>
+            <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']})}
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
-                {this.render_detail_item('0')}
-                {/* {this.render_all_images_part()} */}
             </div>
         )
     }
@@ -1209,7 +1308,7 @@ class NewContractorPage extends Component {
 
     render_image_part(){
         var size = this.props.size
-        var col = Math.round(this.props.app_state.width / 100)
+        var col = Math.round(400 / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
@@ -1266,14 +1365,43 @@ class NewContractorPage extends Component {
 
 
     render_rates_part(){
-        var height = this.props.height-150
-        return(
-            <div style={{overflow: 'auto', maxHeight: height}}>
-                {this.render_set_token_and_amount_part()}
-                <div style={{height: 20}}/>
-                {this.render_set_prices_list_part()}
-            </div>
-        )
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_set_token_and_amount_part()}
+                    <div style={{height: 20}}/>
+                    {this.render_set_prices_list_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_token_and_amount_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_token_and_amount_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
     }
 
 

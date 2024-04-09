@@ -210,7 +210,7 @@ class NewStorefrontItemPage extends Component {
                     </div>
                 </div>
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -287,6 +287,45 @@ class NewStorefrontItemPage extends Component {
 
 
     render_subscription_configuration_part(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_subscription_configuration_part1()}
+                    {this.render_subscription_configuration_part2()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_subscription_configuration_part1()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_subscription_configuration_part2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_subscription_configuration_part1()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_subscription_configuration_part2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_subscription_configuration_part1(){
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div>
@@ -319,8 +358,15 @@ class NewStorefrontItemPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.purchase_option_tags_object} tag_size={'l'} when_tags_updated={this.when_purchase_option_tags_object_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
 
+                {this.render_direct_shipping_fee_view_if_enabled()}
+            </div>
+        )
+    }
 
-                
+    render_subscription_configuration_part2(){
+        var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
+        return(
+            <div>
                 {/* {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':'Sales Visibility', 'details':'If set to masked, all your direct purchase sales will be invisible to outsiders', 'size':'l'})}
                 <div style={{height:10}}/>
@@ -328,7 +374,6 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/> */}
 
 
-                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['473']/* 'Product Chatroom' */, 'details':this.props.app_state.loc['474']/* 'If set to disabled, senders cannot send messsages to the new storefront items product chatroom in the activity section' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.chatroom_enabled_tags_object} tag_size={'l'} when_tags_updated={this.when_chatroom_enabled_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -352,9 +397,24 @@ class NewStorefrontItemPage extends Component {
                 <div style={{height:10}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_storefront_item_in_stock_option} tag_size={'l'} when_tags_updated={this.when_get_storefront_item_in_stock_option_updated.bind(this)} theme={this.props.theme}/>
                 <div style={{height:10}}/>
-                
 
-                {this.render_direct_shipping_fee_view_if_enabled()}
+
+            </div>
+        )
+    }
+
+    render_shipping_detail_suggestions(){
+        var items = [].concat(this.get_fulfilment_location_from_local_storage())
+        if(items.length == 0) return;
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={()=> this.when_suggestion_clicked(item, index)}>
+                            {this.render_detail_item('3',{'title':this.truncate(item['text'], 15), 'details':this.get_time_difference(item['time']),'size':'s'})}
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
@@ -736,6 +796,29 @@ class NewStorefrontItemPage extends Component {
 
 
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -743,7 +826,6 @@ class NewStorefrontItemPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
-                    {this.render_new_job_object()}
                 </div>
             )
         }
@@ -754,7 +836,20 @@ class NewStorefrontItemPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6">
-                        {this.render_new_job_object()}
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -912,7 +1007,7 @@ class NewStorefrontItemPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 10px 0px 0px'}}>
+                <div>
                     {this.render_text_part()}
                     {this.render_entered_texts()}
                 </div>
@@ -920,12 +1015,27 @@ class NewStorefrontItemPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_text_part()}
-                    </div>
-                    <div className="col-6">
                         {this.render_entered_texts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_text_part()}
+                        {this.render_entered_texts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -1019,7 +1129,7 @@ class NewStorefrontItemPage extends Component {
                         <SwipeableList>
                             <SwipeableListItem
                                 swipeLeft={{
-                                content: <div>Delete</div>,
+                                content: <p style={{'color': this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2751']/* Delete */}</p>,
                                 action: () => this.delete_text_item(item)
                                 }}
                                 swipeRight={{
@@ -1626,16 +1736,48 @@ class NewStorefrontItemPage extends Component {
 
     render_enter_image_part(){
         var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_images_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
 
+    render_pick_images_parts(){
         return(
-            <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image. Then tap to remove.' */})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
-                {this.render_detail_item('0')}
-                {/* {this.render_all_images_part()} */}
-                
             </div>
         )
     }
@@ -1795,17 +1937,14 @@ class NewStorefrontItemPage extends Component {
 
     render_enter_item_price_part(){
         var size = this.props.size
-        var height = this.props.height-150
 
-        if(size == 's'){
-            return(
-                <div style={{}}>
-                    {this.render_set_token_and_amount_part()}
-                    <div style={{height: 20}}/>
-                    {this.render_set_prices_list_part()}
-                </div>
-            )
-        }
+        return(
+            <div style={{}}>
+                {this.render_set_token_and_amount_part()}
+                <div style={{height: 20}}/>
+                {this.render_set_prices_list_part()}
+            </div>
+        )
     }
 
 
@@ -1942,9 +2081,47 @@ class NewStorefrontItemPage extends Component {
 
 
     render_variants_picker_part(){
+        var size = this.props.app_state.size
+        if(size == 's'){
+            return(
+                <div style={{'overflow-x':'hidden'}}>
+                    {this.render_variant_details_picker_part()}
+                    {this.render_enter_item_price_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_variant_details_picker_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_item_price_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'overflow-x':'hidden'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_variant_details_picker_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_enter_item_price_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_variant_details_picker_part(){
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
-            <div style={{'overflow-x':'hidden'}}>
+            <div>
                 <div style={{height:10}}/>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['535c']/* Set the details for a variant of your new storefront item, then tap the black circle to add it. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
@@ -1983,13 +2160,7 @@ class NewStorefrontItemPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['518']/* 'Number of ' */+selected_composition, 'subtitle':this.format_power_figure(this.state.available_unit_count), 'barwidth':this.calculate_bar_width(this.state.available_unit_count), 'number':this.format_account_balance_figure(this.state.available_unit_count), 'barcolor':'', 'relativepower':this.props.app_state.loc['391']/* 'units' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
-
-                {this.render_enter_item_price_part()}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
-
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_available_unit_count.bind(this)} theme={this.props.theme} power_limit={63}/>
             </div>
         )
     }

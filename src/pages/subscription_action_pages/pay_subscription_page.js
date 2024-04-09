@@ -46,7 +46,7 @@ class PaySubscriptionPage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
 
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
@@ -70,9 +70,48 @@ class PaySubscriptionPage extends Component {
     }
 
 
-
-
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pay_amount_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_total_debit_amount_ui()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pay_amount_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_total_debit_amount_ui()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pay_amount_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_total_debit_amount_ui()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_pay_amount_part(){
         var subscription_config = this.state.subscription_item['data'][1]
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         return(
@@ -80,7 +119,7 @@ class PaySubscriptionPage extends Component {
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['865']/* 'Pay for the subscription ID: ' */+this.state.subscription_item['id']})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['866']/* 'Time Unit' */, 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['866']/* 'Time Unit' */, 'size':'l'})}
 
                 {this.render_minimum_buy_amount()}
 
@@ -93,19 +132,21 @@ class PaySubscriptionPage extends Component {
                 </div>
 
                 <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_units_set.bind(this)} theme={this.props.theme} power_limit={10}/>
+                
+            </div>
+        )
+    }
 
-                {this.render_detail_item('0')}
-
+    render_total_debit_amount_ui(){
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['868']/* 'Total Debit Amount' */, 'details':this.props.app_state.loc['869']/* 'The amount youll pay for the subscription payment is shown below' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
-                <div style={{height:10}}/>
-
+                
+                {this.render_detail_item('0')}
                 {this.render_my_balances()}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }

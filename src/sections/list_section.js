@@ -80,12 +80,28 @@ class PostListSection extends Component {
         var selected_page = this.props.page;
         if(selected_page == '?'){
             var selected_tag = this.props.work_page_tags_object['i'].active
+            var selected_item = this.get_selected_item(this.props.work_page_tags_object, selected_tag)
+            
             if(selected_tag == this.props.app_state.loc['1196']/* 'jobs' */ || selected_tag == 'e'){
+                if(selected_item == this.props.app_state.loc['1264c']/* 'job-notifications' */){
+                    return(
+                        <div>
+                            {this.render_my_notifications(this.props.app_state.loc['1264c']/* 'job-notifications' */)}
+                        </div>
+                    )
+                }
                 return(
                 <div>{this.render_jobs_list_group()}</div>
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1197']/* 'contracts' */){
+                if(selected_item == this.props.app_state.loc['1264d']/* 'contract-notifications' */){
+                    return(
+                        <div>
+                            {this.render_my_notifications(this.props.app_state.loc['1264d']/* 'contract-notifications' */)}
+                        </div>
+                    )
+                }
                 return(
                 <div>{this.render_contracts_list_group()}</div>
                 )
@@ -97,15 +113,29 @@ class PostListSection extends Component {
             }
             else if(selected_tag == this.props.app_state.loc['1200']/* 'subscriptions' */ ){
                 return(
-                <div>{this.render_subscription_list_group()}</div>
+                    <div>{this.render_subscription_list_group()}</div>
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1201']/* 'mail' */){
+                if(selected_item == this.props.app_state.loc['1264f']/* 'mail-notifications' */){
+                    return(
+                        <div>
+                            {this.render_my_notifications(this.props.app_state.loc['1264f']/* 'mail-notifications' */)}
+                        </div>
+                    )
+                }
                 return(
                 <div>{this.render_mail_list_group()}</div>
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1198']/* 'contractors' */){
+                if(selected_item == this.props.app_state.loc['1264e']/* 'contractor-notifications' */){
+                    return(
+                        <div>
+                            {this.render_my_notifications(this.props.app_state.loc['1264e']/* 'contractor-notifications' */)}
+                        </div>
+                    )
+                }
                 return(
                 <div>{this.render_contractor_list_group()}</div>
                 )
@@ -114,6 +144,7 @@ class PostListSection extends Component {
         }
         else if(selected_page == 'e'){
             var selected_tag = this.props.explore_page_tags_object['i'].active
+            var selected_item = this.get_selected_item(this.props.explore_page_tags_object, selected_tag)
             if(selected_tag == 'E5s' || selected_tag == 'e'){
                 var selected_item = this.get_selected_item(this.props.explore_page_tags_object, selected_tag)
 
@@ -141,11 +172,25 @@ class PostListSection extends Component {
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1215']/* 'storefront' */){
+                if(selected_item == this.props.app_state.loc['1264g']/* 'storefront-notifications' */){
+                    return(
+                        <div>
+                            {this.render_my_notifications(this.props.app_state.loc['1264g']/* 'storefront-notifications' */)}
+                        </div>
+                    )
+                }
                 return(
                 <div>{this.render_storefront_item_list_group()}</div>
                 )
             }
             else if(selected_tag == this.props.app_state.loc['1216']/* 'bags' */){
+                if(selected_item == this.props.app_state.loc['1264h']/* 'bag-notifications' */){
+                    return(
+                        <div>
+                            {this.render_my_notifications(this.props.app_state.loc['1264h']/* 'bag-notifications' */)}
+                        </div>
+                    )
+                }
                 return(
                 <div>{this.render_bag_item_list_group()}</div>
                 )
@@ -167,6 +212,11 @@ class PostListSection extends Component {
             else if(selected_option_name == this.props.app_state.loc['1219']/* 'spends 🫰' */ ){
                 return(
                 <div>{this.render_spends_list_group()}</div>
+                )
+            }
+            else if(selected_option_name == this.props.app_state.loc['1264i']/* 'wallet-notifications' */ ){
+                return(
+                <div>{this.render_my_notifications(this.props.app_state.loc['1264i']/* 'wallet-notifications' */)}</div>
                 )
             }
         }
@@ -228,6 +278,186 @@ class PostListSection extends Component {
         this.end_list = React.createRef();
         this.spend_list = React.createRef();
     }
+
+
+
+    render_my_notifications(tag_id){
+        var items = [].concat(this.props.get_all_sorted_notifications(tag_id))
+        if(items == null){
+            items = []
+        }
+        items = [].concat(items)
+        
+        var middle = this.props.height
+        var size = this.props.size;
+        if(size == 'l'){
+            middle = this.props.height-80;
+        }
+
+        if(items.length == 0){
+            items = [0, 0]
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {items.map((item, index) => (
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'10px 20px 10px 0px'}}>
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            return(
+                <div style={{overflow: 'auto', maxHeight: middle}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {items.map((item, index) => (
+                            <div style={{'margin':'3px 0px 3px 0px'}}>
+                                {this.render_notification_item(item, index)}
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    render_notification_item(item, index){
+        if(item['type'] == 'token_event_notification'){
+            var sender = item['event'].returnValues.p2
+            var amount = item['event'].returnValues.p4
+            var depth = item['event'].returnValues.p7
+            var exchange = item['event'].returnValues.p1
+            var timestamp = item['event'].returnValues.p5
+            return(
+                <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})} /* onClick={() => this.open_object(exchange, item['e5'], 'token')} */>
+                    {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+' sent you '+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'my_job_application_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var job_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(job_id, item['e5'], 'job')}>
+                    {this.render_detail_item('3', {'title':'💼 '+this.get_senders_name_or_you(sender, item['e5'])+' selected your application for the job '+job_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'job_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var job_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(job_id, item['e5'], 'job')}>
+                    {this.render_detail_item('3', {'title':'💼 '+this.get_senders_name_or_you(sender, item['e5'])+' applied for your job '+job_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'bag_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var bag_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(bag_id, item['e5'], 'bag')}>
+                    {this.render_detail_item('3', {'title':'🛍 '+this.get_senders_name_or_you(sender, item['e5'])+' requested to fulfil your bag '+bag_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'my_bag_application_response_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var bag_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(bag_id, item['e5'], 'bag')}>
+                    {this.render_detail_item('3', {'title':'🛍 '+this.get_senders_name_or_you(sender, item['e5'])+' selected you to fulfil their bag '+bag_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'contractor_request_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var contractor_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(contractor_id, item['e5'], 'contractor')}>
+                    {this.render_detail_item('3', {'title':'👷🏻‍♀️ '+this.get_senders_name_or_you(sender, item['e5'])+' sent a job request to your contractor post '+contractor_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'contract_entry_notification'){
+            var timestamp = item['event'].returnValues.p7
+            var sender = item['event'].returnValues.p2
+            var contract_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(contract_id, item['e5'], 'contract')}>
+                    {this.render_detail_item('3', {'title':'📑 '+this.get_senders_name_or_you(sender, item['e5'])+' entered your contract '+contract_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'contract_exit_notification'){
+            var timestamp = item['event'].returnValues.p7
+            var sender = item['event'].returnValues.p2
+            var contract_id = item['event'].returnValues.p1
+            return(
+                <div onClick={() => this.open_object(contract_id, item['e5'], 'contract')}>
+                    {this.render_detail_item('3', {'title':'📜 '+this.get_senders_name_or_you(sender, item['e5'])+' exited your contract '+contract_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'direct_purchase_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p1
+            var storefront_id = item['event'].returnValues.p3
+            return(
+                <div onClick={() => this.open_object(storefront_id, item['e5'], 'storefront')}>
+                    {this.render_detail_item('3', {'title':'🏪 '+this.get_senders_name_or_you(sender, item['e5'])+' purchased your storefront item '+storefront_id, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+        else if(item['type'] == 'mail_message_notification'){
+            var timestamp = item['timestamp']
+            var sender = item['event'].returnValues.p2
+            var message = this.truncate(item['ipfs']['message'], 53)
+            var id = item['convo_id']
+            return(
+                <div onClick={() => this.open_object(id, item['e5'], 'mail')}>
+                    {this.render_detail_item('3', {'title':'📩 '+this.get_senders_name_or_you(sender, item['e5'])+': '+message, 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    get_actual_number(number, depth){
+        var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth_vaule = bigInt(('1e'+p))
+        return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
+    }
+
+    truncate(source, size) {
+        return source.length > size ? source.slice(0, size - 1) + "…" : source;
+    }
+
+    get_senders_name_or_you(sender, e5){
+        if(sender == this.props.app_state.user_account_id[e5]){
+            return 'You'
+        }
+         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+    }
+
+    open_object(target, e5, type){
+        this.props.open_object_in_homepage(target, e5, type)
+    }
+
+
+
+
+
 
 
     handleScroll = (event, id) => {

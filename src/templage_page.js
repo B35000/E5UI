@@ -21,7 +21,17 @@ class template extends Component {
 
     render(){
         return(
-            <div>e</div>
+            <div>
+                e
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        
+                    </div>
+                </div>
+            </div>
         )
     }
 

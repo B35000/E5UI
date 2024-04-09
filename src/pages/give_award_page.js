@@ -117,8 +117,69 @@ class GiveAwardPage extends Component {
         return picked_item
     }
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
 
     render_post_part(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_post_part_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_post_part_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_post_part_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_post_part_data(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1158']/* 'Message' */, 'details':this.props.app_state.loc['1161']/* 'Add a award message for your new award. Mind the character limit.' */, 'size':'l'})}
@@ -175,7 +236,48 @@ class GiveAwardPage extends Component {
 
 
 
+
+
+
     render_amounts(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_amounts_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_amounts_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_amounts_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_amounts_data(){
         var award_amount = this.state.award_amount
         var spend_token_balance = this.props.app_state.created_token_object_mapping[this.state.e5][5]['balance']
         return(
@@ -183,6 +285,7 @@ class GiveAwardPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1164']/* 'Award Tiers' */, 'details':this.props.app_state.loc['1165']/* 'Pick an award tier you wish to send to the post author' */, 'size':'l'})}
                 {this.load_award_tiers()}
 
+                <div style={{height:20}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1166']/* 'Total Amount' */, 'details':this.props.app_state.loc['1167']/* 'The total amount of SPEND youll be including in the award' */, 'size':'l'})}
                 <div style={{height:10}}/>
 
@@ -294,9 +397,46 @@ class GiveAwardPage extends Component {
 
 
 
-
-
     render_custom_amounts(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_custom_amounts_data()}
+                    {this.render_set_prices_list_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_custom_amounts_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_custom_amounts_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_custom_amounts_data(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1180']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1181']/* 'Select an exchange by its id, then the desired amount and click add.' */, 'size':'l'})}
@@ -317,7 +457,7 @@ class GiveAwardPage extends Component {
                 </div>
 
                 <div style={{height: 10}}/>
-                {this.render_set_prices_list_part()}
+                
             </div>
         )
     }
@@ -398,10 +538,10 @@ class GiveAwardPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
@@ -414,7 +554,7 @@ class GiveAwardPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem

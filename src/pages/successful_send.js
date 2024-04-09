@@ -31,13 +31,89 @@ class SuccessfulSend extends Component {
         this.setState({data: data})
     }
 
+
     render(){
+        return(
+            <div style={{'padding':'10px 15px 0px 15px'}}>
+                <img style={{width:'140px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'20px'}} src={this.props.app_state.static_assets['done_icon']} alt="E5"/>
+                <div style={{height: 25}}/>
+
+                {this.render_everything()}
+            </div>
+        )
+    }
+
+    render_everything(){
         if(this.state.data == null) return;
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_content()}
+                    {this.render_transaction_hash_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_transaction_hash_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_content(){
         var data = this.state.data
         return(
-            <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
-                <img style={{width:'30%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'4%'}} src={this.props.app_state.static_assets['done_icon']} alt="E5"/>
-                <div style={{height: 25}}/>
+            <div style={{'overflow-x':'hidden'}}>
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2786']/* Transaction Broadcasted.*/,'details':this.props.app_state.loc['2787']/* Your transaction was successfuly broadcasted to the rest of the network. */, 'size':'l'})}
 
@@ -62,19 +138,25 @@ class SuccessfulSend extends Component {
                 <div style={{height: 10}}/>
 
                 {this.render_gas_or_priority_figure()}
-                
+
+            </div>
+        )
+    }
+
+    render_transaction_hash_part(){
+        var data = this.state.data
+        return(
+            <div>
                 {this.render_detail_item('3',{'details':start_and_end(data['hash']), 'title':this.props.app_state.loc['2799']/* 'Transaction Hash.' */,'size':'l'})}
                 
-
                 <div style={{height: 10}}/>
                 <div style={{'padding': '5px'}} onClick={()=> this.copy_to_clipboard()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2801']/* 'Copy Transaction Hash.' */, 'action':''})}
                 </div>
 
-                {this.render_blockexplorer_link()}
+                {this.render_detail_item('0')}
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+                {this.render_blockexplorer_link()}
             </div>
         )
     }

@@ -70,6 +70,7 @@ class ExtendContractPage extends Component {
                     </div>
                 </div>
 
+                <div style={{height:10}}/>
                 {this.render_everything()}
 
             </div>
@@ -83,15 +84,55 @@ class ExtendContractPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_date_picker_part()}
+                    {this.render_contract_config_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_date_picker_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_config_parts()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_date_picker_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_config_parts()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_date_picker_part(){
         var contract_config = this.state.contract_item['data'][1]
         var expiry_time_in_seconds = this.state.contract_item['entry_expiry']
         var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
         return(
             <div>
-                <div style={{height:10}}/>
-
                 {this.show_entered_contract_data()}
-
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['38'], 'details':this.props.app_state.loc['39'], 'size':'l'})}
@@ -104,13 +145,21 @@ class ExtendContractPage extends Component {
                     </LocalizationProvider>
                 </ThemeProvider>
                 <div style={{height:10}}/>
+            </div>
+        )
+    }
 
+    render_contract_config_parts(){
+        var contract_config = this.state.contract_item['data'][1]
+        var expiry_time_in_seconds = this.state.contract_item['entry_expiry']
+        var time_to_expiry =  expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':this.props.app_state.loc['40'], 'size':'l'})}
                 <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[2]), 'details':this.props.app_state.loc['41'], 'size':'l'})}
                 <div style={{height:10}}/>
-
             </div>
         )
     }
@@ -160,6 +209,29 @@ class ExtendContractPage extends Component {
             </div>
         )
 
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
 

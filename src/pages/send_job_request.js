@@ -132,9 +132,68 @@ class SendJobRequestPage extends Component {
         }
     }
 
-
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     render_title_details_part(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_title_details_part_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_details_part_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_details_part_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_title_details_part_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1345']/* 'Set some details for your new job request. It should be task specific.' */})}
@@ -202,7 +261,7 @@ class SendJobRequestPage extends Component {
 
 
     render_image_part(){
-        var col = Math.round(this.props.app_state.width / 100)
+        var col = Math.round(400 / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
@@ -255,10 +314,46 @@ class SendJobRequestPage extends Component {
 
 
 
-
-
-
     render_select_contract_parts(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_contract_parts_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_contract_parts_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_contract_parts_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_select_contract_parts_data(){
         var items = this.get_contract_items()
 
         return(
@@ -439,9 +534,45 @@ class SendJobRequestPage extends Component {
 
 
 
-
-
     render_application_expiry_time(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_application_expiry_time_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_expiry_time_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_expiry_time_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_application_expiry_time_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1349']/* 'Select an expiry time for your job request.' */})}
@@ -471,10 +602,47 @@ class SendJobRequestPage extends Component {
 
 
 
-
-
-
     render_application_prices(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_application_prices_data()}
+                    {this.render_set_prices_list_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_prices_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_prices_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_application_prices_data(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1350']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1351']/* 'Set the payment option you prefer for the job request.' */, 'size':'l'})}
@@ -501,7 +669,6 @@ class SendJobRequestPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1357']/* 'Add Pay' */, 'action':''})}
                 </div>
 
-                {this.render_set_prices_list_part()}
             </div>
         )
     }
@@ -583,10 +750,10 @@ class SendJobRequestPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -599,7 +766,7 @@ class SendJobRequestPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem

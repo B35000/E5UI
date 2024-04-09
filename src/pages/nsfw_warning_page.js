@@ -28,9 +28,57 @@ class NsfwPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
-                <img style={{width:'30%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'10%'}} src={this.props.app_state.static_assets['letter']} alt="E5"/>
+                {this.render_content()}
+            </div>
+        )
+    }
 
-                <div style={{height: 40}}/>
+
+    render_everything(){
+       var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_content()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_content(){
+        return(
+            <div>
+                <img style={{width:'90px', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-top':'30px'}} src={this.props.app_state.static_assets['letter']} alt="E5"/>
+
+                <div style={{height: 20}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2742']/* Not Safe For Work Warning. */,'details':this.props.app_state.loc['2743']/*  */, 'size':'l', 'text_align':'center'})}
                 
                 <div style={{height: 20}}/>
@@ -49,7 +97,28 @@ class NsfwPage extends Component {
 
 
 
-
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
 
 

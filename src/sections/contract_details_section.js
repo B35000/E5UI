@@ -442,16 +442,27 @@ class ContractDetailsSection extends Component {
         return (
             <div>
                 {this.show_entered_contract_data(object)}
-                <div style={{ height: 10 }} />
-
-                {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2142']/* 'Enter a contract to participate in its consensus' */, 'title': this.props.app_state.loc['2143']/* 'Enter Contract' */ })}
-                <div style={{ height: 10 }} />
-
-                <div onClick={() => this.open_enter_contract_ui(object)}>
-                    {this.render_detail_item('5', { 'text': this.props.app_state.loc['2144']/* 'Enter' */, 'action': '' },)}
-                </div>
+                {this.show_enter_contract_button_if_possible(object)}   
             </div>
         )
+    }
+
+    show_enter_contract_button_if_possible(object){
+        var expiry_time_in_seconds = object['entry_expiry']
+        var time_to_expiry = expiry_time_in_seconds - Math.floor(new Date() / 1000);
+        if(time_to_expiry <= 0){
+            return(
+                <div>
+                    <div style={{ height: 10 }} />
+                    {this.render_detail_item('3', { 'size': 'l', 'details': this.props.app_state.loc['2142']/* 'Enter a contract to participate in its consensus' */, 'title': this.props.app_state.loc['2143']/* 'Enter Contract' */ })}
+                    <div style={{ height: 10 }} />
+
+                    <div onClick={() => this.open_enter_contract_ui(object)}>
+                        {this.render_detail_item('5', { 'text': this.props.app_state.loc['2144']/* 'Enter' */, 'action': '' },)}
+                    </div>
+                </div>
+            )
+        }
     }
 
     show_extend_stay_in_contract_button(object) {

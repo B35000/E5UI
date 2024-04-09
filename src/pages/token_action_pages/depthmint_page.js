@@ -66,8 +66,7 @@ class DepthMintPage extends Component {
                     </div>
                 </div>
 
-                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['900']/* 'Depth-Mint your token ' */+this.state.token_item['id']+this.props.app_state.loc['901']/* ' for a specified target' */})}
-                <div style={{height:10}}/>
+                
                 {this.render_everything()}
 
             </div>
@@ -78,9 +77,52 @@ class DepthMintPage extends Component {
         this.setState({new_authmint_action_page_tags_object: tag_obj})
     }
 
+
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_depthmint_data_picker()}
+                    {this.render_authmint_transactions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_depthmint_data_picker()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_authmint_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_depthmint_data_picker()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_authmint_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_depthmint_data_picker(){
         return(
             <div>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['900']/* 'Depth-Mint your token ' */+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]+this.props.app_state.loc['901']/* ' for a specified target' */})}
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['902']/* 'Set the recipient of the depth-mint action' */, 'title':this.props.app_state.loc['903']/* 'Recipient' */})}
 
                 <div style={{height:10}}/>
@@ -105,7 +147,7 @@ class DepthMintPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['892']/* 'Add Action' */, 'action':''})}
                 </div>
 
-                {this.render_authmint_transactions()}
+                
             </div>
         )
     }
@@ -150,21 +192,16 @@ class DepthMintPage extends Component {
 
 
     render_authmint_transactions(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.authmint_actions)
 
         if(items.length == 0){
             items = [0, 1]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -177,7 +214,7 @@ class DepthMintPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -187,7 +224,7 @@ class DepthMintPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '5px'}}>
-                                            {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount']), 'details':this.props.app_state.loc['895']/* 'Target Recipient ID: ' */+item['recipient'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':this.props.app_state.loc['895']/* 'Target Recipient ID: ' */+item['recipient'], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>

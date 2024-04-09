@@ -22,7 +22,7 @@ class synchronizing_page extends Component {
 
 
     render_sync_page(){
-        var h = this.props.app_state.height-200
+        var h = this.props.app_state.height-100
         return(
             <div style={{width:'100%', height:h,'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                 <div>

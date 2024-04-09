@@ -73,6 +73,46 @@ class CollectSubscriptionPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_total_collectible_data()}
+                    {this.render_detail_item('0')}
+                    {this.render_paid_subscriptions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_total_collectible_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_paid_subscriptions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_total_collectible_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_paid_subscriptions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_total_collectible_data(){
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['833']/* 'Collect token payments for the subscription ID: ' */+this.state.subscription_item['id']})}
@@ -85,10 +125,6 @@ class CollectSubscriptionPage extends Component {
                 <div style={{height: 10}}/>
 
                 {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
-
-                {this.render_detail_item('0')}
-
-                {this.render_paid_subscriptions()}
             </div>
         )
     }
@@ -160,11 +196,6 @@ class CollectSubscriptionPage extends Component {
     }
 
     render_paid_subscriptions(){
-        var middle = this.props.height-100;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.subscription_item['paid_accounts'])
         var paid_amount_items = this.state.subscription_item['paid_amounts']
 
@@ -172,23 +203,13 @@ class CollectSubscriptionPage extends Component {
             items = [0,3]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '3px'}} onClick={()=>console.log()}>
-                                <div style={{height:50, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'0px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'0px 20px 0px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <li style={{'padding': '5px'}}>
                                 {this.render_detail_item('3', {'title':this.props.app_state.loc['837']/* 'Account ID: ' */+item, 'details':this.props.app_state.loc['838']/* 'Collectible time: ' */+this.get_time_diff(paid_amount_items[index]), 'size':'s'})}
@@ -224,6 +245,29 @@ class CollectSubscriptionPage extends Component {
             </div>
         )
 
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
     format_power_figure(amount){

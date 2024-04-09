@@ -70,20 +70,6 @@ class template extends Component {
                 </div>
                 
                 <div style={{'margin':'0px 0px 0px 0px'}}>
-                    {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1020']/* 'Transfer the specified token' */})}
-
-                    <div style={{height:10}}/> 
-
-                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'number':this.state.token_item['balance'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
-                        </div>
-
-                        <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'number':this.calculate_balance_after_set_transfers(), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
-                            {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'subtitle':this.format_power_figure(this.calculate_balance_after_set_transfers()), 'barwidth':this.calculate_bar_width(this.calculate_balance_after_set_transfers()), 'number':this.format_account_balance_figure(this.calculate_balance_after_set_transfers()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
-                        </div>
-                    </div>
-
                     {this.render_everything()}
                 </div>
                 
@@ -101,8 +87,61 @@ class template extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_data_picker_ui()}
+                    {this.render_stack_transactions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_data_picker_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_stack_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_data_picker_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_stack_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_data_picker_ui(){
         return(
             <div> 
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1020']/* 'Transfer the specified token' */})}
+
+                <div style={{height:10}}/> 
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'number':this.state.token_item['balance'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1021']/* 'Your Balance' */, 'subtitle':this.format_power_figure(this.state.token_item['balance']), 'barwidth':this.calculate_bar_width(this.state.token_item['balance']), 'number':this.format_account_balance_figure(this.state.token_item['balance']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    </div>
+
+                    <div onClick={() => this.props.view_number({'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'number':this.calculate_balance_after_set_transfers(), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1022']/* 'Your Balance after Set Transfers' */, 'subtitle':this.format_power_figure(this.calculate_balance_after_set_transfers()), 'barwidth':this.calculate_bar_width(this.calculate_balance_after_set_transfers()), 'number':this.format_account_balance_figure(this.calculate_balance_after_set_transfers()), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                    </div>
+                </div>
+
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1023']/* 'Set the recipient of the transfer action' */, 'title':this.props.app_state.loc['1024']/* 'Recipient of action' */})}
 
@@ -129,8 +168,6 @@ class template extends Component {
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1029']/* 'Add Transaction' */, 'action':''})}
                 </div>
-
-                {this.render_stack_transactions()}
 
             </div>
         )
@@ -271,21 +308,16 @@ class template extends Component {
     }
 
     render_stack_transactions(){
-        var middle = this.props.height-100;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.stack_items)
 
         if(items.length == 0){
-            items = [0]
+            items = [0, 1, 2]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -299,7 +331,7 @@ class template extends Component {
             var items = [].concat(this.state.stack_items)
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem

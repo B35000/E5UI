@@ -65,7 +65,6 @@ class ModifySubscriptionPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.modify_subscription_title_tags_object} tag_size={'l'} when_tags_updated={this.when_modify_subscription_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -87,9 +86,69 @@ class ModifySubscriptionPage extends Component {
         this.setState({modify_subscription_title_tags_object: tag_obj})
     }
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     render_everything(){
-        
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.load_selector_parts()}
+                    {this.load_reconfig_items()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_selector_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_reconfig_items()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_selector_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_reconfig_items()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    load_selector_parts(){
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['844']/* 'Make changes to the configuration of the subscription ID: ' */+this.state.subscription_item['id']})}
@@ -101,8 +160,6 @@ class ModifySubscriptionPage extends Component {
 
                 {this.load_reconfig_item_selectors()}
                 <div style={{height:10}}/>
-
-                {this.load_reconfig_items()}
             </div>
         )
     }
@@ -138,7 +195,12 @@ class ModifySubscriptionPage extends Component {
         var selected_item = this.get_selected_item(this.state.reconfig_items_tags_object, this.state.reconfig_items_tags_object['i'].active)
 
         if(selected_item == 'e'){
-            return(<div></div>)
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(4)}
+                </div>
+            )
         }
 
         if(selected_item == this.props.app_state.loc['861a']/* 'prices' */){
@@ -308,10 +370,10 @@ class ModifySubscriptionPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>

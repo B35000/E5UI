@@ -37,7 +37,7 @@ class ArchiveProposalPage extends Component {
         selected: 0, id:makeid(8), type:this.props.app_state.loc['768']/* 'archive' */, object_item:{'id':'', 'end_balance':0, 'spend_balance':0, 'archive_accounts':0, 'data':[[],[0,0,0,0,0,0,0,0,0,0,0,]]}, entered_indexing_tags:[this.props.app_state.loc['768']/* 'archive' */, this.props.app_state.loc['769']/* 'object' */],
 
         archive_proposal_title_tags_object: this.get_archive_proposal_title_tags_object(),
-        bounty_target:'', bounty_exchanges:[]
+        bounty_exchange_target:'', bounty_exchanges:[]
     };
 
     get_archive_proposal_title_tags_object(){
@@ -65,10 +65,9 @@ class ArchiveProposalPage extends Component {
                             </div>
                         </div>
                     </div>
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':this.props.app_state.loc['771']/* 'Archive your specified contract or proposal ID: ' */+this.state.object_item['id'], 'textsize':'14px', 'font':this.props.app_state.font})} 
-                    <div style={{height:10}}/>
-                    {this.render_everything()}
+                    <div style={{'margin':'10px 0px 0px 0px'}}>
+                        {this.render_everything()}   
+                    </div>
                 </div>
 
                 
@@ -81,10 +80,52 @@ class ArchiveProposalPage extends Component {
     }
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_input_bounty_exchange_part()}
+                    {this.render_bounty_exchanges()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_input_bounty_exchange_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_exchanges()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_input_bounty_exchange_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_exchanges()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_input_bounty_exchange_part(){
         var object = this.state.object_item
         return(
             <div>
-                {this.render_detail_item('3', {'title':this.state.object_item['archive_accounts'].length+' accounts', 'details':this.props.app_state.loc['772']/* 'The number of participants in the proposal /contract.' */, 'size':'l'})}
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['771']/* 'Archive your specified contract or proposal ID: ' */+this.state.object_item['id'], 'textsize':'14px', 'font':this.props.app_state.font})} 
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.state.object_item['archive_accounts'].length+' accounts', 'details':this.props.app_state.loc['772']/* 'The number of participants in the proposal/contract.' */, 'size':'l'})}
                 
                 <div style={{height:10}}/>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['773']/* 'End Bounty Balance' */, 'number':object['end_balance'], 'relativepower':'END'})}>
@@ -111,13 +152,12 @@ class ArchiveProposalPage extends Component {
                 </div>
 
                 {this.render_detail_item('0')}
-                {this.render_bounty_exchanges()}
             </div>
         )
     }
 
     when_bounty_target_text_input_field_changed(text){
-        this.setState({bounty_target: text})
+        this.setState({bounty_exchange_target: text})
     }
 
     add_bounty_exchange_item(){
@@ -167,21 +207,16 @@ class ArchiveProposalPage extends Component {
 
 
     render_bounty_exchanges(){
-        var middle = this.props.height-100;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.bounty_exchanges)
 
         if(items.length == 0){
             items = [0, 1]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -193,8 +228,8 @@ class ArchiveProposalPage extends Component {
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -204,7 +239,7 @@ class ArchiveProposalPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '5px'}}>
-                                            {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'details':this.props.app_state.loc['782']/* 'Default depth 0' */, 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>

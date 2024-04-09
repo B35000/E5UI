@@ -116,6 +116,67 @@ class SearchedAccountPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_content()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_content(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
 
         if(this.state.searched_account == null) return;
@@ -127,13 +188,13 @@ class SearchedAccountPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
-            return(
-                <div>
-                    {this.render_creations_item_logs()}
-                </div>
-            )
-        }
+        // else if(selected_item == this.props.app_state.loc['1703']/* 'creations' */){
+        //     return(
+        //         <div>
+        //             {this.render_creations_item_logs()}
+        //         </div>
+        //     )
+        // }
         else if(selected_item == this.props.app_state.loc['1704']/* 'withdraws' */){
             return(
                 <div>
@@ -1658,7 +1719,7 @@ class SearchedAccountPage extends Component {
     }
 
     render_transfers_event_item(item, index){
-        var item = this.state.searched_account
+        var searched_account = this.state.searched_account
         var e5 = item['e5']
 
         var exchange_id = item['event'].returnValues.p1;

@@ -46,11 +46,7 @@ class ViewJobRequestContractPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div className="row">
-                    <div className="col-12" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.view_application_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_view_application_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                </div>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.view_application_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_view_application_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.render_everything()}
 
@@ -63,15 +59,91 @@ class ViewJobRequestContractPage extends Component {
     }
 
 
+
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_contract_part()}
+                    {this.render_entered_contracts_data_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_entered_contracts_data_part()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_entered_contracts_data_part()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_contract_part(){
         if(this.state.contract_data['data'] != null){
             var item = this.state.contract_data
             return(
                 <div>
-                    <div style={{height:10}}/>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1651']/* 'The contractors contract is shown below.' */})}
                     {this.render_contracts_data()}
-                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+        
+    }
+
+    render_entered_contracts_data_part(){
+        if(this.state.contract_data['data'] != null){
+            var item = this.state.contract_data
+            return(
+                <div>
                     {this.show_entered_contract_data()}
                     <div style={{height:10}}/>
                     {this.render_enter_contract_button()}
@@ -79,7 +151,6 @@ class ViewJobRequestContractPage extends Component {
                 </div>
             )
         }
-        
     }
 
     show_entered_contract_data(){
@@ -135,16 +206,11 @@ class ViewJobRequestContractPage extends Component {
 
     render_contracts_data(){
         var background_color = this.props.theme['card_background_color']
-        var he = this.props.height-150
-        var size = this.props.screensize
-        if(size == 'm'){
-            he = this.props.height-190;
-        }
         var item = this.get_contract_details_data()
         var object = this.state.contract_data
 
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{ width:'100%', padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -201,7 +267,11 @@ class ViewJobRequestContractPage extends Component {
                     <div style={{height: 10}}/>
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
 
+
                     {this.render_detail_item('0')}
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['1646c']/* 'Below is the End and Spend balance of the contract.' */, 'title':this.props.app_state.loc['1646b']/* 'Contracts Balance.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['end_balance']['title'], 'number':item['end_balance']['n'], 'relativepower':item['end_balance']['relativepower']})}>
                         {this.render_detail_item('2', item['end_balance'])}
                     </div>

@@ -612,6 +612,7 @@ class BagDetailsSection extends Component {
     }
 
     render_bag_response_item(item, object){
+        if(item == null) return;
         var is_application_accepted = item['is_response_accepted'];
 
         if(this.is_applicant_in_blocked_accounts(item)){
@@ -629,7 +630,7 @@ class BagDetailsSection extends Component {
         if(is_application_accepted){
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2054']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2055']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2056']/* 'Sender ID: ' */+item['applicant_id']+', '+this.get_senders_name2(item['applicant_id'], object), 'size':'s'})}
@@ -643,7 +644,7 @@ class BagDetailsSection extends Component {
         }else{
             return(
                 <div onClick={() => this.view_contract(item, object)}>
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2059']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2059']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'s'})}
                     <div style={{height:3}}/>
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2060']/* 'Contract ID: ' */+item['picked_contract_id'], 'details':this.props.app_state.loc['2061']/* 'Sender ID: ' */+item['applicant_id']+', '+ this.get_senders_name2(item['applicant_id'], object), 'size':'s'})}
@@ -652,6 +653,18 @@ class BagDetailsSection extends Component {
             )
         }
         
+    }
+
+    get_expiry_time(item){
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
+        var t = ''
+        if(time_diff < 0){
+            t = this.get_time_diff(time_diff*-1) +this.props.app_state.loc['1698a']/* ' ago.' */
+        }else{
+            t = this.props.app_state.loc['1698b']/* 'In ' */+this.get_time_diff(time_diff)
+        }
+
+        return t
     }
 
     get_senders_name2(sender, object){

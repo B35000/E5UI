@@ -41,7 +41,7 @@ class FilterSection extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div className="row" style={{width:'103%'}}>
+                <div className="row" style={{width:'102%'}}>
                     <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -52,7 +52,6 @@ class FilterSection extends Component {
                     </div>
                 </div>
                 
-                <div style={{height:10}}/>
                 {this.render_everything()}
             </div>
         )
@@ -70,18 +69,65 @@ class FilterSection extends Component {
 
 
 
-
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
 
     render_everything(){
-        var selected_item = this.get_selected_item(this.state.filter_section_title_tags_obj, this.state.filter_section_title_tags_obj['i'].active)
+        var size = this.props.app_state.size
 
-        if(selected_item == this.props.app_state.loc['1115']/* 'search-filter' */){
+        if(size == 's'){
             return(
                 <div>
                     {this.render_search_part()}
                 </div>
-            )    
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_search_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_search_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
         }
     }
 

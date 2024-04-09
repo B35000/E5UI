@@ -52,7 +52,7 @@ class FreezeUnfreezePage extends Component {
 
     render(){
         return(
-            <div style={{'padding':'10px 20px 0px 10px'}}>
+            <div style={{'padding':'10px 10px 0px 10px'}}>
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.freeze_unfreeze_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_freeze_unfreeze_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -63,9 +63,7 @@ class FreezeUnfreezePage extends Component {
                         </div>
                     </div>
                 </div>
-
-                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['934']/* 'Freeze or Unfreeze the token ' */+this.state.token_item['id']+this.props.app_state.loc['935']/* ' for a specified set of accounts' */})}
-                <div style={{height:10}}/>
+                
                 {this.render_everything()}
             </div>
         )
@@ -77,20 +75,80 @@ class FreezeUnfreezePage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_freeze_unfreeze_number_picker()}
+                    {this.render_freeze_unfreeze_transactions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_freeze_unfreeze_number_picker()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_freeze_unfreeze_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_freeze_unfreeze_number_picker()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_freeze_unfreeze_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_freeze_unfreeze_number_picker(){
+        var balance = this.get_typed_accounts_balance()
+        var frozen_balance = this.get_typed_accounts_frozen_balance()
         return(
             <div>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['934']/* 'Freeze or Unfreeze the token ' */+this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+this.state.token_item['id']]+this.props.app_state.loc['935']/* ' for a specified set of accounts' */})}
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['936']/* 'Set the account to be frozen or unfrozen' */, 'title':this.props.app_state.loc['937']/* 'Account ID' */})}
 
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['937']/* 'Account ID' */} when_text_input_field_changed={this.when_recipient_input_field_changed.bind(this)} text={this.state.recipient_id} theme={this.props.theme}/>
+
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['945a']/* 'Accounts balance.' */, 'number':balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['945a']/* 'Accounts balance.' */, 'subtitle':this.format_power_figure(balance), 'barwidth':this.calculate_bar_width(balance), 'number':this.format_account_balance_figure(balance), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                </div>
+
+                <div style={{height:10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['945b']/* 'Accounts frozen balance.' */, 'number':frozen_balance, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['945b']/* 'Accounts frozen balance.' */, 'subtitle':this.format_power_figure(frozen_balance), 'barwidth':this.calculate_bar_width(frozen_balance), 'number':this.format_account_balance_figure(frozen_balance), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                </div>
 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['938']/* 'Set the amount to freeze or unfreeze.' */, 'title':this.props.app_state.loc['939']/* 'Action Amount.' */})}
 
                 <div style={{height:10}}/>
 
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['940']/* 'Transfer Amount' */, 'number':this.state.freeze_unfreeze_amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['940']/* 'Transfer Amount' */, 'subtitle':this.format_power_figure(this.state.freeze_unfreeze_amount), 'barwidth':this.calculate_bar_width(this.state.freeze_unfreeze_amount), 'number':this.format_account_balance_figure(this.state.freeze_unfreeze_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['940']/* 'Freeze/Unfreeze Amount' */, 'number':this.state.freeze_unfreeze_amount, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['940']/* 'Freeze/Unfreeze Amount' */, 'subtitle':this.format_power_figure(this.state.freeze_unfreeze_amount), 'barwidth':this.calculate_bar_width(this.state.freeze_unfreeze_amount), 'number':this.format_account_balance_figure(this.state.freeze_unfreeze_amount), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
+                </div>
+                <div style={{height:10}}/>
+
+                <div style={{'padding': '5px'}} onClick={()=>this.set_max()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['945e']/* 'Set Maximum Amount.' */, 'action':''})}
                 </div>
 
                 <div style={{height:10}}/>
@@ -101,13 +159,67 @@ class FreezeUnfreezePage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['941']/* 'Add Action' */, 'action':''})}
                 </div>
 
-                {this.render_freeze_unfreeze_transactions()}
             </div>
         )
     }
 
+    set_max(){
+        var balance = this.get_typed_accounts_balance()
+        var frozen_balance = this.get_typed_accounts_frozen_balance()
+        var action = this.get_selected_item(this.state.freeze_unfreeze_action_page_tags_object, 'e')
+        if(action == this.props.app_state.loc['932']/* 'unfreeze' */){
+            this.when_amount_set(frozen_balance)
+        }else{
+            //action freeze
+            this.when_amount_set(balance)
+        }
+    }
+
+    get_typed_accounts_balance(){
+        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
+        if(!isNaN(recipient) && parseInt(recipient) > 1000 && recipient != ''){
+            var exchange_id = this.state.token_item['id']
+            var e5 = this.state.token_item['e5']
+            var pointer = e5+exchange_id+recipient
+            var data = this.props.app_state.frozen_unfrozen_account_balance_data[pointer]
+            if(data != null){
+                var balance = data['balance']
+                return balance
+            }else{
+                return 0
+            }
+            
+        }else{
+            return 0
+        }
+    }
+
+     get_typed_accounts_frozen_balance(){
+        var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
+        if(!isNaN(recipient) && parseInt(recipient) > 1000 && recipient != ''){
+            var exchange_id = this.state.token_item['id']
+            var e5 = this.state.token_item['e5']
+            var pointer = e5+exchange_id+recipient
+            var data = this.props.app_state.frozen_unfrozen_account_balance_data[pointer]
+            if(data != null){
+                var frozen_balance = data['frozen_balance']
+                return frozen_balance
+            }else{
+                return 0
+            }
+            
+        }else{
+            return 0
+        }
+    }
+
     when_recipient_input_field_changed(text){
         this.setState({recipient_id: text})
+
+        var recipient = this.get_typed_alias_id(text.trim())
+        if(!isNaN(recipient) && parseInt(recipient) > 1000 && recipient != ''){
+            this.props.get_account_frozen_unfroozen_balance(this.state.token_item['id'], recipient, this.state.token_item['e5'])
+        }
     }
 
     when_amount_set(amount){
@@ -126,15 +238,18 @@ class FreezeUnfreezePage extends Component {
         var recipient = this.get_typed_alias_id(this.state.recipient_id.trim())
 
         if(isNaN(recipient) || parseInt(recipient) < 0 || recipient == ''){
-            this.props.notify(this.props.app_state.loc['942']/* 'Please put a valid account ID' */, 2600)
+            this.props.notify(this.props.app_state.loc['942']/* 'Please put a valid account ID' */, 3600)
         }
         else if(amount == 0){
-            this.props.notify(this.props.app_state.loc['943']/* 'Please put a valid amount.' */, 2600)
+            this.props.notify(this.props.app_state.loc['943']/* 'Please put a valid amount.' */, 3600)
+        }
+        else if(this.check_if_amount_exceeds_balance(amount, recipient)){
+            this.props.notify(this.props.app_state.loc['945c']/* 'The amount youve set exceeds the specified accounts frozen balance.' */, 6600)
         }
         else{
             var action = this.get_selected_item(this.state.freeze_unfreeze_action_page_tags_object, 'e')
             var stack_action = 1
-            if(action == 'unfreeze') stack_action = 0
+            if(action == this.props.app_state.loc['932']/* 'unfreeze' */) stack_action = 0
 
             var tx = {'amount':amount, 'recipient':recipient, 'action':stack_action, 'action-name':action}
             clone.push(tx)
@@ -142,6 +257,56 @@ class FreezeUnfreezePage extends Component {
             this.props.notify(this.props.app_state.loc['944']/* 'action added!' */, 1600)
         }
     }
+
+
+    check_if_amount_exceeds_balance(amount, recipient){
+        var action = this.get_selected_item(this.state.freeze_unfreeze_action_page_tags_object, 'e')
+        var frozen_balance = this.get_typed_account_updated_balance(recipient)
+        if(action == this.props.app_state.loc['932']/* 'unfreeze' */){
+            if(bigInt(amount).greater(frozen_balance)){
+                return true
+            }
+            return false
+        }
+        return false
+    }
+
+    get_typed_account_updated_balance(recipient){
+        var frozen_balance = this.get_typed_accounts_frozen_balance()
+        var freeze_unfreeze_actions = this.state.freeze_unfreeze_actions
+        freeze_unfreeze_actions.forEach(action => {
+            if(action['recipient'] == recipient){
+                if(action['action'] == 1/* freeze */){
+                    frozen_balance = bigInt(frozen_balance).plus(bigInt(action['amount']))
+                }else{
+                    frozen_balance = bigInt(frozen_balance).minus(bigInt(action['amount']))
+                }
+            }
+        });
+
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(t.type == this.props.app_state.loc['930']/* 'freeze/unfreeze' */){
+                var exchange_id = t.token_item['id']
+                if(exchange_id == this.state.token_item['id']){
+                    var stack_freeze_unfreeze_actions = t.freeze_unfreeze_actions
+                    stack_freeze_unfreeze_actions.forEach(action => {
+                        if(action['recipient'] == recipient){
+                            if(action['action'] == 1/* freeze */){
+                                frozen_balance = bigInt(frozen_balance).plus(bigInt(action['amount']))
+                            }else{
+                                frozen_balance = bigInt(frozen_balance).minus(bigInt(action['amount']))
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        return frozen_balance
+    }
+
 
     get_typed_alias_id(alias){
         if(!isNaN(alias)){
@@ -155,21 +320,16 @@ class FreezeUnfreezePage extends Component {
 
 
     render_freeze_unfreeze_transactions(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.freeze_unfreeze_actions)
 
         if(items.length == 0){
-            items = [0, 1]
+            items = [0, 1, 2]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                            <li style={{'padding': '2px'}} onClick={()=>console.log()}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -182,7 +342,7 @@ class FreezeUnfreezePage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -192,7 +352,7 @@ class FreezeUnfreezePage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '5px'}}>
-                                            {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':'Target Account ID: '+item['recipient'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':''+item['action-name']+' '+this.format_account_balance_figure(item['amount'])+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], 'details':this.props.app_state.loc['945d']/* 'Target Account ID: ' */+item['recipient'], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>

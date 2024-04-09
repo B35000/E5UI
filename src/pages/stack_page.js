@@ -71,7 +71,9 @@ class StackPage extends Component {
         run_time_expiry:0, confirm_clear_stack_dialog:false,
 
         picked_max_priority_per_gas_amount:0,
-        picked_max_fee_per_gas_amount:0
+        picked_max_fee_per_gas_amount:0,
+
+        typed_watch_account_input:'',
     };
 
     get_stack_page_tags_object(){
@@ -80,7 +82,7 @@ class StackPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, this.props.app_state.loc['1593d']/* 'Notifications 🔔' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['1260']/* 'e.stack-data' */,'e.'+this.props.app_state.loc['1261']/* 'e.settings-data' */, 'e.'+this.props.app_state.loc['1262']/* 'e.account-data' */, this.props.app_state.loc['1593x']/* 'Watch 👁️' */], [0]
             ],
             'stack-data':[
               ['xor','e',1], [this.props.app_state.loc['1260']/* 'stack-data' */,this.props.app_state.loc['1408']/* 'stack 📥' */,this.props.app_state.loc['1409']/* 'history 📜' */], [1],[1]
@@ -737,10 +739,10 @@ class StackPage extends Component {
                 </div>
             )
         }
-        else if(selected_item == this.props.app_state.loc['1593d']/* 'Notifications 🔔' */){
+        else if(selected_item == this.props.app_state.loc['1593x']/* 'Watch 👁️' */){
             return(
                 <div>
-                    {this.render_notifications()}
+                    {this.render_watched_account_ui()}
                 </div>
             )
         }
@@ -858,6 +860,43 @@ class StackPage extends Component {
     }
 
     render_run_history_items(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_my_transaction_history()}
+                </div>
+            )
+        }else if(size == 'm'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_my_transaction_history()}
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_empty_views(3)}
+                        </div>
+                    </div>
+                </div>
+            )
+        }else if(size == 'l'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_my_transaction_history()}
+                        </div>
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_empty_views(3)}
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_my_transaction_history(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var middle = this.props.height-100;
@@ -889,7 +928,7 @@ class StackPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <div style={{'padding': '2px 0px 2px 0px'}} onClick={() => this.props.show_view_transaction_log_bottomsheet(item)}>
-                                {this.render_detail_item('3',{'title':this.props.app_state.loc['1593g']/* 'Run ID: ' */+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+this.props.app_state.loc['1698a']+' • '+this.format_account_balance_figure(item.returnValues.p5)+' gas.','size':'l'})}
+                                {this.render_detail_item('3',{'title':'🏃 '+item.returnValues.p3, 'details':this.get_time_difference(item.returnValues.p8)+this.props.app_state.loc['1698a']+' • '+this.format_account_balance_figure(item.returnValues.p5)+' gas.','size':'l'})}
                             </div>
                         ))}
                     </ul>
@@ -917,7 +956,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px', 'overflow-x':'hidden'}}>
+                <div style={{'padding': '0px 0px 0px 0px'}}>
                     {this.render_stack_gas_part()}
                     {this.render_simplified_stack_history()}
                     {this.render_detail_item('0')}
@@ -929,10 +968,84 @@ class StackPage extends Component {
                     {this.render_detail_item('0')}
                 </div>
             )
+        }else if(size == 'm'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_stack_gas_part()}
+                            {this.render_simplified_stack_history()}
+                            {this.render_gas_history_chart()}
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_stack_run_settings_part()}
+                            {/* {this.render_mempool_metrics()} */}
+                        </div>
+                    </div>
+                    {this.render_dialog_ui()}
+                </div>
+            )
+        }else if(size == 'l'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_stack_gas_part()}
+                            {this.render_simplified_stack_history()}
+                            {this.render_gas_history_chart()}
+                        </div>
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_stack_run_settings_part()}
+                            {/* {this.render_mempool_metrics()} */}
+                        </div>
+                        <div className="col-2" style={{'padding': '10px'}}>
+                            
+                        </div>
+                    </div>
+                    {this.render_dialog_ui()}
+                </div>
+            ) 
         }
     }
 
     render_stack_transactions_part(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_stack_transactions()}
+                </div>
+            )
+        }else if(size == 'm'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_stack_transactions()}
+                        </div>
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_empty_views(3)}
+                        </div>
+                    </div>
+                </div>
+            )
+        }else if(size == 'l'){
+            return(
+                <div>
+                    <div className="row">
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_stack_transactions()}
+                        </div>
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_empty_views(3)}
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_stack_transactions(){
         var background_color = this.props.theme['card_background_color']
         var middle = this.props.height-130;
         var size = this.props.size;
@@ -5615,12 +5728,25 @@ class StackPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_settings_details()}
                     </div>
-                    <div className="col-6">
-                        
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_settings_details2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_settings_details()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_settings_details2()}
                     </div>
                 </div>
                 
@@ -5633,114 +5759,7 @@ class StackPage extends Component {
     render_settings_details(){
         return(
             <div>
-                <div style={{height: 10}}/>
                 <div style={{'padding': '0px 0px 0px 0px'}}>
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
-
-
-                    {/* {this.render_detail_item('3',{'title':'Orientation (for larger screens)', 'details':'Set the orientation for viewing a posts details', 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
-
-                    {this.render_detail_item('0')} */}
-
-                    
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l'})}
-                    <div style={{height: 10}}/>
-                    {this.load_preferred_e5_ui()}
-                    {this.render_detail_item('0')}
-
-                    
-
-
-
-                    {/* {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
-
-                    {this.render_detail_item('0')} */}
-
-
-
-                    {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1532'], 'details':this.props.app_state.loc['1533'], 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1534'], 'action':''},)}
-                    </div>
-
-                    {this.render_detail_item('0')} */}
-
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
-
-
-
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
-
-
-
-
-
-
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
-
-
-
-
-
-
-                    {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
-
-                    {this.render_detail_item('0')} */}
-
-
-
-
-
-
-                    
-                    {this.render_detail_item('3',{'title':this.props.app_state.loc['1541']/* 'Content Filter' */, 'details':this.props.app_state.loc['1542']/* 'If set to filtered, the content including the tags you follow will be prioritized in your feed.' */, 'size':'l'})}
-                    <div style={{height: 10}}/>
-
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
-
-                    {this.render_detail_item('0')}
-
-
-                    
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['1543']/* 'Content Tabs' */, 'details':this.props.app_state.loc['1544']/* 'If set to enabled, tabs that help keep track of viewing history will be shown above an objects details.' */, 'size':'l'})}
                     <div style={{height: 10}}/>
 
@@ -5812,6 +5831,115 @@ class StackPage extends Component {
 
                     {this.render_detail_item('0')}
                 </div>
+            </div>
+        )
+    }
+
+    render_settings_details2(){
+        return(
+            <div>
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_themes_tags_object} tag_size={'l'} when_tags_updated={this.when_theme_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['2813']/* 'Feed Orientation' */, 'details':this.props.app_state.loc['2814']/* 'Set the orientation for viewing your content feed.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_orientation_tags_object} tag_size={'l'} when_tags_updated={this.when_details_orientation_changed.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')}
+
+                
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.load_preferred_e5_ui()}
+                {this.render_detail_item('0')}
+
+                
+
+
+
+                {/* {this.render_detail_item('3',{'title':'Preferred storage option', 'details':'Set the storage option you prefer to use', 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_selected_storage_tags_object} tag_size={'l'} when_tags_updated={this.when_get_selected_storage_tags_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')} */}
+
+
+
+                {/* {this.render_detail_item('3',{'title':this.props.app_state.loc['1532'], 'details':this.props.app_state.loc['1533'], 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <div onClick={()=> this.when_clear_cache_clicked()} style={{margin:'0px 10px 0px 10px'}}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['1534'], 'action':''},)}
+                </div>
+
+                {this.render_detail_item('0')} */}
+
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1535']/* 'Preferred Refresh Speed' */, 'details':this.props.app_state.loc['1536']/* 'Set the background refresh speed for E5. Fast consumes more data.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_refresh_speed_tags_object} tag_size={'l'} when_tags_updated={this.when_get_refresh_speed_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1537']/* 'Hide Masked Content' */, 'details':this.props.app_state.loc['1538']/* 'Hide masked content sent from your blocked accounts' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_masked_data_tags_object} tag_size={'l'} when_tags_updated={this.when_get_masked_data_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1539']/* 'Content Channeling' */, 'details':this.props.app_state.loc['1540']/* 'Set which channeling option your content and feed is directed to.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_channeling_object} tag_size={'l'} when_tags_updated={this.when_get_content_channeling_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+
+                {/* {this.render_detail_item('3',{'title':'Content Language', 'details':'Set which language you prefer to use', 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_language_object} tag_size={'l'} when_tags_updated={this.when_get_content_language_object_updated.bind(this)} theme={this.props.theme}/>
+
+                {this.render_detail_item('0')} */}
+
+
+
+
+
+
+                
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['1541']/* 'Content Filter' */, 'details':this.props.app_state.loc['1542']/* 'If set to filtered, the content including the tags you follow will be prioritized in your feed.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -6017,7 +6145,7 @@ class StackPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px','overflow-x':'hidden'}}>
+                <div style={{'padding': '0px 0px 0px 0px', 'margin':'0px 0px 0px 0px'}}>
                     {this.render_set_wallet_data()}
                     {this.render_detail_item('0')}
 
@@ -6028,19 +6156,73 @@ class StackPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':'Set the seed and salt for your preferred wallet', 'color':'dark-grey'})}
-                    <div style={{height: 20}}/>
-
-                    <div className="col-6" style={{'padding': '0px 0px 0px 20px'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_wallet_settings_part()}
                     </div>
-                    <div className="col-6">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_set_wallet_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_my_balances()}
                     </div>
                 </div>
                 
             )
         }
+        else if(size == 'l'){
+            return(
+                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_wallet_settings_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_wallet_data()}
+                        {this.render_detail_item('0')}
+                        {this.render_my_balances()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_my_balances(){
+        var items = this.get_my_balances()
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div> 
+            )
+        }
+        return(
+            <div style={{}}>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '3px 0px 3px 0px'}}>
+                            <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
+                                {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.e5s[item].token, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item]), 'barcolor':'', 'relativepower':'wei', })}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_my_balances(){
+        var e5s = this.props.app_state.e5s['data']
+        var selected_e5s = []
+        for(var i=0; i<e5s.length; i++){
+            var focused_e5 = e5s[i]
+            var balance = this.props.app_state.account_balance[focused_e5]
+            if(balance > 0){
+                if(focused_e5 == 'E35' && selected_e5s.includes('E25')){
+
+                }else{
+                    selected_e5s.push(focused_e5)
+                }
+            }
+        }
+        return selected_e5s
     }
 
     render_set_wallet_data(){
@@ -6071,11 +6253,12 @@ class StackPage extends Component {
     }
 
     render_wallet_address(){
+        var ether_name = this.props.app_state.e5s[this.props.app_state.selected_e5].token
         if(this.props.app_state.has_wallet_been_set){
             return(
                 <div>
                     <div onClick={() => this.copy_to_clipboard(this.get_account_address())}>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':ether_name+' '+this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.get_account_address(), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -6084,7 +6267,7 @@ class StackPage extends Component {
             return(
                 <div>
                     <div>
-                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'l'})}
+                        {this.render_detail_item('3', {'title':ether_name+' '+this.props.app_state.loc['1550']/* 'Wallet Address' */, 'details':this.format_address('0x0000000000000000000000000000000000000000', this.props.app_state.selected_e5), 'size':'l'})}
                     </div>
                     <div style={{height: 10}}/>
                 </div>
@@ -6274,6 +6457,46 @@ class StackPage extends Component {
 
 
     render_contacts_section(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_new_contact_ui()}
+                    {this.render_users_contacts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_new_contact_ui()}
+                        {this.render_users_contacts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_new_contact_ui()}
+                        {this.render_users_contacts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_new_contact_ui(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1565']/* 'Add Contact' */, 'details':this.props.app_state.loc['1566']/* 'You can add a contact manually using their Contact ID.' */, 'size':'l'})}
@@ -6288,7 +6511,6 @@ class StackPage extends Component {
                     </div>
                 </div>
                 <div style={{height: 10}}/>
-                {this.render_users_contacts()}
             </div>
         )
     }
@@ -6415,6 +6637,46 @@ class StackPage extends Component {
 
 
     render_blacklisted_section(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_blacklisted_picker_ui()}
+                    {this.render_users_blocked_accounts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_blacklisted_picker_ui()}
+                        {this.render_users_blocked_accounts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_blacklisted_picker_ui()}
+                        {this.render_users_blocked_accounts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_blacklisted_picker_ui(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1573']/* 'Add Blocked Account' */, 'details':this.props.app_state.loc['1574']/* 'Block an accounts content from being visible in your feed.' */, 'size':'l'})}
@@ -6429,7 +6691,6 @@ class StackPage extends Component {
                     </div>
                 </div>
                 <div style={{height: 10}}/>
-                {this.render_users_blocked_accounts()}
             </div>
         )
     }
@@ -6525,6 +6786,46 @@ class StackPage extends Component {
 
 
     render_alias_stuff(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_alias_picker_ui()}
+                    {this.render_users_aliases()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_alias_picker_ui()}
+                        {this.render_users_aliases()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_alias_picker_ui()}
+                        {this.render_users_aliases()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_alias_picker_ui(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1578']/* 'Reserve Alias' */, 'details':this.props.app_state.loc['1579']/* 'Reserve an alias for your account ID' */, 'size':'l'})}
@@ -6549,7 +6850,6 @@ class StackPage extends Component {
                 {this.render_picked_alias_if_any()}
                 
                 <div style={{height:10}}/>
-                {this.render_users_aliases()}
             </div>
         )
     }
@@ -6734,14 +7034,46 @@ class StackPage extends Component {
 
 
     render_notifications(){
-        return(
-            <div>
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
-                <div style={{height: 10}}/>
-                {this.render_my_notifications()}
-            </div>
-        )
-
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
+                    <div style={{height: 10}}/>
+                    {this.render_my_notifications()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                        {this.render_my_notifications()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_detail_item('3', {'title':this.props.app_state.loc['1593e']/* 'My Notifications.' */, 'details':this.props.app_state.loc['1593f']/* 'All your important notifications are shown below.' */, 'size':'l'})}
+                        <div style={{height: 10}}/>
+                        {this.render_my_notifications()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
     }
 
     get_all_sorted_notifications(){
@@ -6794,7 +7126,7 @@ class StackPage extends Component {
         // }
 
         var sorted_notifs = this.sortByAttributeDescending(all_object_list, 'timestamp')
-        console.log('sorted notifications: ', sorted_notifs)
+        // console.log('sorted notifications: ', sorted_notifs)
 
         return sorted_notifs
     }
@@ -6851,7 +7183,7 @@ class StackPage extends Component {
             var exchange = item['event'].returnValues.p1
             var timestamp = item['event'].returnValues.p5
             return(
-                <div onClick={() => this.open_object(exchange, item['e5'], 'token')}>
+                <div onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[item['e5']+exchange], 'number':this.get_actual_number(amount, depth), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange]})} /* onClick={() => this.open_object(exchange, item['e5'], 'token')} */>
                     {this.render_detail_item('3', {'title':'💸 '+this.get_senders_name_or_you(sender, item['e5'])+' sent you '+this.format_account_balance_figure(this.get_actual_number(amount, depth))+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange], 'details':''+(new Date(timestamp*1000))+', '+(this.get_time_difference(timestamp))+this.props.app_state.loc['1698a']/* ago. */, 'size':'s'})}
                 </div>
             )
@@ -6967,9 +7299,199 @@ class StackPage extends Component {
         if(sender == this.props.app_state.user_account_id[e5]){
             return 'You'
         }
-         var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+        var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
             return alias
     }
+
+
+
+
+
+
+
+    render_watched_account_ui(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_watched_account_ui_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_watched_account_ui_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_watched_account_ui_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_watched_account_ui_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['1593v']/* 'Watch Account.' */, 'details':this.props.app_state.loc['1593w']/* 'Track send and receive transactions for a specified account from here.' */, 'size':'l'})}
+
+                <div style={{ 'margin': '10px 5px 10px 5px'}}>
+                    <div className="row" style={{width:'103%'}}>
+                        <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['1593u']/* 'Name or Account ID...' */} when_text_input_field_changed={this.when_watch_account_input_field_changed.bind(this)} text={this.state.typed_watch_account_input} theme={this.props.theme} />
+                        </div>
+                        <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
+                            <div onClick={()=>this.watch()}>
+                                {this.render_detail_item('5',{'text':this.props.app_state.loc['1593y']/* 'Watch' */,'action':''/* , 'prevent_default':true */})}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {this.render_transfers_item_logs()}
+            </div>
+        )
+    }
+
+    when_watch_account_input_field_changed(text){
+        this.setState({typed_watch_account_input: text})
+    }
+
+    watch(){
+        var text = this.state.typed_watch_account_input
+        var name_id = this.get_typed_alias_id(text.trim())
+        if(!isNaN(name_id) && parseInt(name_id) > 1000 &&  name_id != ''){
+            this.props.set_watched_account_id(name_id)
+            this.props.notify(this.props.app_state.loc['1593z'], 2000)
+        }
+    }
+
+
+    render_transfers_item_logs(){
+        var e5 = this.props.app_state.selected_e5
+        var watched_account_id = this.state.typed_watch_account_input;
+        var pointer = e5+watched_account_id
+        var items = this.props.app_state.watched_account_data[pointer]
+        if(items == null) items = []
+
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' ,'list-style':'none'}}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px','list-style':'none' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index}>
+                                    {this.render_transfers_event_item(item, index)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    when_transfers_item_clicked(index){
+        if (this.state.selected_transfers_event_item == index) {
+            this.setState({ selected_transfers_event_item: null })
+        } else {
+            this.setState({ selected_transfers_event_item: index })
+        }
+    }
+
+    render_transfers_event_item(item, index){
+        var e5 = this.props.app_state.selected_e5
+
+        var exchange_id = item['event'].returnValues.p1;
+        var number = item['event'].returnValues.p4
+        var depth = item['event'].returnValues.p7
+        number = this.get_actual_number(number, depth)
+        var from_to = item['action'] == 'Sent' ? 'To: '+this.get_sender_title_text(item['event'].returnValues.p3): 'From: '+this.get_sender_title_text(item['event'].returnValues.p2)
+        
+        if (this.state.selected_transfers_event_item == index) {
+            return (
+                <div>
+                    <div onClick={() => this.when_transfers_item_clicked(index)}>
+                        {this.render_detail_item('3', { 'title': from_to, 'details': this.props.app_state.loc['1770']/* 'Action: ' */+item['action'], 'size': 's'})}
+                    </div>
+                    <div style={{ height: 2 }} />
+                    <div style={{ 'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'number':number, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id]})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+exchange_id], 'subtitle': this.format_power_figure(number), 'barwidth': this.calculate_bar_width(number), 'number': this.format_account_balance_figure(number), 'barcolor': '', 'relativepower': this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], })}
+                    </div>
+
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': this.get_time_difference(item['event'].returnValues.p5), 'details': 'Age', 'size': 's' })}
+                    <div style={{ height: 2 }} />
+                    {this.render_detail_item('3', { 'title': item['event'].returnValues.p6, 'details': 'Block Number', 'size': 's' })}
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                </div>
+            )
+        } else {
+            return (
+                <div onClick={() => this.when_transfers_item_clicked(index)}>
+                    {this.render_detail_item('3', { 'title': from_to, 'details': this.format_account_balance_figure(number)+' '+this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[exchange_id], 'size': 's' })}
+    
+                </div>
+            )
+        }
+    }
+
+    get_sender_title_text(sender) {
+        var e5 = this.props.app_state.selected_e5
+        if (sender == this.props.app_state.user_account_id[e5]) {
+            return 'You'
+        } else {
+            var alias = (this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender] == null ? sender : this.get_all_sorted_objects_mappings(this.props.app_state.alias_bucket)[sender])
+            return alias
+        }
+    }
+
+    get_actual_number(number, depth){
+        var p = (bigInt(depth).times(72)).toString().toLocaleString('fullwide', {useGrouping:false})
+        var depth_vaule = bigInt(('1e'+p))
+        return (bigInt(number).times(depth_vaule)).toString().toLocaleString('fullwide', {useGrouping:false})
+    }
+
+
+    
+
+
+
 
     
 
@@ -6979,6 +7501,28 @@ class StackPage extends Component {
 
 
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     /* renders the specific element in the post or detail object */
     render_detail_item(item_id, object_data){

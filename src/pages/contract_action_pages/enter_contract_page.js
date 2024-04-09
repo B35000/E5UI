@@ -67,6 +67,7 @@ class EnterContractPage extends Component {
                     </div>
                 </div>
 
+                <div style={{height:10}}/>
                 {this.render_everything()}
 
             </div>
@@ -78,10 +79,55 @@ class EnterContractPage extends Component {
     }
 
     render_everything(){
+         var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_date_picker_ui()}
+                    {this.render_contract_entry_fees()}
+                    {this.render_detail_item('0')}
+                    {this.render_my_balances()}
+                    <div style={{height:10}}/>
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_date_picker_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_entry_fees()}
+                        {this.render_detail_item('0')}
+                        {this.render_my_balances()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_date_picker_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_entry_fees()}
+                        {this.render_detail_item('0')}
+                        {this.render_my_balances()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_date_picker_ui(){
         var contract_config = this.state.contract_item['data'][1]
         return(
             <div>
-                <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(contract_config[6]), 'details':this.props.app_state.loc['5'], 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -99,14 +145,6 @@ class EnterContractPage extends Component {
                         <StaticDateTimePicker orientation="portrait" onChange={(newValue) => this.when_new_dat_time_value_set(newValue)}/>
                     </LocalizationProvider>
                 </ThemeProvider>
-                <div style={{height:10}}/>
-
-                {this.render_contract_entry_fees()}
-                <div style={{height:10}}/>
-
-                {this.render_detail_item('0')}
-
-                {this.render_my_balances()}
                 <div style={{height:10}}/>
             </div>
         )
@@ -162,8 +200,8 @@ class EnterContractPage extends Component {
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px', 'list-style':'none'}}>
                     {bt.map((item, index) => (
-                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':buy_amounts[index], 'title':this.props.app_state.loc['13']+item, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
-                            {this.render_detail_item('2', {'style':'l','title':this.props.app_state.loc['13']+item, 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
+                        <li style={{'padding': '1px'}} onClick={() => this.props.view_number({'number':buy_amounts[index], 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                            {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item], 'subtitle':this.format_power_figure(buy_amounts[index]), 'barwidth':this.calculate_bar_width(buy_amounts[index]), 'number':this.format_account_balance_figure(buy_amounts[index]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}
                         </li>
                     ))}
                 </ul>

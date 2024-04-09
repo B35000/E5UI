@@ -79,8 +79,7 @@ class VoteProposalPage extends Component {
                         </div>
                     </div>
                     <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':this.props.app_state.loc['803']/* 'Cast your vote in proposal ID: ' */+this.state.proposal_item['id'], 'textsize':'14px', 'font':this.props.app_state.font})} 
-                    <div style={{height:10}}/>
+                    
 
                     {this.render_everything()}
 
@@ -119,8 +118,68 @@ class VoteProposalPage extends Component {
         return picked_item
     }
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     render_cast_vote_part(){
+       var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_cast_vote_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_cast_vote_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_cast_vote_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_cast_vote_data(){
         var object = this.state.proposal_item
         if(object['data'] == null) return;
         var contract_config = object['data'][1]
@@ -128,32 +187,34 @@ class VoteProposalPage extends Component {
         var voter_weight_balance = this.get_voter_weight_balance(contract_config[7], object)
         return(
             <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['803']/* 'Cast your vote in proposal ID: ' */+this.state.proposal_item['id'], 'textsize':'14px', 'font':this.props.app_state.font})} 
                 <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
 
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][1])+this.props.app_state.loc['788']/* ' YES votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'})}
+                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
 
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][2])+this.props.app_state.loc['789']/* ' NO votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][1])+this.props.app_state.loc['788']/* ' YES votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][1])+'%', 'size':'l'})}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('3', {'title':''+this.get_vote_title(object['account_vote']), 'details':this.props.app_state.loc['804']/* 'Your On-Chain recorded vote' */, 'size':'l'})}
-                    <div style={{ height: 10 }} />
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][2])+this.props.app_state.loc['789']/* ' NO votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][2])+'%', 'size':'l'})}
 
-                    {this.render_detail_item('3', { 'title': voter_weight_target_name, 'details': this.props.app_state.loc['805']/* 'Voter Weight Exchange' */, 'size': 'l' })}
-                    <div style={{ height: 10 }} />
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':''+this.get_vote_title(object['account_vote']), 'details':this.props.app_state.loc['804']/* 'Your On-Chain recorded vote' */, 'size':'l'})}
+                <div style={{ height: 10 }} />
 
-                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['806']/* 'Voter Weight Balance' */, 'number':voter_weight_balance, 'relativepower':this.props.app_state.loc['807'] /* `units` */})}>
-                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['806']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${number_with_commas(voter_weight_balance)}`, 'barcolor': '', 'relativepower':this.props.app_state.loc['807'] /* `units` */, })}
-                    </div>
+                {this.render_detail_item('3', { 'title': voter_weight_target_name, 'details': this.props.app_state.loc['805']/* 'Voter Weight Exchange' */, 'size': 'l' })}
+                <div style={{ height: 10 }} />
+
+                <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['806']/* 'Voter Weight Balance' */, 'number':voter_weight_balance, 'relativepower':this.props.app_state.loc['807'] /* `units` */})}>
+                    {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['806']/* 'Voter Weight Balance' */, 'subtitle': this.format_power_figure(voter_weight_balance), 'barwidth': this.get_number_width(voter_weight_balance), 'number': ` ${number_with_commas(voter_weight_balance)}`, 'barcolor': '', 'relativepower':this.props.app_state.loc['807'] /* `units` */, })}
+                </div>
 
 
-                    <div style={{height:10}}/>
-                    <Tags font={this.props.app_state.font} page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
+                <div style={{height:10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.new_vote_tags_object} tag_size={'l'} when_tags_updated={this.when_new_vote_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -203,10 +264,48 @@ class VoteProposalPage extends Component {
 
 
 
-
     render_collect_bounties_part(){
-        var object = this.state.proposal_item
+        var size = this.props.app_state.size
 
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_collect_bounties_data()}
+                    {this.render_bounty_exchanges()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_collect_bounties_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_exchanges()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_collect_bounties_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_exchanges()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_collect_bounties_data(){
+        var object = this.state.proposal_item
         return(
             <div>
                 <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['812']/* 'End Bounty Balance' */, 'number':object['end_balance'], 'relativepower':'END'})}>
@@ -234,7 +333,6 @@ class VoteProposalPage extends Component {
                 </div>
 
                 {this.render_detail_item('0')}
-                {this.render_bounty_exchanges()}
             </div>
         )
     }
@@ -289,34 +387,18 @@ class VoteProposalPage extends Component {
     }
 
     render_bounty_exchanges(){
-        var middle = this.props.height-100;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.bounty_exchanges)
 
         if(items.length == 0){
-            items = [0, 1]
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                    <div style={{'margin':'10px 20px 10px 0px'}}>
-                                        <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                <div style={{}}>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
             return(
-                <div style={{overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                <div style={{}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -326,7 +408,7 @@ class VoteProposalPage extends Component {
                                     }}>
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '5px'}}>
-                                            {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']], 'details':this.props.app_state.loc['820']/* 'Bounty Exchange ID: ' */+item['exchange'], 'size':'s'})}
+                                            {this.render_detail_item('3', {'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['exchange']], 'size':'s'})}
                                         </li>
                                     </div>
                                 </SwipeableListItem>

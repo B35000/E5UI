@@ -37,7 +37,6 @@ class ConfirmRunPage extends Component {
         return(
             <div style={{'margin':'10px 10px 0px 10px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_confirm_run_tags_object} tag_size={'l'} when_tags_updated={this.when_get_confirm_run_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                <div style={{height: 10}}/>
 
                 {this.render_everything()}
             </div>
@@ -54,6 +53,44 @@ class ConfirmRunPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_small_screen_pickers()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_run()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_stacked_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_confirm_run()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_stacked_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_small_screen_pickers(){
         var selected_page = this.get_selected_item(this.state.get_confirm_run_tags_object, 'e')
 
         if(selected_page == this.props.app_state.loc['1092a']/* 'confirm-run' */){
@@ -71,6 +108,7 @@ class ConfirmRunPage extends Component {
             )
         }
     }
+    
 
 
     get_selected_item(object, option){
@@ -165,10 +203,10 @@ class ConfirmRunPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -183,8 +221,7 @@ class ConfirmRunPage extends Component {
             return(
                 <div>
                     <div style={{}}>
-                        <div style={{height: 10}}/>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                             {items.map((item, index) => (
                                 <li style={{'padding': '2px 2px 2px 2px'}}>
                                     {this.render_stack_item(item, index)}

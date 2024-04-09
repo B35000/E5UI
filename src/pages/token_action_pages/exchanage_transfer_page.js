@@ -36,7 +36,7 @@ class ExchangeTransferPage extends Component {
     
     state = {
         selected: 0,id: makeid(8), type:this.props.app_state.loc['907']/* 'exchange-transfer' */, entered_indexing_tags:[this.props.app_state.loc['908']/* 'exchange' */, this.props.app_state.loc['909']/* 'transfer' */],
-        token_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0]]},
+        token_item: {'data':[[],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],]},
         new_transfer_title_tags_object:this.get_new_transfer_title_tags_object(),
 
         exchange_transfer_target:'', exchange_transfer_amount:0, exchange_transfer_values:[], exchange_transfer_receiver:'', token_target:'',
@@ -68,10 +68,7 @@ class ExchangeTransferPage extends Component {
                     </div>
                 </div>
 
-                <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['910']/* 'Run an exchange transfer for : ' */+this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+this.state.token_item['id']]})}
-
-                <div style={{'margin':'20px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -83,10 +80,51 @@ class ExchangeTransferPage extends Component {
         this.setState({new_transfer_title_tags_object: tag_obj})
     }
 
-
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_transfer_data_pickers()}
+                    {this.load_transfer_actions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_transfer_data_pickers()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_transfer_actions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_transfer_data_pickers()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_transfer_actions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_transfer_data_pickers(){
         return(
             <div>
+                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['910']/* 'Run an exchange transfer for : ' */+this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+this.state.token_item['id']]})}
+                <div style={{height:10}}/>
+
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['911']/* 'Target Receiver' */, 'details':this.props.app_state.loc['912']/* 'Set the account set to receive the token amounts' */, 'size':'l'})}
                 <div style={{height:20}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['913']/* 'Target Receiver...' */} when_text_input_field_changed={this.when_exchange_transfer_receiver_text_input_field_changed.bind(this)} text={this.state.exchange_transfer_receiver} theme={this.props.theme}/>
@@ -113,8 +151,6 @@ class ExchangeTransferPage extends Component {
                 <div style={{'padding': '5px'}} onClick={()=>this.add_exchange_transfer_item()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['919']/* 'Add Transfer Action' */, 'action':''})}
                 </div>
-
-                {this.load_transfer_actions()}
 
             </div>
         )
@@ -173,6 +209,8 @@ class ExchangeTransferPage extends Component {
         }
     }
 
+    
+
     does_exchange_exist(exchange_id){
         if(this.props.app_state.created_token_object_mapping[this.state.token_item['e5']][parseInt(exchange_id)] == null){
             return false
@@ -190,21 +228,16 @@ class ExchangeTransferPage extends Component {
     }
 
     load_transfer_actions(){
-        var middle = this.props.height-100;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.exchange_transfer_values)
 
         if(items.length == 0){
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
@@ -217,7 +250,7 @@ class ExchangeTransferPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -228,7 +261,7 @@ class ExchangeTransferPage extends Component {
                                     <div style={{width:'100%', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                                         <li style={{'padding': '5px'}}>
                                             <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']]+':'+item['token'], 'number':item['amount'], 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']]})}>
-                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']]+':'+item['token'], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
+                                                {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['token']], 'subtitle':this.format_power_figure(item['amount']), 'barwidth':this.calculate_bar_width(item['amount']), 'number':this.format_account_balance_figure(item['amount']), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item['token']], })}
                                             </div>
                                             <div style={{height:5}}/>
                                             {this.render_detail_item('3', {'title':this.props.app_state.loc['924']/* 'Receiver ID: ' */+item['receiver'], 'details':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.e5+item['exchange']]+':'+item['exchange'], 'size':'s'})}
@@ -324,6 +357,18 @@ class ExchangeTransferPage extends Component {
             ].concat(this.get_account_suggestions())
         }
         else if(type == 'token_target'){
+            var exchange_object = this.state.token_item
+            var buy_exchanges = exchange_object['data'][3]
+            var targets = []
+            var name_directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)
+            var symbol_directory = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)
+            buy_exchanges.forEach(exchange_id => {
+                var title = name_directory[this.state.e5+exchange_id]
+                var details = symbol_directory[exchange_id]
+                targets.push({'id':exchange_id+'', 'label':{'title':title, 'details':details, 'size':'s'}})
+            });
+            return targets;
+
             return[
                 {'id':'3', 'label':{'title':this.props.app_state.loc['926']/* 'End Token' */, 'details':this.props.app_state.loc['928']/* 'Exchange ID 3' */, 'size':'s'}},
                 {'id':'5', 'label':{'title':this.props.app_state.loc['927']/* 'Spend Token' */, 'details':this.props.app_state.loc['929']/* 'Exchange ID 5' */, 'size':'s'}},
@@ -378,13 +423,72 @@ class ExchangeTransferPage extends Component {
     finish(){
         if(this.state.exchange_transfer_values.length == 0){
             this.props.notify(this.props.app_state.loc['897']/* 'you cant stack no changes' */, 3700)
-        }else{
+        }
+        else if(this.has_transfer_amounts_exceeded_balance()){
+            this.props.notify(this.props.app_state.loc['929a']/* 'The amounts youve set exceed the exchanges balance.' */, 5700)
+        }
+        else{
             this.props.add_exchange_transfer_to_stack(this.state)
             this.setState({exchange_transfer_values:[]})
             this.props.notify(this.props.app_state.loc['18']/* 'transaction added to stack' */, 1700);
         }
     }
 
+    has_transfer_amounts_exceeded_balance(){
+        var token_id = this.state.token_item['id']
+        var exchange_transfer_values = this.state.exchange_transfer_values
+        var debit_object = {}
+        var exchanges_targeted = []
+        exchange_transfer_values.forEach(transfer => {
+            if(debit_object[transfer['token']] == null){
+                debit_object[transfer['token']] = 0
+                exchanges_targeted.push(transfer['token'])
+            }
+            debit_object[transfer['token']] = bigInt(debit_object[transfer['token']]).plus(bigInt(transfer['amount']))
+        });
+
+        //load all the exchange transfer actions from the stack
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(txs[i].type == this.props.app_state.loc['907']/* 'exchange-transfer' */){
+                if(txs[i].token_item['id'] == token_id){
+                    var tx_exchange_transfer_values = t.exchange_transfer_values
+                    
+                    tx_exchange_transfer_values.forEach(transfer => {
+                    if(debit_object[transfer['token']] == null){
+                        debit_object[transfer['token']] = 0
+                        exchanges_targeted.push(transfer['token'])
+                    }
+                    debit_object[transfer['token']] = bigInt(debit_object[transfer['token']]).plus(bigInt(transfer['amount']))
+                });
+                }
+            }
+        }
+
+        var selected_object = this.state.token_item
+        var buy_tokens = [].concat(selected_object['data'][3])
+        var buy_amounts = [].concat(selected_object['exchanges_balances'])
+        var balance_obj = {}
+        for(var i=0; i<buy_tokens.length; i++){
+            balance_obj[''+buy_tokens[i]] = buy_amounts[i]
+        }
+
+        console.log('balance_obj: ', balance_obj)
+        var has_exceeded = false
+        exchanges_targeted.forEach(exchange => {
+            console.log('debit_object ',exchange, debit_object[exchange])
+            console.log('balance_obj ',exchange, balance_obj[exchange])
+            if(bigInt(debit_object[exchange]).greater(bigInt(balance_obj[exchange]))){
+                has_exceeded = true
+            }
+        });
+
+        return has_exceeded
+    }
+
+
+    
 
 
 

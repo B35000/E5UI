@@ -4,6 +4,7 @@ import Tags from './../components/tags';
 import TextInput from './../components/text_input';
 import Dialog from "@mui/material/Dialog";
 import NumberPicker from './../components/number_picker';
+import DurationPicker from './../components/duration_picker';
 
 // import Letter from './../assets/letter.png'; 
 import { from } from "@iotexproject/iotex-address-ts";
@@ -33,7 +34,7 @@ class WithdrawEtherPage extends Component {
     state = {
         selected: 0, withdraw_ether_page_tags_object: this.get_withdraw_ether_page_tags_object(),
         recipient_address:'', confirmation_dialog_box: false, e5:{'data':[], 'id':this.props.app_state.selected_e5},
-        run_time_expiry:0, run_gas_price:0,
+        run_time_expiry:0, run_gas_price:0, picked_max_priority_per_gas_amount:0, picked_max_fee_per_gas_amount:0
     };
 
     get_withdraw_ether_page_tags_object(){
@@ -81,12 +82,12 @@ class WithdrawEtherPage extends Component {
             return(
                 <div>
                     <div className="row">
-                        <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                        <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                             <Tags font={this.props.app_state.font} page_tags_object={this.state.withdraw_ether_page_tags_object} tag_size={'l'} when_tags_updated={this.when_withdraw_ether_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
                         </div>
-                        <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                            <div style={{'padding': '5px'}} onClick={()=>this.finish()}>
-                                {this.render_detail_item('5', {'text':this.props.app_state.loc['1994']/* 'Withdraw' */, 'action':''})}
+                        <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                            <div className="text-end" style={{'padding': '0px 10px 0px 0px'}}>
+                                <img className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                             </div>
                         </div>
                     </div>
@@ -130,7 +131,7 @@ class WithdrawEtherPage extends Component {
 
 
     get_gas_price_from_runs(e5){
-        var last_events = this.props.app_state.all_E5_runs[e5]
+        var last_events = this.props.app_state.all_E5_runs[e5['id']]
         var sum = 0
         if(last_events != null){
             var last_check = last_events.length < 50 ? last_events.length : 50
@@ -142,9 +143,84 @@ class WithdrawEtherPage extends Component {
         return sum
     }
 
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+
+
     render_withdraw_ether_part(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_withdraw_ether_part_data()}
+                    {this.show_network_fee()}
+                    {this.render_detail_item('0')}
+                    {this.show_gas_price_or_eip_options()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_withdraw_ether_part_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_network_fee()}
+                        <div style={{height:10}}/>
+                        {this.show_gas_price_or_eip_options()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_withdraw_ether_part_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.show_network_fee()}
+                        <div style={{height:10}}/>
+                        {this.show_gas_price_or_eip_options()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_withdraw_ether_part_data(){
         var e5 = this.state.e5
-        var gas_price = this.props.app_state.gas_price[e5]
+        var gas_price = this.props.app_state.gas_price[e5['id']]
         if(gas_price == null){
             gas_price = this.get_gas_price_from_runs(e5)
         }
@@ -186,31 +262,74 @@ class WithdrawEtherPage extends Component {
                 
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.run_time_expiry), 'details':this.props.app_state.loc['2008']/* 'Estimated Time.' */, 'size':'l'})}
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} power_limit={12}/>
-
-
-                {this.render_detail_item('0')}
-
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2009']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['2010']/* 'The gas price for your next run with E5. The default is set to the amount set by the network.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2011']/* 'Transaction Gas Price in Wei' */, 'number':this.state.run_gas_price, 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2011']/* 'Transaction Gas Price in Wei' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2012']/* 'Transaction Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.state.run_gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.run_gas_price/10**9), 'number':this.format_account_balance_figure(this.state.run_gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
-                </div>
-                <div style={{height: 10}}/>
-
-                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2013']/* 'Network Gas Price in Wei' */, 'number':this.state.gas_price, 'relativepower':'wei'})}>
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2013']/* 'Network Gas Price in Wei' */, 'subtitle':this.format_power_figure(this.state.gas_price), 'barwidth':this.calculate_bar_width(this.state.gas_price), 'number':this.format_account_balance_figure(this.state.gas_price), 'barcolor':'', 'relativepower':'wei', })}
-
-                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2014']/* 'Network Gas Price in Gwei' */, 'subtitle':this.format_power_figure(this.state.gas_price/10**9), 'barwidth':this.calculate_bar_width(this.state.gas_price/10**9), 'number':this.format_account_balance_figure(this.state.gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
-                </div>
-
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <DurationPicker font={this.props.app_state.font} when_number_picker_value_changed={this.when_run_expiry_time_set.bind(this)} theme={this.props.theme} loc={this.props.app_state.loc}/>   
             </div>
         )
+    }
+
+    show_network_fee(){
+        var e5 = this.state.e5
+        var gas_price = this.props.app_state.gas_price[e5['id']]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs(e5)
+        }
+
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2013']/* 'Network Gas Price in Wei' */, 'number':gas_price, 'relativepower':'wei'})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2013']/* 'Network Gas Price in Wei' */, 'subtitle':this.format_power_figure(gas_price), 'barwidth':this.calculate_bar_width(gas_price), 'number':this.format_account_balance_figure(gas_price), 'barcolor':'', 'relativepower':'wei', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2014']/* 'Network Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'', 'relativepower':'gwei', })}
+                </div>
+                <div style={{height: 10}}/>
+            </div>
+        )
+    }
+
+    show_gas_price_or_eip_options(){
+        var e5 = this.state.e5['id']
+        if(this.props.app_state.e5s[e5] == null) return;
+        
+        if(this.props.app_state.e5s[e5].type == '1559'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'details':this.props.app_state.loc['2027a']/* 'The max priority fee per gas(miner tip) for your next wirdraw run.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'number':this.state.picked_max_priority_per_gas_amount, 'relativepower':'wei'})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_priority_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+
+
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'details':this.props.app_state.loc['2027b']/* 'The maximum amount of gas fee your willing to pay for your next withdraw run.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'number':this.state.picked_max_fee_per_gas_amount, 'relativepower':'wei'})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_fee_per_gas_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2009']/* 'Transaction Gas Price' */, 'details':this.props.app_state.loc['2010']/* 'The gas price for your withdraw run. The default is set to the amount set by the network.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'number':this.state.run_gas_price, 'relativepower':'wei'})}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
+                    </div>
+
+                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                </div>
+            )
+        }
     }
 
 
@@ -224,6 +343,14 @@ class WithdrawEtherPage extends Component {
 
     when_run_gas_price(number){
         this.setState({run_gas_price: number})
+    }
+
+    when_max_priority_amount(number){
+        this.setState({picked_max_priority_per_gas_amount: number+0})
+    }
+
+    when_max_fee_per_gas_amount(number){
+        this.setState({picked_max_fee_per_gas_amount: number+0})
     }
 
     isValidAddress = (adr) => {
@@ -297,7 +424,7 @@ class WithdrawEtherPage extends Component {
         return(
             <Dialog PaperProps={{ sx: { borderRadius: "15px" } }} onClose = {() => this.cancel_dialog_box()} open = {this.state.confirmation_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
-                    <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>Confirmation</h3>
+                    <h3 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['2027c']/* Confirmation */}</h3>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2018']/* 'Withdraw Ether Confirmation' */, 'details':this.props.app_state.loc['2019']/* 'Confirm that you want to withdraw Ether to the set address' */, 'size':'s'})}
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px' }}>
@@ -329,7 +456,7 @@ class WithdrawEtherPage extends Component {
         var e5 = this.state.e5['id']
         var run_expiry_duration = this.state.run_time_expiry == 0 ? (60*60*1/* 1 hour */) : this.state.run_time_expiry
         var addr = this.format_to_address(this.state.recipient_address, e5)
-        this.props.withdraw_ether_to_address(addr, e5, run_expiry_duration, this.state.run_gas_price)
+        this.props.withdraw_ether_to_address(addr, e5, run_expiry_duration, this.state.run_gas_price, this.state.picked_max_priority_per_gas_amount, this.state.picked_max_fee_per_gas_amount)
     }
 
 
@@ -373,11 +500,47 @@ class WithdrawEtherPage extends Component {
 
 
 
-
-
-
-
     render_withdraws_item_logs(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_withdraws_item_logs_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_withdraws_item_logs_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_withdraws_item_logs_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+
+    render_withdraws_item_logs_data(){
         var items = this.props.app_state.withdraw_event_data[this.state.e5['id']]
         var middle = this.props.height - 170;
         if (items.length == 0) {
@@ -385,10 +548,10 @@ class WithdrawEtherPage extends Component {
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                             {items.map((item, index) => (
-                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                <li style={{ 'padding': '2px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -402,7 +565,7 @@ class WithdrawEtherPage extends Component {
         } else {
             return (
                 <div style={{ overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none' }}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_withdraws_item_clicked(index)}>
@@ -479,10 +642,46 @@ class WithdrawEtherPage extends Component {
 
 
 
-
-
-
     render_pending_withdraws_item_logs(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pending_withdraws_item_logs_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pending_withdraws_item_logs_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pending_withdraws_item_logs_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_pending_withdraws_item_logs_data(){
         var items = this.props.app_state.pending_withdraw_event_data[this.state.e5['id']]
         var middle = this.props.height - 120;
         if (items.length == 0) {
@@ -490,10 +689,10 @@ class WithdrawEtherPage extends Component {
             return (
                 <div>
                     <div style={{ overflow: 'auto', maxHeight: middle }}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none' }}>
                             {items.map((item, index) => (
-                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
-                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                <li style={{ 'padding': '2px' }}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
                                         <div style={{ 'margin': '10px 20px 10px 0px' }}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
                                         </div>
@@ -507,7 +706,7 @@ class WithdrawEtherPage extends Component {
         } else {
             return (
                 <div style={{ overflow: 'auto', maxHeight: middle}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' , 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{ 'padding': '2px 5px 2px 5px' }}>
                                 <div key={index} onClick={() => this.when_pending_withdraws_item_clicked(index)}>

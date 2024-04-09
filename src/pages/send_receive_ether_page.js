@@ -85,27 +85,17 @@ class SendReceiveEtherPage extends Component {
         if(selected_item == this.props.app_state.loc['1369']/* 'send' */ || selected_item == 'e'){
             return(
                 <div>
-                    <div style={{'margin':'10px 0px 0px 10px'}}>
+                    <div style={{'margin':'10px 10px 0px 10px'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_send_ether_ui()}
                     </div> 
                 </div>
             )
         }
-        // else if(selected_item == this.props.app_state.loc['']/* 'logs' */){
-        //     return(
-        //         <div>
-        //             <div style={{'margin':'10px 0px 0px 20px', 'overflow-x':'hidden'}}>
-        //                 {this.render_top_tag_bar_group()}
-        //                 {this.render_transaction_history()}
-        //             </div>
-        //         </div>
-        //     )
-        // }
         else{
             return(
                 <div>
-                    <div style={{'margin':'10px 0px 0px 10px'}}>
+                    <div style={{'margin':'10px 10px 0px 10px'}}>
                         {this.render_top_tag_bar_group()}
                         {this.render_receive_ether_ui()}
                     </div>
@@ -140,8 +130,7 @@ class SendReceiveEtherPage extends Component {
 
     render_send_ether_ui(){
         return(
-            <div style={{'padding':'10px 10px 0px 0px', width:'100%', maxHeight: this.props.height-120}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1371']/* 'Send Ether using the address shown below.' */, 'color':'dark-grey'})}
+            <div style={{}}>
                 {this.render_medium_screen_ui()}
                 {this.render_dialog_ui()}
             </div>
@@ -154,17 +143,35 @@ class SendReceiveEtherPage extends Component {
             return(
                 <div>
                     {this.render_send_ether_middle_part()}
+                    <div style={{height: 30}}/>
+                    {this.render_send_ether_middle_part2()}
                 </div>
             )
         }
-        else{
+        else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_send_ether_middle_part()}
+                        <div style={{height: 20}}/>
+                        {this.render_empty_views(3)}
                     </div>
-                    <div className="col-6">
-                        {this.render_transaction_history()}
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_send_ether_middle_part2()}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_send_ether_middle_part()}
+                        <div style={{height: 20}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_send_ether_middle_part2()}
                     </div>
                 </div>
             )
@@ -185,6 +192,8 @@ class SendReceiveEtherPage extends Component {
 
         return(
             <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['1371']/* 'Send Ether using the address shown below.' */, 'color':'dark-grey'})}
+
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1372']/* 'Sender Wallet Address' */, 'details':this.get_account_address(), 'size':'s'})}
                 <div style={{height: 10}}/>
@@ -193,9 +202,8 @@ class SendReceiveEtherPage extends Component {
                 <div style={{height: 10}}/>
 
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
-                <div style={{height: 10}} theme={this.props.theme}/>
 
-                
+                {this.render_detail_item('0')}
                 {/* <Html5QrcodePlugin 
                     fps={10}
                     qrbox={250}
@@ -222,7 +230,24 @@ class SendReceiveEtherPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1380']/* 'Gas Price in Gwei' */, 'subtitle':this.format_power_figure(gas_price/10**9), 'barwidth':this.calculate_bar_width(gas_price/10**9), 'number':this.format_account_balance_figure(gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                 </div>
 
-                <div style={{height: 30}}/>
+            </div>
+        )
+    }
+
+    render_send_ether_middle_part2(){
+        var e5 = this.state.ether['e5']
+
+        var gas_price = this.props.app_state.gas_price[e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        if(gas_price == 0 || gas_price > 10**18) gas_price = 10**10
+        var gas_transactions = this.state.picked_wei_amount == 0 ? 0 : Math.floor((this.state.picked_wei_amount/gas_price)/2_300_000)
+
+        var balance_gas_transactions = this.props.app_state.account_balance[e5] == 0 ? 0 : Math.floor((this.props.app_state.account_balance[e5]/gas_price)/2_300_000)
+
+        return(
+            <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1381']/* 'Amount to Send' */, 'details':this.props.app_state.loc['1382']/* 'Set the amount to send in the number picker below.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
@@ -247,8 +272,7 @@ class SendReceiveEtherPage extends Component {
                 <div style={{height: 10}}/>
                 {this.render_detail_item('5', {'text':this.props.app_state.loc['1388']/* 'Send Ether to Address' */, 'action':'send_ether'})}
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+                <div style={{height: 30}}/>
             </div>
         )
     }
@@ -661,7 +685,7 @@ class SendReceiveEtherPage extends Component {
 
 
     render_receive_ether_ui(){
-        var size = this.props.size
+        var size = this.props.app_state.size
 
         if(size == 's'){
             return(
@@ -670,16 +694,56 @@ class SendReceiveEtherPage extends Component {
                 </div>
             )
         }
-        else{
+        else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_scan_qr_code_ui()}
                     </div>
-                </div> 
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_scan_qr_code_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
             )
         }
         
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
     render_scan_qr_code_ui(){

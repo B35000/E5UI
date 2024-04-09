@@ -291,10 +291,10 @@ class NewProposalPage extends Component {
                     </div>
                 </div>
 
-                <div style={{height: 10}}/>
-                {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['344']+this.state.contract_item['id']})}
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                    {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['344']+this.state.contract_item['id']})}
+                    <div style={{height: 10}}/>
 
-                <div style={{'margin':'20px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -379,16 +379,65 @@ class NewProposalPage extends Component {
 
 
 
-
-
-    render_enter_tags_part(){
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
         return(
             <div>
-                {this.render_title_tags_part()}
-                
-                {this.render_new_job_object()}
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
+    }
+
+    render_enter_tags_part(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_title_tags_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
     }
 
     render_title_tags_part(){
@@ -512,7 +561,7 @@ class NewProposalPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 10px 0px 0px'}}>
+                <div style={{}}>
                     {this.render_text_part()}
                     {this.render_entered_texts()}
                 </div>
@@ -520,12 +569,27 @@ class NewProposalPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_text_part()}
-                    </div>
-                    <div className="col-6">
                         {this.render_entered_texts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_text_part()}
+                        {this.render_entered_texts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -1216,16 +1280,48 @@ class NewProposalPage extends Component {
 
     render_enter_image_part(){
         var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_images_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
 
+    render_pick_images_parts(){
         return(
-            <div style={{'padding': '10px 10px 0px 0px'}}>
-                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']/* 'Black stages gif, grey stages image. Then tap to remove.' */})}
-                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']})}
+                {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
-                {this.render_detail_item('0')}
-                {/* {this.render_all_images_part()} */}
-                
             </div>
         )
     }
@@ -1327,7 +1423,7 @@ class NewProposalPage extends Component {
     }
 
     render_image_part(){
-        var col = Math.round(this.props.app_state.width / 100)
+        var col = Math.round(400 / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
@@ -1387,9 +1483,73 @@ class NewProposalPage extends Component {
 
 
     render_proposal_configuration_data(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_small_screen_proposal_config_ui()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mid_screen_proposal_config_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mid_screen_proposal_config_ui2()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mid_screen_proposal_config_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_mid_screen_proposal_config_ui2()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_mid_screen_proposal_config_ui(){
         return(
             <div>
-                {this.render_configuration_section_parts()}
+                {this.render_configuration_section_parts(0)}
+                {this.render_detail_item('0')}
+                {this.render_configuration_section_parts(1)}
+                {this.render_detail_item('0')}
+                
+            </div>
+        )
+    }
+
+    render_mid_screen_proposal_config_ui2(){
+        return(
+            <div>
+                {this.render_configuration_section_parts(2)}
+                {this.render_detail_item('0')}
+                {this.render_configuration_section_parts(3)}
+                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+
+    render_small_screen_proposal_config_ui(){
+        var page = this.state.page
+        return(
+            <div>
+                {this.render_configuration_section_parts(page)}
 
                 <div style={{height:20}}/>
                 <div className="row">
@@ -1400,7 +1560,7 @@ class NewProposalPage extends Component {
                         {this.show_next_button()}
                     </div>
                 </div>
-                
+                <div style={{height:20}}/>
             </div>
         )
     }
@@ -1429,8 +1589,8 @@ class NewProposalPage extends Component {
     }
 
 
-    render_configuration_section_parts(){
-        var page = this.state.page
+    render_configuration_section_parts(page){
+        // var page = this.state.page
 
         if(page == 0){
             return(
@@ -1773,6 +1933,46 @@ class NewProposalPage extends Component {
 
 
     render_spend_proposal_ui(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.spend_action_data_ui()}
+                    <div style={{height:20}}/>
+                    {this.render_spend_actions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.spend_action_data_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_spend_actions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.spend_action_data_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_spend_actions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    spend_action_data_ui(){
         return(
             <div>
                 <div style={{height:10}}/>
@@ -1819,14 +2019,6 @@ class NewProposalPage extends Component {
                 <div style={{'padding': '5px'}} onClick={()=>this.add_spend_action_to_list()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['127']/* 'Add' */, 'action':''})}
                 </div>
-
-                <div style={{height:20}}/>
-
-                {this.render_spend_actions()}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
-
             </div>
         )
     }
@@ -1899,10 +2091,10 @@ class NewProposalPage extends Component {
             items = [0, 1]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -1916,7 +2108,7 @@ class NewProposalPage extends Component {
             var items = this.state.spend_actions
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -1960,14 +2152,50 @@ class NewProposalPage extends Component {
 
 
     render_reconfig_proposal_ui(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_reconfig_selector_part()}
+                    {this.load_reconfig_items()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_reconfig_selector_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_reconfig_items()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_reconfig_selector_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_reconfig_items()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_reconfig_selector_part(){
         return(
             <div>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.reconfig_items_tags_object} tag_size={'l'} when_tags_updated={this.when_reconfig_items_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.load_reconfig_item_selectors()}
-                <div style={{height:2}}/>
-
-                {this.load_reconfig_items()}
             </div>
         )
     }
@@ -1997,7 +2225,12 @@ class NewProposalPage extends Component {
 
 
         if(selected_item == 'e'){
-            return(<div></div>)
+            return(
+                <div>
+                    <div style={{height:10}}/>
+                    {this.render_empty_views(4)}
+                </div>
+            )
         }
 
         if(selected_item == this.props.app_state.loc['861a']/* 'prices' */){
@@ -2467,7 +2700,7 @@ class NewProposalPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
                                 <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
@@ -2483,7 +2716,7 @@ class NewProposalPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -2737,6 +2970,45 @@ class NewProposalPage extends Component {
 
 
     render_exchange_transfer_ui(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.load_exchange_transfer_config_ui()}
+                    {this.load_transfer_actions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_exchange_transfer_config_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_transfer_actions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_exchange_transfer_config_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.load_transfer_actions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    load_exchange_transfer_config_ui(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['404']/* 'Target Exchange' */, 'details':this.props.app_state.loc['405']/* 'Set the exchange id you wish to run the exchange transfer from' */, 'size':'l'})}
@@ -2773,9 +3045,6 @@ class NewProposalPage extends Component {
                 <div style={{'padding': '5px'}} onClick={()=>this.add_exchange_transfer_item()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['412']/* 'Add Transfer Action' */, 'action':''})}
                 </div>
-
-                {this.load_transfer_actions()}
-
             </div>
         )
     }
@@ -2848,10 +3117,10 @@ class NewProposalPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:140, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:40 ,width:'auto'}} />
                                     </div>
@@ -2864,7 +3133,7 @@ class NewProposalPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem
@@ -2910,6 +3179,45 @@ class NewProposalPage extends Component {
 
 
     render_bounty_data_ui(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_bounty_amount_picker_ui()}
+                    {this.render_bounty_amounts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_amount_picker_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_amounts()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_amount_picker_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_bounty_amounts()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_bounty_amount_picker_ui(){
         var minimum_spend_bounty_amount = this.state.contract_item['data'][1][10/* <10>default_minimum_spend_vote_bounty_amount */]
         var minimum_end_bounty_amount = this.state.contract_item['data'][1][4/* <4>default_minimum_end_vote_bounty_amount */]
 
@@ -2957,8 +3265,6 @@ class NewProposalPage extends Component {
                 <div style={{'padding': '5px'}} onClick={()=>this.add_bounty_item()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['426']/* 'Add Bounty' */, 'action':''})}
                 </div>
-
-                {this.render_bounty_amounts()}
             </div>
         )
     }
@@ -3048,10 +3354,10 @@ class NewProposalPage extends Component {
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                         <div style={{'margin':'10px 20px 10px 0px'}}>
                                             <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                         </div>
@@ -3064,7 +3370,7 @@ class NewProposalPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem

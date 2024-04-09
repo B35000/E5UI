@@ -80,8 +80,70 @@ class NewMintActionPage extends Component {
     }
 
 
-
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_data_picker_ui()}
+                    {this.render_fees_and_price_data_if_buyable()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_data_picker_ui()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_fees_and_price_data_if_buyable()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_data_picker_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_fees_and_price_data_if_buyable()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+
+    render_data_picker_ui(){
         return(
             <div>
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'15px', 'text':this.props.app_state.loc['951']/* 'Buy or Sell the specified token' */})}
@@ -108,18 +170,6 @@ class NewMintActionPage extends Component {
 
                 <NumberPicker font={this.props.app_state.font} number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
-                {this.render_fees_and_price_data_if_buyable()}
-
-                {/* {this.render_detail_item('0')}
-                {this.set_upper_lower_bounds()} */}
-
-                {/* <div style={{'padding': '5px'}} onClick={()=>  this.add_transaction()}>
-                    {this.render_detail_item('5', {'text':'Add Transaction To Stack', 'action':''})}
-                </div> */}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
-
             </div>
         )
     }
@@ -141,6 +191,12 @@ class NewMintActionPage extends Component {
                     {this.render_my_balances_if_buy_action()}
                     
                     {this.set_price_data()}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }
@@ -209,7 +265,7 @@ class NewMintActionPage extends Component {
                 var buy_depths = [].concat(selected_object['data'][5])
                 return(
                     <div>
-                        <div style={{height:20}}/>
+                        {this.render_space()}
                         {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['962']/* 'The amount you get when selling the token' */, 'title':this.props.app_state.loc['963']/* 'Receive Amount' */})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
@@ -233,7 +289,7 @@ class NewMintActionPage extends Component {
                 var buy_depths = selected_object['data'][5]
                 return(
                     <div>
-                        <div style={{height:20}}/>
+                        {this.render_space()}
                         {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['965']/* 'The amount youll probably get from the buy action' */, 'title':this.props.app_state.loc['966']/* 'Receive Amount' */})}
                         <div style={{height:10}}/>
                         <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[this.state.token_item['e5']+this.state.token_item['id']], 'number':price, 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]})}>
@@ -243,6 +299,18 @@ class NewMintActionPage extends Component {
                     
                 )
             }
+        }
+    }
+
+    render_space(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    <div style={{height:20}}/>
+                </div>
+            )
         }
     }
 

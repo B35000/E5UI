@@ -136,10 +136,69 @@ class FulfilBagPage extends Component {
     }
 
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
 
     render_select_contract_parts(){
-        var items = this.get_contract_items()
+        var size = this.props.app_state.size
 
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_select_contract_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_contract_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_contract_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_select_contract_data(){
+        var items = this.get_contract_items()
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1135']/* 'Select the contract youll be using. If you have no contracts, first create one then youll see it here.' */})}
@@ -152,11 +211,6 @@ class FulfilBagPage extends Component {
 
     render_my_contracts(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-123;
-        var size = this.props.size;
-        if(size == 'l'){
-            middle = this.props.height-80;
-        }
         var items = [].concat(this.get_contract_items())
 
         if(items.length == 0){
@@ -166,7 +220,7 @@ class FulfilBagPage extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}}>
-                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
                                         <p style={{'display': 'flex', 'align-items':'center','justify-content':'center', 'padding':'5px 0px 0px 7px', 'color': 'gray'}}></p>
@@ -325,8 +379,45 @@ class FulfilBagPage extends Component {
 
 
 
-
     render_application_expiry_time(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_application_expiry_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_expiry_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_expiry_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_application_expiry_data(){
         return(
             <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1137']/* 'Select an expiry time for your fulfilment application.' */})}
@@ -358,9 +449,46 @@ class FulfilBagPage extends Component {
 
 
 
-
-
     render_application_prices(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_application_prices_data()}
+                    {this.render_set_prices_list_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_prices_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_application_prices_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_prices_list_part()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_application_prices_data(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1138']/* 'Prepaid or Postpaid' */, 'details':this.props.app_state.loc['1139']/* 'Set the payment option you prefer for the application' */, 'size':'l'})}
@@ -380,7 +508,7 @@ class FulfilBagPage extends Component {
 
 
 
-
+                {this.render_detail_item('0')}
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1143']/* 'Exchange ID' */, 'details':this.props.app_state.loc['1144']/* 'Select an exchange by its id, then the desired price and click add' */, 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -398,8 +526,6 @@ class FulfilBagPage extends Component {
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1147']/* 'Add Price' */, 'action':''})}
                 </div>
-
-                {this.render_set_prices_list_part()}
             </div>
         )
     }
@@ -438,21 +564,16 @@ class FulfilBagPage extends Component {
     }
 
     render_set_prices_list_part(){
-        var middle = this.props.height-300;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.price_data)
 
         if(items.length == 0){
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -465,7 +586,7 @@ class FulfilBagPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem

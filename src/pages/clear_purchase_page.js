@@ -101,6 +101,29 @@ class ClearPurchasePage extends Component {
     }
 
 
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
 
     render_everything(){
         var selected_item = this.get_selected_item(this.state.clear_purchase_title_tags_object, this.state.clear_purchase_title_tags_object['i'].active)
@@ -137,6 +160,44 @@ class ClearPurchasePage extends Component {
 
 
     render_generate_signature_part(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_generate_signature_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_generate_signature_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_generate_signature_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_generate_signature_data(){
         var item = this.state.order_data
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
         return(
@@ -159,7 +220,7 @@ class ClearPurchasePage extends Component {
                     viewBox={`0 0 100 100`}
                 />
                 <div style={{height:5}}/>
-                <p style={{'margin':'5% 0% 0% 44%', 'color':this.props.theme['primary_text_color']}}>Qr Code</p>
+                <p style={{'margin':'5% 0% 0% 44%', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1078a']/* Qr Code */}</p>
                 <div style={{height:5}}/>
                 {this.render_detail_item('3', {'size':'s', 'title':this.props.app_state.loc['1065']/* 'Signature' */, 'details':start_and_end(this.state.signature_data) })}
                 
@@ -190,9 +251,45 @@ class ClearPurchasePage extends Component {
 
     
 
-
-
     verify_signature_part(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.verify_signature_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.verify_signature_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.verify_signature_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    verify_signature_data(){
         var item = this.state.order_data
         var variant_description = this.get_variant_from_id(item['variant_id'])==null?'':this.get_variant_from_id(item['variant_id'])['variant_description']
         return(

@@ -44,7 +44,6 @@ class RPCSettingsPage extends Component {
                 
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_rpc_title_tags_object} tag_size={'l'} when_tags_updated={this.when_get_rpc_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-                <div style={{height:10}}/>
                 {this.render_everything()}
 
             </div>
@@ -57,23 +56,84 @@ class RPCSettingsPage extends Component {
 
     render_everything(){
         if(this.state.ether != null){
-            return(
-                <div>
-                    {this.render_detail_item('3', {'title':'Add Provider', 'details':this.props.app_state.loc['1334']/* 'Add a RPC provider for making transactions.' */, 'size':'l'})}
-                    <div style={{height:10}}/>
-                    <div className="row" style={{width:'103%'}}>
-                        <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
-                            <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1335']/* 'Enter Node Url...' */} when_text_input_field_changed={this.when_typed_rpc_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
+            var size = this.props.app_state.size
+
+            if(size == 's'){
+                return(
+                    <div>
+                        {this.render_content()}
+                    </div>
+                )
+            }
+            else if(size == 'm'){
+                return(
+                    <div className="row">
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_content()}
                         </div>
-                        <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_rpc()} >
-                            {this.render_detail_item('5',{'text':this.props.app_state.loc['1336']/* 'Add' */,'action':''})}
+                        <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_empty_views(3)}
                         </div>
                     </div>
-                    <div style={{height:20}}/>
-                    {this.render_added_rpcs()}
-                </div>
-            )
+                    
+                )
+            }
+            else if(size == 'l'){
+                return(
+                    <div className="row">
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_content()}
+                        </div>
+                        <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                            {this.render_empty_views(3)}
+                        </div>
+                    </div>
+                    
+                )
+            }
         }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_content(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':'Add Provider', 'details':this.props.app_state.loc['1334']/* 'Add a RPC provider for making transactions.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div className="row" style={{width:'103%'}}>
+                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                        <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1335']/* 'Enter Node Url...' */} when_text_input_field_changed={this.when_typed_rpc_changed.bind(this)} text={this.state.typed_rpc_url} theme={this.props.theme}/>
+                    </div>
+                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.add_rpc()} >
+                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1336']/* 'Add' */,'action':''})}
+                    </div>
+                </div>
+                <div style={{height:20}}/>
+                {this.render_added_rpcs()}
+            </div>
+        )
     }
 
     when_typed_rpc_changed(url){

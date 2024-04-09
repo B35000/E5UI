@@ -207,14 +207,14 @@ class home_page extends Component {
         };
 
         obj[this.props.app_state.loc['1196']/* 'jobs' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1205']/* 'applied' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1196']/* 'jobs' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1205']/* 'applied' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264c']/* 'job-notifications' */], [1],[1]
           ];
 
         obj[this.props.app_state.loc['1197']/* 'contracts' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1197']/* 'contracts' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1206']/* 'entered' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264d']/* 'contract-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1198']/* 'contractors' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1198']/* 'contractors' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */,this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264e']/* 'contractor-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1199']/* 'proposals' */] = [
               ['xor','e',1], [this.props.app_state.loc['1199']/* 'proposals' */,this.props.app_state.loc['1211']/* 'my-proposals' */, this.props.app_state.loc['1203']/* 'viewed' */, this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
@@ -223,7 +223,7 @@ class home_page extends Component {
               ['xor','e',1], [this.props.app_state.loc['1200']/* 'subscriptions' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1207']/* 'paid' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264b']/* upcoming */], [1],[1]
           ]
         obj[this.props.app_state.loc['1201']/* 'mail' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1201']/* 'mail' */,this.props.app_state.loc['1208']/* 'received' */,this.props.app_state.loc['1209']/* 'sent' */, this.props.app_state.loc['1210']/* 'active' */, this.props.app_state.loc['1264f']/* 'mail-notifications' */], [1],[1]
           ]
 
         return obj;
@@ -263,10 +263,10 @@ class home_page extends Component {
               ['xor','',0], [this.props.app_state.loc['1214']/* 'channels' */,this.props.app_state.loc['1202']/* 'all' */,this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1215']/* 'storefront' */] = [
-              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','',0], [this.props.app_state.loc['1215']/* 'storefront' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264g']/* 'storefront-notifications' */], [1],[1]
           ]
         obj[this.props.app_state.loc['1216']/* 'bags' */] = [
-              ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */], [1],[1]
+              ['xor','e',1], [this.props.app_state.loc['1216']/* 'bags' */,this.props.app_state.loc['1202']/* 'all' */, this.props.app_state.loc['1203']/* 'viewed' */,this.props.app_state.loc['1204']/* 'created' */, this.props.app_state.loc['1222']/* 'pinned' */, this.props.app_state.loc['1264h']/* 'bag-notifications' */], [1],[1]
           ]
 
         return obj
@@ -277,7 +277,7 @@ class home_page extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['1217']/* 'ethers ⚗️' */, this.props.app_state.loc['1218']/* 'ends ☝️' */, this.props.app_state.loc['1219']/* 'spends 🫰' */, this.props.app_state.loc['1264i']/* 'wallet-notifications' */],[1]
           ],
         }
       }
@@ -300,23 +300,15 @@ class home_page extends Component {
             var middle = this.props.height-112;
             return ( 
                 <div style={{}}>
-                    <div className="row" style={{height: this.props.height, width:width+10, 'background-color':background_color, 'padding':'0px 0px 0px 15px'}}>
-                        <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
-                            <div style={{height:15, width:90, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid'}}/>
-                            <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.2}}/>
-                            <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.4}}/>
-                            <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.6}}/>
-                            <div style={{height:(this.props.height-89), width:90, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px'}}>
-                                {this.render_navbar_button_group(size)}
-                            </div>
-                        </div>
+                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px'}}>
+                        {this.render_side_bar()}
 
                         <div className="col-11" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}} >
                             <div style={{height:top_bar, width:'99%', 'padding':'9px 0px 0px 5px'}}>
                                 {this.render_top_tag_bar(size)}
                             </div>
                             
-                            <div className="row" style={{height:(middle+55), 'padding':'0px 10px 0px 15px'}}>
+                            <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
                                 <div className="col-5" style={{height: (middle+55)}}>
                                     {this.render_post_list_group(size, (middle+133))}
                                 </div>
@@ -328,8 +320,47 @@ class home_page extends Component {
                             </div>
                         </div>   
                     </div>
+                    {this.render_filter_section_bottomsheet()}
+                    {this.render_post_preview_bottomsheet()}
+                    {this.render_nsfw_preview_bottomsheet()}
+                    {this.render_dialog_ui()}
                 </div>
             );
+        }
+        else if(size == 'xl'){
+            var middle = this.props.height-113;
+            return(
+                <div style={{}}>
+                    <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px'}}>
+                        {this.render_side_bar()}
+
+                        <div className="col-11" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}} >
+                            <div style={{height:top_bar, width:'99%', 'padding':'9px 0px 0px 5px'}}>
+                                {this.render_top_tag_bar(size)}
+                            </div>
+                            
+                            <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
+                                <div className="col-4" style={{height: (middle+55)}}>
+                                    {this.render_post_list_group(size, (middle+55))}
+                                </div>
+                                
+                                <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                                    {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
+                                </div>
+                                
+                                <div className="col-4" style={{height: (middle+55)}}>
+                                    {this.render_watch_account_ui()}
+                                </div>
+
+                            </div>
+                        </div>   
+                    </div>
+                    {this.render_filter_section_bottomsheet()}
+                    {this.render_post_preview_bottomsheet()}
+                    {this.render_nsfw_preview_bottomsheet()}
+                    {this.render_dialog_ui()}
+                </div>
+            )
         }
         else if(size == 'm'){
             return ( 
@@ -341,7 +372,7 @@ class home_page extends Component {
                         
                         <div style={{height:5}}/>
                         {this.render_post_details_with_orientation(middle, width, size)}
-                        <div style={{height:5}}/>
+                        <div style={{height:10}}/>
                         
                         <div style={{height:bottom_bar, width: '103%', 'background-color':  navbar_color, 'border-radius': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                             {this.render_navbar_button_group(size)}
@@ -410,6 +441,28 @@ class home_page extends Component {
                 </div>
             )
         }
+    }
+
+    render_side_bar(){
+        var size = this.props.screensize;
+        var top_bar = 50;
+        var middle = this.props.height-126;
+        var bottom_bar = 75;
+        var width = this.props.width;
+        var navbar_color = this.props.theme['nav_bar_color'];
+        var background_color = this.props.theme['homepage_background_color'];
+        var back = this.props.theme['background']
+        return(
+            <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
+                <div style={{height:15, width:90, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid'}}/>
+                <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.2}}/>
+                <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.4}}/>
+                <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.6}}/>
+                <div style={{height:(this.props.height-89), width:90, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px'}}>
+                    {this.render_navbar_button_group(size)}
+                </div>
+            </div>
+        )
     }
 
     render_post_details_with_orientation(middle, width, size){
@@ -529,7 +582,7 @@ class home_page extends Component {
               </div>
           );
         }
-        else if(size == 'l'){
+        else if(size == 'l' || size == 'xl'){
             return ( 
                 <div style={{height: '100%', width:'100%', padding:'5px 0px 0px 0px'}}>
                   <div style={{height:'1px', 'background-color':'#7E7E7E', 'margin': '0px 80% 0px 0px'}}/>
@@ -590,7 +643,7 @@ class home_page extends Component {
     render_navbar_button(icontype, text_padding, img, img_height, img_width, img_padding, title, tabs){
         var navbar_button_text_color = this.props.theme['primary_navbar_text_color']
         var navbar_button_secondary_text = this.props.theme['secondary_navbar_text_color']
-      if(icontype == 's' || icontype == 'xs'){
+        if(icontype == 's' || icontype == 'xs'){
             return (
                 <div style={{height:'100%', width:'93%', 'padding':text_padding, 'text-align':'center', 'background-color':'transparent'}}>
                     <img src={img} style={{height:img_height,width:img_width, padding: img_padding}} />
@@ -636,6 +689,7 @@ class home_page extends Component {
     render_top_tag_bar(size){
         var width = this.props.width;
         if(size == 'l') width = this.props.width - 100;
+        if(size == 'xl') width = this.props.width - 120;
         if(size == 's') width = this.props.width + 10
         return(
             <div className="row" style={{width:width}}>
@@ -2030,6 +2084,75 @@ class home_page extends Component {
             return this.state.explore_section_tags
         }
     }
+
+
+
+    get_all_sorted_notifications(tag_id){
+        var all_object_list = []
+
+        if(tag_id == this.props.app_state.loc['1264c']/* 'job-notifications' */){
+            var my_job_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_responses_notifications)
+
+            var my_job_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_job_application_responses_notifications)
+
+            for (const key in my_job_responses_notifications) {
+                all_object_list.push(my_job_responses_notifications[key])
+            }
+
+            for (const key in my_job_application_responses_notifications) {
+                all_object_list.push(my_job_application_responses_notifications[key])
+            }
+        }
+        else if(tag_id == this.props.app_state.loc['1264e']/* 'contractor-notifications' */){
+            var my_contractor_job_request_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_contractor_job_request_notifications)
+
+            for (const key in my_contractor_job_request_notifications) {
+                all_object_list.push(my_contractor_job_request_notifications[key])
+            }
+        }
+        else if(tag_id == this.props.app_state.loc['1264f']/* 'mail-notifications' */){
+            var my_mail_messages_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.received_mail_notifications)
+
+            for(const key in my_mail_messages_notifications){
+                all_object_list.push(my_mail_messages_notifications[key])
+            }
+        }
+        else if(tag_id == this.props.app_state.loc['1264g']/* 'storefront-notifications' */){
+            var my_store_direct_purchases_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_store_direct_purchases_notifications)
+
+            for (const key in my_store_direct_purchases_notifications) {
+                all_object_list.push(my_store_direct_purchases_notifications[key])
+            }
+        }
+        else if(tag_id == this.props.app_state.loc['1264h']/* 'bag-notifications' */){
+            var my_bag_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_responses_notifications)
+
+            var my_bag_application_responses_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_bag_application_responses_notifications)
+
+            for (const key in my_bag_responses_notifications) {
+                all_object_list.push(my_bag_responses_notifications[key])
+            }
+            for (const key in my_bag_application_responses_notifications) {
+                all_object_list.push(my_bag_application_responses_notifications[key])
+            }
+        }
+        else if(tag_id == this.props.app_state.loc['1264i']/* 'wallet-notifications' */){
+            var my_token_event_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.my_token_event_notifications)
+
+            for (const key in my_token_event_notifications) {
+                all_object_list.push(my_token_event_notifications[key])
+            }
+        }
+        else if(tag_id == this.props.app_state.loc['1264d']/* 'contract-notifications' */){
+            var enter_exit_accounts_notifications = this.get_all_sorted_objects_mappings(this.props.app_state.enter_exit_accounts_notifications)
+
+            for (const key in enter_exit_accounts_notifications) {
+                all_object_list.push(enter_exit_accounts_notifications[key])
+            }
+        }
+
+        return this.sortByAttributeDescending(all_object_list, 'timestamp')
+    }
     
 
 
@@ -2070,6 +2193,7 @@ class home_page extends Component {
             get_contract_items={this.get_contract_items.bind(this)} get_bag_items={this.get_bag_items.bind(this)} get_channel_items={this.get_channel_items.bind(this)} get_contractor_items={this.get_contractor_items.bind(this)} get_exchange_tokens={this.get_exchange_tokens.bind(this)} get_job_items={this.get_job_items.bind(this)} get_mail_items={this.get_mail_items.bind(this)} get_post_items={this.get_post_items.bind(this)} get_proposal_items={this.get_proposal_items.bind(this)} get_storefront_items={this.get_storefront_items.bind(this)} get_subscription_items={this.get_subscription_items.bind(this)} get_e5_data={this.get_e5_data.bind(this)} set_page_scroll={this.set_page_scroll.bind(this)} select_deselect_tag={this.select_deselect_tag.bind(this)} get_searched_account_data={this.props.get_searched_account_data.bind(this)} when_searched_account_clicked={this.props.when_searched_account_clicked.bind(this)}
 
             show_post_item_preview_with_subscription={this.show_post_item_preview_with_subscription.bind(this)}
+            get_all_sorted_notifications={this.get_all_sorted_notifications.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} view_number={this.props.view_number.bind(this)}
             />
         )
     }
@@ -2416,6 +2540,10 @@ class home_page extends Component {
         this.open_post_preview_section(post)
     }
 
+
+    open_object_in_homepage(target, e5, type){
+        this.open_notification_link(target, e5, type)
+    }
 
 
 
@@ -3478,6 +3606,15 @@ class home_page extends Component {
 
 
 
+
+
+
+
+
+
+    render_watch_account_ui(){
+
+    }
 
 
 

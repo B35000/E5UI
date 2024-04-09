@@ -77,7 +77,6 @@ class ModeratorPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                
                 <div className="row">
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.new_moderator_action_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_moderator_action_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
@@ -89,11 +88,8 @@ class ModeratorPage extends Component {
                     </div>
                 </div>
 
-                <div style={{height:10}}/>
                 {this.render_everything()}
 
-                <div style={{height:10}}/>
-                {this.render_all_transactions()}
             </div>
         )
     }
@@ -106,6 +102,46 @@ class ModeratorPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_content()}
+                    <div style={{height:10}}/>
+                    {this.render_all_transactions()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_all_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_all_transactions()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_content(){
         var selected_item = this.get_selected_item(this.state.new_moderator_action_page_tags_object, this.state.new_moderator_action_page_tags_object['i'].active)
 
         if(selected_item == this.props.app_state.loc['1269']/* 'moderators' */){
@@ -240,10 +276,25 @@ class ModeratorPage extends Component {
             this.props.notify(this.props.app_state.loc['1290']/* 'The thing is already public.' */, 5600)
             return;
         }
+        if(this.check_if_all_actions_contains_interactable_checkers_setting()){
+            this.props.notify(this.props.app_state.loc['1300a']/* 'You cant add the same action twice.' */, 5600)
+            return;
+        }
         var tx = {'setting':setting, entered_indexing_tags:['access-rights', 'action'], type:'interactable-checkers', id:makeid(8), 'object':this.state.object_item}
         clone.push(tx)
         this.setState({all_actions: clone})
         this.props.notify(this.props.app_state.loc['1288']/* 'Action added' */, 1600)
+    }
+
+    check_if_all_actions_contains_interactable_checkers_setting(){
+        var contains = false
+        var all_actions = this.state.all_actions
+        all_actions.forEach(action => {
+            if(action.type == 'interactable-checkers'){
+                contains = true
+            }
+        });
+        return contains
     }
 
 
@@ -375,21 +426,16 @@ class ModeratorPage extends Component {
 
 
     render_all_transactions(){
-        var middle = this.props.height-500;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
         var items = [].concat(this.state.all_actions)
 
         if(items.length == 0){
             items = [0, 1]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '5px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -402,7 +448,7 @@ class ModeratorPage extends Component {
         }else{
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.reverse().map((item, index) => (
                             <SwipeableList>
                                 <SwipeableListItem

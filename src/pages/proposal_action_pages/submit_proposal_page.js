@@ -57,10 +57,9 @@ class SubmitProposalPage extends Component {
                             </div>
                         </div>
                     </div>
-                    <div style={{height:10}}/>
-                    {this.render_detail_item('4', {'text':this.props.app_state.loc['786']/* 'Click finish to submit the proposal.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
-                    <div style={{height:10}}/>
-                    {this.render_everything()}
+                    <div style={{'margin':'10px 0px 0px 0px'}}>
+                        {this.render_everything()}   
+                    </div>
                 </div>
 
                 
@@ -74,11 +73,53 @@ class SubmitProposalPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_consensus_object()}
+                    {this.render_consensus_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_consensus_data()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_consensus_object()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_consensus_data()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_consensus_object()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+    render_consensus_object(){
         var background_color = this.props.theme['card_background_color']
         var card_shadow_color = this.props.theme['card_shadow_color']
         var item = this.format_proposal_item(this.state.proposal_item)
-        var object = this.state.proposal_item
-        var proposal_config = object['data'][1];
         return(
             <div>
                 <div style={{height:'auto', width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'max-width':'420px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color}}>
@@ -94,8 +135,17 @@ class SubmitProposalPage extends Component {
                         
                     </div>         
                 </div>
+            </div>
+        )
+    }
 
-                {this.render_detail_item('0')}
+    render_consensus_data(){
+        var object = this.state.proposal_item
+        var proposal_config = object['data'][1];
+        return(
+            <div>
+                {this.render_detail_item('4', {'text':this.props.app_state.loc['786']/* 'The consensus results are shown below.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
+                <div style={{height:10}}/>
 
                 {this.render_detail_item('3', {'title':''+this.format_account_balance_figure(object['consensus_data'][0])+this.props.app_state.loc['787']/* ' WAIT votes' */, 'details':this.get_proportion_of_total(object, object['consensus_data'][0])+'%', 'size':'l'})}
 
@@ -117,9 +167,6 @@ class SubmitProposalPage extends Component {
 
                 <div style={{height:10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_from_now(proposal_config[3]), 'details':this.props.app_state.loc['793']/* 'Proposal submit expiry time from now' */, 'size':'l'})}
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -200,6 +247,29 @@ class SubmitProposalPage extends Component {
             </div>
         )
 
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
     format_proportion(proportion){

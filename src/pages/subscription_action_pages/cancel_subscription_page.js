@@ -59,7 +59,9 @@ class CancelSubscriptionPage extends Component {
                     </div>
                 </div>
 
-                {this.render_everything()}
+                <div style={{'margin':'10px 0px 0px 0px'}}>
+                    {this.render_everything()}   
+                </div>
 
             </div>
         )
@@ -69,8 +71,51 @@ class CancelSubscriptionPage extends Component {
         this.setState({cancel_subscription_title_tags_object: tag_obj})
     }
 
-
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_time_unit_picker()}
+                    {this.render_detail_item('0')}
+                    {this.render_cancel_credit_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_time_unit_picker()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_cancel_credit_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_time_unit_picker()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_cancel_credit_part()}
+                        <div style={{height: 10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_time_unit_picker(){
         var subscription_config = this.state.subscription_item['data'][1]
         var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
         return(
@@ -78,10 +123,13 @@ class CancelSubscriptionPage extends Component {
                 {this.render_detail_item('4', {'font':this.props.app_state.font, 'textsize':'13px', 'text':this.props.app_state.loc['824']/* 'Cancel the subscription ID: ' */+this.state.subscription_item['id']})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':'Time Unit', 'size':'s'})}
+                {this.render_detail_item('3', {'title':this.get_time_diff(time_unit), 'details':this.props.app_state.loc['828c']/* 'Time Unit' */, 'size':'l'})}
 
                 <div style={{height: 10}}/>
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.subscription_item['payment']), 'details':this.props.app_state.loc['825']/* 'Remaining Subscription Time' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':number_with_commas(subscription_config[4])+this.props.app_state.loc['828e']/* ' Time Units.' */, 'details':this.props.app_state.loc['828d']/* 'Minimum Cancellable Balance Amount.' */, 'size':'l'})}
 
                 {this.render_detail_item('0')}
 
@@ -91,10 +139,16 @@ class CancelSubscriptionPage extends Component {
 
                 <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e36')} when_number_picker_value_changed={this.when_time_units_set.bind(this)} theme={this.props.theme} power_limit={27}/>
 
-                {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
+            </div>
+        )
+    }
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+    render_cancel_credit_part(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['828a']/* 'Credit Amounts.' */, 'details':this.props.app_state.loc['828b']/* 'Heres everything youll be getting for your cancellation.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+                {this.render_buy_token_uis(this.state.subscription_item['data'][2], this.state.subscription_item['data'][3], this.state.subscription_item['data'][4])}
             </div>
         )
     }
@@ -159,8 +213,12 @@ class CancelSubscriptionPage extends Component {
     finish(){
         var time_units_picked = this.state.time_units
         if(time_units_picked == 0){
-            this.props.notify(this.props.app_state.loc['828']/* 'set a valid time unit amount!' */, 1700)
-        }else{
+            this.props.notify(this.props.app_state.loc['828']/* 'set a valid time unit amount!' */, 3700)
+        }
+        else if(!this.is_minimum_cancellable_amount_left()){
+            this.props.notify(this.props.app_state.loc['828f']/* 'You cant cancel that much. Theres a minimum number of time units thats supposed to remain.' */, 7700)
+        }
+        else{
             var clone = structuredClone(this.state)
             // clone.e5 = this.props.app_state.selected_e5
             this.props.add_cancel_subscription_to_stack(clone)
@@ -168,6 +226,21 @@ class CancelSubscriptionPage extends Component {
         }
     }
 
+    is_minimum_cancellable_amount_left(){
+        var subscription_config = this.state.subscription_item['data'][1]
+        var time_unit = subscription_config[5] == 0 ? 60*53 : subscription_config[5]
+
+        var time_units_picked = this.state.time_units
+        var minimum_cancellable_balance_amount = subscription_config[4]
+        var current_time_unit_balance = bigInt(this.state.subscription_item['payment']).divide(bigInt(time_unit))
+
+        var remaining_time_units_after_cancellation = bigInt(current_time_unit_balance).minus(bigInt(time_units_picked))
+        if(bigInt(remaining_time_units_after_cancellation).greater(bigInt(minimum_cancellable_balance_amount))){
+            return false
+        }
+
+        return true
+    }
 
 
     /* renders the specific element in the post or detail object */
@@ -178,6 +251,29 @@ class CancelSubscriptionPage extends Component {
             </div>
         )
 
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
     format_power_figure(amount){

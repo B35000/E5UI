@@ -169,7 +169,7 @@ class NewChannelPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -244,23 +244,58 @@ class NewChannelPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
-                    {this.render_new_job_object()}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
                 <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6">
-                        {this.render_new_job_object()}
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
             )
         }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
     }
 
     render_title_tags_part(){
@@ -393,7 +428,7 @@ class NewChannelPage extends Component {
 
         if(size == 's'){
             return(
-                <div style={{'padding': '0px 10px 0px 0px'}}>
+                <div style={{'padding': '0px 0px 0px 0px'}}>
                     {this.render_text_part()}
                     {this.render_entered_texts()}
                 </div>
@@ -401,12 +436,27 @@ class NewChannelPage extends Component {
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_text_part()}
-                    </div>
-                    <div className="col-6">
                         {this.render_entered_texts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_text_part()}
+                        {this.render_entered_texts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -1107,16 +1157,48 @@ class NewChannelPage extends Component {
 
     render_enter_image_part(){
         var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_pick_images_parts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_pick_images_parts()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
 
+    render_pick_images_parts(){
         return(
-            <div style={{'padding': '10px 10px 0px 0px'}}>
+            <div>
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['145']})}
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']})}
                 {this.render_create_image_ui_buttons_part()}
                 {this.render_image_part()}
-                {this.render_detail_item('0')}
-                {/* {this.render_all_images_part()} */}
-                
             </div>
         )
     }
@@ -1219,7 +1301,7 @@ class NewChannelPage extends Component {
 
     render_image_part(){
         var size = this.props.size
-        var col = Math.round(this.props.app_state.width / 100)
+        var col = Math.round(400 / 100)
         var rowHeight = 100;
 
         if(this.state.entered_image_objects.length == 0){
@@ -1272,15 +1354,12 @@ class NewChannelPage extends Component {
 
     render_authorities_part(){
         var size = this.props.size
-        var height = this.props.height-150
 
-        if(size == 's'){
-            return(
-                <div style={{overflow: 'auto', maxHeight: height}}>
-                    {this.render_moderator_interactible_ui()}
-                </div>
-            )
-        }
+        return(
+            <div style={{}}>
+                {this.render_moderator_interactible_ui()}
+            </div>
+        )
     }
 
     render_subscription_authority_target(){
@@ -1334,6 +1413,44 @@ class NewChannelPage extends Component {
 
 
     render_moderator_settings(){
+        var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_moderator_input_part()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_moderator_input_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_moderator_input_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_moderator_input_part(){
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['149'], 'details':this.props.app_state.loc['150'], 'size':'l'})}
@@ -1359,11 +1476,14 @@ class NewChannelPage extends Component {
 
     when_add_moderator_button_tapped(){
         var moderator_id = this.get_typed_alias_id(this.state.moderator_id.trim())
+        var moderators_clone = this.state.moderators.slice()
         if(isNaN(moderator_id) || parseInt(moderator_id) < 0){
-            this.props.notify(this.props.app_state.loc['98'], 1600)
+            this.props.notify(this.props.app_state.loc['98'], 3600)
+        }
+        else if(moderators_clone.includes(parseInt(moderator_id))){
+            this.props.notify(this.props.app_state.loc['162n'], 4600)
         }
         else{
-            var moderators_clone = this.state.moderators.slice()
             moderators_clone.push(parseInt(moderator_id))
             this.setState({moderators: moderators_clone});
             this.props.notify(this.props.app_state.loc['152'], 1400)
@@ -1441,9 +1561,47 @@ class NewChannelPage extends Component {
     }
 
     render_interactible_settings(){
+        var size = this.props.size
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_interactable_calendar_part()}
+                    <div style={{height:20}}/>
+                    {this.render_set_interactible_accounts()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_interactable_calendar_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_interactible_accounts()}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_interactable_calendar_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_set_interactible_accounts()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_interactable_calendar_part(){
         return(
             <div>
-                <div style={{height:20}}/>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['154'], 'details':this.props.app_state.loc['155'], 'size':'l'})}
 
                 <div style={{height:10}}/>
@@ -1464,9 +1622,6 @@ class NewChannelPage extends Component {
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_interactible_button_tapped()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['156'], 'action':''})}
                 </div>
-                
-                <div style={{height:20}}/>
-                {this.render_set_interactible_accounts()}
             </div>
         )
     }
@@ -1483,15 +1638,32 @@ class NewChannelPage extends Component {
 
     when_add_interactible_button_tapped(){
         var interactible_id = this.get_typed_alias_id(this.state.interactible_id.trim())
+        var interactibles_clone = this.state.interactibles.slice()
         if(isNaN(interactible_id) || parseInt(interactible_id) < 0){
-            this.props.notify(this.props.app_state.loc['98'], 1600)
+            this.props.notify(this.props.app_state.loc['98'], 3600)
+        }
+        if(this.state.interactible_timestamp < (new Date().getTime()/1000)){
+            this.props.notify(this.props.app_state.loc['236'], 2600)
+        }
+        else if(this.is_interactable_included(interactible_id, interactibles_clone)){
+            this.props.notify(this.props.app_state.loc['162n'], 3600)
         }
         else{
-            var interactibles_clone = this.state.interactibles.slice()
             interactibles_clone.push({'id': interactible_id, 'timestamp':this.state.interactible_timestamp})
             this.setState({interactibles: interactibles_clone});
             this.props.notify(this.props.app_state.loc['157'], 1400)
         }
+    }
+
+    is_interactable_included(id, clone){
+        var has_been_added = false
+        clone.forEach(item => {
+            var added_id = item['id']
+            if(id == added_id){
+                has_been_added = true
+            }
+        });
+        return has_been_added
     }
 
     render_set_interactible_accounts(){

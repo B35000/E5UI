@@ -48,11 +48,7 @@ class ViewBagApplicationContractPage extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div className="row">
-                    <div className="col-12" style={{'padding': '5px 0px 0px 10px'}}>
-                        <Tags font={this.props.app_state.font} page_tags_object={this.state.view_application_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_view_application_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
-                    </div>
-                </div>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.view_application_contract_title_tags_object} tag_size={'l'} when_tags_updated={this.when_view_application_contract_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
                 {this.render_everything()}
 
@@ -66,14 +62,91 @@ class ViewBagApplicationContractPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_contract_part()}
+                    {this.render_expiry_time_data()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_expiry_time_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_contract_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_expiry_time_data()}
+                        <div style={{height:10}}/>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_contract_part(){
         if(this.state.application_item['contract'] != null){
             var item = this.state.application_item
             return(
                 <div>
                     {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'13px','text':this.props.app_state.loc['1638']/* 'The contract they applied with is shown below.' */})}
                     {this.render_contracts_data()}
+                </div>
+            )
+        }
+        
+    }
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1639']/* 'Expiry time from now: ' */+this.get_time_diff(item['application_expiry_time'] - (Date.now()/1000)), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
+
+    render_expiry_time_data(){
+        if(this.state.application_item['contract'] != null){
+            var item = this.state.application_item
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1639']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
                     <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['1640']/* 'Estimated Delivery Time' */, 'title':''+this.get_time_diff(item['estimated_delivery_time']), 'size':'l'})}
@@ -88,12 +161,21 @@ class ViewBagApplicationContractPage extends Component {
 
                     {this.render_accept_job_application_button()}
 
-                    {this.render_detail_item('0')}
-                    {this.render_detail_item('0')}
                 </div>
             )
         }
-        
+    }
+
+    get_expiry_time(item){
+        var time_diff = item['application_expiry_time'] - Math.round(Date.now()/1000)
+        var t = ''
+        if(time_diff < 0){
+            t = this.get_time_diff(time_diff*-1) +this.props.app_state.loc['1698a']/* ' ago.' */
+        }else{
+            t = this.props.app_state.loc['1698b']/* 'In ' */+this.get_time_diff(time_diff)
+        }
+
+        return t
     }
 
     render_accept_job_application_button(){
@@ -104,7 +186,7 @@ class ViewBagApplicationContractPage extends Component {
                     <div style={{height:10}}/>
 
                     <div onClick={()=> this.accept_job_application()}>
-                        {this.render_detail_item('5', {'text':'Accept and Enter', 'action':''},)}
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['1646a']/* 'Accept and Enter' */, 'action':''},)}
                     </div>
                 </div>
             )
@@ -139,7 +221,7 @@ class ViewBagApplicationContractPage extends Component {
             )
         }
         return(
-            <div style={{overflow: 'auto', maxHeight: 600}}>
+            <div style={{}}>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1645']/* 'Applicants Requested Pay' */, 'details':this.props.app_state.loc['1646']/* 'Below is the applicants requested pay in their respective token denominations.' */, 'size':'l'})}
                 <div style={{height:10}}/>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
@@ -202,7 +284,7 @@ class ViewBagApplicationContractPage extends Component {
         var object = this.state.application_item['contract']
 
         return(
-            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px', 'max-width':'470px'}}>
+            <div style={{ 'background-color': background_color, 'border-radius': '15px','margin':'5px 0px 20px 0px', 'padding':'0px 10px 0px 10px'}}>
                 <div style={{width:'100%', padding:'0px 10px 0px 10px'}}>
                     {this.render_detail_item('1', item['tags'])}
                     <div style={{height: 10}}/>
@@ -260,6 +342,10 @@ class ViewBagApplicationContractPage extends Component {
                     {this.render_buy_token_uis(object['data'][2], object['data'][3], object['data'][4])}
 
                     {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'details':this.props.app_state.loc['1646c']/* 'Below is the End and Spend balance of the contract.' */, 'title':this.props.app_state.loc['1646b']/* 'Contracts Balance.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+
                     <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':item['end_balance']['title'], 'number':item['end_balance']['n'], 'relativepower':item['end_balance']['relativepower']})}>
                         {this.render_detail_item('2', item['end_balance'])}
                     </div>

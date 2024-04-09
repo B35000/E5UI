@@ -201,7 +201,7 @@ class NewTokenPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'0px 0px 0px 0px'}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -241,6 +241,30 @@ class NewTokenPage extends Component {
         return picked_item
     }
 
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
     render_enter_tags_part(){
         var size = this.props.size
 
@@ -248,21 +272,30 @@ class NewTokenPage extends Component {
             return(
                 <div>
                     {this.render_title_tags_part()}
-                    
-                    {this.render_new_job_object()}
-                    {this.render_detail_item('0')}
                 </div>
             )
         }
         else if(size == 'm'){
             return(
-                <div className="row" style={{'padding': '0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding': '0px 0px 0px 0px'}}>
+                <div className="row" style={{}}>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_title_tags_part()}
                     </div>
-                    <div className="col-6">
-                        {this.render_new_job_object()}
-                        {this.render_detail_item('0')}
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_tags_part()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
                     </div>
                 </div>
                 
@@ -309,8 +342,6 @@ class NewTokenPage extends Component {
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['146']/* 'Images larger than 500Kb will be ignored.' */})}
                 <div style={{height:10}}/>
                 {this.render_create_image_ui_buttons_part()}
-
-                {this.render_detail_item('0')}
                 
                 {this.render_detail_item('0')}
                 {this.render_detail_item('0')}

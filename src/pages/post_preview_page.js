@@ -23,9 +23,57 @@ class PostPreview extends Component {
 
     render(){
         if(this.state.post_object == null) return;
-        var subscriptions = this.get_post_object_subscriptions()
+        
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
+                {this.render_everything()}
+            </div>
+        )
+    }
+
+
+    render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_content()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_content(){
+        var subscriptions = this.get_post_object_subscriptions()
+        return(
+            <div>
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['1302']/* 'You need to pay those subscriptions first before you can view the full post.' */, 'title':this.props.app_state.loc['1301']/* Subscription Locked' */})}
                 <div style={{height: 10}}/>
 
@@ -35,8 +83,29 @@ class PostPreview extends Component {
                 <div style={{height: 10}}/>
                 {this.render_subscription_objects(subscriptions)}
                 {this.render_pin_post_button(this.state.post_object)}
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+            </div>
+        )
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }

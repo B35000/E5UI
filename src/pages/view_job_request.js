@@ -129,7 +129,7 @@ class ViewJobRequestPage extends Component {
             if(!this.state.request_item['is_response_accepted']){
                 return(
                 <div className="row">
-                    <div className="col-1" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.accept_job_request_title_tags_object} tag_size={'l'} when_tags_updated={this.when_accept_job_request_title_tags_object_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
@@ -154,6 +154,43 @@ class ViewJobRequestPage extends Component {
 
 
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_small_screen_selectors()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div>
+                    {this.render_medium_screen_selectors()}
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_details_part()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_contract_parts()}
+                    </div>
+                    <div className="col-4" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_messages_parts()}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+
+
+    render_small_screen_selectors(){
         var selected_item = this.get_selected_item(this.state.accept_job_request_title_tags_object, this.state.accept_job_request_title_tags_object['i'].active)
 
         if(selected_item == 'e'){
@@ -180,6 +217,35 @@ class ViewJobRequestPage extends Component {
     }
 
 
+    render_medium_screen_selectors(){
+        var selected_item = this.get_selected_item(this.state.accept_job_request_title_tags_object, this.state.accept_job_request_title_tags_object['i'].active)
+
+        if(selected_item == 'e' || selected_item == this.props.app_state.loc['1676']/* 'contract' */){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_details_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_select_contract_parts()}
+                    </div>
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1677']/* 'activity' */){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_title_details_part()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_messages_parts()}
+                    </div>
+                </div>
+            )
+        }
+    }
+
 
 
     render_title_details_part(){
@@ -199,21 +265,21 @@ class ViewJobRequestPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                    <div style={{height:5}}/>
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1679']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
-                    <div style={{height:5}}/>
+                    {this.render_detail_item('0')}
                     
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1680']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
-                    <div style={{height:5}}/>
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['1681']/* 'Sender ID' */, 'title':item['applicant_id'], 'size':'l'})}
-                    <div style={{height:5}}/>
+                    <div style={{height:10}}/>
 
                     {this.render_image_part([].concat(item['entered_images']))}
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1682']/* 'Accepted' */, 'details':this.props.app_state.loc['1698']/* 'The contractor Accepted the job request.' */, 'size':'l'})}
-                    <div style={{height:5}}/>
+                    <div style={{height:10}}/>
                     <div onClick={()=>this.open_contract(item['contract'])}>
                         {this.render_detail_item('5', {'text':'View Contract', 'action':''})}
                     </div>
@@ -226,20 +292,21 @@ class ViewJobRequestPage extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1678']/* 'Expiry time from now: ' */+this.get_expiry_time(item), 'details':''+(new Date(item['application_expiry_time'] * 1000)), 'size':'l'})}
-                    <div style={{height:5}}/>
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1686']/* 'Payment Option' */, 'details':this.get_selected_item(item['pre_post_paid_option'], 'e'), 'size':'l'})}
-                    <div style={{height:5}}/>
+                    {this.render_detail_item('0')}
 
                     {this.render_detail_item('3', {'details':this.props.app_state.loc['1687']/* 'Sender ID' */, 'title':item['applicant_id'], 'size':'l'})}
-                    <div style={{height:5}}/>
+                    <div style={{height:10}}/>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1688']/* 'Job Description' */, 'details':item['title_description'], 'size':'l'})}
-                    <div style={{height:5}}/>
+                    <div style={{height:10}}/>
                     {this.render_image_part(item['entered_images'])}
 
-                    <div style={{height:5}}/>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1689']/* 'Set Pay' */, 'details':this.props.app_state.loc['1690']/* 'The amounts youll be receiving for the job.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
                     {this.render_set_prices_list_part(item)}
                 </div>
             )
@@ -610,9 +677,9 @@ class ViewJobRequestPage extends Component {
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
-                    <div onScroll={event => this.handleScroll(event)} style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
+                    <div onScroll={event => this.handleScroll(event)} style={{ 'overflow-y': 'auto', height: he, padding:'0px 0px 5px 0px'}}>
                         {/* <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/> */}
-                        {/* {this.render_top_title()} */}
+                        {this.render_top_title()}
                         {/* {this.render_focus_list()} */}
                         {/* <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/> */}
                         {this.render_sent_received_messages()}
@@ -628,7 +695,7 @@ class ViewJobRequestPage extends Component {
                             </div>
                         </div>
                     </div>
-                    <div style={{'margin': '0px 0px 0px 0px', width:this.props.width}}>
+                    <div style={{'margin': '0px 0px 0px 0px', width:'70%'}}>
                         <TextInput font={this.props.app_state.font} height={20} placeholder={'Enter Message...'} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
                     </div>
 
@@ -698,8 +765,8 @@ class ViewJobRequestPage extends Component {
     render_top_title(){
         var object = this.state.request_item;
         return(
-            <div style={{padding:'5px 5px 5px 5px'}}>
-                {this.render_detail_item('3', {'title':'In '+object['job_request_id'], 'details':object['title_description'], 'size':'l'})} 
+            <div style={{padding:'0px 5px 5px 5px'}}>
+                {this.render_detail_item('3', {'title':'ID: '+object['job_request_id'], 'details':object['title_description'], 'size':'l'})} 
             </div>
         )
     }
@@ -719,12 +786,12 @@ class ViewJobRequestPage extends Component {
     }
 
     render_sent_received_messages(){
-        var middle = this.props.height-250;
-        if(this.get_focused_message() != null) middle = this.props.height-300
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
+        // var middle = this.props.height-250;
+        // if(this.get_focused_message() != null) middle = this.props.height-300
+        // var size = this.props.size;
+        // if(size == 'm'){
+        //     middle = this.props.height-100;
+        // }
         var items = [].concat(this.get_convo_messages())
         var stacked_items = this.get_stacked_items()
 
@@ -770,7 +837,7 @@ class ViewJobRequestPage extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{ 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.render_messages(items.concat(stacked_items))}
                         <div ref={this.messagesEnd}/>
@@ -779,7 +846,7 @@ class ViewJobRequestPage extends Component {
             )
             }else{
                 return(
-                    <div style={{overflow: 'auto', maxHeight: middle, 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div style={{ 'display': 'flex', 'flex-direction': 'column-reverse'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                             {this.render_all_comments()}
                             <div ref={this.messagesEnd}/>

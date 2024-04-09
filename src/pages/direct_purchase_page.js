@@ -77,8 +77,72 @@ class DirectPurchasetPage extends Component {
         return picked_item
     }
 
-
     render_everything(){
+        var size = this.props.app_state.size
+
+        if(size == 's'){
+            return(
+                <div>
+                    {this.render_content()}
+                    {this.render_price_content()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_price_content()}
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_content()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_price_content()}
+                        {this.render_empty_views(3)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_empty_views(size){
+        var items = []
+        for(var i=0; i<size; i++){
+            items.push(i)
+        }
+        
+        return(
+            <div>
+                <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
+                    {items.map((item, index) => (
+                        <li style={{'padding': '2px'}}>
+                            <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{'margin':'10px 20px 10px 0px'}}>
+                                    <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+
+    render_content(){
         var object = this.state.storefront_item
 
         if(object['ipfs'] != null){
@@ -114,11 +178,19 @@ class DirectPurchasetPage extends Component {
 
                     <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_purchase_unit_count.bind(this)} theme={this.props.theme} power_limit={23}/>
                     <div style={{height:10}}/>
+                </div>
+            )
+        }
+    }
 
+    render_price_content(){
+        var object = this.state.storefront_item
+        if(object['ipfs'] != null){
+            return(
+                <div>
                     {this.render_set_storefront_prices_list_part()}
-                    {this.render_detail_item('0')}
                     {this.render_direct_purchase_shipping_fees()}
-                    {this.render_detail_item('0')}
+                    
                     {this.render_my_balances()}
                     <div style={{height:20}}/>
                 </div>
@@ -230,6 +302,7 @@ class DirectPurchasetPage extends Component {
 
         return(
                 <div style={{}}>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1114a']/* 'Purchase Amounts' */, 'details':this.props.app_state.loc['1114b']/* 'This is the final amount for the shipping fee for the items your buying.' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
@@ -259,6 +332,7 @@ class DirectPurchasetPage extends Component {
             }
             return(
                 <div>
+                    {this.render_detail_item('0')}
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1105']/* 'Your balances' */, 'details':this.props.app_state.loc['1106']/* 'This is how much you have available for the direct purchase' */, 'size':'l'})}
                     <div style={{height:10}}/>
 
