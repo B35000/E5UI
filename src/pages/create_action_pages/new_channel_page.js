@@ -169,7 +169,7 @@ class NewChannelPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 

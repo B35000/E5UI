@@ -210,7 +210,7 @@ class NewStorefrontItemPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'10px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -493,7 +493,7 @@ class NewStorefrontItemPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['484']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.shipping_price_amount), 'barwidth':this.calculate_bar_width(this.state.shipping_price_amount), 'number':this.format_account_balance_figure(this.state.shipping_price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['483']/* 'tokens' */, })}
                     </div>
 
-                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.shipping_exchange_id)}/>
+                    <NumberPicker ref={this.amount_picker}  font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_shipping_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.shipping_exchange_id)}/>
 
                     <div style={{'padding': '5px'}} onClick={() => this.when_add_shipping_price_set()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['485']/* 'Add Price' */, 'action':''})}
@@ -1965,7 +1965,7 @@ class NewStorefrontItemPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['505']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['506']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+                <NumberPicker ref={this.amount_picker2} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['507']/* 'Add Price' */, 'action':''})}
@@ -1974,8 +1974,23 @@ class NewStorefrontItemPage extends Component {
         )
     }
 
+    constructor(props) {
+        super(props);
+        this.amount_picker = React.createRef();
+    }
+
     when_exchange_id_input_field_changed(text){
         this.setState({exchange_id: text})
+        this.reset_the_number_picker()
+    }
+
+    reset_the_number_picker(){
+        var me = this;
+        setTimeout(function() {
+            if(me.amount_picker.current != null){
+                me.amount_picker.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
     }
 
     when_price_amount(amount){
@@ -2277,13 +2292,13 @@ class NewStorefrontItemPage extends Component {
         var available_unit_count = this.state.available_unit_count
 
         if(variant_description == ''){
-            this.props.notify(this.props.app_state.loc['521']/* 'that variant description isnt valid' */, 800)
+            this.props.notify(this.props.app_state.loc['521']/* 'that variant description isnt valid' */, 2800)
         }
         else if(price_data.length == 0){
-            this.props.notify(this.props.app_state.loc['522']/* 'set a price for your variant first' */, 900)
+            this.props.notify(this.props.app_state.loc['522']/* 'set a price for your variant first' */, 2900)
         }
         else if(available_unit_count == 0){
-            this.props.notify(this.props.app_state.loc['523']/* 'You need to specify how many units are available first' */, 900)
+            this.props.notify(this.props.app_state.loc['523']/* 'You need to specify how many units are available first' */, 5900)
         }else{
             var variant = {'variant_id':makeid(8),'image_data':image_data, 'variant_description':variant_description, 'price_data':price_data, 'available_unit_count':available_unit_count}
 
@@ -2294,7 +2309,7 @@ class NewStorefrontItemPage extends Component {
                 clone.push(variant)
             }
             this.setState({variants:clone, variant_images:[], variant_description:'', price_data:[], available_unit_count:0, edit_variant_item_pos: -1})
-            this.props.notify(this.props.app_state.loc['524']/* 'added the variant to the item' */, 600)
+            this.props.notify(this.props.app_state.loc['524']/* 'added the variant to the item' */, 2600)
         }
     }
 
@@ -2546,9 +2561,11 @@ class NewStorefrontItemPage extends Component {
     when_price_suggestion_clicked(item, pos, target_type){
         if(target_type=='exchange_id'){
             this.setState({exchange_id: item['id']})
+            this.reset_the_number_picker2()
         }
         else if(target_type == 'shipping_exchange_id'){
             this.setState({shipping_exchange_id: item['id']})
+            this.reset_the_number_picker()
         }
     }
 

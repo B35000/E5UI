@@ -214,6 +214,14 @@ class PostsDetailsSection extends Component {
                     
                     {this.render_edit_object_button(object)}
 
+
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', item['reply_count'])}
+                    <div style={{height: 10}}/>
+
+                    {this.render_detail_item('3', item['award_count'])}
+                    <div style={{height: 10}}/>
+
                     {this.render_award_button(object)}
 
                     {this.render_pin_post_button(object)}
@@ -381,10 +389,15 @@ class PostsDetailsSection extends Component {
         var title = object['ipfs'] == null ? 'Post ID' : object['ipfs'].entered_title_text
         var age = object['event'] == null ? 0 : object['event'].returnValues.p7
         var time = object['event'] == null ? 0 : object['event'].returnValues.p6
+        var number_of_replies = this.get_convo_messages(object).length
+        var number_of_awards = this.get_post_awards(object).length
         return {
             'tags':{'active_tags':tags, 'index_option':'indexed'},
             'id':{'title':object['e5']+' • '+object['id'], 'details':title, 'size':'l'},
-            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, }
+            'age':{'style':'l', 'title':this.props.app_state.loc['1744']/* 'Block Number' */, 'subtitle':this.props.app_state.loc['2494']/* 'age' */, 'barwidth':this.get_number_width(age), 'number':`${number_with_commas(age)}`, 'barcolor':'', 'relativepower':`${this.get_time_difference(time)} `+this.props.app_state.loc['2495']/* ago */, },
+            
+            'reply_count':{'title':`${number_with_commas(number_of_replies)}`, 'details': this.props.app_state.loc['2815']/* 'Number of Replies.' */, 'size':'l'},
+            'award_count':{'title':`${number_with_commas(number_of_awards)}`, 'details': this.props.app_state.loc['2816']/* 'Number of Awards.' */, 'size':'l'},
         }
     }
 
@@ -457,7 +470,7 @@ class PostsDetailsSection extends Component {
 
         return(
             <div>
-                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                     <div style={{ 'overflow-y': 'auto', height: he, padding:'5px 0px 5px 0px'}}>
                         {this.render_award_top_title(object)}
                         <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '10px 20px 10px 20px'}}/>
@@ -544,7 +557,7 @@ class PostsDetailsSection extends Component {
 
         return(
             <div>
-                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px', 'max-width':'470px'}}>
+                <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
                     <div onScroll={event => this.handleScroll(event, object)} style={{ 'overflow-y': 'scroll', height: he, padding:'5px 0px 5px 0px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.comment_structure_tags} tag_size={'l'} when_tags_updated={this.when_comment_structure_tags_updated.bind(this)} theme={this.props.theme}/>
                         {this.render_top_title(object)}

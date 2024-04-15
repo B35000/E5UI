@@ -301,7 +301,7 @@ class SendReceiveEtherPage extends Component {
 
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount/10**9), 'number':(this.state.picked_max_fee_per_gas_amount/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
 
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':(this.state.picked_max_fee_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
                     </div>
 
                     <NumberPicker font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_fee_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
@@ -793,17 +793,17 @@ class SendReceiveEtherPage extends Component {
         var e5 = this.state.ether['e5']
         var picked_amount = this.state.picked_wei_amount
         var my_balance = this.props.app_state.account_balance[e5]
-        var gas_price_picked = 30_000 * this.state.picked_wei_gas_price
+        var gas_price_picked = this.state.picked_wei_gas_price
 
         if(this.props.app_state.e5s[e5].type == '1559'){
             var base_fee = this.props.app_state.gas_price[e5]
-            gas_price_picked = 30_000 * (base_fee + this.state.picked_max_priority_per_gas_amount)
+            gas_price_picked = (this.state.picked_max_priority_per_gas_amount)
             
-            if(gas_price_picked > this.state.picked_max_fee_per_gas_amount){
-                this.props.notify(this.props.app_state.loc['1407e']/* 'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.' */, 11200)
-                return;
-            }
-            else if((picked_amount+gas_price_picked) > my_balance){
+            // if(gas_price_picked > this.state.picked_max_fee_per_gas_amount){
+            //     this.props.notify(this.props.app_state.loc['1407e']/* 'The base fee and your selected max priority per gas amount exceeds your selected max fee per gas amount.' */, 11200)
+            //     return;
+            // }
+            if((picked_amount+gas_price_picked) > my_balance){
                 this.props.notify(this.props.app_state.loc['1404']/* 'Your ether balance is insufficient to fulfil that transaction.' */, 7200)
                 return;
             }
@@ -837,8 +837,7 @@ class SendReceiveEtherPage extends Component {
         this.setState({confirmation_dialog_box: false})
         var e5 = this.state.ether['e5']
         this.props.notify(this.props.app_state.loc['1405']/* 'running your send transaction...' */, 5600)
-        this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas(), this.state.ether);
-        
+        this.props.send_ether_to_target(this.format_to_address(this.state.recipient_address, e5), this.state.picked_wei_amount, this.set_gas_price(), this.props.app_state, e5, this.set_max_priority_per_gas(), this.set_max_fee_per_gas(), this.state.ether);  
     };
 
     set_gas_price(){

@@ -349,14 +349,14 @@ class NewPostPage extends Component {
                 <div style={{height:10}}/>
 
 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['767a']/* Take down post. */, 'details':this.props.app_state.loc['767b']/* Take down the post from the explore section. */, 'size':'l'})}
-                <div style={{height:10}}/>
-                <Tags page_tags_object={this.state.get_take_down_option} tag_size={'l'} when_tags_updated={this.when_get_take_down_option.bind(this)} theme={this.props.theme}/>
-                <div style={{height:10}}/>
+                
 
             </div>
         )
+    }
+
+    when_get_take_down_option(tag_obj){
+        this.setState({get_take_down_option: tag_obj})
     }
 
     render_title_tags_part2(){

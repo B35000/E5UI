@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 
-import SwipeableBottomSheet from 'react-swipeable-bottom-sheet';
+import SwipeableBottomSheet from './../externals/SwipeableBottomSheet';
 import Dialog from "@mui/material/Dialog";
 import ViewGroups from './../components/view_groups'
 import { motion } from "framer-motion"
@@ -290,7 +290,7 @@ class home_page extends Component {
         var size = this.props.screensize;
         var top_bar = 50;
         var middle = this.props.height-126;
-        var bottom_bar = 75;
+        var bottom_bar = 65;
         var width = this.props.width;
         var navbar_color = this.props.theme['nav_bar_color'];
         var background_color = this.props.theme['homepage_background_color'];
@@ -304,7 +304,7 @@ class home_page extends Component {
                         {this.render_side_bar()}
 
                         <div className="col-11" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}} >
-                            <div style={{height:top_bar, width:'99%', 'padding':'9px 0px 0px 5px'}}>
+                            <div style={{height:top_bar, 'padding':'9px 0px 0px 5px'}}>
                                 {this.render_top_tag_bar(size)}
                             </div>
                             
@@ -387,6 +387,7 @@ class home_page extends Component {
             );
         }
         else if(size == 's'){
+            var bottom_bar = 75;
             return ( 
                 <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
                     {this.render_small_screen_size_ui(size, top_bar, width)}
@@ -452,13 +453,14 @@ class home_page extends Component {
         var navbar_color = this.props.theme['nav_bar_color'];
         var background_color = this.props.theme['homepage_background_color'];
         var back = this.props.theme['background']
+        var bar_width = 85
         return(
             <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
-                <div style={{height:15, width:90, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid'}}/>
-                <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.2}}/>
-                <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.4}}/>
-                <div style={{height:15, width:90, 'background-color': navbar_color, opacity:0.6}}/>
-                <div style={{height:(this.props.height-89), width:90, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px'}}>
+                <div style={{height:15, width:bar_width, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid'}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.2}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.4}}/>
+                <div style={{height:15, width:bar_width, 'background-color': navbar_color, opacity:0.6}}/>
+                <div style={{height:(this.props.height-89), width:bar_width, 'background-color':  navbar_color,'border-radius': '0px 0px 20px 20px'}}>
                     {this.render_navbar_button_group(size)}
                 </div>
             </div>
@@ -688,18 +690,16 @@ class home_page extends Component {
     /* render the top bar tags with the create object button */
     render_top_tag_bar(size){
         var width = this.props.width;
-        if(size == 'l') width = this.props.width - 100;
+        if(size == 'l') width = this.props.width - 120;
         if(size == 'xl') width = this.props.width - 120;
-        if(size == 's') width = this.props.width + 10
+        if(size == 's') width = this.props.width
         return(
-            <div className="row" style={{width:width}}>
-                <div className="col-10" style={{'padding': '0px 0px 0px 10px'}}>
+            <div style={{'display': 'flex','flex-direction': 'row','margin':'0px 0px 0px 0px', width: width}}>
+                <div style={{'padding': '0px 0px 0px 10px', width:width-60}}>
                     {this.render_tag_bar_group(this.get_tag_group_option(),'l')}
                 </div>
-                <div className="col-2" style={{'padding': '2px 0px 0px 0px'}}>
-                    <div className="text-end" style={{'padding': '0px 0px 0px 0px'}} >
-                        {this.render_e_plus_button()}
-                    </div>
+                <div style={{'padding': '0px 0px 0px 0px', width:60}}>
+                    {this.render_e_plus_button()}
                 </div>
             </div>
         );

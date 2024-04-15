@@ -572,7 +572,7 @@ class RespondToJobPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1324']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1325']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1326']/* 'Add Price' */, 'action':''})}
@@ -580,6 +580,11 @@ class RespondToJobPage extends Component {
 
             </div>
         )
+    }
+
+    constructor(props) {
+        super(props);
+        this.amount_picker = React.createRef();
     }
 
     get_power_limit_for_exchange(exchange){
@@ -608,6 +613,16 @@ class RespondToJobPage extends Component {
 
     when_exchange_id_input_field_changed(text){
         this.setState({exchange_id: text})
+        this.reset_the_number_picker()
+    }
+
+    reset_the_number_picker(){
+        var me = this;
+        setTimeout(function() {
+            if(me.amount_picker.current != null){
+                me.amount_picker.current.reset_number_picker()
+            }
+        }, (1 * 1000));  
     }
 
     when_price_amount(amount){
@@ -776,6 +791,7 @@ class RespondToJobPage extends Component {
 
     when_price_suggestion_clicked(item, pos, target_type){
         this.setState({exchange_id: item['id']})
+        this.reset_the_number_picker()
     }
 
 

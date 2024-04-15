@@ -168,7 +168,7 @@ import { Buffer } from 'buffer';
 
 
 /* shared component stuff */
-import SwipeableBottomSheet from 'react-swipeable-bottom-sheet'; 
+import SwipeableBottomSheet from './externals/SwipeableBottomSheet'; 
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SwipeableViews from 'react-swipeable-views';
@@ -389,7 +389,7 @@ class App extends Component {
         token:'ETHT',
         e5_address:'0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0', 
         first_block:20, end_image:'https://nftstorage.link/ipfs/bafkreibrox62z2x62w4veqmoc6whuu4j4ni7iubhing6j7cjqfv2uigciq', spend_image:'https://nftstorage.link/ipfs/bafkreia5yy5rlxac3wh2i2u4a7hpfkiqthfjjoqvumovzajt2frqo4233e', ether_image:'https://nftstorage.link/ipfs/bafkreidedjpi2oy3xau4wa2sio7o5js7l4wkdmyo2kfw5vx5kdqey5wrrm', iteration:40_000, url:0, active:false, e5_img:'https://nftstorage.link/ipfs/bafkreib2nwt7hxnjzv44mi66odisosg6escg4jeejv3oxhl4lml74bb4mu',
-        end_token_power_limit: 990
+        end_token_power_limit: 990, type:'1559'
       },
       'E25':{
         web3:['https://etc.etcdesktop.com'], 
@@ -889,7 +889,7 @@ class App extends Component {
         '64':'modify-contract','65':'modify','66':'contract','67':'auth','68':'Vote Bounty Split Proportion','69':'Maximum Extend Enter Contract Limit','70':'Minimum End Bounty Amount','71':'Proposal Expiry Duration Limit','72':'Maximum Enter Contract Duration','73':'Auto Wait','74':'Proposal Modify Expiry Duration Limit','75':'Moderator Modify Privelage','76':'Unlimited Extend Contract Time','77':'Maximum Proposal Expiry Submit Expiry time difference','78':'Bounty Limit Type','79':'Force Exit Enabled','80':'Minimum Spend Bounty Amount','81':'no','82':'yes','83':'modifiable','84':'non-modifiable','85':'enabled','86':'disabled','87':'relative','88':'absolute','89':'enabled','90':'disabled','91':'Make changes to the configuration of the contract ID: ','92':'units','93':'Add Change.','94':'Target ID...','95':'Current ','96':'Current Value.','97':'Reconfiguration action added.','98':'Please pute a valid account ID.','99':'Reconfiguration action added.','100':'Modify Target.','101':'Position.','102':'Proportion.','103':'Duration.','104':'Value: ','105':'Target ID','106':'Reconfiguration action removed.','107':'My Account','108':'Account','108a':'Edit contract prices.', '108b':'Change the entry fees of your contract.', '108c':'You cant change the first price-value of the entry fees used', '108d':'', '108e':'', '108f':'',
         
         /* new channel page */
-        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Images larger than 5Mb will be ignored','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.',
+        '109':'channel','110':'e.text','111':'links','112':'images','113':'e.authorities','114':'authorities','115':'text','116':'font','117':'size','118':'moderators','119':'interactable','120':'e.font','121':'e.size','122':'Set a title for your new Channel.','123':'Enter Title...','124':'Remaining character count: ','125':'Set tags for indexing your new Channel.','126':'Enter Tag...','127':'Add.','128':'Type something.','129':'Enter one word.','130':'That tag is too long.','131':'That tag is too short.','132':'You cant enter the same word twice.','133':'Tag added.','134':'Enter your preferred text then tap add to add it.','135':'Type Something...','136':'Add Text.','137':'Edit Text.','138':'Editing Item.','139':'Search an object by its title or id, then tap it to add it to the new Channel.','140':'Search.','141':'Searching...','142':'Link removed from object.','143':'The link is already in the Channel','144':'Link added to the Channel.','145':'The grey circle stages an image. Then tap an image to remove it.','146':'Large images may be compressed to save on space.','147':'Access Rights.','148':'If enabled, access to the channel will be restricted to moderators and specified accounts.','149':'Moderator ID','150':'Set the account id for your targeted moderator.','151':'Add Moderator.','152':'Added moderator.','153':'Account ID','154':'Interactable ID','155':'Set the account id for your targeted account, and expiry time for their interactability.','156':'Add Interactable Account','157':'Added interactable account.','158':'Interactable Account ID: ','159':'Until: ','160':'Add some tags first.','161':'Add a title for your Channel.','162':'That title is too long.','162a':'📑 contract', '162b':'💼 job', '162c':'👷🏻‍♀️ contractor', '162d':'🏪 storefront', '162e':'🎫 subscription', '162f':'📰 post', '162g':'📡 channel','162h':'🪙 token','162i':'🧎 proposal', '162j':'per-hour', '162k':'per-job','162l':'The maximum number of tags you can use is 7.','162m':'You cant use special characters.','162n':'You already added that account.',
         
         /* new contract page */
         '163':'configuration','164':'entry-fees','165':'private','166':'public','167':'Set a title for your new Contract.','168':'Set tags for indexing your new Contract.','169':'Add.','170':'Enter Contract.','171':'If set to enter-contract, youll enter the contract your creating in one transaction.','172':'Preset the new contract settings based on common use cases.','173':'👥 Workgroup Contract','174':'A contract representing shared consensus within an organization or group of people.','175':'🧘 Personal Contract','176':'A contract primarily used by one person.','177':'👷🏼 Work Contract','178':'A contract used for the job and contractor markets.','179':'⚭ Life Contract','180':'A contract representing shared consensus between two or more people for an extended period of time.','181':'Workgroup contract preset has been applied.','182':'Personal contract preset has been applied.','183':'Work contract preset has been applied.','184':'Life contract preset has been applied.','185':'Create a basic E5 contract.','186':'Next.','187':'Previous.','188':'Contract Type.','189':'set the type of contract, either private or public.','190':'Note: if set to private, youll be giving new accounts access to the contract manually after its created.','191':'Vote Bounty Split Proportion (Optional).','192':'The mandatory percentage or proportion enforced on each new proposal targeting your new contract. Then, the percentage is used to calculate what each voter is set to receive based on the existing proposals balance.','193':'Vote Bounty Split Proportion.','194':'Recommended: 3% - 5%','195':'Maximum Extend Enter Contract Limit.','196':'The maximum amount of time a sender can extend their stay in your new contract.','197':'Recommended: 1 dy.','198':'Minimum End Bounty Amount (Optional).','199':'The minimum amount of end that can be used as bounty for creating a proposal for your new contract.','200':'Minimum End Bounty Amount.','201':'Minimum Spend Bounty Amount (Optional).','202':'The minimum amount of spend that can be used as bounty for new proposals targeting your new contract.','203':'Minimum Spend Bounty Amount.','204':'Maximum Enter Contract Duration.','205':'The maximum amount of time an account can enter your new contract for.','206':'Recommended: 4wks.','207':'Auto Wait.','208':'If set to yes, all new propsals sent to your new contract are automatically voted wait for each participant in the contract.','209':'Recommended: no.','210':'Proposal Modify Expiry Duration Limit.','211':'The period of time before the expiry of a proposal, during which the propsal cannot be modified.','212':'Recommended: 3 Hrs.','213':'Moderator Modify Privelage.','214':'If set to modifiable, you as a moderator can directly modify your contracts configuration.','215':'Recommended: modifiable.','216':'Unlimited Extend Contract Time.','217':'If set to enabled, you can extend your stay in this contract at any time after entry.','218':'Recommended: enabled','219':'Maximum Proposal Expiry Submit Expiry Time Difference.','220':'The maximum difference in time between the proposal expiry and submit expiry time for all proposals sent to your new contract.','221':'Recommended: at least 2wks.','222':'Bounty Limit Type.','223':'If set to absolute, the bounty limits set for end and spend will be used as is and if set to relative, the bounty limits will be set relative to the state of the network and demand.','224':'Recommended: absolute','225':'Force Exit Enabled','226':'If set to enabled, you as a moderator can force other members of the contract to exit the contract.','227':'Recommended: enabled.','228':'Proposal Expiry Duration Limit.','229':'The minimum amount of time difference that can be used while setting the expiry time for a new proposal sent to your new contract.','230':'Recommended: 1hr - 3hrs.','231':'Default Consensus Majority Limit (optional).','232':'If you prefer the contract to be consensus majority instead of unanimous, set the majority proportion here. By default, 0% and 100% means unanimous consensus.','233':'Recommended: 70% to 80%.','234':'Voter Weight Exchange.','235':'Specify an exchange that will be used to calculate voter weights for all proposals sent to your new contract.','236':'Please put a valid date and time.','237':'Exchange ID.','238':'Add an exchange by its id or name, then the desired amount. The first exchange must be the End or Spend exchange.','239':'Minimum End Contract Amount.','240':'Minimum Spend Contract Amount.','241':'Price.','242':'Add Price.','243':'Please put a valid exchange id.','244':'Please put a valid amount.','245':'The first exchange must be the End or Spend exchange.','246':'You cant use the same exchange twice.','247':'Added entry fee price.','248':'That End amount is less than the minimum required by the main contract.','249':'That Spend amount is less than the minimum required by the main contract.','250':'Please put a valid voter weight exchange id.','251':'Please add a title for your Contract.','252':'That Contract title is too long.', '252a':'Auto-Wait will be disabled if you opt for this voter weight feature.',
@@ -916,7 +916,7 @@ class App extends Component {
         '536':'subscription','537':'configuration','538':'authorities','539':'prices','540':'false','541':'true','542':'moderators','543':'interactable','544':'enabled','545':'disabled','546':'Set a name for your new Subscription.','547':'Enter Title...','548':'Set some tags for indexing your new Subscription.','549':'Enter Tag...','550':'Add.','551':'Create a basic E5 Subscription.','552':'Next','553':'Previous','554':'Cancellable.','555':'If set to true, subscription payers can refund their subscription payments.','556':'Recommended: false.','557':'Time Unit','558':'The amount of time thats used as a unit when paying for your new subscription.','559':'Recommended: 1 min.','560':'Minimum Buy Amount.','561':'Minimum amount of time units that can be paid for your new subscription.','562':'units','563':'Recommended: at least 1','564':'Maximum Buy Amount','565':'Maximum amount of time units that can be paid for your new subscription.','566':'Minimum Cancellable Amount(For Cancellable Subscriptions)','567':'The minimum amount of time units that can be left when cancelling your new subscriptions payments.','568':'Minimum Cancellable Amount','569':'Recommended: at least 1','570':'Access Rights','571':'If enabled, access to the subscription will be restricted to moderators and specified accounts.','572':'Set the authority ID for your new subscription.','573':'Set the subscription beneficiary ID for your new subscription.','574':'moderators','575':'interactable','576':'Moderator ID','577':'Set the account id for your targeted moderator','578':'Add Moderator','579':'Account ID','580':'Interactable ID','581':'Set the account id for your targeted account, and expiry time for their interactability','582':'Add Interactable Account.','583':'Please put a valid account ID.','584':'Added interactable account.','585':'Interactable Account ID: ','586':'Until: ','587':'Exchange ID','588':'Type an exchange by its id, then the desired price and click add.','589':'Price','590':'tokens','591':'Add Price','592':'Please put a valid exchange ID.','593':'Please put a valid amount.','594':'You cant use the same exchange twice.','595':'Added price.','596':'My Account','597':'Account','598':'Add some tags first.','599':'Add a name first.','600':'That name is too long.', '600a':'Enter Authority', '600b':'Enter Beneficiary ID...',
         
         /* new token page */
-        '601':'token','602':'basic','603':'custom','604':'token-authorities','605':'token-prices','606':'capped','607':'uncapped','608':'locked','609':'unlocked','610':'locked','611':'unlocked','612':'partially-custom','613':'fully-custom','614':'fixed','615':'spread','616':'enabled','617':'disabled','618':'moderators','619':'interactable','620':'Set a name for your new Token. No spaces should be used.','621':'Enter Name..','622':'Set a symbol for your new Token. No spaces should be used.','623':'Enter Symbol...','624':'Set tags for indexing your new Token.','625':'Enter Tag...','626':'Set an image for your new Token.','627':'Use a smaller image.','628':'Preset the new tokens settings based on common use cases.','629':'📈 E-Token','630':'A fixed supply token used for managing stake and funding a workgroup.','631':'☝️ Paid Token','632':'A fixed supply token with a very large supply similar to END.','633':'🫰 Free Token','634':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.','635':'🔧 Utility Token','636':'An uncapped, general purpose token which is bought and sold from its exchange.','637':'e-token preset has been applied.','638':'End token preset has been applied.','639':'Spend token preset has been applied.','640':'Utility token preset has been applied.','641':'Next.','642':'Previous.','643':'Token Supply(For Capped Tokens)','644':'The supply of a capped token available for buying (for capped tokens)','645':'Token Supply','646':'tokens','647':'Recommended: 100,000,000e2','648':'Buy Limit','649':'The maximum amount of tokens that can be bought in one transaction.','650':'Trust Fee','651':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.','652':'Recommended: 3.5%','653':'Sell Limit','654':'The maximum amount of your new token a sender can sell in a transaction.','655':'Create a custom E5 token.','656':'Set the token type.','657':'Capped token (with limited supply) or uncapped token (with unlimited supply)','658':'Minimum Time Between Swap','659':'The minimum amount of time a sender has to wait between making a swap for a given token.','660':'Trust Fee.','661':'Proportion or percentage fee enforced on all contract spending that takes place using token.','662':'Recommended: 3.5%','663':'Minimum Transactions Between Swap','664':'The minimum number of transactions sender has to make between swaps for your new token.','665':'transactions','666':'Minimum Blocks Between Swap','667':'The minimum number of blocks sender has to wait between making a swap for your new token.','668':'blocks','669':'Minimum Entered Contracts Between Swap','670':'The minimum amount of contracts sender should enter before interacting with your new exchange again.','671':'Minimum Transactions For First Buy','672':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.','673':'contracts','674':'Minimum Entered Contracts For First Buy.','675':'The minimum number of contracts sender should have entered before first buy.','676':'Unlocked Liquidity','677':'If set to unlocked, You have direct access to the token exchanges liquidity','678':'Recommended: unlocked','679':'Unlocked Supply','680':'If set to unlocked, you can mint more of the token outside the exchange.','681':'Recommended: unlocked','682':'Fully Custom','683':'If set to fully-custom, you have full access to the token exchanges configuration','684':'Recommended: fully-custom','685':'Block Limit(For Uncapped Spend Tokens)','686':'The maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.','687':'Block Limit.','688':'Recommended: ','689':'Halving type (for Uncapped Spend Tokens)','690':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.','691':'Recommended: Spread','692':'Maturity Limit(For Uncapped Spend Tokens)','693':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is proportionately less than its default set value.','694':'Maturity Limit','695':'Internal Block Halving(For Uncapped Spend Tokens)','696':'Proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)','697':'Internal Block Halving Proportion','698':'Recommended: 40% - 51%','699':'Block Limit Reduction(For Uncapped Spend Tokens)','700':'Proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)','701':'Block Limit Reduction Proportion','702':'Recommended: 65% - 91%','703':'Block Reset Limit(For Uncapped Spend Tokens)','704':'The maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.','705':'Block Reset Limit','706':'Recommended: 3','707':'Block Limit Sensitivity (for Uncapped Spend Tokens)','708':'The sensitivity of your new exchange to increasing demand','709':'Recommended: 2','710':'Exchange Ratio X','711':'The buy output exchange ratio X for your new token','712':'Exchange Ratio X:Y','713':'Exchange Ratio Y','714':'The buy input exchange ratio Y for your new token','715':'Access Rights','716':'If enabled, access to the exchange will be restricted to moderators and specified accounts','717':'Exchange Authority ID','718':'The account set to control the exchange','719':'Set Exchange Authority ID','720':'Trust Fee Target ID','721':'The account set to receive trust fee when collected from contract spend actions','722':'Set Trust Fee Target ID','723':'My Account','724':'Account','725':'Moderator ID','726':'Moderator ID','727':'Set the account id for your targeted moderator.','728':'Add Moderator','729':'Please put a valid account ID.','730':'Added the account as a moderator.','731':'Account ID','732':'Interactable ID','733':'Set the account id for your targeted account, and expiry time for their interactability','734':'Add Interactable Account','735':'Please put a valid account id','736':'Added interactable account.','737':'Exchange ID','738':'The an exchange by its id, then the desired price and click add.','739':'Price.','740':'Add Price.','741':'Please put a valid exchange ID.','742':'Please put a valid amount.','743':'You cant use the same exchange twice','744':'Added your set price.','745':'Add some tags first.','746':'Please add a name for your token.','747':'Please add a symbol for your token.','748':'That token name is too long.','749':'That token name is invalid.','750':'That token symbol is invalid.','751':'','752':'That token symbol is already in use.','752a':'That token symbol is too long.',
+        '601':'token','602':'basic','603':'custom','604':'token-authorities','605':'token-prices','606':'capped','607':'uncapped','608':'locked','609':'unlocked','610':'locked','611':'unlocked','612':'partially-custom','613':'fully-custom','614':'fixed','615':'spread','616':'enabled','617':'disabled','618':'moderators','619':'interactable','620':'Set a name for your Token. No spaces should be used.','621':'Enter Name..','622':'Set a symbol for your Token. No spaces should be used.','623':'Enter Symbol...','624':'Set tags for indexing your Token.','625':'Enter Tag...','626':'Set an image for your Token.','627':'Use a smaller image.','628':'Preset the new tokens settings based on common use cases.','629':'📈 E-Token','630':'A fixed supply token used for managing stake and funding a workgroup.','631':'☝️ Paid Token','632':'A fixed supply token with a very large supply similar to END.','633':'🫰 Free Token','634':'A variable supply token whose supply increases as users mint from its exchange, similar to SPEND.','635':'🔧 Utility Token','636':'An uncapped, general purpose token which is bought and sold from its exchange.','637':'e-token preset has been applied.','638':'End token preset has been applied.','639':'Spend token preset has been applied.','640':'Utility token preset has been applied.','641':'Next.','642':'Previous.','643':'Token Supply(For Capped Tokens)','644':'The supply of a capped token available for buying (for capped tokens)','645':'Token Supply','646':'tokens','647':'Recommended: 100,000,000e2','648':'Buy Limit','649':'The maximum amount of tokens that can be bought in one transaction.','650':'Trust Fee','651':'Proportion or percentage fee enforced on all contract spending that takes place using your new token.','652':'Recommended: 3.5%','653':'Sell Limit','654':'The maximum amount of your new token a sender can sell in a transaction.','655':'Create a custom E5 token.','656':'Set the token type.','657':'Capped token (with limited supply) or uncapped token (with unlimited supply)','658':'Minimum Time Between Swap','659':'The minimum amount of time a sender has to wait between making a swap for a given token.','660':'Trust Fee.','661':'Proportion or percentage fee enforced on all contract spending that takes place using token.','662':'Recommended: 3.5%','663':'Minimum Transactions Between Swap','664':'The minimum number of transactions sender has to make between swaps for your new token.','665':'transactions','666':'Minimum Blocks Between Swap','667':'The minimum number of blocks sender has to wait between making a swap for your new token.','668':'blocks','669':'Minimum Entered Contracts Between Swap','670':'The minimum amount of contracts sender should enter before interacting with your new exchange again.','671':'Minimum Transactions For First Buy','672':'The minimum number of transactions sender has to make to buy/sell your new token for the first time.','673':'contracts','674':'Minimum Entered Contracts For First Buy.','675':'The minimum number of contracts sender should have entered before first buy.','676':'Unlocked Liquidity','677':'If set to unlocked, You have direct access to the token exchanges liquidity','678':'Recommended: unlocked','679':'Unlocked Supply','680':'If set to unlocked, you can mint more of the token outside the exchange.','681':'Recommended: unlocked','682':'Fully Custom','683':'If set to fully-custom, you have full access to the token exchanges configuration','684':'Recommended: fully-custom','685':'Block Limit(For Uncapped Spend Tokens)','686':'The maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.','687':'Block Limit.','688':'Recommended: ','689':'Halving type (for Uncapped Spend Tokens)','690':'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.','691':'Recommended: Spread','692':'Maturity Limit(For Uncapped Spend Tokens)','693':'Amount of your token used in calculating the active block limit. If the maturity limit has not been exceeded, the active block limit used is proportionately less than its default set value.','694':'Maturity Limit','695':'Internal Block Halving(For Uncapped Spend Tokens)','696':'Proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.(for uncapped tokens)','697':'Internal Block Halving Proportion','698':'Recommended: 40% - 51%','699':'Block Limit Reduction(For Uncapped Spend Tokens)','700':'Proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)','701':'Block Limit Reduction Proportion','702':'Recommended: 65% - 91%','703':'Block Reset Limit(For Uncapped Spend Tokens)','704':'The maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.','705':'Block Reset Limit','706':'Recommended: 3','707':'Block Limit Sensitivity (for Uncapped Spend Tokens)','708':'The sensitivity of your new exchange to increasing demand','709':'Recommended: 2','710':'Exchange Ratio X','711':'The buy output exchange ratio X for your new token','712':'Exchange Ratio X:Y','713':'Exchange Ratio Y','714':'The buy input exchange ratio Y for your new token','715':'Access Rights','716':'If enabled, access to the exchange will be restricted to moderators and specified accounts','717':'Exchange Authority ID','718':'The account set to control the exchange','719':'Set Exchange Authority ID','720':'Trust Fee Target ID','721':'The account set to receive trust fee when collected from contract spend actions','722':'Set Trust Fee Target ID','723':'My Account','724':'Account','725':'Moderator ID','726':'Moderator ID','727':'Set the account id for your targeted moderator.','728':'Add Moderator','729':'Please put a valid account ID.','730':'Added the account as a moderator.','731':'Account ID','732':'Interactable ID','733':'Set the account id for your targeted account, and expiry time for their interactability','734':'Add Interactable Account','735':'Please put a valid account id','736':'Added interactable account.','737':'Exchange ID','738':'The an exchange by its id, then the desired price and click add.','739':'Price.','740':'Add Price.','741':'Please put a valid exchange ID.','742':'Please put a valid amount.','743':'You cant use the same exchange twice','744':'Added your set price.','745':'Add some tags first.','746':'Please add a name for your token.','747':'Please add a symbol for your token.','748':'That token name is too long.','749':'That token name is invalid.','750':'That token symbol is invalid.','751':'','752':'That token symbol is already in use.','752a':'That token symbol is too long.',
         
         /* edit pages */
         '753':'edit-channel','754':'unlocked','755':'locked','756':'tokens','757':'Add some tags first.','758':'Add a title fro your job post.','759':'That title is too long.','760':'job','761':'edit-token','762':'edit-channel','763':'edit-contractor','764':'edit-job','765':'edit-post','766':'edit-storefront-item','767':'edit-token', '767a':'Take down post.', '767b':'If set to taken-down, your post will not be visible to others except for yourself.', '767c':'taken-down',
@@ -1101,7 +1101,7 @@ class App extends Component {
         
         '2786':'Transaction Broadcasted.','2787':'Your transaction was successfuly broadcasted to the rest of the network.','2788':'From Your Address.','2789':'Recipient Address','2790':'Amount Sent in Wei.','2791':'Amount Sent in Ether.','2792':'Transaction Gas.','2793':'Gas Price Set in Wei.','2794':'Max Priority Fee Per Gas Set in Wei.','2795':'Max Fee per Gas Set in Wei.','2796':'Gas Price Set in Gwei.','2797':'Max Priority Fee Per Gas Set in Gwei.','2798':'Max Fee per Gas Set in Gwei.','2799':'Transaction Hash.','2800':'Qr Code.','2801':'Copy Transaction Hash.','2802':'Track Your Transaction.','2803':'You can track the status of your transaction from the chains blockexplorer.',
         
-        '2804':'Payment History','2805':'Their payment history is shown below.','2806':'Current ','2807':'Time Units: ','2808':'Accounts Balances','2809':'Heres all the tokens the account is in posession of.','2810':'Add a transaction first.','2811':'Exchange Authority','2812':'Trust Fee Target','2813':'Feed Orientation','2814':'Set the orientation for viewing your content feed.','2815':'','2816':'','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2804':'Payment History','2805':'Their payment history is shown below.','2806':'Current ','2807':'Time Units: ','2808':'Accounts Balances','2809':'Heres all the tokens the account is in posession of.','2810':'Add a transaction first.','2811':'Exchange Authority','2812':'Trust Fee Target','2813':'Feed Orientation','2814':'Set the orientation for viewing your content feed.','2815':'Number of Replies.','2816':'Number of Awards.','2817':'','2818':'','2819':'','2820':'','2821':'','2822':'','2823':'','2824':'','2825':'','2826':'','2827':'','2828':'','2829':'','2830':'','2831':'','2832':'','2833':'','2834':'','2835':'','2836':'','2837':'','2838':'','2839':'','2840':'','2841':'','2843':'','2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1235,7 +1235,7 @@ class App extends Component {
     var me = this;
     setTimeout(function() {
       me.interval = setInterval(() => me.background_sync(), obj[me.state.refresh_speed]);
-      me.interval2 = setInterval(() => me.start_get_accounts_data(false, true), 60_000)
+      me.interval2 = setInterval(() => me.start_get_accounts_data(false, true), 35_000)
     }, (1 * 100));
     
   }
@@ -1820,7 +1820,7 @@ class App extends Component {
   }
 
   /* gets the screensize in three categories, small medium and large */
-  //   getScreenSize() {
+  // getScreenSize() {
   //     var width = this.state.width;
   //     var height = this.state.height;
 
@@ -1851,29 +1851,29 @@ class App extends Component {
   // }
 
   getScreenSize() {
-      var width = this.state.width;
-      var height = this.state.height;
+    var width = this.state.width;
+    var height = this.state.height;
 
      
-      if(width<250){
-        return 'e';
-      }
-      else if(width > 1920){
-        return 'e';//l
-      }
-      else if(width > 1250){
-        return 'e';//xl
-      }
-      else if(width > 1020){
-        return 'l';//l
-      }
-      else if(width > 690){
-        return 'm'; //m
-      }
-      else{
-        return 's';
-          
-      }
+    if(width<250){
+      return 'e';
+    }
+    else if(width > 1920){
+      return 'e';
+    }
+    else if(width > 1250){
+      return 'e';//xl
+    }
+    else if(width > 1020){
+      return 'l';//l
+    }
+    else if(width > 690){
+      return 'm'; //m
+    }
+    else{
+      return 's';
+        
+    }
 
   }
 
@@ -1899,10 +1899,10 @@ class App extends Component {
         
         'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white',
 
-        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
+        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
 
-        'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24'
-
+        'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24',
+        'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu'
 
       }
     }
@@ -1926,9 +1926,10 @@ class App extends Component {
         
         'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
-        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
+        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
         
-        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme'
+        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
+        'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u'
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -1952,9 +1953,10 @@ class App extends Component {
         'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
 
-        'background':'https://nftstorage.link/ipfs/bafkreidlcdmmhg5wh3h6ipub4q6jwa3yeeqr4ovxvk24fppnl2jdtiyzyi', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
+        'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
 
-        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme'
+        'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
+        'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u'
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
@@ -1981,7 +1983,8 @@ class App extends Component {
 
         'background':'https://nftstorage.link/ipfs/bafkreihfrklgd4ohlsn4akcotktzawdx5mf2ky7ecnh5jx34oomecry2x4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiehl5q32o5bvomkiybrybqhisbnwgqgikfwy5sronba4dv5ctetqq', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreiac46ktvwpelr7ltozw746twfbjfy4d33m7wtxe7sye5nnweg25ia', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreigp4fh5puuzc7hrp2lmstlyeaqjtctyvuk7gcqdqsqlvebj4upxcm', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrilrx55ohomflas5as6puq3fm7vkn4gmp2sssqwydlvom7rxyli',
 
-        'close':'https://nftstorage.link/ipfs/bafkreidjlt2fejd5t2urmawpfg5xgtm55zlctx2zek3bqxwikehoyq6whe'
+        'close':'https://nftstorage.link/ipfs/bafkreidjlt2fejd5t2urmawpfg5xgtm55zlctx2zek3bqxwikehoyq6whe',
+        'clear':'https://nftstorage.link/ipfs/bafkreicdhnkw75k4k7m4hwiwaebgsiv2mf6zix5d6ctr2shpa7jtuy5bke'
       }
     }
 
@@ -2613,13 +2616,17 @@ class App extends Component {
     this.setState({graph_type: item})
     var me = this;
     setTimeout(function() {
-        me.set_cookies()
+      me.set_cookies()
     }, (1 * 1000));
   }
 
   set_watched_account_id(account){
     this.setState({watched_account_id: account})
-    this.update_watched_account_data()
+    var me = this;
+    setTimeout(function() {
+      this.update_watched_account_data()
+    }, (1 * 1000));
+    
   }
 
 
@@ -6703,7 +6710,7 @@ class App extends Component {
         gasPrice: run_gas_price.toString().toLocaleString('fullwide', {useGrouping:false}),
     }
 
-    if(this.props.app_state.e5s[e5].type == '1559'){
+    if(this.state.e5s[e5].type == '1559'){
       tx = {
         gas: 65000,
         value: 0,
@@ -7701,9 +7708,9 @@ class App extends Component {
 
   when_wallet_data_updated2(added_tags, set_salt, selected_item, is_synching){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
-    // this.generate_account_for_each_e5(seed)
     this.generate_one_account_for_all_e5s(seed)
-
+    this.setState({account_balance: {}});
+    
     var me = this
     setTimeout(function() {
         me.start_get_accounts_data(is_synching, false)
@@ -7726,7 +7733,7 @@ class App extends Component {
   }
 
 
-  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){   
+  when_wallet_data_updated(added_tags, set_salt, selected_item, is_synching){
     var seed = added_tags.join(' | ') + set_salt + selected_item;
     // this.generate_account_for_each_e5(seed)
     this.generate_one_account_for_all_e5s(seed)
@@ -8593,6 +8600,10 @@ class App extends Component {
     var end_balance_of_E5 = await this.get_balance_in_exchange(3, 2, e5, contract_addresses)
     var spend_balance_of_E5 = await this.get_balance_in_exchange(5, 2, e5, contract_addresses)
     var end_balance_of_burn_account = await this.get_balance_in_exchange(3, 0, e5, contract_addresses)
+
+
+    console.log('end_balance: ', end_balance_of_E5, ' spend_balance: ',spend_balance_of_E5, ' burn account balance: ', end_balance_of_burn_account)
+
 
     var end_balance_of_E5_clone = structuredClone(this.state.end_balance_of_E5)
     end_balance_of_E5_clone[e5] = end_balance_of_E5

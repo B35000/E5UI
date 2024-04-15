@@ -39,6 +39,8 @@ class PostPreview extends Component {
             return(
                 <div>
                     {this.render_content()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }

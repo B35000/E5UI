@@ -667,7 +667,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -1047,26 +1047,14 @@ class StackPage extends Component {
 
     render_stack_transactions(){
         var background_color = this.props.theme['card_background_color']
-        var middle = this.props.height-130;
-        var size = this.props.size;
-        if(size == 'm'){
-            middle = this.props.height-100;
-        }
+        
         var items = [].concat(this.props.app_state.stack_items)
 
         if(items.length == 0){
             items = [0,3,0]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {items.map((item, index) => (
-                            <div style={{ height: 75, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '7px', 'padding': '10px 0px 10px 10px', 'max-width': '420px', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center', 'margin':'5px 0px 5px 0px' }}>
-                                <div style={{ 'margin': '10px 20px 10px 0px' }}>
-                                    <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
-                                </div>
-                            </div>
-                        ))}
-                    </ul>
+                    {this.render_empty_views(3)}
                 </div>
             )
         }else{
@@ -5723,6 +5711,7 @@ class StackPage extends Component {
             return(
                 <div>
                     {this.render_settings_details()}
+                    {this.render_settings_details2()}
                 </div>
             )
         }
@@ -5756,7 +5745,7 @@ class StackPage extends Component {
     }
 
     //here
-    render_settings_details(){
+    render_settings_details2(){
         return(
             <div>
                 <div style={{'padding': '0px 0px 0px 0px'}}>
@@ -5835,7 +5824,7 @@ class StackPage extends Component {
         )
     }
 
-    render_settings_details2(){
+    render_settings_details(){
         return(
             <div>
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1528']/* 'App Theme' */, 'details':this.props.app_state.loc['1529']/* 'Set the look and feel of E5.' */, 'size':'l'})}
@@ -6337,7 +6326,7 @@ class StackPage extends Component {
             this.props.notify(this.props.app_state.loc['1560']/* 'Please set a salt.' */, 4200)
         }
         else{
-            this.props.notify(this.props.app_state.loc['1561']/* 'Setting your wallet. This might take a while...' */, 5500)
+            this.props.notify(this.props.app_state.loc['1561']/* 'Setting your wallet.' */, 5500)
 
             var me = this;
             setTimeout(function() {

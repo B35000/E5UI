@@ -88,6 +88,8 @@ class NewMintActionPage extends Component {
                 <div>
                     {this.render_data_picker_ui()}
                     {this.render_fees_and_price_data_if_buyable()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }

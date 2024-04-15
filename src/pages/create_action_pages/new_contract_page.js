@@ -259,7 +259,11 @@ class NewContractPage extends Component {
         if(size == 's'){
             return(
                 <div>
-                    {this.render_title_tags_part()}                    
+                    {this.render_title_tags_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_presets_menu()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}                  
                 </div>
             )
         }
@@ -270,7 +274,7 @@ class NewContractPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_presets_menu()}
                     </div>
                 </div>
                 
@@ -283,7 +287,7 @@ class NewContractPage extends Component {
                         {this.render_title_tags_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_presets_menu()}
                     </div>
                 </div>
                 
@@ -345,13 +349,9 @@ class NewContractPage extends Component {
                 <div style={{height:20}}/>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.include_enter_contract_action_tags_object} tag_size={'l'} when_tags_updated={this.when_include_enter_contract_action_tags_object.bind(this)} theme={this.props.theme}/>
 
-                {this.render_detail_item('0')}
-
-                {this.render_presets_menu()}
                 <div style={{height:20}}/>
                 
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
+                
             </div>
         )
     }

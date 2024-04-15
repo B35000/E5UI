@@ -41,13 +41,13 @@ class FilterSection extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div className="row" style={{width:'102%'}}>
-                    <div className="col-9" style={{'padding': '5px 0px 0px 10px'}}>
+                <div className="row">
+                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div style={{'padding': '5px'}} onClick={()=> this.clear_search()} >
-                            {this.render_detail_item('5',{'text':this.props.app_state.loc['1123']/* 'Clear' */,'action':''})}
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                            <img className="text-end" onClick={()=>this.clear_search()} src={this.props.theme['clear']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
