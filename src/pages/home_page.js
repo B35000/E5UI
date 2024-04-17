@@ -1243,7 +1243,7 @@ class home_page extends Component {
         }
 
         if(selected_option_name == this.props.app_state.loc['1202']/* 'all' */){
-            return this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_contracts))))
+            return (this.sort_feed_based_on_my_section_tags(this.filter_using_searched_text(this.filter_for_blocked_accounts(this.get_all_sorted_objects(this.props.app_state.created_contracts)))))
         }
         else if(selected_option_name == this.props.app_state.loc['1203']/* 'viewed' */){
             var my_viewed_contracts = []
@@ -1479,7 +1479,7 @@ class home_page extends Component {
             }
         }
 
-        return this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data))
+        return this.filter_by_content_channeling(this.filter_using_searched_text(this.filter_for_blocked_accounts(sorted_token_exchange_data)))
     }
 
     get_job_items(){
@@ -2003,10 +2003,10 @@ class home_page extends Component {
             var object_content_channeling_setting = ipfs.content_channeling_setting
             var object_language = ipfs.device_language_setting
 
-            // console.log('--------------------------------filter_by_content_channeling---------------------')
-            // console.log(ipfs)
-            // console.log(object_country, ' ',object_content_channeling_setting, ' ', object_language)
-            
+            if(object['id'] == 2 || object['id'] == 3 || object['id'] == 5 ){
+                return_objs.push(object)
+            }
+       
             if(content_channeling_setting == this.props.app_state.loc['1231']/* 'local' */){
                 if(device_country == object_country && object_content_channeling_setting == this.props.app_state.loc['1231']/* 'local' */){
                     return_objs.push(object)
@@ -2021,9 +2021,6 @@ class home_page extends Component {
                 if(object_content_channeling_setting == this.props.app_state.loc['1233']/* 'international' */){
                     return_objs.push(object)
                 }
-            } 
-            else{
-                console.log('invalid content channeling setting!')
             }
         });
 

@@ -2592,6 +2592,16 @@ class NewTokenPage extends Component {
         if(record != null) return true
         record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_symbols)[symbol]
         if(record != null) return true
+
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(t.type == this.props.app_state.loc['601']/* 'token' */){
+                var selected_symbol = t.entered_symbol_text
+                if(symbol == selected_symbol) return true
+            }
+        }
+
         return false
     }
 
@@ -2600,6 +2610,16 @@ class NewTokenPage extends Component {
         if(record != null) return true
         record = this.get_all_sorted_objects_mappings(this.props.app_state.registered_token_names)[name]
         if(record != null) return true
+
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            var t = txs[i]
+            if(t.type == this.props.app_state.loc['601']/* 'token' */){
+                var title_text = t.entered_title_text
+                if(name == title_text) return true
+            }
+        }
+
         return false
     }
 

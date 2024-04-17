@@ -136,13 +136,13 @@ class NewContractorPage extends Component {
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_contractor_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contractor_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
-                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
+                        <div className="text-end" style={{'padding': '0px 10px 0px 0px'}}>
                             <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
                 
-                <div style={{'margin':'0px 0px 0px 0px', width:'100%'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
             </div>
