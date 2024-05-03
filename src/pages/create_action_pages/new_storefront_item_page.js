@@ -210,7 +210,7 @@ class NewStorefrontItemPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'10px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -1944,6 +1944,14 @@ class NewStorefrontItemPage extends Component {
                 {this.render_set_token_and_amount_part()}
                 <div style={{height: 20}}/>
                 {this.render_set_prices_list_part()}
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['535e']/* 'Add Variant' */, 'details':this.props.app_state.loc['535f']/* 'Add a new variant of the item with the details set above.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                <div style={{'padding': '0px 0px 0px 0px'}} onClick={()=>this.when_add_variant_tapped()}>
+                    {/* <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto'}} /> */}
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['535e'], 'action':''})}
+                </div>
             </div>
         )
     }
@@ -2041,10 +2049,10 @@ class NewStorefrontItemPage extends Component {
             items = [0, 1]
             return(
                 <div style={{}}>
-                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px', 'list-style':'none'}}>
                         {items.map((item, index) => (
                             <li style={{'padding': '2px 0px 2px 0px'}} onClick={()=>console.log()}>
-                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                <div style={{height:60, width:'100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 0px 10px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 10px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
                                     </div>
@@ -2103,6 +2111,8 @@ class NewStorefrontItemPage extends Component {
                 <div style={{'overflow-x':'hidden'}}>
                     {this.render_variant_details_picker_part()}
                     {this.render_enter_item_price_part()}
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('0')}
                 </div>
             )
         }
@@ -2138,19 +2148,10 @@ class NewStorefrontItemPage extends Component {
         var selected_composition = this.get_selected_item(this.state.composition_type, 'e')
         return(
             <div>
-                <div style={{height:10}}/>
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['535c']/* Set the details for a variant of your new storefront item, then tap the black circle to add it. */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height:10}}/>
-                <div className="row">
-                    <div className="col-10" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_variant_tabs()}
-                    </div>
-                    <div className="col-2" style={{'padding': '5px 0px 0px 5px'}}>
-                        <div style={{'padding': '0px'}} onClick={()=>this.when_add_variant_tapped()}>
-                            <img src={this.props.app_state.static_assets['e5_empty_icon']} style={{height:45, width:'auto'}} />
-                        </div> 
-                    </div>
-                </div>
+                {this.render_variant_tabs()}
+                
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['512']/* 'Variant Title' */, 'details':this.props.app_state.loc['513']/* 'Set a basic description of the variant of the item your selling like a color or size option' */, 'size':'l'})}

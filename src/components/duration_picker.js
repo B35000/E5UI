@@ -77,7 +77,7 @@ class DurationPicker extends Component {
 
     get_text_color(pos){
       if(pos == this.state.edit_pos){
-        return this.props.theme['number_picker_power_color'];
+        return this.props.theme['number_picker_picked_label_text_color'];
       }
       else{
           return this.props.theme['number_picker_label_text_color'];

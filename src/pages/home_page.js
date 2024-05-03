@@ -308,16 +308,7 @@ class home_page extends Component {
                                 {this.render_top_tag_bar(size)}
                             </div>
                             
-                            <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
-                                <div className="col-5" style={{height: (middle+55)}}>
-                                    {this.render_post_list_group(size, (middle+133))}
-                                </div>
-                                
-                                <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
-                                    {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
-                                </div>
-                                
-                            </div>
+                            {this.render_large_screen_ui(middle, size)}
                         </div>   
                     </div>
                     {this.render_filter_section_bottomsheet()}
@@ -413,6 +404,46 @@ class home_page extends Component {
             );
         }
 
+    }
+
+    render_large_screen_ui(middle, size){
+        var width = this.props.width;
+        if(width < 1100){
+            //large
+            return(
+                <div>
+                    <div className="row" style={{height:(middle+54), 'padding':'0px 10px 0px 15px'}}>
+                        <div className="col-5" style={{height: (middle+55)}}>
+                            {this.render_post_list_group(size, (middle+133))}
+                        </div>
+                        
+                        <div ref={this.details_container} className="col-7" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                            {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
+                        </div>
+                    </div>
+                </div>
+            )
+        }else{
+            //extra-large
+            return(
+                <div>
+                    <div className="row" style={{height:(middle+54), 'padding':'0px 1px 0px 15px'}}>
+                        <div className="col-4" style={{height: (middle+55)}}>
+                            {this.render_post_list_group(size, (middle+133))}
+                        </div>
+                        
+                        <div ref={this.details_container} className="col-4" style={{'padding':'3px 0px 0px 0px', 'margin':'0px 0px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle+55)}}>
+                            {this.render_post_detail_object(size, (middle+50), this.state.details_container_width)}
+                        </div>
+                        
+                        <div className="col-4" style={{height: (middle+55)}}>
+                            {this.render_metrics_section((middle+55))}
+                        </div>
+
+                    </div>
+                </div>
+            )
+        }
     }
 
     render_small_screen_size_ui(size, top_bar, width){
@@ -689,8 +720,15 @@ class home_page extends Component {
 
     /* render the top bar tags with the create object button */
     render_top_tag_bar(size){
-        var width = this.props.width;
-        if(size == 'l') width = this.props.width - 120;
+        var width = this.props.width-10;
+        if(size == 'l'){
+            var w = this.props.width
+            if(w < 1100){
+                width = this.props.width - 120;
+            }else{
+                width = this.props.width - 130;
+            }
+        } 
         if(size == 'xl') width = this.props.width - 120;
         if(size == 's') width = this.props.width
         return(
@@ -3609,9 +3647,417 @@ class home_page extends Component {
 
 
 
-    render_watch_account_ui(){
+    render_metrics_section(h){
+        return(
+            <div>
+                <div style={{'padding':'10px 10px 10px 10px', 'margin':'0px 0px 0px 5px', 'background-color':this.props.theme['card_background_color'],'border-radius': '15px', height:h, 'overflow-y': 'auto',}}>
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2817']/* 'Available E5s.' */, 'details':this.props.app_state.loc['2818']/* 'The E5s that are currently in use.' */, 'size':'l'})}
+                    {this.load_preferred_e5_ui()}
+                    {this.render_detail_item('0')} 
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2819']/* 'Active Wallets.' */, 'details':this.props.app_state.loc['2820']/* 'Your wallet ethers that have balances.' */, 'size':'l'})}
+                    {this.render_my_balances()}
+                    {this.render_detail_item('0')} 
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2821']/* 'Estimated Gas.' */, 'details':this.props.app_state.loc['2822']/* 'The estimated gas set to be consumed in your next run.' */, 'size':'l'})}
+                    <div style={{height: 5}}/>
+                    {this.render_stack_gas_figure()}
+                    {this.render_detail_item('0')} 
+
+
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2823']/* 'Stats and Telemetries.' */, 'details':this.props.app_state.loc['2824']/* 'Some info about E5 in its entirety.' */, 'size':'l'})}
+                    <div style={{height: 5}}/>
+                    {this.render_transaction_data()}
+
+
+                </div>
+            </div>
+        )
+    }
+
+    load_active_e5s(){
+        var active_e5s = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+            if(this.props.app_state.e5s[e5].active == true){
+                active_e5s.push(e5)
+            }
+        }
+        return active_e5s
+    }
+
+    load_preferred_e5_ui(){
+        var items = this.load_active_e5s()
+        var items2 = [0, 1]
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_e5_item(item)}
+                        </li>
+                    ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
 
     }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:54, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','margin':'0px 0px 0px 0px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_e5_item(item){
+        var image = this.props.app_state.e5s[item].e5_img
+        var details = this.props.app_state.e5s[item].token
+        if(this.props.app_state.selected_e5 == item){
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image,'details':details, 'size':'s'})}
+                    {/* <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '3px 5px 0px 5px'}}/> */}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('12', {'title':item, 'image':image, 'details':details, 'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+
+
+
+
+    get_my_balances(){
+        var e5s = this.props.app_state.e5s['data']
+        var selected_e5s = []
+        for(var i=0; i<e5s.length; i++){
+            var focused_e5 = e5s[i]
+            var balance = this.props.app_state.account_balance[focused_e5]
+            if(balance > 0){
+                if(focused_e5 == 'E35' && selected_e5s.includes('E25')){
+
+                }else{
+                    selected_e5s.push(focused_e5)
+                }
+            }
+        }
+        return selected_e5s
+    }
+
+    render_my_balances(){
+        var items = this.get_my_balances()
+
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }else{
+            var items2 = [0, 1]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '0px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_ether_balance_item(item)}
+                            </li>
+                        ))}
+                        {items2.map(() => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                {this.render_empty_horizontal_list_item2()}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    render_ether_balance_item(item){
+        var image = this.props.app_state.e5s[item].ether_image
+        var token_name = this.props.app_state.e5s[item].token
+        var details = this.format_account_balance_figure(this.props.app_state.account_balance[item]) + ' wei'
+        return(
+            <div onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
+                {this.render_coin_item({'title':token_name, 'image':image, 'details':details, 'size':'s', 'img_size':30})}
+            </div>
+        )
+    }
+
+    render_empty_horizontal_list_item2(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:43, width:127, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    render_coin_item(object_data){
+        var background_color = this.props.theme['view_group_card_item_background'];
+        var border_radius = '7px';
+        var E5EmptyIcon = 'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'
+        var title = 'Author';
+        var details = 'e25885';
+        var size = 'l';
+        var img_size = 45
+        if(object_data != null){
+            title = object_data['title']
+            details = object_data['details']
+            size = object_data['size']
+        }
+        var font_size = ['12px', '10px', 16];
+        if(size == 'l'){
+            font_size = ['17px', '13px', 19];
+        }
+        if(title == ''){
+            title = '...'
+        }
+        if(details == ''){
+            details = '...'
+        }
+        var img = E5EmptyIcon;
+        if(object_data != null){
+            img = object_data['image'];
+        }
+        if(object_data != null && object_data['img_size'] != null){
+            img_size = object_data['img_size']
+        }
+        return (
+            <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
+                <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={img} style={{height:img_size ,width:img_size}} />
+                    </div>
+                    <div style={{'margin':'0px 0px 0px 5px'}}>
+                        <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}}>{title}</p> 
+                        
+                        <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }}>{details}</p>
+                    </div>
+                </div>
+            </div>
+        ); 
+    }
+
+
+
+
+
+    render_stack_gas_figure(){
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1452']/* 'Estimated Gas To Be Consumed' */, 'subtitle':this.format_power_figure(this.estimated_gas_consumed()), 'barwidth':this.calculate_bar_width(this.estimated_gas_consumed()), 'number':this.format_account_balance_figure(this.estimated_gas_consumed()), 'barcolor':'', 'relativepower':'gas', })}
+
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1453']/* 'Wallet Impact' */, 'subtitle':this.format_power_figure(this.calculate_wallet_impact_figure()), 'barwidth':this.calculate_bar_width(this.calculate_wallet_impact_figure()), 'number':this.calculate_wallet_impact_figure()+'%', 'barcolor':'', 'relativepower':'proportion', })}
+
+                </div>
+            </div>
+        )
+    }
+
+    calculate_wallet_impact_figure(){
+        var estimated_gas_to_be_consumed = this.estimated_gas_consumed()
+        var gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
+        if(gas_price == null){
+            gas_price = this.get_gas_price_from_runs()
+        }
+        var total_ether_to_be_spent = estimated_gas_to_be_consumed * gas_price
+        var my_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
+
+        if(my_balance == 0) return 0
+
+        var x = (total_ether_to_be_spent / my_balance) * 100
+        return Math.round(x * 1000) / 1000
+    }
+
+    estimated_gas_consumed(){
+        var gas_figure = this.props.app_state.calculated_gas_figures[this.props.app_state.selected_e5]
+        if(gas_figure == null) return 0
+        return gas_figure
+    }
+
+    get_gas_price_from_transactions(){
+        var last_blocks = this.props.app_state.last_blocks[this.props.app_state.selected_e5]
+        var sum = 0
+        if(last_blocks != null){
+            for(var i=0; i<last_blocks.length; i++){
+                sum += last_blocks[i].baseFeePerGas
+            }
+            sum = sum/last_blocks.length;
+        }
+        return sum
+    }
+
+    get_gas_price_from_runs(){
+        var last_events = this.props.app_state.all_E5_runs[this.props.app_state.selected_e5]
+        var sum = 0
+        if(last_events != null){
+            var last_check = last_events.length < 50 ? last_events.length : 50
+            for(var i=0; i<last_check; i++){
+                sum += last_events[i].returnValues.p7
+            }
+            sum = sum/last_check;
+        }
+        return sum
+    }
+
+
+
+
+
+    render_transaction_data(){  
+        var transaction_events = this.load_all_event_data('transaction').length
+        var transfer_events = this.load_all_event_data('transfer').length
+        var traffic_proportion_events = this.load_traffic_proportion_data()
+
+        var subscription_events = this.load_all_event_data('subscription').length
+        var contract_events = this.load_all_event_data('contract').length
+        var proposal_events = this.load_all_event_data('proposal').length
+        var exchange_events = this.load_all_event_data('exchange').length
+        var post_events = this.load_all_event_data('post').length
+        var channel_events = this.load_all_event_data('channel').length
+        var job_events = this.load_all_event_data('job').length
+        var store_events = this.load_all_event_data('store').length
+        var bag_events = this.load_all_event_data('bag').length
+        var contractor_events = this.load_all_event_data('contractor').length
+
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2836']/* 'Total E5 Runs.' */, 'subtitle':this.format_power_figure(transaction_events), 'barwidth':this.calculate_bar_width(transaction_events), 'number':this.format_account_balance_figure(transaction_events), 'barcolor':'', 'relativepower':this.props.app_state.loc['2837']/* 'Runs.' */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2825']/* Total E5 Subscriptions, Contracts and Proposals created. */}</p>
+                        {this.render_detail_item('2', this.render_small_number(subscription_events, this.props.app_state.loc['2826']/* subscriptions */))}
+                        {this.render_detail_item('2', this.render_small_number(contract_events, this.props.app_state.loc['2827']/* contracts */))}
+                        {this.render_detail_item('2', this.render_small_number(proposal_events, this.props.app_state.loc['2828']/* proposals */))}  
+                </div>
+                <div style={{height: 10}}/>
+
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2841']/* Total Exchanges, Posts and Channels created. */}</p>
+                        
+                        {this.render_detail_item('2', this.render_small_number(exchange_events, this.props.app_state.loc['2829']/* exchanges */))}
+                        {this.render_detail_item('2', this.render_small_number(post_events, this.props.app_state.loc['2830']/* posts */))}
+                        {this.render_detail_item('2', this.render_small_number(channel_events, this.props.app_state.loc['2831']/* channels */))}
+                        {this.render_detail_item('2', this.render_small_number(job_events, this.props.app_state.loc['2832']/* jobs */))}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2843']/* Total Storefront-items, Bags and Contractors created */}</p>
+                        {this.render_detail_item('2', this.render_small_number(store_events, this.props.app_state.loc['2833']/* storefront-items */))}
+                        {this.render_detail_item('2', this.render_small_number(bag_events, this.props.app_state.loc['2834']/* bags */))}
+                        {this.render_detail_item('2', this.render_small_number(contractor_events, this.props.app_state.loc['2835']/* contractors */))}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2838']/* 'Total E5 Transfers.' */, 'subtitle':this.format_power_figure(transfer_events), 'barwidth':this.calculate_bar_width(transfer_events), 'number':this.format_account_balance_figure(transfer_events), 'barcolor':'', 'relativepower':this.props.app_state.loc['2839']/* 'transfers' */, })}
+                </div>
+                <div style={{height: 10}}/>
+
+                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 10px 5px 10px','border-radius': '8px' }}>
+                        <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['2840']/* E5 Traffic Distribution. */}</p>
+                        
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'listStyle':'none'}}>
+                        {traffic_proportion_events.map((item, index) => (
+                            <div>
+                                {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':(item['percentage']+'%'), 'number':item['e5'], 'relativepower':item['percentage']+'%', })}
+                            </div>
+                            
+                        ))}
+                    </ul>   
+                </div>
+                <div style={{height: 10}}/>
+
+            </div>
+        )
+    }
+
+
+    load_all_event_data(chart_id){
+        var all_objects = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+
+            var e5_chart_data = this.props.app_state.all_data[e5]
+            if(e5_chart_data != null){
+                var e5s_events = e5_chart_data[chart_id]
+                all_objects = all_objects.concat(e5s_events)
+            }
+        }
+
+        return all_objects
+    }
+
+    load_traffic_proportion_data(){
+        var all_data = this.load_all_event_data('data').length
+        var return_data = []
+        for(var i=0; i<this.props.app_state.e5s['data'].length; i++){
+            var e5 = this.props.app_state.e5s['data'][i]
+
+            var e5_chart_data = this.props.app_state.all_data[e5]
+            if(e5_chart_data != null){
+                var e5s_events = e5_chart_data['data'].length
+                var x = ((e5s_events * 100) / all_data)
+                var rounded_proportion = Math.round(x * 1000) / 1000
+                return_data.push({'e5':e5, 'percentage':rounded_proportion})
+            }
+        }
+
+        return this.sortByAttributeDescending(return_data, 'percentage')
+    }
+
+    render_small_number(number, name){
+        return{
+            'style':'s',
+            'title':'',
+            'subtitle':'',
+            'barwidth':this.calculate_bar_width(number),
+            'number':this.format_account_balance_figure(number),
+            'relativepower':name,
+        }
+    }
+
+
 
 
 
@@ -3633,6 +4079,87 @@ class home_page extends Component {
             </div>
         )
 
+    }
+
+    format_account_balance_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return number_with_commas(amount.toString())
+        }else{
+            var power = amount.toString().length - 9
+            return number_with_commas(amount.toString().substring(0, 9)) +'e'+power
+        }
+        
+    }
+
+    calculate_bar_width(num){
+        if(num == null) return '0%'
+        var last_two_digits = num.toString().slice(0, 1)+'0';
+        if(num > 10){
+            last_two_digits = num.toString().slice(0, 2);
+        }
+        return last_two_digits+'%'
+    }
+
+    format_power_figure(amount){
+        if(amount == null){
+            amount = 0;
+        }
+        if(amount < 1_000_000_000){
+            return 'e0'
+        }
+        else{
+            var power = amount.toString().length - 9
+            return 'e'+(power+1)
+        }
+    }
+
+    /* gets a formatted time diffrence from now to a given time */
+    get_time_difference(time){
+        var number_date = Math.round(parseInt(time));
+        var now = Math.round(new Date().getTime()/1000);
+
+        var diff = now - number_date;
+        return this.get_time_diff(diff)
+    }
+
+    get_time_diff(diff){
+        if(diff < 60){//less than 1 min
+            var num = diff
+            var s = num > 1 ? 's': '';
+            return num+ this.props.app_state.loc['29']
+        }
+        else if(diff < 60*60){//less than 1 hour
+            var num = Math.floor(diff/(60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['30'] 
+        }
+        else if(diff < 60*60*24){//less than 24 hours
+            var num = Math.floor(diff/(60*60));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['31'] + s;
+        }
+        else if(diff < 60*60*24*7){//less than 7 days
+            var num = Math.floor(diff/(60*60*24));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['32'] + s;
+        }
+        else if(diff < 60*60*24*7*53){//less than 1 year
+            var num = Math.floor(diff/(60*60*24*7));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['33'] + s;
+        }
+        else {//more than a year
+            var num = Math.floor(diff/(60*60*24*7*53));
+            var s = num > 1 ? 's': '';
+            return num + this.props.app_state.loc['34'] + s;
+        }
+    }
+
+    format_proportion(proportion){
+        return ((proportion/10**18) * 100)+'%';
     }
 
 

@@ -667,7 +667,7 @@ class StackPage extends Component {
             <div style={{'margin':'10px 10px 0px 10px', 'padding':'0px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_stack_page_tags_object} tag_size={'l'} when_tags_updated={this.when_stack_tags_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'0px 0px 0px 0px', overflow: 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -5843,7 +5843,7 @@ class StackPage extends Component {
                 {this.render_detail_item('0')}
 
                 
-
+                {/* preferred E5 */}
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1530'], 'details':this.props.app_state.loc['1531'], 'size':'l'})}
                 <div style={{height: 10}}/>
                 {this.load_preferred_e5_ui()}
@@ -6071,10 +6071,8 @@ class StackPage extends Component {
     }
 
     load_preferred_e5_ui(){
-        // var items = structuredClone(this.state.get_selected_e5_tags_object['e'][1])
-        // items.splice(0, 1)
         var items = this.load_active_e5s()
-
+        var items2 = [0, 1]
         return(
             <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
                 <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
@@ -6083,10 +6081,28 @@ class StackPage extends Component {
                             {this.render_e5_item(item)}
                         </li>
                     ))}
+                    {items2.map(() => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                            {this.render_empty_horizontal_list_item()}
+                        </li>
+                    ))}
                 </ul>
             </div>
         )
 
+    }
+
+    render_empty_horizontal_list_item(){
+        var background_color = this.props.theme['view_group_card_item_background']
+        return(
+            <div>
+                <div style={{height:57, width:85, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                    </div>
+                </div>
+            </div>
+        )
     }
 
 
@@ -6188,6 +6204,7 @@ class StackPage extends Component {
                     {items.map((item, index) => (
                         <li style={{'padding': '3px 0px 3px 0px'}}>
                             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.e5s[item].token, 'number':this.props.app_state.account_balance[item], 'relativepower':'wei'})}>
+                                
                                 {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.e5s[item].token, 'subtitle':this.format_power_figure(this.props.app_state.account_balance[item]), 'barwidth':this.calculate_bar_width(this.props.app_state.account_balance[item]), 'number':this.format_account_balance_figure(this.props.app_state.account_balance[item]), 'barcolor':'', 'relativepower':'wei', })}
                             </div>
                         </li>
@@ -6823,7 +6840,7 @@ class StackPage extends Component {
                     <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1580']/* 'Enter New Alias Name...' */} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias_list()} >
+                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias()} >
                         {this.render_detail_item('5',{'text':this.props.app_state.loc['1581']/* 'Reserve' */,'action':''})}
                     </div>
                 </div>
@@ -6897,7 +6914,7 @@ class StackPage extends Component {
     }
 
 
-    reserve_alias_list(){
+    reserve_alias(){
         var typed_word = this.state.typed_alias_word.trim()
         
         if(typed_word == ''){
@@ -6924,6 +6941,9 @@ class StackPage extends Component {
         else if(this.is_word_reserved(typed_word)){
             this.props.notify(this.props.app_state.loc['1590']/* 'That word is reserved, you cant use it.' */, 5000)
         }
+        else if(this.does_stack_contain_reserve_action()){
+            this.props.notify(this.props.app_state.loc['1593aa']/* 'You cant reserve more than one alias in one run.' */, 5000)
+        }
         else{
             this.props.add_alias_transaction_to_stack(this.state.typed_alias_word)
             this.setState({typed_alias_word: ''})
@@ -6936,6 +6956,18 @@ class StackPage extends Component {
             return true
         }
         return false
+    }
+
+    does_stack_contain_reserve_action(){
+        var does_stack_contain_reserve = false
+        var txs = this.props.app_state.stack_items
+        for(var i=0; i<txs.length; i++){
+            if(txs[i].type == this.props.app_state.loc['1506']/* 'alias' */){
+                does_stack_contain_reserve = true
+            }
+        }
+
+        return does_stack_contain_reserve
     }
 
     onlyLettersAndNumbers(str) {

@@ -78,12 +78,12 @@ class ViewGroups extends Component {
               
             }
             return (
-                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius,height:'40px'}}>
+                <div style={{'margin':'0px 0px 0px 5px','padding': '5px 0px 7px 0px', width: '99%', 'background-color': 'transparent','border-radius': border_radius, height:'40px'}}>
                     <ul style={{'list-style': 'none', 'padding': '0px 0px 5px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '13px', 'margin':'0px 0px 5px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
                       {active_tags.map((item, index) => (
                           <li style={{'display': 'inline-block', 'padding': '5px 5px 5px 1px', '-ms-overflow-style': 'none', height:40}}>
                               <div style={{'background-color': this.get_tag_color(item, selected_tags, tag_background_color), 'border-radius': '19px', 'box-shadow': '0px 0px 1px 1px '+tag_shadow}} onClick={()=> this.when_tag_item_clicked(item, index, when_tapped)}>
-                                <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '16px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{item}</p>
+                                <p style={{'color': this.props.theme['tag_text_color'], 'font-size': '14px', 'padding':' 4px 17px 4px 17px', 'text-align': 'justify', 'font-family': this.props.font}} className="text-center">{item}</p>
                             </div>
                           </li>
                       ))}
@@ -172,7 +172,7 @@ class ViewGroups extends Component {
             }
             var font_size = ['12px', '10px', 16];
             if(size == 'l'){
-                font_size = ['17px', '13px', 19];
+                font_size = ['15px', '12px', 19];
             }
             if(title == ''){
                 title = '...'
@@ -194,6 +194,7 @@ class ViewGroups extends Component {
                             </div>
                             <div style={{'margin':'0px 0px 0px 10px'}}>
                                 <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 
+                                
                                 <p style={{'font-size': font_size[1],'color': this.props.theme['secondary_text_color'],'margin': '0px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', 'white-space': 'pre-line', 'word-wrap': 'break-word' }} onClick={() => this.copy_id_to_clipboard(details)}>{details}</p>
                             </div>
                         </div>
@@ -253,7 +254,7 @@ class ViewGroups extends Component {
             }
             return(
                 <div onClick={()=> this.when_action_button_clicked(action)} style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px'}}>
-                    <button style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '13px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '15px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize', 'font-family': this.props.font}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
+                    <button style={{'background-color': this.props.theme['button_color'], 'color': this.props.theme['button_text_color'], 'border-radius': '17px', width:'100%', 'border': 'none','text-decoration': 'none','font-size': '13px','padding':'8px 0px 8px 0px','margin':'0px 0px 0px 0px','box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'text-transform': 'capitalize', 'font-family': this.props.font}} onMouseDown={(e) => this.when_any_button_tapped(e, prevent_default)}>
                       {text}
                     </button>
                 </div>
@@ -405,6 +406,7 @@ class ViewGroups extends Component {
             var title = 'Author';
             var details = 'e25885';
             var size = 'l';
+            var img_size = 45
             if(object_data != null){
                 title = object_data['title']
                 details = object_data['details']
@@ -424,11 +426,14 @@ class ViewGroups extends Component {
             if(object_data != null){
                 img = object_data['image'];
             }
+            if(object_data != null && object_data['img_size'] != null){
+                img_size = object_data['img_size']
+            }
             return (
                 <div style={{'display': 'flex','flex-direction': 'row','padding': '5px 15px 5px 0px','margin':'0px 0px 0px 0px', 'background-color': background_color,'border-radius': border_radius}}>
-                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px', width: '99%'}}>
+                    <div style={{'display': 'flex','flex-direction': 'row','padding': '0px 0px 0px 5px'}}>
                         <div style={{'margin':'0px 0px 0px 0px'}}>
-                            <img src={img} style={{height:45 ,width:45}} />
+                            <img src={img} style={{height:img_size ,width:img_size}} />
                         </div>
                         <div style={{'margin':'3px 0px 0px 5px'}}>
                             <p style={{'font-size': font_size[0],'color': this.props.theme['primary_text_color'],'margin': '5px 0px 0px 0px','font-family': this.props.font,'text-decoration': 'none', height:'auto', 'word-wrap': 'break-word'}} onClick={() => this.copy_id_to_clipboard(title)}>{title}</p> 

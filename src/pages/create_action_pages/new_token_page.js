@@ -4,6 +4,7 @@ import Tags from '../../components/tags';
 import NumberPicker from '../../components/number_picker';
 import DurationPicker from '../../components/duration_picker';
 import TextInput from '../../components/text_input';
+import Slider from '../../components/slider'
 // import Letter from '../../assets/letter.png';
 
 import EndImg from '../../assets/end_token_icon.png';
@@ -81,6 +82,31 @@ class NewTokenPage extends Component {
         default_depth:0,
         get_end_token_base_liquidity:this.get_end_token_base_liquidity(),
         get_end_token_base_stability:this.get_end_token_base_stability(),
+
+
+        /* simulator stuff */
+        simulator_block_time:12000, get_simulator_block_time:this.get_simulator_block_time(),
+        simulator_block_number:0,
+
+        simulator_active_mint_block:0,
+        simulator_active_block_limit_reduction_proportion: bigInt(bgN(1, 18)),
+        simulator_total_minted_for_current_block:0,
+        simulator_block_limit_sensitivity:1,/*  */ sim_block_limit_sensitivity_tags:this.get_new_token_block_limit_sensitivity_tags_object(),
+        simulator_internal_block_halfing_proportion: bigInt(bgN(50, 16)),/*  */
+        simulator_block_limit_reduction_proportion: bigInt(bgN(90, 16)),/*  */
+        simulator_block_reset_limit:1,/*  */
+        simulator_mint_limit:1000_000,/*  */
+        simulator_block_limit:2000_000,/*  */
+        simulator_total_supply:0,
+        simulator_maturity_limit:5000_000,/*  */
+        simulator_block_halving_type:1,/*  */ sim_block_halving_type_tags: this.get_new_token_halving_type_tags_object(),
+        UpdateExchangeRatiosEvents:[],
+        UpdateProportionRatios:[],
+        simulator_speed:100,
+
+        get_simulator_reduction_proportion_chart_filters:this.get_simulator_reduction_proportion_chart_filters(),
+        simulator_state:'stopped',
+
     };
 
     get_new_token_page_tags_object(){
@@ -89,15 +115,22 @@ class NewTokenPage extends Component {
                 active:'e', 
             },
             'e':[
-                ['or','',0], ['e','e.'+this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['604']/* 'token-authorities' */, this.props.app_state.loc['605']/* 'token-prices' */], [0]
+                ['or','',0], ['e','e.'+this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['604']/* 'token-authorities' */, this.props.app_state.loc['605']/* 'token-prices' */, 'e.'+this.props.app_state.loc['752b']/* 'spend-simulator' */], [0]
             ],
             'configuration': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['602']/* 'basic' */, this.props.app_state.loc['603']/* 'custom' */, this.props.app_state.loc['2765']/* ??? */], [1], [1]
+            ],
+            'spend-simulator': [
+                ['xor', 'e', 1], [this.props.app_state.loc['752b']/* 'spend-simulator' */, this.props.app_state.loc['752d']/* 'configuration' */, this.props.app_state.loc['752c']/* 'control' */,], [1], [1]
             ],
         };
 
         obj[this.props.app_state.loc['2764']/* 'configuration' */] = [
             ['xor', 'e', 1], [this.props.app_state.loc['2764']/* 'configuration' */, this.props.app_state.loc['602']/* 'basic' */, this.props.app_state.loc['603']/* 'custom' */, this.props.app_state.loc['2765']/* ??? */], [1], [1]
+        ]
+
+        obj[this.props.app_state.loc['752b']/* 'spend-simulator' */] = [
+            ['xor', 'e', 1], [this.props.app_state.loc['752b']/* 'spend-simulator' */, this.props.app_state.loc['752d']/* 'config' */, this.props.app_state.loc['752c']/* 'control' */, ], [1], [1]
         ]
 
         return obj;
@@ -220,6 +253,29 @@ class NewTokenPage extends Component {
     }
 
 
+    get_simulator_reduction_proportion_chart_filters(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','25%', '50%', '80%', this.props.app_state.loc['1416']/* 'all-time' */], [4]
+            ],
+        };
+    }
+
+    get_simulator_block_time(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e','3sec', '7sec', '12sec', '30sec', '60sec'], [3]
+            ],
+        };
+    }
+
+
 
     render(){
         return(
@@ -237,7 +293,7 @@ class NewTokenPage extends Component {
                 </div>
                 
                 
-                <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-120}}>
+                <div style={{'margin':'0px 0px 0px 0px', 'overflow-y': 'auto', 'overflow-x':'none', maxHeight: this.props.height-120}}>
                     {this.render_everything()}   
                 </div>
                 
@@ -304,6 +360,13 @@ class NewTokenPage extends Component {
                 </div>
             )
         }
+        else if(selected_item == this.props.app_state.loc['752c']/* 'control' */ || selected_item == this.props.app_state.loc['752d']/* 'config' */){
+            return(
+                <div>
+                    {this.render_simulator_part()}
+                </div>
+            )
+        }
     }
 
     get_selected_item(object, option){
@@ -354,7 +417,6 @@ class NewTokenPage extends Component {
     render_title_tags_part(){
         return(
             <div style={{'padding':'0px 10px 0px 10px'}}>
-
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['620']/* 'Set a name for your new Token. No spaces should be used.' */})}
                 <div style={{height:10}}/>
                 <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['621']/* 'Enter Name...' */} when_text_input_field_changed={this.when_title_text_input_field_changed.bind(this)} text={this.state.entered_title_text} theme={this.props.theme}/>
@@ -1719,6 +1781,836 @@ class NewTokenPage extends Component {
 
 
 
+    render_simulator_part(){
+         var size = this.props.size
+
+        if(size == 's'){
+            return(
+                <div style={{}}>
+                    {this.render_small_screen_simulator()}
+                </div>
+            )
+        }
+        else if(size == 'm'){
+            return(
+                <div className="row">
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_config_ui()}
+                        
+                    </div>
+                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_control_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_empty_views(4)}
+                    </div>
+                </div>
+            )
+        }
+        else if(size == 'l'){
+            return(
+                <div className="row">
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_config_ui()}
+                    </div>
+                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_control_ui()}
+                        {this.render_detail_item('0')}
+                        {this.render_empty_views(4)}
+                    </div>
+                </div>
+                
+            )
+        }
+    }
+
+    render_small_screen_simulator(){
+        var selected_item = this.get_selected_item(this.state.new_token_page_tags_object, this.state.new_token_page_tags_object['i'].active)
+
+        if(selected_item == this.props.app_state.loc['752c']/* 'control' */){
+            return(
+                <div>
+                    {this.render_control_ui()}
+                </div>
+            )
+        }else{
+           return(
+                <div>
+                    {this.render_config_ui()}
+                </div>
+            ) 
+        }
+    }
+
+    render_control_ui(){
+        return(
+            <div>
+                {this.render_simulator_speed_picker()}
+                {this.render_detail_item('0')}
+
+                
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752aj']/* ''Simulated Block Time.' */, 'details':this.props.app_state.loc['752ak']/* 'Set the simulated block time below.' */, 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_simulator_block_time} tag_size={'l'} when_tags_updated={this.when_get_simulator_block_time.bind(this)} theme={this.props.theme}/>
+                {this.render_detail_item('0')}
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2580']/* Total Supply' */, 'details':this.props.app_state.loc['752q']/* `Chart containing the total supply of the simulated token over simulated time.` */, 'size':'l'})}
+                {this.render_detail_item('6', {'dataPoints':this.get_total_supply_data_points(), 'interval':110, 'hide_label':true})}
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2581']/* 'Y-Axis: Total Supply' */, 'details':this.props.app_state.loc['2391']/* 'X-Axis: Time' */, 'size':'s'})}
+
+
+                <div style={{height: 20}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
+                {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(), 'interval':this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_data(this.state.UpdateProportionRatios))})}
+                <div style={{height: 10}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_simulator_reduction_proportion_chart_filters} tag_size={'l'} when_tags_updated={this.when_get_simulator_reduction_proportion_chart_filters.bind(this)} theme={this.props.theme}/>
+                <div style={{height: 10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2578']/* Y-Axis: Proportion' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+
+
+                {this.render_detail_item('0')}
+                {this.render_detail_item('3', {'title':this.get_block_speed_value(), 'details':this.props.app_state.loc['752r']/* 'Simulator Block Time.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.format_account_balance_figure(this.state.simulator_block_number), 'details':this.props.app_state.loc['752s']/* 'Simulator Block Number.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.simulator_active_block_limit_reduction_proportion), 'details':this.props.app_state.loc['752t']/* 'Simulator Active Block Limit Reduction Proportion.' */, 'size':'l'})}
+
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['752u']/* 'Total Minted For Current Block' */, 'number':this.state.simulator_total_minted_for_current_block, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['752u']/* 'Total Minted For Current Block' */, 'subtitle':this.format_power_figure(this.state.simulator_total_minted_for_current_block), 'barwidth':this.calculate_bar_width(this.state.simulator_total_minted_for_current_block), 'number':this.format_account_balance_figure(this.state.simulator_total_minted_for_current_block), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                </div>
+
+                <div style={{height: 10}}/>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['752v']/* 'Simulated Total Supply.' */, 'number':this.state.simulator_total_supply, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['752v']/* 'Simulated Total Supply.' */, 'subtitle':this.format_power_figure(this.state.simulator_total_supply), 'barwidth':this.calculate_bar_width(this.state.simulator_total_supply), 'number':this.format_account_balance_figure(this.state.simulator_total_supply), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                </div>
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752w']/* 'Pause/Play ' */, 'details':this.props.app_state.loc['752y']/* 'Pause, Start or Resume the simulator with the set configuration.' */, 'size':'l'})}
+                <div style={{height:5}}/>
+                <div style={{'padding': '5px'}} onClick={()=> this.pause_play()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['752w']/* 'Pause/Play ' */, 'action':''})}
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752x']/* 'Reset' */, 'details':this.props.app_state.loc['752z']/* 'Stop and Reset the simulator.' */, 'size':'l'})}
+                <div style={{height:5}}/>
+                <div style={{'padding': '5px'}} onClick={()=> this.reset_sim()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['752x']/* 'Reset' */, 'action':''})}
+                </div>
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752ah']/* 'Apply Configuration' */, 'details':this.props.app_state.loc['752ai']/* 'Set and apply the simulator`s configuration in your new token.' */, 'size':'l'})}
+                <div style={{height:5}}/>
+                <div style={{'padding': '5px'}} onClick={()=> this.set_configuration_for_spend_token()}>
+                    {this.render_detail_item('5', {'text':this.props.app_state.loc['752ah']/* 'Apply Configuration' */, 'action':''})}
+                </div>
+
+            </div>
+        )
+    }
+
+    get_block_speed_value(){
+        var time = this.state.simulator_block_time
+        if(time < 1000){
+            return time+"ms"
+        }
+        else if(time < 1000*60){
+            return (time/1000) +"s"
+        }
+        else{
+            return (time /(1000*60))+"min"
+        }
+    }
+
+    get_mint_rate(){
+        var sim_time = this.get_simulator_speed()
+        var rate = 1000/sim_time
+        var x = Math.round(rate * 100) / 100
+        return x
+    }
+
+    pause_play(){
+        if(this.state.simulator_state == 'stopped'){
+            this.start_simulator()
+            this.setState({simulator_state: 'running'})
+            this.props.notify(this.props.app_state.loc['752aa']/* 'Simulator Started' */, 1000);
+        }
+        else if(this.state.simulator_state == 'running'){
+            this.pause_simulator()
+            this.setState({simulator_state: 'paused'})
+            this.props.notify(this.props.app_state.loc['752ab']/* 'Simulator Paused.' */, 1000);
+        }
+        else if(this.state.simulator_state == 'paused'){
+            this.resume_simulator()
+            this.setState({simulator_state: 'running'})
+            this.props.notify(this.props.app_state.loc['752ac']/* 'Simulator Resumed.' */, 1000);
+        }
+    }
+
+    reset_sim(){
+        this.reset_simulator()
+        this.setState({simulator_state: 'stopped'})
+        this.props.notify(this.props.app_state.loc['752ad']/* 'Simulator Stopped.' */, 1000);
+    }
+
+    set_configuration_for_spend_token(){
+        this.setState({
+            new_token_block_limit_sensitivity_tags_object: this.state.sim_block_limit_sensitivity_tags,
+            internal_block_halfing_proportion: this.state.simulator_internal_block_halfing_proportion, 
+            block_limit_reduction_proportion: this.state.simulator_block_limit_reduction_proportion,
+            block_reset_limit: this.state.simulator_block_reset_limit,
+            default_exchange_amount_buy_limit: this.state.simulator_mint_limit,
+            block_limit: this.state.simulator_block_limit,
+            maturity_limit: this.state.simulator_maturity_limit,
+            new_token_halving_type_tags_object: this.state.sim_block_halving_type_tags
+        })
+        this.props.notify(this.props.app_state.loc['752ag']/* 'The simulator configuration has been applied to your new token.' */, 4500)
+    }
+
+    when_get_simulator_block_time(tag_obj){
+        var obj = {'3sec':3000, '7sec':7000, '12sec':12000, '30sec':30000, '60sec':60000}
+        var selected_speed = this.get_selected_item(tag_obj, tag_obj['i'].active)
+        var speed = obj[selected_speed]
+
+        this.setState({get_simulator_block_time: tag_obj, simulator_block_time: speed})
+        clearInterval(this.interval);
+        this.interval = setInterval(() => this.increase_block(), speed);
+    }
+
+    
+
+    when_get_simulator_reduction_proportion_chart_filters(tag_obj){
+        this.setState({get_simulator_reduction_proportion_chart_filters: tag_obj})
+    }
+
+    get_total_supply_data_points(){
+        var data =  this.filter_total_supply_data(this.state.UpdateExchangeRatiosEvents)
+        if(data.length <= 15) return []
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        var largest_number = this.get_total_supply_interval_figure(data)
+        if(largest_number == 0) largest_number = 1
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            // yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/7)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+        return dps
+    }
+
+    filter_total_supply_data(data){
+        var length = 0.8 * data.length
+        if(length == 0) return []
+
+        var last20PercentCount = Math.ceil(length);
+        const last20Percent = data.slice(-last20PercentCount);
+        return last20Percent;
+    }
+
+    get_total_supply_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+    get_lowest_total_supply_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event))
+        });
+        var largest = Math.min.apply(Math, data);
+        return largest
+    }
+
+
+    get_proportion_ratio_data_points(){
+        var data = this.filter_proportion_ratio_data(this.state.UpdateProportionRatios)
+        if(data.length <= 15) return []
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/10)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+yVal+"%"});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+        return dps
+    }
+
+    filter_proportion_ratio_data(data){
+        var obj = {'25%':0.25, '50%':0.5, '80%':0.8}
+        obj[this.props.app_state.loc['1416']/* 'all-time' */] = 1
+        
+        var selected_filter = this.get_selected_item(this.state.get_simulator_reduction_proportion_chart_filters, this.state.get_simulator_reduction_proportion_chart_filters['i'].active)
+
+        var f = obj[selected_filter]
+        var length = f * data.length
+        if(length == 0) return []
+
+        var last20PercentCount = Math.ceil(length);
+        const last20Percent = data.slice(-last20PercentCount);
+        return last20Percent;
+    }
+
+    get_proportion_ratio_interval_figure(events){
+        if(events.length == 0) return 110
+        var data = []
+        events.forEach(event => {
+            data.push((event))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest + 10
+    }
+
+
+
+
+    render_config_ui(){
+        return(
+            <div>
+                {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['752p']/* 'Simulate a Spend token based on a custom configuration of your choice.' */})}
+                <div style={{height:10}}/>
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752g']/* 'Block Limit Sensitivity' */, 'details':this.props.app_state.loc['752h']/* 'The sensitivity of the simulated exchange to increasing demand.' */, 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.sim_block_limit_sensitivity_tags} tag_size={'l'} when_tags_updated={this.when_sim_block_limit_sensitivity_tags.bind(this)} theme={this.props.theme}/>
+                <div style={{height:2}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['709']/* 'Recommended: 2' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                {this.render_detail_item('0')}
+
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752i']/* 'Internal Block Halving' */, 'details':this.props.app_state.loc['696']/* 'proportion or percentage used in reducing the amount of spend that a sender can mint based on the block limit relative to the current block mint total.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.simulator_internal_block_halfing_proportion), 'details':this.props.app_state.loc['697']/* 'Internal Block Halving Proportion' */, 'size':'l'})}
+
+                <div style={{height:2}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['698']/* 'Recommended: 40% - 51%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_internal_block_halfing_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752j']/* 'Block Limit Reduction.' */, 'details':this.props.app_state.loc['700']/* 'proportion or percentage used in reducing the active block limit reduction proportion between blocks if block limit is exceeded in current block.(for uncapped tokens)' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                
+                {this.render_detail_item('3', {'title':this.format_proportion(this.state.simulator_block_limit_reduction_proportion), 'details':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'size':'l'})}
+
+                <div style={{height:2}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['702']/* 'Recommended: 65% - 91%' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_block_limit_reduction_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752k']/* 'Block Reset Limit' */, 'details':this.props.app_state.loc['704']/* 'the maximum number of blocks that are counted while reseting active block limit reduction proportion value when multiple blocks have passed without a mint event taking place.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['705']/* 'Block Reset Limit' */, 'number':this.state.simulator_block_reset_limit, 'relativepower':this.props.app_state.loc['668']/* 'blocks' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['705']/* 'Block Reset Limit' */, 'subtitle':this.format_power_figure(this.state.simulator_block_reset_limit), 'barwidth':this.calculate_bar_width(this.state.simulator_block_reset_limit), 'number':this.format_account_balance_figure(this.state.simulator_block_reset_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['668']/* 'blocks' */, })}
+                </div>
+
+                <div style={{height:2}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['706']/* 'Recommended: 3' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={999} when_number_picker_value_changed={this.when_simulator_block_reset_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752l']/* 'Mint Limit' */, 'details':this.props.app_state.loc['649']/* 'The maximum amount of tokens that can be bought in one transaction.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['752l']/* 'Mint Limit' */, 'number':this.state.simulator_mint_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['752l']/* 'Mint Limit' */, 'subtitle':this.format_power_figure(this.state.simulator_mint_limit), 'barwidth':this.calculate_bar_width(this.state.simulator_mint_limit), 'number':this.format_account_balance_figure(this.state.simulator_mint_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                </div>
+
+                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_mint_limit.bind(this)} theme={this.props.theme} power_limit={54}/>
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752m']/* 'Block Limit.' */, 'details':this.props.app_state.loc['686']/* 'the maximum amount of your new token that can be minted before the active mint limit is reduced using its internal block halfing proportion.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['687']/* 'Block Limit' */, 'number':this.state.simulator_block_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['687']/* 'Block Limit' */, 'subtitle':this.format_power_figure(this.state.simulator_block_limit), 'barwidth':this.calculate_bar_width(this.state.simulator_block_limit), 'number':this.format_account_balance_figure(this.state.simulator_block_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                </div>
+
+                <div style={{height:2}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_account_balance_figure(this.state.simulator_mint_limit), 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_block_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+
+
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752n']/* 'Simulated Maturity Limit' */, 'details':this.props.app_state.loc['693']/* 'Amount of your token used in calculating the active block limit.' */, 'size':'l'})}
+                <div style={{height:20}}/>
+                
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['694']/* 'Maturity Limit' */, 'number':this.state.simulator_maturity_limit, 'relativepower':this.props.app_state.loc['646']/* 'tokens' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['694']/* 'Maturity Limit' */, 'subtitle':this.format_power_figure(this.state.simulator_maturity_limit), 'barwidth':this.calculate_bar_width(this.state.simulator_maturity_limit), 'number':this.format_account_balance_figure(this.state.simulator_maturity_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['646']/* 'tokens' */, })}
+                </div>
+
+                <div style={{height:2}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['688']/* 'Recommended: ' */+this.format_account_balance_figure(bigInt(this.state.simulator_mint_limit).multiply(100)), 'textsize':'10px', 'font':this.props.app_state.font})}
+
+                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_simulator_maturity_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+
+                {this.render_detail_item('0')}
+
+
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752o']/* 'Simulated Halving type' */, 'details':this.props.app_state.loc['690']/* 'If set to spread, each minter receives a slightly less ammount than the previous minter in a given block.' */, 'size':'l'})}
+
+                <div style={{height:20}}/>
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.sim_block_halving_type_tags} tag_size={'l'} when_tags_updated={this.when_sim_block_halving_type_tags.bind(this)} theme={this.props.theme}/>
+
+                <div style={{height:2}}/>
+                {this.render_detail_item('10', {'text':this.props.app_state.loc['691']/* 'Recommended: Spread' */, 'textsize':'10px', 'font':this.props.app_state.font})}
+
+            </div>
+        )
+    }
+
+    render_simulator_speed_picker(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['752e']/* 'Mint Volume.' */, 'details':this.props.app_state.loc['752f']/* 'The simulated mint volume to be used.' */, 'size':'l'})}
+
+                <div style={{height:10}}/>
+                {this.render_detail_item('3', {'title':this.get_mint_rate()+this.props.app_state.loc['752af']/* ' mints per second' */, 'details':this.props.app_state.loc['752ae']/* 'Rate' */, 'size':'l'})}
+                <div style={{height:5}}/>
+                <div style={{height:'100%', width:'94%', 'margin':'7px 0px 0px 0px', 'padding':'0px 0px 0px 10px'}}>
+                    <Slider value={this.state.simulator_speed}  whenNumberChanged={(e)=>this.when_number_input_slider_changed(e)} unitIncrease={()=>this.when_number_slider_button_tapped()} unitDecrease={()=>this.when_number_slider_button_double_tapped()} theme={this.props.theme}/>
+                </div>
+
+            </div>
+        )
+    }
+
+    when_number_input_slider_changed(number){
+        this.setState({simulator_speed: parseInt(number.target.value)})
+
+        var me = this;
+        setTimeout(function() {
+            if(me.state.simulator_state == 'running') me.update_mint_action_speed()
+        }, (1 * 100));
+    }
+
+    when_number_slider_button_tapped(){
+        var new_number = this.state.simulator_speed +1
+        if(new_number < 999){
+            this.setState({simulator_speed: new_number})
+        }
+        var me = this;
+        setTimeout(function() {
+            if(me.state.simulator_state == 'running') me.update_mint_action_speed()
+        }, (1 * 100));
+    }
+
+    when_number_slider_button_double_tapped(){
+        var new_number = this.state.simulator_speed -1
+        if(new_number > 0){
+            this.setState({simulator_speed: new_number})
+        }
+        var me = this;
+        setTimeout(function() {
+            if(me.state.simulator_state == 'running') me.update_mint_action_speed()
+        }, (1 * 100));
+    }
+
+    when_sim_block_limit_sensitivity_tags(tag_obj){
+        var value = parseInt(this.get_selected_item(tag_obj, tag_obj['i'].active))
+        this.setState({sim_block_limit_sensitivity_tags: tag_obj, simulator_block_limit_sensitivity:value})
+    }
+
+    when_simulator_internal_block_halfing_proportion(value){
+        this.setState({simulator_internal_block_halfing_proportion: value})
+    }
+
+    when_simulator_block_limit_reduction_proportion(value){
+        this.setState({simulator_block_limit_reduction_proportion: value})
+    }
+
+    when_simulator_block_reset_limit(value){
+        this.setState({simulator_block_reset_limit: value})
+    }
+
+    when_simulator_mint_limit(value){
+        this.setState({simulator_mint_limit: value})
+    }
+
+    when_simulator_block_limit(value){
+        this.setState({simulator_block_limit: value})
+    }
+
+    when_simulator_maturity_limit(value){
+        this.setState({simulator_maturity_limit: value})
+    }
+
+    when_sim_block_halving_type_tags(tag_obj){
+        var value = (this.get_selected_item(tag_obj, tag_obj['i'].active) == this.props.app_state.loc['615']/* 'spread' */ ? 1 : 0)
+        this.setState({sim_block_halving_type_tags: tag_obj, simulator_block_halving_type: value})
+    }
+
+
+
+
+
+    start_simulator(){
+        console.log()
+        this.interval = setInterval(() => this.increase_block(), this.state.simulator_block_time);
+        this.interval2 = setInterval(() => this.simulate_mint_action(), this.get_simulator_speed());
+    }
+
+    pause_simulator() {
+        clearInterval(this.interval);
+        clearInterval(this.interval2);
+    }
+
+    resume_simulator(){
+        this.interval = setInterval(() => this.increase_block(), this.state.simulator_block_time);
+        this.interval2 = setInterval(() => this.simulate_mint_action(), this.get_simulator_speed());
+    }
+
+    reset_simulator(){
+        clearInterval(this.interval);
+        clearInterval(this.interval2);
+        this.reset_simulator_values()
+    }
+
+    update_mint_action_speed(){
+        clearInterval(this.interval2);
+        this.interval2 = setInterval(() => this.simulate_mint_action(), this.get_simulator_speed());
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+        clearInterval(this.interval2);
+    }
+
+
+    increase_block(){
+        this.setState({simulator_block_number: this.state.simulator_block_number+1})
+    }
+
+    get_simulator_speed(){
+        var speed = this.state.simulator_speed
+        var inv =  1000 - speed
+        return inv + 15
+    }
+
+    reset_simulator_values(){
+        this.setState({
+            simulator_block_time:12000,
+            simulator_block_number:0,
+
+            simulator_active_mint_block:0,
+            simulator_active_block_limit_reduction_proportion: bigInt(bgN(1, 18)),
+            simulator_total_minted_for_current_block:0,
+            simulator_block_limit_sensitivity:1,/*  */ sim_block_limit_sensitivity_tags:this.get_new_token_block_limit_sensitivity_tags_object(),
+            simulator_internal_block_halfing_proportion: bigInt(bgN(50, 16)),/*  */
+            simulator_block_limit_reduction_proportion: bigInt(bgN(90, 16)),/*  */
+            simulator_block_reset_limit:1,/*  */
+            simulator_mint_limit:1000_000,/*  */
+            simulator_block_limit:2000_000,/*  */
+            simulator_total_supply:0,
+            simulator_maturity_limit:5000_000,/*  */
+            simulator_block_halving_type:1,/*  */ sim_block_halving_type_tags: this.get_new_token_halving_type_tags_object(),
+            UpdateExchangeRatiosEvents:[],
+            UpdateProportionRatios:[],
+            simulator_speed:100,
+
+            get_simulator_reduction_proportion_chart_filters:this.get_simulator_reduction_proportion_chart_filters(),
+        })
+    }
+
+
+
+    simulate_mint_action(){
+        this.calculate_reduction_proportion_ratios()
+        var final_tokens_to_receive = this.calculate_tokens_to_receive()
+
+        this.update_exchange_ratios(final_tokens_to_receive)
+        this.update_total_minted_for_current_block(final_tokens_to_receive)
+    }
+
+    calculate_reduction_proportion_ratios(){
+        var new_ratio = this.state.simulator_active_block_limit_reduction_proportion;
+
+        if(this.state.simulator_block_number - this.state.simulator_active_mint_block >= 1){
+            if(this.state.simulator_total_minted_for_current_block > this.state.simulator_block_limit){
+                var sensitivity = this.state.simulator_block_limit_sensitivity;
+                if(sensitivity == 0){
+                    sensitivity = 1;
+                }
+
+                var factor = this.calculate_factor(this.state.simulator_internal_block_halfing_proportion, this.state.simulator_total_minted_for_current_block, this.state.simulator_block_limit)
+
+                if(factor != 0){
+                    var new_proportion = this.calculate_share_of_total(this.state.simulator_active_block_limit_reduction_proportion, this.compound(this.state.simulator_block_limit_reduction_proportion, factor * sensitivity))
+
+                    new_ratio = new_proportion == 0 ? 1 : new_proportion
+                }
+
+                if(this.state.simulator_block_number - this.state.simulator_active_mint_block > 1){
+                    var numerator = bigInt(new_ratio).multiply(10**18)
+                    var power = (this.state.simulator_block_number - this.state.simulator_active_mint_block) - 1
+
+                    new_ratio = this.calculate_new_increased_active_block_limit_reduction_proportion(numerator, power, this.state.simulator_block_reset_limit, this.state.simulator_block_limit_reduction_proportion)
+                }
+            } else{
+                if(this.state.simulator_active_block_limit_reduction_proportion < 10**18){
+                    var numerator = bigInt(this.state.simulator_active_block_limit_reduction_proportion).multiply(10**18)
+                    var power = this.state.simulator_block_number - this.state.simulator_active_mint_block
+
+                    new_ratio = this.calculate_new_increased_active_block_limit_reduction_proportion(numerator, power, this.state.simulator_block_reset_limit, this.state.simulator_block_limit_reduction_proportion)
+                }
+            }
+        }
+
+        if(new_ratio < 1) new_ratio = 1
+        this.setState({simulator_active_block_limit_reduction_proportion: new_ratio})
+    }
+
+    calculate_factor(p1/* reduction_proportion */, p2/* total_minted_for_current_block */, p3/* max_block_buyable_amount */){
+        if(p1/* reduction_proportion */ == 0 || p2/* total_minted_for_current_block */ == 0 || p3/* max_block_buyable_amount */==0){
+            /* if one of the values passed is zero, return zero */
+            return 0;
+        }
+
+        var total_amount = p2/* total_minted_for_current_block */ == 0 ? 1 /* 1 to avoid exception */ : p2/* total_minted_for_current_block */
+        var x = bigInt(10**18).divide(p1/* reduction_proportion */)
+        var y = bigInt(total_amount).divide(p3/* max_block_buyable_amount */)
+        return bigInt(x).times(y);
+    }
+
+    compound(p1/* p1: numb  */, p2/* p2: steps */){
+        var v1/* val */ = 0;
+        v1 /* v1: val */ = p1/* p1: numb  */;
+        /* set the return value as the proportion argument */
+
+        if (p2/* p2: steps */ > 1) {
+            /* if the number of steps is more than one */
+
+            for (var t = 0; t < p2/* p2: steps */ - 1; t++) {
+                /* for each number of steps required */
+
+                v1/* v1: val */ = (bigInt(v1/* v1: val */).times(p1/* p1: numb  */)).divide(10**18); /* (denominator -> 10**18) */
+            }
+        }
+        if(v1/* v1: val */ == 0 && p1/* p1: numb  */ != 0){
+            /* if the compounded steps caused the proprtion to be compounded down to zero, set it as 1 */
+            v1/* v1: val */ = 1;
+        }
+
+        return v1
+    }
+
+    calculate_share_of_total(p1, p2){
+        if (p1 /* p1: amount */ == 0 || p2 /* p2: proportion */ == 0) return 0;
+
+
+        return (bigInt(p1/* p1: amount */).times(p2 /* p2: proportion */)).divide(10**18); /* (denominator -> 10**18) */
+        /* prevents an overflow incase the amount is large */
+    }
+
+    calculate_new_increased_active_block_limit_reduction_proportion(p1/* numerator */, p2/* power */, p3/* block_reset_limit */, p4/* block_limit_reduction_proportion */){
+        if (p2/* power */ > p3/* block_reset_limit */ && p3/* block_reset_limit */ != 0) {
+            /* if a reset limit exists and the power is greater than it */
+
+            p2/* power */ = p3/* block_reset_limit */;
+            /* set the power to be the reset limit */
+        }
+        else if(p2/* power */ >= 35){
+            /* if the power is greater than thirtyfive */
+
+            p2/* power */ = 35;
+            /* set it to 35 */
+        }
+        var v1/* denominator */ = this.compound(p4/* block_limit_reduction_proportion */, p2/* power */);
+        /* intialize a denominator variable thats the compounded value of the block limit reduction proportion using the power */
+
+        var v2/* new_val */ = p1/* numerator */ / v1/* denominator */;
+        /* then set the return value as the numerator divided by the denominator */
+
+        if ( v2/* new_val */ > 10**18 /* (denominator -> 10**18) */ ) {
+            /* if the value is more than 100% */
+            v2/* new_val */ = 10**18; /* (denominator -> 10**18) */
+            /*  set it to 100% */
+        }
+        return v2/* new_val */;
+    }
+
+
+    calculate_tokens_to_receive(){
+        var active_mintable_amount = this.calculate_active_mintable_amounts()
+        var tokens_to_receive_data = this.calculate_tokens_setup(active_mintable_amount)
+        var final_tokens_to_receive = this.calculate_final_tokens_to_receive(tokens_to_receive_data, active_mintable_amount)
+
+        return final_tokens_to_receive;
+    }
+
+
+    calculate_active_mintable_amounts(){
+        return this.calculate_share_of_total(this.state.simulator_mint_limit, this.state.simulator_active_block_limit_reduction_proportion)
+    }
+
+    calculate_tokens_setup(active_mintable_amount){
+        return this.get_tokens_to_receive(active_mintable_amount)
+    }
+
+
+    get_tokens_to_receive(active_mintable_amount){
+        var active_block_limit = this.get_active_block_limit(this.state.simulator_block_limit, this.state.simulator_mint_limit, this.state.simulator_total_supply, this.state.simulator_maturity_limit)
+
+        var factor = this.calculate_factor(this.state.simulator_internal_block_halfing_proportion, this.state.simulator_total_minted_for_current_block, active_block_limit)
+
+        var factor_amount = active_mintable_amount
+
+        if(factor > 0){
+            factor_amount = factor > active_mintable_amount ? 1 : bigInt(active_mintable_amount).divide(factor)
+        }
+
+        if(this.state.simulator_block_halving_type == 1){
+            factor_amount = this.calculate_spread_factor_amount(this.state.simulator_internal_block_halfing_proportion, this.state.simulator_total_minted_for_current_block, active_block_limit, factor_amount)
+        }
+
+        var ir_parent = 1000
+        var or_parent = 1000
+
+        return [factor, ir_parent, or_parent, factor_amount]
+    }
+
+    get_active_block_limit(p1/* block_limit */, p2/* mint_limit */, p3/* total_supply */, p4/* maturity_limit */){
+        var v = p1/* block_limit */
+
+        if (p4/* maturity_limit */ != 0 && p3/* total_supply */ < p4/* maturity_limit */) {
+            v/* active_block_limit */ = (bigInt(p3/* total_supply */).times(p1/* block_limit */)).divide(p4/* maturity_limit */);
+
+
+            if (v/* active_block_limit */ < p2/* mint_limit */) {
+                v/* active_block_limit */ = p2/* mint_limit */;
+            }
+        }
+
+        return v/* active_block_limit */
+    }
+
+    calculate_spread_factor_amount( p1/* internal_block_halfing_proportion */, p2/* total_minted_for_current_block */, p3/* block_limit */, p4/* factor_amount */){
+        var v1/* mod_amm */ = p2/* total_minted_for_current_block */ == 0 ? 0 : bigInt(p2/* total_minted_for_current_block */).mod(p3/* block_limit */);
+        
+        if (v1/* mod_amm */ == 0) {
+            return p4/* factor_amount */;
+        }
+
+        var v2/* sub_amount */ = 0;
+        var v3/* rem */ = this.calculate_share_of_total(p4/* factor_amount */, (10**18 - p1/* internal_block_halfing_proportion */) );
+
+
+        v2/* sub_amount */ = ((bigInt(v1/* mod_amm */).multiply(v3/* rem */)).divide(p3/* block_limit */));
+        return bigInt(p4/* factor_amount */).minus(v2/* sub_amount */)
+    }
+
+    calculate_final_tokens_to_receive(tokens_to_receive_data, active_mintable_amount){
+        var amount = tokens_to_receive_data[0] == 0 ? active_mintable_amount : tokens_to_receive_data[3]
+        return this.price(amount, tokens_to_receive_data[1], tokens_to_receive_data[2])
+    }
+
+    price(amount, input_reserve_ratio, output_reserve_ratio){
+        return amount
+    }
+
+    update_exchange_ratios(final_tokens_to_receive){
+        var new_amount = bigInt(this.state.simulator_total_supply).plus(final_tokens_to_receive)
+        var clone = this.state.UpdateExchangeRatiosEvents.slice()
+        clone.push(new_amount)
+        this.setState({simulator_total_supply: new_amount, UpdateExchangeRatiosEvents: clone})
+    }
+
+    update_total_minted_for_current_block(final_tokens_to_receive){
+        if(this.state.simulator_block_limit != 0){
+            if(this.state.simulator_active_mint_block != this.state.simulator_block_number){
+                this.setState({simulator_total_minted_for_current_block: final_tokens_to_receive, simulator_active_mint_block: this.state.simulator_block_number})
+            }else{
+                this.setState({simulator_total_minted_for_current_block: bigInt(this.state.simulator_total_minted_for_current_block).plus(final_tokens_to_receive)})
+            }
+            var clone = this.state.UpdateProportionRatios.slice()
+            var x = this.format_percentage(this.state.simulator_active_block_limit_reduction_proportion)
+            clone.push(x)
+            this.setState({UpdateProportionRatios:clone})
+        }
+    }
+
+    format_percentage(p){
+        var x = (p / (10**18)) * 100
+        return Math.round(x * 1000) / 1000
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     render_token_authorities_part(){
@@ -2464,6 +3356,8 @@ class NewTokenPage extends Component {
         }
         
     }
+
+
 
     calculate_bar_width(num){
         if(num == null) return '0%'

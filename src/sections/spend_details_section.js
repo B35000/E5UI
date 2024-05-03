@@ -932,7 +932,7 @@ class SpendDetailSection extends Component {
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['701']/* 'Block Limit Reduction Proportion' */, 'details':this.props.app_state.loc['2577']/* 'Chart containing the block limit reduction proportion over time.' */, 'size':'l'})}
-                    {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(proportion_ratio_events), 'interval':110})}
+                    {this.render_detail_item('6', {'dataPoints':this.get_proportion_ratio_data_points(proportion_ratio_events), 'interval':this.get_interval_for_proportion_ratio_chart(proportion_ratio_events)})}
                     <div style={{height: 10}}/>
                     <Tags font={this.props.app_state.font} page_tags_object={this.state.block_limit_chart_tags_object} tag_size={'l'} when_tags_updated={this.when_block_limit_chart_tags_objectt_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height: 10}}/>
@@ -973,7 +973,7 @@ class SpendDetailSection extends Component {
             yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i%(Math.round(noOfDps/10)) == 0 && i != 0){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+yVal+"%"});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
@@ -994,6 +994,11 @@ class SpendDetailSection extends Component {
         });
         var largest = Math.max.apply(Math, data);
         return largest
+    }
+
+    get_interval_for_proportion_ratio_chart(events){
+        if(events.length == 0) return 110
+        return this.get_proportion_ratio_interval_figure(this.filter_proportion_ratio_events(events)) + 10
     }
 
     get_lowest_proportion_ratio_figure(events){
@@ -1206,7 +1211,7 @@ class SpendDetailSection extends Component {
             yVal = data[factor * xVal]
             // yVal = data[i]
             if(yVal != null){
-                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                if(i%(Math.round(noOfDps/10)) == 0 && i != 0){
                     dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
                 }else{
                     dps.push({x: xVal, y: yVal});//
