@@ -72,7 +72,7 @@ class MailDetailsSection extends Component {
         var he = this.props.height
         return(
             <div>
-                <div style={{height:he, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
+                <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
@@ -335,11 +335,16 @@ class MailDetailsSection extends Component {
     }
 
     scroll_to_bottom(){
+        this.is_auto_scrolling = true
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        var me = this;
+        setTimeout(function() {
+            me.is_auto_scrolling = false
+        }, (1 * 500));
     }
 
     handleScroll = (event, object) => {
-        this.has_user_scrolled[object['e5_id']] = true
+        if(!this.is_auto_scrolling) this.has_user_scrolled[object['e5_id']] = true
     };
 
     render_focused_message(object){
@@ -455,10 +460,10 @@ class MailDetailsSection extends Component {
         // }
         else{
             return(
-                <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'scroll'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
+                        {this.render_messages(items.concat(stacked_items), object)}
                     </ul>
                 </div>
             )
@@ -489,7 +494,7 @@ class MailDetailsSection extends Component {
         }
         else{
             return(
-                <div>
+                <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div>

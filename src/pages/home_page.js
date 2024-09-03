@@ -354,6 +354,7 @@ class home_page extends Component {
             )
         }
         else if(size == 'm'){
+            var middle = this.props.height-126;
             return ( 
                 <div className="row" style={{height: this.props.height, width:'102%','background-color':background_color, 'overflow': 'hidden'}}>
                     <div className="col" style={{backgroundImage: `url(${back})` , backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}>
@@ -484,7 +485,7 @@ class home_page extends Component {
         var navbar_color = this.props.theme['nav_bar_color'];
         var background_color = this.props.theme['homepage_background_color'];
         var back = this.props.theme['background']
-        var bar_width = 85
+        var bar_width = 77
         return(
             <div className="col-1" style={{'margin':'20px 0px 2px 0px'}}>
                 <div style={{height:15, width:bar_width, 'background-color': background_color,'border-radius': '20px 20px 0px 0px',  'border-width':'0px', 'border-color':navbar_color, 'border-style': 'solid solid hidden solid'}}/>
@@ -504,12 +505,12 @@ class home_page extends Component {
         var w = this.props.width/2
         if(orientation == 'right'){
             return(
-                <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 0px'}}>
+                <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size, h)}
+                        {this.render_post_list_group(size, h+10)}
                     </div>
 
-                    <div className="col-6" style={{'padding':'3px 5px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
@@ -517,13 +518,13 @@ class home_page extends Component {
             );
         }else{
             return(
-                <div className="row" style={{height:middle, width:width, 'margin':'0px 0px 0px 0px'}}>
-                    <div className="col-6" style={{'padding':'3px 5px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
+                <div className="row" style={{height:middle, width:width-10, 'margin':'0px 0px 0px 0px'}}>
+                    <div className="col-6" style={{'padding':'3px 1px 0px 0px', 'background-color':this.props.theme['send_receive_ether_background_color'],'border-radius': '15px', height: (middle)}}>
                         {this.render_post_detail_object(size, h, w)}
                     </div>
 
                     <div className="col-6" style={{}}>
-                        {this.render_post_list_group(size, h)}
+                        {this.render_post_list_group(size, h+10)}
                     </div>
 
                 </div>
@@ -571,24 +572,24 @@ class home_page extends Component {
 
     render_navbar_button_group(size){
         //#545454 - highlight color
-
+        var line_margin = '0px '+this.get_navbar_line_margin_percentage()+' 0px 0px'
         if(size == 'm'){
           return ( 
               <div className="row" style={{'padding':'0px 0px 0px 10px', height:'100%', width:'100%'}}>
                   <div className="col" style={{'background-color': this.get_navbar_normal_or_highlighted_button_background('?'),'padding':'5px 0px 0px 30px', 'border-radius': '0px 0px 0px 0px'}} onClick={()=> this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('l','1px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
+                      {this.render_navbar_button('l','4px 0px 0px 12px', this.props.theme['JobIcon'], 'auto', '70px','3px 12px 3px 19px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)}
                   </div>
 
                   <div className="col" style={{'padding':'5px 0px 0px 30px','background-color': this.get_navbar_normal_or_highlighted_button_background('e')}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                    {this.render_navbar_button('l','2px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                    {this.render_navbar_button('l','5px 0px 0px 3px', this.props.theme['ExploreIcon'], 'auto', '60px','5px 11px 0px 20px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
                   </div>
 
                   <div className="col" style={{'padding':'5px 0px 0px 30px', 'background-color': this.get_navbar_normal_or_highlighted_button_background('w')}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('l','2px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                    {this.render_navbar_button('l','5px 0px 0px 15px', this.props.theme['WalletIcon'], 'auto', '70px','5px 10px 6px 17px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
                   </div>
                   
                   <div className="col" style={{'padding':'5px 0px 0px 30px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                    {this.render_navbar_button('l','2px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                    {this.render_navbar_button('l','5px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '59px','3px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
                   </div>
               </div>
           );
@@ -618,29 +619,29 @@ class home_page extends Component {
         else if(size == 'l' || size == 'xl'){
             return ( 
                 <div style={{height: '100%', width:'100%', padding:'5px 0px 0px 0px'}}>
-                  <div style={{height:'1px', 'background-color':'#7E7E7E', 'margin': '0px 80% 0px 0px'}}/>
+                  <div style={{height:'1px', 'background-color':'#7E7E7E', 'margin': line_margin}}/>
                   <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('?'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('?')}>
-                      {this.render_navbar_button('s', '1px 0px 10px 5px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)} 
+                      {this.render_navbar_button('s', '1px 0px 10px 6px', this.props.theme['JobIcon'], 'auto', '60px','5px 12px 0px 11px','????',this.props.app_state.loc['1223']/* 'Work Contracts' */)} 
                   </div>
                 
 
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
                   <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('e'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('e')}>
-                      {this.render_navbar_button('s', '0px 0px 10px 5px', this.props.theme['ExploreIcon'], 'auto', '50px','5px 11px 0px 10px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
+                      {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['ExploreIcon'], 'auto', '50px','5px 11px 0px 10px',this.props.app_state.loc['1224']/* 'Explore' */,this.props.app_state.loc['1225']/* 'Deployed E5s' */)}
                       
                   </div>
                 
 
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '20px 12px 5px 0px'}}/>
                   <div style={{'background-color':this.get_navbar_normal_or_highlighted_button_background('w'), padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('w')}>
-                    {this.render_navbar_button('s', '0px 0px 10px 5px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 6px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
+                    {this.render_navbar_button('s', '0px 0px 10px 9px', this.props.theme['WalletIcon'], 'auto', '55px','5px 10px 6px 10px',this.props.app_state.loc['1226']/* 'Wallet' */,this.props.app_state.loc['1227']/* 'Coin & Tokens' */)}
                       
                   </div>
                 
 
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '10px 12px '+(this.props.height-460)+'px 0px'}} />
                     <div style={{'background-color':'transparent', padding:'0px 5px 0px 0px'}} onClick={() => this.when_bottom_navbar_button_clicked('s')}>
-                        {this.render_navbar_button('s', '0px 0px 0px 5px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
+                        {this.render_navbar_button('s', '0px 0px 0px 9px', this.props.theme['StackIcon'], 'auto', '50px','1px 11px 2px 12px',this.props.app_state.loc['1228']/* 'Stack' */,this.props.app_state.loc['1229']/* 'Runs on e' */)}
                     </div>
                   <div style={{height:'1px', 'background-color':'transparent', 'margin': '0px 12px 5px 0px'}}/>
             </div>
@@ -656,6 +657,17 @@ class home_page extends Component {
             color = this.props.theme['navbar_button_selected_color'];
         }
         return color;
+    }
+
+    get_navbar_line_margin_percentage(){
+        var page = this.state.page
+        if(page == '?'){
+            return '80%'
+        }
+        else if(page == 'e'){
+            return '55%'
+        }
+        else return '25%'
     }
 
     /* called when a bottom navbar item has been clicked */
@@ -691,12 +703,12 @@ class home_page extends Component {
                 <div className="row" style={{ width:'100%', 'padding':'7px 0px 0px 10px', 'border-radius': '0px 0px 0px 0px'}}>
                     <div className="col-3" style={{'padding':'0px 0px 10px 0px'}}>
                         <div style={{height:'7%', width:'100%'}}>
-                            <img src={img} style={{height:img_height,width:img_width, padding: img_padding}} />
+                            <img src={img} style={{height:img_height,width:img_width, padding: img_padding}}/>
                         </div>
                     </div>
                     <div className="col" style={{'padding':'0px 0px 0px 10px'}}>
                         <div style={{height:'7%', width:'100%', 'padding':text_padding}}>
-                            <p style={{'font-size': '18px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p> 
+                            <p style={{'font-size': '15px','color': navbar_button_text_color,'margin': '0px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'text-shadow': '-1px -1px 2px '+this.props.theme['navbar_text_shadow_color']}}>{title}</p> 
                             <p style={{'font-size': '10px','color': navbar_button_secondary_text,'margin': '-5px 0px 0px 0px','font-family': this.props.app_state.font,'text-decoration': 'none', 'font-weight': 'bold'}} className="text-capitalize">{tabs}</p>
                         </div>
                     </div>
@@ -2009,7 +2021,7 @@ class home_page extends Component {
 
         objects.forEach(object => {
             var entered_title_text = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            if(object['id'].toString().includes(searched_input) || entered_title_text.includes(searched_input)){
+            if(object['id'].toString() == (searched_input) || entered_title_text.toLowerCase().includes(searched_input.toLowerCase())){
                 if(this.check_if_object_includes_tags(object, searched_tags)){
                     return_objs.push(object)
                 }
@@ -3664,13 +3676,23 @@ class home_page extends Component {
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2821']/* 'Estimated Gas.' */, 'details':this.props.app_state.loc['2822']/* 'The estimated gas set to be consumed in your next run.' */, 'size':'l'})}
                     <div style={{height: 5}}/>
                     {this.render_stack_gas_figure()}
+
+
+                    {this.render_detail_item('0')}
+                    {this.render_detail_item('3',{'title':this.props.app_state.loc['2844']/* 'Acitve E5 Info.' */, 'details':this.props.app_state.loc['2845']/* 'Telemetries for your selected E5' */, 'size':'l'})}
+                    <div style={{height: 5}}/>
+                    {this.load_E5_charts()}
+
+
+
+
                     {this.render_detail_item('0')} 
-
-
                     {this.render_detail_item('3',{'title':this.props.app_state.loc['2823']/* 'Stats and Telemetries.' */, 'details':this.props.app_state.loc['2824']/* 'Some info about E5 in its entirety.' */, 'size':'l'})}
                     <div style={{height: 5}}/>
                     {this.render_transaction_data()}
 
+
+                    
 
                 </div>
             </div>
@@ -3939,7 +3961,7 @@ class home_page extends Component {
 
 
 
-    render_transaction_data(){  
+    render_transaction_data(){
         var transaction_events = this.load_all_event_data('transaction').length
         var transfer_events = this.load_all_event_data('transfer').length
         var traffic_proportion_events = this.load_traffic_proportion_data()
@@ -4055,6 +4077,815 @@ class home_page extends Component {
             'number':this.format_account_balance_figure(number),
             'relativepower':name,
         }
+    }
+
+
+
+
+
+
+    load_E5_charts(){
+        var e5_chart_data = this.props.app_state.all_data[this.props.app_state.selected_e5]
+        if(e5_chart_data != null){
+           return(
+               <div>
+                    {this.show_subscription_transaction_count_chart(e5_chart_data)}
+                    {this.show_contract_transaction_count_chart(e5_chart_data)}
+                    {this.show_proposal_transaction_count_chart(e5_chart_data)}
+                    {this.show_exchange_transaction_count_chart(e5_chart_data)}
+                    {this.show_post_transaction_count_chart(e5_chart_data)}
+                    {this.show_channel_transaction_count_chart(e5_chart_data)}
+                    {this.show_job_transaction_count_chart(e5_chart_data)}
+                    {this.show_stores_transaction_count_chart(e5_chart_data)}
+                    {this.show_bag_transaction_count_chart(e5_chart_data)}
+                    {this.show_contractor_transaction_count_chart(e5_chart_data)}
+                    {this.show_data_transaction_count_chart(e5_chart_data)}
+                    {this.show_metadata_transaction_count_chart(e5_chart_data)}
+                    {this.show_withdraw_amount_data_chart(e5_chart_data)}
+                    {this.show_deposit_amount_data_chart(e5_chart_data)}
+                    {this.show_transfer_events_chart(e5_chart_data)}
+                    {this.show_transaction_transaction_count_chart(e5_chart_data)}
+               </div>
+           ) 
+        }
+    }
+
+    show_subscription_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['subscription']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2262']/* Subscriptions Created' */, 'details':this.props.app_state.loc['2263']/* `Chart containing the total number of subscriptions made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2269e']/* 'Y-Axis: Total Subscriptions Made' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2270']/* 'Total Subscriptions' */, 'number':amount, 'relativepower':this.props.app_state.loc['2271']/* 'subscriptions' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2270']/* 'Total Subscriptions' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2271']/* 'subscriptions' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p4
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p4 - events[i].returnValues.p4
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+    show_contract_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['contract']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2272']/* 'Contracts Created' */, 'details':this.props.app_state.loc['2273']/* `Chart containing the total number of contracts made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2274']/* 'Y-Axis: Total Contracts Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2276']/* 'Total Contracts' */, 'number':amount, 'relativepower':this.props.app_state.loc['2277']/* 'contracts' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2276']/* 'Total Contracts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2277']/* 'contracts' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_proposal_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['proposal']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2278']/* 'Proposals Created' */, 'details':this.props.app_state.loc['2279']/* `Chart containing the total number of proposals made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2280']/* 'Y-Axis: Total Proposals Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2281']/* 'Total Proposals' */, 'number':amount, 'relativepower':this.props.app_state.loc['2282']/* 'proposals' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2281']/* 'Total Proposals' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2282']/* 'proposals' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_exchange_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['exchange']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2283']/* 'Exchanges Created' */, 'details':this.props.app_state.loc['2284']/* `Chart containing the total number of exchanges made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2285']/* 'Y-Axis: Total Exchanges Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2286']/* 'Total Exchanges' */, 'number':amount, 'relativepower':this.props.app_state.loc['2287']/* 'exchanges' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2286']/* 'Total Exchanges' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2287']/* 'exchanges' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+
+
+    show_post_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['post']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2288']/* 'Indexed Posts Created' */, 'details':this.props.app_state.loc['2289']/* `Chart containing the total number of indexed posts made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2290']/* 'Y-Axis: Total Posts Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2291']/* 'Total Posts' */, 'number':amount, 'relativepower':this.props.app_state.loc['2292']/* 'posts' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2291']/* 'Total Posts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2292']/* 'posts' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_post_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p6 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_post_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+    show_channel_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['channel']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2293']/* 'Indexed Channels Created' */, 'details':this.props.app_state.loc['2294']/* `Chart containing the total number of indexed channels made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2295']/* 'Y-Axis: Total Channels Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2296']/* 'Total Channels' */, 'number':amount, 'relativepower':this.props.app_state.loc['2297']/* 'channels' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2296']/* 'Total Channels' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2297']/* 'channels' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+    
+    show_job_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['job']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2298']/* 'Indexed Jobs Created' */, 'details':this.props.app_state.loc['2299']/* `Chart containing the total number of indexed jobs made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2300']/* 'Y-Axis: Total Jobs Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2301']/* 'Total Jobs' */, 'number':amount, 'relativepower':this.props.app_state.loc['2302']/* 'jobs' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2301']/* 'Total Jobs' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2302']/* 'jobs' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_stores_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['store']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2303']/* 'Indexed Storefront Items Created' */, 'details':this.props.app_state.loc['2304']/* `Chart containing the total number of indexed storefront items made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2305']/* 'Y-Axis: Total Storefront Items Made' */, 'details':this.props.app_state.loc['2269']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2306']/* 'Total Storefront Items' */, 'number':amount, 'relativepower':this.props.app_state.loc['445']/* 'items' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2306']/* 'Total Storefront Items' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['445']/* 'items' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_bag_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['bag']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2308']/* 'Bags Created' */, 'details':this.props.app_state.loc['2309']/* `Chart containing the total number of bags made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_count_data_points(events), 'interval':this.get_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2310']/* 'Y-Axis: Total Bags Made' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2311']/* 'Total Bags' */, 'number':amount, 'relativepower':this.props.app_state.loc['2312']/* 'bags' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2311']/* 'Total Bags' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2312']/* 'bags' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_contractor_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['contractor']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2313']/* 'Indexed Contractors Created' */, 'details':this.props.app_state.loc['2314']/* `Chart containing the total number of indexed contractors made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2315']/* 'Y-Axis: Total Contractor Posts' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2316']/* 'Total Contractor Posts' */, 'number':amount, 'relativepower':this.props.app_state.loc['1198']/* 'contractors' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2316']/* 'Total Contractor Posts' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['1198']/* 'contractors' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    show_data_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['data']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2317']/* 'Data Throughput' */, 'details':this.props.app_state.loc['2318']/* `Chart containing the data throughput over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_post_transaction_count_data_points(events), 'interval':this.get_post_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2319']/* 'Y-Axis: Total Data Events' */, 'details':this.props.app_state.loc['1461']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2320']/* 'Total Data Events' */, 'number':amount, 'relativepower':this.props.app_state.loc['1263']/* 'events' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2320']/* 'Total Data Events' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['1263']/* 'events' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+
+
+    show_metadata_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['metadata']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2321']/* 'Metadata Throughput' */, 'details':this.props.app_state.loc['2322']/* `Chart containing the total number of metadata events made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_metadata_transaction_count_data_points(events), 'interval':this.get_metadata_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2323']/* 'Y-Axis: Total Metadata Events' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2324']/* 'Total Metadata Events' */, 'number':amount, 'relativepower':this.props.app_state.loc['2325']/* 'events' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2324']/* 'Total Metadata Events' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2325']/* 'events' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_metadata_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_metadata_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+    show_withdraw_amount_data_chart(e5_chart_data){
+        var events = e5_chart_data['withdraw']
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2326']/* 'Withdrawn Ether' */, 'details':this.props.app_state.loc['2327']/* `The total amount of ether thats been withdrawn from the E5 over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_withdraw_amount_data_points(events), 'interval':110, 'hide_label': true})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2328']/* 'Y-Axis: Total Withdrawn Ether' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_withdraw_amount_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    data.push(bigInt(events[i].returnValues.p5))
+                }else{
+                    data.push(bigInt(data[data.length-1]).add(bigInt(events[i].returnValues.p5)))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p6 - events[i].returnValues.p6
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        var largest_number = this.get_withdraw_amount_interval_figure(events)
+        var recorded = false
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            // yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && !recorded){
+                    recorded = true
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_withdraw_amount_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p5))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+
+
+    show_deposit_amount_data_chart(e5_chart_data){
+        var events = e5_chart_data['transaction']
+        if(events.length > 3){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2329']/* 'Deposited Ether' */, 'details':this.props.app_state.loc['2330']/* `The total amount of ether thats been deposited into the E5 over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_deposit_amount_data_points(events), 'interval':110, 'hide_label': true})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2331']/* 'Y-Axis: Total Deposited Ether' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_deposit_amount_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i == 0){
+                    data.push(bigInt(events[i].returnValues.p6))
+                }else{
+                    data.push(bigInt(data[data.length-1]).add(bigInt(events[i].returnValues.p6)))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=(61*265100)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        var largest_number = this.get_deposit_amount_interval_figure(events)
+        var recorded = false;
+        for(var i = 0; i < noOfDps; i++) {
+            if(largest_number == 0) yVal = 0
+            else yVal = parseInt(bigInt(data[factor * xVal]).multiply(100).divide(largest_number))
+            // yVal = data[factor * xVal]
+            // yVal = data[i]
+
+            
+            if(yVal != null && data[factor * xVal] != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0 && !recorded){
+                    recorded = true
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(data[factor * xVal])+" wei."});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+        }
+
+        return dps
+    }
+
+    get_deposit_amount_interval_figure(events){
+        var data = []
+        events.forEach(event => {
+            data.push(bigInt(event.returnValues.p6))
+        });
+        var largest = Math.max.apply(Math, data);
+        return largest
+    }
+
+
+
+    show_transaction_transaction_count_chart(e5_chart_data){
+        var events = e5_chart_data['transaction']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2332']/* 'Transaction Runs' */, 'details':this.props.app_state.loc['2333']/* `Chart containing the total number of E5 runs made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transaction_transaction_count_data_points(events), 'interval':this.get_transaction_transaction_count_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2334']/* 'Y-Axis: Total Runs Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2335']/* 'Total Runs' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336']/* 'runs' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2335']/* 'Total Runs' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336']/* 'runs' */, })}
+                    </div>
+                    {/* {this.render_detail_item('0')} */}
+                </div>
+            )
+        }
+    }
+
+    get_transaction_transaction_count_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p8 - events[i].returnValues.p8
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transaction_transaction_count_interval_figure(events){
+        return events.length
+    }
+
+
+
+    show_transfer_events_chart(e5_chart_data){
+        var events = e5_chart_data['transfer']
+        var amount = events.length
+        if(events.length >= 23){
+            return(
+                <div>
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336a']/* 'Transfers' */, 'details':this.props.app_state.loc['2336b']/* `Chart containing the total number of transfers made over time.` */, 'size':'l'})}
+                    
+                    {this.render_detail_item('6', {'dataPoints':this.get_transfers_data_points(events), 'interval':this.get_transfers_interval_figure(events)})}
+                    <div style={{height: 10}}/>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2336c']/* 'Y-Axis: Total Transfers Made' */, 'details':this.props.app_state.loc['2275']/* 'X-Axis: Time' */, 'size':'s'})}
+                    <div style={{height: 10}}/>
+                    <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2336d']/* 'Total Transfers' */, 'number':amount, 'relativepower':this.props.app_state.loc['2336e']/* 'transfers' */})}>
+                        {this.render_detail_item('2', { 'style': 'l', 'title': this.props.app_state.loc['2336d']/* 'Total Transfers' */, 'subtitle': this.format_power_figure(amount), 'barwidth': this.calculate_bar_width(amount), 'number': this.format_account_balance_figure(amount), 'barcolor': '', 'relativepower': this.props.app_state.loc['2336e']/* 'transfers' */, })}
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_transfers_data_points(events){
+        var data = []
+        try{
+            for(var i=0; i<events.length; i++){
+                if(i==0){
+                    data.push(1)
+                }
+                else{
+                    data.push(parseInt(data[data.length-1]) + (1))
+                }
+
+                if(i==events.length-1){
+                    var diff = Date.now()/1000 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                else{
+                    var diff = events[i+1].returnValues.p5 - events[i].returnValues.p5
+                    for(var t=0; t<diff; t+=(60*60*3)){
+                        data.push(data[data.length-1])      
+                    }
+                }
+                
+            }
+        }catch(e){
+
+        }
+        
+
+
+        var xVal = 1, yVal = 0;
+        var dps = [];
+        var noOfDps = 100;
+        var factor = Math.round(data.length/noOfDps) +1;
+        // var noOfDps = data.length
+        for(var i = 0; i < noOfDps; i++) {
+            yVal = data[factor * xVal]
+            // yVal = data[i]
+            if(yVal != null){
+                if(i%(Math.round(noOfDps/3)) == 0 && i != 0){
+                    dps.push({x: xVal,y: yVal, indexLabel: ""+this.format_account_balance_figure(yVal)});//
+                }else{
+                    dps.push({x: xVal, y: yVal});//
+                }
+                xVal++;
+            }
+            
+        }
+
+
+        return dps
+    }
+
+    get_transfers_interval_figure(events){
+        return events.length
     }
 
 

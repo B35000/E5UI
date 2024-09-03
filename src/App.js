@@ -315,7 +315,7 @@ function clone(obj) {
 class App extends Component {
 
   state = {
-    page:'?',/* the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
+    page:'?',/* UNUSED the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
     send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false,
@@ -323,7 +323,7 @@ class App extends Component {
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
 
-    theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'nft-storage',
+    theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura',
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1423']/* 'average' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
 
     new_object_target: '0', edit_object_target:'0',
@@ -1027,7 +1027,7 @@ class App extends Component {
         '1647':'view-job-request-contract','1648':'view','1649':'response','1650':'view-contract','1651':'The contractors contract is shown below.','1652':'Entry Exipry Time','1653':'Time remaining','1654':'Your time in the contract has exipred.','1655':'','1656':'','1657':'','1658':'','1659':'','1660':'','1661':'','1662':'','1663':'Youre not part of the contract','1664':'Enter Contract','1665':'Enter the contract sent from the contractor','1666':'Enter Contract',
         
         /* view job request */
-        '1667':'accept-job-request','1668':'accept','1669':'job','1670':'request','1671':'channel-structure','1672':'comment-structure','1673':'contract','1674':'activity','1675':'activity','1676':'contract','1677':'activity','1678':'Expiry time from now: ','1679':'Payment Option','1680':'Job Description','1681':'Sender ID','1682':'Accepted','1683':'Set Pay','1684':'The requested pay for the job','1685':'','1686':'Payment Option','1687':'Sender ID','1688':'Job Description','1689':'Set Pay','1690':'The amounts youll be receiving for the job.','1691':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1692':'Copied message to clipboard.','1693':'responses','1694':'You','1695':'Type something first.','1696':'You need to make at least 1 transaction to participate.','1697':'Message added to stack.','1698':'The contractor Accepted the job request.','1698a':' ago','1698b':' In ','1698c':'The job request has already expired.',
+        '1667':'accept-job-request','1668':'accept','1669':'job','1670':'request','1671':'linear','1672':'nested','1673':'contract','1674':'activity','1675':'activity','1676':'contract','1677':'activity','1678':'Expiry time from now: ','1679':'Payment Option','1680':'Job Description','1681':'Sender ID','1682':'Accepted','1683':'Set Pay','1684':'The requested pay for the job','1685':'','1686':'Payment Option','1687':'Sender ID','1688':'Job Description','1689':'Set Pay','1690':'The amounts youll be receiving for the job.','1691':'Select the contract youll be using. If you have no contracts, first create one then youll see it here.','1692':'Copied message to clipboard.','1693':'responses','1694':'You','1695':'Type something first.','1696':'You need to make at least 1 transaction to participate.','1697':'Message added to stack.','1698':'The contractor Accepted the job request.','1698a':' ago','1698b':' In ','1698c':'The job request has already expired.',
         
         /* view searched account */
         '1699':'main-data','1700':'subscription-data','1701':'contract-data','1702':'exchange-data','1703':'creations','1704':'withdraws','1705':'pending-withdraws','1706':'runs','1707':'payments','1708':'cancellations','1709':'entries','1710':'exits','1711':'votes','1712':'swaps','1713':'transfers','1714':'Address','1715':'Ether Balance in Ether','1716':'Ether Balance in Wei','1717':'Last Transaction Block','1718':'Last Transaction age','1719':'Number of entered contracts','1720':'Number of E5 runs','1721':'Balance Search','1722':'Search the accounts balance in a specified exchange','1723':'Exchange ID or Symbol...','1724':'Balance','1725':'Transaction Runs','1726':'hart containing the total number of E5 runs theyve made over time.','1727':'Y-Axis: Total Runs Made','1728':'X-Axis: Time','1729':'job object','1730':'post object','1731':'shadow object','1732':'storefront bag object','1733':'contractor object','1734':'storefront item object','1735':'storefront object','1736':'account object','1737':'contract object','1738':'token exchange object','1739':'consensus object','1740':'subscription object','1741':'custom object','1742':'channel object','1743':'Object ID','1744':'Block Number','1745':'transaction ID','1746':'Amount in Wei','1747':'Amount in Ether','1748':'Age','1749':'Amount Added in Wei','1750':'Transaction ID','1751':'Transaction Stack Size','1752':'Estimated Gas Consumed','1753':'Included Wei','1754':'Gas Price Paid','1755':'Coinbase (Miner)','1756':'Subscription ID','1757':'Time Units: ','1758':'Subscription ID:  ','1759':'Contract ID','1760':'Contract ID: ','1761':'Proposal ID','1762':'Contract ID: ','1763':'Exchange ID','1764':'Amount Swapped','1765':'Updted Token Exchange Liquidity','1766':'Updated Exchange Ratio X','1767':'Updated Exchange Ratio Y','1768':'Updated Exchange Ratios X:Y','1769':'','1770':'Action: ',
@@ -1103,9 +1103,9 @@ class App extends Component {
         
         '2804':'Payment History','2805':'Their payment history is shown below.','2806':'Current ','2807':'Time Units: ','2808':'Accounts Balances','2809':'Heres all the tokens the account is in posession of.','2810':'Add a transaction first.','2811':'Exchange Authority','2812':'Trust Fee Target','2813':'Feed Orientation','2814':'Set the orientation for viewing your content feed.','2815':'Number of Replies.','2816':'Number of Awards.',
         
-        '2817':'Available E5s.','2818':'The E5s that are currently in use.','2819':'Active Wallets.','2820':'Your wallet ethers that have balances.','2821':'Estimated Gas.','2822':'The estimated gas set to be consumed in your next run.','2823':'Extra Info.','2824':'Some info about E5 in its entirety.','2825':'Total E5 Subscriptions, Contracts and Proposals created.','2826':'subscriptions','2827':'contracts','2828':'proposals','2829':'exchanges','2830':'posts','2831':'channels','2832':'jobs','2833':'storefront-items','2834':'bags','2835':'contractors','2836':'Total E5 Runs.','2837':'runs.','2838':'Total E5 Transfers.','2839':'transfers','2840':'E5 Traffic Distribution.','2841':'Total Exchanges, Posts, Jobs and Channels created.','2843':'Total Storefront-items, Bags and Contractors created',
+        '2817':'Available E5s.','2818':'The E5s that are currently in use.','2819':'Active Wallets.','2820':'Your wallet ethers that have balances.','2821':'Estimated Gas.','2822':'The estimated gas set to be consumed in your next run.','2823':'Extra Info.','2824':'Some info about E5 in its entirety.','2825':'Total E5 Subscriptions, Contracts and Proposals.','2826':'subscriptions','2827':'contracts','2828':'proposals','2829':'exchanges','2830':'posts','2831':'channels','2832':'jobs','2833':'storefront-items','2834':'bags','2835':'contractors','2836':'Total E5 Runs.','2837':'runs.','2838':'Total E5 Transfers.','2839':'transfers','2840':'E5 Traffic Distribution.','2841':'Total Exchanges, Posts, Jobs and Channels.','2843':'Total Storefront-items, Bags and Contractors.',
         
-        '2844':'','2845':'','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2844':'Acitve E5 Info.','2845':'Telemetries for your selected E5','2846':'','2847':'','2848':'','2849':'','2850':'','2851':'','2852':'','2852':'','2853':'','2854':'','2855':'','2856':'','2857':'','2858':'','2859':'','2860':'','2861':'','2862':'','2863':'','2864':'','2865':'','2866':'','2867':'','2868':'','2869':'','2870':'','2871':'','2872':'','2873':'','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1731,7 +1731,7 @@ class App extends Component {
   }
 
   is_allowed_in_e5(){
-    // return true
+    return true
     var obj = ['United States', 'Kenya']
     var user_country = this.get_country()
 
@@ -1900,6 +1900,7 @@ class App extends Component {
   
         'number_picker_label_color':'#D5D5D5','number_picker_label_shadow':'#c9c9c9',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#afafaf', 'number_picker_picked_label_text_color':'#444444',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
         'slider_color':'white', 'toast_background_color':'white', 'calendar_color':'light', 'alert_icon':'https://nftstorage.link/ipfs/bafkreifw3p53ua3n4joozv6huahxkussrjhr22xb66bhl547httger7j7u', 'add_icon':'https://nftstorage.link/ipfs/bafkreidkqw7q2lyvx5lgp57rdbj243s342aw4csznlteu5sr6k7bwybpq4', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'white',
 
@@ -1927,6 +1928,7 @@ class App extends Component {
 
         'number_picker_label_color':'#3C3C3C','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#878787', 'number_picker_picked_power_label_text_color':'#444444',
         
         'slider_color':'white','toast_background_color':'#333333', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
@@ -1953,6 +1955,7 @@ class App extends Component {
 
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#262626',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#CECDCD','number_picker_label_text_color':'#878787', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
         'slider_color':'white','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreia2moq6orn66pofy3gsighjbrmpjhw6c5oix4t6rzvbzyxrkjek2a', 'add_icon':'https://nftstorage.link/ipfs/bafkreid2oj5w6gvnh4kspehdarlowpes2ztxyqd3pfmyh55j6di7hssqmi', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
@@ -1981,6 +1984,7 @@ class App extends Component {
 
         'number_picker_label_color':'#171717','number_picker_label_shadow':'#013f01',
         'number_picker_power_color':'white','number_picker_power_shadow_color':'#013f01','number_picker_label_text_color':'#5bc15b', 'number_picker_picked_label_text_color':'white',
+        'number_picker_power_label_text_color':'#afafaf', 'number_picker_picked_power_label_text_color':'#444444',
         
         'slider_color':'#01c601','toast_background_color':'#171717', 'calendar_color':'dark', 'alert_icon':'https://nftstorage.link/ipfs/bafkreibc4fjptfewuzg22f4p4nk65wknautn3ckiho7jizflyqbrqra4cy', 'add_icon':'https://nftstorage.link/ipfs/bafkreibdzmvmt56gvw5ky566vcwvvi3sy3djmafony7smk5vuwtq3uznoy', 'text_input_background':'rgb(217, 217, 217,.6)', 'text_input_color':'#393e46', 'messsage_reply_background':'black',
 
@@ -2978,7 +2982,7 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_new_object_bottomsheet.bind(this)} open={this.state.new_object_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             {this.render_create_object_ui()}
           </div>
       </SwipeableBottomSheet>
@@ -3059,7 +3063,7 @@ class App extends Component {
     if(target == '0'){
       return(
         <div>
-          <NewJobPage ref={this.new_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+          <NewJobPage ref={this.new_job_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
         </div>
       )
     }
@@ -3082,27 +3086,27 @@ class App extends Component {
     }
     else if(target == '6'){
       return(
-        <NewPostPage ref={this.new_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewPostPage ref={this.new_post_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
       )
     }
     else if(target == '7'){
       return(
-        <NewChannelPage ref={this.new_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} />
+        <NewChannelPage ref={this.new_channel_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
       )
     }
     else if(target == '4'){
       return(
-        <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+        <NewStorefrontItemPage ref={this.new_storefront_item_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
       )
     }
     else if(target == '5'){
       return(
-        <NewMailPage ref={this.new_mail_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)}/>
+        <NewMailPage ref={this.new_mail_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_mail_to_stack={this.when_add_new_mail_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
       );
     }
     else if(target == '9'){
       return(
-        <NewContractorPage ref={this.new_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)}/>
+        <NewContractorPage ref={this.new_contractor_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} when_add_new_object_to_stack={this.when_add_new_object_to_stack.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
       );
     }
     
@@ -6386,7 +6390,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_send_job_request_bottomsheet.bind(this)} open={this.state.send_job_request_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)}/>
+            <SendJobRequestPage ref={this.send_job_request_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_send_job_request_to_stack={this.add_send_job_request_to_stack.bind(this)} show_images={this.show_images.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -6848,7 +6852,7 @@ class App extends Component {
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_add_comment_bottomsheet.bind(this)} open={this.state.add_comment_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
           <div style={{ height: 550, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
-            <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)}/>
+            <AddCommentPage ref={this.add_comment_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_comment_to_respective_forum_page={this.add_comment_to_respective_forum_page.bind(this)} store_image_in_ipfs={this.store_image_in_ipfs.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
     )
@@ -10118,7 +10122,7 @@ class App extends Component {
 
     var created_token_data = await H5contractInstance.methods.f86(created_tokens).call((error, result) => {});
     // var token_balances = await H52contractInstance.methods.f140e(created_tokens, account, created_token_depths).call((error, result) => {});
-    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, 13)
+    var token_balances_and_data = await this.get_balance_from_multiple_exchanges(created_tokens, account, H52contractInstance, created_token_depths)
     var token_balances = token_balances_and_data['bal']
     var token_balances_data = token_balances_and_data['bal_data']
 
@@ -10192,9 +10196,23 @@ class App extends Component {
       var timestamp = event == null ? 0 : event.returnValues.p4
       var author = event == null ? 0 : event.returnValues.p3
 
+      var balance = token_balances[i]
+      var token_balance_data = token_balances_data[i]
+
+      var exchanges_depth = 0
+      if(tokens_data != null){
+        exchanges_depth = tokens_data.default_depth == null ? 0 : tokens_data.default_depth
+      }
+
+      if(exchanges_depth > 13){
+        var token_balances_and_data2 = await this.get_balance_from_multiple_exchanges([created_tokens[i]], account, H52contractInstance, [exchanges_depth])
+        balance = token_balances_and_data2['bal'][0]
+        token_balance_data = token_balances_and_data2['bal_data'][0]
+      }
+
       var token_obj = {
-        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':token_balances[i], 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5, 
-        'token_balances_data':token_balances_data[i]
+        'id':created_tokens[i], 'data':created_token_data[i], 'ipfs':tokens_data, 'event':event, 'balance':balance, 'account_data':accounts_exchange_data[i], 'exchanges_balances':exchanges_balances, 'moderators':moderators, 'access_rights_enabled':interactible_checker_status_values[i],'e5':e5, 'timestamp':timestamp, 'exchange_ratio_data':update_exchange_ratio_event_data, 'proportion_ratio_data':update_proportion_ratio_event_data, 'author':author, 'e5_id':created_tokens[i]+e5, 
+        'token_balances_data':token_balance_data
       }
 
       if(interactible_checker_status_values[i] == true && (my_interactable_time_value[i][0] < Date.now()/1000 && !moderators.includes(account) && event.returnValues.p3 != account )){
@@ -11411,27 +11429,35 @@ class App extends Component {
     }
   }
 
-  store_objects_data_in_ipfs_using_option = async (data) => {
+  store_image_in_ipfs = async (data) => {
+    var cid = await this.store_objects_data_in_ipfs_using_option(data, true, true)
+    return `https://nftstorage.link/ipfs/${cid}`
+  }
+
+  store_objects_data_in_ipfs_using_option = async (data, unappend_identifier, unencrypt_image) => {
     var set_storage_option = this.state.storage_option
 
     if(set_storage_option == 'infura'){
-      var cid = await this.store_data_in_infura(data)
+      var cid = await this.store_data_in_infura(data, unencrypt_image)
+      if(unappend_identifier == true) return cid
       return 'in.'+cid;
     }
     else if(set_storage_option == 'web3-storage'){
-      var cid = await this.store_data_in_web3(data)
+      var cid = await this.store_data_in_web3(data, unencrypt_image)
+      if(unappend_identifier == true) return cid
       return 'we.'+cid;
     }
     else if(set_storage_option == 'nft-storage'){
-      var cid = await this.store_data_in_nft_storage(data)
+      var cid = await this.store_data_in_nft_storage(data, unencrypt_image)
+      if(unappend_identifier == true) return cid
       return 'nf.'+cid;
     }
   }
 
 
 
-  store_data_in_infura = async (_data) => {
-    var data = this.encrypt_storage_data(_data)
+  store_data_in_infura = async (_data, unencrypt_image) => {
+    var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
     const projectId = `${process.env.REACT_APP_INFURA_API_KEY}`;
     const projectSecret = `${process.env.REACT_APP_INFURA_API_SECRET}`;
     const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
@@ -11496,8 +11522,8 @@ class App extends Component {
 
 
 
-  store_data_in_web3 = async (_data) => {
-    var data = this.encrypt_storage_data(_data)
+  store_data_in_web3 = async (_data, unencrypt_image) => {
+    var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
     const client = new Web3Storage({ token: `${process.env.REACT_APP_WEB3_STORAGE_ACCESS_TOKEN}` })
 
     var file = this.makeFileObjects(data);
@@ -11576,8 +11602,8 @@ class App extends Component {
 
 
 
-  store_data_in_nft_storage = async (_data) => {
-    var data = this.encrypt_storage_data(_data)
+  store_data_in_nft_storage = async (_data, unencrypt_image) => {
+    var data = unencrypt_image ? _data: this.encrypt_storage_data(_data)
     const NFT_STORAGE_TOKEN = `${process.env.REACT_APP_NFT_STORAGE_ACCESS_TOKEN}`
     const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
 
@@ -11608,13 +11634,13 @@ class App extends Component {
     ]
 
     var gateways = [
-      `https://cloudflare-ipfs.com/ipfs/${cid}`
+      `https://nftstorage.link/ipfs/${cid}`
     ]
     
     await this.wait(this.state.ipfs_delay)
     // var selected_gateway = gateways[Math.round(Math.random() * 12)]
     var selected_gateway = gateways[0]
-
+    console.log('selected_gateway', selected_gateway)
     try {
       const response = await fetch(selected_gateway);
       if (!response.ok) {
@@ -11682,10 +11708,15 @@ class App extends Component {
   get_balance_from_multiple_exchanges = async (exchanges, account, H52contractInstance, exchanges_depth) => {
     var exchange_ids = []
     var depths = []
+    var positions = []
     for(var j=0; j<exchanges.length; j++){
-      for(var i=exchanges_depth; i>=0; i--){
+      var exchange_depth = exchanges_depth[j]
+      console.log('in exchange: ', j, ' id: ',exchanges[j], ' exchange depth: ',exchange_depth)
+      for(var i=exchange_depth; i>=0; i--){
+        console.log('pushing position: ', j, ' for excahnge id: ', exchanges[j])
         exchange_ids.push(exchanges[j])
         depths.push(i)
+        positions.push(j)
       }
     }
     
@@ -11693,8 +11724,10 @@ class App extends Component {
 
     var bal = [];
     var balance_data = []
+    console.log('positions: ', positions)
     for(var i=0; i<token_balances.length; i++){
-      var bal_pos = Math.floor(i/(exchanges_depth+1))
+      // var bal_pos = Math.floor(i/(exchanges_depth+1))
+      var bal_pos = positions[i]
       if(bal_pos == bal.length){
         bal.push(0)
         balance_data.push({})
@@ -11704,8 +11737,11 @@ class App extends Component {
       
       balance = bigInt(balance).add(balance_at_depth)
       bal[bal_pos] = balance.toString().toLocaleString('fullwide', {useGrouping:false})
+      console.log('balance data pos: ',bal_pos, 'balance_data: ',balance_data)
       balance_data[bal_pos][depths[i]] = token_balances[i].toString().toLocaleString('fullwide', {useGrouping:false})
     }
+
+
 
     // return bal
     return { 'bal':bal, 'bal_data':balance_data }
@@ -11910,21 +11946,24 @@ class App extends Component {
         const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
 
         var e5_id = parseInt(e5.replace('E',''))
-        var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id})
+        var cutoff_timestamp = Math.round(Date.now()/1000) - (60*60*24*400)
+        var created_channel_data = await this.load_event_data(web3, E52contractInstance, 'e4', focused_e5, {p1/* target_id */: 17, p3/* context */:id, p5: e5_id,})
         created_channel_data = created_channel_data.reverse()
 
         var is_first_time = this.state.object_messages[id] == null ? true: false
         for(var j=0; j<created_channel_data.length; j++){
-          var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
-          if(ipfs_message != null){
-            ipfs_message['time'] = created_channel_data[j].returnValues.p6
-            if(!messages.includes(ipfs_message)){
-              messages = [ipfs_message].concat(messages)
-            }
-            if(is_first_time){
-              var clone = JSON.parse(JSON.stringify(this.state.object_messages))
-              clone[id] = messages
-              this.setState({object_messages: clone})
+          if(parseInt(created_channel_data[j].returnValues.p6) > cutoff_timestamp){
+            var ipfs_message = await this.fetch_objects_data_from_ipfs_using_option(created_channel_data[j].returnValues.p4)
+            if(ipfs_message != null){
+              ipfs_message['time'] = created_channel_data[j].returnValues.p6
+              if(!messages.includes(ipfs_message)){
+                messages = [ipfs_message].concat(messages)
+              }
+              if(is_first_time){
+                var clone = JSON.parse(JSON.stringify(this.state.object_messages))
+                clone[id] = messages
+                this.setState({object_messages: clone})
+              }
             }
           }
         }
@@ -12624,9 +12663,12 @@ class App extends Component {
 
           var end_spend_balance = await H52contractInstance.methods.f140e([3,5], id, [0,0]).call((error, result) => {});
 
-          var interacted_exchanges = this.get_searched_account_interacted_exchanges(update_exchange_ratio_event_data, contract_token_event_data)
+          var interacted_exchanges_data = this.get_searched_account_interacted_exchanges(update_exchange_ratio_event_data, contract_token_event_data, e5)
 
-          var token_balances_and_data = await this.get_balance_from_multiple_exchanges(interacted_exchanges, id, H52contractInstance, 13)
+          var interacted_exchanges = interacted_exchanges_data['exchanges']
+          var interacted_exchanges_depths = interacted_exchanges_data['depths']
+
+          var token_balances_and_data = await this.get_balance_from_multiple_exchanges(interacted_exchanges, id, H52contractInstance, interacted_exchanges_depths)
           var token_balances = token_balances_and_data['bal']
 
 
@@ -12653,12 +12695,16 @@ class App extends Component {
     
   }
 
-  get_searched_account_interacted_exchanges(update_exchange_ratio_event_data, contract_token_event_data){
+  get_searched_account_interacted_exchanges(update_exchange_ratio_event_data, contract_token_event_data, e5){
     var exchanges = []
+    var exchanges_depth_data = []
     update_exchange_ratio_event_data.forEach(event => {
       var exchange_id = parseInt(event.returnValues.p1)
       if(!exchanges.includes(exchange_id)){
         exchanges.push(exchange_id)
+        var depth_item = this.state.created_token_object_mapping[e5][exchange_id]['ipfs'] == null ? 0 : this.state.created_token_object_mapping[e5][exchange_id]['ipfs'].default_depth
+        if(depth_item == null) depth_item = 0
+        exchanges_depth_data.push(parseInt(depth_item))
       }
     });
 
@@ -12666,10 +12712,14 @@ class App extends Component {
       var exchange_id = parseInt(event['event'].returnValues.p1)
       if(!exchanges.includes(exchange_id)){
         exchanges.push(exchange_id)
+        var depth_item = this.state.created_token_object_mapping[e5][exchange_id]['ipfs'] == null ? 0 : this.state.created_token_object_mapping[e5][exchange_id]['ipfs'].default_depth
+        if(depth_item == null) depth_item = 0
+        exchanges_depth_data.push(parseInt(depth_item))
       }
     });
 
-    return exchanges
+    // return exchanges
+    return {'exchanges':exchanges, 'depths':exchanges_depth_data}
   }
 
 

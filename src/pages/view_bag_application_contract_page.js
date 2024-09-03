@@ -179,7 +179,8 @@ class ViewBagApplicationContractPage extends Component {
     }
 
     render_accept_job_application_button(){
-        if(!this.state.application_item['is_response_accepted']){
+        var item = this.state.application_item
+        if(!this.state.application_item['is_response_accepted'] && this.props.app_state.user_account_id[item['e5']] != item['applicant_id']){
             return(
                 <div>
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1643']/* 'Accept application' */, 'details':this.props.app_state.loc['1644']/* 'Accept the bag fulfilment application and enter their contract(This action cant be undone)' */, 'size':'l'})}

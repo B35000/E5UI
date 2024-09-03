@@ -98,7 +98,6 @@ class SearchedAccountPage extends Component {
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.searched_account_page_tags_object} tag_size={'l'} when_tags_updated={this.when_searched_account_page_tags_object_updated.bind(this)} theme={this.props.theme}/>
 
-                {this.render_search_bar()}
                 <div style={{'margin':'10px 0px 0px 0px', overflow: 'auto', maxHeight: this.props.height-f}}>
                     {this.render_everything()}
                 </div>
@@ -121,7 +120,10 @@ class SearchedAccountPage extends Component {
         if(size == 's'){
             return(
                 <div>
+                    {this.render_search_bar()}
+                    
                     {this.render_content()}
+                    {this.render_search_account_balances_ui()}
                 </div>
             )
         }
@@ -129,10 +131,12 @@ class SearchedAccountPage extends Component {
             return(
                 <div className="row">
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_search_bar()}
                         {this.render_content()}
                     </div>
                     <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_search_account_balances_ui()}
+                       
                     </div>
                 </div>
                 
@@ -142,10 +146,12 @@ class SearchedAccountPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                        {this.render_search_bar()}
                         {this.render_content()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_empty_views(3)}
+                        {this.render_search_account_balances_ui()}
+                        
                     </div>
                 </div>
                 
@@ -297,6 +303,7 @@ class SearchedAccountPage extends Component {
                 <div style={{ padding: '5px 10px 0px 10px'}}>
                     <TextInput font={this.props.app_state.font} height={25} placeholder={obj[selected_item]} when_text_input_field_changed={this.when_typed_search_changed.bind(this)} text={search_id_text} theme={this.props.theme}/>
                 </div>
+                <div style={{height: 10}}/>
             </div>
         )
     }
@@ -433,42 +440,44 @@ class SearchedAccountPage extends Component {
 
                 {this.show_transaction_transaction_count_chart(item['transactions'])}
 
-                {this.render_search_account_ui(item)}
-                {this.render_detail_item('0')}
-
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['2808']/* 'Accounts Balances' */, 'details':this.props.app_state.loc['2809']/* 'Heres all the tokens the account is in posession of.' */, 'size':'l'})}
-                <div style={{height:10}}/>
-                {this.render_accounts_balances(item)}
-
-                
-
-                {this.render_detail_item('0')}
-                {this.render_detail_item('0')}
             </div>
         )
     }
 
-    render_accounts_balances(searched_item_data){
+    render_search_account_balances_ui(){
+        var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
+
+        if(this.state.searched_account == null) return;
+
+        if(selected_item == 'e'){
+            return(
+                <div>
+                    {this.render_search_account_ui()}
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2808']/* 'Accounts Balances' */, 'details':this.props.app_state.loc['2809']/* 'Heres all the tokens the account is in posession of.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    {this.render_accounts_balances()}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }
+    }
+
+    render_accounts_balances(){
+        var searched_item_data = this.state.searched_account
         var e5 = searched_item_data['e5']
         var interacted_exchanges = [].concat(searched_item_data['interacted_exchanges'])
         var interacted_exchanges_balances = [].concat(searched_item_data['interacted_exchanges_balances'])
         if(interacted_exchanges.length == 0){
-            interacted_exchanges = [0, 1, 2]
             return(
                 <div>
-                    <div style={{overflow: 'auto'}}>
-                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {interacted_exchanges.map((item, index) => (
-                                <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
-                                    <div style={{height:60, width:'100%', 'background-color': this.props.theme['view_group_card_item_background'], 'border-radius': '15px','padding':'10px 0px 10px 10px', 'max-width':'420px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
-                                        <div style={{'margin':'10px 20px 10px 0px'}}>
-                                            <img src={this.props.app_state.static_assets['letter']} style={{height:30 ,width:'auto'}} />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {this.render_empty_views(3)}
                 </div> 
             )
         }
@@ -487,7 +496,8 @@ class SearchedAccountPage extends Component {
         )
     }
 
-    render_search_account_ui(item){
+    render_search_account_ui(){
+        var item = this.state.searched_account
         return(
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1721']/* 'Balance Search' */, 'details':this.props.app_state.loc['1722']/* 'Search the accounts balance in a specified exchange' */, 'size':'l'})}
@@ -1313,7 +1323,7 @@ class SearchedAccountPage extends Component {
                 <div>
                     {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
                     <div style={{ height: 2 }} />
-                    {this.render_detail_item('3', { 'title': this.get_time_diff(item.returnValues.p4 - Date.now() / 1000), 'details': 'Entry Expiry', 'size': 's' })}
+                    {this.render_detail_item('3', { 'title': this.get_time_diff((Date.now() / 1000) - item.returnValues.p4), 'details': 'Entry Expiry', 'size': 's' })}
                     <div style={{ height: 2 }} />
                     {this.render_detail_item('3', { 'title': this.get_time_difference(item.returnValues.p7), 'details': 'Age', 'size': 's' })}
                     <div style={{ height: 2 }} />
@@ -1325,7 +1335,7 @@ class SearchedAccountPage extends Component {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details':this.props.app_state.loc['1759'] /* 'Contract ID' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                    {/* <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -1414,7 +1424,7 @@ class SearchedAccountPage extends Component {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title':item.returnValues.p1, 'details': this.props.app_state.loc['1759']/* 'Contract ID' */, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                    {/* <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }
@@ -1508,7 +1518,7 @@ class SearchedAccountPage extends Component {
             return (
                 <div>
                     {this.render_detail_item('3', { 'title': vote , 'details': this.props.app_state.loc['1762']/* 'Contract ID: ' */+item.returnValues.p1, 'size': 's' })}
-                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} />
+                    {/* <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '5px 20px 5px 20px' }} /> */}
                 </div>
             )
         }

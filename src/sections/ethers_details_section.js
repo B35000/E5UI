@@ -40,7 +40,7 @@ class EthersDetailsSection extends Component {
               active:'e', 
           },
           'e':[
-              ['or','',0], ['e',this.props.app_state.loc['2232']/* 'details' */,this.props.app_state.loc['2448']/* 'transactions' */],[0]
+              ['or','',0], ['e',this.props.app_state.loc['2232']/* 'details' *//* ,this.props.app_state.loc['2448'] *//* 'transactions' */],[0]
           ],
         }
     }
@@ -114,7 +114,7 @@ class EthersDetailsSection extends Component {
         var he = this.props.height
         return(
             <div>
-                <div style={{height:he, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
+                <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
@@ -586,9 +586,6 @@ class EthersDetailsSection extends Component {
         //         </div>
         //     )
         // }
-
-        console.log('-----------------------render_block_history_logs---------------------------')
-        console.log(tx_history)
 
         if(tx_history == null || this.get_txs_history_txs(tx_history, object['e5']) == null || this.get_txs_history_txs(tx_history, object['e5']).length == 0){
             var items = [0, 1]

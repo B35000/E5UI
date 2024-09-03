@@ -25,10 +25,14 @@ class NumberPicker extends Component {
     get_create_number_data(){
       return{
         'number': this.get_number_from_power_limit(),
-        'power':0,
+        // 'power':0,
         'editpos':0,
         'powerlimit':this.get_power_limit(),
-        'picked_powers':[]
+        'picked_powers':[],
+
+        'power_editpos':0,
+        'multi_digit_power': this.get_power_number(),
+        'multi_digit_powers_power':0
       }
     }
 
@@ -38,12 +42,22 @@ class NumberPicker extends Component {
 
     get_number_from_power_limit(){
       var power_limit = this.get_power_limit()
-      if(power_limit == 63){
-        return bgN(1,72).toString().substring(1,72)
-      }
-      else{
-        return bgN(1,1000).toString().substring(1,1000)
-      }
+      var num = power_limit+9
+      return bgN(1,num).toString().substring(1,num)
+
+      // if(power_limit == 63){
+      //   return bgN(1,72).toString().substring(1,72)
+      // }
+      // else if(power_limit < 991){
+      //   return bgN(1,1000).toString().substring(1,1000)
+      // }
+      // else{
+      //   return bgN(1,1000000).toString().substring(1,1000000)
+      // }
+    }
+
+    get_power_number(){
+      return bgN(1,1000).toString().substring(1,1000)
     }
 
     render(){
@@ -91,7 +105,7 @@ class NumberPicker extends Component {
     format_powers(picked_powers){
         var new_array = []
         picked_powers.forEach(element => {
-            new_array.push('e'+element)
+            new_array.push('e'+bigInt(element).toString())
         });
         return new_array
     }
@@ -104,30 +118,63 @@ class NumberPicker extends Component {
       
       if(this.props.number_limit < 1000){
         return(
-          <div  style={{'display': 'flex','flex-direction': 'row'}}>
-            {this.render_number_label_item(label_background_color,label_shadow_color,0, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(0)), 65)}
+          <div style={{'display': 'flex','flex-direction': 'row'}}>
+            {this.render_number_label_item(label_background_color,label_shadow_color,0, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(0)), 65, this.get_text_color(0))}
           </div>
         );
       }else{
         return(
-          <div  style={{'display': 'flex','flex-direction': 'row'}}>
-            {this.render_number_label_item(label_background_color,label_shadow_color,2, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(2)), 65)}
+          <div style={{'display': 'flex','flex-direction': 'row'}}>
+            {this.render_number_label_item(label_background_color,label_shadow_color,2, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(2)), 65, this.get_text_color(2))}
             <div style={{width:10}}/>
-            {this.render_number_label_item(label_background_color,label_shadow_color,1, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(1)), 65)}
+            {this.render_number_label_item(label_background_color,label_shadow_color,1, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(1)), 65, this.get_text_color(1))}
             <div style={{width:10}}/>
-            {this.render_number_label_item(label_background_color,label_shadow_color,0, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(0)), 65)}
+            {this.render_number_label_item(label_background_color,label_shadow_color,0, this.format_digit_number_with_zeros(this.get_label_number_tripple_digit(0)), 65, this.get_text_color(0))}
             <div style={{width:20}}/>
             
-            {this.render_number_label_item(number_picker_power_color,number_picker_power_shadow_color,3,this.state.create_number_data['power'], 60)}
+            {this.get_power_label_parts()}
           </div>
         );
       }
     }
 
-    render_number_label_item(background_color, shadow_color, pos, number, width){
+    get_power_label_parts(){
+      var label_background_color = this.props.theme['number_picker_label_color']
+      var label_shadow_color = this.props.theme['number_picker_label_shadow']
+      var number_picker_power_color = this.props.theme['number_picker_power_color']
+      var number_picker_power_shadow_color = this.props.theme['number_picker_power_shadow_color']
+
+      var power_limit = this.get_power_limit()
+      if(bigInt(power_limit).lesser(1000)){
+        return(
+          <div>
+            {this.render_power_label_item(number_picker_power_color,number_picker_power_shadow_color,0,(this.get_power_label_tripple_digits(0)), 60, this.get_power_text_color(0))}
+          </div>
+        )
+      }else{
+        return(
+          <div style={{'display': 'flex','flex-direction': 'row'}}>
+            {this.render_power_label_item(number_picker_power_color,number_picker_power_shadow_color,1,this.format_digit_number_with_zeros(this.get_power_label_tripple_digits(1)), 60, this.get_power_text_color(1))}
+            <div style={{width:10}}/>
+
+            {this.render_power_label_item(number_picker_power_color,number_picker_power_shadow_color,0,this.format_digit_number_with_zeros(this.get_power_label_tripple_digits(0)), 60, this.get_power_text_color(0))}
+          </div>
+        )
+      }
+    }
+
+    render_number_label_item(background_color, shadow_color, pos, number, width, text_color){
       return(
-        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 0px 5px 5px 5px' }} onClick={()=>this.when_number_label_item_clicked(pos)}>
-            <p style={{'color': this.get_text_color(pos), 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
+        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_number_label_item_clicked(pos)}>
+            <p style={{'color': text_color, 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
+        </button>
+      );
+    }
+
+    render_power_label_item(background_color, shadow_color, pos, number, width, text_color){
+      return(
+        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_power_label_item_clicked(pos)}>
+            <p style={{'color': text_color, 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
         </button>
       );
     }
@@ -156,7 +203,7 @@ class NumberPicker extends Component {
     }
 
     when_number_input_slider_changed(number){
-      var pos = ((this.state.create_number_data['number'].length) - this.state.create_number_data['power']) - (this.state.create_number_data['editpos'] * 3) - 3;
+      var pos = ((this.state.create_number_data['number'].length) - this.get_power()) - (this.state.create_number_data['editpos'] * 3) - 3;
       var current_number = this.state.create_number_data['number']+'';
       var new_number_digits = this.format_digit_number_with_zeros(number.target.value);
 
@@ -171,9 +218,9 @@ class NumberPicker extends Component {
       }
       clone['number'] = new_number;
       
-      if(bigInt(new_number) <= this.props.number_limit){
-        if(!clone['picked_powers'].includes(this.state.create_number_data['power'])){
-          clone['picked_powers'].push(this.state.create_number_data['power']);
+      if(bigInt(new_number).lesserOrEquals(this.props.number_limit)){
+        if(!clone['picked_powers'].includes(this.state.create_number_data['multi_digit_power'])){
+          clone['picked_powers'].push(this.state.create_number_data['multi_digit_power']);
         }
         this.setState({create_number_data: clone})
         this.props.when_number_picker_value_changed(bigInt(new_number))
@@ -182,8 +229,6 @@ class NumberPicker extends Component {
     }
 
     when_power_input_slider_changed(number){
-      var new_power = (parseInt(number.target.value)/1000) * this.state.create_number_data['powerlimit'];
-      
       var clone = {};
       var page_data = this.state.create_number_data;
       for (var key in page_data) {/* clone the existing created object data object */
@@ -191,8 +236,35 @@ class NumberPicker extends Component {
             clone[key] = page_data[key];
           }
       }
-      clone['power'] = Math.round(new_power);
-      this.setState({create_number_data: clone})
+      if(this.state.create_number_data['powerlimit'] < 1000){
+        var new_number = Math.round(((number.target.value)*(this.state.create_number_data['powerlimit']))/(1000))
+        clone['multi_digit_power'] = new_number.toString();
+
+        if(bigInt(new_number).lesserOrEquals(this.get_power_limit())){
+          this.setState({create_number_data: clone})
+        }
+      }else{
+        var pos = (this.state.create_number_data['multi_digit_power'].length - this.state.create_number_data['multi_digit_powers_power']) - (this.state.create_number_data['power_editpos'] * 3) - 3;
+        var current_number = this.state.create_number_data['multi_digit_power']+'';
+        var new_number_value = number.target.value
+        
+        if(this.state.create_number_data['power_editpos'] == 1){
+          var power_limit = this.state.create_number_data['powerlimit']
+          var d = (power_limit/1000)
+          new_number_value = Math.round((parseInt(new_number_value) * (d))/(1000))
+        }
+        var new_number_digits = this.format_digit_number_with_zeros(new_number_value);
+        var new_number = current_number.replaceAt(pos, new_number_digits);
+        clone['multi_digit_power'] = new_number;
+
+        if(bigInt(new_number).lesserOrEquals(this.get_power_limit())){
+          this.setState({create_number_data: clone})
+        }
+      }
+      
+
+      
+      
     }
 
 
@@ -216,31 +288,24 @@ class NumberPicker extends Component {
       }
     }
 
+
+
+
     when_power_slider_button_tapped(){
-      var clone = {};
-      var page_data = this.state.create_number_data;
-      for (var key in page_data) {/* clone the existing created object data object */
-          if (page_data.hasOwnProperty(key)) {
-            clone[key] = page_data[key];
-          }
-      }
-      clone['power']++;
-      if(clone['power'] <= clone['powerlimit']){
-        this.setState({create_number_data: clone})
+      var input_number = parseInt(this.get_power_value());
+      var new_amount = input_number +1
+      if(new_amount<999){
+        var obj = {target: {value: new_amount}}
+        this.when_power_input_slider_changed(obj);
       }
     }
 
     when_power_slider_button_double_tapped(){
-      var clone = {};
-      var page_data = this.state.create_number_data;
-      for (var key in page_data) {/* clone the existing created object data object */
-          if (page_data.hasOwnProperty(key)) {
-            clone[key] = page_data[key];
-          }
-      }
-      clone['power']--;
-      if(clone['power'] >= 0){
-        this.setState({create_number_data: clone})
+      var input_number = parseInt(this.get_power_value());
+      var new_amount =  input_number -1;
+      if(new_amount>=0){
+        var obj = {target:{value:new_amount}}
+        this.when_power_input_slider_changed(obj);
       }
     }
 
@@ -250,7 +315,27 @@ class NumberPicker extends Component {
     }
 
     get_power_value(){
-      return ((this.state.create_number_data['power']*1000)/this.state.create_number_data['powerlimit']);
+      // return ((this.state.create_number_data['power']*1000)/this.state.create_number_data['powerlimit']);
+
+      if(this.state.create_number_data['powerlimit'] < 1000){
+        var power = this.get_power()
+        return (power.times(1000).divide(this.state.create_number_data['powerlimit']))
+      }else{
+        var label = this.get_power_label_tripple_digits(this.state.create_number_data['power_editpos']);
+        if(this.state.create_number_data['power_editpos'] == 1){
+          var power_limit = this.state.create_number_data['powerlimit']
+          var d = Math.floor(power_limit/1000)
+          return bigInt(label).times(1000).divide(d)
+        }else{
+          return label
+        }
+      }
+      
+      // return this.get_power_label_tripple_digits(this.state.create_number_data['power_editpos']);
+    }
+
+    get_power(){
+      return bigInt(this.state.create_number_data['multi_digit_power'])
     }
 
 
@@ -264,6 +349,16 @@ class NumberPicker extends Component {
           return this.props.theme['number_picker_label_text_color'];
       }
     };
+
+    get_power_text_color(pos){
+	    if(pos == this.state.create_number_data['power_editpos']){
+        return this.props.theme['number_picker_picked_power_label_text_color'];
+      }
+      else{
+        return this.props.theme['number_picker_power_label_text_color'];
+      }
+    };
+
 
     format_digit_number_with_zeros(number){
         if(number < 10){
@@ -289,9 +384,29 @@ class NumberPicker extends Component {
       }
     }
 
+    when_power_label_item_clicked(pos){
+      var clone = {};
+      var page_data = this.state.create_number_data;
+      for (var key in page_data) {/* clone the existing created object data object */
+          if (page_data.hasOwnProperty(key)) {
+              clone[key] = page_data[key];
+          }
+      }
+      clone['power_editpos'] = pos;
+      this.setState({create_number_data: clone});
+    }
+
     get_label_number_tripple_digit(pos){
       var number = this.state.create_number_data['number'];
-      var power = this.state.create_number_data['power'];
+      var power = this.get_power();
+      var start_pos =  (number.length) - (parseInt(power)+(pos * 3));
+      var end_pos = start_pos-3;
+      return parseInt(number.substring(start_pos, end_pos));
+    }
+
+    get_power_label_tripple_digits(pos){
+      var number = this.state.create_number_data['multi_digit_power'];
+      var power = this.state.create_number_data['multi_digit_powers_power'];
       var start_pos =  (number.length) - (parseInt(power)+(pos * 3));
       var end_pos = start_pos-3;
       return parseInt(number.substring(start_pos, end_pos));
@@ -314,11 +429,11 @@ class NumberPicker extends Component {
         var clone = {};
         var page_data = this.state.create_number_data;
         for (var key in page_data) {/* clone the existing created object data object */
-            if (page_data.hasOwnProperty(key)) {
-                clone[key] = page_data[key];
-            }
+          if (page_data.hasOwnProperty(key)) {
+            clone[key] = page_data[key];
+          }
         }
-        clone['power'] = parseInt(power)
+        clone['multi_digit_power'] = bgN(1,1000).toString().substring(1,1000)+(power)
         this.setState({create_number_data: clone})
     }
 

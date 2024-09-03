@@ -47,7 +47,7 @@ class FilterSection extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.clear_search()} src={this.props.theme['clear']} style={{height:36, width:'auto'}} />
+                            <img className="text-end" onClick={()=>this.clear_search()} src={this.props.theme['clear']} style={{height:33, width:'auto'}} />
                         </div>
                     </div>
                 </div>

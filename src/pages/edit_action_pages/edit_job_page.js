@@ -269,7 +269,7 @@ class NewJobPage extends Component {
             return(
                 <div className="row">
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
-                        {this.render_content()}
+                        {this.render_title_tags_part()}
                     </div>
                     <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
                         {this.render_empty_views(3)}
@@ -482,6 +482,8 @@ class NewJobPage extends Component {
 
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',this.get_edited_text_object())}
+                <div style={{height:10}}/>
+                {this.render_kaomoji_list()}
                 {this.render_detail_item('0')}
             </div>
         )
@@ -706,6 +708,31 @@ class NewJobPage extends Component {
     }
 
 
+    render_kaomoji_list(){
+        var items = ['⸜(｡˃ ᵕ ˂ )⸝♡','( ˶ˆᗜˆ˵ )','(๑>◡<๑)','ദ്ദി ˉ͈̀꒳ˉ͈́ )✧','( ˶°ㅁ°) !!','(*ᴗ͈ˬᴗ͈)ꕤ*.ﾟ','(｡>﹏<)','(๑-﹏-๑)','ᓚ₍ ^. .^₎','(˵ •̀ ᴗ - ˵ ) ✧','ᕙ(  •̀ ᗜ •́  )ᕗ','( ｡ •̀ ᴖ •́ ｡)','৻(  •̀ ᗜ •́  ৻)','( ˶ˆ꒳ˆ˵ )','(¬`‸´¬)','≽^•⩊•^≼','(ó﹏ò｡)']
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_kamoji_clicked(item)}>
+                            {this.render_detail_item('4',this.get_kamoji_text_object(item))}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_kamoji_text_object(text){
+        return{
+            'font':'Sans-serif', 'textsize':'15px','text':text
+        }
+    }
+
+    when_kamoji_clicked(text){
+        this.setState({entered_text: this.state.entered_text+' '+text})
+    }
 
 
 
@@ -1407,7 +1434,7 @@ class NewJobPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['241'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['756'], })}
                 </div>
 
-                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['284'], 'action':''})}

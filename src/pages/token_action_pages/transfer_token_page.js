@@ -163,7 +163,7 @@ class template extends Component {
                 </div>
 
                 <div style={{height:10}}/>
-                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.token_item)}/>
+                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.token_item)+9))} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.token_item)}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1029']/* 'Add Transaction' */, 'action':''})}

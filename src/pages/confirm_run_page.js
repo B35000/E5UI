@@ -254,16 +254,21 @@ class ConfirmRunPage extends Component {
         var card_shadow_color = this.props.theme['card_shadow_color']
         var op = this.props.app_state.hidden.includes(item) ? 0.5 : 1.0
         var txt = this.props.app_state.hidden.includes(item) ? 'show' : 'hide'
-        return(
-            <div style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
-                <div style={{'padding': '5px 0px 5px 5px'}}>
-                    {this.render_detail_item('1',{'active_tags':[item.e5].concat(item.entered_indexing_tags), 'indexed_option':'indexed', 'when_tapped':''})}
-                    <div style={{height: 10}}/>
+        // return(
+        //     <div style={{height:'auto', 'background-color': background_color, 'border-radius': '15px','padding':'5px 5px 0px 0px', 'box-shadow': '0px 0px 1px 2px '+card_shadow_color, 'margin':'0px 0px 10px 0px', opacity: op}}>
+        //         <div style={{'padding': '5px 0px 5px 5px'}}>
+        //             {this.render_detail_item('1',{'active_tags':[item.e5].concat(item.entered_indexing_tags), 'indexed_option':'indexed', 'when_tapped':''})}
+        //             <div style={{height: 10}}/>
 
-                    {this.render_detail_item('3',{'details':this.props.app_state.loc['1446']/* 'Stack ID ' */, 'title':item.id,'size':'s'})}
-                    <div style={{height: 10}}/>
-                    {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1447']/* 'Type' */,'size':'s'})}
-                </div>         
+        //             {this.render_detail_item('3',{'details':this.props.app_state.loc['1446']/* 'Stack ID ' */, 'title':item.id,'size':'s'})}
+        //             <div style={{height: 10}}/>
+        //             {this.render_detail_item('3',{'title':item.type, 'details':this.props.app_state.loc['1447']/* 'Type' */,'size':'s'})}
+        //         </div>         
+        //     </div>
+        // )
+        return(
+            <div style={{'margin': '2px 0px 2px 0px', opacity: op}}>
+                {this.render_detail_item('3',{'title':item.e5+' • '+item.type, 'details':this.props.app_state.loc['1446']/* 'Stack ID: ' */+item.id,'size':'l'})}
             </div>
         )
     }

@@ -135,7 +135,7 @@ class JobDetailsSection extends Component {
         var he = this.props.height
         return(
             <div>
-                <div style={{height:he, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
+                <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
@@ -772,11 +772,16 @@ class JobDetailsSection extends Component {
     }
 
     scroll_to_bottom(){
+        this.is_auto_scrolling = true
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        var me = this;
+        setTimeout(function() {
+            me.is_auto_scrolling = false
+        }, (1 * 500));
     }
 
     handleScroll = (event, object) => {
-        this.has_user_scrolled[object['e5_id']] = true
+        if(!this.is_auto_scrolling) this.has_user_scrolled[object['e5_id']] = true
     };
 
     render_focused_message(object){
@@ -881,19 +886,19 @@ class JobDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'scroll'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
+                        {this.render_messages(items.concat(stacked_items), object)}
                     </ul>
                 </div>
             )
             }else{
                 return(
-                    <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div style={{overflow: 'scroll'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>
+                            {this.render_all_comments(object)}
                         </ul>
                     </div>
                 )
@@ -924,7 +929,7 @@ class JobDetailsSection extends Component {
             )
         }else{
             return(
-                <div>
+                <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
@@ -1405,7 +1410,7 @@ class JobDetailsSection extends Component {
     render_all_comments(object){
         var sorted_messages_in_tree = this.get_message_replies_in_sorted_object(object)
         return(
-            <div>
+            <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
                 {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
                         <div >

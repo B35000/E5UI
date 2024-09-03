@@ -134,7 +134,7 @@ class BagDetailsSection extends Component {
         var he = this.props.height
         return(
             <div>
-                <div style={{height:he, 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
+                <div style={{height:he, 'background-color': 'transparent', 'border-radius': '15px','padding':'10px 5px 5px 10px','display': 'flex', 'align-items':'center','justify-content':'center','margin':'0px 0px 10px 0px'}}>
                     <img src={this.props.app_state.static_assets['letter']} style={{height:70 ,width:'auto'}} />
                 </div>
             </div>
@@ -601,7 +601,7 @@ class BagDetailsSection extends Component {
             return this.props.app_state.job_responses[object['id']]
         }else{
             var filtered_responses = []
-            var all_responses = this.props.app_state.job_responses[object['id']]
+            var all_responses = this.props.app_state.job_responses[object['id']] == null ? [] : this.props.app_state.job_responses[object['id']]
             for(var i=0; i<all_responses.length; i++){
                 if(all_responses[i]['applicant_id'] == this.props.app_state.user_account_id[object['e5']]){
                     filtered_responses.push(all_responses[i])
@@ -775,11 +775,16 @@ class BagDetailsSection extends Component {
     }
 
     scroll_to_bottom(){
+        this.is_auto_scrolling = true
         this.messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+        var me = this;
+        setTimeout(function() {
+            me.is_auto_scrolling = false
+        }, (1 * 500));
     }
 
     handleScroll = (event, object) => {
-        this.has_user_scrolled[object['e5_id']] = true
+        if(!this.is_auto_scrolling) this.has_user_scrolled[object['e5_id']] = true
     };
 
     render_focused_message(object){
@@ -886,19 +891,19 @@ class BagDetailsSection extends Component {
             var selected_view_option = this.get_selected_item(this.state.comment_structure_tags, 'e')
             if(selected_view_option == this.props.app_state.loc['1671']/* 'channel-structure' */){
                 return(
-                <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                <div style={{overflow: 'scroll'}}>
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                        {this.render_messages(items.concat(stacked_items), object)}
                         <div ref={this.messagesEnd}/>
+                        {this.render_messages(items.concat(stacked_items), object)}
                     </ul>
                 </div>
             )
             }else{
                 return(
-                    <div style={{overflow: 'scroll', 'display': 'flex', 'flex-direction': 'column-reverse'}}>
+                    <div style={{overflow: 'scroll'}}>
                         <ul style={{ 'padding': '0px 0px 0px 0px'}}>
-                            {this.render_all_comments(object)}
                             <div ref={this.messagesEnd}/>
+                            {this.render_all_comments(object)}
                         </ul>
                     </div>
                 )
@@ -929,7 +934,7 @@ class BagDetailsSection extends Component {
             )
         }else{
             return(
-                <div>
+                <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
                     {items.map((item, index) => (
                         <li style={{'padding': '2px 5px 2px 5px'}} onClick={()=>console.log()}>
                             <div >
@@ -1368,7 +1373,7 @@ class BagDetailsSection extends Component {
     render_all_comments(object){
         var sorted_messages_in_tree = this.get_message_replies_in_sorted_object(object)
         return(
-            <div>
+            <div style={{'display': 'flex', 'flex-direction': 'column-reverse'}}>
                 {sorted_messages_in_tree.children.map((item, index) => (
                     <li style={{'padding': '1px 5px 0px 5px'}} onClick={()=>console.log()}>
                         <div >

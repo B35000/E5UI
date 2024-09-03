@@ -1725,7 +1725,7 @@ class NewTokenPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2779']/* 'Token Depth' */, 'subtitle':this.format_power_figure(this.state.default_depth), 'barwidth':this.calculate_bar_width(this.state.default_depth), 'number':this.format_account_balance_figure(this.state.default_depth), 'barcolor':'', 'relativepower':'??', })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_end_token_total_supply.bind(this)} theme={this.props.theme} power_limit={this.get_e5_power_limit()}/>
+                <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e'+(this.get_e5_power_limit()+9))} when_number_picker_value_changed={this.when_end_token_total_supply.bind(this)} theme={this.props.theme} power_limit={this.get_e5_power_limit()}/>
 
                 {this.render_detail_item('0')}
 

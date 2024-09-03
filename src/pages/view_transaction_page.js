@@ -2301,7 +2301,7 @@ class ViewTransactionPage extends Component {
         if(size == 'm'){
             middle = this.props.height-100;
         }
-
+        items = [].concat(items)
         if(items.length == 0){
             items = [0, 1]
             return(

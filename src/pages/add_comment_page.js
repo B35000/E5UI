@@ -148,7 +148,7 @@ class AddCommentPage extends Component {
         if(e.target.files && e.target.files[0]){
             for(var i = 0; i < e.target.files.length; i++){ 
                 let reader = new FileReader();
-                reader.onload = function(ev){
+                reader.onload = async function(ev){
                     const clonedArray = this.state.entered_image_objects == null ? [] : this.state.entered_image_objects.slice();
                     if(ev.total < this.props.app_state.image_size_limit){
                         clonedArray.push(ev.target.result);
@@ -177,7 +177,7 @@ class AddCommentPage extends Component {
             var background_color = this.props.theme['card_background_color']
             return(
                 <div>
-                    <ImageList sx={{ width: 'auto', height: 'auto' }} cols={col} rowHeight={rowHeight}>
+                    <ImageList sx={{ width: 400, height: 'auto' }} cols={col} rowHeight={rowHeight}>
                         {items.map((item, index) => (
                             <ImageListItem key={item.img}>
                                 <div style={{height:100, width:100, 'background-color': background_color, 'border-radius': '5px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>

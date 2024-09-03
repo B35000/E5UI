@@ -817,6 +817,8 @@ class NewPostPage extends Component {
                 </div>
                 <div style={{height:10}}/>
                 {this.render_detail_item('4',this.get_edited_text_object())}
+                <div style={{height:10}}/>
+                {this.render_kaomoji_list()}
                 {this.render_detail_item('0')}
             </div>
         )
@@ -1043,6 +1045,31 @@ class NewPostPage extends Component {
     }
 
 
+    render_kaomoji_list(){
+        var items = ['⸜(｡˃ ᵕ ˂ )⸝♡','( ˶ˆᗜˆ˵ )','(๑>◡<๑)','ദ്ദി ˉ͈̀꒳ˉ͈́ )✧','( ˶°ㅁ°) !!','(*ᴗ͈ˬᴗ͈)ꕤ*.ﾟ','(｡>﹏<)','(๑-﹏-๑)','ᓚ₍ ^. .^₎','(˵ •̀ ᴗ - ˵ ) ✧','ᕙ(  •̀ ᗜ •́  )ᕗ','( ｡ •̀ ᴖ •́ ｡)','৻(  •̀ ᗜ •́  ৻)','( ˶ˆ꒳ˆ˵ )','(¬`‸´¬)','≽^•⩊•^≼','(ó﹏ò｡)']
+
+        return(
+            <div style={{'margin':'0px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent'}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_kamoji_clicked(item)}>
+                            {this.render_detail_item('4',this.get_kamoji_text_object(item))}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    get_kamoji_text_object(text){
+        return{
+            'font':'Sans-serif', 'textsize':'15px','text':text
+        }
+    }
+
+    when_kamoji_clicked(text){
+        this.setState({entered_text: this.state.entered_text+' '+text})
+    }
 
 
 

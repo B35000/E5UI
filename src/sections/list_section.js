@@ -625,7 +625,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'jobs')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '2px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
@@ -753,7 +753,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'contracts')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
@@ -858,7 +858,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'proposals')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
@@ -957,7 +957,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'subscriptions')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
@@ -1064,7 +1064,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], object_type)}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
@@ -1748,7 +1748,7 @@ class PostListSection extends Component {
                     <ul style={{ 'padding': '0px 0px 0px 0px'}}>
                         {this.show_load_metrics([], 'channels')}
                         {items.map((item, index) => (
-                            <li style={{'padding': '5px'}}>
+                            <li style={{'padding': '2px 0px 2px 0px'}}>
                                 <div style={{height:160, width:'100%', 'background-color': background_color, 'border-radius': '15px','padding':'10px 0px 0px 10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
                                     <div style={{'margin':'10px 20px 0px 0px'}}>
                                         <img src={this.props.app_state.static_assets['letter']} style={{height:60 ,width:'auto'}} />
@@ -2409,6 +2409,7 @@ class PostListSection extends Component {
     }
 
     get_number_width(number){
+        if(number == null) return '0%'
         var last_two_digits = number.toString().slice(0, 1)+'0';
         if(number > 10){
             last_two_digits = number.toString().slice(0, 2);
