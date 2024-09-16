@@ -228,8 +228,7 @@ class DepthMintPage extends Component {
                                         </li>
                                     </div>
                                 </SwipeableListItem>
-                            </SwipeableList>
-                            
+                            </SwipeableList> 
                         ))}
                     </ul>
                 </div>

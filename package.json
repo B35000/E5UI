@@ -1,9 +1,9 @@
 {
   "name": "old_e5",
-  "hmepage": "https://b35000.github.io/E5UI/",
-  "homepage": ".",
+  "homepage": "https://b35000.github.io/E5UI/",
+  "hmepage": ".",
   "version": "0.3.1",
-  
+  "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",

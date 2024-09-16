@@ -394,6 +394,8 @@ class EndDetailSection extends Component {
 
                     {this.render_depth_tokens_button(selected_object)}
 
+                    {this.render_royalty_staging_page(selected_object)}
+
                     {this.render_detail_item('0')}
                     {this.render_detail_item('0')}
                 </div>
@@ -565,6 +567,10 @@ class EndDetailSection extends Component {
         this.props.open_moderator_ui(selected_object)
     }
 
+    open_royalty_staging_page(selected_object){
+        this.props.open_royalty_staging_ui(selected_object)
+    }
+
 
     render_last_swap_block(selected_object){
         // var selected_item = this.props.selected_end_item
@@ -695,6 +701,28 @@ class EndDetailSection extends Component {
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['2369']/* 'Perform Moderator Actions' */, 'details':this.props.app_state.loc['2406']/* 'Set an accounts access rights, moderator privelages or block an account' */, 'size':'l'})}
                     <div style={{height:10}}/>
                     <div onClick={()=>this.open_moderator_ui(object)}>
+                        {this.render_detail_item('5', {'text':this.props.app_state.loc['2370']/* 'Perform Action' */, 'action':''})}
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_royalty_staging_page(object){
+        var my_account = this.props.app_state.user_account_id[object['e5']]
+        var events = this.get_moderator_item_logs(object, 'revoke_privelages')
+        var can_stage_royalty_as_author_moderator = false
+        if(events.length == 0 && object['event'].returnValues.p3 == my_account){
+            can_stage_royalty_as_author_moderator = true;
+        }
+        if(object['id'] != 3 && (object['moderators'].includes(my_account) || can_stage_royalty_as_author_moderator) || true){
+            return(
+                <div>
+                    {this.render_detail_item('0')}
+
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447b']/* 'Stage Royalties.' */, 'details':this.props.app_state.loc['2447c']/* 'Stage payouts to the token-holders.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div onClick={()=>this.open_royalty_staging_page(object)}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['2370']/* 'Perform Action' */, 'action':''})}
                     </div>
                 </div>

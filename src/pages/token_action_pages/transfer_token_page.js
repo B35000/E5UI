@@ -31,7 +31,7 @@ function makeid(length) {
     return result;
 }
 
-class template extends Component {
+class TransferTokenPage extends Component {
     
     state = {
         selected: 0,id:makeid(8), type: this.props.app_state.loc['1018']/* 'transfer' */,
@@ -577,13 +577,6 @@ class template extends Component {
             e5: item['e5'], 
             debit_balance: this.get_debit_balance_in_stack(item['id'], item['e5'])
         })
-
-        // var stack_items = this.props.app_state.stack_items
-        // for(var i=0; i<stack_items.length; i++){
-        //     if(stack_items[i].type == this.props.app_state.loc['1018']/* 'transfer' */ && stack_items[i].token_item['id'] == item['id']){
-        //         this.setState({debit_balance: bigInt(this.state.debit_balance).add(stack_items[i].debit_balance)})
-        //     }
-        // }
     }
 
 
@@ -603,4 +596,4 @@ class template extends Component {
 
 
 
-export default template;
+export default TransferTokenPage;
