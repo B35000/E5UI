@@ -2263,6 +2263,8 @@ class home_page extends Component {
 
         this.props.get_exchange_event_data(id, e5)
         this.props.get_moderator_event_data(id, e5)
+        this.props.load_exchanges_royalty_event_data(id, e5)
+        this.props.load_exchanges_royalty_payout_event_data(id, e5)
     }
 
     when_spends_object_clicked(index, id, e5){
@@ -2644,6 +2646,10 @@ class home_page extends Component {
                 view_number={this.props.view_number.bind(this)}
 
                 open_royalty_staging_ui={this.open_royalty_staging.bind(this)}
+                view_royalty_staging={this.open_view_posted_royalty_staging.bind(this)}
+
+                load_exchanges_royalty_event_data={this.props.load_exchanges_royalty_event_data.bind(this)}
+                load_exchanges_royalty_payout_event_data={this.props.load_exchanges_royalty_payout_event_data.bind(this)}
                 />
             </div>
         )
@@ -2764,6 +2770,10 @@ class home_page extends Component {
 
     open_royalty_staging(item){
         this.props.show_stage_royalties_bottomsheet(item)
+    }
+
+    open_view_posted_royalty_staging(staging_data, token_item){
+        this.props.show_view_staged_royalties_bottomsheet(staging_data, token_item)
     }
 
 

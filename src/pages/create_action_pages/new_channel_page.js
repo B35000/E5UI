@@ -1881,13 +1881,13 @@ class NewChannelPage extends Component {
         var id = Math.round(new Date().getTime()/1000);
 
         if(index_tags.length == 0){
-            this.props.notify(this.props.app_state.loc['160'], 2700)
+            this.props.notify(this.props.app_state.loc['160'], 6700)
         }
         else if(title == ''){
-            this.props.notify(this.props.app_state.loc['161'], 2700)
+            this.props.notify(this.props.app_state.loc['161'], 6700)
         }
         else if(title.length > this.props.app_state.title_size){
-            this.props.notify(this.props.app_state.loc['162'], 2700)
+            this.props.notify(this.props.app_state.loc['162'], 6700)
         }
         else{
 

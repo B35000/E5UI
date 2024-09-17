@@ -3,7 +3,6 @@ import ViewGroups from '../../components/view_groups'
 import Tags from '../../components/tags';
 import TextInput from '../../components/text_input';
 import NumberPicker from '../../components/number_picker';
-import DurationPicker from '../../components/duration_picker';
 
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
@@ -41,7 +40,7 @@ class StageRoyaltiesPage extends Component {
     
     state = {
         selected: 0,
-        id:makeid(8), type: this.props.app_state.loc['2846']/* 'stageroyalty' */, entered_indexing_tags:[this.props.app_state.loc['2847']/* 'stage' */, this.props.app_state.loc['2848']/* 'royalty' */, this.props.app_state.loc['2849']/* 'payouts' */], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, get_new_stageroyalties_action_page_tags_object: this.get_new_stageroyalties_action_page_tags_object(),
+        id:makeid(8), type: this.props.app_state.loc['2846']/* 'stage-royalty' */, entered_indexing_tags:[this.props.app_state.loc['2847']/* 'stage' */, this.props.app_state.loc['2848']/* 'royalty' */, this.props.app_state.loc['2849']/* 'payouts' */], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, get_new_stageroyalties_action_page_tags_object: this.get_new_stageroyalties_action_page_tags_object(),
 
         payout_start_timestamp:(new Date().getTime()/1000)+64800, royalty_payout_account:'',
         get_transaction_ordering_tags_object: this.get_transaction_ordering_tags_object(),
@@ -53,7 +52,7 @@ class StageRoyaltiesPage extends Component {
     set_token(token_item){
         if(this.state.token_item['id'] != token_item['id']){
             this.setState({
-                selected: 0,id:makeid(8), type: this.props.app_state.loc['2846']/* 'stageroyalty' */, entered_indexing_tags:[this.props.app_state.loc['2847']/* 'stage' */, this.props.app_state.loc['2848']/* 'royalty' */, this.props.app_state.loc['2849']/* 'payouts' */], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, 
+                selected: 0,id:makeid(8), type: this.props.app_state.loc['2846']/* 'stage-royalty' */, entered_indexing_tags:[this.props.app_state.loc['2847']/* 'stage' */, this.props.app_state.loc['2848']/* 'royalty' */, this.props.app_state.loc['2849']/* 'payouts' */], token_item: {'balance':1, 'data':[[],[],[],[],[]], 'id':0}, 
                 get_new_stageroyalties_action_page_tags_object: this.get_new_stageroyalties_action_page_tags_object(),
 
                 payout_start_timestamp:(new Date().getTime()/1000)+64800,
@@ -230,7 +229,7 @@ class StageRoyaltiesPage extends Component {
 
                 {this.render_detail_item('0')}
 
-                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2861']/* 'The total number of tokens being issued out as payouts.' */, 'title':this.props.app_state.loc['2860']/* 'Total Payout Amount.' */})}
+                {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2861']/* 'The aggregate of the total number of tokens being issued out as payouts.' */, 'title':this.props.app_state.loc['2860']/* 'Total Payout Amount.' */})}
                 <div style={{height:10}}/>
                 {this.render_payout_tokens()}
 
@@ -265,6 +264,12 @@ class StageRoyaltiesPage extends Component {
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['2865']/* 'Set the total number of transactions per payout batch.' */, 'title':this.props.app_state.loc['2864']/* 'Transactions Per Batch.' */})}
+                <div style={{height:10}}/>
+
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['2874']/* 'transactions per batch' */, 'number':this.state.batch_size, 'relativepower':this.props.app_state.loc['2867']/* 'transactions' */})}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2874']/* 'transactions per batch' */, 'subtitle':this.format_power_figure(this.state.batch_size), 'barwidth':this.calculate_bar_width(this.state.batch_size), 'number':this.format_account_balance_figure(this.state.batch_size), 'barcolor':'', 'relativepower':this.props.app_state.loc['2867']/* 'transactions' */, })}
+                </div>
+
                 <NumberPicker font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_transactions_per_batch_value_picked.bind(this)} theme={this.props.theme} power_limit={63}/>
 
             </div>
@@ -277,9 +282,8 @@ class StageRoyaltiesPage extends Component {
         var now = (new Date().getTime()/1000)+1000
         if(timeInSeconds < now){
             this.props.notify(this.props.app_state.loc['2854']/* You cant schedule a time before now. */, 7800)
-        }else{
-            this.setState({payout_start_timestamp: timeInSeconds})
         }
+        this.setState({payout_start_timestamp: timeInSeconds})
     }
 
     when_royalty_payout_account_input_field_changed(text){
@@ -549,7 +553,7 @@ class StageRoyaltiesPage extends Component {
     render_transaction_batches_to_royalties(){
         var exchange_royalty_data = this.props.app_state.exchange_royalty_data[this.state.token_item['id']]
         var total_number_of_transactions = exchange_royalty_data['balance_data']
-        var batches = this.get_batch_data(total_number_of_transactions)
+        var batches = this.get_batch_data(total_number_of_transactions, false)
         if(total_number_of_transactions.length == 0){
             return(
                 <div>
@@ -571,7 +575,7 @@ class StageRoyaltiesPage extends Component {
         }
     }
 
-    get_batch_data(total_number_of_transactions){
+    get_batch_data(total_number_of_transactions, should_use_string_id){
         var batches = []
         var batch_size = this.state.batch_size
         if(batch_size == 0) batch_size = 1;
@@ -582,7 +586,11 @@ class StageRoyaltiesPage extends Component {
                     batch_data.push(total_number_of_transactions[i+j])
                 }
             }
-            batches.push({'data':batch_data, 'id':i})
+            var id = i
+            if(should_use_string_id){
+                id = makeid(5)
+            }
+            batches.push({'data':batch_data, 'id':id})
         }
         return batches
     }
@@ -591,7 +599,59 @@ class StageRoyaltiesPage extends Component {
 
 
     finish(){
+        var payout_title = this.state.payout_title;
+        var payout_amount = this.state.payout_amount;
+        var payout_start_timestamp = this.state.payout_start_timestamp;
+        var royalty_payout_account = this.state.royalty_payout_account;
+        var batch_size = this.state.batch_size;
+        var now = (new Date().getTime()/1000)+1000
+
+        var exchange_royalty_data = this.props.app_state.exchange_royalty_data[this.state.token_item['id']]
+        var total_number_of_transactions = exchange_royalty_data['balance_data']
+        var total_held_shares = this.total_held_shares(total_number_of_transactions)
+
+        if(payout_title == ''){
+            this.props.notify(this.props.app_state.loc['2875']/* You need to set a title for your payout staging. */, 6700)
+        }
+        else if(payout_amount == 0){
+            this.props.notify(this.props.app_state.loc['2876']/* That payout amount is invalid */, 6700)
+        }
+        else if(payout_start_timestamp < now){
+            this.props.notify(this.props.app_state.loc['2877']/* that payout date is invalid. */, 6700)
+        }
+        else if(parseInt(royalty_payout_account) < 1000){
+            this.props.notify(this.props.app_state.loc['2878']/* That payout account is invalid. */, 6700)
+        }
+        else if(batch_size == 0){
+            this.props.notify(this.props.app_state.loc['2879']/* That batch size is invalid. */, 6700)
+        }
+        else if(total_number_of_transactions.length == 0){
+            this.props.notify(this.props.app_state.loc['2883']/* You cant stage no transactions. */, 6700)
+        }
+        else{
+            var me = this;
+            
+            var batches = this.get_batch_data(total_number_of_transactions, true)
+            var payout_data = {'payout_id':parseInt(Date.now()),'exchange_royalty_data':exchange_royalty_data, 'batches':batches, 'payout_title':payout_title, 'payout_amount':payout_amount, 'payout_start_timestamp':payout_start_timestamp, 'royalty_payout_account':royalty_payout_account, 'batch_size':batch_size, 'token_id':this.state.token_item['id'], 'sender':this.props.app_state.user_account_id[this.state.token_item['e5']], 'total_held_shares':total_held_shares}
+
+            this.setState({payout_data:payout_data})
+
+            setTimeout(function(){
+                me.props.add_stage_royalties_to_stack(me.state)
         
+                me.setState({selected: 0,
+                id:makeid(8), type: me.props.app_state.loc['2846']/* 'stageroyalty' */, entered_indexing_tags:[me.props.app_state.loc['2847']/* 'stage' */, me.props.app_state.loc['2848']/* 'royalty' */, me.props.app_state.loc['2849']/* 'payouts' */], get_new_stageroyalties_action_page_tags_object: me.get_new_stageroyalties_action_page_tags_object(),
+
+                payout_start_timestamp:(new Date().getTime()/1000)+64800, royalty_payout_account:'',
+                get_transaction_ordering_tags_object: me.get_transaction_ordering_tags_object(),
+                payout_amount:0, payout_title:'', batch_size:0,
+
+                get_individual_or_batch_tags_object:me.get_individual_or_batch_tags_object(),})
+            }, (1 * 1000));
+
+            this.props.notify(this.props.app_state.loc['18'], 1700);
+        }
+
     }
 
 

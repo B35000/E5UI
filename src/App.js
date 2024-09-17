@@ -214,7 +214,8 @@ import ExchangeTransferPage from './pages/token_action_pages/exchanage_transfer_
 import FreezeUnfreezePage from './pages/token_action_pages/freeze_unfreeze_page';
 import AuthMintPage from './pages/token_action_pages/authmint_page';
 import DepthMintPage from './pages/token_action_pages/depthmint_page';
-import StageRoyaltiesPage from './pages/token_action_pages/stage_royalties_page'
+import StageRoyaltiesPage from './pages/token_action_pages/stage_royalties_page';
+import ViewStagedRoyaltyPage from './pages/token_action_pages/view_staged_royalty_page';
 
 import VoteProposalPage from './pages/proposal_action_pages/vote_proposal_page';
 import SubmitProposalPage from './pages/proposal_action_pages/submit_proposal_page';
@@ -319,7 +320,7 @@ class App extends Component {
     page:'?',/* UNUSED the page thats being shown, ?{jobs}, e{explore}, w{wallet} */
     syncronizing_page_bottomsheet:true,/* set to true if the syncronizing page bottomsheet is visible */
     should_keep_synchronizing_bottomsheet_open: false,/* set to true if the syncronizing page bottomsheet is supposed to remain visible */
-    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false,
+    send_receive_bottomsheet: false, stack_bottomsheet: false, wiki_bottomsheet: false, new_object_bottomsheet: false, view_image_bottomsheet:false, new_store_item_bottomsheet:false, mint_token_bottomsheet:false, transfer_token_bottomsheet:false, enter_contract_bottomsheet: false, extend_contract_bottomsheet: false, exit_contract_bottomsheet:false, new_proposal_bottomsheet:false, vote_proposal_bottomsheet: false, submit_proposal_bottomsheet:false, pay_subscription_bottomsheet:false, cancel_subscription_bottomsheet: false,collect_subscription_bottomsheet: false, modify_subscription_bottomsheet:false, modify_contract_bottomsheet:false, modify_token_bottomsheet:false,exchange_transfer_bottomsheet:false, force_exit_bottomsheet:false, archive_proposal_bottomsheet:false, freeze_unfreeze_bottomsheet:false, authmint_bottomsheet:false, moderator_bottomsheet:false, respond_to_job_bottomsheet:false, view_application_contract_bottomsheet:false, view_transaction_bottomsheet:false, view_transaction_log_bottomsheet:false, add_to_bag_bottomsheet:false, fulfil_bag_bottomsheet:false, view_bag_application_contract_bottomsheet: false, direct_purchase_bottomsheet: false, scan_code_bottomsheet:false, send_job_request_bottomsheet:false, view_job_request_bottomsheet:false, view_job_request_contract_bottomsheet:false, withdraw_ether_bottomsheet: false, edit_object_bottomsheet:false, edit_token_bottomsheet:false, edit_channel_bottomsheet: false, edit_contractor_bottomsheet: false, edit_job_bottomsheet:false, edit_post_bottomsheet: false, edit_storefront_bottomsheet:false, give_award_bottomsheet: false, add_comment_bottomsheet:false, depthmint_bottomsheet:false, searched_account_bottomsheet: false, rpc_settings_bottomsheet:false, confirm_run_bottomsheet:false, edit_proposal_bottomsheet:false, successful_send_bottomsheet:false, view_number_bottomsheet:false, stage_royalties_bottomsheet:false, view_staged_royalties_bottomsheet:false,
 
     syncronizing_progress:0,/* progress of the syncronize loading screen */
     account:null, size:'s', height: window.innerHeight, width: window.innerWidth, is_allowed:this.is_allowed_in_e5(),
@@ -370,7 +371,7 @@ class App extends Component {
     load_subscription_metrics:{}, load_contracts_metrics:{}, load_proposal_metrics:{}, load_tokens_metrics:{}, load_posts_metrics:{}, load_channels_metrics:{}, load_jobs_metrics:{}, load_sent_mail_metrics:{}, load_received_mail_metrics:{}, load_storefront_metrics:{}, load_bags_metrics:{}, load_contractors_metrics:{}, 
 
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
-    exchange_royalty_data:{},
+    exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
   };
 
   get_static_assets(){
@@ -990,7 +991,7 @@ class App extends Component {
         '1155':'award','1156':'give','1157':'reward','1158':'message','1159':'award-tier','1160':'custom-amounts','1161':'Add a award message for your new award. Mind the character limit.','1163':'Type something...','1164':'Award Tiers','1165':'Pick an award tier you wish to send to the post author.','1166':'Total Amount','1167':'The total amount of SPEND youll be including in the award.','1168':'Total amount of SPEND','1169':'Your Spend Balance','1170':'Multiplier','1162':'Multiply the award your sending to the post author.','1171':'Gold','1172':'Diamond','1173':'Silver','1174':'Oil','1175':'Wood','1176':'Beer','1177':'Corn','1178':'Beef','1179':'Chocolate','1180':'Exchange ID','1181':'Select an exchange by its id, then the desired amount and click add.','1182':'Amount','1183':'tokens','1184':'Add Amount','1185':'Please put a valid exchange ID.','1186':'Please put a valid amount.','1187':'Added amount.','1188':'Account 3','1189':'Account 5','1190':'Please pick an award tier.','1191':'You have to leave a message.','1192':'That message is too short.','1193':'That message is too long.','1194':'You dont have enough Spend to give that award.','1195':'One of your token balances is insufficient for the award amounts specified.',
         
         /* homepage */
-        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'Work Contracts','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'','1264k':'',
+        '1196':'jobs','1197':'contracts','1198':'contractors','1199':'proposals','1200':'subscriptions','1201':'mail','1202':'all','1203':'viewed','1204':'created','1205':'applied','1206':'entered','1207':'paid','1208':'received','1209':'sent','1210':'active','1211':'my-proposals','1212':'E5s','1213':'posts','1214':'channels','1215':'storefront','1216':'bags','1217':'ethers ⚗️','1218':'ends ☝️','1219':'spends 🫰','1220':'info ℹ️','1221':'blockexplorer 🗺️','1222':'pinned','1223':'E5 Work','1224':'Explore','1225':'Deployed E5s','1226':'Wallet','1227':'Coin & Tokens','1228':'Stack','1229':'Runs on e','1230':'','1231':'local','1232':'language','1233':'international','1234':'First set your wallet to follow that tag.','1235':'Bag Pinned.','1236':'Bag Unpinned.','1237':'Channel Pinned.','1238':'Channel Unpinned.','1239':'Item Pinned.','1240':'Item Unpinned.','1241':'Post Pinned.','1242':'Post Unpinned.','1243':'Subscription Pinned.','1244':'Subscription Unpinned.','1245':'Proposal Pinned.','1246':'Proposal Unpinned.','1247':'Contractor Pinned.','1248':'Contractor Unpinned.','1249':'Contract Pinned.','1250':'Contract Unpinned.','1251':'Job Pinned.','1252':'Job Unpinned.','1253':'Confirmation.','1254':'Add To Contacts Confirmation.','1255':'Confirm that you want to add the account ','1256':' to your contacts','1257':'Add to Contacts','1258':'E5tokens','1259':'externals','1260':'stack-data','1261':'settings-data','1262':'account-data','1263':'events','1264':'moderator-events','1264a':'That link is unavailable.','1264b':'upcoming', '1264c':'job-notifications', '1264d':'contract-notifications', '1264e':'contractor-notifications', '1264f':'mail-notifications','1264g':'storefront-notifications','1264h':'bag-notifications','1264i':'wallet-notifications','1264j':'','1264k':'',
         
         /* moderator page */
         '1265':'access-rights-settings','1266':'access','1267':'rights','1268':'settings','1269':'moderators','1270':'access-rights','1271':'block-accounts','1272':'private','1273':'public','1274':'Moderator','1275':'Add or Remove a moderator by their account ID.','1276':'Account ID...','1277':'Add/Remove Moderator','1278':'Enable/Disable Access Rights','1279':'Enable or Disable access rights to make the object public or private.','1280':'Current access rights settings.','1281':'Enable/Disable','1282':'Revoke Authors Moderator Privelages.','1283':'Click Disable to disable moderator privelages for the author of the object. This action cannot be undone.','1284':'Revoke','1285':'Access Rights: Enabled','1286':'Access Rights: Disabled','1287':'Please put a valid account ID.','1288':'Action added.','1289':'The thing is already private.','1290':'The thing is already public.','1291':'You cant do that twice.','1292':'Access Rights','1293':'Add/Remove an interactable account by their account ID.','1294':'Time from now','1295':'Add account setting','1296':'Please put a valid account ID.','1297':'Block Accounts','1298':'Deny an account access to your object','1299':'Add Blocked Account','1291e':'Please put a valid account ID.','1292e':' action: ','1293e':'Target: ','1294e':' action.','1295e':'Target: Revoke Privelages','1296e':', time from now: ','1297e':', time from now: ','1298e':'Action removed.','1299e':'Account','1300':'You cant stack no changes.', '1300a':'You cant add the same action twice.',
@@ -1062,7 +1063,7 @@ class App extends Component {
         '2232':'details','2233':'End Balance of Burn Account','2234':'E5 Ether balance in Ether and wei','2235':'E5 Ether balance in Wei','2236':'Last Transaction Block','2237':'Last Transaction age','2238':'Number of entered contracts','2239':'Number of E5 runs','2240':'Withdraw balance','2241':'Withdraw your Ether to a specified address','2242':'Withdraw Ether','2243':'Withdraw','2244':'E5','2245':'Main','2246':'E5 Address:','2247':'Vote Bounty Split Proportion','2248':'Minimum End Contract Amount','2249':'E5 block invocation Limit','2250':'E5 time invocation Limit','2251':'Minimum Entered Contracts for Consensus Participation','2252':'','2253':'Tag Indexing Limit','2254':'Minimum Transaction Count for Consensus Particiation','2255':'Gas Anchor Price','2256':'Transaction Gas Reduction Proportion','2257':'Transaction Gas Anchor Price','2258':'Transaction Gas Lower Limit','2259':'Absolute Proposal Expiry Duration Limit','2260':'Primary Transaction Account','2261':'Primary Account Transaction Period','2262':'Subscriptions Created','2263':'Chart containing the total number of subscriptions made over time.','2264':'','2265':'','2266':'','2267':'','2269e':'Y-Axis: Total Subscriptions Made','2269':'X-Axis: Time','2270':'Total Subscriptions','2271':'subscriptions','2272':'Contracts Created','2273':'Chart containing the total number of contracts made over time.','2274':'Y-Axis: Total Contracts Made','2275':'X-Axis: Time','2276':'Total Contracts','2277':'contracts','2278':'Proposals Created','2279':'Chart containing the total number of proposals made over time.','2280':'Y-Axis: Total Proposals Made','2281':'Total Proposals','2282':'proposals','2283':'Exchanges Created','2284':'Chart containing the total number of exchanges made over time.','2285':'Y-Axis: Total Exchanges Made','2286':'Total Exchanges','2287':'exchanges','2288':'Indexed Posts Created','2289':'Chart containing the total number of indexed posts made over time.','2290':'Y-Axis: Total Posts Made','2291':'Total Posts','2292':'posts','2293':'Indexed Channels Created','2294':'Chart containing the total number of indexed channels made over time.','2295':'Y-Axis: Total Channels Made','2296':'Total Channels','2297':'channels','2298':'Indexed Jobs Created','2299':'Chart containing the total number of indexed jobs made over time.','2300':'Y-Axis: Total Jobs Made','2301':'Total Jobs','2302':'jobs','2303':'Indexed Storefront Items Created','2304':'Chart containing the total number of indexed storefront items made over time.','2305':'Y-Axis: Total Storefront Items Made','2306':'Total Storefront Items','2307':'','2308':'Bags Created','2309':'Chart containing the total number of bags made over time.','2310':'Y-Axis: Total Bags Made','2311':'Total Bags','2312':'bags','2313':'Indexed Contractors Created','2314':'Chart containing the total number of indexed contractors made over time.','2315':'Y-Axis: Total Contractor Posts','2316':'Total Contractor Posts','2317':'Data Throughput','2318':'Chart containing the data throughput over time.','2319':'Y-Axis: Total Data Events','2320':'Total Data Events','2321':'Metadata Throughput','2322':'Chart containing the total number of metadata events made over time.','2323':'Y-Axis: Total Metadata Events','2324':'Total Metadata Events','2325':'events','2326':'Withdrawn Ether','2327':'The total amount of ether thats been withdrawn from the E5 over time.','2328':'Y-Axis: Total Withdrawn Ether','2329':'Deposited Ether','2330':'The total amount of ether thats been deposited into the E5 over time.','2331':'Y-Axis: Total Deposited Ether','2332':'Transaction Runs','2333':'Chart containing the total number of E5 runs made over time.','2334':'Y-Axis: Total Runs Made','2335':'Total Runs','2336':'runs', '2336a':'Transfers', '2336b':'Chart containing the total number of transfers made over time.','2336c':'Y-Axis: Total Transfers Made','2336d':'Total Transfers','2336e':'transfers',
         
         /* end detail section */
-        '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions','2370':'Perform Action','2371':'Edit Token Post','2372':'Change the basic details for your Token Post','2373':'Perform Action','2374':'0 (Burn Account)','2375':'ID: ','2376':'Token Identifier','2377':'Token Type','2378':'Block Number','2379':'Exchanges Liquidity','2380':'Buy/Sell Token','2381':'Tokens Total Supply','2382':'The Market Capitalization of the token in its respective denominations.','2383':'Token Market Cap','2384':'Depth-Mint Tokens','2385':'Mint your token from outside its exchange.','2386':'Depth-Mint','2387':'Y-Aggregate','2388':'Chart containing the y-aggregate of ','2389':' over time.','2390':'Y-Axis: Y-aggregate','2391':'X-Axis: Time','2392':'Total Transactions','2393':'Chart containing the total number of buy/sell transactions over time.','2394':'Y-Axis: Total Transactions','2395':'Total Transactions','2396':'Exchange Liquidity','2397':'Chart containing the total supply of ','2398':' in the exchange over time.','2399':'Y-Axis: Exchange Liquidity','2400':'Action','2401':'Amount Swapped','2402':'Updted Token Exchange Liquidity','2403':'Updated Exchange Ratio X','2404':'Updated Exchange Ratio Y','2405':'Updated Exchange Ratios X:Y','2406':'Set an accounts access rights, moderator privelages or block an account','2407':'In Exchange ','2408':'Updated Exchange Ratio Events','2409':'Buy','2410':'Sell','2411':'Swapping Account ID','2412':'Your Transfer Events','2413':'Action: ','2414':'Exchange Modification Events','2415':'Modifier','2416':'Targeted Modify Item','2417':'target ID','2418':'Exchange Transfer Events','2419':'To: ','2420':'From: ','2421':'Action: ','2422':'New Balance ','2423':'Action: Freeze','2424':'Action: Unfreeze','2425':'Amount, depth: ','2426':'Exchange Modify Moderator Events','2427':'Not Moderator','2428':'Moderator','2429':'Targeted Account','2430':'Moderator Account','2431':'Authority value','2432':'Exchange Access Rights Settings Events','2433':'Access Rights Disabled(Public)','2434':'Access Rights Enabled(Private)','2435':'Access Rights Status','2436':'Moderator Account','2437':'Exchange  Account Access Settings Events','2438':'Targeted Account','2439':'Moderator Account','2440':'In Exchange ','2441':'Exchange  Blocked Account Events','2442':'Targeted Account','2443':'Moderator Account','2444':'Exchange  Depth-Mint Events','2445':'Targeted Receiver','2446':'Moderator Sender','2447':'Amount, depth: ', '2447a':'Your Wallets Dominance', '2447b':'Stage Royalties.', '2447c':'Stage payouts to the token-holders.', '2447d':'','2447e':'','2447f':'','2447g':'','2447h':'','2447i':'',
+        '2337':'transfers','2338':'exchange-transfers','2339':'updated-balances','2340':'updated-exchange-ratios','2341':'modify-exchange','2342':'freeze-unfreeze','2343':'depth-mints','2344':'Buy or Sell the token for a specified account.','2345':'Buy/Sell','2346':'Send some tokens to  a specified account','2347':'Transfer','2348':'The exchanges balance for each of the tokens used to buy ','2349':'Buy Token Liquidity','2350':'','2351':'Author Moderator Privelages Disabled','2352':'Author of Object is not a Moderator by default','2353':'Author Moderator Privelages Enabled','2354':'Author of Object is a Moderator by default','2355':'The amount you get when selling one unit of the token','2356':'Token Price','2357':'Last Swap Block','2358':'Last Swap Age','2359':'Last Swap Transactions Count','2360':'Last Entered Contracts Count','2361':'Modify Token','2362':'Modify the configuration of the exchange directly.','2363':'Exchange Transfer','2364':'Transfer tokens from the exchanges account to a specified target.','2365':'Run Transfers','2366':'Freeze/Unfreeze Tokens','2367':'Freeze or unfreeze a given accounts balance.','2368':'Freeze/Unfreeze','2369':'Perform Moderator Actions','2370':'Perform Action','2371':'Edit Token Post','2372':'Change the basic details for your Token Post','2373':'Perform Action','2374':'0 (Burn Account)','2375':'ID: ','2376':'Token Identifier','2377':'Token Type','2378':'Block Number','2379':'Exchanges Liquidity','2380':'Buy/Sell Token','2381':'Tokens Total Supply','2382':'The Market Capitalization of the token in its respective denominations.','2383':'Token Market Cap','2384':'Depth-Mint Tokens','2385':'Mint your token from outside its exchange.','2386':'Depth-Mint','2387':'Y-Aggregate','2388':'Chart containing the y-aggregate of ','2389':' over time.','2390':'Y-Axis: Y-aggregate','2391':'X-Axis: Time','2392':'Total Transactions','2393':'Chart containing the total number of buy/sell transactions over time.','2394':'Y-Axis: Total Transactions','2395':'Total Transactions','2396':'Exchange Liquidity','2397':'Chart containing the total supply of ','2398':' in the exchange over time.','2399':'Y-Axis: Exchange Liquidity','2400':'Action','2401':'Amount Swapped','2402':'Updted Token Exchange Liquidity','2403':'Updated Exchange Ratio X','2404':'Updated Exchange Ratio Y','2405':'Updated Exchange Ratios X:Y','2406':'Set an accounts access rights, moderator privelages or block an account','2407':'In Exchange ','2408':'Updated Exchange Ratio Events','2409':'Buy','2410':'Sell','2411':'Swapping Account ID','2412':'Your Transfer Events','2413':'Action: ','2414':'Exchange Modification Events','2415':'Modifier','2416':'Targeted Modify Item','2417':'target ID','2418':'Exchange Transfer Events','2419':'To: ','2420':'From: ','2421':'Action: ','2422':'New Balance ','2423':'Action: Freeze','2424':'Action: Unfreeze','2425':'Amount, depth: ','2426':'Exchange Modify Moderator Events','2427':'Not Moderator','2428':'Moderator','2429':'Targeted Account','2430':'Moderator Account','2431':'Authority value','2432':'Exchange Access Rights Settings Events','2433':'Access Rights Disabled(Public)','2434':'Access Rights Enabled(Private)','2435':'Access Rights Status','2436':'Moderator Account','2437':'Exchange  Account Access Settings Events','2438':'Targeted Account','2439':'Moderator Account','2440':'In Exchange ','2441':'Exchange  Blocked Account Events','2442':'Targeted Account','2443':'Moderator Account','2444':'Exchange  Depth-Mint Events','2445':'Targeted Receiver','2446':'Moderator Sender','2447':'Amount, depth: ', '2447a':'Your Wallets Dominance', '2447b':'Stage Royalties.', '2447c':'Stage payouts to the token-holders.', '2447d':'royalty-stagings','2447e':'Exchange Royalty Payment Stagings.','2447f':'Scheduled for: ','2447g':'','2447h':'','2447i':'',
         
         /* ethers details section */
         '2448':'transactions','2449':'Reload wallet.','2450':'Your Balance in Wei','2451':'Your Balance in Ether','2452':'Transactions (2.3M Gas average)','2453':'Gas Price in Wei','2454':'Gas Price in Gwei','2455':'E5 txs/ether (2.3M Gas average)','2456':'Gas txs/ether (23K Gas average)','2457':'Send/Receive Ether','2458':'Send or receive ether from a specified account.','2459':'Send/Receive','2460':'Node Settings','2461':'Change the remote procedure call (RPC) provider setting for making your transactions.','2462':'Open','2463':'Wallet Status','2464':'Syncronizing wallet, please wait...','2465':'Wallet sync failed. Please reload the wallet.','2466':'Wallet Status','2467':'Syncronized.','2468':'Chain ID','2469':'Gas Limit per Block','2470':'Base Fee in wei','2471':'Base Fee in gwei','2472':'Your Address','2473':'Average block time for the last 5 blocks','2474':'Wallet Address','2475':'copied address to clipboard','2476':' seconds','2477':'Gas Used','2478':'Gas Price Paid in Wei','2479':'Gas Price Paid in Gwei','2480':'Value','2481':'Number of Blocks Mined',
@@ -1109,7 +1110,9 @@ class App extends Component {
         
         '2844':'Acitve E5 Info.','2845':'Telemetries for your selected E5',
         
-        '2846':'stageroyalty','2847':'stage','2848':'royalty','2849':'payouts','2850':'staged-transactions','2851':'Stage a royalty payout to your tokens stakeholders.','2852':'Set the date and time that the payout will begin.','2852b':'Schedule Date and Time.','2853':'Starting time.','2854':'You cant schedule a time before now.','2855':'Payout Account.','2856':'Set the account that will handle the payout transactions.','2857':'ascending','2858':'descending','2859':'random','2860':'Total Payout Amount.','2861':'The total number of tokens being issued out as payouts.','2862':'Payout Description.','2863':'Set a short title for your payout staging.','2864':'Transactions Per Batch.','2865':'Set the total number of transactions per payout batch.','2866':'Balance Snapshot Time.','2867':'transactions','2868':'Total Payout Transactions.','2869':'all','2870':'batches','2871':'Alias Unknown.','2872':' transactions.','2873':'Batch: ','2874':'','2875':'','2876':'','2877':'','2878':'','2879':'','2880':'','2881':'','2882':'','2883':'','2884':'','2885':'','2886':'','2887':'','2888':'','2889':'','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2846':'stage-royalty','2847':'stage','2848':'royalty','2849':'payouts','2850':'staged-transactions','2851':'Stage a royalty payout to your tokens stakeholders.','2852':'Set the date and time that the payout will begin.','2852b':'Schedule Date and Time.','2853':'Starting time.','2854':'You cant schedule a time before now.','2855':'Payout Account.','2856':'Set the account that will handle the payout transactions.','2857':'ascending','2858':'descending','2859':'random','2860':'Total Payout Amount.','2861':'The aggregate of the total number of tokens being issued out as payouts.','2862':'Payout Description.','2863':'Set a short title for your payout staging.','2864':'Transactions Per Batch.','2865':'Set the total number of transactions per payout batch.','2866':'Balance Snapshot Time.','2867':'transactions','2868':'Total Payout Transactions.','2869':'all','2870':'batches','2871':'Alias Unknown.','2872':' transactions.','2873':'Batch: ','2874':'transactions per batch','2875':'You need to set a title for your payout staging.','2876':'That payout amount is invalid.','2877':'That payout date is invalid.','2878':'That payout account is invalid.','2879':'That batch size is invalid.','2880':'Starting On: ','2881':'Total Batches.','2882':'batches','2883':'You cant stage no transactions.',
+        
+        '2884':'royalty-payouts','2885':'stage-details','2886':'completed','2887':'The details for the royalty payout are listed below.','2888':'The royalty payout batches are listed below. Tap a batch to stage it and tap a staged batch to remove.','2889':'You cant stack royalty payouts in the same exchange twice.','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','2916':'','2917':'','2918':'','2919':'','2920':'','2921':'','2922':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1187,6 +1190,7 @@ class App extends Component {
     this.successful_send_page = React.createRef();
     this.view_number_page = React.createRef();
     this.stage_royalties_page = React.createRef();
+    this.view_staged_royalties_page = React.createRef();
 
     this.focused_page = this.getLocale()['1196']/* 'jobs' */
     this.has_gotten_contracts = false;
@@ -2098,7 +2102,7 @@ class App extends Component {
           {this.render_edit_proposal_object_bottomsheet()}
           {this.render_successful_send_bottomsheet()}
           {this.render_stage_royalties_bottomsheet()}
-
+          {this.render_view_staged_royalties_bottomsheet()}
 
 
 
@@ -2149,8 +2153,12 @@ class App extends Component {
 
       get_contract_event_data={this.get_contract_event_data.bind(this)} get_proposal_event_data={this.get_proposal_event_data.bind(this)} get_subscription_event_data={this.get_subscription_event_data.bind(this)} get_exchange_event_data={this.get_exchange_event_data.bind(this)} get_moderator_event_data={this.get_moderator_event_data.bind(this)} get_accounts_payment_information={this.get_accounts_payment_information.bind(this)} show_depthmint_bottomsheet={this.show_depthmint_bottomsheet.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} get_channel_event_data={this.get_channel_event_data.bind(this)}
 
-      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} load_data_from_page_in_focus={this.load_data_from_page_in_focus.bind(this)}
+      when_select_deselect_work_tag={this.when_select_deselect_work_tag.bind(this)} when_select_deselect_explore_tag={this.when_select_deselect_explore_tag.bind(this)} get_searched_account_data={this.get_searched_account_data.bind(this)} when_searched_account_clicked={this.when_searched_account_clicked.bind(this)} enable_tabs={this.enable_tabs.bind(this)} show_rpc_settings_bottomsheet={this.show_rpc_settings_bottomsheet.bind(this)} get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} load_data_from_page_in_focus={this.load_data_from_page_in_focus.bind(this)}
+      
       show_stage_royalties_bottomsheet={this.show_stage_royalties_bottomsheet.bind(this)}
+      load_exchanges_royalty_event_data={this.load_exchanges_royalty_event_data.bind(this)}
+      show_view_staged_royalties_bottomsheet={this.show_view_staged_royalties_bottomsheet.bind(this)}
+      load_exchanges_royalty_payout_event_data={this.load_exchanges_royalty_payout_event_data.bind(this)}
       />
     )
   }
@@ -5396,7 +5404,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_view_transaction_bottomsheet.bind(this)} open={this.state.view_transaction_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+          <div style={{ height: this.state.height-90, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             <ViewTransactionPage ref={this.view_transaction_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} show_images={this.show_images.bind(this)} open_edit_object_uis={this.open_edit_object_uis.bind(this)} delete_transaction={this.delete_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} delete_message_item={this.delete_message_item.bind(this)} when_edit_bag_item_tapped={this.when_edit_bag_item_tapped.bind(this)} delete_bag_item={this.delete_bag_item.bind(this)} delete_collected_signature={this.delete_collected_signature.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
@@ -5823,10 +5831,26 @@ class App extends Component {
           if(me.depthmint_page.current){
           me.depthmint_page.current?.setState(tx)
         }
-        }, (1 * 500));
-        
+        }, (1 * 500));  
     }
-        
+    else if(tx.type == this.getLocale()['2846']/* stage-royalty */){
+        this.open_stage_royalties_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.stage_royalties_page.current){
+            me.stage_royalties_page.current?.setState(tx)
+          }
+        }, (1 * 500));  
+    }
+    else if(tx.type == this.getLocale()['2884']/* 'royalty-payouts' */){
+        this.open_view_staged_royalties_bottomsheet()
+        var me = this;
+        setTimeout(function() {
+          if(me.view_staged_royalties_page.current){
+            me.view_staged_royalties_page.current?.setState(tx)
+          }
+        }, (1 * 500));  
+    }       
   }
 
   delete_message_item(item, transaction_item){
@@ -7027,7 +7051,7 @@ class App extends Component {
     var size = this.getScreenSize();
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_stage_royalties_bottomsheet.bind(this)} open={this.state.stage_royalties_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
             <StageRoyaltiesPage ref={this.stage_royalties_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_stage_royalties_to_stack={this.add_stage_royalties_to_stack.bind(this)}/>
           </div>
       </SwipeableBottomSheet>
@@ -7074,6 +7098,84 @@ class App extends Component {
   }
 
   add_stage_royalties_to_stack(state_obj){
+    var stack_clone = this.state.stack_items.slice()      
+    var edit_id = -1
+    for(var i=0; i<stack_clone.length; i++){
+      if(stack_clone[i].id == state_obj.id){
+        edit_id = i
+      }
+    }
+    if(edit_id != -1){
+      stack_clone[edit_id] = state_obj
+    }else{
+      stack_clone.push(state_obj)
+    }
+    this.setState({stack_items: stack_clone})
+    this.set_cookies_after_stack_action(stack_clone)
+  }
+
+
+
+
+
+
+
+
+
+
+
+  render_view_staged_royalties_bottomsheet(){
+    if(this.state.view_staged_royalties_bottomsheet2 != true) return;
+    var background_color = this.state.theme['send_receive_ether_background_color'];
+    var size = this.getScreenSize();
+    return(
+      <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_staged_royalties_bottomsheet.bind(this)} open={this.state.view_staged_royalties_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
+          <div style={{ height: this.state.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <ViewStagedRoyaltyPage ref={this.view_staged_royalties_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} add_royalty_batch_payment_to_stack={this.add_royalty_batch_payment_to_stack.bind(this)}/>
+          </div>
+      </SwipeableBottomSheet>
+    )
+  }
+
+  open_view_staged_royalties_bottomsheet(){
+    if(this.state.view_staged_royalties_bottomsheet == true){
+      //closing
+      this.view_staged_royalties_bottomsheet = this.view_staged_royalties_page.current?.state;
+
+      this.setState({view_staged_royalties_bottomsheet: !this.state.view_staged_royalties_bottomsheet});
+      var me = this;
+      setTimeout(function() {
+        me.setState({view_staged_royalties_bottomsheet2: false});
+      }, (1 * 1000));
+    }else{
+      //opening
+      this.setState({view_staged_royalties_bottomsheet2: true});
+      var me = this;
+      setTimeout(function() {
+        if(me.state != null){
+          me.setState({view_staged_royalties_bottomsheet: !me.state.view_staged_royalties_bottomsheet});
+
+          if(me.view_staged_royalties_bottomsheet != null){
+            me.view_staged_royalties_page.current?.setState(me.view_staged_royalties_bottomsheet)
+          }
+        }
+      }, (1 * 200));
+    }
+  }
+
+  show_view_staged_royalties_bottomsheet(staging_data, token_item){
+    this.open_view_staged_royalties_bottomsheet()
+    var me = this;
+    setTimeout(function() {
+      if(me.view_staged_royalties_page.current != null){
+        me.view_staged_royalties_page.current.set_data(staging_data, token_item)
+      }
+    }, (1 * 500));
+    
+
+  }
+
+  add_royalty_batch_payment_to_stack(state_obj){
     var stack_clone = this.state.stack_items.slice()      
     var edit_id = -1
     for(var i=0; i<stack_clone.length; i++){
@@ -12276,7 +12378,7 @@ class App extends Component {
     const H52_address = this.state.addresses[e5][6];
     const H52contractInstance = new web3.eth.Contract(H52contractArtifact.abi, H52_address);
 
-    var created_awward_data = await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})
+    var created_awward_data = (await this.load_event_data(web3, H52contractInstance, 'e5', e5, {p3/* awward_context */: id})).reverse()
 
     var award_events = []
     var is_first_time = this.state.award_data[id] == null ? true: false
@@ -12835,7 +12937,6 @@ class App extends Component {
 
 
   load_exchanges_royalty_information = async (token_item) => {
-    console.log('hella','load_exchanges_royalty_information')
     var e5 = token_item['e5'];
     var exchange_id = token_item['id']
     if(!this.should_load_exchange_royalty_data(exchange_id)){
@@ -12861,11 +12962,8 @@ class App extends Component {
       }
     });
 
-    console.log('interacted accounts', interacted_accounts)
-
     var returned_balances = await H52contractInstance.methods.f270([exchange_id], [interacted_accounts], [0], 1, 0).call((error, result) => {});
     var balances = returned_balances[0]
-    console.log('hella', 'boo2', balances)
     var now = (new Date().getTime()/1000)
 
     var account_balances = []
@@ -12879,7 +12977,6 @@ class App extends Component {
     let sorted_account_balances = this.sortByAttributeDescending(account_balances, 'balance').reverse()
     var data = {'balance_data':sorted_account_balances, 'time':now}
 
-    console.log('hella', 'hella', data)
     var clone = structuredClone(this.state.exchange_royalty_data)
     clone[exchange_id] = data
     this.setState({exchange_royalty_data: clone})
@@ -12896,6 +12993,61 @@ class App extends Component {
       }
     }
     return should
+  }
+
+  load_exchanges_royalty_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_exchange_royalty_events = (await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 12/* 12(stage_royalty_id) */, p3/* context */: id})).reverse()
+
+    var royalty_events = []
+    var is_first_time = this.state.token_royalty_data_staging_data[id] == null ? true: false
+    for(var j=0; j<created_exchange_royalty_events.length; j++){
+      var ipfs_object = await this.fetch_objects_data_from_ipfs_using_option(created_exchange_royalty_events[j].returnValues.p4)
+      if(ipfs_object != null){
+        royalty_events.push(ipfs_object)
+      }
+      if(is_first_time){
+        var clone = JSON.parse(JSON.stringify(this.state.token_royalty_data_staging_data))
+        clone[id] = royalty_events
+        this.setState({token_royalty_data_staging_data: clone})
+      }
+    }
+
+    var clone = JSON.parse(JSON.stringify(this.state.token_royalty_data_staging_data))
+    clone[id] = royalty_events
+    this.setState({token_royalty_data_staging_data: clone})
+  }
+
+  load_exchanges_royalty_payout_event_data = async (id, e5) => {
+    const web3 = new Web3(this.get_web3_url_from_e5(e5));
+    const E52contractArtifact = require('./contract_abis/E52.json');
+    const E52_address = this.state.addresses[e5][1];
+    const E52contractInstance = new web3.eth.Contract(E52contractArtifact.abi, E52_address);
+
+    var created_exchange_royalty_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: 13/* 13(record_royalty_payout_id) */, p3/* context */: id})
+
+    var royalty_payout_events = []
+    var is_first_time = this.state.token_royalty_payout_data[id] == null ? true: false
+    for(var j=0; j<created_exchange_royalty_events.length; j++){
+      var ipfs_object = await this.fetch_objects_data_from_ipfs_using_option(created_exchange_royalty_events[j].returnValues.p4)
+      if(ipfs_object != null){
+        royalty_payout_events.push(ipfs_object)
+      }
+
+      if(is_first_time){
+        var clone = JSON.parse(JSON.stringify(this.state.token_royalty_payout_data))
+        clone[id] = royalty_payout_events
+        this.setState({token_royalty_payout_data: clone})
+      }
+    }
+
+    var clone = JSON.parse(JSON.stringify(this.state.token_royalty_payout_data))
+    clone[id] = royalty_payout_events
+    this.setState({token_royalty_payout_data: clone})
   }
 
 

@@ -1051,7 +1051,6 @@ class StackPage extends Component {
         var items = [].concat(this.props.app_state.stack_items)
 
         if(items.length == 0){
-            items = [0,3,0]
             return(
                 <div style={{}}>
                     {this.render_empty_views(3)}
@@ -1381,6 +1380,9 @@ class StackPage extends Component {
         return data
     }
 
+
+
+
     render_simplified_stack_history(){
         var runs = this.props.app_state.E5_runs[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.E5_runs[this.props.app_state.selected_e5]
         var items = [].concat(this.remove_duplicates(runs))
@@ -1651,7 +1653,6 @@ class StackPage extends Component {
             this.props.show_confirm_run_bottomsheet(run_data)
         }
     }
-
 
     fetch_gas_figures(){
         this.props.notify(this.props.app_state.loc['1494']/* 'calculating your stacks gas figure...' */, 2200)
@@ -2418,6 +2419,26 @@ class StackPage extends Component {
                     strs.push([])
                     adds.push([])
                     ints.push(depthmint_obj)
+                }
+                else if(txs[i].type == this.props.app_state.loc['2846']/* stage-royalty */){
+                    var stage_royalty_obj = await this.format_stage_royalty_object(txs[i], calculate_gas)
+                    
+                    strs.push(stage_royalty_obj.str)
+                    adds.push([])
+                    ints.push(stage_royalty_obj.int)
+                }
+                else if(txs[i].type == this.props.app_state.loc['2884']/* 'royalty-payouts' */){
+                    var royalty_payout_obj = await this.format_make_royalty_payout_object(txs[i], calculate_gas)
+
+                    //the transfers
+                    strs.push([])
+                    adds.push([])
+                    ints.push(royalty_payout_obj.transfers_obj)
+
+                    //the record of the transafers
+                    strs.push(royalty_payout_obj.str)
+                    adds.push([])
+                    ints.push(royalty_payout_obj.transfers_record)
                 }
                 
                 delete_pos_array.push(i)
@@ -4588,6 +4609,101 @@ class StackPage extends Component {
         }
 
         return obj
+    }
+
+    format_stage_royalty_object = async(t, calculate_gas) => {
+        var obj = [ /* add data */
+            [20000, 13, 0],
+            [12], [23],/* 12(stage_royalty_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+        var string_obj = [[]]
+
+        var context = t.token_item['id']
+        var int_data = Date.now()
+
+        var string_data = await this.get_object_ipfs_index(t.payout_data, calculate_gas);
+
+        obj[3].push(context)
+        obj[4].push(int_data)
+
+        string_obj[0].push(string_data)
+
+        return {int: obj, str: string_obj}
+    }
+
+    format_make_royalty_payout_object= async (t, calculate_gas) => {
+        var transfers_obj = [/* send tokens to another account */
+            [30000, 1, 0],
+            [], [],/* exchanges */
+            [], [],/* receivers */
+            [],/* amounts */
+            []/* depths */
+        ]
+
+        var transfers_record = [ /* add data */
+            [20000, 13, 0],
+            [13], [23],/* 13(record_royalty_payout_id) */
+            [], /* contexts */
+            [] /* int_data */
+        ]
+
+        var batches = t.selected_batches
+        var payout_amount = t.staging_data['payout_amount']
+        var total_held_shares = t.staging_data['total_held_shares']
+        var transacted_batches = []
+        batches.forEach(batch => {
+            transacted_batches.push(batch['id'])
+            batch['data'].forEach(transaction => {
+                var transaction_receiver = transaction['account']
+                var transaction_payout_info = this.get_transaction_payout_info(transaction, t.token_item, payout_amount, total_held_shares)
+
+                transaction_payout_info.forEach(item => {
+                    transfers_obj[1].push(item['token_id'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                    transfers_obj[2].push(23)
+                    transfers_obj[3].push(transaction_receiver)
+                    transfers_obj[4].push(23)
+                    transfers_obj[5].push(item['amount'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                    transfers_obj[6].push(item['depth'].toString().toLocaleString('fullwide', {useGrouping:false}))
+                });
+            });
+        });
+
+
+        var context = t.token_item['id']
+        var int_data = t.staging_data['payout_id']
+
+        var string_obj = [[]]
+        var payout_record_info = {'payout_id':t.staging_data['payout_id'], 'id':Date.now(), 'transacted_batches':transacted_batches}
+
+        var string_data = await this.get_object_ipfs_index(payout_record_info, calculate_gas);
+        string_obj[0].push(string_data)
+
+        transfers_record[3].push(context)
+        transfers_record[4].push(int_data)
+
+        return {transfers_obj: transfers_obj, str: string_obj, transfers_record: transfers_record}
+    }
+
+    get_transaction_payout_info(transaction, token_exchange, payout_amount,total_held_shares){
+        var receivers_recorded_balance = transaction['balance']
+        var buy_tokens = [].concat(token_exchange['data'][3])
+        var buy_amounts = [].concat(token_exchange['data'][4])
+        var buy_amounts_depths = [].concat(token_exchange['data'][5])
+        var transfers = []
+        for(var i=0; i<buy_tokens.length; i++){
+            var token_id = buy_tokens[i]
+            var amount = this.calculate_payout_amount_for_individual_shareholder(buy_amounts[i],total_held_shares, receivers_recorded_balance, payout_amount)
+            var depth = buy_amounts_depths[i]
+            transfers.push({'token_id':token_id, 'amount':amount, 'depth':depth})
+        }
+        return transfers
+    }
+
+    calculate_payout_amount_for_individual_shareholder(price, total_shares, shareholder_amount, payout_amount){
+        var total_amount_of_token_being_distributed =  bigInt(price).multiply(payout_amount);
+        return bigInt(total_amount_of_token_being_distributed).multiply(bigInt(shareholder_amount)).divide(total_shares)
     }
 
     optimize_run_if_enabled(ints, strs, adds, should_optimize_run){

@@ -51,6 +51,8 @@ class EndDetailSection extends Component {
             if(object == null) return;
             this.props.get_exchange_event_data(object['id'], object['e5'])
             this.props.get_moderator_event_data(object['id'], object['e5'])
+            this.props.load_exchanges_royalty_event_data(object['id'], object['e5'])
+            this.props.load_exchanges_royalty_payout_event_data(object['id'], object['e5'])
         }
     }
 
@@ -61,7 +63,7 @@ class EndDetailSection extends Component {
               active:'e', 
           },
           'e':[
-              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */],[1]
+              ['xor','',0], ['e',this.props.app_state.loc['2118']/* 'details' */,'e.'+this.props.app_state.loc['2119']/* 'e.events' */, 'e.'+this.props.app_state.loc['2120']/* 'e.moderator-events' */, this.props.app_state.loc['2447d']/* 'royalty-stagings' */],[1]
           ],
             'events': [
                 ['xor', 'e', 1], [this.props.app_state.loc['2119']/* 'events' */, this.props.app_state.loc['2337']/* 'transfers' */, this.props.app_state.loc['2338']/* 'exchange-transfers' */, this.props.app_state.loc['2339']/* 'updated-balances' */, this.props.app_state.loc['2340']/* 'updated-exchange-ratios' */, this.props.app_state.loc['2341']/* 'modify-exchange' */ ,this.props.app_state.loc['2342']/* 'freeze-unfreeze' */, this.props.app_state.loc['2343']/* 'depth-mints' */], [1], [1]
@@ -222,6 +224,13 @@ class EndDetailSection extends Component {
             return(
                 <div>
                     {this.render_depth_mint_logs(selected_object)}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['2447d']/* 'royalty-stagings' */){
+            return(
+                <div>
+                    {this.render_royalty_payment_staging_information(selected_object)}
                 </div>
             )
         }
@@ -1317,6 +1326,91 @@ class EndDetailSection extends Component {
 
 
 
+    render_royalty_payment_staging_information(object){
+        var he = this.props.height - 45
+        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
+        return (
+            <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
+                <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
+                    <div style={{ padding: '5px 5px 5px 5px' }}>
+                        {this.render_detail_item('3', { 'title': this.props.app_state.loc['2407']/* 'In Exchange '  */+ object['id'], 'details': this.props.app_state.loc['2447e']/* 'Exchange Royalty Payment Stagings.' */, 'size': 'l' })}
+                    </div>
+                    
+                    <div style={{ height: '1px', 'background-color': '#C1C1C1', 'margin': '10px 20px 10px 20px' }} />
+                    {this.render_royalty_staging_item_logs(object)}
+                </div>
+            </div>
+        )
+    }
+
+
+    render_royalty_staging_item_logs(object){
+        var middle = this.props.height - 120;
+        var items = [].concat(this.get_royalty_payout_logs(object))
+        if (items.length == 0) {
+            items = [0, 1]
+            return (
+                <div>
+                    <div style={{ overflow: 'auto', maxHeight: middle }}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                            {items.map((item, index) => (
+                                <li style={{ 'padding': '2px 5px 2px 5px' }} onClick={() => console.log()}>
+                                    <div style={{ height: 60, width: '100%', 'background-color': this.props.theme['card_background_color'], 'border-radius': '15px', 'padding': '10px 0px 10px 10px',  'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }}>
+                                        <div style={{ 'margin': '10px 20px 10px 0px' }}>
+                                            <img src={this.props.app_state.static_assets['letter']} style={{ height: 30, width: 'auto' }} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div style={{  }}>
+                    <ul style={{ 'padding': '0px 0px 0px 0px' }}>
+                        {items.map((item, index) => (
+                            <li style={{ 'padding': '2px 5px 2px 5px' }}>
+                                <div key={index}>
+                                    {this.render_royalty_staging_event_item(item, object)}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    get_royalty_payout_logs(object) {
+        if (this.props.app_state.token_royalty_data_staging_data[object['id']] == null) {
+            return []
+        }
+        return this.props.app_state.token_royalty_data_staging_data[object['id']]
+    }
+
+
+    render_royalty_staging_event_item(item, object){
+        var title = item['payout_title']
+        var date_time = (this.props.app_state.loc['2447f']/* Scheduled for:  */+(new Date(item['payout_start_timestamp']*1000)))
+        return(
+            <div onClick={() => this.props.view_royalty_staging(item, object)}>
+                {this.render_detail_item('3', {'size':'l', 'details':date_time, 'title':title})}
+            </div>
+        )
+    }
+    
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1472,7 +1566,6 @@ class EndDetailSection extends Component {
     //ctrl-c, ctrl-v
     render_transfer_logs(object){
         var he = this.props.height - 45
-        // var object = this.get_exchange_tokens(3)[this.props.selected_end_item]
         return (
             <div style={{ 'background-color': 'transparent', 'border-radius': '15px', 'margin': '0px 0px 0px 0px', 'padding': '0px 0px 0px 0px',  }}>
                 <div style={{ 'overflow-y': 'auto', height: he, padding: '5px 0px 5px 0px' }}>
