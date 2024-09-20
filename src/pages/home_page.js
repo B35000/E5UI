@@ -4,9 +4,11 @@ import EndImg from './../assets/end_token_icon.png';
 import SpendImg from './../assets/spend_token_icon.png';
 
 import SwipeableBottomSheet from './../externals/SwipeableBottomSheet';
+import { Sheet } from 'react-modal-sheet';
+import './../main.css'
+
 import Dialog from "@mui/material/Dialog";
 import ViewGroups from './../components/view_groups'
-import { motion } from "framer-motion"
 import SwipeableViews from 'react-swipeable-views';
 
 import Tags from './../components/tags';
@@ -16,9 +18,12 @@ import FilterSection from './filter_section';
 import PostPreview from './post_preview_page';
 import NsfwPage from './nsfw_warning_page'
 
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import CanvasJSReact from './../externals/canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
 
 var bigInt = require("big-integer");
 const Web3 = require('web3');
@@ -30,7 +35,29 @@ function number_with_commas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function getOS() {
+    return 'iOS'
+    const userAgent = window.navigator.userAgent,
+        platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
+        macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+        iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+    let os = null;
 
+    if (macosPlatforms.indexOf(platform) !== -1) {
+        os = 'Mac OS';
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+        os = 'iOS';
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        os = 'Windows';
+    } else if (/Android/.test(userAgent)) {
+        os = 'Android';
+    } else if (/Linux/.test(platform)) {
+        os = 'Linux';
+    }
+
+    return os;
+}
 
 
 class home_page extends Component {
@@ -41,6 +68,7 @@ class home_page extends Component {
         explore_page_tags_object:this.get_main_page_tag_object('e'), 
         wallet_page_tags_object:this.get_main_page_tag_object('w'),
         selected_ether_item: null, selected_end_item: null, selected_spend_item: null, selected_e5_item: null, selected_proposal_item: null, selected_mail_item: null, selected_storefront_item: null, selected_bag_item: null,
+        
         view_post_bottomsheet: false, selected_contractor_item:null, filter_section_bottomsheet:false, post_preview_bottomsheet:false, post_nsfw_bottomsheet: false,
 
         viewed_posts:[],viewed_channels:[],viewed_jobs:[], viewed_contracts:[], viewed_subscriptions:[], viewed_proposals:[],viewed_stores:[], viewed_bags:[], viewed_contractors:[], confirmation_dialog_box: false, contact_to_add:0, 
@@ -536,15 +564,29 @@ class home_page extends Component {
         if(this.state.view_post_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var overlay_background = this.props.theme['send_receive_ether_overlay_background'];
-        var overlay_shadow_color = this.props.theme['send_receive_ether_overlay_shadow'];
         var size = this.props.screensize;
-
+        var os = getOS()
+        if(os == 'iOS'){
+            return(
+                <Sheet isOpen={this.state.view_post_bottomsheet} onClose={this.open_view_object_bottomsheet.bind(this)} detent="content-height" disableDrag={true} >
+                    <Sheet.Container>
+                        <Sheet.Content>
+                            <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '0px 0px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
+                                {this.render_post_detail_object(size, this.props.height-30, this.props.width)}
+                            </div>
+                        </Sheet.Content>
+                        <ToastContainer limit={3} containerId="id2"/>
+                    </Sheet.Container>
+                    <Sheet.Backdrop onTap={()=> this.open_view_object_bottomsheet()}/>
+                </Sheet>
+            )
+        }
         return(
-        <SwipeableBottomSheet fullScreen={true}  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px', 'margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
-            <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
-                {this.render_post_detail_object(size, this.props.height, this.props.width)}
-            </div>
-        </SwipeableBottomSheet>
+            <SwipeableBottomSheet fullScreen={true}  overflowHeight={0} marginTop={0} onChange={this.open_view_object_bottomsheet.bind(this)} open={this.state.view_post_bottomsheet} style={{'z-index':'5',}} bodyStyle={{'background-color': 'transparent', 'margin':'0px -11px 0px 0px', 'padding':'0px 0px 0px 0px'}} overlayStyle={{'background-color': overlay_background}}>
+                <div style={{ height: this.props.height-1, 'background-color':background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '5px 5px 0px 0px','margin': '0px 0px 0px 0px', 'padding':'0px 0px 0px 0px' }}>
+                    {this.render_post_detail_object(size, this.props.height, this.props.width)}
+                </div>
+            </SwipeableBottomSheet>
         )
 
     }
@@ -868,9 +910,31 @@ class home_page extends Component {
         if(this.state.filter_section_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var size = this.props.size
+        var os = getOS()
+        if(os == 'iOS'){
+            return(
+                <Sheet isOpen={this.state.filter_section_bottomsheet} onClose={this.open_filter_section_bottomsheet.bind(this)} detent="content-height" disableScrollLocking={true}>
+                    <Sheet.Container>
+                        {/* <Sheet.Header>
+                            <div style={{'height':20, 'background-color':background_color,  'display': 'block', 'margin-left': 'auto', 'border-radius': '8px 8px 0px 0px', 'margin-right': 'auto', 'padding':'11px 0px 0px '+((this.props.width / 2) - 50)+'px'}} onClick={()=> this.open_filter_section_bottomsheet()}>
+                                <div style={{height:5, width: 100, 'background-color':this.props.theme['bar_color'], 'border-radius': '2px', 'margin':'0px 0px 0px 0px'}}/>
+                            </div>
+                        </Sheet.Header> */}
+                        <Sheet.Content>
+                            <div style={{ height: 390, 'background-color': background_color, 'border-style': 'solid', 'border-color': 'transparent', 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                                <FilterSection ref={this.filter_section_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)} when_add_tags_button_tapped={this.when_add_tags_button_tapped.bind(this)} reset_scroll_height={this.reset_scroll_height.bind(this)}/>
+                            </div>
+                        </Sheet.Content>
+                        <ToastContainer limit={3} containerId="id2"/>
+                    </Sheet.Container>
+                    <Sheet.Backdrop onTap={()=> this.open_filter_section_bottomsheet()}/>
+                </Sheet>
+            )
+        }
+
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_filter_section_bottomsheet.bind(this)} open={this.state.filter_section_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
-            <div style={{ height: 400, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>  
+            <div style={{ height: 390, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
                 <FilterSection ref={this.filter_section_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)} when_add_tags_button_tapped={this.when_add_tags_button_tapped.bind(this)} reset_scroll_height={this.reset_scroll_height.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
@@ -962,6 +1026,27 @@ class home_page extends Component {
         if(this.state.post_preview_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var size = this.props.size
+        var os = getOS()
+        if(os == 'iOS'){
+            return(
+                <Sheet isOpen={this.state.post_preview_bottomsheet} onClose={this.open_post_preview_bottomsheet.bind(this)} detent="content-height">
+                    <Sheet.Container>
+                        {/* <Sheet.Header>
+                            <div style={{'height':20, 'background-color':background_color,  'display': 'block', 'margin-left': 'auto', 'border-radius': '8px 8px 0px 0px', 'margin-right': 'auto', 'padding':'11px 0px 0px '+((this.props.width / 2) - 50)+'px'}} onClick={()=> this.open_post_preview_bottomsheet()}>
+                                <div style={{height:5, width: 100, 'background-color':this.props.theme['bar_color'], 'border-radius': '2px', 'margin':'0px 0px 0px 0px'}}/>
+                            </div>
+                        </Sheet.Header> */}
+                        <Sheet.Content>
+                            <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                                <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)}/>
+                            </div>
+                        </Sheet.Content>
+                        <ToastContainer limit={3} containerId="id2"/>
+                    </Sheet.Container>
+                    <Sheet.Backdrop onTap={()=> this.open_post_preview_bottomsheet()}/>
+                </Sheet>
+            )
+        }
         return(
         <SwipeableBottomSheet  overflowHeight={0} marginTop={0} onChange={this.open_post_preview_bottomsheet.bind(this)} open={this.state.post_preview_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
             <div style={{ height: this.props.height-60, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
@@ -1021,9 +1106,30 @@ class home_page extends Component {
         if(this.state.post_nsfw_bottomsheet2 != true) return;
         var background_color = this.props.theme['send_receive_ether_background_color'];
         var size = this.props.size
+        var os = getOS()
+        if(os == 'iOS'){
+             return(
+                <Sheet isOpen={this.state.post_nsfw_bottomsheet} onClose={this.open_post_nsfw_bottomsheet.bind(this)} detent="content-height">
+                    <Sheet.Container>
+                        {/* <Sheet.Header>
+                            <div style={{'height':20, 'background-color':background_color,  'display': 'block', 'margin-left': 'auto', 'border-radius': '8px 8px 0px 0px', 'margin-right': 'auto', 'padding':'11px 0px 0px '+((this.props.width / 2) - 50)+'px'}} onClick={()=> this.open_post_nsfw_bottomsheet()}>
+                                <div style={{height:5, width: 100, 'background-color':this.props.theme['bar_color'], 'border-radius': '2px', 'margin':'0px 0px 0px 0px'}}/>
+                            </div>
+                        </Sheet.Header> */}
+                        <Sheet.Content>
+                            <div style={{ height: 370, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                                <NsfwPage ref={this.post_nsfw_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_warning_ignored={this.when_warning_ignored.bind(this)}/>
+                            </div>
+                        </Sheet.Content>
+                        <ToastContainer limit={3} containerId="id2"/>
+                    </Sheet.Container>
+                    <Sheet.Backdrop onTap={()=> this.open_post_nsfw_bottomsheet()}/>
+                </Sheet>
+            )
+        }
         return(
         <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_post_nsfw_bottomsheet.bind(this)} open={this.state.post_nsfw_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.props.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.props.theme['send_receive_ether_overlay_shadow']}}>
-            <div style={{ height: 430, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <div style={{ height: 370, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.props.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
                 <NsfwPage ref={this.post_nsfw_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_warning_ignored={this.when_warning_ignored.bind(this)}/>
             </div>
         </SwipeableBottomSheet>
@@ -2230,7 +2336,7 @@ class home_page extends Component {
 
     render_post_list_group2(size, p, list_section, h){
         return(
-            <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.props.notify.bind(this)}
+            <PostListSection ref={list_section} size={size} height={h} width={this.props.width} page={p} work_page_tags_object={this.state.work_page_tags_object} explore_page_tags_object={this.state.explore_page_tags_object} wallet_page_tags_object={this.state.wallet_page_tags_object} app_state={this.props.app_state} notify={this.render_top_notification.bind(this)}
             when_ether_object_clicked={this.when_ether_object_clicked.bind(this)} when_spends_object_clicked={this.when_spends_object_clicked.bind(this)} when_ends_object_clicked={this.when_ends_object_clicked.bind(this)} when_E5_item_clicked={this.when_E5_item_clicked.bind(this)} when_job_post_item_clicked={this.when_job_post_item_clicked.bind(this)} when_contract_item_clicked={this.when_contract_item_clicked.bind(this)} when_subscription_item_clicked={this.when_subscription_item_clicked.bind(this)} when_post_item_clicked={this.when_post_item_clicked.bind(this)} when_channel_item_clicked={this.when_channel_item_clicked.bind(this)} when_proposal_item_clicked={this.when_proposal_item_clicked.bind(this)} when_mail_item_clicked={this.when_mail_item_clicked.bind(this)} when_storefront_post_item_clicked={this.when_storefront_post_item_clicked.bind(this)} when_bag_post_item_clicked={this.when_bag_post_item_clicked.bind(this)} when_contractor_post_item_clicked={this.when_contractor_post_item_clicked.bind(this)}
 
             theme={this.props.theme} fetch_objects_data={this.props.fetch_objects_data.bind(this)} when_view_image_clicked={this.when_view_image_clicked.bind(this)}
@@ -2622,7 +2728,7 @@ class home_page extends Component {
 
                 selected_ether_item={this.state.selected_ether_item} selected_end_item={this.state.selected_end_item} selected_spend_item={this.state.selected_spend_item} selected_e5_item={this.state.selected_e5_item} selected_job_post_item={this.state.selected_job_post_item} selected_contract_item={this.state.selected_contract_item} selected_subscription_item={this.state.selected_subscription_item} selected_post_item={this.state.selected_post_item} selected_channel_item={this.state.selected_channel_item} selected_proposal_item={this.state.selected_proposal_item} selected_mail_item={this.state.selected_mail_item} selected_storefront_item={this.state.selected_storefront_item} selected_bag_item={this.state.selected_bag_item} selected_contractor_item={this.state.selected_contractor_item}
 
-                height={h} screensize={this.props.screensize} width={width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.props.notify.bind(this)}
+                height={h} screensize={this.props.screensize} width={width} app_state={this.props.app_state} open_send_receive_ether_bottomsheet={this.props.open_send_receive_ether_bottomsheet.bind(this)} theme={this.props.theme} open_wiki_bottomsheet={this.props.open_wiki_bottomsheet.bind(this)} notify={this.render_top_notification.bind(this)}
                 
                 when_view_image_clicked={this.when_view_image_clicked.bind(this)} when_edit_job_tapped={this.when_edit_job_tapped.bind(this)} fetch_objects_data={this.props.fetch_objects_data.bind(this)}
                 
@@ -2653,6 +2759,50 @@ class home_page extends Component {
                 />
             </div>
         )
+    }
+
+    render_top_notification(data, duration){
+        var os = getOS()
+        if(os != 'iOS'){
+            this.props.notify(data, duration)
+        }else{
+            var time = duration == null ? 1000: duration;
+            var id = "id2"
+            toast(this.render_toast_item(data), {
+                position: "top-center",
+                autoClose: time,
+                closeButton: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                transition: Slide,
+                containerId:id,
+                toastId:data,
+                hideProgressBar: true,
+                style:{'background-color':'transparent','box-shadow': '0px 0px 0px 0px #CECDCD', width:'auto'}
+            });
+        }
+    }
+
+    /* renders the toast item used */
+    render_toast_item(message){
+        var width = this.props.app_state.width
+        if(width > 330){
+        width = 330
+        }
+        return (
+            <div>
+                <div style={{'background-color':this.props.theme['toast_background_color'], 'border-radius': '20px', 'box-shadow': '0px 0px 2px 1px '+this.props.theme['card_shadow_color'],'padding': '3px 3px 3px 3px','display': 'flex','flex-direction': 'row', width: width-40}}>
+                    <div style={{'padding': '10px 0px 5px 5px','display': 'flex','align-items': 'center', height:35}}> 
+                        <img src={this.props.theme['alert_icon']} style={{height:25,width:'auto','scale': '0.9'}} />
+                    </div>
+                    <div style={{'padding': '0px 0px 0px 8px', 'margin':'5px 0px 0px 0px','display': 'flex','align-items': 'center'}}>
+                        <p style={{'font-size': '13px', 'color':this.props.theme['primary_text_color'],'text-shadow': '-0px -0px 0px #A1A1A1', 'margin':'0px', 'font-family': this.props.app_state.font}}>{message}</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
 

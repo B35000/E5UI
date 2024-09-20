@@ -721,10 +721,13 @@ class EndDetailSection extends Component {
         var my_account = this.props.app_state.user_account_id[object['e5']]
         var events = this.get_moderator_item_logs(object, 'revoke_privelages')
         var can_stage_royalty_as_author_moderator = false
-        if(events.length == 0 && object['event'].returnValues.p3 == my_account){
-            can_stage_royalty_as_author_moderator = true;
+        if(object['id'] != 3){
+            if(events.length == 0 && object['event'].returnValues.p3 == my_account){
+                can_stage_royalty_as_author_moderator = true;
+            }
         }
-        if(object['id'] != 3 && (object['moderators'].includes(my_account) || can_stage_royalty_as_author_moderator) || true){
+        
+        if(object['id'] != 3 && (object['moderators'].includes(my_account) || can_stage_royalty_as_author_moderator)){
             return(
                 <div>
                     {this.render_detail_item('0')}

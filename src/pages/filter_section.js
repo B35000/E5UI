@@ -41,8 +41,8 @@ class FilterSection extends Component {
     render(){
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
-                <div className="row">
-                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
+                {/* <div className="row">
+                    <div className="col-12" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
@@ -50,7 +50,7 @@ class FilterSection extends Component {
                             <img className="text-end" onClick={()=>this.clear_search()} src={this.props.theme['clear']} style={{height:33, width:'auto'}} />
                         </div>
                     </div>
-                </div>
+                </div> */}
                 
                 {this.render_everything()}
             </div>
@@ -166,7 +166,11 @@ class FilterSection extends Component {
                 </div>
 
                 {this.render_detail_item('1',{'active_tags':this.state.added_tags, 'indexed_option':'indexed', 'when_tapped':'delete_added_tag'})}
-
+                
+                {this.render_detail_item('0')}
+                <div onClick={()=> this.clear_search()}>
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['1125b']/* 'Clear Search Filters.' */,'action':'', 'prevent_default':true})}
+                </div>
             </div>
         )
     }
