@@ -317,7 +317,7 @@ function clone(obj) {
 }
 
 function getOS() {
-  return 'iOS'
+  // return 'iOS'
   const userAgent = window.navigator.userAgent,
       platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
       macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
