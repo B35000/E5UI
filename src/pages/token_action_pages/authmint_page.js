@@ -140,7 +140,7 @@ class AuthMintPage extends Component {
 
                 <div style={{height:10}}/>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={()=>this.add_transaction()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['892']/* 'Add Action' */, 'action':''})}

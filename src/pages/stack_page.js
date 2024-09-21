@@ -60,6 +60,7 @@ class StackPage extends Component {
         get_preferred_font_tags_object: this.get_preferred_font_tags_object(),
         get_skip_nsfw_warning_tags_object: this.get_skip_nsfw_warning_tags_object(),
         get_graph_type_tags_object: this.get_graph_type_tags_object(),
+        get_remember_account_tags_object: this.get_remember_account_tags_object(),
 
         get_wallet_thyme_tags_object:this.get_wallet_thyme_tags_object(),
         gas_history_chart_tags_object:this.get_gas_history_chart_tags_object(),
@@ -658,6 +659,38 @@ class StackPage extends Component {
 
 
 
+    get_remember_account_tags_object(){
+        return{
+           'i':{
+                active:'e', 
+            },
+            'e':[
+                ['or','',0], ['e', this.props.app_state.loc['2892']/* 'remember' */], [this.get_selected_remember_account_type_option()]
+            ], 
+        }
+    }
+
+
+    get_selected_remember_account_type_option(){
+        if(this.props.app_state.remember_account == 'e'){
+            return 0
+        }
+        else if(this.props.app_state.remember_account == this.props.app_state.loc['2892']/* 'remember' */){
+            return 1
+        }
+        return 0;
+    }
+
+
+    set_selected_remember_account_type_tag(){
+        this.setState({get_remember_account_tags_object: this.get_remember_account_tags_object(),})
+    }
+
+
+
+
+
+
 
 
 
@@ -766,7 +799,7 @@ class StackPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1429']/* 'Transaction Gas Limit' */, 'subtitle':this.format_power_figure(this.state.run_gas_limit), 'barwidth':this.calculate_bar_width(this.state.run_gas_limit), 'number':this.format_account_balance_figure(this.state.run_gas_limit), 'barcolor':'', 'relativepower':this.props.app_state.loc['1430']/* 'units' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
                 
                 <div style={{height:10}}/>
                 <div style={{'padding': '5px'}} onClick={()=>this.set_tx_gas_limit()}>
@@ -802,7 +835,7 @@ class StackPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593q']/* 'Transaction Max Priority Fee Per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_priority_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
-                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_priority_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_priority_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
 
 
@@ -814,7 +847,7 @@ class StackPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1593s']/* 'Max Fee per Gas.' */, 'subtitle':this.format_power_figure(this.state.picked_max_fee_per_gas_amount), 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
-                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_fee_per_gas_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_max_fee_per_gas_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 </div>
             )
@@ -828,7 +861,7 @@ class StackPage extends Component {
                         {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1433']/* 'Transaction Gas Price' */, 'subtitle':this.format_power_figure(this.state.run_gas_price), 'barwidth':this.calculate_bar_width(this.state.run_gas_price), 'number':this.format_account_balance_figure(this.state.run_gas_price), 'barcolor':'', 'relativepower':'wei', })}
                     </div>
 
-                    <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_run_gas_price.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -4444,7 +4477,8 @@ class StackPage extends Component {
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
-        var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
+        // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
+        var string_data = t.alias //it doesnt make sense to store alias data as hashes when the alias character limit is less than hash size.
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -4467,7 +4501,8 @@ class StackPage extends Component {
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
-        var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
+        // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
+        var string_data = t.alias
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -4490,7 +4525,8 @@ class StackPage extends Component {
         var context = this.props.app_state.user_account_id[this.props.app_state.selected_e5]
         var int_data = Date.now()
 
-        var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
+        // var string_data = await this.get_object_ipfs_index(t.alias, calculate_gas);
+        var string_data = t.alias
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -6045,6 +6081,15 @@ class StackPage extends Component {
                 <Tags font={this.props.app_state.font} page_tags_object={this.state.get_content_filtered_setting_object} tag_size={'l'} when_tags_updated={this.when_get_content_filtered_setting_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
 
                 {this.render_detail_item('0')}
+
+
+                
+                {this.render_detail_item('3',{'title':this.props.app_state.loc['2893']/* 'Remember Account.' */, 'details':this.props.app_state.loc['2894']/* 'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.' */, 'size':'l'})}
+                <div style={{height: 10}}/>
+
+                <Tags font={this.props.app_state.font} page_tags_object={this.state.get_remember_account_tags_object} tag_size={'l'} when_tags_updated={this.when_get_remember_account_tags_object_updated.bind(this)} theme={this.props.theme} app_state={this.props.app_state}/>
+
+                {this.render_detail_item('0')}
             </div>
         )
     }
@@ -6166,6 +6211,12 @@ class StackPage extends Component {
         this.setState({get_graph_type_tags_object: tag_object})
         var selected_item = this.get_selected_item(this.state.get_graph_type_tags_object, 'e')
         this.props.when_graph_type_tags_changed(selected_item)
+    }
+
+    when_get_remember_account_tags_object_updated(tag_object){
+        this.setState({get_remember_account_tags_object: tag_object});
+        var selected_item = this.get_selected_item(this.state.get_remember_account_tags_object, 'e')
+        this.props.when_remember_account_tags_changed(selected_item)
     }
 
 
@@ -6365,7 +6416,7 @@ class StackPage extends Component {
     }
 
     render_reload_wallet_if_wallet_is_set(){
-        if(this.props.app_state.has_wallet_been_set){
+        if(this.props.app_state.has_wallet_been_set || this.props.app_state.accounts[this.props.app_state.selected_e5] != null){
             return(
                 <div style={{'padding':'0px 5px 0px 5px'}} onClick={() => this.props.get_wallet_data_for_specific_e5(this.props.app_state.selected_e5)}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['2449']/* reload wallet' */, 'action': ''})}
@@ -6404,22 +6455,23 @@ class StackPage extends Component {
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1551']/* 'Wallet Seed' */, 'details':this.props.app_state.loc['1552']/* 'Set your preferred seed. Type a word then click add to add a word, or tap the word to remove' */, 'size':'l'})}
                 <div style={{height: 10}}/>
                 
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1553']/* 'Enter word...' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.typed_word} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'when_add_word_button_tapped'/* , 'prevent_default':true */})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" onClick={()=>this.when_add_word_button_tapped()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
 
                 {this.render_detail_item('1',{'active_tags':this.state.added_tags, 'indexed_option':'indexed', 'when_tapped':'delete_entered_seed_word'})}
-                
 
                 {this.render_detail_item('0')}
 
                 {this.render_detail_item('3',{'title':this.props.app_state.loc['1554']/* 'Wallet Salt' */, 'details':this.props.app_state.loc['1555']/* 'Set the preferred salt for your wallet' */, 'size':'l'})}
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_new_salt_figure_set.bind(this)} theme={this.props.theme} power_limit={990}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e999')} when_number_picker_value_changed={this.when_new_salt_figure_set.bind(this)} theme={this.props.theme} power_limit={990}/>
 
                 {this.render_detail_item('0')}
 
@@ -6624,12 +6676,14 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1565']/* 'Add Contact' */, 'details':this.props.app_state.loc['1566']/* 'You can add a contact manually using their Contact ID.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1567']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_contacts_changed.bind(this)} text={this.state.typed_contact_word} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_cotact_to_list()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1568']/* 'Add' */,'action':''})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_cotact_to_list()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 <div style={{height: 10}}/>
@@ -6804,12 +6858,14 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1573']/* 'Add Blocked Account' */, 'details':this.props.app_state.loc['1574']/* 'Block an accounts content from being visible in your feed.' */, 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1575']/* 'Enter Account ID...' */} when_text_input_field_changed={this.when_add_blocked_account_changed.bind(this)} text={this.state.typed_blocked_account_word} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_blocked_account_to_list()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1568']/* 'Add' */,'action':''})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_blocked_account_to_list()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 <div style={{height: 10}}/>
@@ -6952,12 +7008,14 @@ class StackPage extends Component {
             <div>
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1578']/* 'Reserve Alias' */, 'details':this.props.app_state.loc['1579']/* 'Reserve an alias for your account ID' */, 'size':'l'})}
                 <div style={{height:10}}/>
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1580']/* 'Enter New Alias Name...' */} when_text_input_field_changed={this.when_typed_alias_changed.bind(this)} text={this.state.typed_alias_word} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1581']/* 'Reserve' */,'action':''})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=>this.reserve_alias()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
 
@@ -7489,13 +7547,15 @@ class StackPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1593v']/* 'Watch Account.' */, 'details':this.props.app_state.loc['1593w']/* 'Track send and receive transactions for a specified account from here.' */, 'size':'l'})}
 
                 <div style={{ 'margin': '10px 5px 10px 5px'}}>
-                    <div className="row" style={{width:'103%'}}>
-                        <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                    <div className="row" style={{width:'100%'}}>
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                             <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['1593u']/* 'Name or Account ID...' */} when_text_input_field_changed={this.when_watch_account_input_field_changed.bind(this)} text={this.state.typed_watch_account_input} theme={this.props.theme} />
                         </div>
-                        <div className="col-3" style={{'padding': '0px 10px 0px 0px'}}>
+                        <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
                             <div onClick={()=>this.watch()}>
-                                {this.render_detail_item('5',{'text':this.props.app_state.loc['1593y']/* 'Watch' */,'action':''/* , 'prevent_default':true */})}
+                                <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                    <img className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                                </div>
                             </div>
                         </div>
                     </div>

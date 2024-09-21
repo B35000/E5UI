@@ -304,7 +304,7 @@ class GiveAwardPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1170']/* 'Multiplier' */, 'details':this.props.app_state.loc['1162']/* 'Multiply the award your sending to the post author.' */, 'size':'l'})}
 
-                <NumberPicker font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_multiplier.bind(this)} theme={this.props.theme} power_limit={3}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_multiplier.bind(this)} theme={this.props.theme} power_limit={3}/>
 
             </div>
         )
@@ -450,7 +450,7 @@ class GiveAwardPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1182']/* 'Amount' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1183']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1184']/* Add Amount' */, 'action':''})}

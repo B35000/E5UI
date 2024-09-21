@@ -291,7 +291,7 @@ class SendReceiveEtherPage extends Component {
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_priority_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_priority_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
                     </div>
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_priority_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_priority_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
 
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1407c']/* 'Max Fee per Gas.' */, 'details':this.props.app_state.loc['1407d']/* 'Set the maximum amount of gas fee your willing to pay for your transaction below.' */, 'size':'l'})}
@@ -304,7 +304,7 @@ class SendReceiveEtherPage extends Component {
                         {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_max_fee_per_gas_amount), 'number':this.format_account_balance_figure(this.state.picked_max_fee_per_gas_amount), 'barcolor':'#606060', 'relativepower':'wei', })}
                     </div>
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_fee_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_max_fee_per_gas_figure_set.bind(this)} theme={this.props.theme} power_limit={13}/>
                 </div>
             )
         }else{
@@ -646,7 +646,7 @@ class SendReceiveEtherPage extends Component {
         var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_number_picker_value_changed.bind(this)} theme={this.props.theme} power_limit={23}/>
             </div>
         )
     }
@@ -656,7 +656,7 @@ class SendReceiveEtherPage extends Component {
         var limit = this.props.app_state.account_balance[e5] == null ? 0 : this.props.app_state.account_balance[e5]
         return(
             <div>
-                <NumberPicker font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={23}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_new_gas_price_figure_set.bind(this)} theme={this.props.theme} power_limit={23}/>
             </div>
         )
     }

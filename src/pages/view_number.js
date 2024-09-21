@@ -37,7 +37,6 @@ class ViewNumber extends Component {
         var number = data['number']
         this.setState({data:data, 
             number: this.get_number_from_data(number), power_limit: this.get_power_limit_from_data(number), power: this.get_power_limit_from_data(number),
-        
             multi_digit_power: this.get_multi_digit_power_value(number),
         })
     }
@@ -128,6 +127,45 @@ class ViewNumber extends Component {
         )
     }
 
+    render_number_board(){
+        var items = this.props.app_state.number_board
+        if(items.length == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <div style={{}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                            {items.map((item, index) => (
+                                <div style={{ 'margin': '3px 0px 3px 0px'}}>
+                                    {this.render_board_number(item)}
+                                </div>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    render_board_number(data){
+        var n = data['number']
+        var number =  this.get_number_from_data(n) 
+        var relativepower = data['relativepower']
+        var title = data['title']
+        return(
+            <div>
+                <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.set_data(data)}>
+                    {this.render_detail_item('2', { 'style':'l', 'title':title, 'subtitle':this.format_power_figure(number), 'barwidth':this.calculate_bar_width(number), 'number':this.format_account_balance_figure(number), 'barcolor':'#606060', 'relativepower':relativepower, })}
+                </div>
+            </div>
+        )
+    }
+
 
     render_content(){
         if(this.state.data == null) return;
@@ -142,8 +180,19 @@ class ViewNumber extends Component {
                 <div style={{height:20}}/>
                 {this.render_number_label_group()}
                 {this.render_number_picker_sliders()}
+                <div style={{height: 20}}/>
+
+                <div onClick={()=> this.copy_to_clipboard(number)}>
+                    {this.render_detail_item('5',{'text':this.props.app_state.loc['2890']/* 'copy to clipboard' */,'action':''})}
+                </div>
             </div>
         )
+    }
+
+    copy_to_clipboard(number){
+        navigator.clipboard.writeText(number)
+        this.props.write_to_local_clipboard(number)
+        this.props.notify(this.props.app_state.loc['2891']/* Copied to clipboard. */, 1500)
     }
 
 
@@ -343,6 +392,7 @@ class ViewNumber extends Component {
       var start_pos =  (number.length) - (parseInt(power)+(pos * 3));
       var end_pos = start_pos-3;
       var res = parseInt(number.substring(start_pos, end_pos));
+      if(isNaN(res)) return 0
       return res
     }
 
@@ -351,7 +401,9 @@ class ViewNumber extends Component {
       var power = this.state.multi_digit_powers_power;
       var start_pos =  (number.length) - (parseInt(power)+(pos * 3));
       var end_pos = start_pos-3;
-      return parseInt(number.substring(start_pos, end_pos));
+      var res = parseInt(number.substring(start_pos, end_pos));
+      if(isNaN(res)) return 0
+      return res
     }
 
 

@@ -18,7 +18,7 @@ class FilterSection extends Component {
     
     state = {
         selected: 0, filter_section_title_tags_obj: this.get_filter_section_title_tags_obj(),
-        typed_searched_word:'', added_tags:[]
+        typed_searched_word:'', added_tags:[], typed_tag:''
     };
 
 
@@ -42,7 +42,7 @@ class FilterSection extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
                 {/* <div className="row">
-                    <div className="col-12" style={{'padding': '0px 0px 0px 10px'}}>
+                    <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.filter_section_title_tags_obj} tag_size={'l'} when_tags_updated={this.when_filter_section_title_tags_obj_updated.bind(this)} theme={this.props.theme}/>
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
@@ -139,12 +139,14 @@ class FilterSection extends Component {
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1116']/* 'You can search an object by its ID or its title.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
 
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1117']/* 'Enter Object ID or Title...' */} when_text_input_field_changed={this.when_search_input_field_changed.bind(this)} text={this.state.typed_searched_word} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1118']/* 'Search' */,'action':''})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.search_object()} >
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 <div style={{height: 10}}/>
@@ -156,12 +158,14 @@ class FilterSection extends Component {
                 {this.render_detail_item('4', {'text':this.props.app_state.loc['1119']/* 'You can filter objects using their tags.' */, 'textsize':'13px', 'font':this.props.app_state.font})}
                 <div style={{height: 10}}/>
                 
-                <div className="row" style={{width:'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{width:'100%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1120']/* 'Enter tag...' */} when_text_input_field_changed={this.when_tag_input_field_changed.bind(this)} text={this.state.typed_tag} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['1121']/* 'Add' */,'action':'', 'prevent_default':true})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}} onClick={()=> this.add_tag()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
 
@@ -213,6 +217,7 @@ class FilterSection extends Component {
             this.props.notify(this.props.app_state.loc['1125']/* 'Enter one word.' */, 1400)
         }
         else{
+            typed_word = typed_word.trim()
             var cloned_seed_array = this.state.added_tags.slice()
             cloned_seed_array.push(typed_word)
             this.setState({added_tags: cloned_seed_array, typed_tag:''})

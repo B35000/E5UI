@@ -724,6 +724,12 @@ class BagDetailsSection extends Component {
     render_bag_message_activity(object){
         var he = this.props.height-100
         if(this.get_focused_message(object) != null) he = this.props.height-175
+        var size = this.props.screensize
+        var ww = '80%'
+        if(size == 'l') ww = '90%'
+        if(this.props.app_state.width > 1100){
+            ww = '80%'
+        }
         return(
             <div>
                 <div style={{ 'background-color': 'transparent', 'border-radius': '15px','margin':'0px 0px 0px 0px', 'padding':'0px 0px 0px 0px'}}>
@@ -742,16 +748,20 @@ class BagDetailsSection extends Component {
                         {/* {this.render_image_picker()} */}
                         <div>
                             <div style={{'position': 'relative', 'width':45, 'height':45, 'padding':'0px 0px 0px 0px'}} onClick={()=> this.when_circle_clicked(object)}>
-                                <img src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
+                                <img alt="" src={this.props.app_state.static_assets['e5_empty_icon3']} style={{height:45, width:'auto', 'z-index':'1' ,'position': 'absolute'}}/>
                             </div>
                         </div>
                     </div>
-                    <div style={{'margin': '0px 0px 0px 0px', width:'70%'}}>
-                        <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
-                    </div>
-
-                    <div style={{'padding': '2px 5px 0px 5px', 'width':100}} onClick={()=>this.add_message_to_stack(object)}>
-                        {this.render_detail_item('5', {'text':'Send', 'action':'-'})}
+                    <div style={{width:10}}/>
+                    <div className="row" style={{width:ww}}>
+                        <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
+                            <TextInput font={this.props.app_state.font} height={20} placeholder={this.props.app_state.loc['1039']/* 'Enter Message...' */} when_text_input_field_changed={this.when_entered_text_input_field_changed.bind(this)} text={this.state.entered_text} theme={this.props.theme}/>
+                        </div>
+                        <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                            <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                                <img alt="" className="text-end" onClick={()=>this.add_message_to_stack(object)} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div> 
@@ -833,10 +843,10 @@ class BagDetailsSection extends Component {
     }
 
     componentDidUpdate(){
-        var has_scrolled = this.has_user_scrolled[this.props.selected_bag_item]
-        if(has_scrolled == null){
-            this.scroll_to_bottom()
-        }
+        // var has_scrolled = this.has_user_scrolled[this.props.selected_bag_item]
+        // if(has_scrolled == null){
+        //     this.scroll_to_bottom()
+        // }
     }
 
     render_sent_received_messages(object){

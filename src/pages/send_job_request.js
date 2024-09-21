@@ -663,7 +663,7 @@ class SendJobRequestPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['1355']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['1356']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['1357']/* 'Add Pay' */, 'action':''})}

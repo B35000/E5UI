@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Slider from './slider'
 import ViewGroups from './view_groups'
+import TextInput from './text_input';
 // import E5EmptyIcon3 from './../assets/e5empty_icon.png';
 var bigInt = require("big-integer");
 
@@ -20,6 +21,8 @@ class NumberPicker extends Component {
     state = {
         selected: 0,
         create_number_data: this.get_create_number_data(),
+        is_picking_with_text_area:false,
+        entered_number:'',
     };
 
     get_create_number_data(){
@@ -44,16 +47,6 @@ class NumberPicker extends Component {
       var power_limit = this.get_power_limit()
       var num = power_limit+9
       return bgN(1,num).toString().substring(1,num)
-
-      // if(power_limit == 63){
-      //   return bgN(1,72).toString().substring(1,72)
-      // }
-      // else if(power_limit < 991){
-      //   return bgN(1,1000).toString().substring(1,1000)
-      // }
-      // else{
-      //   return bgN(1,1000000).toString().substring(1,1000000)
-      // }
     }
 
     get_power_number(){
@@ -65,7 +58,7 @@ class NumberPicker extends Component {
             <div>
                 <div  style={{'margin':'25px 0px 0px 5px','padding': '0px 0px 5px 0px'}}>
                     {this.render_number_label_group()}
-                    {this.render_number_picker_sliders()}
+                    {this.render_sliders_or_textarea()}
                     <div style={{height: 10}}/>
                     <div className="row">
                         <div className="col-9" style={{'padding': '0px 0px 0px 10px'}}>
@@ -73,7 +66,7 @@ class NumberPicker extends Component {
                         </div>
                         <div className="col-2" style={{'padding': '3px 0px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '5px'}} onClick={()=>this.reset_number_picker2()}>
-                              <img src={'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'} style={{height:35 ,width:35}} />
+                              <img alt="" src={'https://nftstorage.link/ipfs/bafkreib7qp2bgl3xnlgflwmqh7lsb7cwgevlr4s2n5ti4v4wi4mcfzv424'} style={{height:35 ,width:35}} />
                             </div>
                             
                         </div>
@@ -85,12 +78,11 @@ class NumberPicker extends Component {
     }
 
     reset_number_picker(){
-      this.setState({create_number_data: this.get_create_number_data()})
-      // this.props.when_number_picker_value_changed(bigInt('0'))
+      this.setState({create_number_data: this.get_create_number_data(), entered_number:''})
     }
 
     reset_number_picker2(){
-      this.setState({create_number_data: this.get_create_number_data()})
+      this.setState({create_number_data: this.get_create_number_data(), entered_number:''})
       this.props.when_number_picker_value_changed(bigInt('0'))
     }
 
@@ -165,7 +157,7 @@ class NumberPicker extends Component {
 
     render_number_label_item(background_color, shadow_color, pos, number, width, text_color){
       return(
-        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_number_label_item_clicked(pos)}>
+        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_number_label_item_tapped(pos)}>
             <p style={{'color': text_color, 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
         </button>
       );
@@ -173,10 +165,40 @@ class NumberPicker extends Component {
 
     render_power_label_item(background_color, shadow_color, pos, number, width, text_color){
       return(
-        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_power_label_item_clicked(pos)}>
+        <button style={{ height: 40, width: width, 'background-color': background_color, 'border-radius': '10px', 'box-shadow': ('0px 0px 1px 1px '+shadow_color),'margin': '0px 0px 0px 0px', 'border': 'none','text-decoration': 'none' , 'padding':' 1px 5px 5px 5px' }} onClick={()=>this.when_power_label_item_tapped(pos)}>
             <p style={{'color': text_color, 'font-size': '26px', 'padding-top':' 0px', 'font-family': this.props.font}} >{number}</p>
         </button>
       );
+    }
+
+
+
+
+
+    render_sliders_or_textarea(){
+      if(this.state.is_picking_with_text_area){
+        return(
+          <div>
+            <div style={{height: 20}}/>
+            <TextInput font={this.props.font} height={20} placeholder={'000'} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.entered_number} theme={this.props.theme}/>
+          </div>
+        )
+      }else{
+        return(
+          <div>
+            {this.render_number_picker_sliders()}
+          </div>
+        )
+      }
+    }
+
+    when_text_input_field_changed(text){
+      if(!isNaN(text)){ 
+        var new_obj = this.get_create_number_data()
+          new_obj['number'] = this.get_power_number() + (bigInt(0).add(bigInt(text))).toString().toLocaleString('fullwide', {useGrouping:false});
+          this.setState({create_number_data: new_obj, entered_number: text})
+          this.props.when_number_picker_value_changed(bigInt(new_obj['number']))
+      }
     }
 
     render_number_picker_sliders(){
@@ -370,6 +392,36 @@ class NumberPicker extends Component {
        return (""+number);
     }
 
+
+
+
+
+    when_number_label_item_tapped(pos){
+      let me = this;
+      if(Date.now() - this.last_all_click_time < 200){
+          //double tap
+          me.read_and_set_data_from_clipboard()
+          clearTimeout(this.all_timeout);
+      }else{
+          this.all_timeout = setTimeout(function() {
+              clearTimeout(this.all_timeout);
+              // single tap
+              me.when_number_label_item_clicked(pos)
+          }, 200);
+      }
+      this.last_all_click_time = Date.now();
+    }
+
+    read_and_set_data_from_clipboard(){
+      const text = this.props.clip_number;
+      if(text != null){
+          var new_obj = this.get_create_number_data()
+          new_obj['number'] = this.get_power_number() + (bigInt(0).add(bigInt(text))).toString().toLocaleString('fullwide', {useGrouping:false});
+          this.setState({create_number_data: new_obj})
+          this.props.when_number_picker_value_changed(bigInt(new_obj['number']))
+      }
+    }
+
     when_number_label_item_clicked(pos){
       var clone = {};
       var page_data = this.state.create_number_data;
@@ -382,6 +434,28 @@ class NumberPicker extends Component {
       if(pos != 3){
         this.setState({create_number_data: clone});
       }
+    }
+
+
+
+    when_power_label_item_tapped(pos){
+      let me = this;
+      if(Date.now() - this.last_all_click_time2 < 200){
+          //double tap
+          me.switch_pickers()
+          clearTimeout(this.all_timeout2);
+      }else{
+          this.all_timeout2 = setTimeout(function() {
+              clearTimeout(this.all_timeout2);
+              // single tap
+              me.when_power_label_item_clicked(pos)
+          }, 200);
+      }
+      this.last_all_click_time2 = Date.now();
+    }
+
+    switch_pickers(){
+      this.setState({is_picking_with_text_area: !this.state.is_picking_with_text_area})
     }
 
     when_power_label_item_clicked(pos){

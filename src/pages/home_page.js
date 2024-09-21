@@ -37,6 +37,7 @@ function number_with_commas(x) {
 
 function getOS() {
     // return 'iOS'
+    if(iOS()) return 'iOS'
     const userAgent = window.navigator.userAgent,
         platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
         macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
@@ -57,6 +58,19 @@ function getOS() {
     }
 
     return os;
+}
+
+function iOS() {
+  return [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 }
 
 
@@ -2127,13 +2141,19 @@ class home_page extends Component {
 
         objects.forEach(object => {
             var entered_title_text = object['ipfs'] == null ? '' : object['ipfs'].entered_title_text
-            if(object['id'].toString() == (searched_input) || entered_title_text.toLowerCase().includes(searched_input.toLowerCase())){
+            var object_author = object['author'] == null ? '0' : object['author']
+            if(object['id'].toString() == (searched_input) || entered_title_text.toLowerCase().includes(searched_input.toLowerCase()) || this.get_searched_input_account_id(searched_input) == object_author.toString()){
                 if(this.check_if_object_includes_tags(object, searched_tags)){
                     return_objs.push(object)
                 }
             }
         });
         return return_objs;
+    }
+
+    get_searched_input_account_id(name){
+        if(!isNaN(name)) return name
+        return (this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[name] == null ? name : this.get_all_sorted_objects_mappings(this.props.app_state.alias_owners)[name])
     }
 
     check_if_object_includes_tags(object, searched_tags){

@@ -170,7 +170,7 @@ class NewMintActionPage extends Component {
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['961']/* 'Set Maximum' */, 'action':''})}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={this.get_number_limit()} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
             </div>
         )
@@ -706,7 +706,7 @@ class NewMintActionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['975']/* 'Upper Bound' */, 'subtitle':this.format_power_figure(this.state.upper_bound), 'barwidth':this.calculate_bar_width(this.state.upper_bound), 'number':this.format_account_balance_figure(this.state.upper_bound), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_upper_bound_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_upper_bound_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{height:20}}/>
 
@@ -714,7 +714,7 @@ class NewMintActionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['976']/* 'Lower Bound' */, 'subtitle':this.format_power_figure(this.state.lower_bound), 'barwidth':this.calculate_bar_width(this.state.lower_bound), 'number':this.format_account_balance_figure(this.state.lower_bound), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']], })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_lower_bound_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_lower_bound_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
             </div>
         )

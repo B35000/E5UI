@@ -233,7 +233,7 @@ class StageRoyaltiesPage extends Component {
                 <div style={{height:10}}/>
                 {this.render_payout_tokens()}
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_amount_set.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
@@ -270,7 +270,7 @@ class StageRoyaltiesPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['2874']/* 'transactions per batch' */, 'subtitle':this.format_power_figure(this.state.batch_size), 'barwidth':this.calculate_bar_width(this.state.batch_size), 'number':this.format_account_balance_figure(this.state.batch_size), 'barcolor':'', 'relativepower':this.props.app_state.loc['2867']/* 'transactions' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_transactions_per_batch_value_picked.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={999} when_number_picker_value_changed={this.when_transactions_per_batch_value_picked.bind(this)} theme={this.props.theme} power_limit={63}/>
 
             </div>
         )

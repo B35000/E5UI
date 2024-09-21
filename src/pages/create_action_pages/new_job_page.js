@@ -124,7 +124,7 @@ class NewJobPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px', 'overflow-x':'hidden'}}>
 
-                <div className="row">
+                <div className="row" style={{'width':'102%'}}>
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -256,12 +256,15 @@ class NewJobPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['277']})}
                 <div style={{height:10}}/>
 
-                <div className="row">
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                        {/* {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})} */}
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" onClick={()=>this.add_indexing_tag_for_new_job()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
@@ -1400,7 +1403,7 @@ class NewJobPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['241'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['756'], })}
                 </div>
 
-                <NumberPicker ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} ref={this.amount_picker} font={this.props.app_state.font} number_limit={bigInt('1e'+(this.get_power_limit_for_exchange(this.state.exchange_id)+9))} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={this.get_power_limit_for_exchange(this.state.exchange_id)}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['284'], 'action':''})}

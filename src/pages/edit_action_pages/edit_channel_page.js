@@ -167,7 +167,7 @@ class NewChannelPage extends Component {
         return(
             <div style={{'padding':'10px 10px 0px 10px'}}>
 
-                <div className="row">
+                <div className="row" style={{'width':'102%'}}>
                     <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                         <Tags font={this.props.app_state.font} page_tags_object={this.state.get_new_job_page_tags_object} tag_size={'l'} when_tags_updated={this.when_new_job_page_tags_updated.bind(this)} theme={this.props.theme}/>
                     </div>
@@ -322,12 +322,15 @@ class NewChannelPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['125']})}
                 <div style={{height:10}}/>
 
-                <div className="row" style={{'width':'103%'}}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                        {/* {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})} */}
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" onClick={()=>this.add_indexing_tag_for_new_job()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}

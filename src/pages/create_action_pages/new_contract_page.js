@@ -184,13 +184,13 @@ class NewContractPage extends Component {
         return(
             <div>
                 <div style={{'padding':'10px 10px 0px 10px'}}>
-                    <div className="row">
+                    <div className="row" style={{'width':'102%'}}>
                         <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                             <Tags font={this.props.app_state.font} page_tags_object={this.state.new_contract_tags_object} tag_size={'l'} when_tags_updated={this.when_new_contract_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                                <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                                <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                             </div>
                         </div>
                     </div>
@@ -332,12 +332,14 @@ class NewContractPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['168']})}
                 <div style={{height:10}}/>
 
-                <div className="row">
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['126']} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['169'], 'action':'add_indexing_tag', 'prevent_default':true})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" onClick={()=>this.add_indexing_tag_for_new_job()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
@@ -854,7 +856,7 @@ class NewContractPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['194'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_vote_bounty_split_proportion.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
             )
         }
@@ -886,7 +888,7 @@ class NewContractPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_end_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -903,7 +905,7 @@ class NewContractPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':'', 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_minimum_spend_vote_bounty_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -947,7 +949,7 @@ class NewContractPage extends Component {
         //             <div style={{height:2}}/>
         //             {this.render_detail_item('10', {'text':this.props.app_state.loc['212'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
-        //             <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
+        //             <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_proposal_modify_expiry_duration_limit.bind(this)} theme={this.props.theme} power_limit={63}/>
         //         </div>
         //     )
         // }
@@ -1048,7 +1050,7 @@ class NewContractPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['233'], 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_consensus_majority_limit.bind(this)} power_limit={9} theme={this.props.theme} />
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_default_consensus_majority_limit.bind(this)} power_limit={9} theme={this.props.theme} />
                 </div>
             )
         }
@@ -1594,7 +1596,7 @@ class NewContractPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['241'], 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['483']/* tokens */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 <div style={{'padding': '5px'}} onClick={() => this.when_add_price_set()}>
                     {this.render_detail_item('5', {'text':this.props.app_state.loc['242'], 'action':''})}

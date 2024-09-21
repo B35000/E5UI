@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 function getOS() {
+  if(iOS()) return 'iOS'
   const userAgent = window.navigator.userAgent,
       platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
       macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
@@ -21,6 +22,19 @@ function getOS() {
   }
 
   return os;
+}
+
+function iOS() {
+  return [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 }
 
 

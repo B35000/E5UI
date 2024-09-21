@@ -256,6 +256,7 @@ import { LotusClient } from 'filecoin.js'
 import { create } from 'ipfs-http-client'
 // import { Web3Storage } from 'web3.storage'
 import { NFTStorage, Blob } from 'nft.storage'
+// import { Helmet } from "react-helmet";
 
 import Dexie from 'dexie';
 import { locale } from 'dayjs';
@@ -318,6 +319,7 @@ function clone(obj) {
 
 function getOS() {
   // return 'iOS'
+  if(iOS()) return 'iOS'
   const userAgent = window.navigator.userAgent,
       platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
       macosPlatforms = ['macOS', 'Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
@@ -340,6 +342,19 @@ function getOS() {
   return os;
 }
 
+function iOS() {
+  return [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+}
+
 class App extends Component {
 
   state = {
@@ -353,6 +368,7 @@ class App extends Component {
 
     theme: this.get_theme_data(this.getLocale()['1593a']/* 'auto' */), storage_option:'infura',
     details_orientation: this.getLocale()['1419']/* 'right' */, refresh_speed:this.getLocale()['1423']/* 'average' */, masked_content:'e', content_channeling:this.getLocale()['1233']/* 'international' */, device_language:this.get_language(), section_tags_setting:this.getLocale()['1426']/* 'all' */, visible_tabs:'e', storage_permissions: 'e', stack_optimizer: 'e', homepage_tags_position:this.getLocale()['1593k']/* 'top' */, font:'Sans-serif', auto_skip_nsfw_warning:'e', graph_type:'area'/* splineArea */,
+    remember_account:'e',
 
     new_object_target: '0', edit_object_target:'0',
     account_balance:{}, stack_items:[],
@@ -383,7 +399,7 @@ class App extends Component {
     selected_e5:'E25', default_e5:'E25',
     accounts:{}, has_wallet_been_set:false, is_running: {},
 
-    device_country:this.get_country(), static_assets: this.get_static_assets(),
+    device_country:this.get_country(), static_assets: this.get_static_assets(), os:getOS(),
     
     job_section_tags:[], explore_section_tags:[], should_update_section_tags_onchain:false,
     searched_accounts_data:{}, searched_account_exchange_balances:{}, withdraw_event_data:{}, pending_withdraw_event_data:{}, object_directory:{},
@@ -398,6 +414,8 @@ class App extends Component {
 
     frozen_unfrozen_account_balance_data:{}, watched_account_data:{}, watched_account_id:'',
     exchange_royalty_data:{}, token_royalty_data_staging_data:{}, token_royalty_payout_data:{},
+
+    number_board:[], clip_number:"0",
   };
 
   get_static_assets(){
@@ -1138,7 +1156,9 @@ class App extends Component {
         
         '2846':'stage-royalty','2847':'stage','2848':'royalty','2849':'payouts','2850':'staged-transactions','2851':'Stage a royalty payout to your tokens stakeholders.','2852':'Set the date and time that the payout will begin.','2852b':'Schedule Date and Time.','2853':'Starting time.','2854':'You cant schedule a time before now.','2855':'Payout Account.','2856':'Set the account that will handle the payout transactions.','2857':'ascending','2858':'descending','2859':'random','2860':'Total Payout Amount.','2861':'The aggregate of the total number of tokens being issued out as payouts.','2862':'Payout Description.','2863':'Set a short title for your payout staging.','2864':'Transactions Per Batch.','2865':'Set the total number of transactions per payout batch.','2866':'Balance Snapshot Time.','2867':'transactions','2868':'Total Payout Transactions.','2869':'all','2870':'batches','2871':'Alias Unknown.','2872':' transactions.','2873':'Batch: ','2874':'transactions per batch','2875':'You need to set a title for your payout staging.','2876':'That payout amount is invalid.','2877':'That payout date is invalid.','2878':'That payout account is invalid.','2879':'That batch size is invalid.','2880':'Starting On: ','2881':'Total Batches.','2882':'batches','2883':'You cant stage no transactions.',
         
-        '2884':'royalty-payouts','2885':'stage-details','2886':'completed','2887':'The details for the royalty payout are listed below.','2888':'The royalty payout batches are listed below. Tap a batch to stage it and tap a staged batch to remove.','2889':'You cant stack royalty payouts in the same exchange twice.','2890':'','2891':'','2892':'','2893':'','2894':'','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','2916':'','2917':'','2918':'','2919':'','2920':'','2921':'','2922':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
+        '2884':'royalty-payouts','2885':'stage-details','2886':'completed','2887':'The details for the royalty payout are listed below.','2888':'The royalty payout batches are listed below. Tap a batch to stage it and tap a staged batch to remove.','2889':'You cant stack royalty payouts in the same exchange twice.',
+        
+        '2890':'copy to clipboard.','2891':'Copied to clipboard.','2892':'remember','2893':'Remember Account.','2894':'If set to remember, your account will be remembered when you refresh the webapp. You have to enable preserve state (cookies) to activate this setting.','2895':'','2896':'','2897':'','2898':'','2899':'','2900':'','2901':'','2902':'','2903':'','2904':'','2905':'','2906':'','2907':'','2908':'','2909':'','2910':'','2911':'','2912':'','2913':'','2914':'','2915':'','2916':'','2917':'','2918':'','2919':'','2920':'','2921':'','2922':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'','':'',
       }
       //this.props.app_state.loc['']
     }
@@ -1223,7 +1243,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("mounted", 'os version: ', getOS());
+    console.log("mounted", 'os version: ', iOS());
     
     /* listens for when the window is resized */
     window.addEventListener("resize", this.resize.bind(this));
@@ -1348,7 +1368,9 @@ class App extends Component {
       homepage_tags_position: this.state.homepage_tags_position,
       font: this.state.font,
       auto_skip_nsfw_warning: this.state.auto_skip_nsfw_warning,
-      graph_type: this.state.graph_type
+      graph_type: this.state.graph_type,
+      remember_account: this.state.remember_account,
+      account_data: this.get_account_data_to_store(),
     }
   }
 
@@ -1405,6 +1427,8 @@ class App extends Component {
       var cupcake_font = cupcake_state.font
       var cupcake_auto_skip_nsfw_warning = cupcake_state.auto_skip_nsfw_warning
       var cupcake_graph_type = cupcake_state.graph_type
+      var cupcake_remember_account = cupcake_state.remember_account
+      var cupcake_account_data = cupcake_state.account_data
       
       if(cupcake_theme != null){
         this.setState({theme:cupcake_theme})
@@ -1540,6 +1564,13 @@ class App extends Component {
         this.setState({graph_type: cupcake_graph_type})
       }
 
+      if(cupcake_remember_account != null){
+        this.setState({remember_account: cupcake_remember_account})
+        if(cupcake_remember_account != 'e' && cupcake_account_data != null){
+          this.load_accounts_data_from_store(cupcake_account_data)
+        }
+      }
+
 
     }
 
@@ -1560,10 +1591,38 @@ class App extends Component {
         me.stack_page.current?.set_preferred_font_tag()
         me.stack_page.current?.set_skip_nsfw_warning_tag()
         me.stack_page.current?.set_selected_graph_type_tag()
+        me.stack_page.current?.set_selected_remember_account_type_tag()
     }, (1 * 1000));
 
     
   }
+
+  get_account_data_to_store(){
+    var _accounts = {}
+    if(this.state.remember_account == 'e') return _accounts
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var focused_e5 = this.state.e5s['data'][i];
+      if(this.state.accounts[focused_e5] != null){
+        _accounts[focused_e5] = {address: this.state.accounts[focused_e5].address}
+      }
+    }
+    return _accounts
+  }
+
+  load_accounts_data_from_store(data){
+    var _accounts = {}
+    for(var i=0; i<this.state.e5s['data'].length; i++){
+      var focused_e5 = this.state.e5s['data'][i];
+      if(data[focused_e5] != null){
+        _accounts[focused_e5] = {address: data[focused_e5].address, privateKey:''}
+      }
+    }
+    this.setState({accounts: _accounts})
+  }
+
+
+
+
 
 
   set_providers(cupcake_selected_providers, cached_providers){
@@ -1942,8 +2001,8 @@ class App extends Component {
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreiebw5kut7ujhsvq3pan5pmqnp35wa4ku5x6x3rpoej4ng7oe3gvvi', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreicsqi2tsk2td3acxdltz3tp42gjmk6z7luo3bgwbju5d7zwcbqnvu', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreieemcsowwgjplxmdxip2fuecstymrf5wiih2k32ex5wqt2pif4kpy', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreic6gol6fa2aa5ntw2egqb75gv7uavbirx3luxgq5qf7aby3ardpxq', 
 
         'close':'https://nftstorage.link/ipfs/bafkreigsgm64vokx55abvuuqtcr7srdbqlrtaz5fqb53i7pck2ipwkyw24',
-        'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu'
-
+        'clear':'https://nftstorage.link/ipfs/bafkreiboxvoi3u6dm3lwd4lne5xqknjzdtakck22ufkjzqdvmgrtwq4mbu',
+        'add_text':'https://bafybeih7uo6hedtxgdge4digebt6o5gocacajgcbq2lc4nlfyb2uu55zma.ipfs.w3s.link/add_text_input_item.png',
       }
     }
     else if(theme == this.getLocale()['1418']/* 'dark' */){
@@ -1970,7 +2029,8 @@ class App extends Component {
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
         
         'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
-        'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u'
+        'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
+        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link'
       }
     }
     else if(theme == this.getLocale()['2740']/* midnight */){
@@ -1998,7 +2058,8 @@ class App extends Component {
         'background':'https://nftstorage.link/ipfs/bafkreia37sg7rg6j5xqt2qwaocxmw4ljzkk4m37s4jibi6bgg6lyslxkt4', 'JobIcon':'https://nftstorage.link/ipfs/bafkreibkhtf3jbrnldaivpirumvrjdfvyvoi5g5prkv2xgj4zgn6yjjosm', 'ExploreIcon': 'https://nftstorage.link/ipfs/bafkreidmthhxjlqmevpmdytduvilbdp3mfkrxyrvvkjysjhhsbw5qh4eku', 'WalletIcon':'https://nftstorage.link/ipfs/bafkreib3yaw4fbicdiiy3j276jjyzo7ephkavscaxo7ka5m5spebxa2uc4', 'StackIcon': 'https://nftstorage.link/ipfs/bafkreidrhshxvp2uosjdii727r3ompnoubiiuk5oyynxyllffamw32kjt4',
 
         'close':'https://nftstorage.link/ipfs/bafkreif363r22ob2tm6o7ahf2exbdge7tpcfglmwjvzb2mfuwfjaf7mlme',
-        'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u'
+        'clear':'https://nftstorage.link/ipfs/bafkreie2xrfhubydc4oih637nmadvqesx4yqmqo55jpgf3alhlhxyzd37u',
+        'add_text':'https://bafkreifxaepix26g36uzkdvgtksww2nn44hjbbimikmd6dbrbrpml3jku4.ipfs.w3s.link'
       }
     }
     else if(theme == this.getLocale()['2741']/* green */){
@@ -2535,7 +2596,9 @@ class App extends Component {
       <StackPage ref={this.stack_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} theme={this.state.theme} when_device_theme_changed={this.when_device_theme_changed.bind(this)} when_details_orientation_changed={this.when_details_orientation_changed.bind(this)} notify={this.prompt_top_notification.bind(this)} when_wallet_data_updated2={this.when_wallet_data_updated2.bind(this)} height={this.state.height} run_transaction_with_e={this.run_transaction_with_e.bind(this)} store_data_in_infura={this.store_data_in_infura.bind(this)} get_accounts_public_key={this.get_accounts_public_key.bind(this)} encrypt_data_object={this.encrypt_data_object.bind(this)} 
       encrypt_key_with_accounts_public_key_hash={this.encrypt_key_with_accounts_public_key_hash.bind(this)} get_account_public_key={this.get_account_public_key.bind(this)} get_account_raw_public_key={this.get_account_raw_public_key.bind(this)} view_transaction={this.view_transaction.bind(this)} show_hide_stack_item={this.show_hide_stack_item.bind(this)} show_view_transaction_log_bottomsheet={this.show_view_transaction_log_bottomsheet.bind(this)} add_account_to_contacts={this.add_account_to_contacts.bind(this)} remove_account_from_contacts={this.remove_account_from_contacts.bind(this)} add_alias_transaction_to_stack={this.add_alias_transaction_to_stack.bind(this)} unreserve_alias_transaction_to_stack={this.unreserve_alias_transaction_to_stack.bind(this)} reset_alias_transaction_to_stack={this.reset_alias_transaction_to_stack.bind(this)} 
       when_selected_e5_changed={this.when_selected_e5_changed.bind(this)} when_storage_option_changed={this.when_storage_option_changed.bind(this)} store_objects_data_in_ipfs_using_option={this.store_objects_data_in_ipfs_using_option.bind(this)} lock_run={this.lock_run.bind(this)} open_wallet_guide_bottomsheet={this.open_wallet_guide_bottomsheet.bind(this)} clear_cache={this.clear_cache.bind(this)} when_refresh_speed_changed={this.when_refresh_speed_changed.bind(this)} remove_account_from_blocked_accounts={this.remove_account_from_blocked_accounts.bind(this)} add_account_to_blocked_list={this.add_account_to_blocked_list.bind(this)} when_masked_data_setting_changed={this.when_masked_data_setting_changed.bind(this)} when_content_channeling_changed={this.when_content_channeling_changed.bind(this)} when_content_language_changed={this.when_content_language_changed.bind(this)} when_content_filter_setting_changed={this.when_content_filter_setting_changed.bind(this)} when_tabs_setting_changed={this.when_tabs_setting_changed.bind(this)} when_storage_permission_setting_changed={this.when_storage_permission_setting_changed.bind(this)} calculate_gas_with_e={this.calculate_gas_with_e.bind(this)} 
-      get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} />
+      get_wallet_data_for_specific_e5={this.get_wallet_data_for_specific_e5.bind(this)} show_confirm_run_bottomsheet={this.show_confirm_run_bottomsheet.bind(this)} when_stack_optimizer_setting_changed={this.when_stack_optimizer_setting_changed.bind(this)} clear_transaction_stack={this.clear_transaction_stack.bind(this)} open_object_in_homepage={this.open_object_in_homepage.bind(this)} when_homepage_tags_position_tags_changed={this.when_homepage_tags_position_tags_changed.bind(this)} when_preferred_font_tags_changed={this.when_preferred_font_tags_changed.bind(this)} when_skip_nsfw_warning_tags_changed={this.when_skip_nsfw_warning_tags_changed.bind(this)} when_graph_type_tags_changed={this.when_graph_type_tags_changed.bind(this)} set_watched_account_id={this.set_watched_account_id.bind(this)} 
+      when_remember_account_tags_changed={this.when_remember_account_tags_changed.bind(this)}
+      />
     )
   }
 
@@ -2720,6 +2783,14 @@ class App extends Component {
       this.update_watched_account_data()
     }, (1 * 1000));
     
+  }
+
+  when_remember_account_tags_changed(item){
+    this.setState({remember_account: item})
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
 
@@ -8387,13 +8458,14 @@ class App extends Component {
     var background_color = this.state.theme['send_receive_ether_background_color'];
     var size = this.getScreenSize();
     var os = getOS()
+    var h = 300
     if(os == 'iOS'){
         return(
             <Sheet isOpen={this.state.view_number_bottomsheet} onClose={this.open_view_number_bottomsheet.bind(this)} detent="content-height" disableDrag={true} disableScrollLocking={true}>
                 <Sheet.Container>
                     <Sheet.Content>
-                        <div style={{ height: 240, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-                          <ViewNumber ref={this.view_number_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+                        <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+                          <ViewNumber ref={this.view_number_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)}/>
                         </div>
                     </Sheet.Content>
                     <ToastContainer limit={3} containerId="id2"/>
@@ -8404,8 +8476,8 @@ class App extends Component {
     }
     return(
       <SwipeableBottomSheet overflowHeight={0} marginTop={0} onChange={this.open_view_number_bottomsheet.bind(this)} open={this.state.view_number_bottomsheet} style={{'z-index':'5'}} bodyStyle={{'background-color': 'transparent'}} overlayStyle={{'background-color': this.state.theme['send_receive_ether_overlay_background'],'box-shadow': '0px 0px 0px 0px '+this.state.theme['send_receive_ether_overlay_shadow']}}>
-          <div style={{ height: 240, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
-            <ViewNumber ref={this.view_number_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)}/>
+          <div style={{ height: h, 'background-color': background_color, 'border-style': 'solid', 'border-color': this.state.theme['send_receive_ether_overlay_background'], 'border-radius': '1px 1px 0px 0px', 'border-width': '0px', 'box-shadow': '0px 0px 2px 1px '+this.state.theme['send_receive_ether_overlay_shadow'],'margin': '0px 0px 0px 0px', 'overflow-y':'auto'}}>
+            <ViewNumber ref={this.view_number_page} app_state={this.state} view_number={this.view_number.bind(this)} size={size} height={this.state.height} theme={this.state.theme} notify={this.prompt_top_notification.bind(this)} write_to_local_clipboard={this.write_to_local_clipboard.bind(this)} />
           </div>
       </SwipeableBottomSheet>
     )
@@ -8438,6 +8510,7 @@ class App extends Component {
   }
 
   view_number(number){
+    this.add_number_to_number_board(number)
     this.open_view_number_bottomsheet()
     var me = this;
     setTimeout(function() {
@@ -8445,8 +8518,29 @@ class App extends Component {
         me.view_number_page.current.set_data(number)
       }
     }, (1 * 500));
-    
+  }
 
+  add_number_to_number_board(number){
+    var clone = this.state.number_board.slice()
+    if(!this.number_in_board(number)){
+      clone.push(number)
+    }
+    this.setState({number_board: clone})
+  }
+
+  number_in_board(number){
+    var in_board = false;
+    this.state.number_board.forEach(num => {
+      console.log('comparing: ',num, ' to: ', number)
+      if(num['relativepower'] == number['relativepower']){
+        return true;
+      }
+    });
+    return in_board
+  }
+
+  write_to_local_clipboard(number){
+    this.setState({clip_number:number})
   }
 
 
@@ -8731,7 +8825,14 @@ class App extends Component {
 
     if(this.is_allowed_in_e5()){
       // this.get_browser_cache_size_limit()
-      this.when_wallet_data_updated(['(32)'], 0, '', true) 
+      if(this.state.accounts[this.state.selected_e5] != null){
+        var me = this
+        setTimeout(function() {
+            me.start_get_accounts_data(true, false)
+        }, (3 * 1000));
+      }else{
+        this.when_wallet_data_updated(['(32)'], 0, '', true) 
+      }
     } 
     
   }
@@ -8810,6 +8911,11 @@ class App extends Component {
     }, (3 * 10));
 
     this.setState({has_wallet_been_set: true})
+
+    var me = this;
+    setTimeout(function() {
+      me.set_cookies()
+    }, (1 * 1000));
   }
 
   generate_one_account_for_all_e5s(seed){
@@ -8821,7 +8927,7 @@ class App extends Component {
       var focused_e5 = this.state.e5s['data'][i];
       _accounts[focused_e5] = {privateKey:account.privateKey, address: account.address}
     }
-    console.log(_accounts)
+    // console.log(_accounts)
     this.setState({accounts: _accounts})
   }
 
@@ -9050,7 +9156,7 @@ class App extends Component {
     if(web3_url != ''){
       this.get_wallet_data(account_for_e5, is_syncing, web3_url, e5_address, e5)
       if(this.get_contract_from_e5(e5) != ''){
-         this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data)
+        this.get_all_events_from_e5(account_for_e5, is_syncing, web3_url, e5_address, e5, should_skip_account_data)
       }
     }
   }
@@ -9448,7 +9554,7 @@ class App extends Component {
 
     /* ---------------------------------------- ACCOUNT DATA ------------------------------------------- */
     var accounts = await contractInstance.methods.f167([],[address_account.address], 2).call((error, result) => {});
-    console.log('account id----------------',accounts[0], 'for e5 ',e5)
+    console.log('account_id',accounts[0], 'for e5 ',e5)
     var account = accounts[0] == 0 ? 1 : accounts[0]
 
     var clone = structuredClone(this.state.user_account_id)
@@ -10681,11 +10787,14 @@ class App extends Component {
     var alias_timestamp = {}
     var is_first_time = this.state.my_alias_events[e5] == null
     for(var i=0; i<alias_events.length; i++){
-      var alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
+      var alias_string = alias_events[i].returnValues.p4
+      if(alias_string.length > 23){
+        alias_string = await this.fetch_objects_data_from_ipfs_using_option(alias_events[i].returnValues.p4)
+      } 
       var alias_sender = alias_events[i].returnValues.p2/* owner */
 
       if(alias_owners[alias_string] == null){
-        console.log('setting alias: ',alias_string, ' for account: ',alias_sender)
+        // console.log('setting alias: ',alias_string, ' for account: ',alias_sender)
         alias_owners[alias_string] = alias_sender
         alias_bucket[alias_sender] = alias_string 
         alias_timestamp[alias_string] = alias_events[i].returnValues.p6
@@ -10697,7 +10806,7 @@ class App extends Component {
       }
       else if(alias_owners[alias_string] == alias_sender){
         //ownership was revoked
-        console.log('revoking alias: ',alias_string, ' for account: ',alias_sender)
+        // console.log('revoking alias: ',alias_string, ' for account: ',alias_sender)
         alias_owners[alias_string] = null
         alias_bucket[alias_sender] = null
         var pos = -1
@@ -11598,6 +11707,7 @@ class App extends Component {
   }
 
   get_sent_mail_data = async (E52contractInstance, e5, account, web3) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var my_created_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p2/* sender_acc_id */: account, p3/* context */:30})
     my_created_mail_events = my_created_mail_events
 
@@ -11642,6 +11752,7 @@ class App extends Component {
   }
 
   get_received_mail_data = async (E52contractInstance, e5, account, web3) => {
+    if(this.state.accounts[e5].privateKey == '') return;
     var my_received_mail_events = await this.load_event_data(web3, E52contractInstance, 'e4', e5, {p1/* target_id */: account, p3/* context */:30})
     this.record_number_of_items(e5, 'received_mail', my_received_mail_events.length)
 

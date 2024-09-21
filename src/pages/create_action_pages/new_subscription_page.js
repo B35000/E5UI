@@ -118,13 +118,13 @@ class NewSubscriptionPage extends Component {
         return(
             <div>
                 <div style={{'padding':'10px 10px 0px 10px'}}>
-                    <div className="row">
+                    <div className="row" style={{'width':'102%'}}>
                         <div className="col-11" style={{'padding': '0px 0px 0px 10px'}}>
                             <Tags font={this.props.app_state.font} page_tags_object={this.state.new_subscription_tags_object} tag_size={'l'} when_tags_updated={this.when_new_subscription_tags_object.bind(this)} theme={this.props.theme}/>
                         </div>
                         <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                             <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                                <img className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}}/>
+                                <img alt="" className="text-end" onClick={()=>this.finish_creating_object()} src={this.props.theme['close']} style={{height:36, width:'auto'}}/>
                             </div>
                         </div>
                     </div>
@@ -263,12 +263,15 @@ class NewSubscriptionPage extends Component {
                 {this.render_detail_item('4',{'font':this.props.app_state.font, 'textsize':'15px','text':this.props.app_state.loc['548']/* 'Set tags for indexing your new Subscription' */})}
                 <div style={{height:10}}/>
 
-                <div className="row">
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                <div className="row" style={{'width':'99%'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['549']/* 'Enter Tag...' */} when_text_input_field_changed={this.when_index_text_input_field_changed.bind(this)} text={this.state.entered_tag_text} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 5px 0px 0px'}}>
-                        {this.render_detail_item('5', {'text':this.props.app_state.loc['550']/* 'Add' */, 'action':'add_indexing_tag', 'prevent_default':true})}
+                    <div className="col-1" style={{'padding': '0px 10px 0px 0px'}}>
+                        {/* {this.render_detail_item('5', {'text':this.props.app_state.loc['127'], 'action':'add_indexing_tag', 'prevent_default':true})} */}
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" onClick={()=>this.add_indexing_tag_for_new_job()} src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 {this.render_detail_item('10',{'font':this.props.app_state.font, 'textsize':'10px','text':this.props.app_state.loc['124']/* 'remaining character count: ' */+(this.props.app_state.tag_size - this.state.entered_tag_text.length)})}
@@ -398,7 +401,7 @@ class NewSubscriptionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Buy Amount', 'subtitle':this.format_power_figure(this.state.minimum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_buy_amount), 'number':this.format_account_balance_figure(this.state.minimum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
@@ -412,7 +415,7 @@ class NewSubscriptionPage extends Component {
 
                 {this.render_detail_item('3', {'title':this.get_time_diff(this.state.time_unit), 'details':'Time Unit', 'size':'l'})}
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_time_unit.bind(this)} theme={this.props.theme} power_limit={12}/>
 
                 {this.render_detail_item('0')}
             </div>
@@ -440,7 +443,7 @@ class NewSubscriptionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':'Maximum Buy Amount', 'subtitle':this.format_power_figure(this.state.maximum_buy_amount), 'barwidth':this.calculate_bar_width(this.state.maximum_buy_amount), 'number':this.format_account_balance_figure(this.state.maximum_buy_amount), 'barcolor':'', 'relativepower':'units', })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
@@ -448,7 +451,7 @@ class NewSubscriptionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':'Minimum Cancellable Balance Amount', 'subtitle':this.format_power_figure(this.state.minimum_cancellable_balance_amount), 'barwidth':this.calculate_bar_width(this.state.minimum_cancellable_balance_amount), 'number':this.format_account_balance_figure(this.state.minimum_cancellable_balance_amount), 'barcolor':'', 'relativepower':'units', })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
             </div>
@@ -619,7 +622,7 @@ class NewSubscriptionPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['563']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -634,7 +637,7 @@ class NewSubscriptionPage extends Component {
                     </div>
 
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_maximum_buy_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -651,7 +654,7 @@ class NewSubscriptionPage extends Component {
                     <div style={{height:2}}/>
                     {this.render_detail_item('10', {'text':this.props.app_state.loc['569']/* 'Recommended: at least 1' */, 'textsize':'10px', 'font':this.props.app_state.font})}
 
-                    <NumberPicker font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                    <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} ref={this.number_picker_ref} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_minimum_cancellable_balance_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
                 </div>
             )
         }
@@ -1103,7 +1106,7 @@ class NewSubscriptionPage extends Component {
                     {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['589']/* 'Price' */, 'subtitle':this.format_power_figure(this.state.price_amount), 'barwidth':this.calculate_bar_width(this.state.price_amount), 'number':this.format_account_balance_figure(this.state.price_amount), 'barcolor':'', 'relativepower':this.props.app_state.loc['590']/* 'tokens' */, })}
                 </div>
 
-                <NumberPicker font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
+                <NumberPicker clip_number={this.props.app_state.clip_number} font={this.props.app_state.font} number_limit={bigInt('1e72')} when_number_picker_value_changed={this.when_price_amount.bind(this)} theme={this.props.theme} power_limit={63}/>
 
                 {this.render_detail_item('0')}
 
