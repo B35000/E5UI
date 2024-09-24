@@ -247,7 +247,7 @@ class WithdrawEtherPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['2003']/* 'Receiver Wallet Address' */, 'details':this.state.recipient_address, 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['2004']/* Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['2004']/* Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
                 <div style={{height: 10}} theme={this.props.theme}/>
 
 
@@ -406,14 +406,16 @@ class WithdrawEtherPage extends Component {
 
     finish(){
         var e5 = this.state.e5
+
         if(!this.isValidAddress(this.state.recipient_address)){
-            this.props.notify(this.props.app_state.loc['2016']/* 'Please set a valid receiver' */, 500)
+            this.props.notify(this.props.app_state.loc['2016']/* 'Please set a valid receiver' */, 3500)
         }
         else if(this.props.app_state.withdraw_balance[e5['id']] == 0){
-            this.props.notify(this.props.app_state.loc['2017']/* 'You cant withdraw 0 ether.' */, 500)
+            this.props.notify(this.props.app_state.loc['2017']/* 'You cant withdraw 0 ether.' */, 3500)
         }
         else{
-            this.setState({confirmation_dialog_box: true}) 
+            // this.setState({confirmation_dialog_box: true}) 
+            this.props.show_dialog_bottomsheet({'e5':this.state.e5, 'recipient_address':this.state.recipient_address}, 'confirm_withdraw_ether')
         }
     }
 

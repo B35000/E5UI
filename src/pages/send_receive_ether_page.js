@@ -201,7 +201,7 @@ class SendReceiveEtherPage extends Component {
                 {this.render_detail_item('3', {'title':this.props.app_state.loc['1373']/* 'Receiver Wallet Address' */, 'details':this.state.recipient_address, 'size':'s'})}
                 <div style={{height: 10}}/>
 
-                <TextInput font={this.props.app_state.font} height={30} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
+                <TextInput font={this.props.app_state.font} height={60} placeholder={this.props.app_state.loc['1374']/* 'Set Receiver Address Here' */} when_text_input_field_changed={this.when_text_input_field_changed.bind(this)} text={this.state.recipient_address} theme={this.props.theme}/>
 
                 {this.render_detail_item('0')}
                 {/* <Html5QrcodePlugin 
@@ -278,6 +278,7 @@ class SendReceiveEtherPage extends Component {
     }
 
     show_gas_price_or_eip_options(e5){
+        var picked_gas_price_in_gwei = (this.state.picked_wei_gas_price / (10**9))
         if(this.props.app_state.e5s[e5].type == '1559'){
             return(
                 <div>
@@ -314,8 +315,11 @@ class SendReceiveEtherPage extends Component {
                     <div style={{height: 10}}/>
                     <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '20px 0px 5px 0px','border-radius': '8px' }}>
                         <p style={{'color': this.props.theme['primary_text_color'], 'font-size': '11px', height: 7, 'margin':'0px 0px 20px 10px', 'font-family': this.props.app_state.font}} className="fw-bold">{this.props.app_state.loc['1387']/* Picked Gas Price in Gwei. */}</p>
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(picked_gas_price_in_gwei), 'number':(picked_gas_price_in_gwei)+'', 'barcolor':'#606060', 'relativepower':'gwei', })}
+
+                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price), 'number':(this.state.picked_wei_gas_price)+'', 'barcolor':'#606060', 'relativepower':'wei', })}
+
                         {/* {this.render_detail_item('2', this.get_picked_gas_price_in_wei())} */}
-                        {this.render_detail_item('2', { 'style':'s', 'title':'', 'subtitle':'', 'barwidth':this.calculate_bar_width(this.state.picked_wei_gas_price/10**9), 'number':(this.state.picked_wei_gas_price/10**9), 'barcolor':'#606060', 'relativepower':'gwei', })}
                         {/* {this.render_detail_item('2', this.get_picked_gas_price_in_ether())} */}
                     </div>
 
@@ -928,7 +932,8 @@ class SendReceiveEtherPage extends Component {
             this.props.notify(this.props.app_state.loc['1407']/* 'Please set a valid recipient.' */, 4500)
         }
         else{
-            this.setState({confirmation_dialog_box: true}) 
+            // this.setState({confirmation_dialog_box: true}) 
+            this.props.show_dialog_bottomsheet({'picked_wei_amount':this.state.picked_wei_amount, 'e5':this.state.ether['e5'], 'recipient_address':this.state.recipient_address}, 'confirm_send_ether_dialog')
         }
        
     };

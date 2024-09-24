@@ -364,6 +364,8 @@ class EndDetailSection extends Component {
 
                     {this.render_token_liquidity_balance(selected_object, symbol)}
 
+                    {this.render_exchange_balance_proportions(selected_object)}
+
                     {this.render_last_swap_block(selected_object)}
                     {this.render_last_swap_timestamp(selected_object)}
                     {this.render_last_swap_transaction_count(selected_object)}
@@ -913,7 +915,6 @@ class EndDetailSection extends Component {
         // var selected_object = this.get_exchange_tokens(3)[selected_item]
         var buy_tokens = [].concat(selected_object['data'][3])
         var buy_amounts = [].concat(selected_object['exchanges_balances'])
-        var buy_depths = [].concat(selected_object['data'][5])
         return(
             <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
                 <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
@@ -987,6 +988,59 @@ class EndDetailSection extends Component {
     open_depth_mint_ui(selected_object){
         this.props.show_depthmint_bottomsheet(selected_object)
     }
+
+
+    render_exchange_balance_proportions(selected_object){
+        if(selected_object['ipfs'] == null) return;
+        var original_exchange_ratio_y = selected_object['ipfs'].token_exchange_ratio_y
+        var current_exchange_ratio_y = selected_object['data'][2][1/* <1>token_exchange_ratio_y */];
+        var difference = bigInt(current_exchange_ratio_y).minus(original_exchange_ratio_y)
+        if(difference.isPositive()){
+            var buy_tokens = [].concat(selected_object['data'][3])
+            var exchange_balances = [].concat(selected_object['exchanges_balances'])
+            var expected_balances = this.get_expected_balances(selected_object['data'][4],difference)
+            var proportion_differences = this.get_proportion_differences(expected_balances, exchange_balances)
+
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2447g']/* 'Exchange Liquidity Proportions.' */, 'details':this.props.app_state.loc['2447h']/* 'Proportions of the exchange\'s balances that have not been transfered out by its moderators.' */, 'size':'l'})}
+                    <div style={{height:10}}/>
+                    <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 0px 5px 0px','border-radius': '8px'}}>
+                        <ul style={{ 'padding': '0px 0px 0px 0px', 'margin':'0px'}}>
+                            {buy_tokens.map((item, index) => (
+                                <li style={{'padding': '1px'}}>
+                                    {this.render_detail_item('2', {'style':'l','title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[selected_object['e5']+item], 'subtitle':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], 'barwidth':(proportion_differences)+'%', 'number':(proportion_differences)+'%', 'relativepower':this.props.app_state.loc['996e']/* 'proportion' */})}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    {this.render_detail_item('0')}
+                </div>
+            )
+        }
+    }
+
+    get_expected_balances(prices, difference){
+        var data = []
+        prices.forEach(price => {
+            data.push(bigInt(price).multiply(difference))
+        });
+        return data
+    }
+
+    get_proportion_differences(expected_balances, actual_balances){
+        var data = []
+        for(var i=0; i<expected_balances.length; i++){
+            var expected_balance = expected_balances[i]
+            var actual_balance = actual_balances[i]
+
+            data.push(bigInt(actual_balance).multiply(100).divide(expected_balance))
+        }
+        return data
+    }
+
+
+
 
 
 

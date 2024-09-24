@@ -722,15 +722,15 @@ class StackPage extends Component {
                     {this.render_stack_run_section()}
                 </div>
             )    
-        }else 
-        if(selected_item == this.props.app_state.loc['1408']/* 'stack 📥' */){
+        }
+        else if(selected_item == this.props.app_state.loc['1408']/* 'stack 📥' */){
             return(
                 <div>
                     {this.render_stack_transactions_part()}
                 </div>
             )    
         }
-        if(selected_item == this.props.app_state.loc['1409']/* 'history 📜' */){
+        else if(selected_item == this.props.app_state.loc['1409']/* 'history 📜' */){
             return(
                 <div>
                     {this.render_run_history_items()}
@@ -1124,14 +1124,14 @@ class StackPage extends Component {
     }
 
     open_confirm_clear_stack_dialog(){
-        this.setState({confirm_clear_stack_dialog: true})
+        this.props.show_dialog_bottomsheet({}, 'confirm_clear_stack_dialog')
+        // this.setState({confirm_clear_stack_dialog: true})
     }
 
     render_confirm_clear_dialog(){
         return(
             <Dialog PaperProps={{ sx: { borderRadius: "15px" } }} onClose = {() => this.cancel_clear_transactions_dialog_box()} open = {this.state.confirm_clear_stack_dialog}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
-                    
                     <h4 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color']}}>{this.props.app_state.loc['1443']/* Confirm Action */}</h4>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1445']/* 'Confirm Clear Stack Action' */, 'details':'This action cannot be undone.', 'size':'l'})}
@@ -1141,7 +1141,6 @@ class StackPage extends Component {
                     <div style={{'padding': '5px'}} onClick={()=> this.clear_stack()}>
                         {this.render_detail_item('5', {'text':this.props.app_state.loc['1444']/* 'Confirm' */, 'action':''})}
                     </div>
-
                 </div>
                 
             </Dialog>
@@ -1714,6 +1713,8 @@ class StackPage extends Component {
         var delete_pos_array = []
         var pushed_txs = []
         var should_optimize_run = true;
+        var now = Date.now()
+        var ipfs_index = await this.get_ipfs_index_object(txs, now, calculate_gas)
         for(var i=0; i<txs.length; i++){
             if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
                 if(txs[i].type == this.props.app_state.loc['1311']/* 'contract' */){
@@ -2241,56 +2242,56 @@ class StackPage extends Component {
                     }    
                 }
                 else if(txs[i].type == this.props.app_state.loc['285']/* 'mail' */){
-                    var mail_obj = await this.format_mail_object(txs[i], calculate_gas)
+                    var mail_obj = await this.format_mail_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(mail_obj.str)
                     adds.push([])
                     ints.push(mail_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */){
-                    var message_obj = await this.format_message_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_message_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1510']/* 'channel-messages' */){
-                    var message_obj = await this.format_channel_message_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_channel_message_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
-                    var message_obj = await this.format_post_comment_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_post_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
-                    var message_obj = await this.format_job_application_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_job_application_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1513']/* 'accept-job-application' */){
-                    var message_obj = await this.format_accept_application_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_accept_application_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1514']/* 'job-messages' */){
-                    var message_obj = await this.format_job_comment_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_job_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
-                    var message_obj = await this.format_proposal_message_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_proposal_message_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
@@ -2320,7 +2321,7 @@ class StackPage extends Component {
                     metadata_action[2].push(35)
                     metadata_action[3].push(0)
                     metadata_action[4].push(0)
-                    var ipfs_obj = await this.get_object_ipfs_index(final_bag_object, calculate_gas);
+                    var ipfs_obj = await this.get_object_ipfs_index(final_bag_object, calculate_gas, ipfs_index, txs[i].id);
                     metadata_strings[0].push(ipfs_obj.toString())
 
                     should_optimize_run = false
@@ -2330,21 +2331,21 @@ class StackPage extends Component {
                     adds.push([])
                 }
                 else if(txs[i].type == this.props.app_state.loc['1497']/* 'bag-response' */){
-                    var message_obj = await this.format_bag_application_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_bag_application_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1498']/* 'accept-bag-application' */){
-                    var message_obj = await this.format_accept_bag_application_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_accept_bag_application_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
-                    var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas, ints)
+                    var message_obj = await this.format_direct_purchase_object(txs[i], calculate_gas, ints, ipfs_index)
                     if(message_obj.depth[1].length > 0){
                         strs.push([])
                         adds.push([])
@@ -2356,21 +2357,21 @@ class StackPage extends Component {
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
-                    var clear_obj = await this.format_clear_purchase_object(txs[i], calculate_gas)
+                    var clear_obj = await this.format_clear_purchase_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(clear_obj.str)
                     adds.push([])
                     ints.push(clear_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */){
-                    var message_obj = await this.format_bag_comment_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_bag_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
-                    var message_obj = await this.format_storefront_comment_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_storefront_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
@@ -2383,29 +2384,29 @@ class StackPage extends Component {
                     ints.push(contractor_obj)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
-                    var message_obj = await this.format_job_request_object(txs[i], calculate_gas)
-                    console.log('format_job_request_object --------------------------------------------------')
+                    var now = parseInt(now.toString() + i)
+                    var message_obj = await this.format_job_request_object(txs[i], calculate_gas, now, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)    
                 }
                 else if(txs[i].type == this.props.app_state.loc['1504']/* 'accept-job-request' */){
-                    var message_obj = await this.format_accept_job_request_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_accept_job_request_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }  
                 else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
-                    var message_obj = await this.format_job_request_comment_object(txs[i], calculate_gas)
+                    var message_obj = await this.format_job_request_comment_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(message_obj.str)
                     adds.push([])
                     ints.push(message_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1506']/* 'alias' */){
-                    var alias_obj = await this.format_alias_object(txs[i], calculate_gas)
+                    var alias_obj = await this.format_alias_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(alias_obj.str)
                     adds.push([])
@@ -2430,19 +2431,18 @@ class StackPage extends Component {
                     ints.push(alias_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */){
-                    var format_edit_object = await this.format_edit_object(txs[i], calculate_gas)
+                    var format_edit_object = await this.format_edit_object(txs[i], calculate_gas, ipfs_index)
                     strs.push(format_edit_object.metadata_strings)
                     adds.push([])
                     ints.push(format_edit_object.metadata_action)
                 }
                 else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
-                    var format_object = await this.format_award_object(txs[i], calculate_gas, ints)
+                    var format_object = await this.format_award_object(txs[i], calculate_gas, ints, ipfs_index)
                     if(format_object.depth[1].length > 0){
                         strs.push([])
                         adds.push([])
                         ints.push(transfer_object.depth)
                     }
-
                     strs.push(format_object.str)
                     adds.push([])
                     ints.push(format_object.int)
@@ -2454,14 +2454,14 @@ class StackPage extends Component {
                     ints.push(depthmint_obj)
                 }
                 else if(txs[i].type == this.props.app_state.loc['2846']/* stage-royalty */){
-                    var stage_royalty_obj = await this.format_stage_royalty_object(txs[i], calculate_gas)
+                    var stage_royalty_obj = await this.format_stage_royalty_object(txs[i], calculate_gas, ipfs_index)
                     
                     strs.push(stage_royalty_obj.str)
                     adds.push([])
                     ints.push(stage_royalty_obj.int)
                 }
                 else if(txs[i].type == this.props.app_state.loc['2884']/* 'royalty-payouts' */){
-                    var royalty_payout_obj = await this.format_make_royalty_payout_object(txs[i], calculate_gas)
+                    var royalty_payout_obj = await this.format_make_royalty_payout_object(txs[i], calculate_gas, ipfs_index)
 
                     //the transfers
                     strs.push([])
@@ -2496,7 +2496,7 @@ class StackPage extends Component {
                 metadata_action[2].push(35)
                 metadata_action[3].push(0)
                 metadata_action[4].push(0)
-                var ipfs_obj = await this.get_object_ipfs_index(pushed_txs[i], calculate_gas);
+                var ipfs_obj = await this.get_object_ipfs_index(pushed_txs[i], calculate_gas, ipfs_index, pushed_txs[i].id);
                 metadata_strings[0].push(ipfs_obj.toString())
             }
         }
@@ -2507,11 +2507,6 @@ class StackPage extends Component {
             adds.push([])
         }
         
-
-
-
-
-
 
         var index_data_in_tags = [ /* index data in tags */
             [20000, 12, 0],
@@ -2574,7 +2569,7 @@ class StackPage extends Component {
             var string_obj = [[]]
             var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
             var data = {'contacts':contacts_clone, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas);
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'contacts');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -2593,7 +2588,7 @@ class StackPage extends Component {
             var string_obj = [[]]
             var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
             var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas);
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'blocked');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -2613,7 +2608,7 @@ class StackPage extends Component {
             var job_section_tags = this.props.app_state.job_section_tags
             var explore_section_tags = this.props.app_state.explore_section_tags
             var data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
-            var string_data = await this.get_object_ipfs_index(data, calculate_gas);
+            var string_data = await this.get_object_ipfs_index(data, calculate_gas, ipfs_index, 'tags');
             string_obj[0].push(string_data)
             
             strs.push(string_obj)
@@ -2623,11 +2618,10 @@ class StackPage extends Component {
 
 
         var optimized_run = this.optimize_run_if_enabled(ints, strs, adds, should_optimize_run)
-        console.log(optimized_run)
+        console.log('rundata',optimized_run)
         ints = optimized_run['ints']
         strs = optimized_run['strs']
         adds = optimized_run['adds']
-        console.log('-------------------------------------------run-transactions--------------------------------')
 
         // this.props.lock_run(false)
         // return;
@@ -2650,7 +2644,8 @@ class StackPage extends Component {
                     this.props.lock_run(false)
                 }
                 else if(account_balance < (estimated_gas_to_be_consumed * run_gas_price)){
-                    this.setState({invalid_ether_amount_dialog_box: true})
+                    // this.setState({invalid_ether_amount_dialog_box: true})
+                    this.props.show_dialog_bottomsheet({'run_gas_limit':run_gas_limit}, 'invalid_ether_amount_dialog_box')
                     this.props.lock_run(false)
                 }
                 else if(run_gas_limit < 35000){
@@ -2677,6 +2672,185 @@ class StackPage extends Component {
             var gas_lim = run_gas_limit.toString().toLocaleString('fullwide', {useGrouping:false})
             this.props.calculate_gas_with_e(strs, ints, adds, gas_lim, wei, delete_pos_array, run_gas_price, this.set_max_priority_per_gas(), this.set_max_fee_per_gas())
         }  
+    }
+
+    get_ipfs_index_object = async (txs, now, calculate_gas) => {
+        var obj = {}
+        var pushed_txs = []
+        for(var i=0; i<txs.length; i++){
+            if(!this.props.app_state.hidden.includes(txs[i]) && txs[i].e5 == this.props.app_state.selected_e5){
+                pushed_txs.push(txs[i])
+                if(txs[i].type == this.props.app_state.loc['285']/* 'mail' */){
+                    var t = txs[i]
+                    var mail_obj = await this.get_encrypted_mail_message(t, t.target_recipient)
+                    obj[t.id] = mail_obj
+                }
+                else if(txs[i].type == this.props.app_state.loc['1509']/* 'mail-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = await this.get_encrypted_mail_message(t.messages_to_deliver[m], t.messages_to_deliver[m]['recipient'])
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['1510']/* 'channel-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }  
+                }
+                else if(txs[i].type == this.props.app_state.loc['1511']/* 'post-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }   
+                }
+                else if(txs[i].type == this.props.app_state.loc['1512']/* 'job-response' */){
+                    var t = txs[i]
+                    var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application', 'custom_specifications':t.custom_specifications}
+
+                    obj[t.id] = application_obj   
+                }
+                else if(txs[i].type == this.props.app_state.loc['1513']/* 'accept-job-application' */){
+                    var t = txs[i]
+                    var application_obj = {'accepted':true}
+                    obj[t.id] = application_obj
+                }
+                else if(txs[i].type == this.props.app_state.loc['1514']/* 'job-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }  
+                }
+                else if(txs[i].type == this.props.app_state.loc['1515']/* 'proposal-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }  
+                }
+                else if(txs[i].type == this.props.app_state.loc['1516']/* 'storefront-bag' */){
+                    var t = txs[i]
+                    var bag_variants = []
+                    txs[i].items_to_deliver.forEach(item => {
+                        bag_variants.push({'storefront_item_id':item.storefront_item['id'], 'storefront_variant_id':item.selected_variant['variant_id'], 'purchase_unit_count':item.purchase_unit_count})
+                    });
+
+                    var final_bag_object = { 'bag_orders':bag_variants, 'timestamp':Date.now(), content_channeling_setting: txs[i].content_channeling_setting, device_language_setting: txs[i].device_language_setting, device_country: txs[i].device_country }
+
+                    obj[t.id] = final_bag_object
+                }
+                else if(txs[i].type == this.props.app_state.loc['1497']/* 'bag-response' */){
+                    var t = txs[i]
+                    var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
+
+                    obj[t.id] = application_obj 
+                }
+                else if(txs[i].type == this.props.app_state.loc['1498']/* 'accept-bag-application' */){
+                    var t = txs[i]
+                    var application_obj = {'accepted':true}
+                    obj[t.id] = application_obj
+                }
+                else if(txs[i].type == this.props.app_state.loc['1499']/* 'direct-purchase' */){
+                    var t = txs[i]
+                    var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
+
+                    obj[t.id] = purchase_object
+                }
+                else if(txs[i].type == this.props.app_state.loc['1500']/* 'clear-purchase' */){
+                    var t = txs[i]
+                    for(var v=0; v<t.items_to_clear.length; v++){
+                        var string_object = {
+                            'id':t.items_to_clear[v].id,
+                            'variant_id':t.items_to_clear[v].order_data['variant_id'], 
+                            'purchase_unit_count':t.items_to_clear[v].order_data['purchase_unit_count'], 
+                            'sender_address':t.items_to_clear[v].order_data['sender_address'], 
+                            'sender_account':t.items_to_clear[v].order_data['sender_account'],
+                            'signature_data':t.items_to_clear[v].order_data['signature_data'],
+                            'signature': t.items_to_clear[v].received_signature
+                        }
+                        obj[t.items_to_clear[v].id] = string_object
+                    }  
+                }
+                else if(txs[i].type == this.props.app_state.loc['1501']/* 'bag-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }   
+                }
+                else if(txs[i].type == this.props.app_state.loc['1502']/* 'storefront-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }   
+                }
+                else if(txs[i].type == this.props.app_state.loc['1363']/* 'job-request' */){
+                    var t = txs[i]
+                    var now = parseInt(now.toString() + i)
+                    var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':now}
+
+                    obj[t.id] = application_obj
+                }
+                else if(txs[i].type == this.props.app_state.loc['1504']/* 'accept-job-request' */){
+                    var t = txs[i]
+                    var application_obj = {'accepted':true, 'contract_id':t.picked_contract['id']}
+                    obj[t.id] = application_obj
+                }
+                else if(txs[i].type == this.props.app_state.loc['1505']/* 'job-request-messages' */){
+                    var t = txs[i]
+                    for(var m=0; m<t.messages_to_deliver.length; m++){
+                        obj[t.messages_to_deliver[m]['message_id']] = t.messages_to_deliver[m]
+                    }
+                }
+                else if(txs[i].type == this.props.app_state.loc['753']/* 'edit-channel' */ || txs[i].type == this.props.app_state.loc['763']/* 'edit-contractor' */ || txs[i].type == this.props.app_state.loc['764']/* 'edit-job' */ || txs[i].type == this.props.app_state.loc['765']/* 'edit-post' */ || txs[i].type == this.props.app_state.loc['766']/* 'edit-storefront' */ || txs[i].type == this.props.app_state.loc['767']/* 'edit-token' */ || txs[i].type == this.props.app_state.loc['2739']/* 'edit-proposal' */){
+                    var t = txs[i]
+                    obj[t.id] = t
+                }
+                else if(txs[i].type == this.props.app_state.loc['1155']/* 'award' */){
+                    var t = txs[i]
+                    var award_object = {'selected_tier_object':t.selected_tier_object, 'post_id':t.post_item['id'], 'multiplier':t.multiplier, 'custom_amounts':t.price_data, 'entered_message':t.entered_message_text}
+                    obj[t.id] = award_object
+                }
+                else if(txs[i].type == this.props.app_state.loc['2846']/* stage-royalty */){
+                    var t = txs[i]
+                    obj[t.id] = t.payout_data
+                }
+                else if(txs[i].type == this.props.app_state.loc['2884']/* 'royalty-payouts' */){
+                    var t = txs[i]
+                    var batches = t.selected_batches
+                    var transacted_batches = []
+                    batches.forEach(batch => {
+                        transacted_batches.push(batch['id'])
+                    });
+                    var payout_record_info = {'payout_id':t.staging_data['payout_id'], 'id':Date.now(), 'transacted_batches':transacted_batches}
+                    obj[t.id] = payout_record_info
+                }
+            }
+        }
+
+        for(var i=0; i<pushed_txs.length; i++){
+            if(pushed_txs[i].type == this.props.app_state.loc['1130']/* 'contract' */ || pushed_txs[i].type == this.props.app_state.loc['601']/* 'token' */ || pushed_txs[i].type == this.props.app_state.loc['823']/* 'subscription' */ || pushed_txs[i].type == this.props.app_state.loc['297']/* 'post' */ || pushed_txs[i].type == this.props.app_state.loc['760']/* 'job' */ || pushed_txs[i].type == this.props.app_state.loc['109']/* 'channel' */ || pushed_txs[i].type == this.props.app_state.loc['439']/* 'storefront-item' */|| pushed_txs[i].type == this.props.app_state.loc['784']/* 'proposal' */ || pushed_txs[i].type == this.props.app_state.loc['253']/* 'contractor' */){
+                obj[pushed_txs[i].id] = pushed_txs[i]
+            }
+        }
+
+        if(this.props.app_state.should_update_contacts_onchain){
+            var contacts_clone = this.props.app_state.contacts[this.props.app_state.selected_e5] == null ? [] : this.props.app_state.contacts[this.props.app_state.selected_e5].slice()
+            var data = {'contacts':contacts_clone, 'time':Date.now()}
+            obj['contacts'] = data
+        }
+
+        if(this.props.app_state.should_update_blocked_accounts_onchain){
+            var blocked_accounts = this.props.app_state.blocked_accounts[this.props.app_state.selected_e5] == null ? []: this.props.app_state.blocked_accounts[this.props.app_state.selected_e5].slice()
+            var data = {'blocked_accounts':blocked_accounts, 'time':Date.now()}
+            obj['blocked'] = data
+        }
+
+        if(this.props.app_state.should_update_section_tags_onchain){
+            var job_section_tags = this.props.app_state.job_section_tags
+            var explore_section_tags = this.props.app_state.explore_section_tags
+            var data = {'job_section_tags': job_section_tags, 'explore_section_tags':explore_section_tags, 'time':Date.now()}
+            obj['tags'] = data
+        }
+
+        return await this.get_object_ipfs_index(obj, calculate_gas);
     }
 
     get_gas_price(){
@@ -2721,9 +2895,12 @@ class StackPage extends Component {
         return this.props.app_state.last_blocks[e5][0];
     }
 
-    get_object_ipfs_index(tx, calculate_gas){
+    get_object_ipfs_index(tx, calculate_gas, ipfs_index, data_index){
         if(calculate_gas != null && calculate_gas == true){
             return 'QmWBaeu6y1zEcKbsEqCuhuDHPL3W8pZouCPdafMCRCSUWk'
+        }
+        if(ipfs_index != null){
+            return ipfs_index+'_'+data_index
         }
         var object_as_string = JSON.stringify(tx, (key, value) =>
             typeof value === 'bigint'
@@ -2739,7 +2916,6 @@ class StackPage extends Component {
     }
 
     render_dialog_ui(){
-        var account_balance = this.props.app_state.account_balance[this.props.app_state.selected_e5]
         var run_gas_limit = this.state.run_gas_limit == 0 ? 5_300_000 : this.state.run_gas_limit
         var run_gas_price = this.props.app_state.gas_price[this.props.app_state.selected_e5]
         var required_ether = (run_gas_limit * run_gas_price);
@@ -3855,7 +4031,7 @@ class StackPage extends Component {
         return obj
     }
 
-    format_mail_object = async (t, calculate_gas) =>{
+    format_mail_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
         [20000, 13, 0],
         [], [],/* target objects */
@@ -3866,7 +4042,7 @@ class StackPage extends Component {
         var string_obj = [[]]
         var string_data = ''
         if(calculate_gas) string_data = await this.get_object_ipfs_index('', calculate_gas)
-        else string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t, t.target_recipient), calculate_gas);
+        else string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t, t.target_recipient), calculate_gas, ipfs_index, t.id);
 
         var recipient_account = t.target_recipient
         var context = 30
@@ -3902,7 +4078,7 @@ class StackPage extends Component {
         return {'obj':encrypted_obj, 'recipient_data':recipent_data}
     }
 
-    format_message_object = async (t, calculate_gas) =>{
+    format_message_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3917,7 +4093,7 @@ class StackPage extends Component {
             var context = 30
             var int_data = t.messages_to_deliver[i].convo_id
 
-            var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t.messages_to_deliver[i], t.messages_to_deliver[i]['recipient']), calculate_gas);
+            var string_data = await this.get_object_ipfs_index(await this.get_encrypted_mail_message(t.messages_to_deliver[i], t.messages_to_deliver[i]['recipient']), calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(recipient_account)
             obj[2].push(23)
@@ -3930,7 +4106,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_channel_message_object = async (t, calculate_gas) =>{
+    format_channel_message_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3948,7 +4124,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -3961,7 +4137,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_post_comment_object = async (t, calculate_gas) =>{
+    format_post_comment_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -3980,7 +4156,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -3993,7 +4169,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_job_application_object = async (t, calculate_gas) =>{
+    format_job_application_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4009,7 +4185,7 @@ class StackPage extends Component {
 
         var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'picked_contract_e5':t.picked_contract['e5'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'type':'job_application', 'custom_specifications':t.custom_specifications}
 
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -4021,7 +4197,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_accept_application_object = async (t, calculate_gas) =>{
+    format_accept_application_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4037,7 +4213,7 @@ class StackPage extends Component {
 
         var application_obj = {'accepted':true}
 
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -4051,7 +4227,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_job_comment_object = async (t, calculate_gas) =>{
+    format_job_comment_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4070,7 +4246,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.id);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4083,7 +4259,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_proposal_message_object = async (t, calculate_gas) => {
+    format_proposal_message_object = async (t, calculate_gas, ipfs_index) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4102,7 +4278,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.id);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4122,7 +4298,7 @@ class StackPage extends Component {
         return obj
     }
 
-    format_bag_application_object = async (t, calculate_gas) =>{
+    format_bag_application_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4138,7 +4314,7 @@ class StackPage extends Component {
 
         var application_obj = {'price_data':t.price_data, 'picked_contract_id':t.picked_contract['id'], 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'estimated_delivery_time': t.estimated_delivery_time , 'type':'bag_application'}
 
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -4150,7 +4326,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_accept_bag_application_object = async (t, calculate_gas) =>{
+    format_accept_bag_application_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4166,7 +4342,7 @@ class StackPage extends Component {
 
         var application_obj = {'accepted':true}
 
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -4180,7 +4356,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_direct_purchase_object = async (t, calculate_gas, ints) => {
+    format_direct_purchase_object = async (t, calculate_gas, ints, ipfs_index) => {
         var ints_clone = ints.slice()
         var depth_swap_obj = [
             [30000,16,0],
@@ -4256,7 +4432,7 @@ class StackPage extends Component {
 
         var purchase_object = {'shipping_detail':t.fulfilment_location, 'custom_specifications':t.custom_specifications, 'variant_id':t.selected_variant['variant_id'], 'purchase_unit_count':t.purchase_unit_count, 'sender_account':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'signature_data':Date.now(), 'sender_address':this.format_address(this.props.app_state.accounts[this.props.app_state.selected_e5].address, this.props.app_state.selected_e5)}
         
-        var string_data = await this.get_object_ipfs_index(purchase_object, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(purchase_object, calculate_gas, ipfs_index, t.id);
 
         string_obj[0].push(string_data)
 
@@ -4267,7 +4443,7 @@ class StackPage extends Component {
         return bigInt(amount).multiply(bigInt(count))
     }
 
-    format_clear_purchase_object = async (t, calculate_gas) =>{
+    format_clear_purchase_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4283,6 +4459,7 @@ class StackPage extends Component {
             var int_data = 0
 
             var string_object = {
+                'id':t.items_to_clear[i].id,
                 'variant_id':t.items_to_clear[i].order_data['variant_id'], 
                 'purchase_unit_count':t.items_to_clear[i].order_data['purchase_unit_count'], 
                 'sender_address':t.items_to_clear[i].order_data['sender_address'], 
@@ -4290,7 +4467,7 @@ class StackPage extends Component {
                 'signature_data':t.items_to_clear[i].order_data['signature_data'],
                 'signature': t.items_to_clear[i].received_signature
             }
-            var string_data = await this.get_object_ipfs_index(string_object, calculate_gas);
+            var string_data = await this.get_object_ipfs_index(string_object, calculate_gas, ipfs_index, t.items_to_clear[i].id);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4303,7 +4480,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_bag_comment_object = async (t, calculate_gas) => {
+    format_bag_comment_object = async (t, calculate_gas, ipfs_index) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4322,7 +4499,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4335,7 +4512,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_storefront_comment_object = async (t, calculate_gas) => {
+    format_storefront_comment_object = async (t, calculate_gas, ipfs_index) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4354,7 +4531,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['id']
             var int_data = parseInt(t.messages_to_deliver[i]['e5'].replace('E',''))
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4374,7 +4551,7 @@ class StackPage extends Component {
         return obj
     }
 
-    format_job_request_object = async (t, calculate_gas) => {
+    format_job_request_object = async (t, calculate_gas, now, ipfs_index) => {
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4386,11 +4563,11 @@ class StackPage extends Component {
 
         var target_id = t.contractor_item['id']
         var context = 38
-        var int_data = Date.now()
+        var int_data = now
 
         var application_obj = {'price_data':t.price_data, /* 'picked_contract_id':t.picked_contract['id'], */ 'application_expiry_time':t.application_expiry_time, 'applicant_id':this.props.app_state.user_account_id[this.props.app_state.selected_e5], 'pre_post_paid_option':t.pre_post_paid_option, 'title_description':t.entered_title_text, 'entered_images':t.entered_image_objects, 'job_request_id':int_data}
 
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -4402,7 +4579,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_accept_job_request_object = async (t, calculate_gas) =>{
+    format_accept_job_request_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4418,7 +4595,7 @@ class StackPage extends Component {
 
         var application_obj = {'accepted':true, 'contract_id':t.picked_contract['id']}
 
-        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(application_obj, calculate_gas, ipfs_index, t.id);
 
         obj[1].push(target_id)
         obj[2].push(23)
@@ -4432,7 +4609,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_job_request_comment_object = async (t, calculate_gas) =>{
+    format_job_request_comment_object = async (t, calculate_gas, ipfs_index) =>{
         var obj = [ /* set data */
             [20000, 13, 0],
             [], [],/* target objects */
@@ -4451,7 +4628,7 @@ class StackPage extends Component {
             var context = t.messages_to_deliver[i]['contractor_id']
             var int_data = t.messages_to_deliver[i]['id']
 
-            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas);
+            var string_data = await this.get_object_ipfs_index(t.messages_to_deliver[i], calculate_gas, ipfs_index, t.messages_to_deliver[i]['message_id']);
 
             obj[1].push(target_id)
             obj[2].push(23)
@@ -4536,7 +4713,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_edit_object = async (t, calculate_gas) => {
+    format_edit_object = async (t, calculate_gas, ipfs_index) => {
         var metadata_action = [ /* set metadata */
             [20000, 1, 0],
             [], [],/* target objects */
@@ -4550,13 +4727,13 @@ class StackPage extends Component {
         metadata_action[3].push(0)
         metadata_action[4].push(0)
         
-        var ipfs_obj = await this.get_object_ipfs_index(t, calculate_gas);
+        var ipfs_obj = await this.get_object_ipfs_index(t, calculate_gas, ipfs_index, t.id);
         metadata_strings[0].push(ipfs_obj.toString())
 
         return {metadata_action: metadata_action, metadata_strings:metadata_strings}
     }
 
-    format_award_object = async (t, calculate_gas, ints) => {
+    format_award_object = async (t, calculate_gas, ints, ipfs_index) => {
         var ints_clone = ints.slice()
         var author = t.post_item['event'].returnValues.p5
         var post_id = t.post_item['id'];
@@ -4610,7 +4787,7 @@ class StackPage extends Component {
 
         var award_object = {'selected_tier_object':t.selected_tier_object, 'post_id':post_id, 'multiplier':t.multiplier, 'custom_amounts':t.price_data, 'entered_message':t.entered_message_text}
         
-        var string_data = await this.get_object_ipfs_index(award_object, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(award_object, calculate_gas, ipfs_index, t.id);
         string_obj[0].push(string_data)
 
         return {int: obj, str: string_obj, depth: depth_swap_obj}
@@ -4647,7 +4824,7 @@ class StackPage extends Component {
         return obj
     }
 
-    format_stage_royalty_object = async(t, calculate_gas) => {
+    format_stage_royalty_object = async(t, calculate_gas, ipfs_index) => {
         var obj = [ /* add data */
             [20000, 13, 0],
             [12], [23],/* 12(stage_royalty_id) */
@@ -4659,7 +4836,7 @@ class StackPage extends Component {
         var context = t.token_item['id']
         var int_data = Date.now()
 
-        var string_data = await this.get_object_ipfs_index(t.payout_data, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(t.payout_data, calculate_gas, ipfs_index, t.id);
 
         obj[3].push(context)
         obj[4].push(int_data)
@@ -4669,7 +4846,7 @@ class StackPage extends Component {
         return {int: obj, str: string_obj}
     }
 
-    format_make_royalty_payout_object= async (t, calculate_gas) => {
+    format_make_royalty_payout_object= async (t, calculate_gas, ipfs_index) => {
         var transfers_obj = [/* send tokens to another account */
             [30000, 1, 0],
             [], [],/* exchanges */
@@ -4713,7 +4890,7 @@ class StackPage extends Component {
         var string_obj = [[]]
         var payout_record_info = {'payout_id':t.staging_data['payout_id'], 'id':Date.now(), 'transacted_batches':transacted_batches}
 
-        var string_data = await this.get_object_ipfs_index(payout_record_info, calculate_gas);
+        var string_data = await this.get_object_ipfs_index(payout_record_info, calculate_gas, ipfs_index, t.id);
         string_obj[0].push(string_data)
 
         transfers_record[3].push(context)

@@ -162,7 +162,8 @@ class ViewTransactionPage extends Component {
 
 
     open_dialog_ui(){
-        this.setState({confirm_delete_dialog_box: true})
+        // this.setState({confirm_delete_dialog_box: true})
+        this.props.show_dialog_bottomsheet({},'confirm_delete_dialog_box')
     }
 
     render_dialog_ui(){
@@ -170,7 +171,6 @@ class ViewTransactionPage extends Component {
             <Dialog PaperProps={{ sx: { borderRadius: "15px" } }} onClose = {() => this.cancel_dialog_box()} open = {this.state.confirm_delete_dialog_box}>
                 <div style={{'padding': '10px', 'background-color':this.props.theme['send_receive_ether_background_color']}}>
                     <div style={{width:300}}/>
-
                     <h5 style={{'margin':'0px 0px 5px 10px', 'color':this.props.theme['primary_text_color'], 'font-family': this.props.app_state.font}}>{this.props.app_state.loc['1786']/* Confirm Delete Action */}</h5>
 
                     {this.render_detail_item('3', {'title':this.props.app_state.loc['1787']/* 'Are you sure?' */, 'details':'You cannot undo this action', 'size':'s'})}

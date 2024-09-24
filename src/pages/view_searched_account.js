@@ -27,7 +27,8 @@ class SearchedAccountPage extends Component {
     state = {
         selected: 0, searched_account: null, searched_account_id:0,
         searched_account_page_tags_object: this.get_searched_account_page_tags_object(),
-        typed_search_exchange_id:'', searched_exchange:'', typed_search_id:{}
+        typed_search_exchange_id:'', searched_exchange:'', typed_search_id:{},
+        get_account_balance_history_tag_object:this.get_account_balance_history_tag_object()
     };
 
     constructor(props) {
@@ -84,9 +85,35 @@ class SearchedAccountPage extends Component {
         return obj
     }
 
+
+    get_account_balance_history_tag_object(){
+        return{
+            'i':{
+                active:'e', 
+            },
+            'e':[
+                ['xor','',0], ['e',this.props.app_state.loc['1770a']/* 'balances' */,this.props.app_state.loc['1770b']/* 'income' */, this.props.app_state.loc['1770h']/* 'expenditure' */], [1]
+            ],
+        };
+    }
+
+
+
     set_searched_item(item, searched_id){
         this.setState({searched_account: item, searched_account_id: searched_id})
+
+        var me = this;
+        setTimeout(function() {
+            me.set_default_balance_year()
+        }, (1 * 700));
     }
+
+
+
+
+
+
+
 
     render(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
@@ -402,7 +429,9 @@ class SearchedAccountPage extends Component {
                 {this.render_detail_item('3', {'title':alias, 'details':item['id'], 'size':'l'})}
                 <div style={{height: 10}}/>
 
-                {this.render_detail_item('3', {'title':this.props.app_state.loc['1714']/* 'Address' */, 'details':start_and_end(address), 'size':'l'})}
+                <div onClick={()=> this.copy_address_to_clipboard(address)}>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1714']/* 'Address' */, 'details':start_and_end(address), 'size':'l'})}
+                </div>
                 <div style={{height: 10}}/>
 
                 <div style={{ 'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px ' + this.props.theme['card_shadow_color'], 'margin': '0px 0px 0px 0px', 'padding': '10px 5px 5px 5px', 'border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.props.app_state.loc['1716']/* 'Ether Balance in Wei' */, 'number':ether_balance, 'relativepower':'wei'})}>
@@ -444,6 +473,11 @@ class SearchedAccountPage extends Component {
         )
     }
 
+    copy_address_to_clipboard(signature_data){
+        navigator.clipboard.writeText(signature_data)
+        this.props.notify(this.props.app_state.loc['1564']/* 'Copied address to clipboard.' */, 3600)
+    }
+
     render_search_account_balances_ui(){
         var selected_item = this.get_selected_item(this.state.searched_account_page_tags_object, this.state.searched_account_page_tags_object['i'].active)
 
@@ -455,9 +489,10 @@ class SearchedAccountPage extends Component {
                     {this.render_search_account_ui()}
                     {this.render_detail_item('0')}
 
-                    {this.render_detail_item('3', {'title':this.props.app_state.loc['2808']/* 'Accounts Balances' */, 'details':this.props.app_state.loc['2809']/* 'Heres all the tokens the account is in posession of.' */, 'size':'l'})}
+                    <Tags font={this.props.app_state.font} page_tags_object={this.state.get_account_balance_history_tag_object} tag_size={'l'} when_tags_updated={this.when_get_account_balance_history_tag_object_updated.bind(this)} theme={this.props.theme}/>
                     <div style={{height:10}}/>
-                    {this.render_accounts_balances()}
+
+                    {this.render_account_balance_or_yearly_balance_change_data()}
                 </div>
             )
         }else{
@@ -467,6 +502,50 @@ class SearchedAccountPage extends Component {
                 </div>
             )
         }
+    }
+
+    when_get_account_balance_history_tag_object_updated(tag_obj){
+        this.setState({get_account_balance_history_tag_object: tag_obj})
+    }
+
+
+    render_account_balance_or_yearly_balance_change_data(){
+        var selected_item = this.get_selected_item(this.state.get_account_balance_history_tag_object, this.state.get_account_balance_history_tag_object['i'].active)
+        
+        if(selected_item == this.props.app_state.loc['1770a']/* 'balances' */){
+            return(
+                <div>
+                    {this.render_account_balance_data()}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1770b']/* 'income' */){
+            return(
+                <div>
+                    {this.render_yearly_balance_change_data('Received')}
+                </div>
+            )
+        }
+        else if(selected_item == this.props.app_state.loc['1770h']/* 'expenditure' */){
+            return(
+                <div>
+                    {this.render_yearly_balance_change_data('Sent')}
+                </div>
+            )
+        }
+    }
+
+
+
+
+    render_account_balance_data(){
+        return(
+            <div>
+                {this.render_detail_item('3', {'title':this.props.app_state.loc['2808']/* 'Accounts Balances' */, 'details':this.props.app_state.loc['2809']/* 'Heres all the tokens the account is in posession of.' */, 'size':'l'})}
+                <div style={{height:10}}/>
+                {this.render_accounts_balances()}
+            </div>
+        )
     }
 
     render_accounts_balances(){
@@ -496,6 +575,186 @@ class SearchedAccountPage extends Component {
         )
     }
 
+
+
+    render_yearly_balance_change_data(target_action){
+        var data = this.get_yearly_balance_change_data(target_action)
+        var active_years = this.get_years(data)
+
+        return(
+            <div>
+                {this.render_yearly_balance_change_title(target_action)}
+                <div style={{height:5}}/>
+                {this.render_balance_years(data, active_years)}
+                <div style={{height:20}}/>
+                {this.render_years_balance_data(data)}
+            </div>
+        )
+    }
+
+    render_yearly_balance_change_title(target_action){
+        if(target_action == 'Received'){
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1770d']/* 'Yearly Income.' */, 'details':this.props.app_state.loc['1770e']/* 'Heres how much money the account has made in the last few years.' */, 'size':'l'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3', {'title':this.props.app_state.loc['1770f']/* 'Yearly Expenditure' */, 'details':this.props.app_state.loc['1770g']/* 'Heres how much money the account has spent in the last few years.' */, 'size':'l'})}
+                </div>
+            )
+        }
+    }
+    
+
+    render_balance_years(data, active_years){
+        var items = active_years;
+        var background_color = this.props.theme['card_background_color']
+        if(items.length == 0){
+            items = [1, 2, 3]
+            return(
+                <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                    <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden', 'scrollbar-width': 'none'}}>
+                        {items.map((item, index) => (
+                            <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}}>
+                                <div style={{height:47, width:97, 'background-color': background_color, 'border-radius': '8px','padding':'10px','display': 'flex', 'align-items':'center','justify-content':'center'}}>
+                                    <div style={{'margin':'0px 0px 0px 0px'}}>
+                                        <img src={this.props.app_state.static_assets['letter']} style={{height:20 ,width:'auto'}} />
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+        return(
+            <div style={{'margin':'3px 0px 0px 0px','padding': '0px 0px 0px 0px', 'background-color': 'transparent', height:48}}>
+                <ul style={{'list-style': 'none', 'padding': '0px 0px 0px 0px', 'overflow': 'auto', 'white-space': 'nowrap', 'border-radius': '1px', 'margin':'0px 0px 0px 0px','overflow-y': 'hidden'}}>
+                    {items.map((item, index) => (
+                        <li style={{'display': 'inline-block', 'margin': '1px 2px 1px 2px', '-ms-overflow-style':'none'}} onClick={() => this.when_balance_year_clicked(item)}>
+                            {this.render_year_item(data, item)}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+    render_year_item(data, item){
+        if(this.state.active_balance_year == item){
+            return(
+                <div>
+                    <div style={{height:'1px', 'background-color':'#C1C1C1', 'margin': '0px 5px 3px 5px'}}/>
+                    {this.render_detail_item('3',{'title':''+item, 'details':this.get_years_exchanges(data, item).length+this.props.app_state.loc['1770c']/* ' exchanges' */,'size':'s'})}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    {this.render_detail_item('3',{'title':''+item, 'details':this.get_years_exchanges(data, item).length+this.props.app_state.loc['1770c']/* ' exchanges' */,'size':'s'})}
+                </div>
+            )
+        }
+    }
+
+    when_balance_year_clicked(year){
+        this.setState({active_balance_year: year})
+    }
+
+    set_default_balance_year(){
+        var data = this.get_yearly_balance_change_data('Received')
+        var active_years = this.get_years(data)
+        if(active_years.length > 0){
+            this.setState({active_balance_year: active_years[0]})
+        }else{
+            this.setState({active_balance_year: 0})
+        }
+    }
+
+
+    render_years_balance_data(data){
+        var searched_item_data = this.state.searched_account
+        var year = this.state.active_balance_year
+        var years_exchanges = this.get_years_exchanges(data, year)
+        var e5 = searched_item_data['e5']
+        if(years_exchanges.length == 0 || year == 0){
+            return(
+                <div>
+                    {this.render_empty_views(3)}
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <ul style={{ 'padding': '0px 0px 0px 0px'}}>
+                        {years_exchanges.map((item, index) => (
+                            <li style={{'padding': '3px 0px 3px 0px'}}>
+                                <div style={{'background-color': this.props.theme['view_group_card_item_background'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }} onClick={() => this.props.view_number({'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'number':this.format_account_balance_figure(data[year][years_exchanges[index]]), 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item]})}>
+                                    {this.render_detail_item('2', { 'style':'l', 'title':this.get_all_sorted_objects_mappings(this.props.app_state.token_name_directory)[e5+item], 'subtitle':this.format_power_figure(data[year][years_exchanges[index]]), 'barwidth':this.calculate_bar_width(data[year][years_exchanges[index]]), 'number':this.format_account_balance_figure(data[year][years_exchanges[index]]), 'barcolor':'', 'relativepower':this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[item], })}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+
+    get_yearly_balance_change_data(target_action){
+        var items = this.state.searched_account['tokens']
+        var data = {}
+
+        items.forEach(item => {
+            var exchange_id = item['event'].returnValues.p1;
+            var amount = item['event'].returnValues.p4
+            var depth = item['event'].returnValues.p7
+            amount = this.get_actual_number(amount, depth)
+            var timestamp = item['timestamp'];
+            
+            if(item['action'] == target_action){
+                var year = (Math.floor(parseInt(timestamp) / (31556952))) + 1970
+                if(data[year] == null) data[year] = {}
+                if(data[year][exchange_id] == null) data[year][exchange_id] = bigInt(0);
+                data[year][exchange_id] = bigInt(data[year][exchange_id]).plus(amount)
+            }
+        });
+
+        return data
+    }
+
+
+    get_years(data){
+        var years = []
+        for (const year in data) {
+            if (data.hasOwnProperty(year)) {
+                years.push(year)
+            }
+        }
+        return years
+    }
+
+    get_years_exchanges(data, year){
+        var exchanges = []
+        var reference = data[year]
+        if(reference == null) return [];
+        for (const exchange in reference) {
+            if (reference.hasOwnProperty(exchange)) {
+                exchanges.push(exchange)
+            }
+        }
+        return exchanges
+    }
+
+
+
+
+
+
+
     render_search_account_ui(){
         var item = this.state.searched_account
         return(
@@ -504,11 +763,13 @@ class SearchedAccountPage extends Component {
                 <div style={{height:10}}/>
 
                 <div className="row" style={{ padding: '5px 10px 0px 10px', width:'103%' }}>
-                    <div className="col-9" style={{'margin': '0px 0px 0px 0px'}}>
+                    <div className="col-11" style={{'margin': '0px 0px 0px 0px'}}>
                         <TextInput font={this.props.app_state.font} height={25} placeholder={this.props.app_state.loc['1723']/* 'Exchange ID...' */} when_text_input_field_changed={this.when_typed_search_exchange_id_changed.bind(this)} text={this.state.typed_search_exchange_id} theme={this.props.theme}/>
                     </div>
-                    <div className="col-3" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
-                        {this.render_detail_item('5',{'text':this.props.app_state.loc['140']/* 'Search' */,'action':''})}
+                    <div className="col-1" style={{'padding': '0px 0px 0px 0px'}} onClick={()=> this.perform_search()}>
+                        <div className="text-end" style={{'padding': '5px 0px 0px 0px'}} >
+                            <img alt="" className="text-end" src={this.props.theme['add_text']} style={{height:37, width:'auto'}} />
+                        </div>
                     </div>
                 </div>
                 <div style={{height:10}}/>

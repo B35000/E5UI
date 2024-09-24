@@ -340,7 +340,7 @@ class home_page extends Component {
 
         if(size == 'l'){
             var middle = this.props.height-112;
-            return ( 
+            return (
                 <div style={{}}>
                     <div className="row" style={{height: this.props.height, width:width+13, 'background-color':background_color, 'padding':'0px 0px 0px 15px'}}>
                         {this.render_side_bar()}
@@ -357,6 +357,7 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
+                    <ToastContainer limit={3} containerId="id3"/>
                 </div>
             );
         }
@@ -392,6 +393,7 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
+                    <ToastContainer limit={3} containerId="id3"/>
                 </div>
             )
         }
@@ -417,12 +419,13 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
+                    <ToastContainer limit={3} containerId="id3"/>
                 </div>
             );
         }
         else if(size == 's'){
             var bottom_bar = 75;
-            return ( 
+            return (
                 <div style={{height: this.props.height, width:'100%','background-color':background_color, backgroundImage: `url(${back})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', 'overflow-y':'hidden'}}>
                     {this.render_small_screen_size_ui(size, top_bar, width)}
                     
@@ -436,6 +439,7 @@ class home_page extends Component {
                     {this.render_post_preview_bottomsheet()}
                     {this.render_nsfw_preview_bottomsheet()}
                     {this.render_dialog_ui()}
+                    <ToastContainer limit={3} containerId="id3"/>
                 </div>
             );
         }
@@ -589,7 +593,7 @@ class home_page extends Component {
                                 {this.render_post_detail_object(size, this.props.height-30, this.props.width)}
                             </div>
                         </Sheet.Content>
-                        <ToastContainer limit={3} containerId="id2"/>
+                        <ToastContainer limit={3} containerId="id3"/>
                     </Sheet.Container>
                     <Sheet.Backdrop onTap={()=> this.open_view_object_bottomsheet()}/>
                 </Sheet>
@@ -939,7 +943,7 @@ class home_page extends Component {
                                 <FilterSection ref={this.filter_section_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_search_button_tapped={this.when_search_button_tapped.bind(this)} when_add_tags_button_tapped={this.when_add_tags_button_tapped.bind(this)} reset_scroll_height={this.reset_scroll_height.bind(this)}/>
                             </div>
                         </Sheet.Content>
-                        <ToastContainer limit={3} containerId="id2"/>
+                        <ToastContainer limit={3} containerId="id3"/>
                     </Sheet.Container>
                     <Sheet.Backdrop onTap={()=> this.open_filter_section_bottomsheet()}/>
                 </Sheet>
@@ -1055,7 +1059,7 @@ class home_page extends Component {
                                 <PostPreview ref={this.post_preview_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_post_preview_subscription_tapped={this.when_post_preview_subscription_tapped.bind(this)} pin_post={this.pin_post.bind(this)}/>
                             </div>
                         </Sheet.Content>
-                        <ToastContainer limit={3} containerId="id2"/>
+                        <ToastContainer limit={3} containerId="id3"/>
                     </Sheet.Container>
                     <Sheet.Backdrop onTap={()=> this.open_post_preview_bottomsheet()}/>
                 </Sheet>
@@ -1135,7 +1139,7 @@ class home_page extends Component {
                                 <NsfwPage ref={this.post_nsfw_page} app_state={this.props.app_state} size={size} height={this.props.height} theme={this.props.theme} notify={this.props.notify.bind(this)} when_warning_ignored={this.when_warning_ignored.bind(this)}/>
                             </div>
                         </Sheet.Content>
-                        <ToastContainer limit={3} containerId="id2"/>
+                        <ToastContainer limit={3} containerId="id3"/>
                     </Sheet.Container>
                     <Sheet.Backdrop onTap={()=> this.open_post_nsfw_bottomsheet()}/>
                 </Sheet>
@@ -2787,7 +2791,7 @@ class home_page extends Component {
             this.props.notify(data, duration)
         }else{
             var time = duration == null ? 1000: duration;
-            var id = "id2"
+            var id = "id3"
             toast(this.render_toast_item(data), {
                 position: "top-center",
                 autoClose: time,
@@ -3182,9 +3186,9 @@ class home_page extends Component {
 
 
     add_id_to_contacts(account_id, item){
-        if(account_id != this.props.app_state.user_account_id[item['e5']]){
-            this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
-        }
+        // if(account_id != this.props.app_state.user_account_id[item['e5']]){
+        //     this.setState({contact_to_add: account_id, confirmation_dialog_box: true})
+        // }
     }
 
     render_dialog_ui(){

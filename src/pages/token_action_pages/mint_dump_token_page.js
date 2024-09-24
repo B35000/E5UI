@@ -62,12 +62,12 @@ class NewMintActionPage extends Component {
                     </div>
                     <div className="col-1" style={{'padding': '0px 0px 0px 0px'}}>
                         <div className="text-end" style={{'padding': '0px 10px 0px 0px'}} >
-                            <img className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
+                            <img alt="" className="text-end" onClick={()=>this.finish()} src={this.props.theme['close']} style={{height:36, width:'auto'}} />
                         </div>
                     </div>
                 </div>
                 
-                <div style={{'margin':'10px 0px 0px 0px'}}>
+                <div style={{'margin':'0px 0px 0px 0px'}}>
                     {this.render_everything()}
                 </div>
                 
@@ -96,10 +96,10 @@ class NewMintActionPage extends Component {
         else if(size == 'm'){
             return(
                 <div className="row">
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
                     </div>
-                    <div className="col-6" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-6" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_fees_and_price_data_if_buyable()}
                     </div>
                 </div>
@@ -109,10 +109,10 @@ class NewMintActionPage extends Component {
         else if(size == 'l'){
             return(
                 <div className="row">
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_data_picker_ui()}
                     </div>
-                    <div className="col-5" style={{'padding': '10px 10px 10px 10px'}}>
+                    <div className="col-5" style={{'padding': '0px 10px 10px 10px'}}>
                         {this.render_fees_and_price_data_if_buyable()}
                     </div>
                 </div>
@@ -193,6 +193,8 @@ class NewMintActionPage extends Component {
                     {this.render_my_balances_if_buy_action()}
                     
                     {this.set_price_data()}
+
+                    {this.calculate_and_show_buy_sell_impact_proportion()}
                 </div>
             )
         }else{
@@ -210,7 +212,7 @@ class NewMintActionPage extends Component {
         var token = ''
         if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
             message = this.props.app_state.loc['956']/* 'Set the amount of tokens your submitting for the mint/buy action.' */
-            token = this.props.app_state.loc['996a']/* tokens */
+            token = this.props.app_state.loc['92']/* tokens */
         }else{
             message = this.props.app_state.loc['996b']/* 'Set the amount of tokens your submitting for the dump-sell action.' */
             token = this.get_all_sorted_objects_mappings(this.props.app_state.token_directory)[this.state.token_item['id']]
@@ -234,6 +236,38 @@ class NewMintActionPage extends Component {
                 </div>
             </div>
         )
+    }
+
+    calculate_and_show_buy_sell_impact_proportion(){
+        var selected_object = this.state.token_item
+        var token_type = selected_object['data'][0][3]
+        var selected_obj_ratio_config = selected_object['data'][2];
+        if(token_type == 3){
+            var exchanges_liquidity = selected_obj_ratio_config[2]
+            var amount = this.state.amount
+            var action = this.get_selected_item(this.state.new_mint_dump_action_page_tags_object, 'e')
+            if(action == this.props.app_state.loc['949']/* 'mint-buy' */){
+                var input_amount = this.state.amount
+                var input_reserve_ratio = selected_object['data'][2][1]
+                var output_reserve_ratio = selected_object['data'][2][0]
+                amount = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
+            }
+            var impact_percentage = bigInt(amount).multiply(100).divide(exchanges_liquidity)
+            var p = impact_percentage+'%'
+            var n = action == this.props.app_state.loc['949']/* 'mint-buy' */ ? '-' : ''
+
+            return(
+                <div>
+                    <div style={{height:20}}/>
+                    {this.render_detail_item('3', {'size':'l', 'details':this.props.app_state.loc['996d']/* 'The impact proportion your transaction will have in the exchanges liquidity.' */, 'title':this.props.app_state.loc['996c']/* 'Transaction Impact' */})}
+                    <div style={{height:10}}/>
+
+                    <div style={{'background-color': this.props.theme['card_background_color'], 'box-shadow': '0px 0px 0px 0px '+this.props.theme['card_shadow_color'],'margin': '0px 0px 0px 0px','padding': '10px 5px 5px 5px','border-radius': '8px' }}>
+                        {this.render_detail_item('2', { 'style':'l', 'title':this.props.app_state.loc['996c']/* 'Transaction Impact' */, 'subtitle':this.format_power_figure(impact_percentage), 'barwidth':this.calculate_bar_width(impact_percentage), 'number':n+p, 'barcolor':'', 'relativepower':this.props.app_state.loc['996e']/* 'proportion' */, })}
+                    </div>
+                </div>
+            )
+        }
     }
 
     set_maximum(){
@@ -286,9 +320,6 @@ class NewMintActionPage extends Component {
                 var input_reserve_ratio = selected_object['data'][2][1]
                 var output_reserve_ratio = selected_object['data'][2][0]
                 var price = this.calculate_price(input_amount, input_reserve_ratio, output_reserve_ratio)
-                var buy_tokens = selected_object['data'][3]
-                var buy_amounts = selected_object['data'][4]
-                var buy_depths = selected_object['data'][5]
                 return(
                     <div>
                         <div style={{height:20}}/>
